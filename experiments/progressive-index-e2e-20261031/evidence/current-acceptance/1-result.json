@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-10-31T11:06:28.330586+00:00",
+  "request": "Complete the one approved frozen Caco2 learning run after authorized unstarted recovery",
+  "authorization": "formal-training-recovery-v2.json and cycle/control/authorization.json",
+  "target": "<COMPUTE_HOST>/UID1012 via fixed Windows route",
+  "workspace": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-index-cycle-20261031",
+  "run_id": "hainan-index-cycle-20261031",
+  "state": "training_completed_pending_main_independent_acceptance",
+  "training_count": 1,
+  "training_completed": true,
+  "prediction_completed": true,
+  "freeze_verified": true,
+  "write_scope_verified": true,
+  "own_resources_released": true,
+  "scoring_performed": false,
+  "upload_performed": false,
+  "upload_scope": "official_competition_upload",
+  "deployment_performed": true,
+  "controller_accepted": null,
+  "checks": {
+    "source_identity": "pass",
+    "input_identity": "pass",
+    "prelaunch_health_occupation": "pass",
+    "actual_cuda_and_learning": "pass",
+    "freeze_and_head_update": "pass",
+    "row_identity_and_prediction_finiteness": "pass",
+    "checkpoint_reload_and_process_evidence": "pass",
+    "write_trace": "pass",
+    "actual_outer_exit": "pass",
+    "own_resource_release": "pass"
+  },
+  "training": {
+    "epochs": 26,
+    "optimizer_steps": 130,
+    "best_epoch": 18,
+    "best_steps": 90,
+    "fit_rows": 573,
+    "stop_rows": 64,
+    "prediction_rows": 273,
+    "train_prediction_rows": 637,
+    "encoder_state_tensors": 11,
+    "encoder_state_sha256": "3dcc8242cc8b63aa1813cf06cb686ae09056e725a415bf244e7aa32c26cc9c74",
+    "head_max_abs_changes": {
+      "0.weight": 0.02097254293039441,
+      "0.bias": 0.011659549083560705,
+      "3.weight": 0.012162439525127411,
+      "3.bias": 0.0016623400151729584
+    },
+    "optimizer_rng_tensor_storages": 15
+  },
+  "exit_codes": {
+    "preflight_child": 0,
+    "preflight_supervisor": 0,
+    "train_child": 0,
+    "train_supervisor": 0,
+    "pipeline_actual_os_wait": 0
+  },
+  "gpu": {
+    "index": 5,
+    "uuid": "<REGISTERED_GPU>",
+    "post_health_recovery_action": "None",
+    "own_gpu_pid_residue": false
+  },
+  "resource_budget": {
+    "gpu_count": 1,
+    "gpu_peak_target_mib": 4096,
+    "cpu_threads": 2,
+    "dataloader_workers": 0,
+    "ram_target_gib": 8,
+    "training_timeout_seconds": 900,
+    "setup_budget_seconds": 2700,
+    "dependency_download_budget_gib": 0,
+    "result_budget_gib": 1,
+    "limits_are_targets_until_enforcement_verified": true
+  },
+  "resource_observation_id": "hainan-20261031T105112-762820Z",
+  "resource_observations": {
+    "preflight": {
+      "peak_observed_rss_bytes": 1126494208,
+      "peak_observed_gpu_mib": 676,
+      "peak_observed_result_bytes": 49564183,
+      "terminal_without_rss": []
+    },
+    "train": {
+      "peak_observed_rss_bytes": 1567531008,
+      "peak_observed_gpu_mib": 1160,
+      "peak_observed_result_bytes": 93259040,
+      "terminal_without_rss": [
+        {
+          "event_line": 71,
+          "at": "2026-10-31T10:56:28.958140+00:00",
+          "pid": 3931584,
+          "state": "Z",
+          "rss_kib": 0
+        }
+      ]
+    }
+  },
+  "registered_processes_checked": 9,
+  "all_registered_processes_gone": true,
+  "actual_phase_seconds": {
+    "preflight": 23.736804274842143,
+    "train": 26.644201477058232
+  },
+  "original_setup_origin": "2026-10-31T10:21:04.244755+00:00",
+  "source_bindings": {
+    "plan_sha256": "73095ab8b98434f21e1cdb7e3e46d8bb9bea41dde8dff3eac26ccbf7961c0f50",
+    "scientific_manifest_sha256": "1f944daecd5a629a488dfba180ee2611091a2482d2e2f489005c2836c0260dd5",
+    "scientific_acceptance_sha256": "83f18b54905dd23b98521d7059cf56be391d7311a54d424e6e73aca4fe8cc35f",
+    "recovery_dispatch_sha256": "03b21435e032aa5c5c44d00da254693a8b0c855cf9122f3e58c62897f05f055b",
+    "runtime_manifest_sha256": "32e2681aee6f2b7337809996e575f1637dc83e146814b15e085f4623069537ae",
+    "execution_profile_sha256": "9fedeeef68c9a37e5c5c9f2e66a02cfef8e18111dd652e8fe312316964ad579a"
+  },
+  "prior_failure": {
+    "record": "acceptance/execution-01/result.json",
+    "outer_exit": 125,
+    "training_started": false,
+    "preserved_exact_sha256": "682b740972d1a939f910b1254855145a9f797af237e8560206bad750aa19b484"
+  },
+  "evidence": {
+    "snapshot": "raw/execution-02/remote-snapshot-v2",
+    "snapshot_manifest": "raw/execution-02/remote-snapshot-v2/fetch-manifest.json",
+    "snapshot_manifest_sha256": "9ce34932a69247ec02d164b07e06268530d3ccb58818a75c24eec19e68255b92",
+    "files_verified": 116,
+    "raw_bytes": 93643877,
+    "artifact_verification": "acceptance/execution-02/artifact-verification.json",
+    "artifact_verification_sha256": "e64a8c1c8b6ec3f55a7198227e5bf2ed83610ec35cc5df666a12c0257b2b523c",
+    "write_audit": "acceptance/execution-02/write-audit.json",
+    "write_audit_sha256": "4418cb71c6d6f4468c2e7a1ab0a9dcb6ed917bab3b9a17e7c84d9f10765cab45",
+    "postcheck": "operator/execution-02/postcheck.json",
+    "resource_summary": "operator/execution-02/resource-summary.json",
+    "actual_os_exit": "raw/execution-02/remote-snapshot-v2/raw/host-wait-exit-v2.json",
+    "learning_lock": "raw/execution-02/remote-snapshot-v2/state/learning-started.lock"
+  },
+  "outside_scope_changes": "No successful outside-root project mutations found in 3 worker traces; reviewed host/supervisor operations scoped to run. Whole-host and device ioctl effects are not verified.",
+  "limitations": [
+    "Independent main RUN_ACCEPTED remains pending; no retrieval/scoring/publication triggered.",
+    "RAM/GPU/result budgets are monitored targets, not hard aggregate quotas. CPU affinity and per-file/core limits were applied.",
+    "Filesystem trace review is not read isolation, GPU partition or whole-server audit.",
+    "Artifact verification did not execute pickle; runtime optimizer/RNG assertions were crosschecked against 15 stored tensors and metadata.",
+    "Shared/parallel use and exact resumed-training trajectory were not tested."
+  ],
+  "local_verifier_correction": "First local final check compared differently shaped environment objects; corrected to compare both 78 raw metadata entries and interpreter digest explicitly. No scientific/output/target mutation.",
+  "scientific_code_accepted": true,
+  "runtime_recovery_admitted": true,
+  "changes": [
+    {
+      "scope": "remote_approved_run",
+      "operation": "recovery_deployment",
+      "new_files": 21,
+      "existing_compat_files_verified_without_rewrite": 2
+    },
+    {
+      "scope": "remote_approved_run",
+      "operation": "one_frozen_backbone_learning_and_predictions",
+      "optimizer_updates": 130,
+      "primary_artifacts_bound": 21
+    },
+    {
+      "scope": "local_approved_run",
+      "operation": "snapshot_and_independent_verification",
+      "files": 116,
+      "private_validation_labels_accessed": false
+    }
+  ],
+  "jobs": [
+    {
+      "job_id": "hainan-index-cycle-20261031:attempt-v2",
+      "gpu_uuid": "<REGISTERED_GPU>",
+      "gpu_index": 5,
+      "pid": 3931584,
+      "start_stat": "3931584 (python3) R 3931580 3931580 3931580 0 -1 4194304 2307 0 0 0 4 1 0 0 20 0 1 0 380690797 29798400 4224 18446744073709551615 4325376 7352253 140723585358432 0 0 0 0 16781312 2 0 0 0 17 0 0 0 0 0 0 10653128 12216448 599769088 140723585361019 140723585361549 140723585361549 140723585363881 0\n",
+      "start_ticks": "380690797",
+      "directory": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-index-cycle-20261031",
+      "state": "completed",
+      "exit_code": 0,
+      "actual_pipeline_os_exit_code": 0,
+      "training_count": 1
+    }
+  ]
+}

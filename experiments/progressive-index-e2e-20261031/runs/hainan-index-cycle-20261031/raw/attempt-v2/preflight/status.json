@@ -1,0 +1,59 @@
+{
+  "run_id": "hainan-index-cycle-20261031",
+  "phase": "preflight",
+  "token": "bf18d5e5b3bc4cfebd131b1a70b15262",
+  "offline_fixture": false,
+  "state": "succeeded",
+  "success": true,
+  "child_returncode": 0,
+  "supervisor_exit_code": 0,
+  "child_identity": {
+    "pid": 3920337,
+    "pgid": 3920337,
+    "start_stat": "3920337 (strace) R 3917863 3920337 3920337 0 -1 4194304 11 0 0 0 0 0 0 0 20 0 1 0 380688432 2658304 0 18446744073709551615 105693686165504 105693686853981 140733045471056 0 0 0 0 0 0 0 0 0 17 1 0 0 0 0 0 105693687245232 105693687660848 105693772193792 140733045478213 140733045479116 140733045479116 140733045481448 0\n",
+    "start_ticks": "380688432"
+  },
+  "receipt_verified": true,
+  "at": "2026-10-31T10:55:38.561813+00:00",
+  "command": [
+    "/usr/bin/strace",
+    "-f",
+    "-qq",
+    "-yy",
+    "-s",
+    "160",
+    "-e",
+    "trace=%file,write,writev,pwrite64,ftruncate,mmap,msync,close,dup,dup2,dup3,fchdir,fchmod,fchown,fsetxattr,fremovexattr,fallocate,copy_file_range,sendfile,landlock_create_ruleset,landlock_add_rule,landlock_restrict_self,prctl",
+    "-o",
+    "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-index-cycle-20261031/raw/attempt-v2/preflight/write.strace",
+    "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/venv/bin/python3",
+    "-I",
+    "-B",
+    "-u",
+    "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-index-cycle-20261031/source/production-adapter-v2/guarded_worker.py",
+    "production",
+    "--root",
+    "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-index-cycle-20261031",
+    "--attempt",
+    "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-index-cycle-20261031/raw/attempt-v2/preflight",
+    "--phase",
+    "preflight",
+    "--token",
+    "bf18d5e5b3bc4cfebd131b1a70b15262",
+    "--profile",
+    "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-index-cycle-20261031/source/execution-profile-v2.json"
+  ],
+  "worker_identity": {
+    "pid": 3920342,
+    "pgid": 3920337,
+    "start_stat": "3920342 (python3) R 3920337 3920337 3920337 0 -1 4194304 2308 0 0 0 4 1 0 0 20 0 1 0 380688433 29818880 4224 18446744073709551615 4325376 7352253 140725887026672 0 0 0 0 16781312 2 0 0 0 17 0 0 0 0 0 0 10653128 12216448 105529344 140725887030387 140725887030925 140725887030925 140725887033257 0\n",
+    "start_ticks": "380688433"
+  },
+  "receipt_sha256": "df9866568789634e4e4f7f8efb28e26edc705b174a18deca478b4ff825879b86",
+  "cleanup": {
+    "signalled": false,
+    "leader_reaped": true
+  },
+  "finished_at": "2026-10-31T10:56:02.298597+00:00",
+  "elapsed_seconds": 23.736804274842143
+}

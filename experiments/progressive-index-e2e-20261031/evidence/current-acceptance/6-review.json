@@ -1,0 +1,87 @@
+{
+  "passed": true,
+  "scope": "runtime_recovery_source_admission_only_not_full_training_acceptance",
+  "at": "2026-10-31T10:47:46.838261+00:00",
+  "reviewer": "main_controller",
+  "source_manifest_sha256": "4cc5009522611d0705212ab45c2aba78c4d0f9a45f012f30912f97f02f8a17c0",
+  "runtime_artifacts_manifest_sha256": "32e2681aee6f2b7337809996e575f1637dc83e146814b15e085f4623069537ae",
+  "prior_attempt": {
+    "file_count_verified": 47,
+    "outer_exit": 125,
+    "training_started": false,
+    "own_pids_gone": [
+      3247307,
+      3249495,
+      3249500
+    ],
+    "raw_pipeline_exit_sha256": "682b740972d1a939f910b1254855145a9f797af237e8560206bad750aa19b484",
+    "trace_independent_recheck": {
+      "path": "raw/preflight/write.strace",
+      "sha256": "172f961379a80420b8001dd340fc941ed3e324a765623697485d5f7ddec502ce",
+      "counts": {
+        "openat": 137,
+        "inside": 55,
+        "write": 51,
+        "rename": 4,
+        "mkdir": 33,
+        "unlink": 60,
+        "ipc_fd": 15,
+        "symlink": 57,
+        "mmap": 51,
+        "anonymous_memory": 7,
+        "unlinkat": 1,
+        "rmdir": 1
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {
+        "/dev/null": 8,
+        "/dev/nvidiactl": 63,
+        "/dev/nvidia0": 11,
+        "/dev/nvidia1": 11,
+        "/dev/nvidia2": 11,
+        "/dev/nvidia3": 11,
+        "/dev/nvidia4": 11,
+        "/dev/nvidia5": 21,
+        "/dev/nvidia6": 11,
+        "/dev/nvidia7": 11,
+        "/dev/nvidia-uvm": 5
+      },
+      "denied_counts": {
+        "EEXIST": 89,
+        "EACCES": 57,
+        "ENOENT": 2
+      },
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    }
+  },
+  "independent_tests": [
+    {
+      "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-index-cycle-20261031/source/production-adapter-v2/checks/suite-20261031T104618-a35ce25d/result.json",
+      "checks": 22
+    },
+    {
+      "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-index-cycle-20261031/source/production-adapter-v2/checks/proc-fixtures-20261031T104625-aab31e31/result.json",
+      "checks": 8
+    }
+  ],
+  "reviewed": [
+    "only proven terminal missing VmRSS is accounted zero; live unknown stays failure",
+    "new versioned runtime, phases and locks preserve v1",
+    "existing scientific output or learning lock blocks reentry",
+    "science code, model, input and hyperparameters unchanged"
+  ],
+  "operator_required_checks": [
+    "Before deployment/launch require old raw/pipeline-exit.json exists and its exact SHA matches formal recovery binding; v2 generic source only checks when present, so this is an explicit operator gate",
+    "Verify v1 registered PIDs remain exited and all TRAIN_FILES absent",
+    "Fresh resource log plus direct GPU/identity/health check",
+    "Verify complete new runtime manifest; do not overwrite old profile/binding/dispatch or files"
+  ],
+  "not_verified": [
+    "actual target process-exit race under v2",
+    "full training and frozen tensor evidence",
+    "target write/resource behavior of v2"
+  ]
+}
