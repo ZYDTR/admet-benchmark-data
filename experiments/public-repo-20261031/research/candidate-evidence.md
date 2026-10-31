@@ -1,0 +1,97 @@
+Historical research background, 2026-10-30. Current readiness is in current-research-context.md; current rules are ../rules/CURRENT_RULES.md. Recommendations here do not authorize execution or prove that candidate models are integrated. Prior small-batch suggestions are not a cap on the present request for broad directions/parameters.
+
+# 候选证据卡：冻结 ADMET 路线
+
+查阅截止：2026-10-30。服务于固定数据提交 `0275588ac7a5d3df032ec7dc0794cab21dfcfeeb`。这些是文献、代码与资产元数据证据，未下载权重、未跑候选、未产生本赛排名。`pilot` 表示研究投入值得考虑，实际接入仍须完成该资产检查。来源 ID 见 [来源索引](source-index.md)。
+
+## 1. 本轮合并后的优先级
+
+| 候选 | 当前建议 | 最有价值的问题 | 还欠什么 |
+| --- | --- | --- | --- |
+| Morgan/基础 RDKit 描述符 + 合理监督模型 | 保留对照 | 简单结构特征是否已足够 | 固定特征定义、仅 train 拟合处理、覆盖与本地效果 |
+| 随机初始化的小型 Chemprop D-MPNN | 保留深度对照 | 学习目标任务表示是否胜过固定表示 | 实际训练接口、预算、覆盖与效果 |
+| MiniMol + 新训练 head | 首轮 `pilot` | 生物/量子多任务预训练表示能否迁移 | 权重授权范围、加载完整性、异常行、受限 head 比较 |
+| CheMeleon + 新训练 head | 首轮 `pilot` | 描述符预训练表示是否有效；head 是否关键 | 本地覆盖、冻结状态、同预算比较 |
+| MoLFormer-XL-both-10pct + 新 head | 第三名额或替补 `pilot` | 序列表征能否提供不同增量 | 精确公开资产的 token/立体处理与效果 |
+| Uni-Mol / Uni-Mol2 | `defer`，条件满足后几何 pilot | 几何是否在已选 2D/序列之上增加有效信息 | 固定资产、构象/裁剪/回退、覆盖与成本 |
+| CheMeleon + TabPFN 2.6 | `defer`，组合对照支线 | 更换预测器能否救回有用表示 | 2.6 资产与许可、上下文/资源协议、训练交付关系 |
+| KPGT | `defer` | 知识增强图表示是否值得更复杂接入 | 辅助特征与预拟合参数、依赖、完整覆盖 |
+| SMI-TED | `defer` | 另一个序列预训练目标是否补充首选 | 序列路线先有价值、明确变体与资源预算 |
+| MolE | `defer` | 获得真实 checkpoint 后才进入比较 | 当前官方发布链尚未闭合 |
+
+没有候选达到 `preferred`。首轮名额是全队总额，不是各专项报告的候选简单相加。这里把 MiniMol/CheMeleon 排前，是方法相关性和接入证据的工作判断；若 MiniMol 资产接入未闭合，可先做 CheMeleon 与 MoLFormer，不需让全队等待。规则资格、候选价值与运行完成度分别判断。
+
+## 2. MiniMol
+
+**支持。** 原始方法直接用固定分子表示训练下游 MLP，与本赛冻结条件接近。官方入口输出 512 维特征。论文与评测脚本的成绩包含 head 搜索、5 模型集成和重复，不能当成单个默认头的效果。[M01–M02]
+
+**资产。** 官方代码提交 `41642328affbb35e4950b7b7a9020aa95919b503`；目标路径 `minimol/ckpts/minimol_v1/state_dict.pth`，还需匹配配置与依赖。代码 MIT；README 特别说明 included code，未独立补齐权重授权范围。本轮未下载权重，不把仓库存在写成完整可运行。
+
+**真实实现限制。** `load_state_dict(..., strict=False)` 需检查 missing/unexpected keys；默认入口/依赖可能隐藏失败输出，必须检查行数与映射。作者 benchmark runner 会调用 TDC loader，且读取 `test.Y` 推断任务类型；本赛不能直接执行该评测流程。预训练排除 >100 重原子分子，不等于推理接口有100原子的硬上限；配置中的同名限制是注释。[M02]
+
+**反证范围。** 2026 TDC 审计对其预训练结构暴露提出质疑。它没有证明本赛目标测试标签进入训练，也不能把文中其他模型的安装失败归到 MiniMol。结构/相关 assay 暴露会削弱公开分数的直接迁移力度，不能单凭这一条判定当前冻结使用违规。审计作者也展示自己的模型，来源立场需要保留。[B01]
+
+**判别实验。** 与经典特征、CheMeleon 在同一固定划分下比较，控制 head 搜索名额；若额外接入成本明显超预算，先让替补进入。若某个 head 失败，只给一个有理由的配套对照；持续无增益且无互补时暂缓。
+
+## 3. CheMeleon
+
+**支持与反证同时存在。** 它在 Chemprop D-MPNN 上用可计算描述符预训练。arXiv v2 主表主要是微调，kNN probe 也先微调再提取，不能作为原权重全程冻结证据。作者补充材料 S5/Fig S6 则确有永久冻结消融：在其 FNN 和验证设置下，回归较弱，分类的收敛表现也不同。后续独立团队研究固定 CheMeleon + 表格基础预测器，说明 head 能改变结论。以上均不是本赛成绩。[M03,M05,M11]
+
+**资产与入口。** 代码提交 `b5e5bd88a7070c3f278e7e65e85b792617bf125c`。具体权重 [Zenodo 15460715](https://zenodo.org/records/15460715)，文件 `chemeleon_mp.pt`，34,859,448 字节，发布方 MD5 `6a80b54fdb7de37ef0374d302f01e8ce`，API 明确 MIT；[本次发布方响应](evidence/chemeleon-zenodo-metadata.json)可离线核对。未下载计算 SHA256。官方 fingerprint 入口用固定消息传递与聚合提取表示，缺少本地权重时会下载，需要正式接入时显式固定资产。[M04]
+
+**版本限制。** arXiv v2 为2026-02-09；2026期刊版已经存在，出版社全文受阻，本轮不能声称和所读 arXiv/Research Square 附件逐字一致。旧 v1 headline 不混用；Research Square supplement 只标自己的版本，不冒充期刊附件。[M03,M05]
+
+**输入。** 入口的默认 RDKit 解析会受本批两个失败串影响。Chemprop v2.2.1 的原子编码对1–36和 I 有独立类别，其余进 unknown；并非含金属一定报错，也不保证信息充分。不能为了支持新元素随意改变冻结 checkpoint 的输入维度。[M06]
+
+**判别实验。** 固定表示 + 有限容量的新 MLP，与 MiniMol/经典特征对照；回归冻结证据较弱是需要检验的前提，不是排除所有 head 的依据。TabPFN 组合单列为另一完整方案。
+
+## 4. MoLFormer-XL-both-10pct
+
+原论文明确区分冻结表示和骨干微调；主要下游表默认 full-XL 微调。公开 `both-10pct` 只使用两个预训练库各10%，不能继承 full-XL 成绩。公开卡支持固定向量，但说明预训练去立体信息、排除长于202 tokens的输入；“超过约200 atoms未测试”是另一条条件。[M07]
+
+精确 HF revision：`361063d0ad524ef77cf39b08469f6be770dc550f`；`model.safetensors` 元数据187,248,784字节；卡标 Apache-2.0。需一并固定 tokenizer、配置与远程自定义代码。本轮只有[发布方元数据摘录](evidence/alternative-model-metadata.json)，没有权重运行验证。
+
+它的研究价值是以可复用公开序列表征提供不同候选。接入前实际计算 token/词表覆盖，不能把681个字符或388个原子当成 token 计数。若要改变标准化，记录其对立体、片段和原始行的影响。首轮作为第三名额或替补；没有序列路线增量之前，不同时扩多个近似语言模型。
+
+## 5. Uni-Mol 与 Uni-Mol2
+
+官方表示接口能从 SMILES 或给定坐标提取固定表示。SMILES 路径意味着额外构象生成；本仓库没有提供现成3D。当前前处理源码有构象回退、v1默认256原子随机裁剪、v2默认128原子裁剪。权重不变和 `eval()` 不会自动固定这些随机过程。本批388重原子输入使这个问题实际存在。[M08]
+
+已核元数据的是 `dptech/Uni-Mol2` revision `bf37d253c0f5ac61f468137eb00059978a104ff0` 的 `modelzoo/84M/checkpoint.pt`，336,632,021字节，卡 MIT；不能拿它冒充 v1 复现。未测构象成功率、超128原子数量、吞吐和效果。
+
+在2D/序列先有合理方案后，用一个固定资产问“额外几何是否带来收益”。覆盖与重复性先清楚：构象、裁剪、回退、seed、输出层都进入缓存身份。若不能完整处理所有提交行，仍可做明确标记的局部研究，但不能称整套方案可交付。预训练大规模或量化任务成果不能单独证明冻结 ADMET 优胜。
+
+## 6. TabPFN 及组合路线
+
+2026 ADMET 基准使用 **v2**；冻结 CheMeleon + TFM 前作使用 **2.6**；当前官方默认已经是 **3.5**。不同版本、许可、上下文协议不可混用。论文中的 `fit` / in-context prediction 不等于新增梯度训练。[B03,M11–M12]
+
+2.6 前作：固定分子表示及 TFM，不做任务特定权重训练；默认8 estimators，部分基线复用 CheMeleon 团队已发布预测；“win”包括与最优统计上不可区分，不是逐项绝对第一。研究有特征维数/样本规模资源限制，不能从摘要胜率推出本赛优选。[M11]
+
+它有价值，但先作为对照或组合支线。要明确本赛设计/训练交付由什么模块满足，不能声称“调用固定模型已完成新深度模型训练”。2.6 的确切权重哈希和许可尚未完成；不以已核的 v2 条目替代。
+
+已核 v2 元数据供识别，不代表复现2.6：
+
+| 资产 | HF revision | 文件元数据 |
+| --- | --- | --- |
+| `Prior-Labs/TabPFN-v2-clf` | `275f19d2add9c2c0de38f9ebaded3856599fa2e7` | 默认分类权重29,009,539字节 |
+| `Prior-Labs/TabPFN-v2-reg` | `02a44705ff7790b50cded404bc59adb94da456a1` | 默认回归权重44,390,977字节 |
+
+代码和权重授权分开记录，v2 权重使用自己的 Prior Labs License。没有在本轮安装/下载或测试任何 TabPFN。
+
+## 7. 后置候选
+
+**KPGT。** 原文有固定骨干 feature extraction；不是因为不支持冻结而后置。代码 `47dc1646c70b2138a157de481d24a1ac35d174cd`，Apache-2.0；官方指向的 Figshare 权重记录 MIT、327.41 MB。实现同时依赖图、指纹与描述符，归一化含预拟合分布参数；变量 `ecfp` 实际调用 RDKFingerprint，不可按名字猜。冻结图模型允许并不自动完成所有辅助资产的边界审查。历史 DGL 环境意味着需要接入验证，不证明今天一定不能运行。[M09]
+
+**SMI-TED。** `ibm-research/materials.smi-ted` revision `414c3ea0a8603ef49d1c5bb3db336e09877c01ce`，权重元数据1,159,784,188字节，卡 Apache-2.0；需固定 light/large 等确切变体。2026多模态原始研究提供任务依赖的线索，但与IBM有机构关联，且本轮未恢复所有 ADMET 冻结/head 配置。它不能当成完全独立的本赛复证，也不能据此永久否定模型。[M10,B04]
+
+**MolE。** 官方仓库 `dd56d319103e973fde0dcaa3537cb36a7b7a9843` 的 checkpoint 下载仍为 TODO，仓库 CC BY-NC 4.0。先解决具体资产来源，再评价其可用性；不能把延后写成精度差或所有参赛都被许可禁止。[M13]
+
+## 8. 实验前的共同问题
+
+1. 输入异常是否保留行映射并有程序化、可验证策略？是否把局部覆盖成功冒充全量成功？
+2. 外部权重始终固定吗？推理的 buffer、构象与裁剪是否也可重复？
+3. 自己的 head 只用获准 train 学习吗？拟合变换、缓存和标签角色是否清楚？
+4. 对照预算是否支持所声称的归因？一个head失败后，是否只追加有意义的最小对照？
+5. 当前收益是否仅反映特定验证分布？Ames单骨架、LD50/solubility空骨架验证需要限定解释。
+
+这些问题应在实验计划里得到答案，不要求研究阶段伪造实际运行结果。下一项最有价值的信息是本数据上受控实验，不是继续扩充候选名字。

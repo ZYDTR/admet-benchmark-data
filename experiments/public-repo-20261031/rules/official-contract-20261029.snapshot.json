@@ -1,0 +1,142 @@
+{
+  "schema_version": 1,
+  "competition_id": 159,
+  "title": "小分子药物预测技术创新赛",
+  "source_url": "http://www.aiinnovation.com.cn/web/#/trackDetail?id=159",
+  "verified_on": "2026-10-29",
+  "official_updated_at": "2026-10-26T11:23:49+08:00",
+  "deadline": "2026-11-05T23:59:59+08:00",
+  "official_rules": [
+    {
+      "id": "R01",
+      "rule": "不允许使用其他外部数据。",
+      "source_field": "describe"
+    },
+    {
+      "id": "R02",
+      "rule": "设计并训练深度学习模型，输入为 SMILES 或 3D 构象。",
+      "source_field": "describe"
+    },
+    {
+      "id": "R03",
+      "rule": "按官方模板仅填写 y_pred，保留其他列数据格式。",
+      "source_field": "submit_way"
+    },
+    {
+      "id": "R04",
+      "rule": "分类可提交正类概率或置信度分数；回归提交连续值。",
+      "source_field": "submit_way"
+    },
+    {
+      "id": "R05",
+      "rule": "预测由模型自动生成，不得人工修改。",
+      "source_field": "submit_way"
+    },
+    {
+      "id": "R06",
+      "rule": "入围团队提交源码复现审核；规则列明无法复现、未根据训练集和验证集调参优化、按提交训练方法无法得到相同结果等情况可能取消成绩。",
+      "source_field": "grade_standard"
+    },
+    {
+      "id": "R07",
+      "rule": "以末次有效提交为准。",
+      "source_field": "match_notice"
+    },
+    {
+      "id": "R08",
+      "rule": "文件名为团队名称-赛题名称-提交日期.csv。",
+      "source_field": "submit_way"
+    },
+    {
+      "id": "R09",
+      "rule": "每队不超过5人，同一选手同一赛题不重复参赛；遵守所使用开源项目许可证。",
+      "source_field": "match_notice"
+    },
+    {
+      "id": "R10",
+      "rule": "相关支持单位不得参加本赛题。",
+      "source_field": "match_notice"
+    }
+  ],
+  "template_observations": {
+    "rows": 16379,
+    "tasks": 22,
+    "classification_tasks": 13,
+    "regression_tasks": 9,
+    "fields": [
+      "task",
+      "sample_idx",
+      "drug_id",
+      "smiles",
+      "y_pred",
+      "metric"
+    ],
+    "sha256": "8ee41589d2c98e7b93081c058b3f928ac09bea4b3ffc899fa13677051e9baa20",
+    "blank_drug_id_count": 1,
+    "unique_task_sample_idx": true,
+    "unique_task_drug_id": false,
+    "encoding": "UTF-8 BOM",
+    "line_endings": "CRLF"
+  },
+  "local_defaults": [
+    {
+      "id": "T01",
+      "policy": "未确认准入的外部权重、外部拟合参数、教师输出及测试集拟合暂不用于实验。",
+      "basis": "Harness采用的保守默认；官方仅明确禁止其他外部数据，具体细则见U02/U03，不能说成官方逐项禁令。"
+    },
+    {
+      "id": "T02",
+      "policy": "当前执行器使用固定本地镜像、断网执行、最小只读输入和独立缓存。",
+      "basis": "src/admet_harness/runtime.py的实现限制，用于固定输入与执行环境；不是官方要求的环境形式。"
+    },
+    {
+      "id": "T03",
+      "policy": "当前执行器强制随机初始化训练；固定数据和评价合同，保留来源及运行证据。",
+      "basis": "src/admet_harness/runtime.py的实现范围；官方R06要求复现审核，但没有要求随机初始化。"
+    },
+    {
+      "id": "T04",
+      "policy": "团队私有使用；本次Harness不执行官网上传。",
+      "basis": "用户已确认团队私有用途；官网上传未包含在当前操作Skill中。"
+    }
+  ],
+  "unresolved": [
+    {
+      "id": "U01",
+      "question": "官方 Y 的物理单位、生物学正类解释及原始标签制备变换。当前只确认文件内数值目标，按原 Y 学习并提交。",
+      "status": "scientific_interpretation_unconfirmed"
+    },
+    {
+      "id": "U02",
+      "question": "外部预训练权重、外部拟合的标准化参数、教师模型和额外无标签数据的明确边界。",
+      "status": "unconfirmed"
+    },
+    {
+      "id": "U03",
+      "question": "测试分子是否可用于无监督预训练或拟合处理参数。",
+      "status": "unconfirmed"
+    },
+    {
+      "id": "U04",
+      "question": "官方总分聚合公式、AUPRC 的精确定义、指标不可定义时的处理。",
+      "status": "unconfirmed"
+    },
+    {
+      "id": "U05",
+      "question": "入围复现的详细材料、环境、重训范围和容差。",
+      "status": "unconfirmed"
+    }
+  ],
+  "received_dataset": {
+    "evidence": "materials/data-intake.json",
+    "zip_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+    "tasks": 22,
+    "csv_files": 66,
+    "train_rows": 53695,
+    "validation_rows": 11735,
+    "test_rows": 16379,
+    "source_confirmation": "user confirmed official registration/download page",
+    "target_contract": "supplied_numeric_Y_only"
+  },
+  "official_evidence": "materials/official/rules.json"
+}

@@ -1,0 +1,25 @@
+{
+  "at": "2026-10-30T17:20:46.666858+00:00",
+  "pid": 1527650,
+  "pgid": 1527650,
+  "start_stat": "1527650 (strace) R 1525511 1527650 1527650 0 -1 4194304 10 0 0 0 0 0 0 0 20 0 1 0 374358711 2658304 0 18446744073709551615 103101838147584 103101838836061 140724450604608 0 0 0 0 0 0 0 0 0 17 0 0 0 0 0 0 103101839227312 103101839642928 103101918912512 140724450608302 140724450608836 140724450608836 140724450611176 0\n",
+  "command": [
+    "/usr/bin/strace",
+    "-f",
+    "-qq",
+    "-yy",
+    "-s",
+    "160",
+    "-e",
+    "trace=%file,write,writev,pwrite64,ftruncate,mmap,msync,close,dup,dup2,dup3,fchdir,fchmod,fchown,fsetxattr,fremovexattr,fallocate,copy_file_range,sendfile,landlock_create_ruleset,landlock_add_rule,landlock_restrict_self,prctl",
+    "-o",
+    "<RUN_ROOT>/raw/train01.strace",
+    "<ENV_ROOT>/bin/python3",
+    "-I",
+    "-B",
+    "-u",
+    "<RUN_ROOT>/source/guard_exec_cuda02.py",
+    "train01"
+  ],
+  "timeout_seconds": 900
+}

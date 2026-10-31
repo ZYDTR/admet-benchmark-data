@@ -1,0 +1,53 @@
+{
+  "run_id": "hainan-frozen-training-20261031",
+  "task": "caco2_wang",
+  "head_config": {
+    "hidden_dims": [
+      512
+    ],
+    "dropout": 0.1,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "batch_size": 128,
+    "epochs": 50,
+    "patience": 8,
+    "val_fraction_from_train": 0.1,
+    "seed": 42
+  },
+  "inputs": [
+    {
+      "role": "train",
+      "task": "caco2_wang",
+      "path": "input/train.csv",
+      "sha256": "3061c58d3601d081e5459a2de03dc1d189243c4b5683d1b7288577a29fed4d6f",
+      "rows": 637
+    },
+    {
+      "role": "validation",
+      "task": "caco2_wang",
+      "path": "input/valid.csv",
+      "sha256": "41370e87d89a96a7481425dae1bf7c45184bd116b353e96719b2afcd0a8a5ca3",
+      "rows": 91
+    },
+    {
+      "role": "test",
+      "task": "caco2_wang",
+      "path": "input/test.csv",
+      "sha256": "d87dac944bedcefb216bce57ba5a8de93d3781172c66653b937e5065b9c2579c",
+      "rows": 182
+    }
+  ],
+  "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+  "resource_budget": {
+    "gpu_count": 1,
+    "gpu_peak_target_mib": 4096,
+    "cpu_threads": 2,
+    "dataloader_workers": 0,
+    "ram_target_gib": 8,
+    "training_timeout_seconds": 900,
+    "setup_budget_seconds": 2700,
+    "dependency_download_budget_gib": 0,
+    "result_budget_gib": 1,
+    "limits_are_targets_until_enforcement_verified": true
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "run_id": "hainan-frozen-training-20261031",
+  "purpose": "Repair and verify actual frozen-backbone CUDA training; establish reusable training Skill",
+  "authorization": "2026-10-31 user explicitly requested primary Codex to fix and run the actual training workflow, then write a training Skill, preserving all hard constraints. One Caco2 configuration; no HPO, private labels or upload.",
+  "executor_role": "explicitly_authorized_host_operator",
+  "model": "CheMeleon_frozen_plus_MLP",
+  "pretrained_backbone_frozen": true,
+  "pretrained_backbone_path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/assets/chemeleon_mp.pt",
+  "pretrained_backbone_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+  "training_labels": "official_train_only",
+  "validation_labels_allowed": false,
+  "external_labels_allowed": false,
+  "test_fitting_allowed": false,
+  "new_cleaning_allowed": false,
+  "official_upload_allowed": false,
+  "task": "caco2_wang",
+  "device": "cuda",
+  "max_concurrent_jobs": 1,
+  "remote_directory": "<RUN_ROOT>",
+  "inputs": [
+    {
+      "role": "train",
+      "task": "caco2_wang",
+      "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/execution/data/official/data_benchmark/caco2_wang/train.csv",
+      "sha256": "3061c58d3601d081e5459a2de03dc1d189243c4b5683d1b7288577a29fed4d6f",
+      "rows": 637
+    },
+    {
+      "role": "validation",
+      "task": "caco2_wang",
+      "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/execution/data/blind_validation/caco2_wang/valid.csv",
+      "sha256": "41370e87d89a96a7481425dae1bf7c45184bd116b353e96719b2afcd0a8a5ca3",
+      "rows": 91
+    },
+    {
+      "role": "test",
+      "task": "caco2_wang",
+      "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/execution/data/official/data_benchmark/caco2_wang/test.csv",
+      "sha256": "d87dac944bedcefb216bce57ba5a8de93d3781172c66653b937e5065b9c2579c",
+      "rows": 182
+    }
+  ],
+  "head_config": {
+    "hidden_dims": [
+      512
+    ],
+    "dropout": 0.1,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "batch_size": 128,
+    "epochs": 50,
+    "patience": 8,
+    "val_fraction_from_train": 0.1,
+    "seed": 42
+  },
+  "resource_budget": {
+    "gpu_count": 1,
+    "gpu_peak_target_mib": 4096,
+    "cpu_threads": 2,
+    "dataloader_workers": 0,
+    "ram_target_gib": 8,
+    "training_timeout_seconds": 900,
+    "setup_budget_seconds": 2700,
+    "dependency_download_budget_gib": 0,
+    "result_budget_gib": 1,
+    "limits_are_targets_until_enforcement_verified": true
+  },
+  "reference_source": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/execution/output/model/src",
+  "policy_sha256": "38796c896885963c4ed220ed4ee28b7cc78b4ed1f0d08bf30c76b19f4c22d4e5",
+  "hainan_skill_sha256": "9d204ef80a80fdc45838c2497d681c761687616c31f61922dd801a5c549ba97b",
+  "requirements": [
+    "Read skill before any remote action",
+    "Fresh prelaunch resource/process checks",
+    "Actual GPU encoder and head execution",
+    "Frozen in-memory parameters and buffers before/after",
+    "Optimizer encoder/head parameter identity separation",
+    "Nonzero head update",
+    "All writes and caches inside task root; trace or equivalent audit",
+    "Exit status and own process release",
+    "No private valid labels or real scoring",
+    "One job; no nested delegation"
+  ],
+  "gpu_uuid": "<SELECTED_GPU_UUID>",
+  "gpu_index": 3,
+  "existing_environment_readonly": "<ENV_ROOT>"
+}

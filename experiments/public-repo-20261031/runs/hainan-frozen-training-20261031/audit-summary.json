@@ -1,0 +1,109 @@
+{
+  "historical_audit": {
+    "auditor": "parent independent offline parser; no child audit code imported",
+    "manifest_files": 51,
+    "manifest_mismatches": [],
+    "traces": [
+      {
+        "path": "raw/cuda01.strace",
+        "sha256": "0fe2900a6db18276ae0d994a071fa54b14d1a4415dca4ee43e7a1440628e442f",
+        "counts": {
+          "openat": 135,
+          "inside": 45,
+          "write": 49,
+          "unlink": 60,
+          "mkdir": 14,
+          "ipc_fd": 15,
+          "symlink": 57,
+          "mmap": 51,
+          "anonymous_memory": 7,
+          "unlinkat": 1,
+          "rmdir": 1
+        },
+        "outside_mutation_evidence": [],
+        "device_operations": {
+          "/dev/null": 8,
+          "/dev/nvidiactl": 63,
+          "/dev/nvidia0": 11,
+          "/dev/nvidia1": 11,
+          "/dev/nvidia2": 11,
+          "/dev/nvidia3": 21,
+          "/dev/nvidia4": 11,
+          "/dev/nvidia5": 11,
+          "/dev/nvidia6": 11,
+          "/dev/nvidia7": 11,
+          "/dev/nvidia-uvm": 5
+        },
+        "denied_counts": {
+          "EEXIST": 68,
+          "EACCES": 57,
+          "ENOENT": 2
+        },
+        "unresolved_count": 0,
+        "unresolved_examples": [],
+        "pending_at_eof": {},
+        "semaphore_mutation_lines": []
+      },
+      {
+        "path": "raw/train01.strace",
+        "sha256": "c1d1a9ef65b0948f5d4d2d25dc9cbba5b63de2f5489fec319c63ff8c9eab3bd4",
+        "counts": {
+          "openat": 145,
+          "inside": 130,
+          "write": 122,
+          "unlink": 59,
+          "mkdir": 14,
+          "ipc_fd": 13,
+          "symlink": 57,
+          "mmap": 51,
+          "anonymous_memory": 7,
+          "writev": 3,
+          "unlinkat": 1,
+          "rmdir": 1
+        },
+        "outside_mutation_evidence": [],
+        "device_operations": {
+          "/dev/null": 8,
+          "/dev/nvidiactl": 63,
+          "/dev/nvidia0": 11,
+          "/dev/nvidia1": 11,
+          "/dev/nvidia2": 11,
+          "/dev/nvidia3": 21,
+          "/dev/nvidia4": 11,
+          "/dev/nvidia5": 11,
+          "/dev/nvidia6": 11,
+          "/dev/nvidia7": 11,
+          "/dev/nvidia-uvm": 5
+        },
+        "denied_counts": {
+          "EEXIST": 70,
+          "EACCES": 57,
+          "ENOENT": 2
+        },
+        "unresolved_count": 0,
+        "unresolved_examples": [],
+        "pending_at_eof": {},
+        "semaphore_mutation_lines": []
+      }
+    ],
+    "limitations": [
+      "Conservative traced filesystem syscall review only; not whole-server proof, ioctl/device partitioning or SSH-daemon audit.",
+      "Relative paths without annotated dirfd and unresolved inherited descriptors are reported, not silently passed.",
+      "Argument parser is narrow; exact positive findings independently checked against original line numbers."
+    ]
+  },
+  "raw_trace_files": [
+    {
+      "file": "cuda01.strace",
+      "bytes": 24654299,
+      "sha256": "0fe2900a6db18276ae0d994a071fa54b14d1a4415dca4ee43e7a1440628e442f"
+    },
+    {
+      "file": "train01.strace",
+      "bytes": 24608079,
+      "sha256": "c1d1a9ef65b0948f5d4d2d25dc9cbba5b63de2f5489fec319c63ff8c9eab3bd4"
+    }
+  ],
+  "caveat": "Original full traces are retained locally but excluded from public packet; rely on historical independent audit plus complete scientific source, logs and evidence, not a claim that Chat read the full traces.",
+  "known_denial": "NVIDIA driver attempts to unlink /dev/char device links were denied; no permission widening or GPU reset was used."
+}
