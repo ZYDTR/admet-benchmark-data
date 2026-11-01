@@ -1,0 +1,60 @@
+{
+  "recorded_at": "2026-11-01T04:49:51.063841+00:00",
+  "task": "caco2_wang",
+  "split": "official_valid",
+  "metric": "MAE",
+  "direction": "minimize",
+  "prior": {
+    "run_id": "hainan-index-cycle-20261031",
+    "monitor": "internal_validation_standardized_mse",
+    "epochs": 26,
+    "optimizer_steps": 130,
+    "best_epoch": 18,
+    "score": 0.42147216141758237,
+    "score_uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/1c5592e98f3fff1c29369bd521f39e0cc044f3d3/experiments/progressive-index-e2e-20261031/batches/progressive-index-e2e-20261031/aggregate-scores.json",
+    "score_sha256": "bee79268d7ed6c34fef383d10b2671d18138cd75217d13467baeac2ea058064a",
+    "prediction_sha256": "0d1f4121f2eb6d2af9fd4471b32f05b3056030504b37e513d9ed2904092a3bda",
+    "controller_acceptance": "Prior main independently accepted; immutable score document pending flag is historical"
+  },
+  "current": {
+    "run_id": "hainan-mae-monitor-20261101",
+    "monitor": "internal_validation_raw_mae",
+    "epochs": 15,
+    "optimizer_steps": 75,
+    "best_epoch": 7,
+    "score": 0.40302117308791197,
+    "prediction_sha256": "2c125d4da93d2f7a75200998516d81355df4ca24e6a94a778b7b08c71206c055",
+    "controller_score_verification": false
+  },
+  "observed_delta_current_minus_prior": -0.018450988329670404,
+  "observed_relative_reduction_percent": 4.377747813191795,
+  "config_differences": {
+    "run_id": {
+      "prior": "hainan-index-cycle-20261031",
+      "current": "hainan-mae-monitor-20261101"
+    },
+    "monitor": {
+      "prior": "internal_validation_standardized_mse",
+      "current": "internal_validation_raw_mae"
+    }
+  },
+  "same_checks": {
+    "head_config": true,
+    "split_config": true,
+    "input_file_hashes": true,
+    "fit_row_indices": true,
+    "stop_row_indices": true,
+    "feature_payload_hashes": false,
+    "initial_head_storage_hashes": true
+  },
+  "prior_run_metric_invocations_this_task": 0,
+  "current_run_metric_invocations": 1,
+  "limitations": [
+    "Single pair, not replicated causal/statistical proof",
+    "Scientific implementation and runtime revisions remain explicit in full source/version maps",
+    "Physical Y unit unconfirmed; no new Y transform",
+    "Both valid results participate in model selection; not untouched final evaluation",
+    "Different feature hashes are observed. Backend/hardware origin and effect on downstream score are unconfirmed; monitor change alone cannot be credited with a causal improvement. Legacy scaling question remains proposed."
+  ],
+  "feature_comparison": "derived/feature-comparison.json"
+}

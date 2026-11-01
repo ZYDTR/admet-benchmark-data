@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "producer": "production-adapter-v1",
+  "run_id": "hainan-mae-monitor-20261101",
+  "phase": "preflight",
+  "token": "80394f174f194f35a54bbbd92744b402",
+  "worker_identity": {
+    "pid": 1285795,
+    "pgid": 1285789,
+    "start_stat": "1285795 (python3) R 1285789 1285789 1285789 0 -1 4194304 2913 0 0 0 8 3 0 0 20 0 1 0 386736858 28901376 4608 18446744073709551615 4325376 7352253 140721959736880 0 0 0 0 16781312 2 0 0 0 17 0 0 0 0 0 0 10653128 12216448 851709952 140721959740512 140721959741069 140721959741069 140721959743401 0\n",
+    "start_ticks": "386736858"
+  },
+  "accepted_manifest_sha256": "d6e30195c4b4d90a9010830d049a3c97e1e2b13e8319b6a4991ed06282625b5b",
+  "gpu_uuid": "<REGISTERED_GPU>",
+  "offline_fixture": false,
+  "science_main_returncode": 0,
+  "status": "completed",
+  "evidence_files": [
+    {
+      "path": "raw/attempt-01/preflight/preflight-proof.json",
+      "sha256": "2f34099e01c4295e8a66cc2681a8f0771a96dab3bcaf9a9c48e1fb843d7cb00b"
+    },
+    {
+      "path": "raw/attempt-01/preflight/storage-probe.pt",
+      "sha256": "f011ec342e16bce5254041ba1381b176bc8114d0007cff488979f92433da3fc8"
+    }
+  ],
+  "protection": {
+    "environment_before_scientific_import": true,
+    "landlock_applied": true,
+    "process_limits_applied": true,
+    "limits": {
+      "cpu_affinity": [
+        0,
+        1
+      ],
+      "core_bytes": 0,
+      "file_bytes": 471859200,
+      "ram_quota_enforced": false,
+      "gpu_quota_enforced": false
+    },
+    "guard": {
+      "abi": 4,
+      "handled_access_fs": 32754,
+      "rules": [
+        {
+          "path": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-mae-monitor-20261101",
+          "allowed_access": 32754
+        },
+        {
+          "path": "/dev/null",
+          "allowed_access": 2
+        },
+        {
+          "path": "/dev/nvidia-uvm-tools",
+          "allowed_access": 2
+        },
+        {
+          "path": "/dev/nvidia-uvm",
+          "allowed_access": 2
+        },
+        {
+          "path": "/dev/nvidia7",
+          "allowed_access": 2
+        },
+        {
+          "path": "/dev/nvidia6",
+          "allowed_access": 2
+        },
+        {
+          "path": "/dev/nvidia5",
+          "allowed_access": 2
+        },
+        {
+          "path": "/dev/nvidia4",
+          "allowed_access": 2
+        },
+        {
+          "path": "/dev/nvidia3",
+          "allowed_access": 2
+        },
+        {
+          "path": "/dev/nvidia2",
+          "allowed_access": 2
+        },
+        {
+          "path": "/dev/nvidia1",
+          "allowed_access": 2
+        },
+        {
+          "path": "/dev/nvidia-modeset",
+          "allowed_access": 2
+        },
+        {
+          "path": "/dev/nvidia0",
+          "allowed_access": 2
+        },
+        {
+          "path": "/dev/nvidiactl",
+          "allowed_access": 2
+        },
+        {
+          "path": "/dev/nvidia-caps/nvidia-cap2",
+          "allowed_access": 2
+        },
+        {
+          "path": "/dev/nvidia-caps/nvidia-cap1",
+          "allowed_access": 2
+        }
+      ],
+      "no_new_privs": true,
+      "restrict_self_return_code": 0,
+      "applied_before_threads": true,
+      "limitations": [
+        "No read isolation, GPU partition, ioctl restriction, or system-wide audit.",
+        "Landlock ABI3 write rules do not cover chmod/chown/xattr/utime.",
+        "Device I/O and denied attempts require explicit trace review.",
+        "Environment settings and affinity do not enforce an aggregate RAM/GPU quota."
+      ]
+    },
+    "offline_test_only": false
+  },
+  "claims": {
+    "preflight_returned_zero": true,
+    "actual_cuda_verified": true
+  },
+  "at": "2026-11-01T03:44:09.368989+00:00"
+}

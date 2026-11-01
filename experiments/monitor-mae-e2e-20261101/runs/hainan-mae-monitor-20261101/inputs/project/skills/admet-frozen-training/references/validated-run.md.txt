@@ -1,0 +1,37 @@
+# 已验证参考：海南单作业冻结 CheMeleon
+
+2026-10-31，主控亲自完成；[完整报告](../../../runs/hainan-frozen-training-20261031/acceptance/report.md)。旧失败原件位于相邻的 `hainan-skill-pilot-20261030`，不得覆盖。
+
+新 run：[PLAN](../../../runs/hainan-frozen-training-20261031/PLAN.json)、[源码目录](../../../runs/hainan-frozen-training-20261031/source)、[验收结果](../../../runs/hainan-frozen-training-20261031/acceptance/result.json)。参考实现路径和GPU身份是当次值，不能直接启动旧run。
+
+实测环境：<COMPUTE_HOST>/UID1012，经固定Windows链路；GPU3当时健康且空闲。Python3.12.3、torch2.6.0+cu124、chemprop2.2.1、RDKit2024.09.6、numpy1.26.4。环境只读复用自有旧run的venv，78项发行包元数据和解释器摘要在 `acceptance/postcheck.json`。无需重复下载安装；不能把此次环境复用验收当作新依赖安装路径已通过。
+
+Caco2官方train637，内部573/64，无标签valid91/test182；2048维冻结编码+512新头，14 epoch/70步，最佳epoch6。模型部分约4.81秒，含导入与系统调用记录正式阶段约28.92秒。整卡采样峰值1169MiB；这不是任意任务的固定资源额度。
+
+运行前后8个参数和3个buffer摘要相同，4个新头张量改变；273行预测身份正确，重载误差<1e-6。两阶段轨迹无成功目录外文件改动，6个登记进程退出，选卡回到空闲且健康。
+
+## 来自真实失败的经验
+
+- 旧GPU4显存和利用率0，末次却要求Reset；健康与占用须分别验收。新run改用当时健康空闲GPU3，没有reset故障卡。新日期不能沿用这些卡号状态。
+- joblib导入探测曾创建 `/dev/shm` 临时信号量，即使自行删除也已越界；此次导入前关闭不需要的多进程探测，完整导入轨迹验证没有该副作用。
+- CUDA可能给本进程线程命名而写 `/proc/.../comm`。此次保留Landlock，只用已审读辅助库拦截可选线程命名操作；实际CUDA矩阵、编码和梯度更新均通过。不能把这个局部兼容处理变成任意文件重定向或放宽目录权限。
+- NVIDIA初始化还尝试删除 `/dev/char/*` 链接，每阶段57次全部被拒绝，训练正常。保留拒绝证据，不为驱动“修复”设备链接或更改系统权限。普通缓存环境变量并不覆盖驱动行为，因此不能去掉本次限制后仍声称边界已验证。
+- 旧尝试共用prelaunch文件曾覆盖历史。此次各phase分别保存prelaunch、dispatch、PID身份、日志、轨迹和exit，独占启动锁防重复；状态未知先查原作业。
+
+参考限制是Landlock ABI4的文件写入约束加实际轨迹，不是读隔离、GPU分区、全机审计或IOCTL隔离；CUDA枚举可打开其他卡的设备节点。共享他人占用卡、多任务并行、其他模型与框架、新环境安装、私有valid评分和赛事上传均未在这轮验证。
+
+只读复核：
+
+```sh
+python3 -B <LOCAL_WORKSPACE>/adhoc_jobs/admet_training/skills/admet-frozen-training/scripts/check_evidence.py <LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-frozen-training-20261031
+```
+
+17项离线测试的范围与结果见run `acceptance/tests.json`。无新增冷启动代理；本Skill是主控按已成功运行的代码、原件和反例验收整理的版本，不能宣称保证任何模型永远正确。
+
+## 原会话 Follow 实测与缺陷
+
+2026-10-31，原 GPT-6.1-sol/xhigh 会话只收到 Skill 路径及另一组 Caco2 任务，独立完成 256 单元头、lr0.0005、seed43 的海南训练；19 epoch/95 步、273 行预测，冻结与写入/释放证据通过。它在首次预检中发现外部 GPU 进程后只退出自己的作业，等待空闲再完成。完整原件与主控结论见 [Follow 报告](../../../runs/hainan-skill-follow-20261031/acceptance/report.md)。
+
+严格 Follow 未全通过：一次环境检查认证失败后，裸多行 shell 仍执行部署和预检，末尾成功使整段返回 0；稍后才补齐环境检查。后续训练正确不能抵消该门禁缺陷。正文因此补充依赖动作失败即中断、逐阶段验收；旧 Skill 已冻结保存，修订未追加真实训练验证。此轮保留历史上下文，不能推论冷启动、共享或并行分支已通过。
+
+2026-10-31用户随后明确纠正恢复策略：偶发连接/认证拒绝应该自动重试，不能因此终止自主流程。现行正文已区分“阻断依赖写入”和“整个任务终止”，同一入口有界恢复成功即继续；启动结果不明先查原作业。此前报告按当时规则保留，故障本身不是现行规则下的失败项；未经前置检查就继续部署仍不等于正确恢复。固定只读客户端实现及验证记录见 [恢复策略回执](../../../../../contexts/infrastructure/hainan_compute_20261031_retry_policy/receipt.json)，不是新一轮训练验收。

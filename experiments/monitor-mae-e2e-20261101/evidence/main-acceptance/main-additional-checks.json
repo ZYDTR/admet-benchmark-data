@@ -1,0 +1,88 @@
+{
+  "config_matches_frozen_plan": true,
+  "new_head_shapes": {
+    "0.weight": [
+      256,
+      2048
+    ],
+    "0.bias": [
+      256
+    ],
+    "3.weight": [
+      1,
+      256
+    ],
+    "3.bias": [
+      1
+    ]
+  },
+  "head_lr": 0.0005,
+  "head_seed": 43,
+  "best_epoch_recomputed": 7,
+  "early_stop_patience_recomputed": 8,
+  "train_only_metric_rechecks": {
+    "fit": {
+      "rows": 573,
+      "mae_and_mse_match_best_epoch": true,
+      "absolute_tolerance": 2e-05
+    },
+    "internal_stop": {
+      "rows": 64,
+      "mae_and_mse_match_best_epoch": true,
+      "absolute_tolerance": 2e-05
+    }
+  },
+  "blind_valid_test_columns_verified": true,
+  "cuda_encoder_and_head_events_verified": true,
+  "prelaunch": [
+    {
+      "phase": "preflight",
+      "observations": 3,
+      "health_and_no_active_load": true
+    },
+    {
+      "phase": "train",
+      "observations": 3,
+      "health_and_no_active_load": true
+    }
+  ],
+  "host": "<COMPUTE_HOST>",
+  "uid": 1012,
+  "postcheck_own_pids_gone": [
+    1257915,
+    1283209,
+    1283479,
+    1283527,
+    1285789,
+    1285795,
+    1297230,
+    1297236
+  ],
+  "gpu_released_at_recorded_postcheck": true,
+  "resource_sample_count": 149,
+  "maximum_tree_rss_bytes": 1564553216,
+  "learning_lock_retained": true,
+  "official_valid_truth_read": false,
+  "official_scoring_performed": false,
+  "scientific_result_accepted_for_downstream_scoring": true,
+  "supervisor_success": false,
+  "supervisor_actual_exit_code": 125,
+  "supervisor_fault_root_cause": "unknown; failing stat/status not captured",
+  "retrieval_snapshot_complete_run": false,
+  "missing_from_execution_snapshot": [
+    "root encoder.py",
+    "large pretrained asset; reuse or fresh transfer required"
+  ],
+  "source_review": [
+    "train_remote_v4.py complete",
+    "production completion and state_contract",
+    "operator binary reader and write-trace parser",
+    "previously admitted science/runtime hashes"
+  ],
+  "limitations": [
+    "recorded postcheck is not a new remote observation",
+    "RAM/GPU observations are not hard OS quotas",
+    "occupied-GPU sharing and exact resumed-learning trajectory untested",
+    "no independent GPU re-execution"
+  ]
+}

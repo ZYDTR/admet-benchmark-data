@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "policy_revision": 2,
+  "scope": "curated_preparation_training_feedback_candidate_pending_controller_delivery",
+  "run_id": "hainan-mae-monitor-20261101",
+  "task": "caco2_wang",
+  "split": "official_valid",
+  "rows": 91,
+  "metric_definition": "mean(abs(original numeric Y - y_pred)); registered fixed host MAE",
+  "direction": "minimize",
+  "group_definition": "entire91-row registered task; no subgroups or row identities",
+  "score": 0.40302117308791197,
+  "diagnostic_aggregates": {
+    "rmse": 0.557926790377507,
+    "signed_mean_error": -0.0043224935274724695,
+    "median_absolute_error": 0.2945885610000003
+  },
+  "scoring_receipt": {
+    "path": "private_scoring/scoring-receipt.json",
+    "sha256": "c41d46dc70ad2318045620313ba5ce60f95f97c3950b075d69bf9e508e13d2f7",
+    "prediction_sha256": "2c125d4da93d2f7a75200998516d81355df4ca24e6a94a778b7b08c71206c055",
+    "fixed_function_sha256": "6c8a2b4be4a9d4a1258a70f7f7e56789478a86faef0e407946e00af5fad3ee22",
+    "strict_wrapper_sha256": "6410d987eb602f6258fe5a0f22a1f569c80ebc49aa54ef9f8cc8bd65e699cdda",
+    "private_receipt_not_published": true,
+    "public_verification_summary_path": "batches/monitor-mae-e2e-20261101/scoring-summary.json"
+  },
+  "permitted_technical_observations": [
+    "Current raw-MAE monitor selected epoch7; complete science artifacts accepted while supervisor125 retained",
+    "Same-task observed result is lower than prior MSE-monitor result; use comparison source and limits, do not infer a proven mechanism",
+    "Saved raw feature payload hashes differ from the prior run despite equal input/split/checkpoint and initial-head storage identities. Inspect aggregate difference report; do not attribute score change solely to monitor."
+  ],
+  "excluded": [
+    "row_valid_truth",
+    "row_valid_residuals",
+    "row_lookup_answers",
+    "tiny_group_or_difference_reconstruction",
+    "whole_analysis_packet_access"
+  ],
+  "source_map": [
+    "derived/aggregate-scores.json",
+    "derived/monitor-comparison.json",
+    "control/SCORING_TASK.json",
+    "derived/feature-comparison.json"
+  ],
+  "actual_preparation_training_delivery": false,
+  "does_not_authorize_new_training_or_refit": true
+}
