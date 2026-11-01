@@ -1,0 +1,54 @@
+# 六任务24项科学训练完成
+
+截至 2026-11-02 05:20:21（北京时间，原件UTC），24/24项CUDA新头学习、全train/盲valid/test预测及执行方核验已完成，无活动或待续学习。六任务×H0/H1(dropout0.1/0.3)×seed44/45，冻结CheMeleon2048→256→1，原六项Caco2没有重训。主控独立验收及指定取回方一次批量评分待接续；本执行没有访问valid真值、评分、发布或官方上传。
+
+**科学产物完成与运行退出分开。** 两次实际GPU阶段外层strace退出为-9/-15，分别发生compact compute-apps及完整XML资源查询12秒超时，均保留unknown并仅终止有身份的自有作业。第二次在24份完成记录、模型/预测/核验落盘后仍被监控结束，不能将其当成全程正常；也不能因此再学已完成模型。原第一worker终态未捕获但PID已退出；第二worker在trace有SIGTERM终态，非正常0退出。资源监控存在两段缺口，不声明整批资源全通过或全机零影响。
+
+模型/数据/代码/完整字段映射、精确远端与本地文件及SHA见 [ARTIFACT_INDEX.json](ARTIFACT_INDEX.json)、[FIELD_MAP.md](FIELD_MAP.md)、config-mapping.json、source-diff.json与continuation-diff.patch。BBB H0 seed44的成功产物在原run/attempt-02，其余在各自原run。每项本地快照包含best/last、初始化、last完整optimizer/RNG/progress、历史、预处理/内部划分、三分区预测及组合盲预测。冗余epoch progress保留远端并哈希；36个原特征/parse-mask NPY保留远端只读、完整SHA已取回，未重复下载或冷编码。
+
+| task | 配置 | seed | 轮数 | 步数 | best轮 / 步 |
+|---|---|---:|---:|---:|---:|
+| lipophilicity_astrazeneca | H0 | 44 | 20 | 420 | 12 / 252 |
+| lipophilicity_astrazeneca | H0 | 45 | 25 | 525 | 17 / 357 |
+| lipophilicity_astrazeneca | H1 | 44 | 14 | 294 | 6 / 126 |
+| lipophilicity_astrazeneca | H1 | 45 | 25 | 525 | 17 / 357 |
+| bbb_martins | H0 | 44 | 15 | 150 | 7 / 70 |
+| bbb_martins | H0 | 45 | 11 | 110 | 3 / 30 |
+| bbb_martins | H1 | 44 | 10 | 100 | 2 / 20 |
+| bbb_martins | H1 | 45 | 12 | 120 | 4 / 40 |
+| cyp2d6_veith | H0 | 44 | 11 | 715 | 3 / 195 |
+| cyp2d6_veith | H0 | 45 | 12 | 780 | 4 / 260 |
+| cyp2d6_veith | H1 | 44 | 12 | 780 | 4 / 260 |
+| cyp2d6_veith | H1 | 45 | 26 | 1690 | 18 / 1170 |
+| clearance_hepatocyte_az | H0 | 44 | 35 | 210 | 27 / 162 |
+| clearance_hepatocyte_az | H0 | 45 | 24 | 144 | 16 / 96 |
+| clearance_hepatocyte_az | H1 | 44 | 14 | 84 | 6 / 36 |
+| clearance_hepatocyte_az | H1 | 45 | 32 | 192 | 24 / 144 |
+| ld50_zhu | H0 | 44 | 22 | 616 | 14 / 392 |
+| ld50_zhu | H0 | 45 | 13 | 364 | 5 / 140 |
+| ld50_zhu | H1 | 44 | 14 | 392 | 6 / 168 |
+| ld50_zhu | H1 | 45 | 14 | 392 | 6 / 168 |
+| solubility_aqsoldb | H0 | 44 | 13 | 468 | 5 / 180 |
+| solubility_aqsoldb | H0 | 45 | 21 | 756 | 13 / 468 |
+| solubility_aqsoldb | H1 | 44 | 22 | 792 | 14 / 504 |
+| solubility_aqsoldb | H1 | 45 | 20 | 720 | 12 / 432 |
+
+完成模型累计11339步。24项best/last/optimizer/RNG已在另一CPU-only进程实际weights_only加载并逐张量比对：524801参数、新头变化、各checkpoint自身epoch/step、last optimizer步数与全部RNG（含NumPy MT19937、Python、CPU/CUDA和独立sampler）一致；24份真实batch loss/梯度有限，按样本数重新汇总的train/dropout模式epoch loss全部匹配。生产计算中每项还实际重建CPU best头、重新计算fit-only统计并预测所有行，最大绝对CPU差0.001230288243；预先定义rtol3e-5及随原尺度std声明的f32 atol在每run证据中给出，不声称CPU/GPU逐位一致。12组H0/H1同seed初始化、内部划分/统计及共享epoch前缀的sampler顺序实际匹配。
+
+24份全部逐行核验：train 93,660、盲valid 27,740、test 30,360，合计151,760个模型-行预测；组合盲CSV 58,100行与有序valid+test分文件逐字典一致。Drug_ID、raw Drug、task/split/原行号与原train.Y保留，重复ID/原Drug组不删除。18个输入源SHA、24原配置SHA、配置语义、fit/stop无重叠且完整覆盖、原Drug不跨内部边界、全部预测有限/分类概率范围、parse mask和缓存内容身份均通过。逐run expanded-config是原JSON的重排/转义序列化，其解析内容相同；原配置SHA独立绑定，不伪造字节相同。
+
+18份cold缓存覆盖37,940原行，按各split原始相同SMILES只编码37649个输入再还原所有行；后一次0次cold，18份全身份验证复用。原cold说明与续接verified_reuse说明分别保存在cache/task和attempts/02/cache/task，原件未覆盖。全24每项编码器8参数张量+3buffer前后相同，eval/no_grad/requires_grad/optimizer排除和原权重SHA检查通过。无新的backbone拟合、目标清洗、外部标签或教师数据。
+
+候选差异按实际消费补齐：AP/AUPRC明确为并列组Average Precision（7/12反例实测），分类标签fit/stop两类实查；完整Python/NumPy/CPU/CUDA seeds、CPU sampler和严格deterministic/CUBLAS/cudnn/TF32设置实跑，无静默降级；MSE/BCEWithLogits显式参数、fit-only统计与输出一次inverse、best实际消费、真实加权loss均有实际路径及检查。legacy_reference SHA只作历史身份，实际修订源码全摘要留存，不声称字节相同。
+
+失败与恢复完整保留：两次GPU2/5启动前出现他人任务被拒，未创建CUDA worker；全卡XML查询也曾超时，unknown不当空闲。首实际GPU阶段冷编码完成并交4个lipo头后，监控查询超时停止自有；进入BBB H0 seed44时留下8,430,976字节progress.tmp（SHA5a3372fdf6babd5a3cb54613b233700031ecccaac82935b2e67881a344ae9a51），实际CPU weights_only加载缺zip central directory，不能恢复，原已做步数unknown。正式/最终checkpoint不存在、原PID退出后，按TASK已预委派权限只对此fit重启一次同配置，另存attempt-02；原4项核验后跳过，其余首次学习。没有宣称已从损坏状态恢复。
+
+我一度只检查正式checkpoint而过早判断可重启，部署保护发现临时文件并拒绝；随后过早发出的启动也被缺执行目录拒于CUDA前。主控另指出XML模块名E被Path覆盖的实际bug，续接启动因此在worker前失败；已保留旧版、修为ET并实跑通过，原cold描述改为attempt02独立保存，旧状态快照保留。所有无学习部署拒绝、实际SSH/OS返回及错误均保留，不用末尾完成掩盖失败。
+
+两次实际GPU均在启动时健康空闲GPU1（UUID GPU-b9fbba0f-b366-d145-720a-37b369c234a0），无驻留他人作业；不是沿用上轮GPU1共享许可。单worker、2核affinity、nice19，4GiB allocator目标、8GiB RSS采样退出。成功采样未见该卡foreign PID或health异常；设备显存观测峰2,871MiB，续接873MiB。精确host RSS峰未保存，末次快照约1765.84/1630.04MiB，8GiB条件不冒充系统配额或峰值证明。资源超时后均控制自身；未对同事项目/私有日志或服务做探测。最后9个登记生命周期均退出/不存在/复用，GPU1回到健康None、4MiB、0%、无可见进程，见postcheck02-summary.json。
+
+编译、两CUDA阶段、三CPU诊断共6条窄file/write/mmap trace审读：没有发现成功越界文件修改、unparsed或pending；拒绝（含驱动链接操作）和device IO分列。它不是全机、所有ioctl或全部父进程的零影响证明。原件、实际环境（78包METADATA与Python身份）、真实命令和运行源均已取回。
+
+独立总GPU作业预算7200秒，实际两段保守计费415.577396171167秒，剩6784.422603828833秒；包含导入/检查/预测/失败等待，不把精确kernel活跃时间未知填0，不动用旧六项余量。当前原生turn自2026-11-01T20:14:35Z起，截至本封口3946.373秒，TIMING.json分准备、实际计算、排障和取回验收；资源查询拒绝耗时归准备/排障，未进入等待观察者的专门停驻。SSH区间可重叠，不能相加作墙钟，线程更早创建的日历跨度另列且不是活跃计算。最终native结束待主控回读。没有新墙钟截止或旧工程cap。
+
+本任务无剩余学习，预算余量不授权追加实验。主控独立消费24项原件后交指定取回角色一次批量评分/发布，再继续研究链路；本执行不越过该职责。

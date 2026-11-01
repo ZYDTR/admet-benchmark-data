@@ -1,0 +1,27 @@
+# 首次CUDA中断与恢复边界复核
+
+主控已消费执行方实质故障回报，并亲读实际生产/续接源码、CUDA与学习进展、查询超时原件、PID退出及临时checkpoint安全加载结果。原范围的有界恢复可以继续；此次不是完整模型和边界验收通过。下一负责人仍为原Sol/xhigh执行方，不新增训练任务或重新派发24项。
+
+## 已有事实
+
+首次实际作业在GPU1 UUID `GPU-b9fbba0f-b366-d145-720a-37b369c234a0` 执行。原CUDA检查含H100设备、矩阵计算和确定性配置；编码原件记录18份task/split原特征、37940原行、37649分区内不同SMILES及598条CUDA无梯度forward事件。重复SMILES仅编码复用并映射原行，不是删行；实际全部缓存及行映射仍需全批取回复核。
+
+四份lipo学习完成回执分别为H0s44的420步/20epoch、H0s45的525步/25epoch、H1s44的294步/14epoch、H1s45的525步/25epoch。主控已读实际产生best/last、新头变化、固定buffer、全预测与CPU重载检查的源码；远端模型/预测字节及完整写入轨迹尚未由主控独立取回，所以这里只记4项初步完成，不记4项完整验收通过。
+
+20:36:42Z（北京时间04:36:42），限定所选UUID的compact compute-app查询超时12秒。此前同查询和pmon均正常；原错误保留。监控以unknown为由只对登记的两个自有PID、核对start_ticks后用pidfd终止。strace wait为-9；worker实际退出码未知。20:39:11Z复核两个PID均absent。171.64320986019447GPU作业秒已扣，剩7028.3567901398055秒。随后GPU1 XML查询正常、无进程、恢复动作None、显存4MiB；这证明查询恢复，不证明首次超时的设备/驱动根因。
+
+BBB H0s44有learning-started，但无正式progress.pt/完成产物，步数未知。8,430,976字节progress.tmp在CPU weights_only实际读取失败，缺ZIP central directory，SHA `5a3372fdf6babd5a3cb54613b233700031ecccaac82935b2e67881a344ae9a51`。因此不能恢复该临时文件；原作业已退出、该项未完成，符合TASK预先给出的至多一次同配置重启条件。已完成4项不重训，19项仍是首次学习；新attempt保留失败。此前一次部署因临时文件存在被拒、一次过早续接因目录未创建被拒，都发生在新的CUDA学习前，不能算第二次科学尝试。
+
+## 主控发现并已交执行方的具体缺陷
+
+观察时的run-cached-remote.py将ElementTree导入别名E，随后把E赋为attempt目录Path，health仍调用E.fromstring。绑定与Path无此方法的独立反例在binding-counterexample.json；它是确定的源码缺陷，但当时没有取得该缺陷实际执行的错误回执。已向原执行方发送具体位置，请其修正和验证，不代它修改运行源码。
+
+续接study_continue.py还会改写首轮cache下encoding-summary/internal-split/transforms。要求保留首轮原件，将续接记录放新attempt，缓存内容与身份核验分别保留。实际是否已覆盖待终态对账，不能把可能风险写成已确认覆盖。operator/status的finalized用量注释及active估算沿旧值，已要求按当前阶段对账，保留旧快照。
+
+## Skill判断与后续
+
+主控重新完整读取Best Practice Skill Writing。现行训练Skill已规定实际运行验证、原失败保留、checkpoint身份检查和Agent现场恢复，变量重名及未消费部署失败是实现质量问题。此次不给Skill堆固定重试脚本，也不改运行中的冻结规范。可沉淀的短结果标准是：恢复可用性取决于实际候选内容及完整性，不能由固定文件名存在/缺失推定；续接不丢失首次计算与失败证据。待本轮收齐实际行为后再决定必要的Skill修订，不把尚未实测的修复写成通过。
+
+已接续动作：原执行方收到具体缺陷、证据保留及状态修正反馈，继续TASK原24项和原预算；主控更新当前阶段并等待实际产物。此时不发送新Chat、不评分、不扩大配置、不连接海南操作其他任务。全部关键快照和源码摘要在CHECKS.json与observed/。
+
+后续原生cursor140：执行方确认E变量覆盖确实导致创建学习进程前失败，已保存旧版并修复名称；缓存说明改为attempt02，状态已更新为repairing_continuation_before_start、当前无活动CUDA、已用171.64320986019447秒。主控实际读回状态及当前源码，原E别名覆盖已不存在；续接真正运行与余20项完成仍待后续原件。

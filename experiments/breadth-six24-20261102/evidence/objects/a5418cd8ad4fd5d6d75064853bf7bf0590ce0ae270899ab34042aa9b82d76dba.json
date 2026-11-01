@@ -1,0 +1,186 @@
+{
+  "interface_id": "admet-frozen-breadth-repair001-proposed",
+  "task": "clearance_hepatocyte_az",
+  "scientific_asset_id": "chemeleon",
+  "encoder": {
+    "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+    "feature_dim": 2048,
+    "encoding_batch_size": 64,
+    "mode": "eval",
+    "autograd": false,
+    "freeze_parameters": true,
+    "freeze_buffers": true,
+    "dtype": "float32",
+    "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+    "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction",
+    "legacy_reference_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+    "actual_code_identity": "actual reviewed scientific implementation at execution; record full source hashes and semantic mapping, no legacy-byte equality claim"
+  },
+  "inputs": {
+    "train": {
+      "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+      "task_selector": "clearance_hepatocyte_az",
+      "role_selector": "train",
+      "rows": 848,
+      "per_file_sha256": "5075b6a07d08d50c22a3a434e4708eb34b2d310b612a0a1c523bd153c11ba1f0",
+      "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+      "columns": [
+        "Drug_ID",
+        "Drug",
+        "Y"
+      ]
+    },
+    "validation": {
+      "role": "blind_validation",
+      "rows": 122,
+      "sha256": "c5d813115fa6ca174dcc55fefbac8924bc6ee865e254cd167929eda493a7aea8",
+      "columns": [
+        "Drug_ID",
+        "Drug"
+      ]
+    },
+    "test": {
+      "role": "test",
+      "rows": 243,
+      "sha256": "104ed6e16c206737f97c2e814ae36aa8acce459d94d39df78bbc07eb0ac2ef90",
+      "columns": [
+        "Drug_ID",
+        "Drug"
+      ]
+    },
+    "row_identity": [
+      "task",
+      "split",
+      "row_index"
+    ],
+    "preserve_raw_smiles_and_labels": true,
+    "drug_id_is_not_key": true
+  },
+  "split": {
+    "method": "raw_smiles_group_shuffle",
+    "seed": 43,
+    "validation_fraction": 0.1,
+    "group_key": "exact raw Drug string",
+    "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+    "reference": "training-science L254–360",
+    "class_stratification": false,
+    "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+    "split_id": "clearance_hepatocyte_az__official-train__raw-smiles-group__s43__stop010__v1"
+  },
+  "feature_preprocessing": {
+    "fit_partition": "inner_fit_only",
+    "statistics_dtype": "float32",
+    "method": "legacy_mean_std",
+    "std_ddof": 0,
+    "replace_std_below": 1e-08,
+    "replacement_std": 1.0,
+    "clip": null,
+    "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+    "refit_for_each_split": true,
+    "reuse_raw_not_scaled_features": true
+  },
+  "target": {
+    "kind": "regression",
+    "positive_label": null,
+    "transform": "fit-only mean/std ddof0, std0->1",
+    "fit_partition": "inner_fit_only",
+    "physical_units": "not inferred; supplied numeric Y scale",
+    "inverse_transform_at_prediction": true,
+    "prediction_scale": "original supplied Y, inverse affine exactly once",
+    "prediction_clipping": null
+  },
+  "head": {
+    "hidden_dims": [
+      256
+    ],
+    "activation": "ReLU",
+    "dropout": 0.3,
+    "output_dim": 1,
+    "output_activation_during_loss": "identity",
+    "bias": true,
+    "batch_norm": false,
+    "layer_norm": false,
+    "residual": false,
+    "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+    "trainable_parameter_count": 524801
+  },
+  "optimizer": {
+    "name": "AdamW",
+    "lr": 0.0005,
+    "weight_decay": 0.0001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "amsgrad": false,
+    "scheduler": "none",
+    "weight_decay_applies_to": "all head parameters",
+    "encoder_parameters_in_optimizer": false
+  },
+  "loss": {
+    "name": "MSELoss",
+    "target_scale": "standardized_by_inner_fit",
+    "reduction": "mean",
+    "pos_weight": null,
+    "sample_weight": "uniform"
+  },
+  "training": {
+    "batch_size": 128,
+    "max_epochs": 50,
+    "gradient_accumulation_steps": 1,
+    "gradient_clip_norm": null,
+    "precision": "float32",
+    "mixed_precision": false,
+    "shuffle_each_epoch": true,
+    "sampler": "CPU torch.Generator seeded by fixed model_seed",
+    "drop_last": false,
+    "num_workers": 0,
+    "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+    "official_valid_used_for_gradients_or_early_stopping": false,
+    "head_train_mode_during_updates": true,
+    "encoder_stays_eval_during_head_training": true,
+    "torch_cuda_manual_seed_all": "scalar model_seed",
+    "deterministic_algorithms": true,
+    "cudnn_benchmark": false,
+    "cudnn_deterministic": true,
+    "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+    "model_seed": 45
+  },
+  "early_stopping": {
+    "partition": "inner_stop_from_official_train",
+    "head_mode": "eval no dropout",
+    "metric_input": "inverse transformed original-Y outputs",
+    "metric": "Spearman",
+    "definition": "Pearson correlation of average tied ranks",
+    "direction": "maximize",
+    "patience": 8,
+    "min_delta": 1e-07,
+    "ties": "retain earlier epoch",
+    "restore_best": true,
+    "evaluate_every_epochs": 1,
+    "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+  },
+  "artifacts": {
+    "save_best_and_last": true,
+    "save_optimizer_and_all_rng": true,
+    "save_train_fit_stop_predictions": true,
+    "save_blind_predictions": true,
+    "save_full_encoder_parameter_buffer_digests": true,
+    "record_worker_and_supervisor_exit_separately": true,
+    "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+    "save_test_predictions_when": "this controller task authorizes all selected task test rows after best-head reload, no test labels or fitting"
+  },
+  "evaluation": {
+    "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+    "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+    "selection_claim": "screening signal only, not independent generalization estimate",
+    "normalization": "none; task metric only; no inferred official aggregate formula",
+    "external_metric": "Spearman",
+    "external_direction": "maximize",
+    "official_valid_feedback_schedule": "design frozen for all 24 fits; designated retrieval role scores once per fit after independent acceptance; trainer never receives row labels"
+  },
+  "execution_authorized": true,
+  "controller_request_id": "admet-breadth-six24-20261102-001",
+  "run_id": "hainan-breadth-clearance_hepatocyte_az-h1-s45-20261102"
+}

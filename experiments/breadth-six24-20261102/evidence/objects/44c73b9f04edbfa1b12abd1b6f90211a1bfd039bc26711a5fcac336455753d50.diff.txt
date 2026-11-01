@@ -1,0 +1,404 @@
+--- original/cache.py
++++ repaired/cache.py
+@@ -85,8 +85,12 @@
+     emb, ok = u_emb[take], u_ok[take]
+     if emb.shape != (len(rows), embedder.feature_dim):
+         raise InterfaceError(f"{task}/{split}: unexpected embedding shape {emb.shape}")
+-
+-    filled = np.where(np.isfinite(emb), emb, np.float32(GLOBAL_FILL_VALUE)).astype(np.float32)
++    if embedder.feature_dim != FEATURE_DIM or ok.shape != (len(rows),) or ok.dtype != np.bool_:
++        raise InterfaceError("encoder dimension/parse mask does not match cache contract")
++    if not np.isfinite(emb[ok]).all():
++        raise InterfaceError("non-finite output on a parsed row must not be zero-filled")
++    filled = np.asarray(emb, dtype=np.float32).copy()
++    filled[~ok] = np.float32(GLOBAL_FILL_VALUE)
+     arr_p, mask_p, meta_p = cache_paths(cache_root, task, split)
+     arr_p.parent.mkdir(parents=True, exist_ok=True)
+     np.save(arr_p, np.ascontiguousarray(filled))
+@@ -140,6 +144,10 @@
+         raise InterfaceError(f"cache contains non-finite values: {task}/{split}")
+     if int(ok.sum()) != meta["identity"]["parsed_true_count"]:
+         raise InterfaceError(f"parse mask population changed: {task}/{split}")
++    if (array_digest(ok) != meta["identity"]["parse_mask"]
++            or list(np.nonzero(~ok)[0]) != meta["identity"]["unparsed_row_indices"]
++            or not (X[~ok] == GLOBAL_FILL_VALUE).all()):
++        raise InterfaceError("parse mask/zero-fill identity mismatch")
+     return X, ok
+ 
+ 
+@@ -192,10 +200,12 @@
+ 
+ 
+ def fill_raw(X):
+-    """Apply the documented constant zero fill to unparseable rows (idempotent)."""
++    """Accept already filled, validated raw cache; never hide corrupt finite rows."""
+     import numpy as np
+     A = np.asarray(X, dtype=np.float32)
+-    return np.where(np.isfinite(A), A, np.float32(GLOBAL_FILL_VALUE))
++    if not np.isfinite(A).all():
++        raise InterfaceError("raw cache must be finite; parse-mask fill occurs at encoding")
++    return A
+ 
+ 
+ def fit_feature_scaler(X_filled_fit, fit_row_indices: Sequence[int]) -> FeatureScaler:
+@@ -204,6 +214,8 @@
+     A = np.asarray(X_filled_fit, dtype=np.float32)
+     if A.ndim != 2 or A.shape[0] == 0:
+         raise InterfaceError("fit_feature_scaler needs a non-empty 2-D fit matrix")
++    if len(fit_row_indices) != len(A) or len(set(fit_row_indices)) != len(A):
++        raise InterfaceError("fit matrix rows must match distinct fit row indices")
+     if not np.isfinite(A).all():
+         raise InterfaceError("fit matrix has non-finite values; fill before fitting")
+     mu = A.mean(axis=0)
+@@ -231,6 +243,7 @@
+ 
+     def transform_f32(self, y):
+         """float32 view for feeding torch training space (loss/MSE in float32)."""
++        import numpy as np
+         return self.transform(y).astype(np.float32)
+ 
+     def inverse(self, z):
+@@ -246,7 +259,8 @@
+         if d.get("kind") != "target_standardize_fit_only":
+             raise InterfaceError("unknown target scaler kind")
+         mean, std = float(d["mean"]), float(d["std"])
+-        if std <= 0:
++        import math
++        if not math.isfinite(mean) or not math.isfinite(std) or std <= 0:
+             raise InterfaceError("invalid target std")
+         return TargetScaler(mean=mean, std=std)
+ 
+--- original/encoder.py
++++ repaired/encoder.py
+@@ -78,6 +78,17 @@
+             raise InterfaceError(f"encoder dim {self.feature_dim} != {FEATURE_DIM}")
+         self.encoding_calls = 0
+         self.encoded_smiles_count = 0
++        self.frozen_state = self.state_digest()
++
++    def state_digest(self):
++        """Identity of all parameters AND buffers, including eval-time state."""
++        h = hashlib.sha256()
++        for name, tensor in sorted(self.model.state_dict().items()):
++            value = tensor.detach().cpu().contiguous().numpy()
++            h.update(name.encode())
++            h.update(str((value.shape, value.dtype)).encode())
++            h.update(value.tobytes())
++        return h.hexdigest()
+ 
+     def assert_frozen(self) -> None:
+         if self.model.training:
+@@ -85,6 +96,8 @@
+         trainable = [n for n, p in self.model.named_parameters() if p.requires_grad]
+         if trainable:
+             raise InterfaceError(f"encoder has trainable params: {trainable[:5]}")
++        if self.state_digest() != self.frozen_state:
++            raise InterfaceError("encoder parameters or buffers changed")
+ 
+     def embed(self, smiles: list[str]):
+         """Return (float32 [n, d] with NaN on unparseable rows, bool [n] parse mask).
+@@ -98,6 +111,7 @@
+         from chemprop.data import BatchMolGraph
+         from rdkit import Chem, RDLogger
+ 
++        self.assert_frozen()
+         RDLogger.DisableLog("rdApp.*")
+         featurizer = featurizers.SimpleMoleculeMolGraphFeaturizer()
+         self.encoding_calls += 1
+@@ -123,4 +137,5 @@
+                 ok[idx] = True
+         if np.isnan(out[ok]).any() or np.isinf(out[ok]).any():
+             raise InterfaceError("encoder produced non-finite values on parsed rows")
++        self.assert_frozen()
+         return out, ok
+--- original/heads.py
++++ repaired/heads.py
+@@ -140,7 +140,7 @@
+     import torch
+     from .cache import FeatureScaler, TargetScaler
+ 
+-    ck = torch.load(path, map_location="cpu", weights_only=False)
++    ck = torch.load(path, map_location="cpu", weights_only=True)
+     if ck.get("format") != HEAD_FORMAT or ck.get("encoder") != "chemeleon_mp":
+         raise InterfaceError(f"unexpected head contract: {ck.get('format')!r}")
+     model = build_head(ck["feature_dim"], ck["head"]["hidden_dims"][0],
+--- original/metrics.py
++++ repaired/metrics.py
+@@ -27,7 +27,7 @@
+ def _check_pairs(y_true: Sequence[float], y_score: Sequence[float]) -> None:
+     if len(y_true) != len(y_score):
+         raise InterfaceError(f"length mismatch: {len(y_true)} vs {len(y_score)}")
+-    if not y_true:
++    if len(y_true) == 0:
+         raise InterfaceError("empty metric input")
+     for v in list(y_true) + list(y_score):
+         if not math.isfinite(float(v)):
+@@ -55,7 +55,7 @@
+ 
+ def auroc(y_true: Sequence[float], y_score: Sequence[float]) -> float | None:
+     _check_pairs(y_true, y_score)
+-    labels = [int(round(float(y))) for y in y_true]
++    labels = [float(y) for y in y_true]
+     for lab in labels:
+         if lab not in (0, 1):
+             raise InterfaceError(f"AUROC requires binary labels, got {lab}")
+@@ -70,7 +70,7 @@
+ 
+ def average_precision(y_true: Sequence[float], y_score: Sequence[float]) -> float | None:
+     _check_pairs(y_true, y_score)
+-    labels = [int(round(float(y))) for y in y_true]
++    labels = [float(y) for y in y_true]
+     for lab in labels:
+         if lab not in (0, 1):
+             raise InterfaceError(f"AP requires binary labels, got {lab}")
+@@ -142,6 +142,8 @@
+             raise InterfaceError(f"unsupported metric: {metric!r}")
+         if direction not in ("minimize", "maximize"):
+             raise InterfaceError(f"unknown direction: {direction!r}")
++        if direction != ("minimize" if metric == "MAE" else "maximize"):
++            raise InterfaceError("metric/direction contradiction")
+         self.metric = metric
+         self.direction = direction
+         self.best_value: float | None = None
+@@ -150,13 +152,17 @@
+ 
+     def observe(self, y_true: Sequence[float], y_pred: Sequence[float],
+                 epoch: int) -> dict[str, Any]:
+-        value = METRIC_FUNCS[self.metric](y_true, y_pred)
++        if self.undefined_epochs:
++            raise InterfaceError("monitor previously invalid; this run remains rejected")
++        try:
++            value = METRIC_FUNCS[self.metric](y_true, y_pred)
++        except (ValueError, OverflowError) as exc:
++            self.undefined_epochs.append(epoch)
++            raise InterfaceError(f"invalid monitor input at epoch {epoch}: {exc}") from exc
+         record: dict[str, Any] = {"epoch": epoch, "metric": self.metric, "value": value}
+         if value is None or not math.isfinite(value):
+             self.undefined_epochs.append(epoch)
+-            record["improved"] = False
+-            record["status"] = "undefined"
+-            return record
++            raise InterfaceError(f"undefined/nonfinite {self.metric} at epoch {epoch}; reject task")
+         if self.best_value is None:
+             improved = True
+         elif self.direction == "minimize":
+@@ -187,6 +193,11 @@
+                 raise InterfaceError(f"task-metrics[{task}] missing {key}")
+         if d["metric"] not in METRIC_FUNCS:
+             raise InterfaceError(f"task-metrics[{task}] unsupported metric {d['metric']}")
++        EarlyStopMonitor(d["metric"], d["direction"])
++        from .common import task_kind
++        allowed = ("AUROC", "AUPRC") if task_kind(task) == "classification" else ("MAE", "Spearman")
++        if d["metric"] not in allowed:
++            raise InterfaceError(f"task-metrics[{task}] metric incompatible with task kind")
+         out[task] = {"metric": d["metric"], "direction": d["direction"],
+                      "definition": d["definition"]}
+     return out
+--- original/pipeline.py
++++ repaired/pipeline.py
+@@ -36,7 +36,8 @@
+         self.kind = task_kind(task)
+         self.data_root = Path(data_root)
+         self.work_root = Path(work_root)
+-        self.metrics = load_task_metrics(metrics_contract)[task]
++        self.task_metrics = load_task_metrics(metrics_contract)
++        self.metrics = self.task_metrics[task]
+         self.rows: dict[str, list[dict[str, str]]] = {}
+         self.source_sha: dict[str, str] = {}
+         self.split_record: dict[str, Any] | None = None
+@@ -78,9 +79,27 @@
+                               self.rows[split], self.source_sha[split])
+ 
+     # ---- fit-only transforms --------------------------------------------
+-    def fit_transforms(self, X_fit_rows):
+-        """Fit feature/target scalers using ONLY official-train fit-partition rows."""
+-        self.scaler = fit_feature_scaler(X_fit_rows, self.split_record["fit_row_indices"])
++    def _checked_split(self):
++        if self.split_record is None:
++            raise InterfaceError("make_internal_split must precede transforms/training")
++        expected = split_train_stop_groups(
++            self.rows["train"], seed=self.split_record["seed"],
++            validation_fraction=self.split_record["validation_fraction"])
++        if self.split_record != expected:
++            raise InterfaceError("split record differs from actual train rows and split identity")
++        return expected
++
++    def fit_transforms(self):
++        """Load the identity-checked full train cache, then select fit rows here.
++
++        No caller-supplied matrix: a fit-row hash cannot prove that an arbitrary
++        matrix excludes stop rows. Refit after changing the train input/split.
++        """
++        rec = self._checked_split()
++        X_train, _ = self.load_cache("train")
++        idx = rec["fit_row_indices"]
++        self.scaler = fit_feature_scaler(X_train[idx], idx)
++        self.transform_identity = (self.source_sha["train"], rec["split_record_sha256"])
+         if self.kind == "regression":
+             y = train_labels(self.rows["train"], self.task)
+             idx = self.split_record["fit_row_indices"]
+@@ -107,12 +126,21 @@
+         merged = dict(cfg)
+         merged.setdefault("task", self.task)
+         merged.setdefault("kind", self.kind)
+-        cfg = validate_config(merged)
++        cfg = validate_config(merged, self.task_metrics)
++        if cfg["task"] != self.task or cfg["kind"] != self.kind:
++            raise InterfaceError("configuration task does not match pipeline")
+         if preparation:
+             from .trainer import TrainingUnavailableInPreparation
+             raise TrainingUnavailableInPreparation(
+                 "fit_head(preparation=True) never updates parameters; host calls with "
+                 "preparation=False during authorized training runs")
++        rec = self._checked_split()
++        if (cfg["split"]["seed"] != rec["seed"]
++                or cfg["split"]["stop_fraction"] != rec["validation_fraction"]):
++            raise InterfaceError("configuration split differs from actual split")
++        if getattr(self, "transform_identity", None) != (
++                self.source_sha["train"], rec["split_record_sha256"]):
++            raise InterfaceError("transforms absent or stale for current train/split")
+         X_tr, ok_tr = self.load_cache("train")
+         Xf = fill_raw(X_tr)
+         fit_idx = self.split_record["fit_row_indices"]
+@@ -130,7 +158,7 @@
+             preparation=False,
+             X_fit=Xs[fit_idx], y_fit=y_fit,
+             X_stop=Xs[stop_idx], y_stop=y_stop_eval,
+-            cfg=cfg, device=device, monitor=self.monitor(),
++            cfg=cfg, task_metrics=self.task_metrics, device=device, monitor=self.monitor(),
+             target_scaler=self.target_scaler, stop_row_indices=stop_idx)
+         return model, result
+ 
+--- original/trainer.py
++++ repaired/trainer.py
+@@ -17,16 +17,16 @@
+ import math
+ from typing import Any, Mapping, Sequence
+ 
+-from .common import InterfaceError, task_kind
++from .common import CHEMELEON_SHA256, InterfaceError, task_kind
+ from .data_io import (ADMITTED_BATCH_SIZE, ADMITTED_DROPOUT, ADMITTED_HIDDEN_DIMS,
+                       ADMITTED_LR, ADMITTED_MAX_EPOCHS, ADMITTED_MODEL_SEEDS,
+                       ADMITTED_PATIENCE, ADMITTED_SPLIT_SEED, ADMITTED_STOP_FRACTION,
+                       ADMITTED_WEIGHT_DECAY)
+-from .heads import build_head, make_loss, make_optimizer
++from .heads import build_head, make_loss, make_optimizer, postprocess
+ from .metrics import EarlyStopMonitor, MIN_DELTA
+ 
+ 
+-def validate_config(cfg: Any) -> dict:
++def validate_config(cfg: Any, task_metrics: Mapping[str, Any]) -> dict:
+     """Validate one run configuration against the admitted scientific envelope."""
+     if not isinstance(cfg, dict):
+         raise InterfaceError(f"config must be an object, got {type(cfg).__name__}")
+@@ -43,6 +43,8 @@
+     d = cfg["pretrained_sha256"]
+     if not (isinstance(d, str) and len(d) == 64 and all(c in "0123456789abcdef" for c in d)):
+         raise InterfaceError("pretrained_sha256 must be 64-char lowercase hex")
++    if d != CHEMELEON_SHA256:
++        raise InterfaceError("pretrained_sha256 differs from the approved encoder")
+     h = cfg["head"]
+     if not isinstance(h, dict):
+         raise InterfaceError("head must be an object")
+@@ -82,6 +84,10 @@
+     expected_dir = "minimize" if cfg["monitor_metric"] == "MAE" else "maximize"
+     if cfg["monitor_direction"] != expected_dir:
+         raise InterfaceError(f"monitor_direction must be {expected_dir} for {cfg['monitor_metric']}")
++    metric_entry = task_metrics.get(cfg["task"])
++    if not metric_entry or (cfg["monitor_metric"], cfg["monitor_direction"]) != (
++            metric_entry["metric"], metric_entry["direction"]):
++        raise InterfaceError("monitor differs from registered task metric/direction")
+     return cfg
+ 
+ 
+@@ -89,7 +95,25 @@
+     """Raised by train_head when called inside a preparation-only session."""
+ 
+ 
++def evaluate_stop(kind, logits, y_stop_original, monitor, epoch, target_scaler=None):
++    """Actual epoch-monitor boundary; only predictions undergo inverse scaling."""
++    import numpy as np
++    predictions = postprocess(kind, logits, target_scaler)
++    targets = np.asarray(y_stop_original, dtype=np.float64)
++    return monitor.observe(targets.tolist(), predictions.tolist(), epoch)
++
++
++def restore_best_head(model, best_state):
++    """Inference uses the selected head; last optimizer/state remain for recovery."""
++    if best_state is None:
++        raise InterfaceError("no valid best head was selected")
++    model.load_state_dict(best_state, strict=True)
++    model.eval()
++    return model
++
++
+ def train_head(*, preparation: bool, X_fit, y_fit, X_stop, y_stop, cfg: Mapping[str, Any],
++               task_metrics: Mapping[str, Any],
+                device: str, monitor: EarlyStopMonitor,
+                target_scaler=None, stop_row_indices: Sequence[int] = ()):
+     """Run the full head-training loop on cached features. Host-executed only.
+@@ -116,9 +140,23 @@
+     import numpy as np
+     import torch
+ 
+-    cfg = validate_config(dict(cfg))
++    cfg = validate_config(dict(cfg), task_metrics)
++    if (monitor.metric, monitor.direction) != (cfg["monitor_metric"], cfg["monitor_direction"]):
++        raise InterfaceError("actual monitor differs from configuration")
++    if monitor.best_epoch is not None or monitor.undefined_epochs:
++        raise InterfaceError("each run requires a fresh monitor")
+     kind = cfg["kind"]
+     hc = cfg["head"]
++    for name, X, y in (("fit", X_fit, y_fit), ("stop", X_stop, y_stop)):
++        X, y = np.asarray(X), np.asarray(y)
++        if (X.ndim != 2 or X.shape[1] != hc["feature_dim"] or not len(X)
++                or y.shape != (len(X),) or not np.isfinite(X).all()
++                or not np.isfinite(y).all()):
++            raise InterfaceError(f"{name} features/targets have invalid shape or values")
++        if kind == "classification" and not np.isin(y, [0., 1.]).all():
++            raise InterfaceError(f"{name} labels are not binary")
++    if kind == "regression" and target_scaler is None:
++        raise InterfaceError("regression requires fit-only target scaler")
+     model = build_head(int(np.asarray(X_fit).shape[1]), hc["hidden_dim"],
+                       hc["dropout"], hc["seed"]).to(device)
+     opt = make_optimizer(model, hc["lr"], hc["weight_decay"])
+@@ -141,19 +179,15 @@
+             sel = perm[start:start + hc["batch_size"]]
+             opt.zero_grad(set_to_none=True)
+             loss = loss_fn(model(Xt[sel]), yt[sel])
++            if not torch.isfinite(loss):
++                raise InterfaceError("non-finite loss; reject this run")
+             loss.backward()          # host-only path
+             opt.step()               # host-only path
+             steps += 1
+         model.eval()
+         with torch.no_grad():
+             zv = model(Xv).detach().cpu().numpy().reshape(-1)
+-        if kind == "regression":
+-            pred_orig = target_scaler.inverse(zv)
+-            y_true_eval = np.asarray(y_stop, dtype=np.float64) * target_scaler.std + target_scaler.mean
+-        else:
+-            pred_orig = 1.0 / (1.0 + np.exp(-zv))
+-            y_true_eval = np.asarray(y_stop, dtype=np.float64)
+-        rec = monitor.observe(list(y_true_eval), list(pred_orig), epoch)
++        rec = evaluate_stop(kind, zv, y_stop, monitor, epoch, target_scaler)
+         with torch.no_grad():
+             batch_loss = float(loss_fn(model(Xt[:min(8, n)]), yt[:min(8, n)]).item())
+         rec.update({"steps": steps, "loss": batch_loss})
+@@ -181,11 +215,15 @@
+         "rng_state": {
+             "python": list(map(_plain, __import__("random").getstate())),
+             "torch_cpu": torch.get_rng_state().cpu().clone(),
++            "torch_cuda": [s.cpu().clone() for s in torch.cuda.get_rng_state_all()]
++                          if str(device).startswith("cuda") else [],
+             "sampler": gen.get_state().cpu().clone(),
+         },
+         "progress": {"epochs_completed": len(history), "cumulative_steps": steps},
++        "returned_model_state": "best",
++        "optimizer_and_rng_state_at": "last",
+     }
+-    return model, result
++    return restore_best_head(model, best_state), result
+ 
+ 
+ def _plain(x):

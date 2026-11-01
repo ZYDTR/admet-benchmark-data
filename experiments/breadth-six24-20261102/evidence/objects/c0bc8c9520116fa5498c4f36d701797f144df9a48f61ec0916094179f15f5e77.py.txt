@@ -1,0 +1,274 @@
+"""Raw embedding cache and fit-only transforms (two separate layers).
+
+Layer 1 — raw cache: frozen-encoder output per (task, split), bound to an identity
+record containing checkpoint sha256, encoder-module sha256, source CSV sha256, full
+ordered row identity (every Drug_ID/Drug pair), feature dim, dtype, finiteness
+digests and the parse mask. A cache is only accepted after ALL of these match;
+file existence or row counts alone never suffice.
+
+Layer 2 — fit transform: feature standardization whose statistics are fitted ONLY
+on the official-train fit partition (never internal-stop rows, never valid/test).
+Regression target standardization likewise fits on the fit partition only. The
+transform object carries its fit-partition identity so misuse is detectable.
+
+Unparseable rows keep their position, get the documented constant zero raw fill
+before scaling, and remain visible through the parse mask. No cleaning happens.
+"""
+
+from __future__ import annotations
+
+import json
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Mapping, Sequence
+
+from .common import (CHEMELEON_SHA256, FEATURE_DIM, GLOBAL_FILL_VALUE,
+                     InterfaceError, array_digest, canonical_json_bytes,
+                     row_identity_sha256, sha256_hex, sha256_file, write_json)
+
+
+def _module_sha256() -> dict[str, str]:
+    base = Path(__file__).resolve().parent
+    out = {}
+    for name in ("encoder.py", "cache.py", "data_io.py", "heads.py"):
+        p = base / name
+        out[name] = sha256_file(p) if p.is_file() else "absent"
+    return out
+
+
+def cache_contract(task: str, split: str, source_sha256: str,
+                   rows: Sequence[Mapping[str, str]]) -> dict[str, Any]:
+    """Identity binding a raw cache entry to data + implementation + full row order."""
+    from importlib.metadata import version as _pkg_version
+    pkgs = {}
+    for pkg in ("chemprop", "rdkit", "torch", "numpy"):
+        try:
+            pkgs[pkg] = _pkg_version(pkg)
+        except Exception:
+            pkgs[pkg] = "absent"
+    return {
+        "version": 1,
+        "task": task,
+        "split": split,
+        "feature_dim": FEATURE_DIM,
+        "fill_value": GLOBAL_FILL_VALUE,
+        "encoder_checkpoint_sha256": CHEMELEON_SHA256,
+        "implementation_sha256": _module_sha256(),
+        "packages": pkgs,
+        "source_csv_sha256": source_sha256,
+        "n_rows": len(rows),
+        "row_identity_sha256": row_identity_sha256(rows),
+    }
+
+
+def cache_paths(cache_root: Path, task: str, split: str):
+    d = cache_root / task
+    return (d / f"raw_{split}.npy", d / f"mask_{split}.npy",
+            d / f"raw_{split}.meta.json")
+
+
+def build_raw_cache(embedder, task: str, split: str, rows: Sequence[Mapping[str, str]],
+                    source_sha256: str, cache_root: Path,
+                    contract: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Encode every row of one split (deduplicating identical SMILES strings within
+    the split, broadcasting back to each original row index) and persist the cache.
+
+    Returns the identity record. Caller must supply rows already loaded unchanged.
+    """
+    import numpy as np
+
+    smiles = [r["Drug"] for r in rows]
+    uniq = list(dict.fromkeys(smiles))
+    u_emb, u_ok = embedder.embed(uniq)
+    pos = {s: i for i, s in enumerate(uniq)}
+    take = np.asarray([pos[s] for s in smiles], dtype=np.int64)
+    emb, ok = u_emb[take], u_ok[take]
+    if emb.shape != (len(rows), embedder.feature_dim):
+        raise InterfaceError(f"{task}/{split}: unexpected embedding shape {emb.shape}")
+    if embedder.feature_dim != FEATURE_DIM or ok.shape != (len(rows),) or ok.dtype != np.bool_:
+        raise InterfaceError("encoder dimension/parse mask does not match cache contract")
+    if not np.isfinite(emb[ok]).all():
+        raise InterfaceError("non-finite output on a parsed row must not be zero-filled")
+    filled = np.asarray(emb, dtype=np.float32).copy()
+    filled[~ok] = np.float32(GLOBAL_FILL_VALUE)
+    arr_p, mask_p, meta_p = cache_paths(cache_root, task, split)
+    arr_p.parent.mkdir(parents=True, exist_ok=True)
+    np.save(arr_p, np.ascontiguousarray(filled))
+    np.save(mask_p, ok)
+    contract = contract or cache_contract(task, split, source_sha256, rows)
+    meta = {
+        "contract": contract,
+        "files": {"arr": sha256_file(arr_p), "mask": sha256_file(mask_p)},
+        "identity": {
+            "features": array_digest(filled),
+            "parse_mask": array_digest(ok),
+            "parsed_true_count": int(ok.sum()),
+            "unparsed_row_indices": [int(i) for i in np.nonzero(~ok)[0]],
+        },
+    }
+    write_json(meta_p, meta)
+    load_raw_cache(cache_root, task, split, rows, source_sha256)
+    return meta
+
+
+def load_raw_cache(cache_root: Path, task: str, split: str,
+                   rows: Sequence[Mapping[str, str]], source_sha256: str):
+    """Validate-and-load a raw cache entry against live input identity.
+
+    Raises InterfaceError on any contract/row-order/content mismatch; never falls
+    back to silent acceptance.
+    """
+    import numpy as np
+
+    arr_p, mask_p, meta_p = cache_paths(Path(cache_root), task, split)
+    for p in (arr_p, mask_p, meta_p):
+        if not p.is_file():
+            raise InterfaceError(f"cache missing: {p}")
+    meta = json.loads(meta_p.read_text(encoding="utf-8"))
+    expected_contract = cache_contract(task, split, source_sha256, rows)
+    if meta["contract"] != expected_contract:
+        diff = sorted(k for k in expected_contract
+                      if meta["contract"].get(k) != expected_contract[k])
+        raise InterfaceError(f"stale/corrupt cache contract for {task}/{split}: {diff}")
+    if meta["files"]["arr"] != sha256_file(arr_p) or meta["files"]["mask"] != sha256_file(mask_p):
+        raise InterfaceError(f"cache file digest mismatch for {task}/{split}")
+    X = np.load(arr_p, allow_pickle=False)
+    ok = np.load(mask_p, allow_pickle=False)
+    if X.shape != (len(rows), FEATURE_DIM) or str(X.dtype) != "float32":
+        raise InterfaceError(f"cache array shape/dtype invalid: {X.shape} {X.dtype}")
+    if ok.shape != (len(rows),) or ok.dtype != np.bool_:
+        raise InterfaceError(f"cache mask shape/dtype invalid: {ok.shape} {ok.dtype}")
+    if array_digest(X)["sha256"] != meta["identity"]["features"]["sha256"]:
+        raise InterfaceError(f"cache content digest mismatch (reordered/tampered?): {task}/{split}")
+    if not np.isfinite(X).all():
+        raise InterfaceError(f"cache contains non-finite values: {task}/{split}")
+    if int(ok.sum()) != meta["identity"]["parsed_true_count"]:
+        raise InterfaceError(f"parse mask population changed: {task}/{split}")
+    if (array_digest(ok) != meta["identity"]["parse_mask"]
+            or list(np.nonzero(~ok)[0]) != meta["identity"]["unparsed_row_indices"]
+            or not (X[~ok] == GLOBAL_FILL_VALUE).all()):
+        raise InterfaceError("parse mask/zero-fill identity mismatch")
+    return X, ok
+
+
+@dataclass
+class FeatureScaler:
+    """Fit-only feature standardization with explicit fit-partition identity."""
+
+    mean: Any            # np.ndarray float32 [d]
+    std: Any             # np.ndarray float32 [d]
+    fit_partition: str   # always "official_train.fit_subset"
+    fit_row_indices_sha256: str
+    fit_n_rows: int
+    epsilon: float = 1e-8
+
+    def apply(self, X):
+        import numpy as np
+        A = np.asarray(X, dtype=np.float32)
+        if A.ndim != 2 or A.shape[1] != self.mean.shape[0]:
+            raise InterfaceError(f"scaler.apply shape invalid: {A.shape}")
+        if not np.isfinite(A).all():
+            raise InterfaceError("scaler.apply received non-finite raw features; "
+                                 "fill unparseable rows first (fill_raw)")
+        return ((A - self.mean) / self.std).astype(np.float32)
+
+    def to_dict(self) -> dict[str, Any]:
+        import numpy as np
+        return {
+            "kind": "feature_standardize_fit_only",
+            "fit_partition": self.fit_partition,
+            "fit_row_indices_sha256": self.fit_row_indices_sha256,
+            "fit_n_rows": self.fit_n_rows,
+            "epsilon": self.epsilon,
+            "mean": np.asarray(self.mean).tolist(),
+            "std": np.asarray(self.std).tolist(),
+        }
+
+    @staticmethod
+    def from_dict(d: Mapping[str, Any]) -> "FeatureScaler":
+        import numpy as np
+        if d.get("kind") != "feature_standardize_fit_only":
+            raise InterfaceError("unknown scaler kind")
+        return FeatureScaler(
+            mean=np.asarray(d["mean"], dtype=np.float32),
+            std=np.asarray(d["std"], dtype=np.float32),
+            fit_partition=d["fit_partition"],
+            fit_row_indices_sha256=d["fit_row_indices_sha256"],
+            fit_n_rows=int(d["fit_n_rows"]),
+            epsilon=float(d["epsilon"]),
+        )
+
+
+def fill_raw(X):
+    """Accept already filled, validated raw cache; never hide corrupt finite rows."""
+    import numpy as np
+    A = np.asarray(X, dtype=np.float32)
+    if not np.isfinite(A).all():
+        raise InterfaceError("raw cache must be finite; parse-mask fill occurs at encoding")
+    return A
+
+
+def fit_feature_scaler(X_filled_fit, fit_row_indices: Sequence[int]) -> FeatureScaler:
+    """Standardize columns using ONLY the given fit-partition rows of official train."""
+    import numpy as np
+    A = np.asarray(X_filled_fit, dtype=np.float32)
+    if A.ndim != 2 or A.shape[0] == 0:
+        raise InterfaceError("fit_feature_scaler needs a non-empty 2-D fit matrix")
+    if len(fit_row_indices) != len(A) or len(set(fit_row_indices)) != len(A):
+        raise InterfaceError("fit matrix rows must match distinct fit row indices")
+    if not np.isfinite(A).all():
+        raise InterfaceError("fit matrix has non-finite values; fill before fitting")
+    mu = A.mean(axis=0)
+    sd = A.std(axis=0)
+    eps = 1e-8
+    sd = np.where(sd < eps, 1.0, sd)
+    return FeatureScaler(
+        mean=mu.astype(np.float32), std=sd.astype(np.float32),
+        fit_partition="official_train.fit_subset",
+        fit_row_indices_sha256=sha256_hex(canonical_json_bytes(sorted(fit_row_indices))),
+        fit_n_rows=A.shape[0], epsilon=eps,
+    )
+
+
+@dataclass
+class TargetScaler:
+    """Regression-target standardization fitted on the fit partition only."""
+
+    mean: float
+    std: float
+
+    def transform(self, y):
+        import numpy as np
+        return (np.asarray(y, dtype=np.float64) - self.mean) / self.std
+
+    def transform_f32(self, y):
+        """float32 view for feeding torch training space (loss/MSE in float32)."""
+        import numpy as np
+        return self.transform(y).astype(np.float32)
+
+    def inverse(self, z):
+        import numpy as np
+        return np.asarray(z, dtype=np.float64) * self.std + self.mean
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"kind": "target_standardize_fit_only", "mean": float(self.mean),
+                "std": float(self.std)}
+
+    @staticmethod
+    def from_dict(d: Mapping[str, Any]) -> "TargetScaler":
+        if d.get("kind") != "target_standardize_fit_only":
+            raise InterfaceError("unknown target scaler kind")
+        mean, std = float(d["mean"]), float(d["std"])
+        import math
+        if not math.isfinite(mean) or not math.isfinite(std) or std <= 0:
+            raise InterfaceError("invalid target std")
+        return TargetScaler(mean=mean, std=std)
+
+
+def fit_target_scaler(y_fit) -> TargetScaler:
+    import numpy as np
+    y = np.asarray(y_fit, dtype=np.float64)
+    if y.size == 0 or not np.isfinite(y).all():
+        raise InterfaceError("fit targets must be non-empty and finite")
+    std = float(y.std())
+    return TargetScaler(mean=float(y.mean()), std=(std if std > 0 else 1.0))

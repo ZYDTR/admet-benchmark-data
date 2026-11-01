@@ -1,0 +1,4634 @@
+[
+  {
+    "proposal_id": "R001-lipophilicity_astrazeneca-H0",
+    "task": "lipophilicity_astrazeneca",
+    "config_tag": "H0",
+    "split_id": "lipophilicity_astrazeneca__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 44,
+    "config_sha256": "db749af27e8677fc49a8645e45fd4db0a6c925d5f07d3b08d2ed5db0f28a20fe",
+    "unique_fit_key_sha256": "b8d4f25041f21fe12502eb01bbb76a98dc4ba45d6148996306fb2c3cbf7ab935",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "lipophilicity_astrazeneca",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "lipophilicity_astrazeneca",
+          "role_selector": "train",
+          "rows": 2940,
+          "per_file_sha256": "0049aa6d5b56d2f8c22e475b11b837ebfa86536d0c8ede06d432e854fb9d83d3",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 420,
+          "sha256": "ca5a5375aefc37693f3b3aa56171ddba8b0cd6fb7fe6899ecfd2e61a422b5190",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 840,
+          "sha256": "d768c259d5e8222b5a9dd29bcfccb5cc46560b190a4ec66b1ca4bf1a4ff59568",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "lipophilicity_astrazeneca__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.1,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 44
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "MAE",
+        "definition": "mean absolute error on original Y",
+        "direction": "minimize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "MAE",
+        "external_direction": "minimize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  },
+  {
+    "proposal_id": "R001-lipophilicity_astrazeneca-H0",
+    "task": "lipophilicity_astrazeneca",
+    "config_tag": "H0",
+    "split_id": "lipophilicity_astrazeneca__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 45,
+    "config_sha256": "9fa3c17715f4121b892272990b184e9fb81feb3236a949007af041e34d87def4",
+    "unique_fit_key_sha256": "087890bcea25bbd4412b5e0a3f954d6052a8f992ac8dae3fde555e05f0f79b80",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "lipophilicity_astrazeneca",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "lipophilicity_astrazeneca",
+          "role_selector": "train",
+          "rows": 2940,
+          "per_file_sha256": "0049aa6d5b56d2f8c22e475b11b837ebfa86536d0c8ede06d432e854fb9d83d3",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 420,
+          "sha256": "ca5a5375aefc37693f3b3aa56171ddba8b0cd6fb7fe6899ecfd2e61a422b5190",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 840,
+          "sha256": "d768c259d5e8222b5a9dd29bcfccb5cc46560b190a4ec66b1ca4bf1a4ff59568",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "lipophilicity_astrazeneca__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.1,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 45
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "MAE",
+        "definition": "mean absolute error on original Y",
+        "direction": "minimize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "MAE",
+        "external_direction": "minimize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  },
+  {
+    "proposal_id": "R001-lipophilicity_astrazeneca-H1",
+    "task": "lipophilicity_astrazeneca",
+    "config_tag": "H1",
+    "split_id": "lipophilicity_astrazeneca__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 44,
+    "config_sha256": "e7858e3fcd3df8b90f04129de1cf9031d3814a6f2cb93eeb23d57035fea0bf04",
+    "unique_fit_key_sha256": "770012872a132463b31028ef9904b98d362665005cc742bc8f7b57b1ed765664",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "lipophilicity_astrazeneca",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "lipophilicity_astrazeneca",
+          "role_selector": "train",
+          "rows": 2940,
+          "per_file_sha256": "0049aa6d5b56d2f8c22e475b11b837ebfa86536d0c8ede06d432e854fb9d83d3",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 420,
+          "sha256": "ca5a5375aefc37693f3b3aa56171ddba8b0cd6fb7fe6899ecfd2e61a422b5190",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 840,
+          "sha256": "d768c259d5e8222b5a9dd29bcfccb5cc46560b190a4ec66b1ca4bf1a4ff59568",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "lipophilicity_astrazeneca__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.3,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 44
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "MAE",
+        "definition": "mean absolute error on original Y",
+        "direction": "minimize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "MAE",
+        "external_direction": "minimize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  },
+  {
+    "proposal_id": "R001-lipophilicity_astrazeneca-H1",
+    "task": "lipophilicity_astrazeneca",
+    "config_tag": "H1",
+    "split_id": "lipophilicity_astrazeneca__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 45,
+    "config_sha256": "a8a20c06b5281a006e6c89a25b144176fc8f761bfb625dc28636dce9d0437ff4",
+    "unique_fit_key_sha256": "4752b014e8c866868d09aaea9b4e1cb9199105bfdc0eb0900b4c434f154cf66d",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "lipophilicity_astrazeneca",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "lipophilicity_astrazeneca",
+          "role_selector": "train",
+          "rows": 2940,
+          "per_file_sha256": "0049aa6d5b56d2f8c22e475b11b837ebfa86536d0c8ede06d432e854fb9d83d3",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 420,
+          "sha256": "ca5a5375aefc37693f3b3aa56171ddba8b0cd6fb7fe6899ecfd2e61a422b5190",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 840,
+          "sha256": "d768c259d5e8222b5a9dd29bcfccb5cc46560b190a4ec66b1ca4bf1a4ff59568",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "lipophilicity_astrazeneca__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.3,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 45
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "MAE",
+        "definition": "mean absolute error on original Y",
+        "direction": "minimize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "MAE",
+        "external_direction": "minimize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  },
+  {
+    "proposal_id": "R001-bbb_martins-H0",
+    "task": "bbb_martins",
+    "config_tag": "H0",
+    "split_id": "bbb_martins__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 44,
+    "config_sha256": "e0e146170ebac0eb0f0465533520ce45353f84bbd3abc9ea7604ec362af0cb97",
+    "unique_fit_key_sha256": "c544d486aea3a9ecbd805463d8a276d8745c8c632f91a5b1001ca3a07db53e26",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "bbb_martins",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "bbb_martins",
+          "role_selector": "train",
+          "rows": 1421,
+          "per_file_sha256": "b3223c2fa0fff26ab990b4dbafbbe435a8ceb6114d76488bc3be27a68dfe23b9",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 203,
+          "sha256": "d1c0d3a7bf02e124c67dd3baba4cae8f9b7cacd2039cb215fcdbee99fa79c1bb",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 406,
+          "sha256": "19deb430b339574eec9f0b9e04acca64adc2c3979bf200634bb03cbbeda99ef5",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "bbb_martins__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "binary_classification",
+        "positive_label": 1,
+        "transform": "none",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": false,
+        "prediction_scale": "sigmoid(logit) continuous P(Y=1), no threshold, no target scaling",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.1,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "BCEWithLogitsLoss",
+        "target_scale": "binary_0_1",
+        "reduction": "mean",
+        "pos_weight": 1.0,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 44
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "sigmoid of finite logits cast to float64; same probabilities as export, no threshold or clipping",
+        "metric": "AUROC",
+        "definition": "continuous-score ROC AUC with averaged tied ranks",
+        "direction": "maximize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "AUROC",
+        "external_direction": "maximize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  },
+  {
+    "proposal_id": "R001-bbb_martins-H0",
+    "task": "bbb_martins",
+    "config_tag": "H0",
+    "split_id": "bbb_martins__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 45,
+    "config_sha256": "2ecba41b8ffd299324bff1c501b9894e98eb40b37b55886a4c20e17db5970404",
+    "unique_fit_key_sha256": "07a5c83ee8a8b4540ea1610574092f01d66abf770d1f77d3d6cb234afc02f046",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "bbb_martins",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "bbb_martins",
+          "role_selector": "train",
+          "rows": 1421,
+          "per_file_sha256": "b3223c2fa0fff26ab990b4dbafbbe435a8ceb6114d76488bc3be27a68dfe23b9",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 203,
+          "sha256": "d1c0d3a7bf02e124c67dd3baba4cae8f9b7cacd2039cb215fcdbee99fa79c1bb",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 406,
+          "sha256": "19deb430b339574eec9f0b9e04acca64adc2c3979bf200634bb03cbbeda99ef5",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "bbb_martins__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "binary_classification",
+        "positive_label": 1,
+        "transform": "none",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": false,
+        "prediction_scale": "sigmoid(logit) continuous P(Y=1), no threshold, no target scaling",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.1,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "BCEWithLogitsLoss",
+        "target_scale": "binary_0_1",
+        "reduction": "mean",
+        "pos_weight": 1.0,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 45
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "sigmoid of finite logits cast to float64; same probabilities as export, no threshold or clipping",
+        "metric": "AUROC",
+        "definition": "continuous-score ROC AUC with averaged tied ranks",
+        "direction": "maximize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "AUROC",
+        "external_direction": "maximize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  },
+  {
+    "proposal_id": "R001-bbb_martins-H1",
+    "task": "bbb_martins",
+    "config_tag": "H1",
+    "split_id": "bbb_martins__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 44,
+    "config_sha256": "20e905e0c20149ee528b71710439c076f80913ef8cfc772e90c918025716456a",
+    "unique_fit_key_sha256": "d50a21cb5a7e83969c6e0cfaabaa58a10d7846b444190fb8b0c2896081af12c1",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "bbb_martins",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "bbb_martins",
+          "role_selector": "train",
+          "rows": 1421,
+          "per_file_sha256": "b3223c2fa0fff26ab990b4dbafbbe435a8ceb6114d76488bc3be27a68dfe23b9",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 203,
+          "sha256": "d1c0d3a7bf02e124c67dd3baba4cae8f9b7cacd2039cb215fcdbee99fa79c1bb",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 406,
+          "sha256": "19deb430b339574eec9f0b9e04acca64adc2c3979bf200634bb03cbbeda99ef5",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "bbb_martins__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "binary_classification",
+        "positive_label": 1,
+        "transform": "none",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": false,
+        "prediction_scale": "sigmoid(logit) continuous P(Y=1), no threshold, no target scaling",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.3,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "BCEWithLogitsLoss",
+        "target_scale": "binary_0_1",
+        "reduction": "mean",
+        "pos_weight": 1.0,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 44
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "sigmoid of finite logits cast to float64; same probabilities as export, no threshold or clipping",
+        "metric": "AUROC",
+        "definition": "continuous-score ROC AUC with averaged tied ranks",
+        "direction": "maximize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "AUROC",
+        "external_direction": "maximize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  },
+  {
+    "proposal_id": "R001-bbb_martins-H1",
+    "task": "bbb_martins",
+    "config_tag": "H1",
+    "split_id": "bbb_martins__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 45,
+    "config_sha256": "71a0a93e0991c94dc5760093bbe811c98b0b14b2061c068d98767781e8b4d4a3",
+    "unique_fit_key_sha256": "3910b9caae5b6c27a24cf3b62ed8ba532703a7e22fe6872ab4305ea5940623a4",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "bbb_martins",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "bbb_martins",
+          "role_selector": "train",
+          "rows": 1421,
+          "per_file_sha256": "b3223c2fa0fff26ab990b4dbafbbe435a8ceb6114d76488bc3be27a68dfe23b9",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 203,
+          "sha256": "d1c0d3a7bf02e124c67dd3baba4cae8f9b7cacd2039cb215fcdbee99fa79c1bb",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 406,
+          "sha256": "19deb430b339574eec9f0b9e04acca64adc2c3979bf200634bb03cbbeda99ef5",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "bbb_martins__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "binary_classification",
+        "positive_label": 1,
+        "transform": "none",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": false,
+        "prediction_scale": "sigmoid(logit) continuous P(Y=1), no threshold, no target scaling",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.3,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "BCEWithLogitsLoss",
+        "target_scale": "binary_0_1",
+        "reduction": "mean",
+        "pos_weight": 1.0,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 45
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "sigmoid of finite logits cast to float64; same probabilities as export, no threshold or clipping",
+        "metric": "AUROC",
+        "definition": "continuous-score ROC AUC with averaged tied ranks",
+        "direction": "maximize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "AUROC",
+        "external_direction": "maximize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  },
+  {
+    "proposal_id": "R001-cyp2d6_veith-H0",
+    "task": "cyp2d6_veith",
+    "config_tag": "H0",
+    "split_id": "cyp2d6_veith__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 44,
+    "config_sha256": "ed2d479bd1d3a7e405effa6f8b7b3f48af633b6faa0459011843040e93949611",
+    "unique_fit_key_sha256": "2210daa2266937012d000324a23be0e1ef95a84b3daa877c18b89e0d1824ecb1",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "cyp2d6_veith",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "cyp2d6_veith",
+          "role_selector": "train",
+          "rows": 9191,
+          "per_file_sha256": "f9ddcf3ef3bfda8ec7ccfc3f3882296f3562861df01a28432560781bc9eaa1d6",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 1313,
+          "sha256": "8a8f539ba9648d5cbeafa133853f4dffa4526b08a277133b86014bde00949e6d",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 2626,
+          "sha256": "45e6e276b45169003f4e73c795fa4ea059780cfce04c1d06fdb1852b8849dccc",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "cyp2d6_veith__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "binary_classification",
+        "positive_label": 1,
+        "transform": "none",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": false,
+        "prediction_scale": "sigmoid(logit) continuous P(Y=1), no threshold, no target scaling",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.1,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "BCEWithLogitsLoss",
+        "target_scale": "binary_0_1",
+        "reduction": "mean",
+        "pos_weight": 1.0,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 44
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "sigmoid of finite logits cast to float64; same probabilities as export, no threshold or clipping",
+        "metric": "AP",
+        "definition": "average precision over grouped identical scores, no trapezoidal PR interpolation",
+        "direction": "maximize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "AUPRC",
+        "external_direction": "maximize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  },
+  {
+    "proposal_id": "R001-cyp2d6_veith-H0",
+    "task": "cyp2d6_veith",
+    "config_tag": "H0",
+    "split_id": "cyp2d6_veith__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 45,
+    "config_sha256": "5d998a9d01597d8403a7a957fd5be444567241e3568975a8ab28af51eb20964b",
+    "unique_fit_key_sha256": "29d4c6c9a6871a30a1003320c1374a8714e1471604f4879151c1a8276f8ab0d9",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "cyp2d6_veith",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "cyp2d6_veith",
+          "role_selector": "train",
+          "rows": 9191,
+          "per_file_sha256": "f9ddcf3ef3bfda8ec7ccfc3f3882296f3562861df01a28432560781bc9eaa1d6",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 1313,
+          "sha256": "8a8f539ba9648d5cbeafa133853f4dffa4526b08a277133b86014bde00949e6d",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 2626,
+          "sha256": "45e6e276b45169003f4e73c795fa4ea059780cfce04c1d06fdb1852b8849dccc",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "cyp2d6_veith__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "binary_classification",
+        "positive_label": 1,
+        "transform": "none",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": false,
+        "prediction_scale": "sigmoid(logit) continuous P(Y=1), no threshold, no target scaling",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.1,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "BCEWithLogitsLoss",
+        "target_scale": "binary_0_1",
+        "reduction": "mean",
+        "pos_weight": 1.0,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 45
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "sigmoid of finite logits cast to float64; same probabilities as export, no threshold or clipping",
+        "metric": "AP",
+        "definition": "average precision over grouped identical scores, no trapezoidal PR interpolation",
+        "direction": "maximize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "AUPRC",
+        "external_direction": "maximize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  },
+  {
+    "proposal_id": "R001-cyp2d6_veith-H1",
+    "task": "cyp2d6_veith",
+    "config_tag": "H1",
+    "split_id": "cyp2d6_veith__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 44,
+    "config_sha256": "2a809136d88189144992e22d1dd35d2721e2e0a4773028b781a8d921231eecf8",
+    "unique_fit_key_sha256": "146fcc6b7bbc387a501401c15521743753b9001b34d07abf5d114a21d2b6e679",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "cyp2d6_veith",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "cyp2d6_veith",
+          "role_selector": "train",
+          "rows": 9191,
+          "per_file_sha256": "f9ddcf3ef3bfda8ec7ccfc3f3882296f3562861df01a28432560781bc9eaa1d6",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 1313,
+          "sha256": "8a8f539ba9648d5cbeafa133853f4dffa4526b08a277133b86014bde00949e6d",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 2626,
+          "sha256": "45e6e276b45169003f4e73c795fa4ea059780cfce04c1d06fdb1852b8849dccc",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "cyp2d6_veith__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "binary_classification",
+        "positive_label": 1,
+        "transform": "none",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": false,
+        "prediction_scale": "sigmoid(logit) continuous P(Y=1), no threshold, no target scaling",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.3,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "BCEWithLogitsLoss",
+        "target_scale": "binary_0_1",
+        "reduction": "mean",
+        "pos_weight": 1.0,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 44
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "sigmoid of finite logits cast to float64; same probabilities as export, no threshold or clipping",
+        "metric": "AP",
+        "definition": "average precision over grouped identical scores, no trapezoidal PR interpolation",
+        "direction": "maximize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "AUPRC",
+        "external_direction": "maximize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  },
+  {
+    "proposal_id": "R001-cyp2d6_veith-H1",
+    "task": "cyp2d6_veith",
+    "config_tag": "H1",
+    "split_id": "cyp2d6_veith__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 45,
+    "config_sha256": "52f183684a92f5fe7fa2d12650a1197a4c64791e407b25b84b0360a30d64acb3",
+    "unique_fit_key_sha256": "bfaf1f0b65d0d2147eb6024b146d184d14082faca8bb4a94465263375ddcc051",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "cyp2d6_veith",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "cyp2d6_veith",
+          "role_selector": "train",
+          "rows": 9191,
+          "per_file_sha256": "f9ddcf3ef3bfda8ec7ccfc3f3882296f3562861df01a28432560781bc9eaa1d6",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 1313,
+          "sha256": "8a8f539ba9648d5cbeafa133853f4dffa4526b08a277133b86014bde00949e6d",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 2626,
+          "sha256": "45e6e276b45169003f4e73c795fa4ea059780cfce04c1d06fdb1852b8849dccc",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "cyp2d6_veith__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "binary_classification",
+        "positive_label": 1,
+        "transform": "none",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": false,
+        "prediction_scale": "sigmoid(logit) continuous P(Y=1), no threshold, no target scaling",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.3,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "BCEWithLogitsLoss",
+        "target_scale": "binary_0_1",
+        "reduction": "mean",
+        "pos_weight": 1.0,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 45
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "sigmoid of finite logits cast to float64; same probabilities as export, no threshold or clipping",
+        "metric": "AP",
+        "definition": "average precision over grouped identical scores, no trapezoidal PR interpolation",
+        "direction": "maximize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "AUPRC",
+        "external_direction": "maximize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  },
+  {
+    "proposal_id": "R001-clearance_hepatocyte_az-H0",
+    "task": "clearance_hepatocyte_az",
+    "config_tag": "H0",
+    "split_id": "clearance_hepatocyte_az__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 44,
+    "config_sha256": "81e0972c025cd7d1483ffe66a6abbcd77500df2b721d17893886de0c570d939c",
+    "unique_fit_key_sha256": "caacb769e002bce7189484939c7d244a6a672ba403bfbc10736feda4c87799d9",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "clearance_hepatocyte_az",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "clearance_hepatocyte_az",
+          "role_selector": "train",
+          "rows": 848,
+          "per_file_sha256": "5075b6a07d08d50c22a3a434e4708eb34b2d310b612a0a1c523bd153c11ba1f0",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 122,
+          "sha256": "c5d813115fa6ca174dcc55fefbac8924bc6ee865e254cd167929eda493a7aea8",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 243,
+          "sha256": "104ed6e16c206737f97c2e814ae36aa8acce459d94d39df78bbc07eb0ac2ef90",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "clearance_hepatocyte_az__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.1,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 44
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "Spearman",
+        "definition": "Pearson correlation of average tied ranks",
+        "direction": "maximize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "Spearman",
+        "external_direction": "maximize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  },
+  {
+    "proposal_id": "R001-clearance_hepatocyte_az-H0",
+    "task": "clearance_hepatocyte_az",
+    "config_tag": "H0",
+    "split_id": "clearance_hepatocyte_az__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 45,
+    "config_sha256": "07650f00b8b811ac66168ecc85095244628f2026c11b58ce1c74f6c3e1578b61",
+    "unique_fit_key_sha256": "a788d2e5134d2d4dd03d136742b5fa4590c2ad57850e1a0c1bb3665e4a051b89",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "clearance_hepatocyte_az",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "clearance_hepatocyte_az",
+          "role_selector": "train",
+          "rows": 848,
+          "per_file_sha256": "5075b6a07d08d50c22a3a434e4708eb34b2d310b612a0a1c523bd153c11ba1f0",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 122,
+          "sha256": "c5d813115fa6ca174dcc55fefbac8924bc6ee865e254cd167929eda493a7aea8",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 243,
+          "sha256": "104ed6e16c206737f97c2e814ae36aa8acce459d94d39df78bbc07eb0ac2ef90",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "clearance_hepatocyte_az__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.1,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 45
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "Spearman",
+        "definition": "Pearson correlation of average tied ranks",
+        "direction": "maximize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "Spearman",
+        "external_direction": "maximize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  },
+  {
+    "proposal_id": "R001-clearance_hepatocyte_az-H1",
+    "task": "clearance_hepatocyte_az",
+    "config_tag": "H1",
+    "split_id": "clearance_hepatocyte_az__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 44,
+    "config_sha256": "06f8ec31d92cbfb3be2a538db5cdd56189ff1246519d91c247b4346af5f66520",
+    "unique_fit_key_sha256": "bc454b5fd9c6ce635beab82bfb7179ba53b3f20223f01826b7565ce05bd14767",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "clearance_hepatocyte_az",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "clearance_hepatocyte_az",
+          "role_selector": "train",
+          "rows": 848,
+          "per_file_sha256": "5075b6a07d08d50c22a3a434e4708eb34b2d310b612a0a1c523bd153c11ba1f0",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 122,
+          "sha256": "c5d813115fa6ca174dcc55fefbac8924bc6ee865e254cd167929eda493a7aea8",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 243,
+          "sha256": "104ed6e16c206737f97c2e814ae36aa8acce459d94d39df78bbc07eb0ac2ef90",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "clearance_hepatocyte_az__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.3,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 44
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "Spearman",
+        "definition": "Pearson correlation of average tied ranks",
+        "direction": "maximize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "Spearman",
+        "external_direction": "maximize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  },
+  {
+    "proposal_id": "R001-clearance_hepatocyte_az-H1",
+    "task": "clearance_hepatocyte_az",
+    "config_tag": "H1",
+    "split_id": "clearance_hepatocyte_az__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 45,
+    "config_sha256": "fd3fbc0fafe3f25f0e5ee9e3e3cad2135746a04d47339d53b1ce95b735c33329",
+    "unique_fit_key_sha256": "682153ebd2bb82044d4c7b5be82b3380bb0172fd64074cfdaf0577fb987f0678",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "clearance_hepatocyte_az",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "clearance_hepatocyte_az",
+          "role_selector": "train",
+          "rows": 848,
+          "per_file_sha256": "5075b6a07d08d50c22a3a434e4708eb34b2d310b612a0a1c523bd153c11ba1f0",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 122,
+          "sha256": "c5d813115fa6ca174dcc55fefbac8924bc6ee865e254cd167929eda493a7aea8",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 243,
+          "sha256": "104ed6e16c206737f97c2e814ae36aa8acce459d94d39df78bbc07eb0ac2ef90",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "clearance_hepatocyte_az__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.3,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 45
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "Spearman",
+        "definition": "Pearson correlation of average tied ranks",
+        "direction": "maximize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "Spearman",
+        "external_direction": "maximize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  },
+  {
+    "proposal_id": "R001-ld50_zhu-H0",
+    "task": "ld50_zhu",
+    "config_tag": "H0",
+    "split_id": "ld50_zhu__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 44,
+    "config_sha256": "944407ce20d20b15e422d73ddfeccea8ff3b0bed958430e70509a6f71c5d35f1",
+    "unique_fit_key_sha256": "cf497b2315a56bd68b31dcee33eac9c4c1f2f4dcf64fb3cdb2480a2a610db224",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "ld50_zhu",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "ld50_zhu",
+          "role_selector": "train",
+          "rows": 3970,
+          "per_file_sha256": "749c76c38fdf4fb147f8fa5ae4dfa247cca26b152461a1e52234bca441626daa",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 1937,
+          "sha256": "814330b9411c74632916423faeaf5534cc2507a0c569240b971f883eb9043800",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 1478,
+          "sha256": "ddf437d076faebad8fb5e74a85379643f3e05824fa5a8aeaf37f725edf8cad5d",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "ld50_zhu__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.1,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 44
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "MAE",
+        "definition": "mean absolute error on original Y",
+        "direction": "minimize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "MAE",
+        "external_direction": "minimize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  },
+  {
+    "proposal_id": "R001-ld50_zhu-H0",
+    "task": "ld50_zhu",
+    "config_tag": "H0",
+    "split_id": "ld50_zhu__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 45,
+    "config_sha256": "eaafe07a248ddc5e01bb8a92de63cd9728a2bebebde7d3a87b44b19e6ce5b455",
+    "unique_fit_key_sha256": "325ebccdd7a589e49caedaac59119916df64dd453b425995b55fe9f40d5e472d",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "ld50_zhu",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "ld50_zhu",
+          "role_selector": "train",
+          "rows": 3970,
+          "per_file_sha256": "749c76c38fdf4fb147f8fa5ae4dfa247cca26b152461a1e52234bca441626daa",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 1937,
+          "sha256": "814330b9411c74632916423faeaf5534cc2507a0c569240b971f883eb9043800",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 1478,
+          "sha256": "ddf437d076faebad8fb5e74a85379643f3e05824fa5a8aeaf37f725edf8cad5d",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "ld50_zhu__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.1,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 45
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "MAE",
+        "definition": "mean absolute error on original Y",
+        "direction": "minimize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "MAE",
+        "external_direction": "minimize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  },
+  {
+    "proposal_id": "R001-ld50_zhu-H1",
+    "task": "ld50_zhu",
+    "config_tag": "H1",
+    "split_id": "ld50_zhu__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 44,
+    "config_sha256": "72753afc575e158cdc37d86649473596cebc6e922333eda07ba808ba73aad4f8",
+    "unique_fit_key_sha256": "4a553c4dbf8dc96065b2c5e16cfb5a763fbe9256cf0cc41c08a1683548854a40",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "ld50_zhu",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "ld50_zhu",
+          "role_selector": "train",
+          "rows": 3970,
+          "per_file_sha256": "749c76c38fdf4fb147f8fa5ae4dfa247cca26b152461a1e52234bca441626daa",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 1937,
+          "sha256": "814330b9411c74632916423faeaf5534cc2507a0c569240b971f883eb9043800",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 1478,
+          "sha256": "ddf437d076faebad8fb5e74a85379643f3e05824fa5a8aeaf37f725edf8cad5d",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "ld50_zhu__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.3,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 44
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "MAE",
+        "definition": "mean absolute error on original Y",
+        "direction": "minimize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "MAE",
+        "external_direction": "minimize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  },
+  {
+    "proposal_id": "R001-ld50_zhu-H1",
+    "task": "ld50_zhu",
+    "config_tag": "H1",
+    "split_id": "ld50_zhu__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 45,
+    "config_sha256": "77785b8235e1e35e135176f98316f2f43fe3f45b7608f39a82287d3bbd0bb92a",
+    "unique_fit_key_sha256": "313245771ea1d6f79b7f28c100ce770bfb7788202724eb3efbe2008abe929308",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "ld50_zhu",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "ld50_zhu",
+          "role_selector": "train",
+          "rows": 3970,
+          "per_file_sha256": "749c76c38fdf4fb147f8fa5ae4dfa247cca26b152461a1e52234bca441626daa",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 1937,
+          "sha256": "814330b9411c74632916423faeaf5534cc2507a0c569240b971f883eb9043800",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 1478,
+          "sha256": "ddf437d076faebad8fb5e74a85379643f3e05824fa5a8aeaf37f725edf8cad5d",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "ld50_zhu__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.3,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 45
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "MAE",
+        "definition": "mean absolute error on original Y",
+        "direction": "minimize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "MAE",
+        "external_direction": "minimize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  },
+  {
+    "proposal_id": "R001-solubility_aqsoldb-H0",
+    "task": "solubility_aqsoldb",
+    "config_tag": "H0",
+    "split_id": "solubility_aqsoldb__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 44,
+    "config_sha256": "faf66667f0015eca9152b63c188deb4b6d4078a3aaf9451d1b0b7197e87f1ae9",
+    "unique_fit_key_sha256": "cbc46e52076d0b2bfc3573025e1f63973fe80bf765a0b4001095e85f9985c0ed",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "solubility_aqsoldb",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "solubility_aqsoldb",
+          "role_selector": "train",
+          "rows": 5045,
+          "per_file_sha256": "744ee3d69e3f0d9230894a62a95bc64ea15b2d6d44f1a5fb890c5c3260ce89c2",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 2940,
+          "sha256": "3ced20ec95adf2e8250f0be25a945d611f828f599569799bfabd0718c258fcf6",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 1997,
+          "sha256": "ad5814c7b77ff79de9c99b97d667ab8762e78933a4f0147030c6615d3111ce90",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "solubility_aqsoldb__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.1,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 44
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "MAE",
+        "definition": "mean absolute error on original Y",
+        "direction": "minimize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "MAE",
+        "external_direction": "minimize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  },
+  {
+    "proposal_id": "R001-solubility_aqsoldb-H0",
+    "task": "solubility_aqsoldb",
+    "config_tag": "H0",
+    "split_id": "solubility_aqsoldb__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 45,
+    "config_sha256": "173d1047b8bd5835a35eba145f25bc474f7a24253a34e86e774b4906ab65ccb0",
+    "unique_fit_key_sha256": "182d63f384674bda82800fd0957dd3e644a110d8fb6c1c141c63926663e07a7c",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "solubility_aqsoldb",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "solubility_aqsoldb",
+          "role_selector": "train",
+          "rows": 5045,
+          "per_file_sha256": "744ee3d69e3f0d9230894a62a95bc64ea15b2d6d44f1a5fb890c5c3260ce89c2",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 2940,
+          "sha256": "3ced20ec95adf2e8250f0be25a945d611f828f599569799bfabd0718c258fcf6",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 1997,
+          "sha256": "ad5814c7b77ff79de9c99b97d667ab8762e78933a4f0147030c6615d3111ce90",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "solubility_aqsoldb__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.1,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 45
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "MAE",
+        "definition": "mean absolute error on original Y",
+        "direction": "minimize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "MAE",
+        "external_direction": "minimize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  },
+  {
+    "proposal_id": "R001-solubility_aqsoldb-H1",
+    "task": "solubility_aqsoldb",
+    "config_tag": "H1",
+    "split_id": "solubility_aqsoldb__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 44,
+    "config_sha256": "2a9158f242403ab1c54576bb4fcd788fba99a704225f4debcd4ee87db4b762eb",
+    "unique_fit_key_sha256": "f4ec72e040bd1634d612da446498afd5e6de4720afa97aace522af2b5f420607",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "solubility_aqsoldb",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "solubility_aqsoldb",
+          "role_selector": "train",
+          "rows": 5045,
+          "per_file_sha256": "744ee3d69e3f0d9230894a62a95bc64ea15b2d6d44f1a5fb890c5c3260ce89c2",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 2940,
+          "sha256": "3ced20ec95adf2e8250f0be25a945d611f828f599569799bfabd0718c258fcf6",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 1997,
+          "sha256": "ad5814c7b77ff79de9c99b97d667ab8762e78933a4f0147030c6615d3111ce90",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "solubility_aqsoldb__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.3,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 44
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "MAE",
+        "definition": "mean absolute error on original Y",
+        "direction": "minimize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "MAE",
+        "external_direction": "minimize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  },
+  {
+    "proposal_id": "R001-solubility_aqsoldb-H1",
+    "task": "solubility_aqsoldb",
+    "config_tag": "H1",
+    "split_id": "solubility_aqsoldb__official-train__raw-smiles-group__s43__stop010__v1",
+    "model_seed": 45,
+    "config_sha256": "5eadd85a6c1273e56b1531b9e5ef09dae3c587b00872833167384f8650dda61e",
+    "unique_fit_key_sha256": "cda6c880745e92ac7b168918e7dd69865f5478a83f4dd2b9cfbe62e7c0686d32",
+    "full_scientific_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "solubility_aqsoldb",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "solubility_aqsoldb",
+          "role_selector": "train",
+          "rows": 5045,
+          "per_file_sha256": "744ee3d69e3f0d9230894a62a95bc64ea15b2d6d44f1a5fb890c5c3260ce89c2",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 2940,
+          "sha256": "3ced20ec95adf2e8250f0be25a945d611f828f599569799bfabd0718c258fcf6",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 1997,
+          "sha256": "ad5814c7b77ff79de9c99b97d667ab8762e78933a4f0147030c6615d3111ce90",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "solubility_aqsoldb__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.3,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed": 45
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "MAE",
+        "definition": "mean absolute error on original Y",
+        "direction": "minimize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "MAE",
+        "external_direction": "minimize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "is_executed": false
+  }
+]

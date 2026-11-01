@@ -1,0 +1,46 @@
+"""Fixed host scoring of explicitly bound full-valid predictions; no model execution."""
+import csv,io,hashlib,math
+from pathlib import Path
+from fixed_metrics import _task_result,METRICS
+
+def read_bound(spec,fields):
+ p=Path(spec['path']);payload=p.read_bytes()
+ if hashlib.sha256(payload).hexdigest()!=spec['sha256']:raise ValueError('source hash mismatch: '+str(p))
+ reader=csv.DictReader(io.StringIO(payload.decode('utf-8-sig'),newline=''))
+ if reader.fieldnames!=fields:raise ValueError('unexpected CSV fields: '+str(p))
+ rows=list(reader)
+ if any(None in r or any(v is None for v in r.values()) for r in rows):raise ValueError('ragged CSV')
+ if len(rows)!=spec['rows']:raise ValueError('incomplete row coverage')
+ return rows
+
+def prepare_pairs(run,truth,blind,pred):
+ if not (len(truth)==len(blind)==len(pred)==run['prediction']['rows']):raise ValueError('row count differs')
+ pairs=[]
+ for i,(t,b,p) in enumerate(zip(truth,blind,pred)):
+  if (t['Drug_ID'],t['Drug'])!=(b['Drug_ID'],b['Drug']):raise ValueError('truth/blind row identity differs')
+  if (p['task'],p['split'],p['row_index'],p['Drug_ID'],p['Drug'])!=(run['task'],'valid',str(i),b['Drug_ID'],b['Drug']):raise ValueError('prediction row identity differs')
+  if p['parse_ok'] not in ('True','False'):raise ValueError('parse mask value invalid')
+  y,v=float(t['Y']),float(p['y_pred'])
+  if not math.isfinite(y) or not math.isfinite(v):raise ValueError('nonfinite value')
+  if METRICS[run['metric']][0]=='classification' and (y not in (0.,1.) or not 0<=v<=1):raise ValueError('invalid binary label/probability')
+  pairs.append((y,v))
+ return pairs
+
+def score_batch(contract):
+ runs=contract['runs']
+ if len(runs)!=contract['expected_run_count'] or len({r['run_id'] for r in runs})!=len(runs):raise ValueError('run set/count invalid')
+ truths={};blinds={};prepared=[]
+ # Validate every bound source before calling any metric. No partial valid-driven selection.
+ for r in runs:
+  if r['metric'] not in METRICS or r['direction']!=METRICS[r['metric']][2]:raise ValueError('metric contract')
+  for field,cache,fields in [('truth',truths,['Drug_ID','Drug','Y']),('blind',blinds,['Drug_ID','Drug'])]:
+   spec=r[field];key=(spec['path'],spec['sha256'],spec['rows'])
+   if key not in cache:cache[key]=read_bound(spec,fields)
+  t=truths[(r['truth']['path'],r['truth']['sha256'],r['truth']['rows'])];b=blinds[(r['blind']['path'],r['blind']['sha256'],r['blind']['rows'])]
+  p=read_bound(r['prediction'],['task','split','row_index','Drug_ID','Drug','y_pred','parse_ok'])
+  prepared.append((r,prepare_pairs(r,t,b,p)))
+ result=[]
+ for r,pairs in prepared:
+  metric=_task_result({'metric':r['metric'],'kind':METRICS[r['metric']][0],'label_contract_status':'provided_numeric_Y_units_not_all_confirmed'},pairs,0)
+  result.append({'run_id':r['run_id'],'task':r['task'],'config_tag':r['config_tag'],'seed':r['seed'],'split':'valid','source_prediction_sha256':r['prediction']['sha256'],'source_truth_sha256':r['truth']['sha256'],'source_blind_sha256':r['blind']['sha256'],**metric})
+ return {'request_id':contract['request_id'],'scope':'local_per_task_valid_metrics_only','scored_runs':len(result),'metric_calls':len(result),'truth_sources_read':len(truths),'row_truth_or_residual_in_output':False,'official_aggregate':None,'scores':result}

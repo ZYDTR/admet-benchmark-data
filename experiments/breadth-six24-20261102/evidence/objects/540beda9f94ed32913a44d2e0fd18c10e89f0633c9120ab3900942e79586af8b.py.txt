@@ -1,0 +1,78 @@
+"""One concrete scientific run. No transport, scheduling, model agent or retry."""
+import ctypes,json,os,resource,sys,time
+from pathlib import Path
+sys.path.insert(0,str(Path(__file__).resolve().parent))
+import common_guarded_v3
+sys.modules['common_guarded']=common_guarded_v3
+from common_guarded import ROOT,GPU_UUID,environment,now,safe,write_json
+assert sys.platform=='linux' and os.getuid()==os.getgid()==1012 and ROOT==Path('[TASK_WORKSPACE]/admet/breadth-six24-20261102/_cpu-review01')
+record={'at':now(),'pid':os.getpid(),'start_stat':Path('/proc/self/stat').read_text(),'gpu_uuid':GPU_UUID,'root':str(ROOT)}
+with safe(ROOT/'raw/compute-start.json').open('x') as stream:json.dump(record,stream);stream.flush();os.fsync(stream.fileno())
+os.environ.clear();os.environ.update(environment());os.chdir(ROOT)
+allowed=sorted(os.sched_getaffinity(0))
+def cpu_ticks():
+    out={}
+    for line in Path('/proc/stat').read_text().splitlines():
+        key,*values=line.split()
+        if key.startswith('cpu') and key[3:].isdigit():
+            v=list(map(int,values));out[int(key[3:])]=(sum(v[:8]),v[3]+v[4])
+    return out
+first=cpu_ticks();time.sleep(.5);second=cpu_ticks()
+ratios={i:1-(second[i][1]-first[i][1])/max(1,second[i][0]-first[i][0]) for i in allowed}
+affinity=sorted(allowed,key=lambda i:ratios[i])[:2];assert len(affinity)==2;os.sched_setaffinity(0,affinity);os.nice(19)
+
+resource.setrlimit(resource.RLIMIT_CORE,(0,0));resource.setrlimit(resource.RLIMIT_FSIZE,(450*1024**2,450*1024**2))
+lib=ctypes.CDLL(None,use_errno=True);lib.syscall.restype=ctypes.c_long
+abi=lib.syscall(444,ctypes.c_void_p(),ctypes.c_size_t(0),ctypes.c_uint(1));assert abi>=1,(abi,ctypes.get_errno())
+handled=sum(1<<i for i in [1,*range(4,13)])
+if abi>=2:handled|=1<<13
+if abi>=3:handled|=1<<14
+class Ruleset(ctypes.Structure):_fields_=[('handled_access_fs',ctypes.c_uint64)]
+class Beneath(ctypes.Structure):_pack_=1;_fields_=[('allowed_access',ctypes.c_uint64),('parent_fd',ctypes.c_int32)]
+attr=Ruleset(handled);fd=lib.syscall(444,ctypes.byref(attr),ctypes.sizeof(attr),0);assert fd>=0,ctypes.get_errno()
+def allow(path,access):
+    descriptor=os.open(path,os.O_PATH|os.O_CLOEXEC)
+    try:
+        rule=Beneath(access,descriptor);assert lib.syscall(445,fd,1,ctypes.byref(rule),0)==0,(str(path),ctypes.get_errno())
+    finally:os.close(descriptor)
+allow(ROOT,handled)
+devices=[]
+for pattern in ('nvidia[0-9]*','nvidiactl','nvidia-uvm','nvidia-uvm-tools','nvidia-modeset'):
+    for path in Path('/dev').glob(pattern):
+        if path.is_char_device():allow(path,1<<1);devices.append(str(path))
+allow(Path('/dev/null'),1<<1)
+assert lib.prctl(38,1,0,0,0)==0;assert lib.syscall(446,fd,0)==0,ctypes.get_errno();os.close(fd)
+write_json(ROOT/'raw/protection.json',dict(record,landlock_abi=abi,handled_access=handled,allowed_write_tree=str(ROOT),device_write_handles=devices,affinity=affinity,nice=os.getpriority(os.PRIO_PROCESS,0),selected_cpu_busy_ratios={i:ratios[i] for i in affinity},fs_size_limit=450*1024**2,coverage='filesystem mutation classes handled by Landlock; device IO and own prctl thread naming are separate'))
+sys.path.insert(0,str(ROOT.parent/'source/src'))
+
+
+import torch,numpy as np
+from admet_breadth.metrics import average_precision,auroc,spearman,EarlyStopMonitor
+from admet_breadth.heads import build_head
+from admet_breadth.trainer import evaluate_stop
+from admet_breadth.cache import TargetScaler
+from admet_breadth.pipeline import TaskPipeline
+assert os.environ['CUDA_VISIBLE_DEVICES']==''
+assert abs(average_precision([1,0,1],[.8,.8,.2])-7/12)<1e-14
+assert average_precision([1,1],[.8,.2]) is None and auroc([1,0],[.5,.5])==.5
+assert abs(spearman([1,1,3],[1,2,2])-.5)<1e-14 and spearman([1,2],[0,0]) is None
+assert evaluate_stop('regression',[3.],[30.],EarlyStopMonitor('MAE','minimize'),1,TargetScaler(15.,5.))['value']==0
+for seed in (44,45):
+ a=build_head(2048,256,.1,seed).state_dict();b=build_head(2048,256,.3,seed).state_dict();assert all(torch.equal(a[k],b[k]) for k in a)
+from rdkit import Chem,RDLogger
+RDLogger.DisableLog('rdApp.*')
+t=json.loads((ROOT.parent/'source/TASK.json').read_text());results=[]
+for task in dict.fromkeys(r['task'] for r in t['runs']):
+ pipe=TaskPipeline(task,ROOT.parent/'data',ROOT,ROOT.parent/'source/task-metrics.json');pipe.load();split=pipe.make_internal_split(43,.1)
+ if pipe.kind=='classification':
+  for key in ('fit_row_indices','stop_row_indices'):assert {float(pipe.rows['train'][i]['Y']) for i in split[key]}=={0.,1.}
+ shapes={}
+ for name,rows in pipe.rows.items():
+  smiles=list(dict.fromkeys(r['Drug'] for r in rows));counts=[]
+  for smi in smiles:
+   m=Chem.MolFromSmiles(smi);counts.append((0,0) if m is None else (m.GetNumAtoms(),2*m.GetNumBonds()))
+  sums=[(sum(x[0] for x in counts[i:i+64]),sum(x[1] for x in counts[i:i+64])) for i in range(0,len(counts),64)]
+  shapes[name]={'rows':len(rows),'unique_smiles':len(smiles),'max_atoms_per64':max(x[0] for x in sums),'max_directed_edges_per64':max(x[1] for x in sums)}
+ results.append({'task':task,'fit_rows':split['fit_rows'],'stop_rows':split['stop_rows'],'split_sha256':split['split_record_sha256'],'shapes':shapes})
+write_json(ROOT/'raw/review.json',{'CUDA_hidden':True,'learning_steps':0,'semantic_fixtures_passed':True,'tasks':results})
+print(json.dumps({'semantic_fixtures_passed':True,'tasks':results}))

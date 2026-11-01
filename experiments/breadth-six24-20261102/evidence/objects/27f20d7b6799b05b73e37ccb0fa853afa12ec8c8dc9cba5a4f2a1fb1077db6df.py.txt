@@ -1,0 +1,45 @@
+"""Passive, deny-by-default inspection of this batch's tensor archives. No torch import."""
+import pickle,io,zipfile,collections,hashlib,math,struct
+class Storage:
+ def __init__(self,dtype,key,size):self.dtype,self.key,self.size=dtype,str(key),size
+class Tensor:
+ def __init__(self,storage,offset,shape,stride,*args):self.storage,self.offset,self.shape,self.stride=storage,offset,tuple(shape),tuple(stride)
+ def __eq__(self,b):return isinstance(b,Tensor) and self.shape==b.shape and self.storage.dtype==b.storage.dtype and self.raw==b.raw
+ @property
+ def sha(self):return hashlib.sha256(self.raw).hexdigest()
+ def values(self):
+  fmt={'FloatStorage':'f','DoubleStorage':'d','LongStorage':'q','IntStorage':'i','ByteStorage':'B','BoolStorage':'?'}[self.storage.dtype]
+  return [x[0] for x in struct.iter_unpack('<'+fmt,self.raw)]
+class Reader(pickle.Unpickler):
+ def find_class(self,module,name):
+  if (module,name)==('collections','OrderedDict'):return collections.OrderedDict
+  if (module,name)==('torch._utils','_rebuild_tensor_v2'):return Tensor
+  if module=='torch' and name in ('FloatStorage','DoubleStorage','LongStorage','IntStorage','ByteStorage','BoolStorage'):return name
+  raise ValueError('Rejected global '+module+'.'+name)
+ def persistent_load(self,pid):
+  assert len(pid)==5 and pid[0]=='storage' and pid[3]=='cpu',pid
+  return Storage(pid[1],pid[2],pid[4])
+def load(path):
+ with zipfile.ZipFile(path) as z:
+  names=z.namelist();assert len(names)==len(set(names))
+  p=next(n for n in names if n.endswith('/data.pkl'));prefix=p[:-len('data.pkl')]
+  assert z.read(prefix+'byteorder')==b'little'
+  result=Reader(io.BytesIO(z.read(p))).load()
+  def visit(x):
+   if isinstance(x,Tensor):
+    element={'FloatStorage':4,'DoubleStorage':8,'LongStorage':8,'IntStorage':4,'ByteStorage':1,'BoolStorage':1}[x.storage.dtype]
+    raw=z.read(prefix+'data/'+x.storage.key);assert len(raw)==x.storage.size*element
+    n=math.prod(x.shape);step=1
+    for dim,stride in zip(x.shape[::-1],x.stride[::-1]):assert stride==step or dim==1;step*=dim
+    x.raw=raw[x.offset*element:(x.offset+n)*element];assert len(x.raw)==n*element
+    assert all(math.isfinite(v) for v in x.values())
+   elif isinstance(x,dict):
+    for v in x.values():visit(v)
+   elif isinstance(x,(tuple,list)):
+    for v in x:visit(v)
+  visit(result);return result
+if __name__=='__main__':
+ import pathlib
+ p=next((pathlib.Path(__file__).parents[2]/'operator/snapshots').iterdir())/'artifacts'
+ for n in ['head-initial.pt','head-best.pt','head-last.pt','training-state-last.pt']:
+  d=load(p/n);print(n,{k:(list(v) if isinstance(v,dict) else len(v) if isinstance(v,list) else v.shape if isinstance(v,Tensor) else v) for k,v in d.items() if k not in ['config','scalers','metadata','history','rng_state','batch_evidence']})

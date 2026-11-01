@@ -1,0 +1,113 @@
+{
+  "at": "2026-11-01T20:34:55.288297+00:00",
+  "files": {
+    "raw/job-start.json": {
+      "at": "2026-11-01T20:34:08.176273+00:00",
+      "argv": [
+        "/usr/bin/strace",
+        "-f",
+        "-qq",
+        "-yy",
+        "-s",
+        "200",
+        "-e",
+        "trace=%file,write,writev,pwrite64,ftruncate,mmap,msync,close,dup,dup2,dup3,fchdir,fchmod,fchown,fsetxattr,fremovexattr,fallocate,copy_file_range,sendfile,landlock_create_ruleset,landlock_add_rule,landlock_restrict_self,prctl",
+        "-o",
+        "[TASK_WORKSPACE]/admet/breadth-six24-20261102/raw/write.strace",
+        "[TASK_WORKSPACE]/admet/hainan-skill-pilot-20261030/venv/bin/python3",
+        "-I",
+        "-B",
+        "-u",
+        "[TASK_WORKSPACE]/admet/breadth-six24-20261102/source/compute.py"
+      ],
+      "identity": {
+        "pid": "process-9b873aad3213",
+        "start_ticks": "392798862",
+        "pgid": "process-9b873aad3213",
+        "state": "D",
+        "start_stat": "process-9b873aad3213 (strace) D process-be3996cb5133 process-9b873aad3213 process-9b873aad3213 0 -1 4194304 19 0 0 0 0 0 0 0 20 0 1 0 392798862 2666496 0 18446744073709551615 103121525207040 103121525895517 140727554063200 0 0 0 0 1 0 1 0 0 17 121 0 0 0 0 0 103121526286768 103121526702384 103122541862912 140727554071513 140727554072015 140727554072015 140727554072552 0\n"
+      },
+      "parent": {
+        "pid": "process-be3996cb5133",
+        "start_ticks": "392798784",
+        "pgid": "process-be3996cb5133",
+        "state": "R",
+        "start_stat": "process-be3996cb5133 (python3) R process-5644d78e5e74 process-be3996cb5133 process-be3996cb5133 0 -1 4194304 2635 3862 1 0 3 1 0 17 20 0 1 0 392798784 28225536 4224 18446744073709551615 4325376 7352253 140732378878416 0 0 0 0 16781313 16386 0 0 0 17 134 0 0 0 0 0 10653128 12216448 782311424 140732378879465 140732378889719 140732378889719 140732378890215 0\n"
+      },
+      "gpu_uuid": "GPU-b9fbba0f-b366-d145-720a-37b369c234a0",
+      "gpu_index": 1
+    },
+    "raw/compute-start.json": {
+      "at": "2026-11-01T20:34:08.709845+00:00",
+      "pid": "process-f949f513b5d6",
+      "start_stat": "process-f949f513b5d6 (python3) R process-9b873aad3213 process-9b873aad3213 process-9b873aad3213 0 -1 4194304 1838 0 13 0 3 1 0 0 20 0 1 0 392798863 26656768 1920 18446744073709551615 4325376 7352253 140735955403856 0 0 0 0 16781313 2 0 0 0 17 44 0 0 0 0 0 10653128 12216448 197066752 140735955410157 140735955410320 140735955410320 140735955410857 0\n",
+      "gpu_uuid": "GPU-b9fbba0f-b366-d145-720a-37b369c234a0",
+      "root": "[TASK_WORKSPACE]/admet/breadth-six24-20261102"
+    },
+    "raw/cuda-check.json": {
+      "at": "2026-11-01T20:34:26.539744+00:00",
+      "gpu_uuid": "GPU-b9fbba0f-b366-d145-720a-37b369c234a0",
+      "device": "_CudaDeviceProperties(name='NVIDIA H100 80GB HBM3', major=9, minor=0, total_memory=81089MB, multi_processor_count=132, uuid=b9fbba0f-b366-d145-720a-37b369c234a0, L2_cache_size=50MB)",
+      "matmul_verified": true,
+      "torch": "2.6.0+cu124",
+      "cuda": "12.4",
+      "deterministic_algorithms": true,
+      "cudnn_deterministic": true,
+      "cudnn_benchmark": false,
+      "tf32_matmul": false,
+      "CUBLAS_WORKSPACE_CONFIG": ":4096:8"
+    },
+    "raw/semantic-fixtures.json": {
+      "AP_tied_group_7_over12": true,
+      "AP_one_class_rejected": true,
+      "AUROC_tie_half": true,
+      "Spearman_ties_and_constant": true,
+      "inverse_only_prediction_once": true,
+      "paired_H0_H1_initial_weights_equal_for_both_seeds": true
+    },
+    "raw/protection.json": {
+      "at": "2026-11-01T20:34:08.709845+00:00",
+      "pid": "process-f949f513b5d6",
+      "start_stat": "process-f949f513b5d6 (python3) R process-9b873aad3213 process-9b873aad3213 process-9b873aad3213 0 -1 4194304 1838 0 13 0 3 1 0 0 20 0 1 0 392798863 26656768 1920 18446744073709551615 4325376 7352253 140735955403856 0 0 0 0 16781313 2 0 0 0 17 44 0 0 0 0 0 10653128 12216448 197066752 140735955410157 140735955410320 140735955410320 140735955410857 0\n",
+      "gpu_uuid": "GPU-b9fbba0f-b366-d145-720a-37b369c234a0",
+      "root": "[TASK_WORKSPACE]/admet/breadth-six24-20261102",
+      "landlock_abi": 4,
+      "handled_access": 32754,
+      "allowed_write_tree": "[TASK_WORKSPACE]/admet/breadth-six24-20261102",
+      "device_write_handles": [
+        "/dev/nvidia7",
+        "/dev/nvidia6",
+        "/dev/nvidia5",
+        "/dev/nvidia4",
+        "/dev/nvidia3",
+        "/dev/nvidia2",
+        "/dev/nvidia1",
+        "/dev/nvidia0",
+        "/dev/nvidiactl",
+        "/dev/nvidia-uvm",
+        "/dev/nvidia-uvm-tools",
+        "/dev/nvidia-modeset"
+      ],
+      "affinity": [
+        120,
+        96
+      ],
+      "nice": 19,
+      "selected_cpu_busy_ratios": {
+        "120": 0.47058823529411764,
+        "96": 0.4716981132075472
+      },
+      "fs_size_limit": 471859200,
+      "coverage": "filesystem mutation classes handled by Landlock; device IO and own prctl thread naming are separate"
+    }
+  },
+  "completed": [],
+  "log_tail": [
+    "[TASK_WORKSPACE]/admet/hainan-skill-pilot-20261030/venv/lib/python3.12/site-packages/chemprop/featurizers/molgraph/cache.py:68: SyntaxWarning: invalid escape sequence '\\s'",
+    "  \"\"\"",
+    "[TASK_WORKSPACE]/admet/hainan-skill-pilot-20261030/venv/lib/python3.12/site-packages/chemprop/featurizers/molgraph/molecule.py:119: SyntaxWarning: invalid escape sequence '\\s'",
+    "  \"\"\"the number of individual :class:`MolGraph`\\s in this batch\"\"\"",
+    "[TASK_WORKSPACE]/admet/hainan-skill-pilot-20261030/venv/lib/python3.12/site-packages/chemprop/data/dataloader.py:36: SyntaxWarning: invalid escape sequence '\\s'",
+    "  \"\"\"Return a :obj:`~torch.utils.data.DataLoader` for :class:`MolGraphDataset`\\s"
+  ]
+}

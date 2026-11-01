@@ -1,0 +1,26 @@
+import json,hashlib,itertools
+from pathlib import Path
+P=Path(__file__).resolve().parents[1]
+c=json.loads((P/'audit/r19-first-config-transcription.json').read_text())
+expected='2ad6975a9b2e2a66bc4f1c2552e3ae6e9e0dfedb2848798f59d8ccf5709b2fea'
+ch='2b264ebc69c99f51fa0bf8ce0b4297dadb93c8cdb559b222b0ac8c48095934e2'
+def ck(obj):
+ for sep in [(',',':'),None]:
+  b=json.dumps(obj,ensure_ascii=False,sort_keys=True,separators=sep).encode()
+  if hashlib.sha256(b).hexdigest()==expected:
+   print('MATCH',json.dumps(obj,ensure_ascii=False),sep);return True
+ return False
+opts=[ [('scientific_asset_id','chemeleon'),('asset','chemeleon'),('asset_id','chemeleon'),None],
+       [('task','solubility_aqsoldb'),('task_id','solubility_aqsoldb'),None],
+       [('config',c),('exact_config',c),('full_config',c),('scientific_config',c),('scientific_config_sha256',ch),('config_sha256',ch),None],
+       [('split_id',c['split']['split_id']),('split',c['split']['split_id']),('split_seed',43),None],
+       [('model_seed',44),('seed',44),None]]
+for x in itertools.product(*opts):
+ d=dict(t for t in x if t is not None)
+ if ck(d): break
+else:
+ vals=['chemeleon','solubility_aqsoldb',c,c['split']['split_id'],44]
+ for k in range(2,6):
+  for v in itertools.permutations(vals,k):
+   if ck(v):raise SystemExit
+ print('No simple candidate matched')

@@ -1,0 +1,203 @@
+"""Local early-stop metrics with explicit per-task definitions and directions.
+
+Definitions follow input/context/task-metrics.json (local, official-equivalence
+unconfirmed) and the approved baseline semantics:
+  AUROC     Mann-Whitney U with average ranks (equals trapezoidal AUC under ties)
+  AUPRC     Average Precision, sklearn-style tied-group weighting
+  MAE       mean absolute error on the original Y scale
+  Spearman  Pearson correlation of average ranks
+
+Direction comes from task-metrics.json: MAE minimize; AUROC/AP/Spearman maximize.
+Undefined values (one-class labels, constant vectors) are reported as None and the
+training loop must reject that task's configuration rather than silently swapping
+metric or seed. Comparison uses ``value < best - MIN_DELTA`` for minimize so ties
+keep the earlier epoch (symmetrically ``value > best + MIN_DELTA`` for maximize).
+"""
+
+from __future__ import annotations
+
+import math
+from typing import Any, Mapping, Sequence
+
+from .common import InterfaceError, read_json
+
+MIN_DELTA = 1e-7
+
+
+def _check_pairs(y_true: Sequence[float], y_score: Sequence[float]) -> None:
+    if len(y_true) != len(y_score):
+        raise InterfaceError(f"length mismatch: {len(y_true)} vs {len(y_score)}")
+    if len(y_true) == 0:
+        raise InterfaceError("empty metric input")
+    for v in list(y_true) + list(y_score):
+        if not math.isfinite(float(v)):
+            raise InterfaceError(f"non-finite value: {v!r}")
+
+
+def _average_ranks(values: Sequence[float]) -> list[float]:
+    n = len(values)
+    order = sorted(range(n), key=lambda i: values[i])
+    ranks = [0.0] * n
+    i = 0
+    while i < n:
+        j = i
+        while j + 1 < n and values[order[j + 1]] == values[order[i]]:
+            j += 1
+        if j > i:
+            avg = (i + 1 + j + 1) / 2.0
+            for k in range(i, j + 1):
+                ranks[order[k]] = avg
+        else:
+            ranks[order[i]] = float(i + 1)
+        i = j + 1
+    return ranks
+
+
+def auroc(y_true: Sequence[float], y_score: Sequence[float]) -> float | None:
+    _check_pairs(y_true, y_score)
+    labels = [float(y) for y in y_true]
+    for lab in labels:
+        if lab not in (0, 1):
+            raise InterfaceError(f"AUROC requires binary labels, got {lab}")
+    n_pos = sum(labels)
+    n_neg = len(labels) - n_pos
+    if n_pos == 0 or n_neg == 0:
+        return None  # undefined for one-class; caller must reject, not substitute
+    ranks = _average_ranks([float(s) for s in y_score])
+    s = sum(r for r, lab in zip(ranks, labels) if lab == 1)
+    return (s - n_pos * (n_pos + 1) / 2.0) / (n_pos * n_neg)
+
+
+def average_precision(y_true: Sequence[float], y_score: Sequence[float]) -> float | None:
+    _check_pairs(y_true, y_score)
+    labels = [float(y) for y in y_true]
+    for lab in labels:
+        if lab not in (0, 1):
+            raise InterfaceError(f"AP requires binary labels, got {lab}")
+    n = len(labels)
+    n_pos = sum(labels)
+    if n_pos == 0 or n_pos == n:
+        return None
+    order = sorted(range(n), key=lambda i: -float(y_score[i]))
+    tp = fp = 0
+    prev_recall = 0.0
+    ap = 0.0
+    i = 0
+    while i < n:
+        j = i
+        score = float(y_score[order[i]])
+        group_pos = group_neg = 0
+        while j < n and float(y_score[order[j]]) == score:
+            if labels[order[j]] == 1:
+                group_pos += 1
+            else:
+                group_neg += 1
+            j += 1
+        tp += group_pos
+        fp += group_neg
+        recall = tp / n_pos
+        precision = tp / (tp + fp)
+        if group_pos:
+            ap += precision * (recall - prev_recall)
+        prev_recall = recall
+        i = j
+    return ap
+
+
+def mae(y_true: Sequence[float], y_pred: Sequence[float]) -> float:
+    _check_pairs(y_true, y_pred)
+    return sum(abs(float(a) - float(b)) for a, b in zip(y_true, y_pred)) / len(y_true)
+
+
+def spearman(y_true: Sequence[float], y_pred: Sequence[float]) -> float | None:
+    _check_pairs(y_true, y_pred)
+    n = len(y_true)
+    if n < 2:
+        return None
+    rx = _average_ranks([float(v) for v in y_true])
+    ry = _average_ranks([float(v) for v in y_pred])
+    mx = sum(rx) / n
+    my = sum(ry) / n
+    cov = sum((a - mx) * (b - my) for a, b in zip(rx, ry))
+    vx = sum((a - mx) ** 2 for a in rx)
+    vy = sum((b - my) ** 2 for b in ry)
+    if vx == 0.0 or vy == 0.0:
+        return None
+    return cov / math.sqrt(vx * vy)
+
+
+METRIC_FUNCS = {
+    "AUROC": auroc,
+    "AUPRC": average_precision,
+    "MAE": mae,
+    "Spearman": spearman,
+}
+
+
+class EarlyStopMonitor:
+    """Config-driven monitor bound to one task's local metric definition."""
+
+    def __init__(self, metric: str, direction: str):
+        if metric not in METRIC_FUNCS:
+            raise InterfaceError(f"unsupported metric: {metric!r}")
+        if direction not in ("minimize", "maximize"):
+            raise InterfaceError(f"unknown direction: {direction!r}")
+        if direction != ("minimize" if metric == "MAE" else "maximize"):
+            raise InterfaceError("metric/direction contradiction")
+        self.metric = metric
+        self.direction = direction
+        self.best_value: float | None = None
+        self.best_epoch: int | None = None
+        self.undefined_epochs: list[int] = []
+
+    def observe(self, y_true: Sequence[float], y_pred: Sequence[float],
+                epoch: int) -> dict[str, Any]:
+        if self.undefined_epochs:
+            raise InterfaceError("monitor previously invalid; this run remains rejected")
+        try:
+            value = METRIC_FUNCS[self.metric](y_true, y_pred)
+        except (ValueError, OverflowError) as exc:
+            self.undefined_epochs.append(epoch)
+            raise InterfaceError(f"invalid monitor input at epoch {epoch}: {exc}") from exc
+        record: dict[str, Any] = {"epoch": epoch, "metric": self.metric, "value": value}
+        if value is None or not math.isfinite(value):
+            self.undefined_epochs.append(epoch)
+            raise InterfaceError(f"undefined/nonfinite {self.metric} at epoch {epoch}; reject task")
+        if self.best_value is None:
+            improved = True
+        elif self.direction == "minimize":
+            improved = value < self.best_value - MIN_DELTA
+        else:
+            improved = value > self.best_value + MIN_DELTA
+        if improved:
+            self.best_value = float(value)
+            self.best_epoch = epoch
+        record["improved"] = improved
+        record["best_value"] = self.best_value
+        record["best_epoch"] = self.best_epoch
+        return record
+
+    def should_stop(self, epoch: int, patience: int) -> bool:
+        if self.best_epoch is None:
+            return False
+        return epoch - self.best_epoch >= patience
+
+
+def load_task_metrics(path) -> dict[str, dict[str, str]]:
+    """Read the registered task-metrics contract; validates shape of every entry."""
+    data = read_json(path)
+    out: dict[str, dict[str, str]] = {}
+    for task, d in data.items():
+        for key in ("metric", "direction", "definition"):
+            if key not in d:
+                raise InterfaceError(f"task-metrics[{task}] missing {key}")
+        if d["metric"] not in METRIC_FUNCS:
+            raise InterfaceError(f"task-metrics[{task}] unsupported metric {d['metric']}")
+        EarlyStopMonitor(d["metric"], d["direction"])
+        from .common import task_kind
+        allowed = ("AUROC", "AUPRC") if task_kind(task) == "classification" else ("MAE", "Spearman")
+        if d["metric"] not in allowed:
+            raise InterfaceError(f"task-metrics[{task}] metric incompatible with task kind")
+        out[task] = {"metric": d["metric"], "direction": d["direction"],
+                     "definition": d["definition"]}
+    return out

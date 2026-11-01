@@ -1,0 +1,27 @@
+# 本批科学实现交接
+
+入口TASK.json及当前项目冻结训练Skill3.0.0。运行方法由执行Agent判断；本文件解释已知科学字段差异及结果要求，不提供或要求固定部署/监控/准入引擎。
+
+`science/pro-original-expanded.json`保留Pro原建议，逐run文件是主控本批采纳的定义。只执行24项，H0/H1只改变dropout0.1/0.3，共同seed44/45。六任务为lipo、BBB、CYP2D6、hepatocyte、LD50、solubility。全部原权重和buffer冻结，新头2048→256→1。完整AdamW/损失/fit-only统计/早停细节以逐run配置为准，不能把旧宽度、旧头或旧底座参数当新训练。
+
+## 候选实际能力和缺口
+
+源码候选为上一周期 `controller/breadth-interface-repair-001/src/admet_breadth`。原Qwen交付失败，主控在独立版本修过尺度、fit范围、监测配置/undefined、最佳头消费、缓存非有限值及冻结等缺陷；验收报告和反例在同目录。请审读实际消费路径，复制到本TASK operator或远端私有目录后适配，不改旧候选或规范。已有检查证明CPU无更新分支，不证明当前CUDA训练。
+
+- Pro的AP与代码AUPRC都指带分数并列组权重的Average Precision，不能换成PR曲线梯形面积。配置`binary_classification`映射代码`classification`；语义需实际fixture验证，输出记录原任务指标名称/定义。
+- `fit_transforms()`自行载入有身份的train缓存并切内部fit，不能传全train拟合统计。内部stop保持原Y，`evaluate_stop`只对预测逆变换一次。全部统计与索引可重建；6任务split seed43的主控核对在上一周期intake/independent-checks.json。
+- 候选尚未完整设置Python、NumPy以及CUDA随机状态和严格确定性。执行前补全逐run所有seed44/45、CPU独立sampler generator、确定性算法/cudnn配置；保存完整RNG，包括NumPy。记录CUDA要求与实际验证，不能默默降级确定性。对H0/H1同seed确认新头初始权重相同，数据顺序/划分一致。
+- 返回模型应实际是best头，last头、last optimizer、last RNG另存并明确所处步数。候选还没有实测的完整resume路径，不能把保存状态当作已恢复。允许在本任务边界内实现并验证恢复；不确定等价时按TASK的有限重启条件判断，不复训已完成项。
+- AP实现对全阳性会返回1，和本批一类标签拒绝语义不一致。本批主控已查两分类任务fit/stop均包含正负类；执行方入口仍应核对实际标签类数，避免复用组件默默接受不适用输入。恒定Spearman预测/非有限监测不得填0或换seed。
+- 日志目前候选loss取的是eval下前8样本，不能将它标为整epoch训练loss。请保存真实更新batch有限loss/梯度与样本加权epoch训练loss（说明计算模式），另保留内部stop指标，便于后续Chat诊断。
+- 科学配置的legacy_reference_code_sha256来自更早参考。修订版字节已经不同，请保存实际源码摘要和逐字段语义映射；不伪造原摘要一致。预训练checkpoint SHA仍必须严格匹配。
+
+已准入权重和本地18输入都由TASK指向，只读复用。实际代码支持范围不是本次授权范围，多余包络值不得自行运行。旧run只读查经验，不覆盖、不复活旧固定launcher/supervisor。
+
+## 预期交付与进度
+
+本批允许全六任务train、盲valid和test编码及预测，18数据集共37940行。原冻结特征在输入/实现/行身份核对后按task/split共享，新头配套fit统计仍与内部划分绑定。24模型各有全train、盲valid、test预测；test只用于无标签预测。准备目录只有盲valid，不打开其他私有标签目录。评分由主控后续派指定取回角色一次批量完成。
+
+实际部署前检查现场资源；资源观察日志不是预留。最新看到GPU6已无可见工作只是历史线索，仍需按UUID/健康/占用/整机CPU内存IO直接复核。空闲与共享都按海南Skill判断，不沿用GPU0失败路径或GPU1条件性通过作为通用许可。资源够时并行可以，按实际预算决定。
+
+科学定义核对、环境/资源边界满足后直接完成已准入任务，无需再等主控释放每一头。无法在原范围解决的科学、资源、身份、预算问题回主控，其余普通实现问题自行留证修复。已有全部成果即使外层工具报错也先查原件，不自动再学一次。保留完整Thread耗时、失败和资源释放，完成后回原主控独立验收。

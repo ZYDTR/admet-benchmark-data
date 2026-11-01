@@ -1,0 +1,268 @@
+{
+  "method": "singlemodel substantivecross-review + two independent arithmetic implementations; no actual subagents",
+  "source_registry": "audit/sources.json",
+  "required_read_receipts": "audit/read-receipts.json",
+  "config_read_crosscheck": "audit/r19-config-hash-checks.json",
+  "checks": [
+    {
+      "check_id": "C1-source-bound-paired-arithmetic",
+      "status": "passed",
+      "method": "json.loads(parse_float=Decimal) on exact-byte SHA-matched two original scores, join by run_id; Decimal50 mean/sample SD and paired differences. Independent Fraction variance identity and float statistics.stdev tolerance. No labels/prediction rows used.",
+      "source_refs": [
+        "SRC-SCORE2",
+        "SRC-SCORE4"
+      ],
+      "result_file": "audit/caco2-recomputation.json",
+      "result": "3pairs; dmean−0.00845531047619052; two means .4313630049157508433/.4229076944395603233; raw input sources/hash inside eachpair."
+    },
+    {
+      "check_id": "C2-run-step-and-config-comparison",
+      "status": "passed_with_recorded_execution_limits",
+      "method": "Read R14 original run fields and per-pair scientific difference paths; verify total_steps=epochs×5 and new_steps=total−resumed. Keep runtime differences separate.",
+      "source_refs": [
+        "SRC-R14",
+        "SRC-R07",
+        "SRC-R13"
+      ],
+      "result_file": "audit/caco2-recomputation.json",
+      "result": "seed46MSE185−30=155; other5resume0; onlymonitor/run_id scientificdiff, cache/GPU/resume differ."
+    },
+    {
+      "check_id": "C3-ledger-dedup",
+      "status": "passed",
+      "method": "Read all6 R15 entries; sum successful_task_scores and set-union logical run_ids; do not add independent controller recomputations; null preserved.",
+      "source_refs": [
+        "SRC-R15"
+      ],
+      "result_file": "audit/ledger-recomputation.json",
+      "result": "32formal task scores;11logical completed runs; known formalread lowerbound4, separate controllerreads2, lifetimeunknown."
+    },
+    {
+      "check_id": "C4-R17-rebuild",
+      "status": "passed",
+      "method": "Read exact-byte reconstructed R17, preserve source numeric values; sum n; assert classpositive+negative=n; cross-check R19inputs counts; compare first edition13errors.",
+      "source_refs": [
+        "SRC-R17",
+        "SRC-R19",
+        "USER-REPAIR-001"
+      ],
+      "result_file": "audit/task-count-reconciliation.json",
+      "result": "22tasks,valid11735,train53695,test16379; first edition14591;13corrected."
+    },
+    {
+      "check_id": "C5-R19-config-content",
+      "status": "passed_scientific_config_scope",
+      "method": "Segmented original read, reconstruct21task bases and4config/seed variants each; sorted-key compactJSON SHA256 matches84 sourceconfig hashes individually observed. No execution.",
+      "source_refs": [
+        "SRC-R19"
+      ],
+      "result_file": "audit/r19-config-hash-checks.json",
+      "result": "84/84 scientificconfig hashes match; original670837byte wrapper SHA not independently recomputed; source hash visual comparisons and locators preserved."
+    },
+    {
+      "check_id": "C6-proposal-union",
+      "status": "passed",
+      "method": "Expand exact task/asset/version/fullscientificconfig/split/seed tuples and hashset-deduplicate; compare baseline/candidate config paths; enumerateall15 two-task confirmations.",
+      "source_refs": [
+        "SRC-R12",
+        "USER-REPAIR-001"
+      ],
+      "result_file": "audit/scenarios.json",
+      "result": "12proposals24unique screen fits; one-factor differences only head.dropout; scenarios16/24/60; confirmmaxadditional4 union28; oldDIR01=14; oldW1W2union10."
+    },
+    {
+      "check_id": "C7-timing-interval",
+      "status": "passed_for_supplied_observations",
+      "method": "Clock timestamp differences from USER-REPAIR-001; no overlapping stage summation; do not infer exact modelcompletedAt.",
+      "source_refs": [
+        "USER-REPAIR-001"
+      ],
+      "result_file": "audit/turnaround-recomputation.json",
+      "result": "send->completion(223.312,310.657]s; release->send180.968s; firstseen->ZIPretained146.685s; latter not isolateddownloadtime."
+    },
+    {
+      "check_id": "C8-history-preservation",
+      "status": "passed",
+      "method": "Keep original edition including supplemental records andZIP; rehash each member versus original delivery-manifest.",
+      "source_refs": [
+        "USER-REPAIR-001"
+      ],
+      "result_file": "audit/first-edition-preservation.json",
+      "result": "7original manifest members byte-identical; originalZIP retained separately."
+    },
+    {
+      "check_id": "C9-rules-source-separation",
+      "status": "passed_with_scope_limits",
+      "method": "Read official snapshot, user-confirmedpolicy, source-map as separate primary documents; distinguish frozen exception from published rules, current permission from oldpublicvisibility.",
+      "source_refs": [
+        "SRC-RULES",
+        "SRC-POLICY",
+        "SRC-MAP"
+      ],
+      "result": "No row-levelvalid reads, newtraining/scoring/upload; latest upstream presence not localassetreadiness."
+    }
+  ],
+  "coverage": [
+    {
+      "question_id": "Q0",
+      "status": "answered",
+      "answer_summary": "从两份原scores独立复算，MAE选轮2胜1负、平均配对差−0.00845531047619052；loss相同、monitor不同；补历史最佳run/config，保留运行混杂和GPU0失败。",
+      "answer_location": "analysis.md §1 六项结果",
+      "evidence_refs": [
+        "SRC-SCORE2",
+        "SRC-SCORE4",
+        "SRC-R14",
+        "SRC-R07",
+        "SRC-R13",
+        "SRC-BESTSCORES",
+        "SRC-BESTCONFIG"
+      ],
+      "unresolved": [
+        "三seed不是独立泛化；GPU1他人性能影响无直接量化，未持久化更新未知。"
+      ],
+      "affected_decisions": [
+        "保留MAE monitor为有限候选，不全局替代，不再以未重载模型阻断回答。"
+      ]
+    },
+    {
+      "question_id": "Q1",
+      "status": "answered",
+      "answer_summary": "比较Caco2、平均22项、有限自适应覆盖；推荐四metric核心＋两shift压力任务；明确没有证明广度因果ROI最优。",
+      "answer_location": "analysis.md §2 策略",
+      "evidence_refs": [
+        "SRC-R17",
+        "SRC-SCAFFOLD",
+        "SRC-R19",
+        "SRC-R14"
+      ],
+      "unresolved": [
+        "未来各task收益/准备成本未测；无本轮新Caco2预算匹配反事实。"
+      ],
+      "affected_decisions": [
+        "24fit确定建议而非无条件全21任务浅调；失败分支可推翻扩大覆盖。"
+      ]
+    },
+    {
+      "question_id": "Q2",
+      "status": "answered",
+      "answer_summary": "22任务分数/metric/direction/valid n/类别计数由精确SHA匹配R17生成，11735对账；train53695/test16379分开；13错数和依赖排序均更正，加入结构/范围风险与逐task因素。",
+      "answer_location": "analysis.md §3 任务全景；audit/task-table.json；audit/r19-disposition.json",
+      "evidence_refs": [
+        "SRC-R17",
+        "SRC-R19",
+        "SRC-SCAFFOLD",
+        "SRC-RANGES",
+        "SRC-R16",
+        "SRC-BASELINE"
+      ],
+      "unresolved": [
+        "完整train.Y分位数/当前fit-stop类别统计为未来准备产物；官方指标等价未确认；未知明确，不推断个体误差。"
+      ],
+      "affected_decisions": [
+        "撤回hERG/DILI/half-life/HIA大样本优先依据；LD50/solubility作为shift探针，不以大n冒充化学多样性。"
+      ]
+    },
+    {
+      "question_id": "Q3",
+      "status": "answered",
+      "answer_summary": "12个具体proposal：6task×H0/H1×seeds44/45=24fits；small16/medium24/large60有全配置展开；两task确认仅追加双方seed46，最多4新增、union28。",
+      "answer_location": "analysis.md §5；next_experiments.json；audit/scenarios.json",
+      "evidence_refs": [
+        "SRC-R19",
+        "SRC-R12",
+        "USER-REPAIR-001"
+      ],
+      "unresolved": [
+        "真实秒数/可用资源尚未测；成本分解、冷缓存编码数量及校准方法已给。"
+      ],
+      "affected_decisions": [
+        "proposal_only不再阻断new_code设计；未把准备任务或条件TBD塞入训练数组；执行仍需主控。"
+      ]
+    },
+    {
+      "question_id": "Q4",
+      "status": "answered",
+      "answer_summary": "明确raw versus fit-transformed缓存、版本/row identity、每split重拟合、逐任务装配/ensemble/joint区别及模板只有y_pred变更和16个未重训任务lineage。",
+      "answer_location": "analysis.md §6；next_batch_guide.md §2 G04",
+      "evidence_refs": [
+        "SRC-ENCODER",
+        "SRC-R19",
+        "SRC-RULES",
+        "SRC-POLICY",
+        "SRC-R13"
+      ],
+      "unresolved": [
+        "未来全部22任务当前接口/旧cache身份和完整template导出需验收；本轮不伪造通过。"
+      ],
+      "affected_decisions": [
+        "CheM fingerprint不再列CLS池化；只复用身份匹配rawcache，完整候选门槛独立。"
+      ]
+    },
+    {
+      "question_id": "Q5",
+      "status": "answered",
+      "answer_summary": "显式loss/monitor/external metric、paired seeds/splits、预注册可证伪建议gate及限制；R15计数独立32formal/11logical，truth lifetime保持null。",
+      "answer_location": "analysis.md §7；audit/ledger-recomputation.json",
+      "evidence_refs": [
+        "SRC-R09",
+        "SRC-R15",
+        "SRC-POLICY",
+        "EXT-AP",
+        "USER-REPAIR-001"
+      ],
+      "unresolved": [
+        "阈值未实测噪声/业务验证；inner_stop选择乐观，新增seed不是新外部数据。"
+      ],
+      "affected_decisions": [
+        "gate作为研究筛选而非置信度；不扩大valid标签权限或将建议频率变硬规则。"
+      ]
+    },
+    {
+      "question_id": "Q6",
+      "status": "answered",
+      "answer_summary": "15方向给具体参数/组合/成本/成熟度/反证；R19全部84科学配置hash核对并21task逐项保留/修改/延期；条件分支和责任/产物清晰。",
+      "answer_location": "analysis.md §4/8；search_space.json；next_batch_guide.md",
+      "evidence_refs": [
+        "SRC-R19",
+        "SRC-R18",
+        "SRC-R16",
+        "SRC-RUNNER",
+        "SRC-ENCODER",
+        "EXT-MINIMOL",
+        "EXT-MOLFORMER"
+      ],
+      "unresolved": [
+        "候选底座本地资产/许可/长输入覆盖未准入；原R19包装文件原字节hash未复算，科学配置84hash均核对。"
+      ],
+      "affected_decisions": [
+        "具体研究设计完成与工程可执行性分离；旧问题追加事件而不删除；不默认执行84fit。"
+      ]
+    },
+    {
+      "question_id": "Q7",
+      "status": "answered",
+      "answer_summary": "采用主控时刻推算完成区间(223.312,310.657]s；分开prep/release/交接/下载保留/报告；两套现场批次/缓存/回收方案，不设固定并发或零显存。",
+      "answer_location": "analysis.md §9；next_batch_guide.md §6；audit/turnaround-recomputation.json",
+      "evidence_refs": [
+        "USER-REPAIR-001",
+        "SRC-R07",
+        "SRC-R18",
+        "SRC-BASELINE"
+      ],
+      "unresolved": [
+        "completedAt、纯模型运行秒和若干角色详细分解仍未知；重叠跨度不相加。"
+      ],
+      "affected_decisions": [
+        "先减少释放/交接/重复准备/逐头Chat，不把下载耗时冒充Thread；GPU1范围不推广。"
+      ]
+    }
+  ],
+  "limits": [
+    "All-history indiscriminate replay; only relevant indices and originals read",
+    "New biological or out-of-distribution generalization performance",
+    "Live execution readiness of proposedheads/new assets; no environment installation or modelrun",
+    "Row-levelvalid truth/residuals or testlabels (out ofscope, deliberatelynotread)",
+    "Actual other-workload throughput/latency under future sharedGPUconditions",
+    "Independent whole-wrapper byteSHA for everyreadoriginal"
+  ]
+}

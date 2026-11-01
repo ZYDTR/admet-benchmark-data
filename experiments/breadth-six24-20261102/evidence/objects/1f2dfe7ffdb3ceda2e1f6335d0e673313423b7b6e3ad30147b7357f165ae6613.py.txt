@@ -1,0 +1,30 @@
+import sys,os,pathlib,json,runpy,resource,time
+root=pathlib.Path(sys.argv[1]).resolve(); inp=pathlib.Path(sys.argv[2]); writes=[]; started=time.monotonic()
+def audit(event,args):
+    path=None
+    if event=='open':
+        p,mode,flags=args
+        if isinstance(p,(str,bytes)) and ((isinstance(mode,str) and any(c in mode for c in 'wax+')) or (isinstance(flags,int) and flags & (os.O_WRONLY|os.O_RDWR|os.O_CREAT|os.O_TRUNC))):path=p
+    elif event in ('os.mkdir','os.remove','os.rmdir','os.chmod'):
+        path=args[0]
+        fd=args[-1]
+        if isinstance(fd,int) and fd>=0 and not os.path.isabs(path):
+            path=os.path.join(os.readlink('/proc/self/fd/'+str(fd)),os.fsdecode(path))
+    elif event in ('os.rename','os.link','os.symlink'):
+        for item in args[:2]:
+            pp=pathlib.Path(os.fsdecode(item)).resolve()
+            if root not in pp.parents and pp!=root:raise RuntimeError('write outside audit root: '+str(pp))
+        path=args[1]
+    elif event=='socket.connect':raise RuntimeError('network forbidden in synthetic checks')
+    if path == os.devnull:
+        return  # non-persistent OS sink used by dill import; no project mutation
+    if path is not None:
+        pp=pathlib.Path(os.fsdecode(path)).resolve()
+        if root not in pp.parents and pp!=root:raise RuntimeError('write outside audit root: '+str(pp))
+        writes.append({'event':event,'path':str(pp)})
+sys.addaudithook(audit)
+sys.argv=[str(root/'tests/encoder_probe.py'),str(inp/'input/data'),str(inp/'work/assets/chemeleon_mp.pt')]
+try:runpy.run_path(sys.argv[0],run_name='__main__')
+finally:
+    out={'elapsed_seconds':time.monotonic()-started,'max_rss_KiB':resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,'observed_python_write_events':writes,'native_extension_syscalls':'not_traced','network_connects_allowed':False}
+    (root/'work/encoder-probe-write-audit.json').write_text(json.dumps(out,indent=2)+'\n')

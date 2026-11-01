@@ -1,0 +1,134 @@
+"""Independent contract/source/identity checks. Uses stdlib and inert JSON only."""
+import json, hashlib, re, math, statistics
+from pathlib import Path
+from decimal import Decimal
+P=Path(__file__).resolve().parents[1]
+def read(n,**kw):return json.loads((P/n).read_text(),**kw)
+def canon(o):return json.dumps(o,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()
+checks=[]
+def check(name,cond,detail=''):
+ checks.append({'check':name,'passed':bool(cond),'detail':detail})
+ if not cond:raise AssertionError(name+': '+str(detail))
+review=read('review.json');issues=read('issues.json');props=read('next_experiments.json');spaces=read('search_space.json');sources=read('audit/sources.json');gates=read('audit/preparation-gates.json')
+required={
+'review.json':'schema_version request_id round_id manifest_sha256 status read_receipt read_checks findings missing_evidence not_assessed comparison_groups stop_reasons decision_coverage'.split(),
+'issues.json':'issue_id status severity category statement affected_run_ids evidence_refs hypothesis counterevidence impact proposed_resolution verification_criterion related_proposal_ids'.split(),
+'next_experiments.json':'proposal_id priority hypothesis control_run_or_config task scientific_asset_id asset_versions change_only hold_fixed split_id seeds metric direction minimum_effect_or_decision_rule success_criterion falsification_criterion compute_budget dependencies within_current_scope stage exact_config preparation_mode reuse_assets estimated_run_count trigger skip_or_stop_if review_checkpoint direction_ids training_objective design_type'.split(),
+'search_space.json':'direction_id linked_issues rationale evidence_refs counterevidence candidate_models_or_modules parameters combination_constraints search_method configuration_count_or_counting_rule seeds estimated_run_count cost_assumptions readiness priority scope_status'.split()}
+for name,req in required.items():
+ x=read(name);check(name+' root',isinstance(x,dict if name=='review.json' else list))
+ for item in [x] if isinstance(x,dict) else x:check(name+' required fields',set(req)<=item.keys())
+check('identityrequest',review['request_id']=='admet-agentled-six-pro-20261102-001')
+check('identityround',review['round_id']=='six-seed-paired-and-breadth-20261102')
+check('identityinput',review['manifest_sha256']=='87788a22149be39cd7b41e68fc0a5df048bb9971a0878eaa1a755092292d2d0d')
+check('Q0-Q7 exact',set(x['question_id'] for x in review['decision_coverage'])=={f'Q{i}' for i in range(8)} and len(review['decision_coverage'])==8)
+check('review enum',review['status'] in ['complete','needs_evidence','inconclusive'])
+check('question enum',all(x['status'] in ['answered','partial','needs_evidence'] for x in review['decision_coverage']))
+check('complete answer consistency',review['status']!='complete' or all(x['status']=='answered' for x in review['decision_coverage']))
+check('23 unique required receipts',len(review['read_receipt'])==len({x['entry_id'] for x in review['read_receipt']})==23)
+sids={x['source_id'] for x in sources};iids={x['issue_id'] for x in issues};pids={x['proposal_id'] for x in props};dids={x['direction_id'] for x in spaces};gids={x['gate_id'] for x in gates}
+for name,items,key in [('issues',issues,'issue_id'),('proposals',props,'proposal_id'),('directions',spaces,'direction_id')]:check(name+' IDs unique',len(items)==len({x[key] for x in items}))
+for x in issues:
+ check(x['issue_id']+' sources',set(x['evidence_refs'])<=sids)
+ check(x['issue_id']+' proposalrefs',set(x['related_proposal_ids'])<=pids)
+for x in spaces:
+ check(x['direction_id']+' sources',set(x['evidence_refs'])<=sids)
+ check(x['direction_id']+' issuerefs',set(x['linked_issues'])<=iids)
+for x in review['decision_coverage']+review['findings']:
+ check('review evidence refs',set(x['evidence_refs'])<=sids)
+# Raw source-byte identity and field-level table checks, not task table against another table copy.
+raw=read('sources/R17.json',parse_float=Decimal);table=read('audit/task-table.json',parse_float=Decimal)
+check('R17 byteSHA',hashlib.sha256((P/'sources/R17.json').read_bytes()).hexdigest()=='ce8375c1c1eb6291eae6439dee77e082486c6e573e844004ce39d43d69890e8c')
+check('R17 22task set',set(raw['tasks'])=={x['task'] for x in table} and len(table)==22)
+for x in table:
+ r=raw['tasks'][x['task']]
+ for k,v in [('metric','metric'),('direction','direction'),('existing_baseline_value','value'),('valid_n','n'),('valid_n_positive','n_positive'),('valid_n_negative','n_negative'),('valid_missing','missing')]:check(x['task']+' '+k,x[k]==r.get(v))
+ if r['kind']=='classification':check(x['task']+' classsum',r['n_positive']+r['n_negative']==r['n'])
+check('valid11735',sum(x['valid_n'] for x in table)==raw['record_count']==11735)
+check('train53695test16379',sum(x['train_n'] for x in table)==53695 and sum(x['test_n'] for x in table)==16379)
+# Markdown table values must be source-derived, not stale first-edition numbers.
+md=(P/'analysis.md').read_text()
+for x in table:
+ needle=f"| {x['task']} | {x['train_n']} | {x['valid_n']} | {x['test_n']} | {x['metric']} {'↓' if x['direction']=='minimize' else '↑'} | {x['existing_baseline_value']} |"
+ check(x['task']+' markdown exactsource row',needle in md,needle)
+check('13count corrections',len(read('audit/task-count-reconciliation.json')['corrected_entries'])==13)
+# Original two source hashes and six-mean check using a separate float implementation.
+vals={}
+for name,sha in [('scores-two.json','7e0d8a9ff81657e4de4dd6effe3b5ab5f10302ecc1fdfd71c56b004e929708a3'),('scores-four.json','f37f584c8ced3b83a796fac05b9becee14d653a6e0a9bbac35e5597b794fb2e8')]:
+ check(name+' sourceSHA',hashlib.sha256((P/'sources'/name).read_bytes()).hexdigest()==sha)
+ vals.update({x['run_id']:x['value'] for x in read('sources/'+name)['scores']})
+a=read('audit/caco2-recomputation.json')
+for mode in ['mse','mae']:
+ z=[vals[f'hainan-agentled-{mode}-s{s}-20261102'] for s in [44,45,46]]
+ check(mode+' mean',abs(statistics.mean(z)-float(a['statistics'][mode]['mean']))<1e-15)
+ check(mode+' sampleSD',abs(statistics.stdev(z)-float(a['statistics'][mode]['sample_sd']))<1e-15)
+check('six values',len(vals)==6)
+# Actual config deep comparison.
+def diffs(a,b,p=''):
+ if type(a)!=type(b):return [p]
+ if isinstance(a,dict):
+  if a.keys()!=b.keys():return [p+'/keys']
+  return sum([diffs(a[k],b[k],p+'/'+k) for k in a],[])
+ if isinstance(a,list):
+  if len(a)!=len(b):return [p+'/length']
+  return sum([diffs(x,y,p+'/'+str(i)) for i,(x,y) in enumerate(zip(a,b))],[])
+ return [] if a==b else [p]
+ft={x['task']:x for x in table};prop_by={x['proposal_id']:x for x in props};fitkeys=set();diffrows=[]
+for p in props:
+ check(p['proposal_id']+' enums',p['preparation_mode'] in ['config_only','new_code','blocked_assets'] and p['stage'] in ['screen','confirm','reserve'] and p['design_type'] in ['control','one_factor','bundle'] and p['direction'] in ['minimize','maximize'])
+ check(p['proposal_id']+' newcode',p['preparation_mode']=='new_code')
+ check(p['proposal_id']+' direction',p['metric']==ft[p['task']]['metric'] and p['direction']==ft[p['task']]['direction'])
+ check(p['proposal_id']+' dependencies',set(p['dependencies'])<=gids and not set(p['dependencies'])&pids)
+ check(p['proposal_id']+' directionrefs',set(p['direction_ids'])<=dids)
+ c=p['exact_config'];o=p['training_objective'];binary=p['metric'] in ['AUROC','AUPRC']
+ check(p['proposal_id']+' loss',c['loss']['name']==o['loss']==('BCEWithLogitsLoss' if binary else 'MSELoss'))
+ check(p['proposal_id']+' monitor',c['early_stopping']['metric']==o['early_stopping_metric']==('AP' if p['metric']=='AUPRC' else p['metric']))
+ check(p['proposal_id']+' monitordirection',c['early_stopping']['direction']==o['early_stopping_direction']==p['direction'])
+ check(p['proposal_id']+' outputscale',o['prediction_scale']==c['target']['prediction_scale'] and ('sigmoid' in o['prediction_scale'] if binary else c['target']['inverse_transform_at_prediction'] is True))
+ check(p['proposal_id']+' freeze',c['encoder']['freeze_parameters'] and c['encoder']['freeze_buffers'] and c['encoder']['autograd'] is False and c['optimizer']['encoder_parameters_in_optimizer'] is False)
+ check(p['proposal_id']+' noexecute',c['execution_authorized'] is False and p['within_current_scope']['execution'] is False)
+ check(p['proposal_id']+' seeds',p['seeds']==[44,45] and p['estimated_run_count']==2)
+ check(p['proposal_id']+' inputcounts',c['inputs']['train']['rows']==ft[p['task']]['train_n'] and c['inputs']['validation']['rows']==ft[p['task']]['valid_n'] and c['inputs']['test']['rows']==ft[p['task']]['test_n'])
+ if p['design_type']=='one_factor':
+  ctrl=prop_by[p['control_run_or_config']];ds=diffs(ctrl['exact_config'],c)
+  check(p['proposal_id']+' onefactor',ds==['/head/dropout'],ds)
+  check(p['proposal_id']+' paired control',p['task']==ctrl['task'] and p['seeds']==ctrl['seeds'] and p['split_id']==ctrl['split_id'])
+  diffrows.append({'candidate':p['proposal_id'],'control':ctrl['proposal_id'],'difference_paths':ds})
+ for seed in p['seeds']:
+  import copy
+  e=copy.deepcopy(c);e['training'].pop('model_seed_source');e['training']['model_seed']=seed
+  key={'asset':p['scientific_asset_id'],'asset_versions':p['asset_versions'],'task':p['task'],'full_scientific_config':e,'split_id':p['split_id'],'seed':seed}
+  fitkeys.add(hashlib.sha256(canon(key)).hexdigest())
+check('12proposals24fits',len(props)==12 and len(fitkeys)==24)
+sc=read('audit/scenarios.json');medium=next(x for x in sc['scenarios'] if x['scenario']=='medium')
+check('exactscreenmatchesmedium',fitkeys==set(medium['fit_key_hashes']))
+for s in sc['scenarios']:
+ expanded=read(s['full_scientific_configs_file']);keys={x['unique_fit_key_sha256'] for x in expanded}
+ check(s['scenario']+' expanded count',len(keys)==s['unique_fit_count']==len(expanded))
+ check(s['scenario']+' coldpasses',s['raw_encoding_cold_cache_dataset_passes']==2*len(s['task_ids']))
+check('all15confirmsets',len(sc['medium_conditional_confirm']['all_15_possible_2task_sets_checked'])==15 and all(x['additional_unique_fits']==4 and x['screen_plus_confirm_union']==28 for x in sc['medium_conditional_confirm']['all_15_possible_2task_sets_checked']))
+head=next(x for x in spaces if x['direction_id']=='DIR-01-HEAD')
+check('DIR01uniqueconfig7',len({canon(x) for x in head['parameters']['unique_configs']})==7 and head['estimated_run_count']==14)
+check('84oldconfigread',len(read('audit/r19-expanded-configs.json'))==84 and len(read('audit/r19-config-hash-checks.json')['checks'])==84)
+for r in read('audit/r19-expanded-configs.json'):check('r19 canonicalhash',hashlib.sha256(canon(r['full_config'])).hexdigest()==r['scientific_config_sha256'])
+check('21oldtaskdecisions',len(read('audit/r19-disposition.json'))==21)
+# Pure mathematical fixture verification without model/evaluator/library execution.
+y=[0,1,0,1];s=[.1,.4,.4,.9]
+pairs=[(s[i],s[j]) for i in range(4) if y[i] for j in range(4) if not y[j]]
+auc=sum(1 if a>b else .5 if a==b else 0 for a,b in pairs)/len(pairs)
+check('fixtureAUROC',auc==.875)
+check('fixtureMAE',sum(abs(a-b) for a,b in zip([0,2,4],[1,2,1]))/3==4/3)
+check('APfixture',abs(.5*1+.5*(2/3)-5/6)<1e-15)
+check('Spearmanfixture',abs((-1.5)/math.sqrt(3)-(-math.sqrt(3)/2))<1e-15)
+check('no source table values lost',all(x['existing_baseline_value'] is not None for x in table))
+# All emitted JSON, excluding historical files, parses.
+json_count=0
+for f in P.rglob('*.json'):
+ if 'history' in f.parts:continue
+ json.loads(f.read_text());json_count+=1
+check('all current JSON parse',True,str(json_count))
+# Model artifacts not created/executed by these scripts.
+check('no new model/weights outputs',not any(f.suffix in ['.pt','.pth','.pkl','.safetensors'] for f in P.rglob('*') if f.is_file()))
+result={'scope':'artifact/source/arithmetical audit; not model readiness or new scientific performance','passed':True,'check_count':len(checks),'checks':checks,'one_factor_diffs':diffrows,'current_json_files_parsed_before_this_report':json_count,'actual_training_runs':0,'actual_new_valid_evaluations':0,'actual_subagents':0}
+(P/'audit/final-validation.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
+print('PASS',len(checks),'checks;12proposals24fits;23requiredreads;22tasks11735valid;original84configshashes')

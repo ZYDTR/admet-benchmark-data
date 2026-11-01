@@ -1,0 +1,18 @@
+# ADMET 项目 Skill 索引
+
+唯一入口：[AGENTS.md](../AGENTS.md)。项目Skill只在这里维护，创作标准为[Best Practice Skill Writing](../../../rules/skills/bestpractice_skill_writing.md)。2026-11-01用户要求结果确定性优于过程确定性，删除固定流程脚本；[变更与删除证据](../audits/agent-led-execution-20261101/REPORT.md)。
+
+| 角色 | 当前Skill | 版本与真实范围 |
+|---|---|---|
+| OpenCode准备 / 主控派发 | [训练前准备](ml-preparation-only/SKILL.md) | 3.0.1；补生产尺度/fit范围、实际监测与最佳头消费、累计尝试证据。3.0.0的Qwen真实交付未通过，原件保留；主控独立代码修复零更新验收见本轮报告，新版Skill的Agent行为尚未复测。无强制打包/封口脚本。 |
+| 专职海南资源观察 | [资源观察](hainan-resource-observation/SKILL.md) | 1.1.0；既有10分钟只读观察继续，采样数据与共享判断分开；不把训练旧实现局限当用户禁令。 |
+| 海南训练执行 | [冻结底座训练](admet-frozen-training/SKILL.md) | 3.0.0；Agent自主部署、选卡、排障和已授权恢复，主控以科学/边界结果验收。本批六项真实学习与科学产物已验；GPU0共享失败保留，GPU1低负载驻留分支条件性验收，完整闭环待完成。 |
+| 取回、评分、获准发布 | [训练取回](hainan-training-retrieval/SKILL.md) | 1.1.0；自主选择取回核验方法，保持完整质量材料与指定宿主评分口径。本批六项取回评分及4228文件发布/匿名读回已主控独立复核；新Pro已接收研究请求，实际阅读与完整回收待验。 |
+| 历史、Chat网关、主控研究 | [实验知识与研究交接](admet-evidence-review/SKILL.md) | 2.0.1；研究Prompt revision16，任务统计须对照来源，候选设计与执行准入分开，实验基线去重。本批运输已验、首版研究部分可用且需修复；新修订行为待验。固定渲染与交接检查已退役。 |
+| 手动官网提交 | [赛事提交](competition-submission/SKILL.md) | 0.1.2；按用户手动触发，独立于本次流程重写。 |
+
+通用[海南连接](../../../rules/skills/hainan-compute-access/SKILL.md)及[mini运维](../../../rules/skills/mac-mini-orbstack-ops/SKILL.md)继续提供已授权基础设施能力。OpenCode从mini已有Context Infrastructure根项目进入；任务私有目录不改变项目归属。
+
+每次新派发把当前Skill及所需材料交到对方可读位置，在提示中明确路径/版本和具体目标。任务事实、原始证据可追溯；运行方法可以因现场改变，不再封入旧的强制流程程序。真实读取、实际行为与结果分别验收。
+
+最近六项试验[contract-follow-e2e-20261101](../cycles/contract-follow-e2e-20261101/CONTINUE.md)已到期收口0/6；旧单作业训练和研究往返记录仍作为历史，不能证明新版完整循环已通过。所有旧Skill及流程代码仅用于审计，不并行充当现行规范。

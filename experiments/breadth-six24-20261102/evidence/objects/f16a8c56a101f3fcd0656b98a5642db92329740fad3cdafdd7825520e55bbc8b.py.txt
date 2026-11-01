@@ -1,0 +1,185 @@
+"""The fixed admitted 24 scientific fits; no scheduling, retries, or model agents."""
+import os,json,time,hashlib,csv,math,gc,random,sys,importlib.metadata
+from pathlib import Path
+from common_guarded import ROOT,GPU_UUID,write_json,now,sha
+EXEC=ROOT/"attempts/02"
+
+def digest_model(model):
+ import torch
+ kinds={n:'parameter' for n,_ in model.named_parameters()};kinds.update({n:'buffer' for n,_ in model.named_buffers()})
+ result={}
+ for n,t in model.state_dict().items():
+  data=t.detach().cpu().contiguous().reshape(-1).view(torch.uint8).numpy().tobytes()
+  result[n]={'sha256':hashlib.sha256(data).hexdigest(),'shape':list(t.shape),'dtype':str(t.dtype),'kind':kinds[n]}
+ return result
+
+def digest_state(state):
+ import torch
+ return {k:hashlib.sha256(v.detach().cpu().contiguous().reshape(-1).view(torch.uint8).numpy().tobytes()).hexdigest() for k,v in state.items()}
+
+def equal(a,b):
+ import torch
+ if isinstance(a,torch.Tensor):return isinstance(b,torch.Tensor) and a.dtype==b.dtype and a.shape==b.shape and torch.equal(a.cpu(),b.cpu())
+ if type(a)!=type(b):return False
+ if isinstance(a,dict):return a.keys()==b.keys() and all(equal(a[k],b[k]) for k in a)
+ if isinstance(a,(list,tuple)):return len(a)==len(b) and all(equal(x,y) for x,y in zip(a,b))
+ return a==b
+
+def restore_rng(value,gen):
+ import torch,numpy as np
+ random.setstate(value['python']);n=value['numpy'];np.random.set_state((n['name'],n['keys'].numpy().astype(np.uint32),n['pos'],n['has_gauss'],n['cached_gaussian']))
+ torch.set_rng_state(value['torch_cpu']);torch.cuda.set_rng_state_all(value['torch_cuda']);gen.set_state(value['sampler'])
+
+def main():
+ import torch,numpy as np
+ from admet_breadth.pipeline import TaskPipeline
+ from admet_breadth.encoder import CheMeleonEmbedder
+ from admet_breadth.common import sha256_file
+ from admet_breadth.heads import build_head,save_head,load_head,forward_logits,postprocess
+ from admet_breadth.metrics import average_precision,auroc,spearman,EarlyStopMonitor
+ from admet_breadth.trainer import evaluate_stop
+ from admet_breadth.cache import TargetScaler,build_raw_cache
+ began=time.monotonic();task=json.loads((ROOT/'source/TASK.json').read_text());mapping=json.loads((ROOT/'source/config-mapping.json').read_text())
+ assert task['request_id']=='admet-breadth-six24-20261102-001' and len(mapping)==len(task['runs'])==24
+ assert os.environ['CUBLAS_WORKSPACE_CONFIG']==':4096:8'
+ torch.set_num_threads(2);torch.set_num_interop_threads(1);torch.use_deterministic_algorithms(True)
+ torch.backends.cudnn.benchmark=False;torch.backends.cudnn.deterministic=True;torch.backends.cuda.matmul.allow_tf32=False;torch.backends.cudnn.allow_tf32=False
+ assert torch.cuda.is_available() and torch.cuda.device_count()==1
+ torch.cuda.set_per_process_memory_fraction(4096*1024**2/torch.cuda.get_device_properties(0).total_memory,0)
+ x=torch.ones(64,64,device='cuda:0');assert bool(torch.all(x@x==64));del x
+ write_json(EXEC/'raw/cuda-check.json',{'at':now(),'gpu_uuid':GPU_UUID,'device':str(torch.cuda.get_device_properties(0)),'matmul_verified':True,'torch':torch.__version__,'cuda':torch.version.cuda,'deterministic_algorithms':torch.are_deterministic_algorithms_enabled(),'cudnn_deterministic':torch.backends.cudnn.deterministic,'cudnn_benchmark':torch.backends.cudnn.benchmark,'tf32_matmul':torch.backends.cuda.matmul.allow_tf32,'CUBLAS_WORKSPACE_CONFIG':os.environ['CUBLAS_WORKSPACE_CONFIG']})
+ # Semantic fixtures exercise the exact production metric/scale/head paths; no update.
+ assert abs(average_precision([1,0,1],[.8,.8,.2])-7/12)<1e-14
+ assert average_precision([1,1],[.8,.2]) is None and auroc([1,0],[.5,.5])==.5
+ assert abs(spearman([1,1,3],[1,2,2])-.5)<1e-14 and spearman([1,2],[0,0]) is None
+ m=EarlyStopMonitor('MAE','minimize');assert evaluate_stop('regression',[3.],[30.],m,1,TargetScaler(15.,5.))['value']==0
+ for seed in (44,45):assert equal(build_head(2048,256,.1,seed).state_dict(),build_head(2048,256,.3,seed).state_dict())
+ write_json(EXEC/'raw/semantic-fixtures.json',{'AP_tied_group_7_over12':True,'AP_one_class_rejected':True,'AUROC_tie_half':True,'Spearman_ties_and_constant':True,'inverse_only_prediction_once':True,'paired_H0_H1_initial_weights_equal_for_both_seeds':True})
+ for i in task['inputs']:
+  f=ROOT/'data'/i['task']/(i['split']+'.csv');assert sha256_file(f)==i['sha256']
+  with f.open(newline='',encoding='utf-8-sig') as stream:reader=csv.DictReader(stream);assert reader.fieldnames==i['columns'];assert len(list(reader))==i['rows']
+ for r,item in zip(task['runs'],mapping):assert r['run_id']==item['run_id'] and sha256_file(ROOT/'configs'/(r['run_id']+'.json'))==r['config_sha256']
+ torch.manual_seed(0);np.random.seed(0);random.seed(0)
+ enc=CheMeleonEmbedder(ROOT/'assets/chemeleon_mp.pt',device='cuda:0',batch_size=64)
+ frozen=digest_model(enc.model);write_json(EXEC/'raw/encoder-before.json',frozen)
+ forward_events=[]
+ def hook(module,inputs,out):
+  values=[out] if isinstance(out,torch.Tensor) else list(out)
+  assert values and all(v.device.type=='cuda' for v in values) and not torch.is_grad_enabled() and not enc.model.training
+  forward_events.append({'shapes':[list(v.shape) for v in values],'devices':[str(v.device) for v in values],'grad_enabled':False})
+ handle=enc.model.message_passing.register_forward_hook(hook)
+ pipes={};cold_count=0
+ for name in dict.fromkeys(r['task'] for r in task['runs']):
+  pipe=TaskPipeline(name,ROOT/'data',ROOT,ROOT/'source/task-metrics.json');pipe.load();split=pipe.make_internal_split(43,.1)
+  if pipe.kind=='classification':
+   for key in ('fit_row_indices','stop_row_indices'):assert {float(pipe.rows['train'][i]['Y']) for i in split[key]}=={0.,1.}
+  write_json(EXEC/'raw/progress.json',{'phase':'encoding','task':name,'at':now()})
+  metas={}
+  for split_name in ('train','valid','test'):
+   meta_file=pipe.cache_dir()/name/('raw_'+split_name+'.meta.json')
+   if meta_file.exists():
+    pipe.load_cache(split_name);meta=json.loads(meta_file.read_text());mode='verified_reuse'
+   else:
+    meta=build_raw_cache(enc,name,split_name,pipe.rows[split_name],pipe.source_sha[split_name],pipe.cache_dir());mode='cold';cold_count+=1
+   metas[split_name]={'mode':mode,'meta':meta}
+  pipe.fit_transforms();pipes[name]=pipe
+  write_json(EXEC/'cache'/name/'internal-split.json',split)
+  write_json(EXEC/'cache'/name/'transforms.json',{'features':pipe.scaler.to_dict(),'target':None if pipe.target_scaler is None else pipe.target_scaler.to_dict()})
+  write_json(EXEC/'cache'/name/'encoding-summary.json',metas)
+  print(json.dumps({'phase':'task_encoded','task':name,'rows':{s:len(v) for s,v in pipe.rows.items()},'at':now()}),flush=True)
+ assert enc.encoding_calls==cold_count and digest_model(enc.model)==frozen
+ write_json(EXEC/'raw/encoding-evidence.json',{'calls':enc.encoding_calls,'distinct_inputs_within_each_split':enc.encoded_smiles_count,'scope_rows':37940,'new_cold_encoding_calls':enc.encoding_calls,'reused_cache_rows':37940 if cold_count==0 else 0,'forward_events':forward_events,'state_unchanged':True,'sources':{f.name:sha256_file(f) for f in (ROOT/'source/src/admet_breadth').glob('*.py')},'packages':{n:importlib.metadata.version(n) for n in ('torch','numpy','chemprop','rdkit')}})
+ handle.remove();initials={};orders={};completed=[];outputs={}
+ for item in mapping:
+  rid=item['run_id'];cfg=item['consumed'];expanded=item['expanded'];pipe=pipes[cfg['task']];run=ROOT/rid;art=run/'artifacts';raw=run/'raw'
+  if (raw/'train-complete.json').exists():
+   ev=json.loads((art/'training-evidence.json').read_text())
+   previous=torch.load(art/'training-state-last.pt',map_location='cpu',weights_only=True)
+   assert ev['config_sha256']==item['expanded_config_sha256'] and ev['input_sha']==pipe.source_sha
+   assert previous['config']==expanded and sha256_file(art/'head-best.pt')==previous['best_head_sha256'] and sha256_file(art/'head-last.pt')==previous['last_head_sha256']
+   assert json.loads((art/'encoder-before.json').read_text())==json.loads((art/'encoder-after.json').read_text())==frozen
+   assert previous['progress']['cumulative_steps']==ev['optimizer_steps']>0
+   initials[(cfg['task'],cfg['head']['seed'])]=ev['head_initial_state_sha256']
+   orders[(cfg['task'],cfg['head']['seed'])]=[row['permutation_sha256'] for row in ev['history']]
+   completed.append(rid);outputs[rid]=str(run.relative_to(ROOT));continue
+  if (raw/'learning-started.json').exists():
+   assert rid=='hainan-breadth-bbb_martins-h0-s44-20261102' and not (art/'progress.pt').exists()
+   run=run/'attempt-02';art=run/'artifacts';raw=run/'raw'
+   assert not run.exists();art.mkdir(parents=True);raw.mkdir();(run/'source').mkdir()
+   write_json(raw/'recovery.json',json.loads((ROOT/'source/recovery-decision.json').read_text()))
+  outputs[rid]=str(run.relative_to(ROOT))
+  assert not (raw/'train-complete.json').exists() and not (raw/'learning-started.json').exists()
+  write_json(raw/'learning-started.json',{'at':now(),'run_id':rid,'gpu_uuid':GPU_UUID,'pid':os.getpid(),'input_sha':pipe.source_sha,'config_sha256':item['expanded_config_sha256']})
+  write_json(run/'source/expanded-config.json',expanded);write_json(run/'source/consumed-config.json',cfg)
+  assert digest_model(enc.model)==frozen;enc.assert_frozen();write_json(art/'encoder-before.json',frozen)
+  write_json(art/'internal-split.json',pipe.split_record)
+  scaler=pipe.scaler.to_dict();target=None if pipe.target_scaler is None else pipe.target_scaler.to_dict()
+  write_json(art/'preprocessing.json',{'feature_scaler':scaler,'target_scaler':target,'split_sha256':pipe.split_record['split_record_sha256']})
+  torch.cuda.reset_peak_memory_stats();fit_start=time.monotonic()
+  def checkpoint(state):
+   assert digest_model(enc.model)==frozen and all(p.grad is None for p in enc.model.parameters())
+   state.update(expanded_config=expanded,input_sha=pipe.source_sha,split_sha256=pipe.split_record['split_record_sha256'],source_sha256=sha256_file(ROOT/'source/src/admet_breadth/trainer.py'))
+   tmp=art/'progress.tmp';torch.save(state,tmp);tmp.replace(art/'progress.pt')
+   epoch=state['history'][-1]
+   write_json(raw/'progress.json',{'at':now(),'epoch':epoch['epoch'],'steps':state['steps'],'monitor':epoch['value'],'best_epoch':state['best_epoch']})
+   with (raw/'epochs.jsonl').open('a') as f:f.write(json.dumps(epoch,allow_nan=False)+'\n')
+   print(json.dumps({'phase':'epoch','run_id':rid,**epoch}),flush=True)
+  model,result=pipe.fit_head(cfg,'cuda:0',preparation=False,checkpoint_callback=checkpoint)
+  steps=result['progress']['cumulative_steps'];initial=result['initial_state_dict'];best=result['best_state_dict'];last=result['last_state_dict']
+  assert sum(p.numel() for p in model.parameters())==524801
+  assert steps>0 and result['nonzero_steps']==steps and any(not torch.equal(initial[k],best[k]) for k in initial)
+  assert all(not p.requires_grad and p.grad is None for p in enc.model.parameters())
+  headids={id(p) for p in model.parameters()};encoderids={id(p) for p in enc.model.parameters()};assert headids.isdisjoint(encoderids)
+  seed=cfg['head']['seed'];pair=(cfg['task'],seed);initial_digest=digest_state(initial)
+  if pair in initials:assert initials[pair]==initial_digest
+  else:initials[pair]=initial_digest
+  permutation=[x['permutation_sha256'] for x in result['history']]
+  if pair in orders:assert orders[pair][:min(len(orders[pair]),len(permutation))]==permutation[:min(len(orders[pair]),len(permutation))]
+  else:orders[pair]=permutation
+  torch.save({'run_id':rid,'config':expanded,'state_dict':initial},art/'head-initial.pt')
+  best_epoch=result['best_epoch'];best_step=result['history'][best_epoch-1]['steps']
+  best_info=save_head(art/'head-best.pt',task=cfg['task'],kind=cfg['kind'],model=model,scaler_dict=scaler,target_scaler_dict=target,train_config=cfg['head'],progress={'epoch':best_epoch,'steps':best_step,'monitor_name_in_TASK':expanded['early_stopping']['metric'],'monitor_value':result['best_value']})
+  model.load_state_dict(last)
+  last_info=save_head(art/'head-last.pt',task=cfg['task'],kind=cfg['kind'],model=model,scaler_dict=scaler,target_scaler_dict=target,train_config=cfg['head'],optimizer_state=result['optimizer_state'],rng_state=result['rng_state'],progress=result['progress'])
+  model.load_state_dict(best);model.eval()
+  result.update(config=expanded,run_id=rid,input_sha=pipe.source_sha,split_sha256=pipe.split_record['split_record_sha256'],best_head_sha256=best_info['sha256'],last_head_sha256=last_info['sha256'])
+  torch.save(result,art/'training-state-last.pt');loaded=torch.load(art/'training-state-last.pt',map_location='cpu',weights_only=True)
+  assert equal(loaded['optimizer_state'],result['optimizer_state']) and equal(loaded['rng_state'],result['rng_state'])
+  gen=torch.Generator(device='cpu');rv=loaded['rng_state']
+  def draws():return [random.random(),np.random.random(),torch.rand(3),torch.rand(3,device='cuda:0').cpu(),torch.randperm(7,generator=gen)]
+  restore_rng(rv,gen);first=draws();restore_rng(rv,gen);second=draws();assert equal(first,second);restore_rng(rv,gen)
+  reloaded,ck,fs,ts=load_head(art/'head-best.pt','cpu');assert digest_state(reloaded.state_dict())==digest_state(best)
+  assert np.array_equal(fs.mean,pipe.scaler.mean)
+  assert np.array_equal(fs.std,pipe.scaler.std)
+  # Reconstruct fit statistics independently from the identity-checked raw train cache.
+  trainX,_=pipe.load_cache('train');fitidx=pipe.split_record['fit_row_indices'];mu=trainX[fitidx].mean(0);sd=trainX[fitidx].std(0);sd[sd<1e-8]=1
+  assert np.array_equal(mu,fs.mean) and np.array_equal(sd,fs.std)
+  if ts is not None:
+   yy=np.asarray([float(r['Y']) for r in pipe.rows['train']],dtype=np.float64)[fitidx]
+   assert ts.mean==float(yy.mean()) and ts.std==(float(yy.std()) or 1.)
+  predictions=[];reload_checks={};fitset=set(fitidx)
+  for split in ('train','valid','test'):
+   records=pipe.predict_split(model,split,'cuda:0');X,mask=pipe.load_cache(split)
+   independent=postprocess(cfg['kind'],forward_logits(reloaded,fs.apply(X),'cpu'),ts)
+   actual=np.asarray([r['y_pred'] for r in records],dtype=np.float64);atol=3e-5*(1.+(1. if ts is None else ts.std))
+   assert np.isfinite(actual).all() and np.allclose(actual,independent,rtol=3e-5,atol=atol)
+   reload_checks[split]={'rows':len(actual),'max_abs_difference':float(np.max(np.abs(actual-independent))),'rtol':3e-5,'atol':atol,'device':'independent CPU head from best checkpoint'}
+   fields=['task','split','row_index','Drug_ID','Drug','y_pred','parse_ok']+(['Y','split_marker','used_for_fitting'] if split=='train' else [])
+   with (art/('predictions-'+split+'.csv')).open('w',newline='',encoding='utf-8') as f:
+    writer=csv.DictWriter(f,fieldnames=fields);writer.writeheader()
+    for i,(record,row) in enumerate(zip(records,pipe.rows[split])):
+     entry={**record,'Drug_ID':row['Drug_ID'],'Drug':row['Drug'],'y_pred':format(float(record['y_pred']),'.17g'),'parse_ok':bool(mask[i])}
+     if split=='train':entry.update(Y=row['Y'],split_marker='fit' if i in fitset else 'internal_stop',used_for_fitting=i in fitset)
+     writer.writerow(entry)
+     if split!='train':predictions.append({k:entry[k] for k in ['task','split','row_index','Drug_ID','Drug','y_pred']})
+  with (art/'predictions.csv').open('w',newline='',encoding='utf-8') as f:
+   w=csv.DictWriter(f,fieldnames=['task','split','row_index','Drug_ID','Drug','y_pred']);w.writeheader();w.writerows(predictions)
+  assert digest_model(enc.model)==frozen and sha256_file(ROOT/'assets/chemeleon_mp.pt')==expanded['encoder']['checkpoint_sha256'];write_json(art/'encoder-after.json',digest_model(enc.model))
+  ev={'run_id':rid,'task':cfg['task'],'seed':seed,'head':cfg['head'],'config_sha256':item['expanded_config_sha256'],'input_sha':pipe.source_sha,'monitor_name_in_TASK':expanded['early_stopping']['metric'],'monitor_definition':expanded['early_stopping']['definition'],'monitor_implementation_alias':cfg['monitor_metric'],'best_epoch':best_epoch,'best_step':best_step,'best_value':result['best_value'],'optimizer_steps':steps,'epochs':len(result['history']),'history':result['history'],'nonzero_gradient_steps':result['nonzero_steps'],'maximum_gradient_l1':result['maximum_gradient_l1'],'head_initial_state_sha256':initial_digest,'head_best_state_sha256':digest_state(best),'optimizer_excludes_encoder':True,'encoder_state_unchanged':True,'encoder_gradients_none':True,'encoder_eval':True,'full_rng_replay':True,'paired_initialization_and_sampler_checked':True,'reloaded_best_CPU':reload_checks,'gpu_uuid':GPU_UUID,'cuda_peak_allocated_bytes':torch.cuda.max_memory_allocated(),'cuda_peak_reserved_bytes':torch.cuda.max_memory_reserved(),'elapsed_seconds':time.monotonic()-fit_start,'stop_reason':'patience8' if len(result['history'])<50 else 'max50','prediction_rows':{k:len(v) for k,v in pipe.rows.items()},'cache_identity':{s:json.loads((pipe.cache_dir()/cfg['task']/('raw_'+s+'.meta.json')).read_text()) for s in ('train','valid','test')}}
+  write_json(art/'training-evidence.json',ev);write_json(raw/'train-complete.json',{'at':now(),'run_id':rid,'steps':steps,'epochs':len(result['history']),'status':'success'})
+  completed.append(rid);write_json(EXEC/'raw/progress.json',{'at':now(),'phase':'heads','completed_runs':completed,'last_run':rid})
+  del model,result,loaded,reloaded,trainX,X;gc.collect();torch.cuda.empty_cache()
+ assert len(completed)==24 and digest_model(enc.model)==frozen
+ write_json(EXEC/'raw/encoder-after.json',digest_model(enc.model))
+ write_json(EXEC/'raw/study-complete.json',{'at':now(),'request_id':task['request_id'],'completed_runs':completed,'elapsed_seconds':time.monotonic()-began,'encoder_encoding_calls':enc.encoding_calls,'reused_raw_cache_datasets':18,'output_directories':outputs,'actual_cuda':True,'no_private_valid_scoring':True})
+ print(json.dumps({'phase':'complete','completed_runs':24,'elapsed_seconds':time.monotonic()-began}),flush=True)

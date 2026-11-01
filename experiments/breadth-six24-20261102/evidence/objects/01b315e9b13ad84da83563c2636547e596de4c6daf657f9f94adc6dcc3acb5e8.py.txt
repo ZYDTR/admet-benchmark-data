@@ -1,0 +1,35 @@
+"""admet_breadth — production scientific interface for 22 ADMET tasks on the frozen
+CheMeleon底座 (preparation deliverable admet-breadth-interface-prepare-20261102-001).
+
+Importing this package performs no training, downloads nothing and writes nothing.
+"""
+
+from .common import (CHEMELEON_SHA256, CLASSIFICATION_TASKS, FEATURE_DIM,
+                     GLOBAL_FILL_VALUE, InterfaceError, NEW_INTERFACES, REGRESSION_TASKS,
+                     SPLITS, TASKS, TEMPLATE_ROWS, task_kind)
+from .data_io import (check_rows_identity, load_split_table, load_task_table,
+                      split_train_stop_groups, train_labels)
+from .encoder import CheMeleonEmbedder, verify_checkpoint
+from .cache import (FeatureScaler, TargetScaler, build_raw_cache, fill_raw,
+                    fit_feature_scaler, fit_target_scaler, load_raw_cache)
+from .heads import build_head, load_head, make_loss, make_optimizer, postprocess, save_head
+from .metrics import (EarlyStopMonitor, METRIC_FUNCS, average_precision, auroc,
+                      load_task_metrics, mae, spearman)
+from .predictions_io import check_coverage, export_submission, load_predictions, write_predictions_csv
+from .trainer import TrainingUnavailableInPreparation, train_head, validate_config
+from .pipeline import TaskPipeline
+
+__all__ = [
+    "TASKS", "NEW_INTERFACES", "CLASSIFICATION_TASKS", "REGRESSION_TASKS", "SPLITS",
+    "FEATURE_DIM", "GLOBAL_FILL_VALUE", "CHEMELEON_SHA256", "TEMPLATE_ROWS",
+    "InterfaceError", "task_kind",
+    "check_rows_identity", "load_split_table", "load_task_table",
+    "split_train_stop_groups", "train_labels",
+    "CheMeleonEmbedder", "verify_checkpoint",
+    "build_raw_cache", "load_raw_cache", "fill_raw",
+    "FeatureScaler", "TargetScaler", "fit_feature_scaler", "fit_target_scaler",
+    "build_head", "make_optimizer", "make_loss", "postprocess", "save_head", "load_head",
+    "EarlyStopMonitor", "METRIC_FUNCS", "load_task_metrics", "auroc", "average_precision", "mae", "spearman",
+    "write_predictions_csv", "load_predictions", "check_coverage", "export_submission",
+    "validate_config", "train_head", "TrainingUnavailableInPreparation", "TaskPipeline",
+]

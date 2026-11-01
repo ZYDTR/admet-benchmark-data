@@ -1,0 +1,496 @@
+[
+  {
+    "issue_id": "ISS-CACO2-MONITOR-01",
+    "status": "open",
+    "severity": "medium",
+    "category": "scientific_comparison",
+    "statement": "保留两胜一负、描述性配对解释；C1改为两份scores原件的Decimal50+Fraction独立计算，不再以比较汇总充当原始输入。",
+    "affected_run_ids": [
+      "hainan-agentled-mse-s44-20261102",
+      "hainan-agentled-mse-s45-20261102",
+      "hainan-agentled-mse-s46-20261102",
+      "hainan-agentled-mae-s44-20261102",
+      "hainan-agentled-mae-s45-20261102",
+      "hainan-agentled-mae-s46-20261102"
+    ],
+    "evidence_refs": [
+      "SRC-SCORE2",
+      "SRC-SCORE4",
+      "SRC-R14"
+    ],
+    "hypothesis": "Raw-scale MAE early stopping may better align selection with external MAE.",
+    "counterevidence": "未来实验效果不确定不妨碍Q0答完；无需重复工程模型重载。",
+    "impact": "Do not replace MSE globally; preserve monitor as Caco2-only candidate.",
+    "proposed_resolution": "If separately authorized, confirm on matched fresh seeds and fixed split with identical cached representation path and checkpoint policy.",
+    "verification_criterion": "Paired deltas across preregistered seeds plus full execution identity; no p-value from three seeds.",
+    "related_proposal_ids": [],
+    "events": [
+      {
+        "event_id": "repair-001-ISS-CACO2-MONITOR-01",
+        "previous_edition_status": "open",
+        "event": "amend_evidence_and_scope_preserve_issue",
+        "change": "保留两胜一负、描述性配对解释；C1改为两份scores原件的Decimal50+Fraction独立计算，不再以比较汇总充当原始输入。",
+        "limits": "未来实验效果不确定不妨碍Q0答完；无需重复工程模型重载。"
+      }
+    ]
+  },
+  {
+    "issue_id": "ISS-RUNNER-21TASK-02",
+    "status": "open",
+    "severity": "high",
+    "category": "implementation_readiness",
+    "statement": "21任务新版接口未验收仍成立，但不再阻断new_code研究设计。首批12proposal/24fit有完整配置与G00–G05依赖。",
+    "affected_run_ids": [],
+    "evidence_refs": [
+      "SRC-R10",
+      "SRC-R19",
+      "SRC-RUNNER"
+    ],
+    "hypothesis": "A zero-fit preparation stage can validate task-specific input/output, target transforms and scoring before training.",
+    "counterevidence": "关闭需每任务fixture和主控授权；本轮仅设计，尚未工程关闭。",
+    "impact": "All non-Caco2 training proposals remain blocked_assets until task fixtures pass.",
+    "proposed_resolution": "按guide G00–G05验收new_code；失败跳过对应task，不自动替换/追加；主控另行释放。",
+    "verification_criterion": "本任务metric/loss/scale/freeze/row/split fixture全通过及真实配置映射审查。",
+    "related_proposal_ids": [
+      "R001-lipophilicity_astrazeneca-H0",
+      "R001-lipophilicity_astrazeneca-H1",
+      "R001-bbb_martins-H0",
+      "R001-bbb_martins-H1",
+      "R001-cyp2d6_veith-H0",
+      "R001-cyp2d6_veith-H1",
+      "R001-clearance_hepatocyte_az-H0",
+      "R001-clearance_hepatocyte_az-H1",
+      "R001-ld50_zhu-H0",
+      "R001-ld50_zhu-H1",
+      "R001-solubility_aqsoldb-H0",
+      "R001-solubility_aqsoldb-H1"
+    ],
+    "events": [
+      {
+        "event_id": "repair-001-ISS-RUNNER-21TASK-02",
+        "previous_edition_status": "open",
+        "event": "amend_evidence_and_scope_preserve_issue",
+        "change": "21任务新版接口未验收仍成立，但不再阻断new_code研究设计。首批12proposal/24fit有完整配置与G00–G05依赖。",
+        "limits": "关闭需每任务fixture和主控授权；本轮仅设计，尚未工程关闭。"
+      }
+    ]
+  },
+  {
+    "issue_id": "ISS-DATA-PROFILE-03",
+    "status": "open",
+    "severity": "high",
+    "category": "data_quality",
+    "statement": "13项valid n已更正；原表14591纠正为11735。空Murcko骨架不等于标签缺失；LD50/solubility定位为结构分布偏移压力探针。",
+    "affected_run_ids": [],
+    "evidence_refs": [
+      "SRC-R17",
+      "SRC-SCAFFOLD",
+      "SRC-RANGES"
+    ],
+    "hypothesis": "Adaptive task selection improves information per unit compute compared with uniform shallow tuning.",
+    "counterevidence": "尚无全面train.Y分位数/标签关联测量；这些列明确未知，准备阶段产物，不虚构。",
+    "impact": "Do not launch broad screen before raw per-task manifest/profile audit.",
+    "proposed_resolution": "使用任务级正确汇总重排；准备只读train.Y和盲输入生成label/feature统计；禁止标签或行修补。",
+    "verification_criterion": "task-table与R17逐字段一致、总11735；未来train profile和所有输入hash匹配；空骨架语义正确。",
+    "related_proposal_ids": [
+      "R001-lipophilicity_astrazeneca-H0",
+      "R001-lipophilicity_astrazeneca-H1",
+      "R001-bbb_martins-H0",
+      "R001-bbb_martins-H1",
+      "R001-cyp2d6_veith-H0",
+      "R001-cyp2d6_veith-H1",
+      "R001-clearance_hepatocyte_az-H0",
+      "R001-clearance_hepatocyte_az-H1",
+      "R001-ld50_zhu-H0",
+      "R001-ld50_zhu-H1",
+      "R001-solubility_aqsoldb-H0",
+      "R001-solubility_aqsoldb-H1"
+    ],
+    "events": [
+      {
+        "event_id": "repair-001-ISS-DATA-PROFILE-03",
+        "previous_edition_status": "open",
+        "event": "amend_evidence_and_scope_preserve_issue",
+        "change": "13项valid n已更正；原表14591纠正为11735。空Murcko骨架不等于标签缺失；LD50/solubility定位为结构分布偏移压力探针。",
+        "limits": "尚无全面train.Y分位数/标签关联测量；这些列明确未知，准备阶段产物，不虚构。"
+      }
+    ]
+  },
+  {
+    "issue_id": "ISS-VALID-ADAPT-04",
+    "status": "open",
+    "severity": "high",
+    "category": "evaluation_bias",
+    "statement": "重算32正式任务评分/11逻辑run；null访问量保持未知；inner_stop同时选轮/筛选会乐观；新增seed不使旧valid独立。",
+    "affected_run_ids": [],
+    "evidence_refs": [
+      "SRC-R15",
+      "SRC-POLICY"
+    ],
+    "hypothesis": "Predeclared screen/confirm stages and task-level aggregate feedback reduce opportunistic selection.",
+    "counterevidence": "本轮阈值是可证伪建议而非显著性/业务已证阈值；用户允许valid调参不被改写为禁令。",
+    "impact": "Treat improvements as selection-stage evidence, not final generalization.",
+    "proposed_resolution": "Record every valid use, predeclare candidate and decision rules, keep row-level truth/residual private.",
+    "verification_criterion": "Evaluation-use ledger updated and every score linked to run/task/split/metric/receipt.",
+    "related_proposal_ids": [
+      "R001-lipophilicity_astrazeneca-H0",
+      "R001-lipophilicity_astrazeneca-H1",
+      "R001-bbb_martins-H0",
+      "R001-bbb_martins-H1",
+      "R001-cyp2d6_veith-H0",
+      "R001-cyp2d6_veith-H1",
+      "R001-clearance_hepatocyte_az-H0",
+      "R001-clearance_hepatocyte_az-H1",
+      "R001-ld50_zhu-H0",
+      "R001-ld50_zhu-H1",
+      "R001-solubility_aqsoldb-H0",
+      "R001-solubility_aqsoldb-H1"
+    ],
+    "events": [
+      {
+        "event_id": "repair-001-ISS-VALID-ADAPT-04",
+        "previous_edition_status": "open",
+        "event": "amend_evidence_and_scope_preserve_issue",
+        "change": "重算32正式任务评分/11逻辑run；null访问量保持未知；inner_stop同时选轮/筛选会乐观；新增seed不使旧valid独立。",
+        "limits": "本轮阈值是可证伪建议而非显著性/业务已证阈值；用户允许valid调参不被改写为禁令。"
+      }
+    ]
+  },
+  {
+    "issue_id": "ISS-RESOURCE-SHARING-05",
+    "status": "open",
+    "severity": "high",
+    "category": "runtime_compliance",
+    "statement": "GPU0失败不撤销；GPU1只在已观察条件接受，未证明任意共享安全；未知他人吞吐不填0影响。",
+    "affected_run_ids": [
+      "hainan-agentled-mse-s44-20261102",
+      "hainan-agentled-mse-s45-20261102",
+      "hainan-agentled-mse-s46-20261102",
+      "hainan-agentled-mae-s44-20261102",
+      "hainan-agentled-mae-s45-20261102",
+      "hainan-agentled-mae-s46-20261102"
+    ],
+    "evidence_refs": [
+      "SRC-R07",
+      "SRC-R13"
+    ],
+    "hypothesis": "A narrow GPU1 low-load serial branch may be operationally viable under fresh prechecks.",
+    "counterevidence": "新批次仍需现场核实实际资源和他人作业，不固定3并发、不零显存门槛。",
+    "impact": "Never generalize to arbitrary shared GPU or erase GPU0 failed attempts.",
+    "proposed_resolution": "Require fresh health, ownership and resource checks; abort on observed contention; report all failed attempts separately.",
+    "verification_criterion": "Per-run resource observations and explicit branch scope; no claim of zero impact without direct measurement.",
+    "related_proposal_ids": [
+      "R001-lipophilicity_astrazeneca-H0",
+      "R001-lipophilicity_astrazeneca-H1",
+      "R001-bbb_martins-H0",
+      "R001-bbb_martins-H1",
+      "R001-cyp2d6_veith-H0",
+      "R001-cyp2d6_veith-H1",
+      "R001-clearance_hepatocyte_az-H0",
+      "R001-clearance_hepatocyte_az-H1",
+      "R001-ld50_zhu-H0",
+      "R001-ld50_zhu-H1",
+      "R001-solubility_aqsoldb-H0",
+      "R001-solubility_aqsoldb-H1"
+    ],
+    "events": [
+      {
+        "event_id": "repair-001-ISS-RESOURCE-SHARING-05",
+        "previous_edition_status": "open",
+        "event": "amend_evidence_and_scope_preserve_issue",
+        "change": "GPU0失败不撤销；GPU1只在已观察条件接受，未证明任意共享安全；未知他人吞吐不填0影响。",
+        "limits": "新批次仍需现场核实实际资源和他人作业，不固定3并发、不零显存门槛。"
+      }
+    ]
+  },
+  {
+    "issue_id": "ISS-EVIDENCE-READ-06",
+    "status": "resolved",
+    "severity": "high",
+    "category": "evidence_completeness",
+    "statement": "23合同entry原文实读完成；R19按21task完整科学配置展开84条并核对所有配置SHA。",
+    "affected_run_ids": [],
+    "evidence_refs": [
+      "SRC-R08",
+      "SRC-R11",
+      "SRC-R13",
+      "SRC-R15",
+      "SRC-R19",
+      "SRC-MAP"
+    ],
+    "hypothesis": "逐项原文读取和可核算配置解析可以关闭首版缺读，不要求无差别重放全库。",
+    "counterevidence": "原670837字节wrapper SHA未本地独立复算，与阅读/配置内容核验区分；不是把未下载宣称读不到。",
+    "impact": "首版Q0–Q7缺读状态由本轮依据更新；原件字节完整性另记。",
+    "proposed_resolution": "已完成本轮原文/配置复核并保留23回执和84SHA审计。",
+    "verification_criterion": "23唯一entry，R17/两scores字节SHA一致，84科学配置SHA逐项对应；包装字节未复算仍明确。",
+    "related_proposal_ids": [],
+    "events": [
+      {
+        "event_id": "repair-001-ISS-EVIDENCE-READ-06",
+        "previous_edition_status": "open",
+        "event": "resolved_missing_read",
+        "change": "23合同entry原文实读完成；R19按21task完整科学配置展开84条并核对所有配置SHA。",
+        "limits": "原670837字节wrapper SHA未本地独立复算，与阅读/配置内容核验区分；不是把未下载宣称读不到。"
+      }
+    ]
+  },
+  {
+    "issue_id": "ISS-REPAIR-COUNTS-07",
+    "status": "resolved",
+    "severity": "high",
+    "category": "source_transcription",
+    "statement": "首版13/22 valid n抄错且全表14591，影响DILI/hERG/HIA/half-life等优先级。",
+    "affected_run_ids": [],
+    "evidence_refs": [
+      "SRC-R17",
+      "USER-REPAIR-001"
+    ],
+    "hypothesis": "见statement；修复或实验可证伪，不预设通过。",
+    "counterevidence": "数据集总规模/相邻列不能代替valid n；未证明错误具体来自哪次复制。",
+    "impact": "影响数据解释、设计或验收边界；不撤销已接受六项科学产物。",
+    "proposed_resolution": "已由字节SHA匹配原件自动生成22行，逐字段比对类别计数，11735总计对账；所有当前报告/JSON只引用此表。",
+    "verification_criterion": "已由字节SHA匹配原件自动生成22行，逐字段比对类别计数，11735总计对账；所有当前报告/JSON只引用此表。",
+    "related_proposal_ids": [],
+    "events": [
+      {
+        "event_id": "repair-001-ISS-REPAIR-COUNTS-07",
+        "event": "new_issue_then_resolved_by_repair",
+        "change": "已由字节SHA匹配原件自动生成22行，逐字段比对类别计数，11735总计对账；所有当前报告/JSON只引用此表。"
+      }
+    ]
+  },
+  {
+    "issue_id": "ISS-REPAIR-PROPOSAL-08",
+    "status": "resolved",
+    "severity": "high",
+    "category": "design_scope",
+    "statement": "proposal_only被误读为不能列new_code候选，首版空实验数组。",
+    "affected_run_ids": [],
+    "evidence_refs": [
+      "SRC-PROMPT",
+      "SRC-R12",
+      "USER-REPAIR-001"
+    ],
+    "hypothesis": "见statement；修复或实验可证伪，不预设通过。",
+    "counterevidence": "new_code未验收仍不能运行，但具体设计可完成。",
+    "impact": "影响数据解释、设计或验收边界；不撤销已接受六项科学产物。",
+    "proposed_resolution": "已形成12条具体proposal；任务/单配置/单split/seeds/objective齐全；工程门槛另列不塞训练数组。",
+    "verification_criterion": "已形成12条具体proposal；任务/单配置/单split/seeds/objective齐全；工程门槛另列不塞训练数组。",
+    "related_proposal_ids": [
+      "R001-lipophilicity_astrazeneca-H0",
+      "R001-lipophilicity_astrazeneca-H1",
+      "R001-bbb_martins-H0",
+      "R001-bbb_martins-H1",
+      "R001-cyp2d6_veith-H0",
+      "R001-cyp2d6_veith-H1",
+      "R001-clearance_hepatocyte_az-H0",
+      "R001-clearance_hepatocyte_az-H1",
+      "R001-ld50_zhu-H0",
+      "R001-ld50_zhu-H1",
+      "R001-solubility_aqsoldb-H0",
+      "R001-solubility_aqsoldb-H1"
+    ],
+    "events": [
+      {
+        "event_id": "repair-001-ISS-REPAIR-PROPOSAL-08",
+        "event": "new_issue_then_resolved_by_repair",
+        "change": "已形成12条具体proposal；任务/单配置/单split/seeds/objective齐全；工程门槛另列不塞训练数组。"
+      }
+    ]
+  },
+  {
+    "issue_id": "ISS-REPAIR-DEDUP-09",
+    "status": "resolved",
+    "severity": "high",
+    "category": "counting",
+    "statement": "DIR01基线重复及W1/W2重叠未去重。",
+    "affected_run_ids": [],
+    "evidence_refs": [
+      "USER-REPAIR-001",
+      "SRC-R12"
+    ],
+    "hypothesis": "见statement；修复或实验可证伪，不预设通过。",
+    "counterevidence": "改变模型配置或split才是不同fit；“阶段名”不是额外fit。",
+    "impact": "影响数据解释、设计或验收边界；不撤销已接受六项科学产物。",
+    "proposed_resolution": "7配置×2=14；旧定义W1∪W2=10。修复版16/24/60，任意2任务双方seed46条件追加4，总28，15种组合已核对。",
+    "verification_criterion": "7配置×2=14；旧定义W1∪W2=10。修复版16/24/60，任意2任务双方seed46条件追加4，总28，15种组合已核对。",
+    "related_proposal_ids": [
+      "R001-lipophilicity_astrazeneca-H0",
+      "R001-lipophilicity_astrazeneca-H1",
+      "R001-bbb_martins-H0",
+      "R001-bbb_martins-H1",
+      "R001-cyp2d6_veith-H0",
+      "R001-cyp2d6_veith-H1",
+      "R001-clearance_hepatocyte_az-H0",
+      "R001-clearance_hepatocyte_az-H1",
+      "R001-ld50_zhu-H0",
+      "R001-ld50_zhu-H1",
+      "R001-solubility_aqsoldb-H0",
+      "R001-solubility_aqsoldb-H1"
+    ],
+    "events": [
+      {
+        "event_id": "repair-001-ISS-REPAIR-DEDUP-09",
+        "event": "new_issue_then_resolved_by_repair",
+        "change": "7配置×2=14；旧定义W1∪W2=10。修复版16/24/60，任意2任务双方seed46条件追加4，总28，15种组合已核对。"
+      }
+    ]
+  },
+  {
+    "issue_id": "ISS-REP-POOLING-10",
+    "status": "resolved",
+    "severity": "high",
+    "category": "architecture",
+    "statement": "首版对CheMeleon2048 fingerprint泛列CLS/mean不合实际架构。",
+    "affected_run_ids": [],
+    "evidence_refs": [
+      "SRC-ENCODER",
+      "EXT-MOLFORMER",
+      "EXT-MINIMOL"
+    ],
+    "hypothesis": "见statement；修复或实验可证伪，不预设通过。",
+    "counterevidence": "当前encoder使用图消息传递和MeanAggregation；Transformer池化不能直接搬来。",
+    "impact": "影响数据解释、设计或验收边界；不撤销已接受六项科学产物。",
+    "proposed_resolution": "主矩阵保持原fingerprint；MolFormer用其版本明确pooler_output，MiniMol512输出；任何表示变换另建feature身份和对照。",
+    "verification_criterion": "主矩阵保持原fingerprint；MolFormer用其版本明确pooler_output，MiniMol512输出；任何表示变换另建feature身份和对照。",
+    "related_proposal_ids": [],
+    "events": [
+      {
+        "event_id": "repair-001-ISS-REP-POOLING-10",
+        "event": "new_issue_then_resolved_by_repair",
+        "change": "主矩阵保持原fingerprint；MolFormer用其版本明确pooler_output，MiniMol512输出；任何表示变换另建feature身份和对照。"
+      }
+    ]
+  },
+  {
+    "issue_id": "ISS-METRIC-PARITY-11",
+    "status": "open",
+    "severity": "medium",
+    "category": "metric_contract",
+    "statement": "本地AP/AUPRC、ties策略有定义，但官方实现/总分等价未确认。",
+    "affected_run_ids": [],
+    "evidence_refs": [
+      "SRC-R09",
+      "SRC-R17",
+      "EXT-AP"
+    ],
+    "hypothesis": "见statement；修复或实验可证伪，不预设通过。",
+    "counterevidence": "已有本地完整评估足以做内部比较，不需要等官方等价才写研究设计；不得称官方总分提升。",
+    "impact": "影响数据解释、设计或验收边界；不撤销已接受六项科学产物。",
+    "proposed_resolution": "准备独立手算fixture，保持本地口径；官方文档未补齐则继续标local-only，不把trapz PR改叫AP。",
+    "verification_criterion": "准备独立手算fixture，保持本地口径；官方文档未补齐则继续标local-only，不把trapz PR改叫AP。",
+    "related_proposal_ids": [
+      "R001-lipophilicity_astrazeneca-H0",
+      "R001-lipophilicity_astrazeneca-H1",
+      "R001-bbb_martins-H0",
+      "R001-bbb_martins-H1",
+      "R001-cyp2d6_veith-H0",
+      "R001-cyp2d6_veith-H1",
+      "R001-clearance_hepatocyte_az-H0",
+      "R001-clearance_hepatocyte_az-H1",
+      "R001-ld50_zhu-H0",
+      "R001-ld50_zhu-H1",
+      "R001-solubility_aqsoldb-H0",
+      "R001-solubility_aqsoldb-H1"
+    ],
+    "events": [
+      {
+        "event_id": "repair-001-ISS-METRIC-PARITY-11",
+        "event": "new_open_dependency",
+        "change": "准备独立手算fixture，保持本地口径；官方文档未补齐则继续标local-only，不把trapz PR改叫AP。"
+      }
+    ]
+  },
+  {
+    "issue_id": "ISS-SHIFT-TAIL-12",
+    "status": "open",
+    "severity": "high",
+    "category": "scientific_diagnosis",
+    "statement": "LD50/solubility valid全部空Murcko骨架；AMES valid单骨架；预测范围汇总存在极端数值。",
+    "affected_run_ids": [],
+    "evidence_refs": [
+      "SRC-SCAFFOLD",
+      "SRC-RANGES",
+      "SRC-BASELINE"
+    ],
+    "hypothesis": "见statement；修复或实验可证伪，不预设通过。",
+    "counterevidence": "空骨架≠缺失≠同一化学家族；输出极端不是残差大/标签错误的直接证明；不能推断原split算法。",
+    "impact": "影响数据解释、设计或验收边界；不撤销已接受六项科学产物。",
+    "proposed_resolution": "保留输入原样；把两MAE任务作为压力探针，先查fit-only缩放/输入条件数/非有限；用汇总而非逐分子valid残差判断。",
+    "verification_criterion": "保留输入原样；把两MAE任务作为压力探针，先查fit-only缩放/输入条件数/非有限；用汇总而非逐分子valid残差判断。",
+    "related_proposal_ids": [
+      "R001-lipophilicity_astrazeneca-H0",
+      "R001-lipophilicity_astrazeneca-H1",
+      "R001-bbb_martins-H0",
+      "R001-bbb_martins-H1",
+      "R001-cyp2d6_veith-H0",
+      "R001-cyp2d6_veith-H1",
+      "R001-clearance_hepatocyte_az-H0",
+      "R001-clearance_hepatocyte_az-H1",
+      "R001-ld50_zhu-H0",
+      "R001-ld50_zhu-H1",
+      "R001-solubility_aqsoldb-H0",
+      "R001-solubility_aqsoldb-H1"
+    ],
+    "events": [
+      {
+        "event_id": "repair-001-ISS-SHIFT-TAIL-12",
+        "event": "new_open_dependency",
+        "change": "保留输入原样；把两MAE任务作为压力探针，先查fit-only缩放/输入条件数/非有限；用汇总而非逐分子valid残差判断。"
+      }
+    ]
+  },
+  {
+    "issue_id": "ISS-TURNAROUND-13",
+    "status": "open",
+    "severity": "medium",
+    "category": "operational_measurement",
+    "statement": "阶段时间有重叠；模型完成仅有区间，formal completedAt仍未知。",
+    "affected_run_ids": [],
+    "evidence_refs": [
+      "USER-REPAIR-001",
+      "SRC-R07",
+      "SRC-R18"
+    ],
+    "hypothesis": "见statement；修复或实验可证伪，不预设通过。",
+    "counterevidence": "310.657s为发出到首次观测最终件上界，不是精确Pro运行；ZIP保留时刻不是单条下载耗时。",
+    "impact": "影响数据解释、设计或验收边界；不撤销已接受六项科学产物。",
+    "proposed_resolution": "输出事件与区间；下一批角色开始/释放/工作/回报分开记并计算区间并集，不简单求和。",
+    "verification_criterion": "输出事件与区间；下一批角色开始/释放/工作/回报分开记并计算区间并集，不简单求和。",
+    "related_proposal_ids": [],
+    "events": [
+      {
+        "event_id": "repair-001-ISS-TURNAROUND-13",
+        "event": "new_open_dependency",
+        "change": "输出事件与区间；下一批角色开始/释放/工作/回报分开记并计算区间并集，不简单求和。"
+      }
+    ]
+  },
+  {
+    "issue_id": "ISS-PRETRAIN-SOURCE-14",
+    "status": "open",
+    "severity": "high",
+    "category": "asset_readiness",
+    "statement": "MiniMol/MoLFormer等公开上游可查不等于本地已准入；预训练来源/权重许可/完整输入仍需验收。",
+    "affected_run_ids": [],
+    "evidence_refs": [
+      "SRC-R16",
+      "EXT-MINIMOL",
+      "EXT-MOLFORMER",
+      "SRC-POLICY"
+    ],
+    "hypothesis": "见statement；修复或实验可证伪，不预设通过。",
+    "counterevidence": "最新MiniMol仓库有setup.py，只反驳“上游永远缺文件”，不反驳历史本地失败；MoLFormer10pct不可冒充full。",
+    "impact": "影响数据解释、设计或验收边界；不撤销已接受六项科学产物。",
+    "proposed_resolution": "只研究候选；核对批准资产来源和版权/许可范围、token长度覆盖/无截断、参数buffer冻结；不下载外部训练数据。",
+    "verification_criterion": "只研究候选；核对批准资产来源和版权/许可范围、token长度覆盖/无截断、参数buffer冻结；不下载外部训练数据。",
+    "related_proposal_ids": [],
+    "events": [
+      {
+        "event_id": "repair-001-ISS-PRETRAIN-SOURCE-14",
+        "event": "new_open_dependency",
+        "change": "只研究候选；核对批准资产来源和版权/许可范围、token长度覆盖/无截断、参数buffer冻结；不下载外部训练数据。"
+      }
+    ]
+  }
+]

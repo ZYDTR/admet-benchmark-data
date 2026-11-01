@@ -1,0 +1,26 @@
+"""Describe identity-verified frozen representations; no labels, model or inference."""
+from pathlib import Path
+import json,hashlib,ast,struct,array,sys,math,heapq
+A=Path(__file__).parent;N=A.parents[1];D=N/'retrieval/batch24-001';bindings={x['path']:x for x in json.loads((D/'manifests/local-remote-bindings.json').read_text())['source_bindings']};out=[]
+def source(k):return Path(bindings[k]['local_original'])
+def npy(k):
+ raw=source(k).read_bytes();assert hashlib.sha256(raw).hexdigest()==bindings[k]['sha256'];assert raw[:6]==b'\x93NUMPY';size=2 if raw[6]==1 else 4;l=int.from_bytes(raw[8:8+size],'little');h=ast.literal_eval(raw[8+size:8+size+l].decode());assert h['descr']=='<f4' and not h['fortran_order'];a=array.array('f');a.frombytes(raw[8+size+l:]);
+ if sys.byteorder!='little':a.byteswap()
+ assert len(a)==math.prod(h['shape']);return a,h['shape']
+def quantile(v,q):
+ v=sorted(v);i=(len(v)-1)*q;lo=int(i);hi=min(lo+1,len(v)-1);return v[lo]+(v[hi]-v[lo])*(i-lo)
+for task in sorted({r['task'] for r in json.loads((D/'SCORING_TASK.json').read_text())['runs']}):
+ trans=json.loads(source(f'cache/{task}/transforms.json').read_text())['features'];mu,sd=trans['mean'],trans['std'];split=json.loads(source(f'cache/{task}/internal-split.json').read_text());fit=set(split['fit_row_indices']);partitions={}
+ for s in ('train','valid','test'):
+  key=f'cache/chemeleon_mp/{task}/raw_{s}.npy';a,shape=npy(key);maxdim=[0.]*2048;rowmax=[];over100=0;over1000=0;internal={'fit':[],'stop':[]}
+  for i in range(shape[0]):
+   largest=0.
+   for k in range(2048):
+    z=abs((a[i*2048+k]-mu[k])/sd[k]);assert math.isfinite(z);maxdim[k]=max(maxdim[k],z);largest=max(largest,z)
+   rowmax.append(largest);over100+=largest>100;over1000+=largest>1000
+   if s=='train':internal['fit' if i in fit else 'stop'].append(largest)
+  rec={'rows':shape[0],'source_sha256':bindings[key]['sha256'],'absolute_standardized_feature_max':max(rowmax),'row_max_quantiles':{str(q):quantile(rowmax,q) for q in (.5,.9,.99,1.)},'rows_with_any_abs_z_above100':over100,'rows_with_any_abs_z_above1000':over1000,'largest_dimensions':[{'dimension':k,'max_abs_z':maxdim[k],'fit_mean':mu[k],'fit_std_used':sd[k]} for k in heapq.nlargest(10,range(2048),key=maxdim.__getitem__)]}
+  if s=='train':rec['internal_row_max_quantiles']={p:{str(q):quantile(v,q) for q in (.5,.9,.99,1.)} for p,v in internal.items()}
+  partitions[s]=rec
+ out.append({'task':task,'feature_dim':2048,'raw_feature_source':'identity-verified frozen CheMeleon cache','scaling_math':'float64 diagnostic of (stored-float32-feature - stored-float32-fit-mean)/stored-float32-fit-std; production f32 may differ by rounding','fit_statistics_source':bindings[f'cache/{task}/transforms.json']['sha256'],'fit_std_below1e-5_count':sum(x<1e-5 for x in sd),'fit_std_below1e-3_count':sum(x<1e-3 for x in sd),'fit_std_min':min(sd),'partitions':partitions})
+r={'evaluation_scope':'no_label_feature_distribution_diagnostic','runs':out,'private_truth_read':False,'model_inference_or_training':False,'causal_conclusion':'These magnitudes document a numerical exposure; their causal contribution to prediction error has not been isolated by intervention.'};(A/'feature-distribution-diagnostic.json').write_text(json.dumps(r,indent=2)+'\n');print(json.dumps([{'task':x['task'],'fit_std_min':x['fit_std_min'],'max_abs_z':{k:v['absolute_standardized_feature_max'] for k,v in x['partitions'].items()},'valid_rows_abs_z_gt1000':x['partitions']['valid']['rows_with_any_abs_z_above1000']} for x in out]))

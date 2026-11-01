@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/weakref.py", line 666, in _exitfunc
+    f()
+  File "/usr/lib/python3.11/weakref.py", line 590, in __call__
+    return info.func(*info.args, **(info.kwargs or {}))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/tempfile.py", line 1042, in _cleanup
+    cls._rmtree(name, ignore_errors=ignore_errors)
+  File "/usr/lib/python3.11/tempfile.py", line 1038, in _rmtree
+    _rmtree(name, onerror=onerror)
+  File "/usr/lib/python3.11/shutil.py", line 732, in rmtree
+    _rmtree_safe_fd(fd, path, onerror)
+  File "/usr/lib/python3.11/shutil.py", line 681, in _rmtree_safe_fd
+    os.unlink(entry.name, dir_fd=topfd)
+  File "<stdin>", line 19, in audit
+RuntimeError: write outside audit root: /workspace/context-infrastructure/_remote_module_non_scriptable.py

@@ -1,0 +1,3231 @@
+{
+  "request_id": "admet-breadth-six24-20261102-001",
+  "runs": [
+    {
+      "run_id": "hainan-breadth-lipophilicity_astrazeneca-h0-s44-20261102",
+      "task": "lipophilicity_astrazeneca",
+      "config_tag": "H0",
+      "seed": 44,
+      "epochs": 20,
+      "steps": 420,
+      "best_epoch": 12,
+      "best_steps": 252,
+      "stop_reason": "patience8",
+      "monitor_name": "MAE",
+      "monitor_definition": "mean absolute error on original Y",
+      "counts": {
+        "train": 2940,
+        "valid": 420,
+        "test": 840
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 2940,
+          "max_abs_difference": 2.00461824517717e-06,
+          "rtol": 3e-05,
+          "atol": 6.603419281141997e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 420,
+          "max_abs_difference": 6.443415787593665e-07,
+          "rtol": 3e-05,
+          "atol": 6.603419281141997e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 840,
+          "max_abs_difference": 5.498381472079927e-05,
+          "rtol": 3e-05,
+          "atol": 6.603419281141997e-05,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-lipophilicity_astrazeneca-h0-s44-20261102",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-lipophilicity_astrazeneca-h0-s44-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-lipophilicity_astrazeneca-h0-s44-20261102.json",
+      "original_config_sha256": "b0bad1cb2ef316d6df9ea185942d353940fde8d5a830948987334bff99f23a41",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3226,
+          "sha256": "6b985472eb80acd9728503a21f431e66f57e96858ea688a89901c3a968aef8c8"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139168,
+          "sha256": "bf932f1da5ff52bb12d55f25a6fe22bb573961695dcfa134012a71a7e12d5772"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108216,
+          "sha256": "b124c5a427bb4303f1234b6ff2916c38b6aba1e6ba61d920e28b29e2259a4ccc"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360778,
+          "sha256": "c0cdc92c01ad594c3603fd59b171d139e25cd08eff325bcf53c619e1130693d6"
+        },
+        "artifacts/internal-split.json": {
+          "size": 29092,
+          "sha256": "e89f782c186c3b394a71030d09d5f6603fee3e84f2312315cf98dacf23d4872d"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 103863,
+          "sha256": "06b44f89c731b193fb3ee9ad1eed92905f4e1d47fc3a27a8c76bc999b6296638"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 407432,
+          "sha256": "f7fc74014dc3f382db0180727cb647047cbcb0cecc89d81f696d5ebe5d5d3a1a"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 51011,
+          "sha256": "8f993c00ea207ec1a8eea48e875c57ff9e2a14655f36282739b3ba3d4b250529"
+        },
+        "artifacts/predictions.csv": {
+          "size": 148514,
+          "sha256": "ef9cee6e63261a4700bb64c43969ebfb4829c927ea05644e6121d7f1ac8ad4a5"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 110373,
+          "sha256": "958bd1978d05517cb4d4d0dcb102d69062be950c7b86ad6bfdef33e94caba755"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 20058,
+          "sha256": "3992d2b40dfe71a0502aa9e96c45f837b8297e26e6b2e016872a3c5055d2e0af"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10554626,
+          "sha256": "4e9ab631e4e457614a9a4ce9b98a7cdfbda386c7e87557d5632d965abb4f1ac3"
+        },
+        "raw/epochs.jsonl": {
+          "size": 9050,
+          "sha256": "5ddae72c1e00f783cb9c84d7c1d11868e52c2cf9d75f7e0350d124ff77c9d41d"
+        },
+        "raw/learning-started.json": {
+          "size": 545,
+          "sha256": "c6850204a536cc48177abadd9245464ba99f6006baf5f47ed5290a774760ae5a"
+        },
+        "raw/progress.json": {
+          "size": 130,
+          "sha256": "4d9fe346c09670611d229d34d793d0ca6673ae55959cf9aab7b0d18bf48452af"
+        },
+        "raw/train-complete.json": {
+          "size": 174,
+          "sha256": "1831f4a3c010059ee053322ccea3ea04afcb67134b82d9edd4c077224fe3a292"
+        },
+        "source/consumed-config.json": {
+          "size": 654,
+          "sha256": "1955c7d9cda4ba983cbea9e293d397b990b50057d192cfe29d27d1c5b839a0ec"
+        },
+        "source/expanded-config.json": {
+          "size": 7123,
+          "sha256": "b8e04cf413a257eb3de61765389bbf70aa6406ca739b338dd48c8b6c8b9666b2"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    },
+    {
+      "run_id": "hainan-breadth-lipophilicity_astrazeneca-h0-s45-20261102",
+      "task": "lipophilicity_astrazeneca",
+      "config_tag": "H0",
+      "seed": 45,
+      "epochs": 25,
+      "steps": 525,
+      "best_epoch": 17,
+      "best_steps": 357,
+      "stop_reason": "patience8",
+      "monitor_name": "MAE",
+      "monitor_definition": "mean absolute error on original Y",
+      "counts": {
+        "train": 2940,
+        "valid": 420,
+        "test": 840
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 2940,
+          "max_abs_difference": 8.591221049236708e-06,
+          "rtol": 3e-05,
+          "atol": 6.603419281141997e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 420,
+          "max_abs_difference": 5.72748069860296e-07,
+          "rtol": 3e-05,
+          "atol": 6.603419281141997e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 840,
+          "max_abs_difference": 4.811083787714665e-05,
+          "rtol": 3e-05,
+          "atol": 6.603419281141997e-05,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-lipophilicity_astrazeneca-h0-s45-20261102",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-lipophilicity_astrazeneca-h0-s45-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-lipophilicity_astrazeneca-h0-s45-20261102.json",
+      "original_config_sha256": "fa466d8cb50beedcefe0b0bd44ab8d359a7908f9fdb32eb56634772526b56311",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3227,
+          "sha256": "062e792c0855f2b74267c020c9b46a638be0cc929191560eb58b9690253357a7"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139168,
+          "sha256": "ad94b8aaf2e651cc7424ed69a20dd93546ee8645d3f8a6f7a8b92b5a3cb1b6a9"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108216,
+          "sha256": "f689b1a0c4bf22bfd5c17cf430590a41eb891c02b0627051d56a37d649a3feff"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360842,
+          "sha256": "aaca1d55690283e74d900fcf52a4e1e71ff83839e3acae02edfd8423b393d662"
+        },
+        "artifacts/internal-split.json": {
+          "size": 29092,
+          "sha256": "e89f782c186c3b394a71030d09d5f6603fee3e84f2312315cf98dacf23d4872d"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 103831,
+          "sha256": "15595109e9b56a3bac350271d7a654a4ad7c34367fa7750f28bbf9b7665ecf75"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 407470,
+          "sha256": "27d75c1990bea003def7205731017bab00e2370c189fdf6adfc990ab295a41e9"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 50999,
+          "sha256": "c7113ab08d87a7d1f4a2c76f88265f41c71753d47e713a4e904bb58694a9dc8e"
+        },
+        "artifacts/predictions.csv": {
+          "size": 148470,
+          "sha256": "7f1797a514dd7f1035b5d2e13d1f735a59fd6f1739620d6f5751b6ab8c8f732e"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 110373,
+          "sha256": "958bd1978d05517cb4d4d0dcb102d69062be950c7b86ad6bfdef33e94caba755"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 22789,
+          "sha256": "4c280c79ddf3d03b5783a63ef93bd20eee497f50ad89402512892cfb082f9d66"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10560194,
+          "sha256": "b3783e2f9b372dada6640b6a0edf70c5003df3e5a4971c2448bc7d54bc4becea"
+        },
+        "raw/epochs.jsonl": {
+          "size": 11337,
+          "sha256": "4f8eba6b1a23dd7bb5dd1effeeca16611c64814d0f4abf30649a6c979e96b235"
+        },
+        "raw/learning-started.json": {
+          "size": 545,
+          "sha256": "da2c8a9200ac9a39b6075f6cac059b0584a4ad1462ec2b0f274da78d02fbd934"
+        },
+        "raw/progress.json": {
+          "size": 131,
+          "sha256": "611327c42a074623b1c0be6bc244f7673f45c559432b59a1f364bf71d8241289"
+        },
+        "raw/train-complete.json": {
+          "size": 174,
+          "sha256": "ea5fd0615c8cfc8ed7909fb59db386ce2c35d3658db8232f6f019e9faaa48ba0"
+        },
+        "source/consumed-config.json": {
+          "size": 654,
+          "sha256": "223932bdf8c311c81c4e93e0f8635a9e66431e468541f16d2958415062f661d0"
+        },
+        "source/expanded-config.json": {
+          "size": 7123,
+          "sha256": "3a70f2a712aab78f761907efeaee0ca7f6151dd5e1f83224183613da6122ccca"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    },
+    {
+      "run_id": "hainan-breadth-lipophilicity_astrazeneca-h1-s44-20261102",
+      "task": "lipophilicity_astrazeneca",
+      "config_tag": "H1",
+      "seed": 44,
+      "epochs": 14,
+      "steps": 294,
+      "best_epoch": 6,
+      "best_steps": 126,
+      "stop_reason": "patience8",
+      "monitor_name": "MAE",
+      "monitor_definition": "mean absolute error on original Y",
+      "counts": {
+        "train": 2940,
+        "valid": 420,
+        "test": 840
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 2940,
+          "max_abs_difference": 1.8327938235529473e-05,
+          "rtol": 3e-05,
+          "atol": 6.603419281141997e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 420,
+          "max_abs_difference": 8.591221045683994e-07,
+          "rtol": 3e-05,
+          "atol": 6.603419281141997e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 840,
+          "max_abs_difference": 0.00013745953677357647,
+          "rtol": 3e-05,
+          "atol": 6.603419281141997e-05,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-lipophilicity_astrazeneca-h1-s44-20261102",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-lipophilicity_astrazeneca-h1-s44-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-lipophilicity_astrazeneca-h1-s44-20261102.json",
+      "original_config_sha256": "6ae96e2da45ab1cb855b722d39b03c265c053ffa823d8156139cb3843e634410",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3226,
+          "sha256": "04e58f9a77bdddd4a77944a524b96fb66c66d41bf031d258542f1b3837b2b1a6"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139168,
+          "sha256": "f173e252bd4947b216cdf9cf8d85aa9e2d0af606db539d4336405e4ac1aca065"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108216,
+          "sha256": "a8cee970239d0cd47f7c90f838264ab0d72fc3beef18b27a78eee8147539c12b"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360778,
+          "sha256": "f46bb08c41945b64c3d88c98f78f6cc29eac36a4d9dec809d08fe874ebe4472b"
+        },
+        "artifacts/internal-split.json": {
+          "size": 29092,
+          "sha256": "e89f782c186c3b394a71030d09d5f6603fee3e84f2312315cf98dacf23d4872d"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 103845,
+          "sha256": "ef98954fc15d3f9be577552af34636eed65150f59a05cc9ed075730a24b26634"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 407460,
+          "sha256": "8694797b47555c741a61e5b750a903d0f625d3e8e7ce02531d427e87e06baaf1"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 50998,
+          "sha256": "266c913e56985c563dbe65b4a394b88c54f6afb427ea0a75a52c46ac4b3eaa7c"
+        },
+        "artifacts/predictions.csv": {
+          "size": 148483,
+          "sha256": "629154acea6822d0f3bcc3ebf3c73039da282c14183781dd60a390aa864e54e5"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 110373,
+          "sha256": "958bd1978d05517cb4d4d0dcb102d69062be950c7b86ad6bfdef33e94caba755"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 16793,
+          "sha256": "98cc5059ddc0dcd8d7185dcc95f4d78db93619a5e890b6d4d99d94c98478782e"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10547970,
+          "sha256": "657ab875422c495dc4216f88ce3ce1af593ced94e879b8ff99b493efbe188132"
+        },
+        "raw/epochs.jsonl": {
+          "size": 6316,
+          "sha256": "62b975cacdf0af9a4c67986c12a21c21229a07a53b9954d7168bfeb4932fc123"
+        },
+        "raw/learning-started.json": {
+          "size": 545,
+          "sha256": "0a3430d521f562fbd2df986d1c7f04ede421f71fd546048d8353caca881219f2"
+        },
+        "raw/progress.json": {
+          "size": 130,
+          "sha256": "641121502f0f7768f4385e964dce78669acd3bd066d9644f344f057acba4b794"
+        },
+        "raw/train-complete.json": {
+          "size": 174,
+          "sha256": "4e1537b9e2bda9d4232f8945d027dde8fda92eb7dc80e0cab0dbd86d1e12ca08"
+        },
+        "source/consumed-config.json": {
+          "size": 654,
+          "sha256": "0ee1be712fc45e4d85afa1675f017695adef5e474f0947221eb1f6c441435425"
+        },
+        "source/expanded-config.json": {
+          "size": 7123,
+          "sha256": "7349e9654e148c6438e28f8bb9f81d4da079e36b77904a287d9d0abe012ab0da"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    },
+    {
+      "run_id": "hainan-breadth-lipophilicity_astrazeneca-h1-s45-20261102",
+      "task": "lipophilicity_astrazeneca",
+      "config_tag": "H1",
+      "seed": 45,
+      "epochs": 25,
+      "steps": 525,
+      "best_epoch": 17,
+      "best_steps": 357,
+      "stop_reason": "patience8",
+      "monitor_name": "MAE",
+      "monitor_definition": "mean absolute error on original Y",
+      "counts": {
+        "train": 2940,
+        "valid": 420,
+        "test": 840
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 2940,
+          "max_abs_difference": 2.7491907357291012e-05,
+          "rtol": 3e-05,
+          "atol": 6.603419281141997e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 420,
+          "max_abs_difference": 5.727480703043852e-07,
+          "rtol": 3e-05,
+          "atol": 6.603419281141997e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 840,
+          "max_abs_difference": 1.7182442100249773e-06,
+          "rtol": 3e-05,
+          "atol": 6.603419281141997e-05,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-lipophilicity_astrazeneca-h1-s45-20261102",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-lipophilicity_astrazeneca-h1-s45-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-lipophilicity_astrazeneca-h1-s45-20261102.json",
+      "original_config_sha256": "26f3649392405bcbf6c909e5951b6f57ec4e498fae4f76263a328f35beb052c9",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3227,
+          "sha256": "b5dcbc1e1fe5bbda5774f578d9f74819c1fb65aea8ea45fe7cddb6bbb1372618"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139168,
+          "sha256": "b51777ab23cf6f2fa1d7367dd055e0c057337172e8ff9a6b56abd9677f1bfd07"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108216,
+          "sha256": "cd29f1f4c35d9695c019cac8b2892fe0e97a3ea0343cfa0bc96802e0af970833"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360842,
+          "sha256": "e4689ce360d4515ca67b88d75c121d095ef301d27e60947eca1dda39493caeee"
+        },
+        "artifacts/internal-split.json": {
+          "size": 29092,
+          "sha256": "e89f782c186c3b394a71030d09d5f6603fee3e84f2312315cf98dacf23d4872d"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 103829,
+          "sha256": "6dfbe72347d69a332ebef4527937844d3a8dd996455adcb8f661bae8ce5e7dbc"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 407450,
+          "sha256": "f0be8a6f8dc215ae017024f85903df61d542f90014bdf0c7fb561cd740046b4c"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 50996,
+          "sha256": "51e7a643ca843be676e27892a8a6dc68bca45ee5a67c0ba092d1d4e35a55bfb9"
+        },
+        "artifacts/predictions.csv": {
+          "size": 148465,
+          "sha256": "b80e365b05ee50d2d45d9122c22046cfa62c41736debd0855db3de72b2a22669"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 110373,
+          "sha256": "958bd1978d05517cb4d4d0dcb102d69062be950c7b86ad6bfdef33e94caba755"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 22769,
+          "sha256": "456cfcea9efb30708e22e848acb20be156b3df6594bd1e6f6058786445794d26"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10560194,
+          "sha256": "90c54c69b69070d8424c927d8b51c7f87decd206667c38ac9b386cd6c42712e7"
+        },
+        "raw/epochs.jsonl": {
+          "size": 11314,
+          "sha256": "1549f4e16adfe78d15e8459452a3e0e1084448c25697a74778e821e78afb2aa2"
+        },
+        "raw/learning-started.json": {
+          "size": 545,
+          "sha256": "fd7f9308ce9230edeffe74f70c31e906e41ec07af013cbb584dbf7dd5daf5e17"
+        },
+        "raw/progress.json": {
+          "size": 131,
+          "sha256": "6253bb6d7bba3a4de8a0eff0dfe662383dbaaeb9921d93903d2f67f2ddc00d9a"
+        },
+        "raw/train-complete.json": {
+          "size": 174,
+          "sha256": "06e3820f7d26d15bb139eaeae37819384922753e056d8580d34de8c44646454f"
+        },
+        "source/consumed-config.json": {
+          "size": 654,
+          "sha256": "fc00cae9515744f72fa74106d1010210d1cc5c5dc14dabc5edc011e8e17b2ebd"
+        },
+        "source/expanded-config.json": {
+          "size": 7123,
+          "sha256": "41ce0684b804e220a13325c8154b93c7f4756aefa02f3908e13d9a59624b3987"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    },
+    {
+      "run_id": "hainan-breadth-bbb_martins-h0-s44-20261102",
+      "task": "bbb_martins",
+      "config_tag": "H0",
+      "seed": 44,
+      "epochs": 15,
+      "steps": 150,
+      "best_epoch": 7,
+      "best_steps": 70,
+      "stop_reason": "patience8",
+      "monitor_name": "AUROC",
+      "monitor_definition": "continuous-score ROC AUC with averaged tied ranks",
+      "counts": {
+        "train": 1421,
+        "valid": 203,
+        "test": 406
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 1421,
+          "max_abs_difference": 5.610537288092132e-07,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 203,
+          "max_abs_difference": 6.011879283285282e-08,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 406,
+          "max_abs_difference": 1.0626942354985403e-06,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-bbb_martins-h0-s44-20261102/attempt-02",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-bbb_martins-h0-s44-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-bbb_martins-h0-s44-20261102.json",
+      "original_config_sha256": "bab5f5cef7f6723bfab06e995675f6ae8cf525fe57de40a43e1905b85f71a28d",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3375,
+          "sha256": "e7a91f6b4cdef9a993e28746dcebaf53203b606ca4fbd15d8b60e8ad46a34424"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139104,
+          "sha256": "3abc2900a133de788be5f1b34e192d1974380e368c1d5039cab0305261f5a72f"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108216,
+          "sha256": "db40ac8b4b3f88627386603d68f97e2371dd8bca0c4c599e99c64fc52cc0a8dc"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360714,
+          "sha256": "2ac393f505bfbc6f00efc2bb51e28be564a43176da1e42a7c34b9e4685104eda"
+        },
+        "artifacts/internal-split.json": {
+          "size": 13903,
+          "sha256": "ee433c17a7aa96f477394e0aaf6608a3d63ab203c7b6add2e8db3664df5efe98"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 40572,
+          "sha256": "834a17a09aad67eeff0a68ab65009b543b2d00e03bc517132d2faa1f8834177b"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 177033,
+          "sha256": "3d36ef0429cdb8d54c7e9bcbde312200285e0756b3564d08ede34503247016e9"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 22323,
+          "sha256": "36f69805f25695b9b85cf68ac672222e4b90036589ed96f1643b37982ec6f9ef"
+        },
+        "artifacts/predictions.csv": {
+          "size": 59790,
+          "sha256": "0bddab9ebf6dc040724302819fdd903a2fac851bb904866bc53dc5c49d013133"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 110096,
+          "sha256": "b606b158f3060a0cabc10540b6ff3dca4e0c5e45ccc2666152a955e9beb55d5c"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 17275,
+          "sha256": "fbdfa6a82ad1ff32d13d7c78c5e99e5737f1e1dd0f9c922d52c4d2dfbd260654"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10541570,
+          "sha256": "58c61eff4fca9fd20375b54de5fbc1da6367eb915e21eb238f53212b776821b4"
+        },
+        "raw/epochs.jsonl": {
+          "size": 6809,
+          "sha256": "aba75c2b818bc05e29f368befae510d6e4b27a0e261281b64475debdebb5877b"
+        },
+        "raw/learning-started.json": {
+          "size": 531,
+          "sha256": "36b84f4557b00efe83255b8ca702ab735546ace47c4f6f463ce2578a252813de"
+        },
+        "raw/progress.json": {
+          "size": 130,
+          "sha256": "76b9b71f437b3a73d92376f4fb65a2a3da9d771b09f70454cd253762a579d2c3"
+        },
+        "raw/recovery.json": {
+          "size": 3014,
+          "sha256": "0b3fcc29a737b934e91e0441c664d99a8e7ff56b60a1945826ae48643aeaceba"
+        },
+        "raw/train-complete.json": {
+          "size": 160,
+          "sha256": "5b6cb92c67d539f815f2cddd1a98d58d8f73c96f7f2fa03ce705362b2e9869f6"
+        },
+        "source/consumed-config.json": {
+          "size": 632,
+          "sha256": "4eb9ca6f78d98c2ea604840055bbaf6261dd98812a2aa2f1ce62272076eb8e58"
+        },
+        "source/expanded-config.json": {
+          "size": 7137,
+          "sha256": "9d09129e059125e98aea7410bdb9520929eb508357acd06ec48e506ae3de41ab"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    },
+    {
+      "run_id": "hainan-breadth-bbb_martins-h0-s45-20261102",
+      "task": "bbb_martins",
+      "config_tag": "H0",
+      "seed": 45,
+      "epochs": 11,
+      "steps": 110,
+      "best_epoch": 3,
+      "best_steps": 30,
+      "stop_reason": "patience8",
+      "monitor_name": "AUROC",
+      "monitor_definition": "continuous-score ROC AUC with averaged tied ranks",
+      "counts": {
+        "train": 1421,
+        "valid": 203,
+        "test": 406
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 1421,
+          "max_abs_difference": 1.6250437884224311e-07,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 203,
+          "max_abs_difference": 9.657317859290693e-08,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 406,
+          "max_abs_difference": 3.1357170438006676e-07,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-bbb_martins-h0-s45-20261102",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-bbb_martins-h0-s45-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-bbb_martins-h0-s45-20261102.json",
+      "original_config_sha256": "6ca9a6968822535dde082021e064dc95a7b823685c1edfe75aa4fa62eda92587",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3224,
+          "sha256": "70486358231e764edb79f0c504de522b9325a8ef987467227bf0b3b52b598f2f"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139104,
+          "sha256": "db364ca99e6f0d570c9b5e75e8f3b1425cede22cc83985db222a081621039dd3"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108216,
+          "sha256": "f92d1739bb7f61a41e7af34cdf351f081a174928871ede4cea186d162a88e0c0"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360714,
+          "sha256": "962e52286b53c20d9e3499df592b366dd5938de8894eb614273ac6741658b9bd"
+        },
+        "artifacts/internal-split.json": {
+          "size": 13903,
+          "sha256": "ee433c17a7aa96f477394e0aaf6608a3d63ab203c7b6add2e8db3664df5efe98"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 40553,
+          "sha256": "8744aa45079b0d28c8999576b8b09810403e4307a63305ac68a1879441ddf237"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 176933,
+          "sha256": "9113406389eae791dff2a2aa23c48396400e0000681f4effd58eeca6c4432549"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 22306,
+          "sha256": "c9c05287b8d0cab43a6456d03098a5241871107654359c6f7b431cf9cc6948aa"
+        },
+        "artifacts/predictions.csv": {
+          "size": 59754,
+          "sha256": "014ce7ca86b6c56af7d810e07dbfd3e2590bc9630f597c3ff527dfdafcca7fa8"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 110096,
+          "sha256": "b606b158f3060a0cabc10540b6ff3dca4e0c5e45ccc2666152a955e9beb55d5c"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 15101,
+          "sha256": "bc4ea599df61fee84e6a2bb6d4df1c7d1293dbe0e5ab6d68e5416b69392303fb"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10539202,
+          "sha256": "f5d95334ae5efe0bec2e76e536c27c2342bffee68232ba79327c68d9a1a39de7"
+        },
+        "raw/epochs.jsonl": {
+          "size": 4990,
+          "sha256": "9743e75c89537024017f24c61aca6221e5d9e54814a54e8449394d94a7c253b8"
+        },
+        "raw/learning-started.json": {
+          "size": 531,
+          "sha256": "501d82fd614f1eb709fd1cc26e6f38d60afbc81544a31a8dbbff7d3ddf982ee3"
+        },
+        "raw/progress.json": {
+          "size": 130,
+          "sha256": "5adaacc9510a4aa2f556180a606fc0264bfd58e6ac9638639ad6793e7d5eec65"
+        },
+        "raw/train-complete.json": {
+          "size": 160,
+          "sha256": "a2175b5d7478c54f6d06043359f5e9fa86ccf939cc5f598ef72e776c93fc66de"
+        },
+        "source/consumed-config.json": {
+          "size": 632,
+          "sha256": "1c5a2eac63cedf3b852a6e39ccf265b0b6c55f59bfbb949ca76f53f14978f0e4"
+        },
+        "source/expanded-config.json": {
+          "size": 7137,
+          "sha256": "5180940f319f125535b8879047297378b2217fb0e7498313fb35f34501b6eec6"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    },
+    {
+      "run_id": "hainan-breadth-bbb_martins-h1-s44-20261102",
+      "task": "bbb_martins",
+      "config_tag": "H1",
+      "seed": 44,
+      "epochs": 10,
+      "steps": 100,
+      "best_epoch": 2,
+      "best_steps": 20,
+      "stop_reason": "patience8",
+      "monitor_name": "AUROC",
+      "monitor_definition": "continuous-score ROC AUC with averaged tied ranks",
+      "counts": {
+        "train": 1421,
+        "valid": 203,
+        "test": 406
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 1421,
+          "max_abs_difference": 1.9740168932802504e-07,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 203,
+          "max_abs_difference": 5.417243975625041e-08,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 406,
+          "max_abs_difference": 4.877236478018077e-07,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-bbb_martins-h1-s44-20261102",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-bbb_martins-h1-s44-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-bbb_martins-h1-s44-20261102.json",
+      "original_config_sha256": "c0813f2ed0bf74b11e2965b6b6afb4d062de9e079371ed9a61d28eec8bf1a140",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3224,
+          "sha256": "ad78b1d2f9332f46b1880a7b3a750664f6fbb41c13d4a308761ca8d5e4b8e31b"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139104,
+          "sha256": "37bad690d8760e895125eb346468d40547fa4a9d5644ffac2895a19a61abee0b"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108216,
+          "sha256": "e46ec80fbe56284deadb8e329b258453e9e220f42cca50f634629db0439c3ebd"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360714,
+          "sha256": "8b3b4fcf0e6f6e12bdb359704b97439e31deb93487216e259b2d57e5d47e128b"
+        },
+        "artifacts/internal-split.json": {
+          "size": 13903,
+          "sha256": "ee433c17a7aa96f477394e0aaf6608a3d63ab203c7b6add2e8db3664df5efe98"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 40523,
+          "sha256": "eb3569cc1b964863c5569d58295129b3ac04bac4171d60feb4c8d53067c671f3"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 176833,
+          "sha256": "b9eeea023c56ba202c0e787df429a4ffae330338d5e589be7456ed79b817847c"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 22305,
+          "sha256": "9719d09b9e887de88928f1552bf1efd3289fa24ca8b9dab66dceb52cedfecbc7"
+        },
+        "artifacts/predictions.csv": {
+          "size": 59723,
+          "sha256": "e832901fa0a0085d0933ea527ef9f627bc6421f183ef24d25f9e6730c9c5427c"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 110096,
+          "sha256": "b606b158f3060a0cabc10540b6ff3dca4e0c5e45ccc2666152a955e9beb55d5c"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 14543,
+          "sha256": "9c499edf211e24c600a0d9d562581578050fbedc9fd6fceee0db2a357e603c2a"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10538626,
+          "sha256": "ed4338634dc9bbddbfc943b7a11971f93ca85381f1afdba9f9b5b67f7816c1d5"
+        },
+        "raw/epochs.jsonl": {
+          "size": 4524,
+          "sha256": "fb99260eab4cedf4e4ca55b47904f016c7bae1a07eea18344fc91ffad521c5e7"
+        },
+        "raw/learning-started.json": {
+          "size": 531,
+          "sha256": "2fe84cac02537699b14f2389a29cf94f0406e5d0597fd3c60bfa6fb476e4f817"
+        },
+        "raw/progress.json": {
+          "size": 130,
+          "sha256": "e4c118dfc70cb8d4d11cae80d61f3fb652c52dc965304f7948e8de0ee4c9b30e"
+        },
+        "raw/train-complete.json": {
+          "size": 160,
+          "sha256": "957e7130dd9d1dc6c808afe4e74e80e557ee2f80974779aad9a69f5ee3abaf02"
+        },
+        "source/consumed-config.json": {
+          "size": 632,
+          "sha256": "59f4a24077dc13f50d62f26c520583ae7b5e2128150bdacb03e53cf484e1138f"
+        },
+        "source/expanded-config.json": {
+          "size": 7137,
+          "sha256": "e0ee4e9fe77d1d8a2966e690715fd216c6b0641bd4c8b0425525a972d4b60d4b"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    },
+    {
+      "run_id": "hainan-breadth-bbb_martins-h1-s45-20261102",
+      "task": "bbb_martins",
+      "config_tag": "H1",
+      "seed": 45,
+      "epochs": 12,
+      "steps": 120,
+      "best_epoch": 4,
+      "best_steps": 40,
+      "stop_reason": "patience8",
+      "monitor_name": "AUROC",
+      "monitor_definition": "continuous-score ROC AUC with averaged tied ranks",
+      "counts": {
+        "train": 1421,
+        "valid": 203,
+        "test": 406
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 1421,
+          "max_abs_difference": 1.9641516801893744e-07,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 203,
+          "max_abs_difference": 9.204838591347908e-08,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 406,
+          "max_abs_difference": 2.2537460883653715e-07,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-bbb_martins-h1-s45-20261102",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-bbb_martins-h1-s45-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-bbb_martins-h1-s45-20261102.json",
+      "original_config_sha256": "8720fb92926b2fa5d82c3ad4fb9aa3a875dfa4eaf5dffe1fd699e0a10aee1f8c",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3224,
+          "sha256": "04ceffbd81215a2df10282298cbb9ff8d8afd0b3d63cf59f01c34de44ffea0ac"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139104,
+          "sha256": "58c8de693539399593ef7f8787cca1e3ef15838e66bca1e45569ba2375fec508"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108216,
+          "sha256": "37d86d5b04a909d92e5b738ac5923236fab90eea3039a4937035b548f5e41549"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360714,
+          "sha256": "22a98ea7f4f528ff3ac16df3603dd99d4457fb4399e308220364f8066ba18e61"
+        },
+        "artifacts/internal-split.json": {
+          "size": 13903,
+          "sha256": "ee433c17a7aa96f477394e0aaf6608a3d63ab203c7b6add2e8db3664df5efe98"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 40574,
+          "sha256": "37c87016276794a5045d88bec535764dd2fe457b60fd8c9dd5999cf31114e5fa"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 176977,
+          "sha256": "4350be546f04fde1d5cfe7e3800e15334db2b9d4070aea0170da7fe792f3462d"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 22318,
+          "sha256": "58b3fd4bdf1ed9e28f72930604f3ca0d624222b7da64dbf50207436950b6f890"
+        },
+        "artifacts/predictions.csv": {
+          "size": 59787,
+          "sha256": "97bf0b561a358a0f3e3a0393e93bed97a63d4aa6d450a8ca1d18aaa49190c824"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 110096,
+          "sha256": "b606b158f3060a0cabc10540b6ff3dca4e0c5e45ccc2666152a955e9beb55d5c"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 15638,
+          "sha256": "d18c26bc29b6fb87f88f21a1044b2ddbb0116416eebb3a0eff3dbf2cd59911ee"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10539778,
+          "sha256": "10902e23934ab9a69b5e9d3513bbbf958bdd92c6d039f5962f5e87b23646c44f"
+        },
+        "raw/epochs.jsonl": {
+          "size": 5439,
+          "sha256": "b2a974c24ffbd99fafe0161309500f8b1fa7933c19417f875a6387d0e3773556"
+        },
+        "raw/learning-started.json": {
+          "size": 531,
+          "sha256": "d37140191d6aed08919737615cc819e1043ecff9439a485348742ccc8fef3fb6"
+        },
+        "raw/progress.json": {
+          "size": 130,
+          "sha256": "84b6005a5069ed4493e44627fdb160f0683befc3f49439a4b685b5f183295e4b"
+        },
+        "raw/train-complete.json": {
+          "size": 160,
+          "sha256": "b4fa9bab4694858a98e2797b3904030464fe6662547ef5549e34b3a84fb639ef"
+        },
+        "source/consumed-config.json": {
+          "size": 632,
+          "sha256": "cc54e3c0745cbd177e36831e39d2192907589d516ff5fb2c242aa07771e03e6c"
+        },
+        "source/expanded-config.json": {
+          "size": 7137,
+          "sha256": "18506fa825f36fd0468aca2fd9b8f84cb9ed31fa177d4dfe626c60d94435bdd0"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    },
+    {
+      "run_id": "hainan-breadth-cyp2d6_veith-h0-s44-20261102",
+      "task": "cyp2d6_veith",
+      "config_tag": "H0",
+      "seed": 44,
+      "epochs": 11,
+      "steps": 715,
+      "best_epoch": 3,
+      "best_steps": 195,
+      "stop_reason": "patience8",
+      "monitor_name": "AP",
+      "monitor_definition": "average precision over grouped identical scores, no trapezoidal PR interpolation",
+      "counts": {
+        "train": 9191,
+        "valid": 1313,
+        "test": 2626
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 9191,
+          "max_abs_difference": 2.9836869991362036e-07,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 1313,
+          "max_abs_difference": 2.582939752637792e-07,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 2626,
+          "max_abs_difference": 5.978626517189056e-07,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-cyp2d6_veith-h0-s44-20261102",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-cyp2d6_veith-h0-s44-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-cyp2d6_veith-h0-s44-20261102.json",
+      "original_config_sha256": "3899251d38e0b225b6d660cc9f401c220a723c7ed5581103908e59519eb13d39",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3228,
+          "sha256": "da856257978a00a2a335cf09784b55941323ace6ebab68222360429bec40564f"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139104,
+          "sha256": "c9dc4a9080a2b6dae90ca8583146251f74ba0276845f4c428adc74bc6e55d7b6"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108216,
+          "sha256": "30d864b42e88d5af342e2a106b923e9a44b6b7bc7b0f21baa36e19c9f5a688de"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360714,
+          "sha256": "6248dbd945452b358a0070d4fc38152da5dd2bdc933c286ac26ff1cd556c5a8c"
+        },
+        "artifacts/internal-split.json": {
+          "size": 91602,
+          "sha256": "e9aab3b617f4a799645b5d69a7eef901307e316814a448c06b4d95a3edf1e0cd"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 267703,
+          "sha256": "f5e02e6ee59feaedfda66b058b55857971eaffebf70fe15c827f55dd0ba04feb"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 1107726,
+          "sha256": "c4a708728a46b8d3429f86bbeb1790afe823945f7d1ae8e54ea3fa28d26b9daf"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 143098,
+          "sha256": "abf73922ec9177c5332ac40aee4743eabf21f22be4ba4c0c7c616ca750ae6fc4"
+        },
+        "artifacts/predictions.csv": {
+          "size": 391046,
+          "sha256": "3fd13ad7a19e96bcccf8792e81b67ada6882532fc578e5bff3502c1feb20763c"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 110412,
+          "sha256": "84fb9faec13ee67030674f0631e05c0ed773d0363a70214bd9819cacef7794b0"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 15151,
+          "sha256": "6827422ab413c5d4d7242ff4472f7e9b2b0af9b1c27a0f19d547c83bc48ef369"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10565506,
+          "sha256": "1d3d4c61d15de57d68206749f2e4b66321c313143ed2bbf9f56a140cfb9ecf71"
+        },
+        "raw/epochs.jsonl": {
+          "size": 4991,
+          "sha256": "a06d5e4a2f2823a635990d702cbfdc803e5933b45699d4db0ee3c2f592fdc468"
+        },
+        "raw/learning-started.json": {
+          "size": 532,
+          "sha256": "7cad3170ad78f73d7e7e0ec2d69e2c045fd6744ab9d24305cd4120a09ad0dedd"
+        },
+        "raw/progress.json": {
+          "size": 130,
+          "sha256": "77ce4a53b4088c2fdc29bd821cba175e7becef197dbe2a76fab1eb275830f1f0"
+        },
+        "raw/train-complete.json": {
+          "size": 161,
+          "sha256": "00b070d0ac3f1b210fb754fad800975eb3ec9a5bd9a43b181a591461b55ed4ae"
+        },
+        "source/consumed-config.json": {
+          "size": 634,
+          "sha256": "39a2d01a4c092df2716f638feadfc551b32e45e3a35db484bd73137ea4b868e6"
+        },
+        "source/expanded-config.json": {
+          "size": 7171,
+          "sha256": "ea085dd0728dc9a157f3dbf495dad5d195585a7d839a4642800df641157148b7"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    },
+    {
+      "run_id": "hainan-breadth-cyp2d6_veith-h0-s45-20261102",
+      "task": "cyp2d6_veith",
+      "config_tag": "H0",
+      "seed": 45,
+      "epochs": 12,
+      "steps": 780,
+      "best_epoch": 4,
+      "best_steps": 260,
+      "stop_reason": "patience8",
+      "monitor_name": "AP",
+      "monitor_definition": "average precision over grouped identical scores, no trapezoidal PR interpolation",
+      "counts": {
+        "train": 9191,
+        "valid": 1313,
+        "test": 2626
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 9191,
+          "max_abs_difference": 7.137814895807892e-07,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 1313,
+          "max_abs_difference": 7.524114455925712e-07,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 2626,
+          "max_abs_difference": 1.0199030124891095e-06,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-cyp2d6_veith-h0-s45-20261102",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-cyp2d6_veith-h0-s45-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-cyp2d6_veith-h0-s45-20261102.json",
+      "original_config_sha256": "7785b1c7c12777e048c0d68301a49fc29954e4873d9a69c752916dac58c78a91",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3228,
+          "sha256": "8983591c24472de125049f8c77118fd0d1593715a971d93f939c6e5c9565d476"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139104,
+          "sha256": "e41d7d84b34ff77864dae1fe47449af30b1c7481d54becf232d13de4cce70715"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108216,
+          "sha256": "434f7130c09dee5437a5bdff4cf4aafc2eaccd2a979dd5887af70ed033949e51"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360714,
+          "sha256": "9ea29e6b7cf44293866b529ffdfb4988f40ca9ae134cca5e14c09f5692ef643a"
+        },
+        "artifacts/internal-split.json": {
+          "size": 91602,
+          "sha256": "e9aab3b617f4a799645b5d69a7eef901307e316814a448c06b4d95a3edf1e0cd"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 268069,
+          "sha256": "0b3b1c029c2640cfec9501c3aa830a20b5df39bcaf0c73c47214b45d9a7598f8"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 1108844,
+          "sha256": "baa0a25361db9dd21f5721c4cd44f74496cda5e784326ef57eba2f4fe4206a23"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 143242,
+          "sha256": "45cd8678782b0e8f5db437a3523e5505c3c15fb7a34e227ce5fe2cdf72a31c7c"
+        },
+        "artifacts/predictions.csv": {
+          "size": 391556,
+          "sha256": "fbe3914c2368ca6931a7225e123aca0ad0c35acb00942d28b2b14dac6acebf11"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 110412,
+          "sha256": "84fb9faec13ee67030674f0631e05c0ed773d0363a70214bd9819cacef7794b0"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 15687,
+          "sha256": "b917f4f154c59639d2103ee075c1b9b6bd2c3c089cbda37eff4954c2aba3cd98"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10568514,
+          "sha256": "41e9345dd8558f355cd24a7b43b35390234a727bddedafa6c4a9478e9bcf324b"
+        },
+        "raw/epochs.jsonl": {
+          "size": 5439,
+          "sha256": "17981c31574302bc4ca5c2dabab0e3e366a7cad591b6d97c7331e6d8fc258ea4"
+        },
+        "raw/learning-started.json": {
+          "size": 532,
+          "sha256": "c284ca4ca5ef15c4bd76d3669e428a28d0c48d0ba20b074aa85b31bb6e0d9cc9"
+        },
+        "raw/progress.json": {
+          "size": 130,
+          "sha256": "8dde80571fe64899495c86b9f709d146e75c62f591fd6d6d69f0ae984291ccea"
+        },
+        "raw/train-complete.json": {
+          "size": 161,
+          "sha256": "3a1da71c64c4397ec159f8846ffd88e831e143431f2fd0a235296dfcff8ccaad"
+        },
+        "source/consumed-config.json": {
+          "size": 634,
+          "sha256": "9c357d195166c24cfc3cfc140a418b7a3f5e0871ef560dc5aad8d4c4d792aad8"
+        },
+        "source/expanded-config.json": {
+          "size": 7171,
+          "sha256": "d060788bdc50bebac4ea8721f1ce594f0e187270775b17637d064a9c0e95e562"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    },
+    {
+      "run_id": "hainan-breadth-cyp2d6_veith-h1-s44-20261102",
+      "task": "cyp2d6_veith",
+      "config_tag": "H1",
+      "seed": 44,
+      "epochs": 12,
+      "steps": 780,
+      "best_epoch": 4,
+      "best_steps": 260,
+      "stop_reason": "patience8",
+      "monitor_name": "AP",
+      "monitor_definition": "average precision over grouped identical scores, no trapezoidal PR interpolation",
+      "counts": {
+        "train": 9191,
+        "valid": 1313,
+        "test": 2626
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 9191,
+          "max_abs_difference": 4.815675837543942e-07,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 1313,
+          "max_abs_difference": 3.9670033380456715e-07,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 2626,
+          "max_abs_difference": 3.483199613740773e-07,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-cyp2d6_veith-h1-s44-20261102",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-cyp2d6_veith-h1-s44-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-cyp2d6_veith-h1-s44-20261102.json",
+      "original_config_sha256": "655f34f2d344235b06c9d392300e6bd32bd326f2c0390c6cb68cea89c87812d5",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3228,
+          "sha256": "f131aa85bfc2351808913b8397ae875ae1e599fcab07ff9adea4fc23f8e8e9e9"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139104,
+          "sha256": "c777f97df412a08b0e7be56cef1c5501a8be8e4cb4a441c80a786ac9c057d8f4"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108216,
+          "sha256": "1fe5c85a777f19b7649d251d6f7fb894c3fc7710668f328c8da7442045c734c1"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360714,
+          "sha256": "e40167d9407065c8f22556c353db453615d6cb5a822bc3891acca3ade0b588a0"
+        },
+        "artifacts/internal-split.json": {
+          "size": 91602,
+          "sha256": "e9aab3b617f4a799645b5d69a7eef901307e316814a448c06b4d95a3edf1e0cd"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 267914,
+          "sha256": "5e63a856d9e1cd264fcd40b5cd15024f0c098578e251104b9716f35ef1196189"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 1108402,
+          "sha256": "ac5a9e3e00750b6e76ba323739075482af866792f5dc0df94c9b20e2535f5991"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 143221,
+          "sha256": "8d5c23ff2ce9e870a8a722ff892ea7a6d4c7b2957b0b280cc29aff016198f40b"
+        },
+        "artifacts/predictions.csv": {
+          "size": 391380,
+          "sha256": "8e81027fa5ad1db99e9c643eb68f1d475d10e65ce73662a46b4e79904b38bc4f"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 110412,
+          "sha256": "84fb9faec13ee67030674f0631e05c0ed773d0363a70214bd9819cacef7794b0"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 15698,
+          "sha256": "93c13e07ca05a1e7c45db02142a9badd90a495b7bd2c435ba753742af91d4cee"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10568514,
+          "sha256": "191f440460ee36c400c886dc9da603d1352517950d400224d0853b00d45f23c0"
+        },
+        "raw/epochs.jsonl": {
+          "size": 5448,
+          "sha256": "cd62e9358d10885dfb024e554ddeeb4afe8576b6e9e3657016cc70873c71896d"
+        },
+        "raw/learning-started.json": {
+          "size": 532,
+          "sha256": "14a3377b478705d1204d826d3e44628eb377de657f0aba47a9791e6485298261"
+        },
+        "raw/progress.json": {
+          "size": 130,
+          "sha256": "904e9bffd2992cebf38b536257a02afe62da319fd8db476ab4d9f882bf20df7d"
+        },
+        "raw/train-complete.json": {
+          "size": 161,
+          "sha256": "3548002d5a011f6fe87ac23f86afdcf8b01d66ec62f23b31e6bcf4d7796c644f"
+        },
+        "source/consumed-config.json": {
+          "size": 634,
+          "sha256": "6819c41b64721565d73725a7e1cc5f300204c3cafebadd4705eeae7603a39105"
+        },
+        "source/expanded-config.json": {
+          "size": 7171,
+          "sha256": "71d31a81b580a73cdfaa55b32cfa7d09bd4fa3eb626638427e7536709f110acf"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    },
+    {
+      "run_id": "hainan-breadth-cyp2d6_veith-h1-s45-20261102",
+      "task": "cyp2d6_veith",
+      "config_tag": "H1",
+      "seed": 45,
+      "epochs": 26,
+      "steps": 1690,
+      "best_epoch": 18,
+      "best_steps": 1170,
+      "stop_reason": "patience8",
+      "monitor_name": "AP",
+      "monitor_definition": "average precision over grouped identical scores, no trapezoidal PR interpolation",
+      "counts": {
+        "train": 9191,
+        "valid": 1313,
+        "test": 2626
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 9191,
+          "max_abs_difference": 1.6320108430223357e-06,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 1313,
+          "max_abs_difference": 7.103210294401308e-07,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 2626,
+          "max_abs_difference": 1.0147041045183158e-06,
+          "rtol": 3e-05,
+          "atol": 6e-05,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-cyp2d6_veith-h1-s45-20261102",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-cyp2d6_veith-h1-s45-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-cyp2d6_veith-h1-s45-20261102.json",
+      "original_config_sha256": "cc746a05171922147673f17d6a798715a3d1b61bbc6930d16c192209a1dfd4ad",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3229,
+          "sha256": "610864d17f90f6024a4f0bcde4ca325e5a5371a8128fe57d775a6259cd4cb3cf"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139104,
+          "sha256": "415daaf6f9ee3478c96a8442247643106b17976c1e1c9a5c3558b4c65c57abdf"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108216,
+          "sha256": "f2352bfcde2c843ab096a950845f3337dce7438e9cead582c90b1739f6f4c3dd"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360714,
+          "sha256": "8b2399e8957653adf8694803b074404d39f8a84980c76d2f7c8f13251ced66df"
+        },
+        "artifacts/internal-split.json": {
+          "size": 91602,
+          "sha256": "e9aab3b617f4a799645b5d69a7eef901307e316814a448c06b4d95a3edf1e0cd"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 270320,
+          "sha256": "9477b2bd2d9b0e099b94d7ccdb2840e173d6a52c9807470c0699e2a2195024d4"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 1117233,
+          "sha256": "026b190e5161179ea2fe9832414d092182639ca8541244847ac2c7830cc34358"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 144389,
+          "sha256": "3df2ae6f0d41bddec5c31863336dc7c8fb8cf2a46f41513b54ced45a5e5a6619"
+        },
+        "artifacts/predictions.csv": {
+          "size": 394954,
+          "sha256": "30af322098a7b79b9c666a8d7b20c42d53f9979ee04e06a8e3dd8afde952be01"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 110412,
+          "sha256": "84fb9faec13ee67030674f0631e05c0ed773d0363a70214bd9819cacef7794b0"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 23321,
+          "sha256": "57e9c7f26905f92d3d0185cd32ef4a689b70fb6e543a6c0b798ebd49d3933b71"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10610562,
+          "sha256": "6d35567a12e0a5c88c8544a0fe376ec6d74d52cf9d3d0a2a74b8376ec10415f7"
+        },
+        "raw/epochs.jsonl": {
+          "size": 11822,
+          "sha256": "5b30fe7a2b35647b2252055bab752222bf726db80d025570b3445c709ee00332"
+        },
+        "raw/learning-started.json": {
+          "size": 532,
+          "sha256": "7a6873c429b0cc544b41fae220e6e1692ce1a890fb4b444d83d4956009798ef6"
+        },
+        "raw/progress.json": {
+          "size": 132,
+          "sha256": "952198fd9e2f2f1d87827e0196225c226fa6a519be0ca9a34dde3f8e85cb817d"
+        },
+        "raw/train-complete.json": {
+          "size": 162,
+          "sha256": "ff8966d6685ecb1a13648833bbe301152d28b8fe7fafcb4d436b87882ca6b8c2"
+        },
+        "source/consumed-config.json": {
+          "size": 634,
+          "sha256": "1f79a3b824b0e37c798909e7e227a90daeca4f12968cd836f975c87b1b211f77"
+        },
+        "source/expanded-config.json": {
+          "size": 7171,
+          "sha256": "0220f6e185aa644fabcead6365fe5958ee0218c3c5c489ca2a14c1b0c3c44f9b"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    },
+    {
+      "run_id": "hainan-breadth-clearance_hepatocyte_az-h0-s44-20261102",
+      "task": "clearance_hepatocyte_az",
+      "config_tag": "H0",
+      "seed": 44,
+      "epochs": 35,
+      "steps": 210,
+      "best_epoch": 27,
+      "best_steps": 162,
+      "stop_reason": "patience8",
+      "monitor_name": "Spearman",
+      "monitor_definition": "Pearson correlation of average tied ranks",
+      "counts": {
+        "train": 848,
+        "valid": 122,
+        "test": 243
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 848,
+          "max_abs_difference": 4.4361354902378025e-05,
+          "rtol": 3e-05,
+          "atol": 0.001518520066493528,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 122,
+          "max_abs_difference": 2.365938928505784e-05,
+          "rtol": 3e-05,
+          "atol": 0.001518520066493528,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 243,
+          "max_abs_difference": 0.00037855022856092546,
+          "rtol": 3e-05,
+          "atol": 0.001518520066493528,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-clearance_hepatocyte_az-h0-s44-20261102",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-clearance_hepatocyte_az-h0-s44-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-clearance_hepatocyte_az-h0-s44-20261102.json",
+      "original_config_sha256": "decf34e4445717e25513937798c50951b7892b431b0f4a4b65b3677323378204",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3224,
+          "sha256": "3e357b8606a770ca40c1183bee06e7f41ba433163c258459d2ec65de2b023a7c"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139168,
+          "sha256": "5ac18731525f648238468dc4413e24639445a28264f0e7a4c803f6bb202c0716"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108216,
+          "sha256": "d701ea38dc5a956c2fff9be2a37cedbb27809bd5443bc14449e81b006303f98e"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360778,
+          "sha256": "e2d64ecdc1aafa754d5c36be9b1bb0a9790029fd3602a8521e3c3bb0b5e62364"
+        },
+        "artifacts/internal-split.json": {
+          "size": 8322,
+          "sha256": "6e41bb8d18031947094dccca87ff57f1160007ab14e196f3b804608a98564f9a"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 29796,
+          "sha256": "70897ec530624b9ca965f3cb3b3945c19db6d8bb28346e055d4d5391ae86c651"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 119718,
+          "sha256": "4b8ea260aa013412002a1c4ed5e0e2df2d9322245488122825ad2ba54125d1b1"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 14994,
+          "sha256": "0ba541bd26a5fd805bff3fba7366e85152a3388790a8ad553632807baa7620ec"
+        },
+        "artifacts/predictions.csv": {
+          "size": 42905,
+          "sha256": "6b787c4fab7e8a6ecb2221c94a69b28377edb2dafd25dddff95eead45c67e1e3"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 109730,
+          "sha256": "d3415cd2bad7b9dc7fbad5ebed87f67ab37ede5ec54eabdb9a7a85ecc57a2242"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 28324,
+          "sha256": "fcab9303e0dababb5135064f917ca08401f5890eeb6cbba41c3e74360fd500e0"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10548738,
+          "sha256": "0d4c7c9bcd9f0464a6f3bc3c38b6bddda018d1c811eb38e3f0639621767ded45"
+        },
+        "raw/epochs.jsonl": {
+          "size": 15980,
+          "sha256": "51555d34cc9b184378d999b287ab861f5be91ed422397d75a9771768b6c3f2e8"
+        },
+        "raw/learning-started.json": {
+          "size": 543,
+          "sha256": "93c1fe22901777226156af1fd2fd1119bdb04e4af03981e047385849c93c7067"
+        },
+        "raw/progress.json": {
+          "size": 131,
+          "sha256": "6b3bac16e4a7beb614ec9d71dda65ecf85f51fbcb601e2f3c823271eb2d04802"
+        },
+        "raw/train-complete.json": {
+          "size": 172,
+          "sha256": "13a6b6bd22c469896a0089a60e6a480c18fd132bd63fd13c074677aef0282827"
+        },
+        "source/consumed-config.json": {
+          "size": 655,
+          "sha256": "790313bcbb2ad9afa53b001824e43499ec13204786ec00634bcf34b2337cd0b2"
+        },
+        "source/expanded-config.json": {
+          "size": 7132,
+          "sha256": "bd9b1514c0667bc9c7db1ac4db0adb1121abf502c52b2226af77d5b9cc6433ec"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    },
+    {
+      "run_id": "hainan-breadth-clearance_hepatocyte_az-h0-s45-20261102",
+      "task": "clearance_hepatocyte_az",
+      "config_tag": "H0",
+      "seed": 45,
+      "epochs": 24,
+      "steps": 144,
+      "best_epoch": 16,
+      "best_steps": 96,
+      "stop_reason": "patience8",
+      "monitor_name": "Spearman",
+      "monitor_definition": "Pearson correlation of average tied ranks",
+      "counts": {
+        "train": 848,
+        "valid": 122,
+        "test": 243
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 848,
+          "max_abs_difference": 5.9148473184222894e-05,
+          "rtol": 3e-05,
+          "atol": 0.001518520066493528,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 122,
+          "max_abs_difference": 4.7318778563010255e-05,
+          "rtol": 3e-05,
+          "atol": 0.001518520066493528,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 243,
+          "max_abs_difference": 0.0006624628997542459,
+          "rtol": 3e-05,
+          "atol": 0.001518520066493528,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-clearance_hepatocyte_az-h0-s45-20261102",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-clearance_hepatocyte_az-h0-s45-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-clearance_hepatocyte_az-h0-s45-20261102.json",
+      "original_config_sha256": "6facbafc41011136e4f8df6b2e1499c036a101011ba873022207888b6aa53ead",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3224,
+          "sha256": "6a6a7d368e5e29fe3cd8e2b7645fa84776253b3f27ff99d1d3e3be8fe24df96f"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139168,
+          "sha256": "bc2aec5221967c0be0c7355655d3b5930d7528f3fd29ed02dfe1eb5c60a68d47"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108216,
+          "sha256": "55e620544fc33fe3588c2620c7e9c205a9eb91ea1e11ec5f687877ed7eb7dad9"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360842,
+          "sha256": "2dd38084440802034cd683712c7708f6676e8621b0393d7b02777f4906a8e685"
+        },
+        "artifacts/internal-split.json": {
+          "size": 8322,
+          "sha256": "6e41bb8d18031947094dccca87ff57f1160007ab14e196f3b804608a98564f9a"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 29801,
+          "sha256": "f7c4816b8bdd9380df3de664475f1c9aca7f9c1fda1971acff757bd56a08cd11"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 119692,
+          "sha256": "535a2d5ad0df551497a10107f9ac97b2ccfd6da83a6b6e8a24d022299a2267c1"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 14997,
+          "sha256": "f87e54582ffdc75dccf77970940c9d2828bb5c288d0f64b144304c3840d214f3"
+        },
+        "artifacts/predictions.csv": {
+          "size": 42913,
+          "sha256": "d39c19c0c6db91aa02f5b459fe3d4d7d26abe0b0b1d92cbafb2c813b94b72d10"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 109730,
+          "sha256": "d3415cd2bad7b9dc7fbad5ebed87f67ab37ede5ec54eabdb9a7a85ecc57a2242"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 22313,
+          "sha256": "2484a8cf8ca4dcf83b5b6e24b406df21a7b79bba4cdf52538d37a9e01e008f55"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10542786,
+          "sha256": "73953901ab7e8a39300ffdc9220fd5bf2ae6fbe9791491843e85726a7524bc93"
+        },
+        "raw/epochs.jsonl": {
+          "size": 10950,
+          "sha256": "d1b4d779b6f4ae55cf13ecf2b6fe9e734f0b9fe4ef42f6cbcdbc993736c9caa1"
+        },
+        "raw/learning-started.json": {
+          "size": 543,
+          "sha256": "0bfd7adff7c1421d47f63c867a4e926965350ad2383fcbf3ed79a48eeecaca4a"
+        },
+        "raw/progress.json": {
+          "size": 131,
+          "sha256": "3335934139c464c2dc73921917a09952944e80718efc00bdf25b6445512e3877"
+        },
+        "raw/train-complete.json": {
+          "size": 172,
+          "sha256": "4febb18e12030f8e3b728ab9e7cfca9ec87b1ea88bf103e7fc6ba665b9c82fa8"
+        },
+        "source/consumed-config.json": {
+          "size": 655,
+          "sha256": "de2871cb16af873b93df4469bc2baa67fb0f2be34b66a18d5724a46592368c56"
+        },
+        "source/expanded-config.json": {
+          "size": 7132,
+          "sha256": "2bf9697f8d132ba4fbe583c2245d498a415bc9682b7831892358dde36e60722a"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    },
+    {
+      "run_id": "hainan-breadth-clearance_hepatocyte_az-h1-s44-20261102",
+      "task": "clearance_hepatocyte_az",
+      "config_tag": "H1",
+      "seed": 44,
+      "epochs": 14,
+      "steps": 84,
+      "best_epoch": 6,
+      "best_steps": 36,
+      "stop_reason": "patience8",
+      "monitor_name": "Spearman",
+      "monitor_definition": "Pearson correlation of average tied ranks",
+      "counts": {
+        "train": 848,
+        "valid": 122,
+        "test": 243
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 848,
+          "max_abs_difference": 6.506332053390906e-05,
+          "rtol": 3e-05,
+          "atol": 0.001518520066493528,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 122,
+          "max_abs_difference": 1.774454196379338e-05,
+          "rtol": 3e-05,
+          "atol": 0.001518520066493528,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 243,
+          "max_abs_difference": 0.0007571004571218509,
+          "rtol": 3e-05,
+          "atol": 0.001518520066493528,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-clearance_hepatocyte_az-h1-s44-20261102",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-clearance_hepatocyte_az-h1-s44-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-clearance_hepatocyte_az-h1-s44-20261102.json",
+      "original_config_sha256": "6c70c8297b75b5d5f6ff64eb9c025185ecd2609e4d323323b93f465c696f5f9d",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3223,
+          "sha256": "88f4c06aa5fcd526969407ab6115d6ec4def1647081004400a0a002918ff90dd"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139168,
+          "sha256": "bdee2cec8a08745ab32ae5221bb69ec2b594db18ee3c7f95e8e901e8c2422dc7"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108216,
+          "sha256": "b2fa3ae6c79ac1ce503bae2c2694d5426c95788b8fa291587770dc0a8589ceaf"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360778,
+          "sha256": "3fdddc93b105aa144b7c49048030bf316c28ee88063943b99b8e5b69755d0435"
+        },
+        "artifacts/internal-split.json": {
+          "size": 8322,
+          "sha256": "6e41bb8d18031947094dccca87ff57f1160007ab14e196f3b804608a98564f9a"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 29796,
+          "sha256": "1f712c3907eec88820a6145b6e5a903a53a45f3d780090495facd128e7d7336f"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 119700,
+          "sha256": "ea533bcfef12d0da76f8d1923edaf7384a7307774a1a6f53a1813406edbcb724"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 14999,
+          "sha256": "bf8ee5b9aa223662eeb522ae3a53d9e09f7b582075d2b2f8c82489d57eb18b5e"
+        },
+        "artifacts/predictions.csv": {
+          "size": 42910,
+          "sha256": "9e0bd46ecbb70e914b2399a3688d9409063d95ff1f59933701ad6cfa8e64cd2c"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 109730,
+          "sha256": "d3415cd2bad7b9dc7fbad5ebed87f67ab37ede5ec54eabdb9a7a85ecc57a2242"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 16836,
+          "sha256": "9ab030b25c0722d0787839997f5c15a638371ed9b48b3ea70cc33d6f74822341"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10538626,
+          "sha256": "83341bc74e56ef0c15291bf6f0bd6e13bc21e7a987a98795166c02cf70682693"
+        },
+        "raw/epochs.jsonl": {
+          "size": 6368,
+          "sha256": "dda068518aeff17521505d22901619ac5424454c98a1d9f662dc036a6f295585"
+        },
+        "raw/learning-started.json": {
+          "size": 543,
+          "sha256": "1aa5c6cf045a7aa62cea35a174e5dc5c60469d2a5820f2152dab1377d0ec5174"
+        },
+        "raw/progress.json": {
+          "size": 128,
+          "sha256": "1c10c7a59043b6119881e11ee46ea4a9b79b775d06ad36896845ab6e15ba47af"
+        },
+        "raw/train-complete.json": {
+          "size": 171,
+          "sha256": "3a5d041992b5917c699f93fadd94f7a8f6f51254fce4fe9adc9a8a6e5eca1bf3"
+        },
+        "source/consumed-config.json": {
+          "size": 655,
+          "sha256": "14f3dd94256d92531a0731d4b39565a1182670a60a03000d1f1c4dc16a6b1442"
+        },
+        "source/expanded-config.json": {
+          "size": 7132,
+          "sha256": "858c5b71db8f7368346d801d1d976173e0718c6befa79c91808eec228ba0f00b"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    },
+    {
+      "run_id": "hainan-breadth-clearance_hepatocyte_az-h1-s45-20261102",
+      "task": "clearance_hepatocyte_az",
+      "config_tag": "H1",
+      "seed": 45,
+      "epochs": 32,
+      "steps": 192,
+      "best_epoch": 24,
+      "best_steps": 144,
+      "stop_reason": "patience8",
+      "monitor_name": "Spearman",
+      "monitor_definition": "Pearson correlation of average tied ranks",
+      "counts": {
+        "train": 848,
+        "valid": 122,
+        "test": 243
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 848,
+          "max_abs_difference": 5.693040545651229e-05,
+          "rtol": 3e-05,
+          "atol": 0.001518520066493528,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 122,
+          "max_abs_difference": 1.182969464252892e-05,
+          "rtol": 3e-05,
+          "atol": 0.001518520066493528,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 243,
+          "max_abs_difference": 0.001230288242595634,
+          "rtol": 3e-05,
+          "atol": 0.001518520066493528,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-clearance_hepatocyte_az-h1-s45-20261102",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-clearance_hepatocyte_az-h1-s45-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-clearance_hepatocyte_az-h1-s45-20261102.json",
+      "original_config_sha256": "a5418cd8ad4fd5d6d75064853bf7bf0590ce0ae270899ab34042aa9b82d76dba",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3224,
+          "sha256": "90e81a30a3a991d5c7d5a7750f93f570970ee509f7199b23e6a5ae44fe57d41e"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139168,
+          "sha256": "d4dc830359dd487f5269d42355762121ab7b9d5cc8cabfacc13234e43d4cea0b"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108216,
+          "sha256": "8a48cfd679cf9ae33635f6e1de44f9586e220f1571949ed19face5b0bd65b3de"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360842,
+          "sha256": "87c5cd724be6c516694d878b5e8d7b4a1040adacec8035db26bdc7cbffefef7c"
+        },
+        "artifacts/internal-split.json": {
+          "size": 8322,
+          "sha256": "6e41bb8d18031947094dccca87ff57f1160007ab14e196f3b804608a98564f9a"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 29794,
+          "sha256": "9d204c3fd405cc211f87409a578ccc2b7684b57d00655a355ed1b3c0978d3183"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 119696,
+          "sha256": "9365afe4d7116ef792c3f617d22cc913975027006b11524ad1106cc3b7c5a64e"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 15007,
+          "sha256": "5dbca2487b057ed4d9bbe271108808aaeb026f8140f55cc7fe99e4c005ec6570"
+        },
+        "artifacts/predictions.csv": {
+          "size": 42916,
+          "sha256": "a1319ad242a24c6c97c25727de74f3f87ca76972c91952a9703e21d88f8b7ba2"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 109730,
+          "sha256": "d3415cd2bad7b9dc7fbad5ebed87f67ab37ede5ec54eabdb9a7a85ecc57a2242"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 26675,
+          "sha256": "675b336371cdc824b14d4002680bcbc35c0e6c99185ae3f9d4c043801f1421e7"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10546242,
+          "sha256": "93e182800d90329b70f2082b9ae9fd53ad60cc4a57f32337a7acadd34739d48f"
+        },
+        "raw/epochs.jsonl": {
+          "size": 14603,
+          "sha256": "ebd98a94547b7ddce816906642cb96689e39cbdcca03eb0dd331a7399cf4051d"
+        },
+        "raw/learning-started.json": {
+          "size": 543,
+          "sha256": "69b4f4769c4f35fbf91d73f11fb62ee7c9487e2fbfbf2843d3fc5646f15824fd"
+        },
+        "raw/progress.json": {
+          "size": 131,
+          "sha256": "281194383c9d3cf641dd46c5a99f4055154d6a3c892b7e9661a0b5140f2f10f8"
+        },
+        "raw/train-complete.json": {
+          "size": 172,
+          "sha256": "f1a65dbf8210c3609d9e7b38a2d8dfdd6d15c05e2614471077f661d66e397bea"
+        },
+        "source/consumed-config.json": {
+          "size": 655,
+          "sha256": "1378e2c0f80f4729aa7292c865cba892321a0e46188b7f76fa87c98516be9e4b"
+        },
+        "source/expanded-config.json": {
+          "size": 7132,
+          "sha256": "c318e896fd8f2c28e00d6b85436a1c1dd1a966b74e2e646153deafb931484229"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    },
+    {
+      "run_id": "hainan-breadth-ld50_zhu-h0-s44-20261102",
+      "task": "ld50_zhu",
+      "config_tag": "H0",
+      "seed": 44,
+      "epochs": 22,
+      "steps": 616,
+      "best_epoch": 14,
+      "best_steps": 392,
+      "stop_reason": "patience8",
+      "monitor_name": "MAE",
+      "monitor_definition": "mean absolute error on original Y",
+      "counts": {
+        "train": 3970,
+        "valid": 1937,
+        "test": 1478
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 3970,
+          "max_abs_difference": 1.0313463167932468e-06,
+          "rtol": 3e-05,
+          "atol": 5.595467987399182e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 1937,
+          "max_abs_difference": 0.0007788727379178795,
+          "rtol": 3e-05,
+          "atol": 5.595467987399182e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 1478,
+          "max_abs_difference": 3.3003082116067617e-06,
+          "rtol": 3e-05,
+          "atol": 5.595467987399182e-05,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-ld50_zhu-h0-s44-20261102",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-ld50_zhu-h0-s44-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-ld50_zhu-h0-s44-20261102.json",
+      "original_config_sha256": "1446db67dbaeec600d55ef35684cf01a0bad41f4384ea06552762932247cb4be",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3227,
+          "sha256": "b50fc009301b580cb9c42cded14bba2fa321908e98922ca0a70516baf42e0a30"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139168,
+          "sha256": "85c0c698254bd5aed8ccc93dd2ce74ea325c229074d3fdb91024861953406d58"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108088,
+          "sha256": "ba4f000e7cf7b40c894c8ea5675d5028a8ca67e98ed208829f2ab0fa45164ce9"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360778,
+          "sha256": "10d6473664ac70e2055530e181c746b36ecc000dcdcdea8c746376be11ab3935"
+        },
+        "artifacts/internal-split.json": {
+          "size": 39393,
+          "sha256": "032f06f93a1f4b320d82f874e682e2ed0b18838ee7df9e2cb993dfb37b8c85a3"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 207859,
+          "sha256": "9aa61aff9ef8f19348d4ab44f1186d4cd25c061fdc6bd714e855b2a08b1f8a88"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 607975,
+          "sha256": "de7b913e5aeb009b0787d22ac9325f211be847ecf9b063ce7f168d89de81bc5b"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 203831,
+          "sha256": "eda1ec70522e670e5b12968c7fbeaf5ca2cee9dff1705ea63e1f2ecc8fc97417"
+        },
+        "artifacts/predictions.csv": {
+          "size": 394555,
+          "sha256": "923d57bd13b14c8daa1f75470f70de9047c841c17826d788b2d94594641feb84"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 109871,
+          "sha256": "a6f5fa339da3e591bcff18c4d3121dc8700a643127f3363e24da86a22d0fc4a3"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 21100,
+          "sha256": "87cfb6746bb13aa4171897247c9ea25fe10ec41aa3a58519ade0dd875155fad6"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10563394,
+          "sha256": "fdd35062f38d6384e9ee1139583060810f33cc1a3eab2ac7cbc8879f79d7d93f"
+        },
+        "raw/epochs.jsonl": {
+          "size": 9978,
+          "sha256": "0010aec2dbe5fba7546c62be34311e5a35bb3a648b1ebca33a4c35d933eaa3a0"
+        },
+        "raw/learning-started.json": {
+          "size": 528,
+          "sha256": "b0ee108d3a0cb36db2c88cdb65d366d8a06cd561719182569c3e32360b6be310"
+        },
+        "raw/progress.json": {
+          "size": 131,
+          "sha256": "7730df91c260d1f38b6144744dbb629951c8d54a86673932061c8715dd139c51"
+        },
+        "raw/train-complete.json": {
+          "size": 157,
+          "sha256": "897efcc0852a3e164851e72ba0d817db6c731c3b0ba70a621fdab4c708cbe1e1"
+        },
+        "source/consumed-config.json": {
+          "size": 620,
+          "sha256": "118129514b677ee40489259d56ede3a8ef302cf3f4568b6b690c370386809b55"
+        },
+        "source/expanded-config.json": {
+          "size": 7057,
+          "sha256": "555c3558ba17c9a4551d559d185679891c9f9e3ae03d09a819bef9439da1f5e9"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    },
+    {
+      "run_id": "hainan-breadth-ld50_zhu-h0-s45-20261102",
+      "task": "ld50_zhu",
+      "config_tag": "H0",
+      "seed": 45,
+      "epochs": 13,
+      "steps": 364,
+      "best_epoch": 5,
+      "best_steps": 140,
+      "stop_reason": "patience8",
+      "monitor_name": "MAE",
+      "monitor_definition": "mean absolute error on original Y",
+      "counts": {
+        "train": 3970,
+        "valid": 1937,
+        "test": 1478
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 3970,
+          "max_abs_difference": 2.062692632254226e-06,
+          "rtol": 3e-05,
+          "atol": 5.595467987399182e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 1937,
+          "max_abs_difference": 0.0002640246568716975,
+          "rtol": 3e-05,
+          "atol": 5.595467987399182e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 1478,
+          "max_abs_difference": 1.6501541058033808e-06,
+          "rtol": 3e-05,
+          "atol": 5.595467987399182e-05,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-ld50_zhu-h0-s45-20261102",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-ld50_zhu-h0-s45-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-ld50_zhu-h0-s45-20261102.json",
+      "original_config_sha256": "b7819bf9a6a1be566e0efb26755b1a2b6c240ceaf74efa191dc213df0575ed8b",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3227,
+          "sha256": "a41ab00fc0c0c3032b4de587ef2caccd49ced414da3ae57d0e68fb06c71985bf"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139168,
+          "sha256": "1e0b06dbcc7784ff68b54c77a0645591f8fd8b32adcbb2088bce6e3a8b80b921"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108088,
+          "sha256": "7dcd4503a1e8ee90e2ce33e88edeabaf967dd8974890107117a092e651474714"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360778,
+          "sha256": "bdf96216f752b9dc83b492ed6d7c837d40cf297ecb586675c933dff14edc5632"
+        },
+        "artifacts/internal-split.json": {
+          "size": 39393,
+          "sha256": "032f06f93a1f4b320d82f874e682e2ed0b18838ee7df9e2cb993dfb37b8c85a3"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 207866,
+          "sha256": "08fb53c7c8ad935c921e52c6cbf0a7c1cfe91a206d27173a0e64bfdb67efd0cf"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 607999,
+          "sha256": "0819b5705a688a4b91f871248737e5537be84c91c6bff9d2ee4d2ad7b4d05d8e"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 203871,
+          "sha256": "0315ad868b998aae16d75b3f96190d87c6c295625ae53fb482b0af2a2a226b9e"
+        },
+        "artifacts/predictions.csv": {
+          "size": 394602,
+          "sha256": "f1f3fb407da8db08950a31b746ec776c80e75ecb78a19be24f700360cd909dba"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 109871,
+          "sha256": "a6f5fa339da3e591bcff18c4d3121dc8700a643127f3363e24da86a22d0fc4a3"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 16200,
+          "sha256": "d0c20bbb15018953f6a8c4e0b1583d767684fabbffb7cb7350caaf30d1605875"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10550722,
+          "sha256": "da66718a12c3eff2fd33a8492123a3725dba46b21c03a5242e7b14c91c9c9937"
+        },
+        "raw/epochs.jsonl": {
+          "size": 5881,
+          "sha256": "2f1f44824ba9787958b7463742a325192b6a9dd1fe140cba08b1f99cb4e7d6e1"
+        },
+        "raw/learning-started.json": {
+          "size": 528,
+          "sha256": "0cb0ed0057b6a6ab266ededf9d15ffe59d37b44b0a98fd2de7319780aa18a47c"
+        },
+        "raw/progress.json": {
+          "size": 131,
+          "sha256": "e292f39b5dd8d9bf2198024925f15e43db552d5f4561f76a3c5c56fc8a833dc2"
+        },
+        "raw/train-complete.json": {
+          "size": 157,
+          "sha256": "99199d93f77a83618ec698fab8acfe128ae2878cc6f64a43f04be48fb7b25f31"
+        },
+        "source/consumed-config.json": {
+          "size": 620,
+          "sha256": "aeec0bc339e8033fe3fd923cf7c0cc6933d5a63bc6f7c3efee57f79b41a81f54"
+        },
+        "source/expanded-config.json": {
+          "size": 7057,
+          "sha256": "78b77e44f405f7183394a4530f81e59d2d5edbb19b8e4fdaab61a92a7f82b717"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    },
+    {
+      "run_id": "hainan-breadth-ld50_zhu-h1-s44-20261102",
+      "task": "ld50_zhu",
+      "config_tag": "H1",
+      "seed": 44,
+      "epochs": 14,
+      "steps": 392,
+      "best_epoch": 6,
+      "best_steps": 168,
+      "stop_reason": "patience8",
+      "monitor_name": "MAE",
+      "monitor_definition": "mean absolute error on original Y",
+      "counts": {
+        "train": 3970,
+        "valid": 1937,
+        "test": 1478
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 3970,
+          "max_abs_difference": 1.3407502108542246e-06,
+          "rtol": 3e-05,
+          "atol": 5.595467987399182e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 1937,
+          "max_abs_difference": 0.0003696345196999573,
+          "rtol": 3e-05,
+          "atol": 5.595467987399182e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 1478,
+          "max_abs_difference": 2.8877696847118273e-06,
+          "rtol": 3e-05,
+          "atol": 5.595467987399182e-05,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-ld50_zhu-h1-s44-20261102",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-ld50_zhu-h1-s44-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-ld50_zhu-h1-s44-20261102.json",
+      "original_config_sha256": "c08d7c37eeaf0a9a39598baef1889f24774e55144fbc36203506578a1aeb01ea",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3227,
+          "sha256": "2b87b9291a4e9f59369e986c3d70aa4662f602fb34cac8d62af5c06c23dd8e81"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139168,
+          "sha256": "5eadd82afa34eae7eca370c854bad6c1af73a7e05dcba36ec1940bb5eed6837f"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108088,
+          "sha256": "5bdb4d7f170f8a0a7b07c75cae4cc3061a8e69e36933b0f97213c83c960fdcae"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360778,
+          "sha256": "7c7cbb2aee6e48b374b2b100770ebf3e13722d12f70a8c228c8c514fbfcbc2d5"
+        },
+        "artifacts/internal-split.json": {
+          "size": 39393,
+          "sha256": "032f06f93a1f4b320d82f874e682e2ed0b18838ee7df9e2cb993dfb37b8c85a3"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 207863,
+          "sha256": "95080055e3eeb9a5520232def5548ecbd5f97c7a91a84636cd202c20ba5fc7e6"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 608000,
+          "sha256": "b589c2147543d3719c04f8138c6b80404abf77481d254156d596043ff0c54b0c"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 203910,
+          "sha256": "5cd1bed193a44850410a3e67ec03434b671cfd73dd45d4140289b744b91d1cdc"
+        },
+        "artifacts/predictions.csv": {
+          "size": 394638,
+          "sha256": "b1037b6fcb97801ca72d24ce74c33c9d9d06f1917e4043ce6840acb6aabdcc8a"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 109871,
+          "sha256": "a6f5fa339da3e591bcff18c4d3121dc8700a643127f3363e24da86a22d0fc4a3"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 16737,
+          "sha256": "12f7d07018f0850bcb6d8897abbaabe59794af599d03e92ed876655eaee51bd3"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10552130,
+          "sha256": "a93222453db3d3ae39d6616103c29f62800d1efb35349752387fccf8bed49b0a"
+        },
+        "raw/epochs.jsonl": {
+          "size": 6328,
+          "sha256": "fdff0558c03cccfd8d7c8694b87678536800b3e5b4a72fd385d20ac8f29073ca"
+        },
+        "raw/learning-started.json": {
+          "size": 528,
+          "sha256": "8d77893ca74392a2c283edade4ea88d7ce2022e56a67227798656a595bf2b0c8"
+        },
+        "raw/progress.json": {
+          "size": 130,
+          "sha256": "0ef2b11ad789d444996014c2b2710b347b342a5b4f7c5c8abc34381e6d405437"
+        },
+        "raw/train-complete.json": {
+          "size": 157,
+          "sha256": "2d78352b505c21a95273ac68d43e4fabad1144b260421e3038da3813e5726c29"
+        },
+        "source/consumed-config.json": {
+          "size": 620,
+          "sha256": "840cf9c5f5c9d30d50fb1462c040e4ed723d6b567511b02d58de21affafbb781"
+        },
+        "source/expanded-config.json": {
+          "size": 7057,
+          "sha256": "b215791cc9d7342be4536a365fde9ae572b25a837004acfb7221d4e10ae25786"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    },
+    {
+      "run_id": "hainan-breadth-ld50_zhu-h1-s45-20261102",
+      "task": "ld50_zhu",
+      "config_tag": "H1",
+      "seed": 45,
+      "epochs": 14,
+      "steps": 392,
+      "best_epoch": 6,
+      "best_steps": 168,
+      "stop_reason": "patience8",
+      "monitor_name": "MAE",
+      "monitor_definition": "mean absolute error on original Y",
+      "counts": {
+        "train": 3970,
+        "valid": 1937,
+        "test": 1478
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 3970,
+          "max_abs_difference": 3.919116001060985e-06,
+          "rtol": 3e-05,
+          "atol": 5.595467987399182e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 1937,
+          "max_abs_difference": 0.0008844826006821904,
+          "rtol": 3e-05,
+          "atol": 5.595467987399182e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 1478,
+          "max_abs_difference": 1.2376155797966248e-06,
+          "rtol": 3e-05,
+          "atol": 5.595467987399182e-05,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-ld50_zhu-h1-s45-20261102",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-ld50_zhu-h1-s45-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-ld50_zhu-h1-s45-20261102.json",
+      "original_config_sha256": "3956203c4152241d34dcd01d8ed8e4aab10394afdaddf40ac8a940a0bd8a1e96",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3227,
+          "sha256": "c56dd2084f7221aabe950afddf7bcaa710dea61d53bc9f3a67f0065537bded0c"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139168,
+          "sha256": "170f94ddd6992b857bdd03bc452322b6b4ba66410a93757491b66fd2215f3b5d"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108088,
+          "sha256": "d0ab0e8a1e2a4d562855d307f33f6868bac2743799ed9c92ea81f9a91de43f16"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360778,
+          "sha256": "65fdfd5a624ac6053614e690245c72a14e6de43e7787afd445926f192d62a6cc"
+        },
+        "artifacts/internal-split.json": {
+          "size": 39393,
+          "sha256": "032f06f93a1f4b320d82f874e682e2ed0b18838ee7df9e2cb993dfb37b8c85a3"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 207853,
+          "sha256": "4e27a11d9349316e0c35b52d17ee65328f4acc6b2691a448ae0475ba8c40b76f"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 607999,
+          "sha256": "7bea357ce8b5f3a8df7aa4568299c8385c855ebdde734398bc96e92b5f01bf09"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 203869,
+          "sha256": "f499ea5ef1d6cd7f57f5f0bfd16a2ddbf0b8bbebdf8881e83614df3ec51b3e1a"
+        },
+        "artifacts/predictions.csv": {
+          "size": 394587,
+          "sha256": "7cdbcec0a8a68255c726d676257c2598638884a3f807c1cb609cbd78a7d67ebb"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 109871,
+          "sha256": "a6f5fa339da3e591bcff18c4d3121dc8700a643127f3363e24da86a22d0fc4a3"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 16746,
+          "sha256": "0526e3a7eff9fcdb2f291f90fe9a346d07e681c725502fc9d06ba3da7af46903"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10552130,
+          "sha256": "d372cfaa68f1df712411b67ba4e3b803ef214e3bc5eed846d72a4193b05a4af2"
+        },
+        "raw/epochs.jsonl": {
+          "size": 6338,
+          "sha256": "1638ad98b45ab2b41416aba1272848ccba804a1f98eb9f4c3279d140b2cd3bd6"
+        },
+        "raw/learning-started.json": {
+          "size": 528,
+          "sha256": "1df7eb16eb2af9bd882e0498ee63169406af6ccec310750dee1f4b86df7253db"
+        },
+        "raw/progress.json": {
+          "size": 130,
+          "sha256": "25cb5efe1249e2084e501cd3e957f810faf05e65d3f18eacdd18e69b0bf063a3"
+        },
+        "raw/train-complete.json": {
+          "size": 157,
+          "sha256": "98c27ee13230f09ef969d3731b4daf80c5d278dde2c4d3a755602a4d8327d01f"
+        },
+        "source/consumed-config.json": {
+          "size": 620,
+          "sha256": "1b2d83806740cb8004b7cc8abb5ca6248d16544eb03702e631a3645eabe23f89"
+        },
+        "source/expanded-config.json": {
+          "size": 7057,
+          "sha256": "374b963179de1c426eb99d1ad1607639fa2b6c6b0d57d0f139ba3c5aa12d0b53"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    },
+    {
+      "run_id": "hainan-breadth-solubility_aqsoldb-h0-s44-20261102",
+      "task": "solubility_aqsoldb",
+      "config_tag": "H0",
+      "seed": 44,
+      "epochs": 13,
+      "steps": 468,
+      "best_epoch": 5,
+      "best_steps": 180,
+      "stop_reason": "patience8",
+      "monitor_name": "MAE",
+      "monitor_definition": "mean absolute error on original Y",
+      "counts": {
+        "train": 5045,
+        "valid": 2940,
+        "test": 1997
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 5045,
+          "max_abs_difference": 4.202699777522412e-06,
+          "rtol": 3e-05,
+          "atol": 9.61027517718531e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 2940,
+          "max_abs_difference": 0.00013448639276703034,
+          "rtol": 3e-05,
+          "atol": 9.61027517718531e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 1997,
+          "max_abs_difference": 5.253374716573944e-06,
+          "rtol": 3e-05,
+          "atol": 9.61027517718531e-05,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-solubility_aqsoldb-h0-s44-20261102",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-solubility_aqsoldb-h0-s44-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-solubility_aqsoldb-h0-s44-20261102.json",
+      "original_config_sha256": "09b62251edacdf836245bc21699e507fdfd68e463619d43c00479c5cd7ab046d",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3227,
+          "sha256": "e3bd79a9d3777b3cc2b0426f4409a39cca0f22fe1183c714253c357fc7409869"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139168,
+          "sha256": "d82485bbd432cadb43b7ecf1e2dfd051d0dbacae487adf9008449ef9ebe989a9"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108152,
+          "sha256": "457104a18b0e760cd9c3ee891c77e99f73d21f3c0bb9c31fffc67c78e2f26b29"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360778,
+          "sha256": "aa43894f08f922a1461d7fc1fe6f2bfe3c403593f9fe737a956283efaefbedbd"
+        },
+        "artifacts/internal-split.json": {
+          "size": 50143,
+          "sha256": "b8258a27958d23a70d39ee4d181a4b82de23879a39c77b9a9437bd9c7d65d9ed"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 277887,
+          "sha256": "b2a2fb7e81a1f3e49a5dab7b87b8d0d31877512d827db6bb76aa5a4d13943ba7"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 771267,
+          "sha256": "4622ffe1e64ac657408c20798b4515057e1ca3c2adc1803832c41fd5b5b83889"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 321805,
+          "sha256": "4b0759b2c56f7bf6e434be7e1a29b651abe923126fe2d7510ec8e68a7d957fc4"
+        },
+        "artifacts/predictions.csv": {
+          "size": 574945,
+          "sha256": "325a7ef20bd01f2d43a79c528e94a3ebcca79a6a9d9532a1d50d7882e232ac4b"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 110046,
+          "sha256": "8d244c504e2187358b13fe8d5fccf9dd84e95e163fc9d2460dc957ec776014f7"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 16248,
+          "sha256": "7447e98302761d5fc3e0f69da1d75b50a811a726fc609715803e3951a9dc7338"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10555202,
+          "sha256": "236ca9b7fb2f7bb3a47fa229bbb541ef9d77b777b58dea014fe39656df67dd9b"
+        },
+        "raw/epochs.jsonl": {
+          "size": 5846,
+          "sha256": "ef381bfcb57ffc6abb66648d1a925e22bc318c4110507e0ace525bbfc444b67a"
+        },
+        "raw/learning-started.json": {
+          "size": 538,
+          "sha256": "4314463d62b328748896452266fb4bd235f6dffa88611aecbfcdeeb7f3cf1582"
+        },
+        "raw/progress.json": {
+          "size": 130,
+          "sha256": "a9c18bb834700128ce06aeff5af03b275e3b699d69bde3c2903bc4938a06437b"
+        },
+        "raw/train-complete.json": {
+          "size": 167,
+          "sha256": "2fb68af53ef5399a2f08a8739b06d389f20d75b4ca402bb5cb0654bb237be913"
+        },
+        "source/consumed-config.json": {
+          "size": 640,
+          "sha256": "a0172e0bfd9ebc1d696b8d15e3298ec8e4d1eeead6e6ec55bca73d0022000a84"
+        },
+        "source/expanded-config.json": {
+          "size": 7097,
+          "sha256": "d4f194f036e822d500a58a30d2b98161e0a6ae05d041a394ca5949d68f9d3400"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    },
+    {
+      "run_id": "hainan-breadth-solubility_aqsoldb-h0-s45-20261102",
+      "task": "solubility_aqsoldb",
+      "config_tag": "H0",
+      "seed": 45,
+      "epochs": 21,
+      "steps": 756,
+      "best_epoch": 13,
+      "best_steps": 468,
+      "stop_reason": "patience8",
+      "monitor_name": "MAE",
+      "monitor_definition": "mean absolute error on original Y",
+      "counts": {
+        "train": 5045,
+        "valid": 2940,
+        "test": 1997
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 5045,
+          "max_abs_difference": 9.456074490543642e-06,
+          "rtol": 3e-05,
+          "atol": 9.61027517718531e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 2940,
+          "max_abs_difference": 0.0002353511873707248,
+          "rtol": 3e-05,
+          "atol": 9.61027517718531e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 1997,
+          "max_abs_difference": 1.2608099325461808e-05,
+          "rtol": 3e-05,
+          "atol": 9.61027517718531e-05,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-solubility_aqsoldb-h0-s45-20261102",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-solubility_aqsoldb-h0-s45-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-solubility_aqsoldb-h0-s45-20261102.json",
+      "original_config_sha256": "c3929ff8907317c14b73806750488c3de1f710f183516ecd45272bb36ef042c6",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3227,
+          "sha256": "24d66bbe01643053d30290a2f06f45f2d4d25865b3e5596f0c5c6261b4b3128d"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139168,
+          "sha256": "87a1aa9560a769c1d16a0074b2ca2b159d856ee556eb1ea76f7ca62ab78103b6"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108152,
+          "sha256": "07fc953e21079c580ab587950dcbc01786390f0d046f092c102d47baec9b47c7"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360842,
+          "sha256": "3bdb9d97a5d041bdc6506c48f7dd9642799ac9cf95b69790a0674a8829455ee3"
+        },
+        "artifacts/internal-split.json": {
+          "size": 50143,
+          "sha256": "b8258a27958d23a70d39ee4d181a4b82de23879a39c77b9a9437bd9c7d65d9ed"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 277924,
+          "sha256": "0eedf6b4b7ddcc145eea268827459978b1716f60ec1d94513bfa4afe3ae5ec27"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 771244,
+          "sha256": "852f71fca1d4fe9da511506716c73d466b6eefc17d3d92ad76245a62631370ff"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 321426,
+          "sha256": "60f54d00bbc4148e598cf98209ccbb76e8e09845c40dceb8278d3f5f9d46d3cf"
+        },
+        "artifacts/predictions.csv": {
+          "size": 574603,
+          "sha256": "6d47471c27b0a975a8ad683f4be116aa95da5edbbcd26c88767bf2d207a54f39"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 110046,
+          "sha256": "8d244c504e2187358b13fe8d5fccf9dd84e95e163fc9d2460dc957ec776014f7"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 20617,
+          "sha256": "e783db8320856a3526de82019a74dbebb8a3d5d2e324203f0c0c4715de54ebe0"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10569282,
+          "sha256": "760316cc00812fdcd6dcaff45a19b67f0244dfdab6ce34b1dc6ca47e7f18a928"
+        },
+        "raw/epochs.jsonl": {
+          "size": 9499,
+          "sha256": "ae1b3084d4d6d910e09e42326d55efcb4c7a06c2c307d6d336288b0ef9c3c113"
+        },
+        "raw/learning-started.json": {
+          "size": 538,
+          "sha256": "dd53fbd8083c80c59277355d9218b0a22f2c56b7fa7c4905155d0f8328624e85"
+        },
+        "raw/progress.json": {
+          "size": 131,
+          "sha256": "3c62c7bcc09b32b326dde733cdabd94fa0f435e3ed8336c7c157af11040da4f3"
+        },
+        "raw/train-complete.json": {
+          "size": 167,
+          "sha256": "ce5b80172560ad40d6e71e09caf9afcb0b3f9bb039bb7f9322668b0196d78c64"
+        },
+        "source/consumed-config.json": {
+          "size": 640,
+          "sha256": "216fa12b3fd725aba843d5e445b7bb089c350649d1978c3d0554ce4a9ea07b67"
+        },
+        "source/expanded-config.json": {
+          "size": 7097,
+          "sha256": "156c72b08ff24e5dba29b66dc53d7c0062f65093fba47d26b4053b2b126a4c67"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    },
+    {
+      "run_id": "hainan-breadth-solubility_aqsoldb-h1-s44-20261102",
+      "task": "solubility_aqsoldb",
+      "config_tag": "H1",
+      "seed": 44,
+      "epochs": 22,
+      "steps": 792,
+      "best_epoch": 14,
+      "best_steps": 504,
+      "stop_reason": "patience8",
+      "monitor_name": "MAE",
+      "monitor_definition": "mean absolute error on original Y",
+      "counts": {
+        "train": 5045,
+        "valid": 2940,
+        "test": 1997
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 5045,
+          "max_abs_difference": 6.724319638351517e-05,
+          "rtol": 3e-05,
+          "atol": 9.61027517718531e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 2940,
+          "max_abs_difference": 0.0002689727855340607,
+          "rtol": 3e-05,
+          "atol": 9.61027517718531e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 1997,
+          "max_abs_difference": 8.405399555044824e-06,
+          "rtol": 3e-05,
+          "atol": 9.61027517718531e-05,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-solubility_aqsoldb-h1-s44-20261102",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-solubility_aqsoldb-h1-s44-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-solubility_aqsoldb-h1-s44-20261102.json",
+      "original_config_sha256": "fe2ac390affcfb76445ddb0c344d0a975d55abc6a892608916ea083a5e8b76d2",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3227,
+          "sha256": "18e643a0111eb2cf12efd05795bf674255bdb1c38e60b629abf48ab11caf06fd"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139168,
+          "sha256": "c43c1d4939c1458ddfdc1a3ff35c9d7d9934da0a1cf50f138ecd054b10a6d01e"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108152,
+          "sha256": "937daeb937d4f43ef4f92b92f945f0ab3ba88febfa3041fa37814a2cfb9c631f"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360778,
+          "sha256": "c60e6cd433496562a03301b66f3349b7a87fa67357ff1f4d5437d172e6632585"
+        },
+        "artifacts/internal-split.json": {
+          "size": 50143,
+          "sha256": "b8258a27958d23a70d39ee4d181a4b82de23879a39c77b9a9437bd9c7d65d9ed"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 277924,
+          "sha256": "d65109f249002c0ef76dcd0cad341dfb5e96706995a12427c384d4d7f4002a0d"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 771314,
+          "sha256": "cc10598570c4ac6a33173c7f645c67bb439ec24398b7eb8ee9946197d22982b6"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 321585,
+          "sha256": "ae9e29847b74ba026e039ffccb9992f9e6631762c5146f0e385d2bc930c85b60"
+        },
+        "artifacts/predictions.csv": {
+          "size": 574762,
+          "sha256": "d2bc467b15b50e78b6371fef1283c2a6ec62ea7f5ce5a3cc0a1e8af005ca992f"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 110046,
+          "sha256": "8d244c504e2187358b13fe8d5fccf9dd84e95e163fc9d2460dc957ec776014f7"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 21164,
+          "sha256": "efcd13afdcc7306f71320d71d3f095ad0701c99acf5885d870f053fecba1ab81"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10571010,
+          "sha256": "eecc0a5ae55ff13ceda27d32a81c31053312357f862f5d37fe6d535fa9ab34dc"
+        },
+        "raw/epochs.jsonl": {
+          "size": 9957,
+          "sha256": "a9da4697f26f142cb8b04316a517b1694d42c1533f9c0195647eee00379631d0"
+        },
+        "raw/learning-started.json": {
+          "size": 538,
+          "sha256": "ae17dd6aa4f6fe6a7e61d9e5fc4c5cd981aaaaec88d2880dba3a9be20a1eb0f4"
+        },
+        "raw/progress.json": {
+          "size": 131,
+          "sha256": "5ab1a35fe4fddc6b3a6ce5eaf69221a62671d1dc547bd17dff808c9370798700"
+        },
+        "raw/train-complete.json": {
+          "size": 167,
+          "sha256": "1663dc834b369b632e803db8c38836a1d3f0ad8cdca653b2601c7ad7608e3c01"
+        },
+        "source/consumed-config.json": {
+          "size": 640,
+          "sha256": "ef89e90a5c0df6d2c7d1e299398804030651f580584ddae34e359b01358f924e"
+        },
+        "source/expanded-config.json": {
+          "size": 7097,
+          "sha256": "feed42ddc781cb6d2d1d1f9fbf6d878c4dfc9e4870ed981e7c8970f64b50ce48"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    },
+    {
+      "run_id": "hainan-breadth-solubility_aqsoldb-h1-s45-20261102",
+      "task": "solubility_aqsoldb",
+      "config_tag": "H1",
+      "seed": 45,
+      "epochs": 20,
+      "steps": 720,
+      "best_epoch": 12,
+      "best_steps": 432,
+      "stop_reason": "patience8",
+      "monitor_name": "MAE",
+      "monitor_definition": "mean absolute error on original Y",
+      "counts": {
+        "train": 5045,
+        "valid": 2940,
+        "test": 1997
+      },
+      "frozen_parameters": 8,
+      "frozen_buffers": 3,
+      "CPU_best_prediction_reload": {
+        "train": {
+          "rows": 5045,
+          "max_abs_difference": 3.572294807696608e-05,
+          "rtol": 3e-05,
+          "atol": 9.61027517718531e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "valid": {
+          "rows": 2940,
+          "max_abs_difference": 0.00013448639276703034,
+          "rtol": 3e-05,
+          "atol": 9.61027517718531e-05,
+          "device": "independent CPU head from best checkpoint"
+        },
+        "test": {
+          "rows": 1997,
+          "max_abs_difference": 1.6810799095878792e-05,
+          "rtol": 3e-05,
+          "atol": 9.61027517718531e-05,
+          "device": "independent CPU head from best checkpoint"
+        }
+      },
+      "serialized_best_last_optimizer_RNG_verified": true,
+      "config_semantics_and_source_sha_verified": true,
+      "source_expanded_JSON_note": "per-run expanded config is reserialized JSON; parsed content equals original registered config, source original SHA is separately recorded",
+      "remote_directory": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/hainan-breadth-solubility_aqsoldb-h1-s45-20261102",
+      "local_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/snapshots/hainan-breadth-solubility_aqsoldb-h1-s45-20261102",
+      "original_config_path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science/hainan-breadth-solubility_aqsoldb-h1-s45-20261102.json",
+      "original_config_sha256": "f682cdb0aa46def86a1bf28aa21cd4919ab28705055d58f5569b9ae22ff34d2c",
+      "files": {
+        "_fetch-manifest.json": {
+          "size": 3227,
+          "sha256": "e3926a5d5868a5d3d87cbfd450471a786bbc5c1ba01808185898ca3fa2ec9b01"
+        },
+        "artifacts/encoder-after.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/encoder-before.json": {
+          "size": 2333,
+          "sha256": "8b45d18e575df300856e9bc48b4f0c55670947a02ca75c419463ec7f6a85ee7b"
+        },
+        "artifacts/head-best.pt": {
+          "size": 2139168,
+          "sha256": "b7c9b9e1c2459fd854e7371ba6e1c696db2b03de71e81d9fe23c24d5e121e3f1"
+        },
+        "artifacts/head-initial.pt": {
+          "size": 2108152,
+          "sha256": "632046ff4230ff2f1b19cc706323e25e31d21eebbb0dd5c84e3887f56d3c396b"
+        },
+        "artifacts/head-last.pt": {
+          "size": 6360842,
+          "sha256": "71269e2e0c623d35468af8ba4d7598ce4778bfb70c33d1e1e9519f952e50ad0e"
+        },
+        "artifacts/internal-split.json": {
+          "size": 50143,
+          "sha256": "b8258a27958d23a70d39ee4d181a4b82de23879a39c77b9a9437bd9c7d65d9ed"
+        },
+        "artifacts/predictions-test.csv": {
+          "size": 277892,
+          "sha256": "cad8eddc57af659c03db311c842432a063deb9a4542da2e61ccec94f17681ca1"
+        },
+        "artifacts/predictions-train.csv": {
+          "size": 771212,
+          "sha256": "c774ffaa5c2c3f3a57eb0f3e9ef70a63001c4614e46ecf01473cdf67f7013182"
+        },
+        "artifacts/predictions-valid.csv": {
+          "size": 321657,
+          "sha256": "a7e1bed011119feaea2ee29abef1aaf4429abba3f83112166790fadd483035f0"
+        },
+        "artifacts/predictions.csv": {
+          "size": 574802,
+          "sha256": "fd87c89d8e21109a79a657d306411eab6cf1926694c08d37cea6450174f9ab97"
+        },
+        "artifacts/preprocessing.json": {
+          "size": 110046,
+          "sha256": "8d244c504e2187358b13fe8d5fccf9dd84e95e163fc9d2460dc957ec776014f7"
+        },
+        "artifacts/training-evidence.json": {
+          "size": 20077,
+          "sha256": "359be11155b9f7d5e3f94efb65da5e6bcaf266811246ea669db6692d55fe135d"
+        },
+        "artifacts/training-state-last.pt": {
+          "size": 10567490,
+          "sha256": "6ccc2ee46692bd1c8fb133188e31f50562528b7bae78c581a021bbc66e970bcb"
+        },
+        "raw/epochs.jsonl": {
+          "size": 9047,
+          "sha256": "3d7c17ddc7aac5e6028a15feb86857a6c0d4fa6c20d94de563628d76cf7f27cf"
+        },
+        "raw/learning-started.json": {
+          "size": 538,
+          "sha256": "622023467e9dc05c02389f22742b617c9084f7b069a8d3221916d13f00990c42"
+        },
+        "raw/progress.json": {
+          "size": 131,
+          "sha256": "fe593e35eb04d10408ebbda5381f7451c13d92a556f1f7a24d4df519f4190ffb"
+        },
+        "raw/train-complete.json": {
+          "size": 167,
+          "sha256": "8f7f5543882fe0780f3a0c12c9a9ae5766ddf1be96b9275d244a1b791035aa12"
+        },
+        "source/consumed-config.json": {
+          "size": 640,
+          "sha256": "7c3e47f3286f5ca3656c499b087c7515b2c174a78a16d2198d1bf81e0bc544da"
+        },
+        "source/expanded-config.json": {
+          "size": 7097,
+          "sha256": "1809b2336362742c4db66b272d40f7d4ba745660f85ae770a1e2ceeeb04048cb"
+        }
+      },
+      "raw_feature_arrays": "immutable remote cache with full hashes in global-evidence/_fetch-manifest.json; not copied locally",
+      "latest_progress": "training-state-last.pt contains complete last optimizer/RNG/progress; redundant epoch progress.pt retained remotely and hashed, omitted from mirror"
+    }
+  ],
+  "global_evidence": "global-evidence",
+  "cache_original_root": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/cache/chemeleon_mp",
+  "second_execution_raw": "[TASK_WORKSPACE]/admet/breadth-six24-20261102/attempts/02/raw",
+  "normative_manifest": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/context/MANIFEST.json",
+  "scoring_or_publication_by_executor": false,
+  "original_six_Caco2_unchanged": true
+}

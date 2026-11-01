@@ -1,0 +1,13 @@
+# 主控修订科学接口候选
+
+来源为本轮Qwen准备交付；原件在preparation/breadth-interface-001/monitor/acceptance。主控修订与证据见REPORT.md、RESULT.json、source.diff。仅候选科学模块，没有部署、调度、封口或监控运行器。
+
+消费入口为src/admet_breadth。使用当前科学任务的允许数据、指标合同和私有work目录构造TaskPipeline；load及make_internal_split后，build_cache只在宿主获准编码范围执行。**fit_transforms()不再接受矩阵**，由pipeline自行加载有身份的train缓存并切fit。组件级fit_feature_scaler只接受与fit索引等长的已切片矩阵。
+
+validate_config(cfg, task_metrics)与train_head(..., task_metrics=task_metrics)要求显式任务指标映射。TaskPipeline读取给定指标JSON并传入，核对本任务、split、底座、配置和实际监测。fit_head默认preparation=True拒绝学习；只有登记的新训练范围允许改False。训练返回model是best头；result保存last头及last optimizer/RNG，恢复轨迹尚未实现和实测，不承诺自动断点等价。
+
+回归fit targets经过fit-only标准化；stop targets保持原Y，evaluate_stop仅把预测逆变换。每次run独立monitor，任何undefined/nonfinite按这批合同拒绝，不悄悄换seed/指标。后续获准改变科学定义时应更新对应合同和实现，不能用当前参数包络冒充永久赛事规则。
+
+当前同mini依赖环境验证：Python3.11、torch2.6.0+cpu、numpy1.26.4、chemprop2.1.2；执行方须核对实际目标环境。已批准权重SHA为c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651。本候选不携带权重和海南连接资料。
+
+tests内为此次数学、接口和冻结反例，非固定训练流程。测试结果证明CPU无更新分支，不证明CUDA学习、恢复和全数据性能。work中的submission_FIXTURE和fixture_untrained_head都不能当正式成果。下一训练任务应使用新的私有目录，明确科学参数、资源预算与真值边界，由执行Agent选择现场方法，主控验收真实结果。

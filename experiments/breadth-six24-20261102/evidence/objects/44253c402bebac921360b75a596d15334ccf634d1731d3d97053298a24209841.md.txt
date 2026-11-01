@@ -1,0 +1,78 @@
+# 下一批指南（主控可审读/派发）
+
+## 0. 状态与边界
+
+本指南是 `proposal_only`，不是训练授权。不得发起训练、取回新 valid 分数、读取逐行 valid 真值/残差、访问测试标签、改动原始行/标签、伪标签、清洗/去重、测试拟合或赛事上传。预训练 encoder 的参数和 buffers 必须冻结；只训练经批准的新模块。所有准备任务为零 fit。
+
+## 1. 推荐派发顺序
+
+### W0 — 21 项数据与任务合同审计（config_only / zero-fit）
+
+**目标**：确定每任务是否有资格进入 screen，不做任何学习。
+
+**输入**：固定 snapshot `092d21ddaeb44f305a0628bef15fb6232ea8eb4b` 的原始任务 manifest、train/valid/test 输入（训练方仅按既有授权接触 train.Y；valid/test 作为盲输入）、task metric registry、科学资产表。
+
+**操作**：
+1. 每任务报告 split 行数、row_index 唯一性、task/split/row_index 三元键、Drug_ID 重复数、SMILES 空值/解析失败数；仅报告统计，不删行、不修标签。
+2. 分类：train-fit 正负例数、valid/test 盲输入行数；不得向训练方输出逐行标签。标记训练或停止分区是否单类。
+3. 回归：仅报告 train-fit 的标签尺度/分位数；valid/test 标签不可读取。检查 ties、极端值和原始单位来源。
+4. 结构：SMILES 原始字符串/规范化版本、重复分子/ scaffold 分布仅作诊断；不改变原始输入。
+5. 评分合同：AUROC、AP/AUPRC、Spearman ties、MAE 的实现/方向/undefined 策略逐项与官方规则核对。AP 与官方 AUPRC 等价未确认前只称本地 AP。
+6. 每任务生成 runner fixture：读入原行、按 task/split/row_index 写出恒等预测，验证输出行序/行数/template 只填 y_pred；分类 fixture 输出合法 [0,1] probability，回归 fixture 输出原 Y 尺度数值。
+7. 资产核验：encoder/model role、权重 SHA、tokenizer/featurizer、license、参数/buffer冻结、optimizer 不含 encoder；不能用 GLM/DeepSeek/Qwen 等准备执行 LLM 充当科学底座。
+
+**产物**：`task-readiness.csv/json`、`row-identity-report.json`、`metric-contract-matrix.json`、每任务 fixture logs 与 source hashes。
+
+**验收**：每 task 的 train/valid/test 输入行数、row_index 对齐、feature cache identity、预测回写和 template roundtrip 全部通过；失败任务标 blocked，不进入 W1。
+
+### W1 — 自适应 screen（new_code 或 config_only，须逐任务通过 W0）
+
+**建议 shortlist**：优先考虑 `lipophilicity_astrazeneca`、`ames`、`cyp2c9_veith`、`cyp3a4_veith`、`herg`、`pgp_broccatelli`、`half_life_obach`。从中选最多 4 项，不按固定配额强行凑数。优先级按数据有效性、样本/类别结构、资产准备度、指标合同和成本排序。暂缓 `bioavailability_ma`、`cyp2d6_substrate_carbonmangels`、`cyp2c9_substrate_carbonmangels`、`cyp3a4_substrate_carbonmangels` 等小样本任务，除非准备审计给出有力反证。
+
+**实验配置**：每个被选任务只用一个已验收冻结底座、一个 task-specific head、一个 split、两个共同 model seeds（44,45）做 baseline。Head 初始优先沿用已验收 2048→256→1（分类最后层 logits，回归线性输出）；若表示维度不为 2048，必须先通过接口核验并由主控批准明确输入维度，不得静默适配。dropout 0.1、AdamW lr=5e-4、wd=1e-4、batch=128、max_epochs=50、patience=8 仅作为候选起点，非已经支持的 runner 字段；训练端需映射到真实字段后复核。每 split 独立拟合 preprocessing，只用 fit rows。
+
+**training_objective**：
+- 分类：`BCEWithLogitsLoss`，loss_scale=logit space；early_stopping_metric 明确为 AUROC 或 average_precision（需先确认runner和定义），direction=maximize；prediction_scale=positive-class probability (`sigmoid(logit)`)。
+- 回归：`MSELoss` on train-fit standardized Y；loss_scale=fit-only standardized target；early_stopping_metric 明确写 `MAE`（minimize）或 `Spearman`（maximize，明确ties），prediction_scale=original supplied Y after inverse transform。
+- 若真实 runner 不支持以上字段或指标，阻断该 task，不允许以“task-native metric”代替。
+
+### W2 — confirm（仅 screen 返回且主控登记后）
+
+最多 2 个任务，每任务同一 config、共同 seeds 44/45/46、同一 split；screen 选中的配置和 baseline 都必须在相同 seeds 下补齐，避免只在不同 seed 上比较。若 screen 只有 2 seed 且差异不稳定，先做 confirm 而非继续扩搜索。改善门槛必须来自历史噪声/业务意义；没有可信阈值则在本轮记录为待定，不能临时编造 0.5%/0.01 等阈值。
+
+### W3 — reserve
+
+- 多个 seed 稳定、资产/接口全通过：另提 uniform seed ensemble；不将其混入 head 单因素结论。
+- 某一任务明显异常：先回查数据/标签/尺度/行身份，不通过更大 head 掩盖。
+- 任何冻结/行身份/标签越界：立即停止相关任务，保留失败日志并交主控。
+
+## 2. 预算情景
+
+| 档位 | 任务范围 | 确定配置数 | seeds/split | fit 上限 | 准备/执行条件 |
+|---|---|---:|---:|---:|---|
+| 小 | 21项零fit审计；最多2 task screen | 1/task | 2 / 1 | 4 | W0通过且主控登记 |
+| 中（推荐） | 21项零fit审计；最多4 task screen；最多2 task confirm | 1/task阶段 | 2 screen；3 confirm / 1 | 8+6=14 | W0通过，W2需主控二次登记 |
+| 大 | 最多6 task × 2个单因素 config | 2/task | 3 / 1 | 36 | 仅中档出现稳定信号后再审议 |
+
+成本核算：`T_prepare + N_unique_encoder_fit*T_encode + N_head_fit*T_head + N_score*T_retrieve + T_review/roundtrip`。缓存只在 encoder/version/weights/tokenizer/input row identity 全部匹配时复用。GPU program 520.7901s 含导入/CPU/失败；两个训练原生 turn 合计 4895.984s；新四项评分取回 270.4201s、角色至回报 661.5655s。时段可能重叠，不相加。其余任务成本必须实测，不能按 Caco2 直接外推。
+
+## 3. 缓存与完整候选导出
+
+1. `raw_representation_cache` 只含冻结 encoder 输出；cache key 包含 asset id/version/weight SHA、tokenizer/featurizer版本、SMILES规范化版本、原始输入 hash、task/split/row identity。
+2. `fit_transform_cache` 单独存 scaler/imputer/feature selection；只由当前 split 的 fit rows 拟合，绑定 fit row ids/hash 与 transform parameters hash。
+3. `prediction` 必须携带 task/split/row_index；merge 前验证一对一映射、无缺失/重复、原始顺序复原。
+4. 逐任务 head 是默认装配方式。Ensemble 是同 task/split/target scale 的独立预测融合。Joint multitask 是共享可训练模块与多目标权重方案，需另行授权/设计，不在本批。
+5. 导出前对官方模板做结构 diff；保持原行列、编码、CRLF/BOM 等格式，只写 `y_pred`；不人工改预测。
+
+## 4. 失败分支与评审节点
+
+- W0 fixture 失败：该 task 标 `blocked_assets`，停止；修复后重跑 fixture，不计训练 fit。
+- screen 无改善：不扩大该任务 head 搜索；回到标签/表示/目标尺度/分组结构诊断。
+- screen 改善但 seed 方向不一致：进入 W2 对照 confirm；不宣布胜出。
+- screen 多任务均改善：只选信息量/成本最优最多 2 项确认，其他留 reserve。
+- 冻结/标签/输入身份/越界故障：立即回主控，禁止等待整批完成。
+- 只有 W0/W1/W2 的登记产物全部到齐，才做整批深评审；不按每个 head 单独发 Chat。
+
+## 5. 责任与验收产物
+
+准备方：零 fit 任务 profile、接口 fixture、资产身份、缓存 schema、时间戳和失败记录。主控：逐 task 审核后登记任务/配置/split/seeds、预算与资源策略。训练方：仅执行已登记矩阵，返回 run/task/split/metric、训练目标、epochs/best epoch/steps、freeze hashes、cache identity、pred row map、技术诊断。评分方：按授权固定评分器批量评分，保留官方与本地指标差异。分析方：只接收本轮允许的汇总与技术诊断；不转发逐行真值/残差。

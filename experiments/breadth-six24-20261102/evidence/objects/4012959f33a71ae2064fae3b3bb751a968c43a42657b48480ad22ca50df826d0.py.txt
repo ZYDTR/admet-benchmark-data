@@ -1,0 +1,32 @@
+"""One no-gradient production probe using two previously probed train SMILES."""
+import copy
+import json
+from pathlib import Path
+import sys
+import numpy as np
+import torch
+from admet_breadth.encoder import CheMeleonEmbedder
+from admet_breadth.data_io import load_split_table
+from admet_breadth.heads import build_head, forward_logits
+
+torch.set_num_threads(2)
+data, checkpoint = map(Path,sys.argv[1:3])
+strings=[r["Drug"] for r in load_split_table(data,"ames","train")[:2]]
+enc=CheMeleonEmbedder(checkpoint,device="cpu",batch_size=2)
+before=enc.state_digest()
+X,mask=enc.embed(strings)
+assert X.shape==(2,2048) and mask.all() and np.isfinite(X).all()
+assert enc.state_digest()==before
+model=build_head(2048,128,.1,44).eval()
+state=copy.deepcopy(model.state_dict())
+scores=forward_logits(model,X,"cpu")
+assert np.isfinite(scores).all()
+assert all(torch.equal(t,model.state_dict()[k]) for k,t in state.items())
+assert not any(p.requires_grad for p in enc.model.parameters())
+print(json.dumps({"checkpoint":enc.checkpoint_meta,"cpu_forward_calls":1,
+                  "strings_from_original_probe":"ames train first2, subset of original first8",
+                  "distinct_smiles":len(set(strings)),"encoder_state_before":before,
+                  "encoder_state_after":enc.state_digest(),
+                  "encoder_parameters":len(list(enc.model.named_parameters())),
+                  "encoder_buffers":len(list(enc.model.named_buffers())),
+                  "head_unchanged":True,"training_steps":0,"CUDA":"not_verified"}))

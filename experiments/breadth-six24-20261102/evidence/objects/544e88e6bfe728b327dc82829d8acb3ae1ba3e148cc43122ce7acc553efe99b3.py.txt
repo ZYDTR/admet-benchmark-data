@@ -1,0 +1,69 @@
+import json,hashlib
+from pathlib import Path
+P=Path(__file__).resolve().parents[1]
+B='https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/'
+C='092d21ddaeb44f305a0628bef15fb6232ea8eb4b'
+# Exact originals, not the previous edition's invented browser references.
+rows=[
+('R00-entry','START_HERE.md','56cfbc45d84944038e109d7ba92d7440824ebd79d24fa9b4f4da2781f8e5a154',12,'turn884091view2','总入口；渐进顺序和科学/运行范围'),
+('R01-current','current/README.md','ac4a07b27efc6301e244ebeef7766f557a105084e376e017a215c02511ffdcba',22,'turn785775view3','六项结果、配对设计和限制'),
+('R02-rules','context/README.md','2d2dc42640d14ac91855e18e04e5bbb8f5efacdc82c8de63e55f7a2fbfebf4c5',11,'turn420145view3','aggregate_only与累计valid账'),
+('R03-research','research/README.md','3868343d1bcba84fd6458e37eb261bb957f87fd2d0673090a85ab282315c7e40',17,'turn432814view3','Q0–Q7和返回合同入口'),
+('R04-history','history/README.md','91cc8481414207ff9f75ba46c1067394935bcdc10cc71509f31430e2b6dfad75',45,'turn420145view4;turn785775view1;turn718572view4;turn483929view0;turn928162view0','33条历史登记导航；不将索引等同所有历史原件'),
+('R05-issues','issues/README.md','1946dc6efd9978e457b2d9ac7fb365fd1b77afe19315a68717efac7aee04f287',10,'turn785775view2','GPU0失败、GPU1条件接受；旧问题不消失'),
+('R06-assets','assets/README.md','3c44b514589e2aa873f8720fcb4fa605acb9b9968be4c9103c1576d4b52a2078',6,'turn718572view3','科学底座与执行LLM分开；21任务runner未验收'),
+('R07-shared','current/failures-and-resources.md','34dabb9179fc60471dd5128f33ae041c1b92956082782c47b4fcb0d7aefd1e20',13,'turn442396view2','11次尝试、恢复、GPU共享条件和时间口径'),
+('R08-source-RESEARCH_BRIEF.md','evidence/objects/07ba1f2d9ab5981de8dac497f57311d6b161407b1de4dd68a1bdf11bdd657a7f.md.txt','07ba1f2d9ab5981de8dac497f57311d6b161407b1de4dd68a1bdf11bdd657a7f',10,'turn205951view2','本轮研究问题和已填输入；不是未来待取材料'),
+('R09-source-decision-contract.json','evidence/objects/45acd7d65dcc88bee472b4b27bd1fdeb9e74f0a5285f42c00ed0b82358595778.json','45acd7d65dcc88bee472b4b27bd1fdeb9e74f0a5285f42c00ed0b82358595778',249,'turn785064view5;turn483929view1;turn483929view2','22任务的本地metric/direction；Q0–Q7验收标准'),
+('R10-source-runner-evidence.md','evidence/objects/485ae3b871d08400a335b75effbfc0fcde443d311ebae2bb6d31f714811f53d0.md.txt','485ae3b871d08400a335b75effbfc0fcde443d311ebae2bb6d31f714811f53d0',8,'turn718572view2','Caco2缓存/恢复实测，新增任务需要new_code准备'),
+('R11-source-CHAT_PROMPT.md','evidence/objects/05e2e8bfffc7c555ce873e5316ece02d779ac665c601d7153cd58e564f2e85fa.md.txt','05e2e8bfffc7c555ce873e5316ece02d779ac665c601d7153cd58e564f2e85fa',70,'turn205951view3;turn718572view0;turn487525view0','历史未填模板，不覆盖当前已填PROMPT；交付/变更因子/去重要求'),
+('R12-source-review-output.json','evidence/objects/144d41be12a9d39d45e064644289c999facd2e87d0ce76b1b56045c41071ca72.json','144d41be12a9d39d45e064644289c999facd2e87d0ce76b1b56045c41071ca72',157,'turn432814view2;turn540712view0','根类型、所有必需字段和枚举'),
+('R13-source-REPORT.md','evidence/objects/8295116e4736c8028a119aaaf6e55b04dc1790f89524518ef9a28a02cd6a97b9.md.txt','8295116e4736c8028a119aaaf6e55b04dc1790f89524518ef9a28a02cd6a97b9',12,'turn205951view4','六项稳定模型/预测和主控验收；不等于运行全通过'),
+('R14-source-six-run-comparison.json','evidence/objects/61f8795f1040539fb3e67a50d4a9a67a3e397bec6df2ab3ab67911e5498357b9.json','61f8795f1040539fb3e67a50d4a9a67a3e397bec6df2ab3ab67911e5498357b9',195,'turn442396view3;turn563344view0','配置差异、epochs/best/steps和执行混杂；仅作核验而非C1分数输入'),
+('R15-source-evaluation-use-ledger.json','evidence/objects/f37f1b0cec261606f46260aa1f2727e475d53a800a4bba77113a5d6c73a8ab59.json','f37f1b0cec261606f46260aa1f2727e475d53a800a4bba77113a5d6c73a8ab59',110,'turn718572view1;turn487525view1;turn563344view1','六组计数去重32任务评分/11逻辑run；未知访问量是null'),
+('R16-source-scientific-assets.json','prior-history/prior-history/history/archive-20261101/originals/S-d764c93e890f1a40.json','79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282',128,'turn487525view2;turn785064view4','CheMeleon可复用；MiniMol/MoLFormer本地资产未ready，其他方向有边界'),
+('R17-prior-S-764562710384d47e','prior-history/prior-history/history/archive-20261101/originals/S-764562710384d47e.json','ce8375c1c1eb6291eae6439dee77e082486c6e573e844004ce39d43d69890e8c',382,'turn432814view0;turn205951view0;turn205951view1','逐任务分数、valid n、类别数和metric定义；合计11735'),
+('R18-prior-H-d5a45626b5031f31d644','prior-history/prior-history/evidence/H-d5a45626b5031f31d644.md.txt','e92ced46c6c02f159f956b08d3e630e0d5763f096be5247f59821e9f9e7544af',26,'turn487525view3','前轮84fit是未执行方案；归一化总分属推断；inner_stop筛选乐观'),
+('R19-prior-H-2cdcdf014e443ab866c8','prior-history/prior-history/evidence/H-2cdcdf014e443ab866c8.json','fa5caf201db27daadd0d7dc2fe86e194fd98b55f1745b290e18f5b09e9711d96',16139,'audit/r19-config-hash-checks.json','21任务×H0/H1×seed44/45；84完整科学配置解析并逐SHA匹配；原wrapper未下载'),
+('R20-plus-official-contract-20261029','prior-history/prior-history/history/archive-20261101/originals/S-a95c8473d1769a29.json','f8a99bd337ed165f2f508e9303d2354594bb5bdec213797d5c582eeacfa06a55',142,'turn762095view0;turn785064view0;turn785064view1','官方规则快照：外部数据、SMILES/3D、模板只填y_pred和复现'),
+('R20-plus-policy','prior-history/prior-history/evidence/H-3db7c2d1e67d40641a20.json','9845a36a3bc3be11818dd070150657d4232eab67774027fa040c7ddf2ac192b0',140,'turn762095view1;turn785064view2;turn785064view3;turn483929view3','用户确认冻结预训练例外和角色数据投影；不把旧公开链接当权限'),
+('R20-plus-source-map','prior-history/prior-history/evidence/H-e275f0ef9a4955741956.md.txt','fa5a8362b3593146787f1c137cb1105f7799dabef9245f92ccb335aeaf326061',26,'turn487525view4','官方公开/用户转述/本地治理三类来源分开')]
+assert len(rows)==23
+sources=[];receipts=[]
+for i,(eid,path,sha,n,refs,fact) in enumerate(rows):
+ sid='SRC-'+(f'R{i:02d}' if i<20 else ['RULES','POLICY','MAP'][i-20])
+ limitation='按浏览器原文分段实读；SHA为正式合同登记值，未在本地取得原字节独立复算。'
+ mode='original'
+ if i==17:limitation='浏览器JSON重建本地原件，11258字节及SHA与正式合同完全匹配；无逐行标签。'
+ if i==19:limitation='完成21种task完整科学配置、84配置hash和开头/结尾审读；未取得原670837字节wrapper，未声称逐字转录全部重复包装字段；科学配置文件与逐项hash证据另存。'
+ item={'source_id':sid,'entry_id':eid,'uri':B+path,'commit':C,'sha256':sha,'hash_verification':'computed_exact_bytes' if i==17 else 'registered_value_not_independently_recomputed','web_line_count':n,'read_evidence':refs,'observed_fact':fact,'limitation':limitation}
+ sources.append(item)
+ receipts.append({'entry_id':eid,'layer':'mandatory_rules_original' if i>=20 else 'mandatory_decision_context','uri':item['uri'],'source_version':{'commit':C,'sha256':sha},'read_mode':mode,'evidence_locator':refs+'; browser lines 0–'+str(n-1)+(' scientific sections / hash locators' if i==19 else ''),'observed_fact':fact,'limitation':limitation,'source_id':sid})
+extras=[
+('SRC-SCORE2','prior-history/evidence/objects/7e0d8a9ff81657e4de4dd6effe3b5ab5f10302ecc1fdfd71c56b004e929708a3.json','7e0d8a9ff81657e4de4dd6effe3b5ab5f10302ecc1fdfd71c56b004e929708a3','turn442396view0','two original scores; exact bytes matched'),
+('SRC-SCORE4','evidence/objects/f37f584c8ced3b83a796fac05b9becee14d653a6e0a9bbac35e5597b794fb2e8.json','f37f584c8ced3b83a796fac05b9becee14d653a6e0a9bbac35e5597b794fb2e8','turn442396view1','four original scores; exact bytes matched'),
+('SRC-SCAFFOLD','prior-history/prior-history/history/archive-20261101/originals/S-68b623177bcc7159.json','978d6b16cac3a22f9a2fa7c0d1b786e546edcd296c4547f442abd8426ec25844','turn539193view0;turn721858view0;turn445538view0;turn445538view1;turn445538view2;turn849010view3;turn849010view4;turn849210view0;turn849210view1;turn849210view2;turn540712view2;turn540712view3','targeted original metadata and task scaffold summaries; not all2312 lines'),
+('SRC-RANGES','prior-history/prior-history/history/archive-20261101/originals/S-616fd441ee2c48b2.json','c9b48565dcbabef6ab245492e0237c22fc4f6f6c97e7dd50dc8d78c59a9a7196','turn721858view1','full historical prediction range aggregate; not labeled residuals; partition not inferred'),
+('SRC-BASELINE','prior-history/prior-history/history/archive-20261101/originals/S-74987a34c418c461.md.txt',None,'turn838531view0','baseline22 model/run/encoder counts, timings, 2 invalid SMILES and prediction extremes'),
+('SRC-ENCODER','prior-history/evidence/objects/7f7a582135830cd166719cdf09b64ca004d88e5710e058d620df72094393b59a.py.txt','7f7a582135830cd166719cdf09b64ca004d88e5710e058d620df72094393b59a','turn203957view1','101 lines inert source read; BondMessagePassing, MeanAggregation, 2048 fingerprint; no code run'),
+('SRC-RUNNER','prior-history/evidence/objects/9409aacd2dac9814e38831c4aeaf8d7d7597fb62d8df8688c6082594ad1f5c78.py.txt','9409aacd2dac9814e38831c4aeaf8d7d7597fb62d8df8688c6082594ad1f5c78','turn203957view2','targeted input validation and supported fields/monitors; full481line replay not performed'),
+('SRC-BESTCONFIG','prior-history/prior-history/history/archive-20261101/originals/S-a875c49c4ef3f7da.json',None,'turn678610view3','full87lines; historical best run head512/lr.001/seed42, currenthead256/lr.0005/otherseeds'),
+('SRC-BESTREPORT','prior-history/prior-history/history/archive-20261101/originals/S-2e8f80a254694f54.md.txt',None,'turn539193view1','historical 14epochs70stepsbest6; validated frozen and blind reload scope'),
+('SRC-SKILLFOLLOW','prior-history/prior-history/history/archive-20261101/originals/S-d76e1996855c0b80.json',None,'turn445538view4','head256/seed43, 19epochs95steps; science vs strict skill failure separated')]
+for sid,path,sha,ref,fact in extras:sources.append({'source_id':sid,'uri':B+path,'commit':C,'sha256':sha,'hash_verification':'computed_exact_bytes' if sid in ['SRC-SCORE2','SRC-SCORE4'] else 'registered_or_unknown_not_recomputed','read_evidence':ref,'observed_fact':fact})
+external=[
+('SRC-BESTSCORES','https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/eaec280cf142839597fe75ce748cd2b9a8a897d4/experiments/public-repo-20261031/scoring/scores.json','turn678610view0','Read only saved task/group aggregates, not linked truth. Best .37862513598901104 tied to hainan-frozen-training-20261031.'),
+('SRC-INDEXSCORE','https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/1c5592e98f3fff1c29369bd521f39e0cc044f3d3/experiments/progressive-index-e2e-20261031/batches/progressive-index-e2e-20261031/aggregate-scores.json','turn678610view1','Saved aggregate .42147216141758237, not new scoring.'),
+('SRC-MAESCORE','https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/batches/monitor-mae-e2e-20261101/aggregate-scores.json','turn678610view2','Saved aggregate .40302117308791197, no truth link followed.'),
+('EXT-MINIMOL','https://github.com/graphcore-research/minimol','turn341913view2','Official upstream current README, 512dim output/10M model/MIT code; does not prove frozen local assets installed or checkpoint license accepted.'),
+('EXT-MOLFORMER','https://huggingface.co/ibm-research/MoLFormer-XL-both-10pct','turn341913view1','Official modelcard 10pct variant, feature extractor/pooler_output; current compatibility advice not auto upgrade approval.'),
+('EXT-AP','https://scikit-learn.org/stable/modules/generated/sklearn.metrics.average_precision_score.html','turn563344view3','AP non-interpolated weighted precision by recall increment; not trapezoidal PR AUC.'),
+('EXT-CHEMELEON','https://github.com/JacksonBurns/chemeleon','turn744965search23;turn463460view0','Authors repository metadata; local accepted encoder source is stronger for exact pooling implementation.')]
+for sid,url,ref,fact in external:sources.append({'source_id':sid,'uri':url,'sha256':None,'hash_verification':'not_computed','read_evidence':ref,'observed_fact':fact})
+sources.append({'source_id':'SRC-PROMPT','uri':'https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/c56cd0e379c25d0e68542bc3a759e0f0474c549c/experiments/agent-led-six-pro-request-20261102/PROMPT.txt','sha256':'bcd74710f4a01ef3a6d38948cbdfebac7673fa2c9e46dd5ce174817571259012','bytes_declared':50306,'read_evidence':'turn884091view0;turn123627view0;turn420145view0;turn785775view0;turn123627view1;turn420145view1;turn123627view2;turn420145view2;turn123627view3;turn341913view0;turn540712view1','observed_fact':'All647 browser lines covered by overlapping windows; originalQ0–Q7 and23sourcecontract apply','hash_verification':'user_declared_not_independently_recomputed'})
+sources.append({'source_id':'SRC-REQUEST','uri':'https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/c56cd0e379c25d0e68542bc3a759e0f0474c549c/experiments/agent-led-six-pro-request-20261102/REQUEST.json','read_evidence':'turn884091view1','observed_fact':'Identity file read; same request/round/input manifest'})
+sources.append({'source_id':'USER-REPAIR-001','uri':None,'read_evidence':'Current user repair instruction','observed_fact':'13 n corrections, new_code permission clarification, numerical-fit-count counterexamples, supplied observed timing; no new execution permission'})
+(P/'audit/sources.json').write_text(json.dumps(sources,ensure_ascii=False,indent=2)+'\n')
+(P/'audit/read-receipts.json').write_text(json.dumps(receipts,ensure_ascii=False,indent=2)+'\n')
+(P/'audit/read-method.md').write_text('''# 阅读与证据取得方法\n\n本轮真实使用 web 原文分段阅读与本地数据算术；没有实际 subagent/delegate 接口，不把主模型的不同审查视角称为独立代理。当前可见工具探测未提供可调用子代理。\n\n23个合同entry均通过其精确URI在浏览器取得。R10的entry_id与.md.txt扩展名差异保留，不算未读；R11历史占位模板不替代正式已填PROMPT。R19重点逐任务完整科学配置解析，84条canonical科学配置SHA均与原件逐项核对；不声称670837字节原wrapper已在本地下载或复算SHA。\n\n容器直接下载原文的网络/DNS路径失败；这不是来源不可达。浏览器仍可读。R17与两份scores从原文内容重建字节，最终原件字节数和登记SHA完全一致，文件与重建脚本保留。其余原件的SHA是合同登记值而非本轮独立算值，逐项标注。\n\n未读取任何逐行valid真值/残差；既有聚合分数、分组计数、SMILES-only骨架统计和代码文本不等于新的标签读取。source-index只用于定位所需原件，不宣称无差别读完52349行。所有原模型/训练源码均未执行。\n''',encoding='utf-8')
+print('23 receipts,',len(sources),'sources')

@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "/workspace/context-infrastructure/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/controller/breadth-interface-repair-001/tests/regression_checks.py", line 236, in <module>
+    check(name,fn)
+  File "/workspace/context-infrastructure/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/controller/breadth-interface-repair-001/tests/regression_checks.py", line 28, in check
+    fn()
+  File "/workspace/context-infrastructure/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/controller/breadth-interface-repair-001/tests/regression_checks.py", line 98, in fit_only_and_pipeline
+    model, _ = p.fit_head(cfg(p.task), "cpu", preparation=False)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/context-infrastructure/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/controller/breadth-interface-repair-001/src/admet_breadth/pipeline.py", line 155, in fit_head
+    y_fit = self.target_scaler.transform_f32(np.asarray(y_all, dtype=np.float64)[fit_idx])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/context-infrastructure/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/controller/breadth-interface-repair-001/src/admet_breadth/cache.py", line 246, in transform_f32
+    return self.transform(y).astype(np.float32)
+                                    ^^
+NameError: name 'np' is not defined

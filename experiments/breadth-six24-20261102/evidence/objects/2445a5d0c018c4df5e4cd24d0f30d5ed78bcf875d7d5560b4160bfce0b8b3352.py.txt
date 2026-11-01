@@ -1,0 +1,205 @@
+"""Per-row prediction records and official-template submission export.
+
+Prediction record contract: (task, split, row_index, y_pred) with row_index the
+0-based original data-row position within that task/split CSV. Every row of a
+requested split receives a finite prediction (unparseable SMILES keep their
+zero-filled embedding), so coverage is complete by construction and verifiable.
+
+Template export guarantees (verified, not assumed):
+  * output bytes preserve the template's UTF-8 BOM presence, CRLF endings, header,
+    row order and every non-y_pred field exactly; only the y_pred cell changes;
+  * refuses on missing/extra/duplicate (task, sample_idx) keys or wrong task set;
+  * classification probabilities must lie in [0, 1]; all values must be finite.
+"""
+
+from __future__ import annotations
+
+import csv
+import io
+import json
+import math
+from pathlib import Path
+from typing import Any, Iterable, Mapping, Sequence
+
+from .common import (InterfaceError, TASKS, TEMPLATE_ROWS, read_json)
+
+
+def write_predictions_csv(path: Path, records: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    """Write task,split,row_index,y_pred rows (.10g format). Validates each record."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", newline="", encoding="utf-8") as fh:
+        w = csv.writer(fh)
+        w.writerow(["task", "split", "row_index", "y_pred"])
+        for r in records:
+            v = float(r["y_pred"])
+            if not math.isfinite(v):
+                raise InterfaceError(f"non-finite y_pred: {r}")
+            if r["split"] not in ("train", "valid", "test"):
+                raise InterfaceError(f"bad split: {r}")
+            if r["task"] not in TASKS:
+                raise InterfaceError(f"bad task: {r}")
+            w.writerow([r["task"], r["split"], int(r["row_index"]), f"{v:.10g}"])
+    return {"path": str(path), "n_records": len(records)}
+
+
+def load_predictions(path: Path | str) -> list[dict[str, Any]]:
+    """Load prediction records from csv/json/jsonl; strict validation."""
+    path = Path(path)
+    if not path.is_file():
+        raise InterfaceError(f"predictions file missing: {path}")
+    text = path.read_bytes().decode("utf-8-sig")
+    recs: list[dict[str, Any]] = []
+    if path.suffix == ".json" or text.lstrip().startswith("["):
+        data = json.loads(text)
+        if not isinstance(data, list):
+            raise InterfaceError("JSON predictions must be a top-level list")
+        for i, r in enumerate(data):
+            recs.append(_coerce(r, f"{path}:item{i}"))
+    elif path.suffix == ".jsonl":
+        for ln, line in enumerate(text.splitlines(), 1):
+            if line.strip():
+                recs.append(_coerce(json.loads(line), f"{path}:{ln}"))
+    else:
+        reader = csv.DictReader(io.StringIO(text, newline=""))
+        if reader.fieldnames is None:
+            raise InterfaceError(f"{path}: empty CSV")
+        need = {"task", "split", "row_index", "y_pred"}
+        if not need.issubset(set(reader.fieldnames)):
+            raise InterfaceError(f"{path}: header missing {sorted(need - set(reader.fieldnames))}")
+        for ln, row in enumerate(reader, 2):
+            recs.append(_coerce(row, f"{path}:{ln}"))
+    return recs
+
+
+def _coerce(r: Mapping[str, Any], where: str) -> dict[str, Any]:
+    try:
+        task = str(r["task"])
+        split = str(r["split"])
+        ri = int(str(r["row_index"]).strip())
+        yp = float(str(r["y_pred"]).strip())
+    except KeyError as e:
+        raise InterfaceError(f"{where}: missing key {e}") from None
+    except (TypeError, ValueError) as e:
+        raise InterfaceError(f"{where}: bad number ({e})") from None
+    if task not in TASKS:
+        raise InterfaceError(f"{where}: unknown task {task!r}")
+    if split not in ("train", "valid", "test"):
+        raise InterfaceError(f"{where}: split must be train/valid/test, got {split!r}")
+    if not math.isfinite(yp):
+        raise InterfaceError(f"{where}: non-finite y_pred {yp!r}")
+    return {"task": task, "split": split, "row_index": ri, "y_pred": yp}
+
+
+def check_coverage(records: Iterable[Mapping[str, Any]], expected_keys: set[tuple]) -> dict[str, Any]:
+    seen: dict[tuple, int] = {}
+    for rec in records:
+        key = (rec["task"], rec["split"], rec["row_index"])
+        seen[key] = seen.get(key, 0) + 1
+    missing = sorted(k for k in expected_keys if k not in seen)
+    extra = sorted(k for k in seen if k not in expected_keys)
+    duplicates = {k: c for k, c in seen.items() if c > 1}
+    return {
+        "n_expected": len(expected_keys), "n_seen": len(seen),
+        "missing_count": len(missing), "extra_count": len(extra),
+        "duplicate_count": len(duplicates),
+        "missing_head": missing[:10], "extra_head": extra[:10],
+        "ok": not missing and not extra and not duplicates,
+    }
+
+
+def expected_test_keys(split_row_counts: Mapping[str, int]) -> set[tuple]:
+    """Expected (task, 'test', row_index) keys from authoritative per-split counts."""
+    return {(t, "test", i) for t, n in split_row_counts.items() for i in range(n)}
+
+
+def _fmt(x: float) -> str:
+    if x == int(x) and abs(x) < 1e16:
+        return repr(float(x))
+    return repr(x)
+
+
+def export_submission(template_path: Path | str, predictions: Sequence[Mapping[str, Any]],
+                      out_path: Path | str, *, probability_bounds: Mapping[str, bool] | None = None,
+                      fixture: bool = False) -> dict[str, Any]:
+    """Fill the official template's y_pred column ONLY.
+
+    probability_bounds maps task -> True when its Y is a probability required to
+    lie in [0,1] (classification tasks). fixture=True marks the run as a synthetic
+    export check; it does not change byte semantics but is recorded in the summary.
+    """
+    from .common import CLASSIFICATION_TASKS
+
+    template_path = Path(template_path)
+    raw = template_path.read_bytes()
+    has_bom = raw[:3] == b"\xef\xbb\xbf"
+    text = raw.decode("utf-8-sig")
+    crlf = "\r\n" in text
+    lines = text.split("\r\n" if crlf else "\n")
+    trailing_newline = False
+    if lines and lines[-1] == "":
+        lines = lines[:-1]
+        trailing_newline = True
+    header = lines[0]
+    data_lines = lines[1:]
+    if len(data_lines) != TEMPLATE_ROWS:
+        raise InterfaceError(f"template data rows {len(data_lines)} != {TEMPLATE_ROWS}")
+    hdr_cols = next(csv.reader([header]))
+    if hdr_cols[:6] != ["task", "sample_idx", "drug_id", "smiles", "y_pred", "metric"]:
+        raise InterfaceError(f"unexpected template header: {hdr_cols}")
+    ypred_col = hdr_cols.index("y_pred")
+
+    parsed = [next(csv.reader([ln])) for ln in data_lines]
+    keys: dict[tuple, int] = {}
+    for i, cols in enumerate(parsed):
+        if len(cols) != len(hdr_cols):
+            raise InterfaceError(f"template row {i} has {len(cols)} cols")
+        key = (cols[0], cols[1])
+        if key in keys:
+            raise InterfaceError(f"duplicate template key {key}")
+        keys[key] = i
+
+    by_key: dict[tuple, float] = {}
+    for rec in predictions:
+        if rec["split"] != "test":
+            raise InterfaceError(f"export requires split=='test', got {rec['split']!r}")
+        key = (rec["task"], str(rec["row_index"]))
+        if key in by_key:
+            raise InterfaceError(f"duplicate prediction key {key}")
+        if key not in keys:
+            raise InterfaceError(f"prediction key not in template: {key}")
+        yp = float(rec["y_pred"])
+        if not math.isfinite(yp):
+            raise InterfaceError(f"non-finite y_pred at {key}: {yp!r}")
+        is_prob = (probability_bounds or {}).get(rec["task"], rec["task"] in CLASSIFICATION_TASKS)
+        if is_prob and not (0.0 <= yp <= 1.0):
+            raise InterfaceError(f"probability out of [0,1] at {key}: {yp!r}")
+        by_key[key] = yp
+
+    missing = [k for k in keys if k not in by_key]
+    if missing:
+        raise InterfaceError(f"{len(missing)} template keys lack predictions (first {missing[:5]})")
+
+    out_lines = [header]
+    for i, line in enumerate(data_lines):
+        cols = parsed[i]
+        cols[ypred_col] = _fmt(by_key[(cols[0], cols[1])])
+        buf = io.StringIO()
+        w = csv.writer(buf, lineterminator="")
+        w.writerow(cols)
+        out_lines.append(buf.getvalue())
+
+    out_text = ("\r\n" if crlf else "\n").join(out_lines)
+    if trailing_newline:
+        out_text += "\r\n" if crlf else "\n"
+    out_bytes = out_text.encode("utf-8")
+    if has_bom:
+        out_bytes = b"\xef\xbb\xbf" + out_bytes
+    out_path = Path(out_path)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_bytes(out_bytes)
+    return {
+        "out": str(out_path), "bytes": len(out_bytes), "rows": len(data_lines),
+        "bom_preserved": has_bom, "crlf_preserved": crlf,
+        "filled": len(by_key), "fixture": bool(fixture),
+    }

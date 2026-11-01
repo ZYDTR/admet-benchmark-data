@@ -1,0 +1,78 @@
+{
+  "request_id": "admet-breadth-six24-20261102-001",
+  "logical_run_id": "hainan-breadth-bbb_martins-h0-s44-20261102",
+  "reason": "original batch stopped on selected NVML compute-app query timeout; pending fit has no durable checkpoint",
+  "known_original_steps": null,
+  "original_own_lifetimes_exited": [
+    {
+      "pid": "process-9b873aad3213",
+      "state": "absent"
+    },
+    {
+      "pid": "process-f949f513b5d6",
+      "state": "absent"
+    }
+  ],
+  "restart_number_for_fit": 1,
+  "restart_authority": "TASK.compute_budget.recovery permits one same-configuration restart when uncompleted, no validated checkpoint and original process exited",
+  "original_job_exit": {
+    "at": "2026-11-01T20:36:59.076237+00:00",
+    "actual_strace_wait_exit": -9,
+    "reason": "monitor_unknown:RuntimeError('unknown resource query')",
+    "elapsed_seconds": 171.64320986019447,
+    "own_identities": [
+      {
+        "pid": "process-9b873aad3213",
+        "start_ticks": "392798862",
+        "pgid": "process-9b873aad3213",
+        "state": "D",
+        "start_stat": "process-9b873aad3213 (strace) D process-be3996cb5133 process-9b873aad3213 process-9b873aad3213 0 -1 4194304 19 0 0 0 0 0 0 0 20 0 1 0 392798862 2666496 0 18446744073709551615 103121525207040 103121525895517 140727554063200 0 0 0 0 1 0 1 0 0 17 121 0 0 0 0 0 103121526286768 103121526702384 103122541862912 140727554071513 140727554072015 140727554072015 140727554072552 0\n"
+      },
+      {
+        "pid": "process-f949f513b5d6",
+        "start_ticks": "392798863",
+        "pgid": "process-9b873aad3213",
+        "state": "R",
+        "start_stat": "process-f949f513b5d6 (python3) R process-9b873aad3213 process-9b873aad3213 process-9b873aad3213 0 -1 4194304 1897505 436 769 3 7745 1124 0 1 39 19 8 0 392798863 19813003264 452054 18446744073709551615 4325376 7352253 140735955403856 0 0 0 0 16781313 2 0 0 0 17 120 0 0 0 0 0 10653128 12216448 197066752 140735955410157 140735955410320 140735955410320 140735955410857 0\n"
+      }
+    ],
+    "signals": [
+      {
+        "pid": "process-f949f513b5d6",
+        "signal": 15,
+        "handle": "pidfd"
+      },
+      {
+        "pid": "process-9b873aad3213",
+        "signal": 15,
+        "handle": "pidfd"
+      },
+      {
+        "pid": "process-f949f513b5d6",
+        "signal": 9,
+        "handle": "pidfd"
+      },
+      {
+        "pid": "process-9b873aad3213",
+        "signal": 9,
+        "handle": "pidfd"
+      }
+    ],
+    "science_complete_file": false,
+    "monitor_rounds": 95
+  },
+  "all18_raw_caches_complete": true,
+  "old4_completed_must_not_relearn": true,
+  "temporary_checkpoint": {
+    "path": "hainan-breadth-bbb_martins-h0-s44-20261102/artifacts/progress.tmp",
+    "size": 8430976,
+    "sha256": "5a3372fdf6babd5a3cb54613b233700031ecccaac82935b2e67881a344ae9a51",
+    "actual_CPU_weights_only_load": false,
+    "error": "PytorchStreamReader failed reading zip archive: failed finding central directory",
+    "evidence": "checkpoint-review-evidence.json"
+  },
+  "validated_checkpoint_unavailable": true,
+  "preparation_failures_retained": [
+    "first stage rejected temporary checkpoint presence before any mutation; then premature launch request rejected missing execution directory before CUDA; actual zero new learning"
+  ]
+}

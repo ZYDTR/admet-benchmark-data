@@ -1,0 +1,76 @@
+"""One-off root evidence review. No model execution, parameter updates or valid truth."""
+from pathlib import Path
+import json,csv,hashlib,random,math,statistics,ast
+from read_tensor_evidence import load,Tensor
+A=Path(__file__).parent;N=A.parents[1];O=N/'operator';W=N.parents[3]
+def j(p):return json.loads(p.read_text())
+def sha(p):
+ with p.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
+def csvrows(p):
+ with p.open(encoding='utf-8-sig',newline='') as f:return list(csv.DictReader(f))
+metric_source=W/'adhoc_jobs/admet_agent_harness/src/admet_harness/evaluation.py'
+tree=ast.parse(metric_source.read_text());names={'_average_ranks','_mae','_auroc','_spearman','_average_precision'};scope={'math':math}
+exec(compile(ast.fix_missing_locations(ast.Module(body=[x for x in tree.body if isinstance(x,ast.FunctionDef) and x.name in names],type_ignores=[])),str(metric_source),'exec'),scope)
+records=[];pairs={};counts={x:0 for x in ('train','valid','test')}
+for r in j(O/'ARTIFACT_INDEX.json')['runs']:
+ p=Path(r['local_snapshot']);cfg=j(Path(r['original_config_path']));ev=j(p/'artifacts/training-evidence.json');pre=j(p/'artifacts/preprocessing.json');sp=j(p/'artifacts/internal-split.json')
+ assert sha(Path(r['original_config_path']))==r['original_config_sha256']
+ assert cfg==j(p/'source/expanded-config.json') and ev['run_id']==r['run_id']
+ assert (p/'artifacts/encoder-before.json').read_bytes()==(p/'artifacts/encoder-after.json').read_bytes()
+ enc=j(p/'artifacts/encoder-before.json');assert len(enc)==11 and sum(v['kind']=='parameter' for v in enc.values())==8
+ rows={s:csvrows(N/'input/data'/r['task']/(s+'.csv')) for s in counts};pred={s:csvrows(p/'artifacts'/('predictions-'+s+'.csv')) for s in counts}
+ for s in counts:
+  assert sha(N/'input/data'/r['task']/(s+'.csv'))==ev['input_sha'][s]
+  assert len(pred[s])==len(rows[s])==r['counts'][s]
+  for i,(x,y) in enumerate(zip(rows[s],pred[s])):
+   assert (y['task'],y['split'],int(y['row_index']),y['Drug_ID'],y['Drug'])==(r['task'],s,i,x['Drug_ID'],x['Drug'])
+   v=float(y['y_pred']);assert math.isfinite(v)
+   if r['task'] in ('bbb_martins','cyp2d6_veith'):assert 0<=v<=1
+   if s=='train':assert y['Y']==x['Y']
+   else:assert 'Y' not in x and 'Y' not in y
+  counts[s]+=len(pred[s])
+ combined=csvrows(p/'artifacts/predictions.csv');splitpred=pred['valid']+pred['test'];assert len(combined)==len(splitpred)
+ for x,y in zip(combined,splitpred):assert all(y[k]==v for k,v in x.items())
+ groups={}
+ for i,x in enumerate(rows['train']):groups.setdefault(x['Drug'],[]).append(i)
+ keys=sorted(groups);random.Random(43).shuffle(keys);target=round(.1*len(rows['train']));stop=[]
+ for k in keys:
+  if len(stop)>=target:break
+  stop.extend(groups[k])
+ stop=sorted(stop);fit=[i for i in range(len(rows['train'])) if i not in set(stop)]
+ assert fit==sp['fit_row_indices'] and stop==sp['stop_row_indices']
+ for i,y in enumerate(pred['train']):assert y['split_marker']==('fit' if i in set(fit) else 'internal_stop')
+ if r['task'] not in ('bbb_martins','cyp2d6_veith'):
+  ys=[float(rows['train'][i]['Y']) for i in fit];ts=pre['target_scaler'];assert math.isclose(statistics.mean(ys),ts['mean'],rel_tol=1e-12,abs_tol=1e-12);assert math.isclose(statistics.pstdev(ys),ts['std'],rel_tol=1e-12,abs_tol=1e-12)
+ ini=load(p/'artifacts/head-initial.pt');best=load(p/'artifacts/head-best.pt');last=load(p/'artifacts/head-last.pt');full=load(p/'artifacts/training-state-last.pt')
+ assert ini['state_dict']==full['initial_state_dict'] and best['state_dict']==full['best_state_dict'] and last['state_dict']==full['last_state_dict']
+ assert best['state_dict']!=ini['state_dict'] and last['optimizer_state']==full['optimizer_state']
+ assert [v.shape for v in best['state_dict'].values()]==[(256,2048),(256,),(1,256),(1,)]
+ assert sum(math.prod(v.shape) for v in best['state_dict'].values())==524801
+ for label,st in [('initial',ini),('best',best)]:assert {k:v.sha for k,v in st['state_dict'].items()}==ev['head_'+label+'_state_sha256']
+ assert best['progress']['epoch']==r['best_epoch'] and best['progress']['steps']==r['best_steps']
+ assert last['progress']['cumulative_steps']==r['steps']==full['progress']['cumulative_steps']==ev['optimizer_steps']
+ for v in full['optimizer_state']['state'].values():assert v['step'].values()==[float(r['steps'])]
+ pg=full['optimizer_state']['param_groups'];assert len(pg)==1;pg=pg[0];assert pg['lr']==.0005 and pg['weight_decay']==.0001 and pg['betas']==(.9,.999) and pg['eps']==1e-8 and pg['amsgrad']==False
+ assert set(full['rng_state'])=={'python','numpy','torch_cpu','torch_cuda','sampler'} and len(full['rng_state']['torch_cuda'])==1
+ assert full['rng_state']['numpy']['keys'].shape==(624,)
+ hist=[json.loads(x) for x in (p/'raw/epochs.jsonl').read_text().splitlines()];assert hist==full['history']==ev['history']
+ batches=full['batch_evidence'];assert len(batches)==r['steps']
+ minmode=r['monitor_name']=='MAE';bestval=None;bestepoch=None
+ for epoch,h in enumerate(hist,1):
+  bs=[b for b in batches if b['epoch']==epoch];assert sum(b['rows'] for b in bs)==len(fit) and all(math.isfinite(b['loss']) and b['gradient_l1']>0 for b in bs)
+  loss=math.fsum(b['loss']*b['rows'] for b in bs)/len(fit);assert math.isclose(loss,h['train_loss'],rel_tol=1e-12,abs_tol=1e-12)
+  improved=bestval is None or ((bestval-h['value'] if minmode else h['value']-bestval)>1e-7)
+  assert improved==h['improved']
+  if improved:bestval=h['value'];bestepoch=epoch
+  assert h['best_epoch']==bestepoch
+ assert bestepoch==r['best_epoch'] and len(hist)-bestepoch==8
+ metric={'MAE':'_mae','AUROC':'_auroc','AP':'_average_precision','AUPRC':'_average_precision','Spearman':'_spearman'}[r['monitor_name']]
+ internal_value=scope[metric]([(float(rows['train'][i]['Y']),float(pred['train'][i]['y_pred'])) for i in stop]);assert math.isclose(internal_value,ev['best_value'],rel_tol=1e-7,abs_tol=1e-7),(r['run_id'],internal_value,ev['best_value'])
+ key=(r['task'],r['seed']);entry=(ini['state_dict'],sp,pre,[h['permutation_sha256'] for h in hist])
+ if key in pairs:
+  old=pairs[key];assert old[:3]==entry[:3];n=min(len(old[3]),len(entry[3]));assert old[3][:n]==entry[3][:n]
+ else:pairs[key]=entry
+ records.append({'run_id':r['run_id'],'steps':r['steps'],'best_epoch':bestepoch,'internal_stop_recomputed':internal_value,'tensor_shapes_and_bytes_verified':True,'row_identity_verified':True,'split_and_target_scaler_recomputed':True,'weighted_batch_loss_recomputed':True})
+result={'passed':True,'runs':records,'prediction_rows':counts,'paired_groups':len(pairs),'metric_source_sha256':sha(metric_source),'private_valid_truth_read':False,'model_executed':False,'limits':['Raw feature arrays not yet retrieved: feature-statistics recomputation not performed by root here.','Root reviewed executor CPU reload execution; no second model inference was run.']}
+(A/'science-independent-checks.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps({'passed':True,'runs':len(records),'steps':sum(x['steps'] for x in records),'rows':counts,'paired_groups':len(pairs)}))

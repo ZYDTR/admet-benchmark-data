@@ -1,0 +1,153 @@
+"""Task heads: new classification / regression MLP heads on frozen 2048-dim features.
+
+Structure (per TASK.md item 3): CheMeleon 2048 -> hidden layer (128/256/512) ->
+ReLU -> Dropout(p) -> Linear(1). The Dropout module is always present so
+state_dict keys never depend on the dropout value. Classification outputs raw
+logits trained with BCEWithLogitsLoss and exported as sigmoid probabilities;
+regression outputs standardized values trained with MSE and exported through the
+fit-only inverse transform to the original Y scale.
+
+Head construction, optimizer creation and serialization are update-free. The
+training loop lives in trainer.py; nothing in this module calls backward/step.
+"""
+
+from __future__ import annotations
+
+from typing import Any, Mapping
+
+from .common import InterfaceError
+
+
+def build_head(in_dim: int, hidden_dim: int, dropout: float, seed: int):
+    """Deterministic seeded MLP head (out_dim=1). torch import is lazy."""
+    import torch
+    from torch import nn
+
+    if in_dim <= 0 or hidden_dim <= 0:
+        raise InterfaceError("in_dim and hidden_dim must be positive")
+    if not 0 <= dropout < 1:
+        raise InterfaceError(f"dropout must be in [0,1), got {dropout!r}")
+    torch.manual_seed(seed)
+    return nn.Sequential(
+        nn.Linear(in_dim, hidden_dim),
+        nn.ReLU(),
+        nn.Dropout(dropout),
+        nn.Linear(hidden_dim, 1),
+    )
+
+
+def make_optimizer(model, lr: float, weight_decay: float):
+    import torch
+    if lr <= 0:
+        raise InterfaceError("lr must be > 0")
+    if weight_decay < 0:
+        raise InterfaceError("weight_decay must be >= 0")
+    return torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
+
+
+def make_loss(kind: str):
+    from torch import nn
+    if kind == "classification":
+        return nn.BCEWithLogitsLoss()
+    if kind == "regression":
+        return nn.MSELoss()
+    raise InterfaceError(f"unknown task kind: {kind!r}")
+
+
+def forward_logits(model, X, device: str, batch_size: int = 4096):
+    """No-grad forward returning flat logits. Model is set to eval() for inference."""
+    import numpy as np
+    import torch
+
+    model.eval()
+    outs = []
+    with torch.no_grad():
+        for start in range(0, len(X), batch_size):
+            xb = torch.as_tensor(np.ascontiguousarray(X[start:start + batch_size]),
+                                 dtype=torch.float32, device=device)
+            outs.append(model(xb).detach().cpu().numpy())
+    z = np.concatenate(outs, axis=0).reshape(-1)
+    if not np.isfinite(z).all():
+        raise InterfaceError("head forward produced non-finite logits")
+    return z
+
+
+def postprocess(kind: str, logits, target_scaler=None):
+    """Export-scale predictions: sigmoid probability or inverse-transformed Y."""
+    import numpy as np
+    z = np.asarray(logits, dtype=np.float64)
+    if kind == "classification":
+        p = 1.0 / (1.0 + np.exp(-z))
+        if not ((p >= 0.0).all() and (p <= 1.0).all()):
+            raise InterfaceError("sigmoid output outside [0,1]")
+        return p
+    if kind == "regression":
+        if target_scaler is None:
+            raise InterfaceError("regression export requires the fit target scaler")
+        y = target_scaler.inverse(z)
+        if not np.isfinite(y).all():
+            raise InterfaceError("inverse-transformed predictions non-finite")
+        return y
+    raise InterfaceError(f"unknown task kind: {kind!r}")
+
+
+HEAD_FORMAT = "admet_breadth_head_v1"
+
+
+def save_head(path, *, task: str, kind: str, model, scaler_dict: Mapping[str, Any],
+              target_scaler_dict: Mapping[str, Any] | None, train_config: Mapping[str, Any],
+              optimizer_state=None, rng_state=None, progress=None) -> dict[str, Any]:
+    """Serialize best/last head + optional optimizer/RNG/progress WITHOUT any update.
+
+    Returns an identity summary (state-dict digests) for reporting.
+    """
+    import hashlib
+    import torch
+    from pathlib import Path
+
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    sd = {k: v.detach().cpu() for k, v in model.state_dict().items()}
+    payload = {
+        "format": HEAD_FORMAT,
+        "task": task,
+        "kind": kind,
+        "encoder": "chemeleon_mp",
+        "feature_dim": 2048,
+        "head": {"hidden_dims": [sd["0.weight"].shape[0]], "dropout": train_config["dropout"],
+                 "activation": "relu",
+                 "output": "sigmoid_probability" if kind == "classification"
+                           else "linear_standardized_then_unscaled"},
+        "train_config": dict(train_config),
+        "scaler": dict(scaler_dict),
+        "target_scaler": dict(target_scaler_dict) if target_scaler_dict else None,
+        "state_dict": sd,
+        "optimizer_state": optimizer_state,
+        "rng_state": rng_state,
+        "progress": progress,
+    }
+    torch.save(payload, path)
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    return {"path": str(path), "sha256": digest,
+            "state_dict_keys": sorted(sd.keys()),
+            "has_optimizer_state": optimizer_state is not None,
+            "has_rng_state": rng_state is not None,
+            "progress": progress}
+
+
+def load_head(path, device: str):
+    """Load a saved head contract and rebuild the module + scalers (no updates)."""
+    import torch
+    from .cache import FeatureScaler, TargetScaler
+
+    ck = torch.load(path, map_location="cpu", weights_only=True)
+    if ck.get("format") != HEAD_FORMAT or ck.get("encoder") != "chemeleon_mp":
+        raise InterfaceError(f"unexpected head contract: {ck.get('format')!r}")
+    model = build_head(ck["feature_dim"], ck["head"]["hidden_dims"][0],
+                       ck["head"]["dropout"], seed=0)
+    model.load_state_dict(ck["state_dict"])
+    model.to(device)
+    model.eval()
+    scaler = FeatureScaler.from_dict(ck["scaler"])
+    target_scaler = TargetScaler.from_dict(ck["target_scaler"]) if ck["target_scaler"] else None
+    return model, ck, scaler, target_scaler

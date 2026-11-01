@@ -1,0 +1,36 @@
+import math,tempfile,csv,hashlib,copy,json,ast
+from pathlib import Path
+from strict_batch_scorer import score_batch,prepare_pairs,read_bound
+from fixed_metrics import _task_result
+D=Path(__file__).parent;checks=[]
+def check(name,fn):fn();checks.append(name)
+def expect_error(fn):
+ try:fn()
+ except (ValueError,KeyError):return
+ raise AssertionError('counterexample accepted')
+def metric(name,y,p):return _task_result({'metric':name,'kind':'classification' if name in ('AUROC','AUPRC') else 'regression','label_contract_status':'synthetic'},list(zip(y,p)),0)
+assert math.isclose(metric('AUPRC',[1,0,1],[.8,.8,.2])['value'],7/12);checks.append('AP ties=7/12, not trapezoid')
+assert metric('AUROC',[1,0],[.5,.5])['value']==.5;checks.append('AUROC tie')
+assert math.isclose(metric('Spearman',[1,1,3],[1,2,2])['value'],.5);checks.append('Spearman tied ranks')
+assert metric('MAE',[10,20],[11,18])['value']==1.5;checks.append('MAE original numeric scale')
+assert metric('Spearman',[1,2],[0,0])['value'] is None and metric('AUROC',[1,1],[.2,.8])['value'] is None;checks.append('undefined explicit, not zero')
+with tempfile.TemporaryDirectory(dir=D) as td:
+ td=Path(td)
+ def make(name,fields,rows):
+  p=td/name
+  with p.open('w',newline='') as f:w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows(rows)
+  return {'path':str(p),'sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'rows':len(rows)}
+ truth=[{'Drug_ID':'','Drug':'C','Y':'1'},{'Drug_ID':'','Drug':'CC','Y':'0'},{'Drug_ID':'x','Drug':'CCC','Y':'1'}];blind=[{k:r[k] for k in ('Drug_ID','Drug')} for r in truth];pred=[{'task':'t','split':'valid','row_index':str(i),**b,'y_pred':str(v),'parse_ok':'True'} for i,(b,v) in enumerate(zip(blind,[.8,.8,.2]))]
+ r={'run_id':'synthetic','task':'t','metric':'AUPRC','direction':'maximize','config_tag':'H0','seed':44,'truth':make('truth.csv',['Drug_ID','Drug','Y'],truth),'blind':make('blind.csv',['Drug_ID','Drug'],blind),'prediction':make('pred.csv',list(pred[0]),pred)}
+ c={'request_id':'synthetic','expected_run_count':1,'runs':[r]};out=score_batch(c);assert out['scored_runs']==out['metric_calls']==1 and math.isclose(out['scores'][0]['value'],7/12);checks.append('actual batch entry accepts duplicate/empty IDs by original rows')
+ for name,field,value in [('wrong split','split','test'),('duplicate row','row_index','1'),('wrong drug','Drug','N'),('wrong task','task','other'),('nan','y_pred','nan'),('out of range','y_pred','1.2')]:
+  changed=copy.deepcopy(pred);changed[0][field]=value;expect_error(lambda:prepare_pairs(r,truth,blind,changed));checks.append(name+' rejected')
+ expect_error(lambda:prepare_pairs(r,truth,blind,pred[:-1]));checks.append('missing row rejected')
+ bad=copy.deepcopy(r['prediction']);bad['sha256']='0'*64;expect_error(lambda:read_bound(bad,list(pred[0])));checks.append('digest mismatch rejected')
+ c['runs'].append(r);expect_error(lambda:score_batch(c));checks.append('duplicate/unregistered run rejected')
+# Preserve exact AST equivalence of six selected host mathematical functions.
+origin=json.loads((D/'metric-origin.json').read_text());src=Path(origin['source']).read_text();dst=(D/'fixed_metrics.py').read_text()
+for name in origin['functions']:
+ a=next(n for n in ast.parse(src).body if isinstance(n,ast.FunctionDef) and n.name==name);b=next(n for n in ast.parse(dst).body if isinstance(n,ast.FunctionDef) and n.name==name);assert ast.dump(a)==ast.dump(b)
+checks.append('six mathematical functions AST-identical to fixed host source')
+(D/'synthetic-results.json').write_text(json.dumps({'passed':True,'cases':checks,'private_truth_read':False,'real_metric_calls':0},indent=2)+'\n');print(json.dumps({'passed':True,'cases':len(checks)}))

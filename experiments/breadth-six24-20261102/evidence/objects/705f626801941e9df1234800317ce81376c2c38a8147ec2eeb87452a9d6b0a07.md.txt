@@ -1,0 +1,20 @@
+# 科学字段实际消费映射
+
+TASK 与24原始配置为定义；config-mapping.json 逐项同时保存原定义、消费投影与来源SHA。source-diff.json 和 continuation-diff.patch 保存修订；实际源在src/admet_breadth、study.py、study_continue.py，远端读回版本在global-evidence/source。legacy_reference_code_sha256仅保留历史参考，不声称修订后字节相同。
+
+| 字段组 | 实际消费及证据 |
+|---|---|
+| 编码器 | 固定SHA/MD5/size检查；checkpoint超参数构建BondMessagePassing+MeanAggregation，原fingerprint路径、2048维f32、batch64、eval/no_grad；参数及buffer冻结。18份cold缓存绑定输入/完整行序/解析mask/源码/依赖/内容摘要；续接18份只读校验复用，0次新cold。 |
+| 输入与分区 | 六任务18CSV精确SHA/列/行数；train.Y仅学习；valid/test仅Drug_ID、Drug；所有行与原属性保留，ID不作键。raw Drug精确分组、codepoint排序、独立Random(43).shuffle，整体组取stop至round(0.1*n)、保留fit，禁止分组越界或额外换seed/stratify。 |
+| 特征统计 | identity-checked原train缓存切内部fit后float32 mean/std(ddof0)，std<1e-8变1，不clip；已解析非有限数据拒绝，解析失败仅raw embedding填0并保留mask。不同头同一内部划分使用同一数学统计；每run保存且CPU重新由原fit行计算。 |
+| 目标 | regression：float64 fit-only均值/标准差(ddof0)，std0→1；喂训练时f32标准化，预测/stop在输出侧inverse一次，原truth不inverse。binary_classification→classification，原0/1目标、positive1，不标准化。fit/stop两类均实查。 |
+| 新头 | 2048→256→1、ReLU、bias、固定存在Dropout(0.1或0.3)，无BatchNorm/LayerNorm/残差，原Linear初始化；524801参数。H0/H1同seed初始化张量和独立sampler各epoch顺序实比。 |
+| AdamW/损失 | lr0.0005、wd0.0001、betas(0.9,0.999)、eps1e-8、amsgradFalse，全部头参数同组decay，无scheduler。仅头参数优化、编码器不在optimizer。MSELoss(mean)标准化回归；BCEWithLogitsLoss(mean)显式pos_weight1.0用于分类，喂raw logits。无sample weighting、无梯度累积/裁剪/AMP。 |
+| 训练与随机 | batch128、max50、drop_lastFalse、num_workers0、train-mode dropout更新；Python/NumPy/TorchCPU/CUDA全seed44或45；独立CPU Generator同seed，每轮randperm。保存全部RNG含NumPy MT19937与sampler，实际回放Python/NumPy/CPU/CUDA/sampler一致。f32、CUBLAS_WORKSPACE_CONFIG=:4096:8、deterministic_algorithms=True、cudnn benchmarkFalse/deterministicTrue、TF32False；不静默降级。 |
+| 监测 | 内部stop、head.eval/no_grad、每epoch一次；MAE原Y尺度minimize，Spearman平均并列秩Pearson/maximize，AUROC平均并列秩U/maximize。AP映射函数名AUPRC，实际为并列分数组Average Precision，7/12反例实测；不是梯形PR面积。非有限/一类/恒定Spearman拒绝，不填0、换seed或metric。min_delta1e-7、patience8、并列留早期。 |
+| loss日志 | 每个真实更新batch保存有限loss、gradient L1及样本数；epoch为train/dropout模式的样本数加权loss，不再将eval前8条loss冒充整轮。最终CPU按batch日志重算24run全部一致。 |
+| best/last | 返回/预测消费best；best与last分别保存；last optimizer/RNG/progress明确处于last，best有自己的epoch/step。全train/盲valid/test用best导出，回归unscale一次、分类float64 sigmoid连续分数，不阈值/clip。每run在独立CPU头上实际重载并复算；终验再实际核对best/last/optimizer/RNG/步数和原初始化变化。 |
+| 恢复边界 | 首4完成不重训；BBB H0 seed44的8.4MiB临时checkpoint缺zip central directory，实际weights_only加载失败且原PID退出，依TASK只重启一次同配置，保留原件与未知旧步数。没有宣称从损坏checkpoint恢复。 |
+| 资源与退出 | 私有写入、只读现有venv；单GPU单worker、2核affinity、nice19、Torch allocator4GiB/8GiB RSS采样退出目标，非全系统配额。真实两次GPU阶段415.577396s，外层监控都发生查询超时并结束自有；第二次科学24完成已先落盘，worker终态与strace终态分开。未知未填0，不声称监控全程正常或全机零影响。 |
+
+每个输出expanded-config是原配置的JSON重排/转义序列化，解析内容必须相同；原配置文件的登记SHA另行绑定，不声称这些格式化文件的字节SHA等同。

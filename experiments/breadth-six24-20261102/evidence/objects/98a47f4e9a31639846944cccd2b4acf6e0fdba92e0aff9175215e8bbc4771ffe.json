@@ -1,0 +1,3362 @@
+[
+  {
+    "proposal_id": "R001-lipophilicity_astrazeneca-H0",
+    "priority": "P1.1",
+    "hypothesis": "Re-establish an exact same-task current head control; historical512-head run is contextual, not the matched control.",
+    "control_run_or_config": {
+      "kind": "designated_control",
+      "config_id": "lipophilicity_astrazeneca-H0-fixed",
+      "historical_context": "R17 baseline is not interchangeable with this control"
+    },
+    "task": "lipophilicity_astrazeneca",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "approved_encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+      "input_commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+      "implementation_status": "existing frozen CheMeleon asset; new multitask-dispatch head interface is proposed, not deployed"
+    },
+    "change_only": [],
+    "hold_fixed": [
+      "same approved train/blind-validation input hashes",
+      "same raw-SMILES-group split43 and fit-only transforms",
+      "frozen encoder parameters/buffers/fingerprint path",
+      "head2048->256->1 and initialization per common seed",
+      "AdamW lr0.0005 wd0.0001; all other optimizer options",
+      "batch128/maxepochs50/patience8/min_delta1e-7",
+      "task-specific loss, early-stop definition and prediction scale",
+      "common seeds44/45; paired sampler order"
+    ],
+    "split_id": "lipophilicity_astrazeneca__official-train__raw-smiles-group__s43__stop010__v1",
+    "seeds": [
+      44,
+      45
+    ],
+    "metric": "MAE",
+    "direction": "minimize",
+    "minimum_effect_or_decision_rule": {
+      "kind": "falsifiable_research_gate_not_statistical_significance",
+      "threshold": "relative 1% reduction versus matched H0",
+      "provenance": "repair001 research recommendation permitted by USER-REPAIR-001; not measured noise floor or established business effect",
+      "screen": "both paired seeds improve in favorable direction; mean improvement reaches threshold; all finite/identity/freeze checks pass",
+      "confirm": "For selected task add BOTH H0/H1 seed46 only; reuse44/45. Third improvement nonnegative and three-seed mean reaches the same original task gate. No significance/generalization claim.",
+      "sensitivity": "report decisions at zero and twice this gate as robustness description; do not retroactively choose a more favorable threshold",
+      "data_used": "inner_stop initially (selection-biased); official_valid feedback only via separately authorized host; same conditions rechecked on aggregate official_valid if host releases scores",
+      "statistic": "MAE: arithmetic mean of seedwise (H0-H1)/H0, require H0>0; other metrics: arithmetic mean of H1-H0",
+      "zero_control_MAE": "No epsilon; mark no improvement possible under relative gate"
+    },
+    "success_criterion": "Freeze/input/finite/checkpoint/export fixtures pass and a reproducible paired baseline exists; no claimed improvement for control.",
+    "falsification_criterion": "Any identity/freeze/nonfinite/undefined-metric failure invalidates this control and dependent candidate.",
+    "compute_budget": {
+      "head_fits": 2,
+      "max_epochs_per_fit": 50,
+      "max_optimizer_steps_per_fit_upper_bound": 1150,
+      "unique_encoder_dataset_passes_shared_with_control_candidate_and_seeds": 2,
+      "test_dataset_passes_default": 0,
+      "time_seconds": null,
+      "estimate_method": "measure approved encoder/setup once per task, then per-fit head time; total includes failed attempts and role turnaround; no GPU-hour extrapolation from Caco2"
+    },
+    "dependencies": [
+      "G00-READ-BOUNDARY",
+      "G01-ASSET-IDENTITY",
+      "G02-INPUT-SPLIT-lipophilicity_astrazeneca",
+      "G03-METRIC-INTERFACE-lipophilicity_astrazeneca",
+      "G04-CACHE-EXPORT",
+      "G05-RESOURCE-AND-AUTH"
+    ],
+    "within_current_scope": {
+      "research_proposal": true,
+      "execution": false,
+      "new_score_retrieval": false
+    },
+    "stage": "screen",
+    "exact_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "lipophilicity_astrazeneca",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "lipophilicity_astrazeneca",
+          "role_selector": "train",
+          "rows": 2940,
+          "per_file_sha256": "0049aa6d5b56d2f8c22e475b11b837ebfa86536d0c8ede06d432e854fb9d83d3",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 420,
+          "sha256": "ca5a5375aefc37693f3b3aa56171ddba8b0cd6fb7fe6899ecfd2e61a422b5190",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 840,
+          "sha256": "d768c259d5e8222b5a9dd29bcfccb5cc46560b190a4ec66b1ca4bf1a4ff59568",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "lipophilicity_astrazeneca__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.1,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed_source": "$proposal.seeds; instantiate one run per scalar seed"
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "MAE",
+        "definition": "mean absolute error on original Y",
+        "direction": "minimize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "MAE",
+        "external_direction": "minimize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "preparation_mode": "new_code",
+    "reuse_assets": [
+      "approved CheMeleon frozen checkpoint",
+      "identity-matched RAW fingerprint cache only; fit-transformed cache requires exact split/fit-row/transform identity"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "controller explicitly approves this exact matrix after all task-specific zero-fit gates; never automatic",
+    "skip_or_stop_if": [
+      "any gate fails",
+      "inner_stop metric undefined or contains one class/constant target; no seed search",
+      "encoder/buffer digest changes",
+      "prediction nonfinite or row bijection fails",
+      "resource contention/authorization failure; preserve supervisor and worker outcomes"
+    ],
+    "review_checkpoint": "after complete registered batch with paired scores and timing; earlier only on boundary/freeze/identity or decisive failure",
+    "direction_ids": [
+      "DIR-01-HEAD"
+    ],
+    "training_objective": {
+      "loss": "MSELoss",
+      "loss_scale": "standardized_by_inner_fit",
+      "early_stopping_metric": "MAE",
+      "early_stopping_direction": "minimize",
+      "prediction_scale": "original supplied Y, inverse affine exactly once"
+    },
+    "design_type": "control"
+  },
+  {
+    "proposal_id": "R001-lipophilicity_astrazeneca-H1",
+    "priority": "P1.1",
+    "hypothesis": "Holding encoder, rows, split, head width, objective and optimizer fixed, dropout0.3 improves stability/metric compared with0.1.",
+    "control_run_or_config": "R001-lipophilicity_astrazeneca-H0",
+    "task": "lipophilicity_astrazeneca",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "approved_encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+      "input_commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+      "implementation_status": "existing frozen CheMeleon asset; new multitask-dispatch head interface is proposed, not deployed"
+    },
+    "change_only": [
+      "head.dropout:0.1->0.3"
+    ],
+    "hold_fixed": [
+      "same approved train/blind-validation input hashes",
+      "same raw-SMILES-group split43 and fit-only transforms",
+      "frozen encoder parameters/buffers/fingerprint path",
+      "head2048->256->1 and initialization per common seed",
+      "AdamW lr0.0005 wd0.0001; all other optimizer options",
+      "batch128/maxepochs50/patience8/min_delta1e-7",
+      "task-specific loss, early-stop definition and prediction scale",
+      "common seeds44/45; paired sampler order"
+    ],
+    "split_id": "lipophilicity_astrazeneca__official-train__raw-smiles-group__s43__stop010__v1",
+    "seeds": [
+      44,
+      45
+    ],
+    "metric": "MAE",
+    "direction": "minimize",
+    "minimum_effect_or_decision_rule": {
+      "kind": "falsifiable_research_gate_not_statistical_significance",
+      "threshold": "relative 1% reduction versus matched H0",
+      "provenance": "repair001 research recommendation permitted by USER-REPAIR-001; not measured noise floor or established business effect",
+      "screen": "both paired seeds improve in favorable direction; mean improvement reaches threshold; all finite/identity/freeze checks pass",
+      "confirm": "For selected task add BOTH H0/H1 seed46 only; reuse44/45. Third improvement nonnegative and three-seed mean reaches the same original task gate. No significance/generalization claim.",
+      "sensitivity": "report decisions at zero and twice this gate as robustness description; do not retroactively choose a more favorable threshold",
+      "data_used": "inner_stop initially (selection-biased); official_valid feedback only via separately authorized host; same conditions rechecked on aggregate official_valid if host releases scores",
+      "statistic": "MAE: arithmetic mean of seedwise (H0-H1)/H0, require H0>0; other metrics: arithmetic mean of H1-H0",
+      "zero_control_MAE": "No epsilon; mark no improvement possible under relative gate"
+    },
+    "success_criterion": "Meet predeclared paired screen rule; retain as candidate only, not a proven generalization winner.",
+    "falsification_criterion": "At least one paired delta nonpositive or mean below gate: do not promote by this gate; distinguish no effect from low power.",
+    "compute_budget": {
+      "head_fits": 2,
+      "max_epochs_per_fit": 50,
+      "max_optimizer_steps_per_fit_upper_bound": 1150,
+      "unique_encoder_dataset_passes_shared_with_control_candidate_and_seeds": 2,
+      "test_dataset_passes_default": 0,
+      "time_seconds": null,
+      "estimate_method": "measure approved encoder/setup once per task, then per-fit head time; total includes failed attempts and role turnaround; no GPU-hour extrapolation from Caco2"
+    },
+    "dependencies": [
+      "G00-READ-BOUNDARY",
+      "G01-ASSET-IDENTITY",
+      "G02-INPUT-SPLIT-lipophilicity_astrazeneca",
+      "G03-METRIC-INTERFACE-lipophilicity_astrazeneca",
+      "G04-CACHE-EXPORT",
+      "G05-RESOURCE-AND-AUTH"
+    ],
+    "within_current_scope": {
+      "research_proposal": true,
+      "execution": false,
+      "new_score_retrieval": false
+    },
+    "stage": "screen",
+    "exact_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "lipophilicity_astrazeneca",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "lipophilicity_astrazeneca",
+          "role_selector": "train",
+          "rows": 2940,
+          "per_file_sha256": "0049aa6d5b56d2f8c22e475b11b837ebfa86536d0c8ede06d432e854fb9d83d3",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 420,
+          "sha256": "ca5a5375aefc37693f3b3aa56171ddba8b0cd6fb7fe6899ecfd2e61a422b5190",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 840,
+          "sha256": "d768c259d5e8222b5a9dd29bcfccb5cc46560b190a4ec66b1ca4bf1a4ff59568",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "lipophilicity_astrazeneca__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.3,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed_source": "$proposal.seeds; instantiate one run per scalar seed"
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "MAE",
+        "definition": "mean absolute error on original Y",
+        "direction": "minimize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "MAE",
+        "external_direction": "minimize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "preparation_mode": "new_code",
+    "reuse_assets": [
+      "approved CheMeleon frozen checkpoint",
+      "identity-matched RAW fingerprint cache only; fit-transformed cache requires exact split/fit-row/transform identity"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "controller explicitly approves this exact matrix after all task-specific zero-fit gates; never automatic",
+    "skip_or_stop_if": [
+      "any gate fails",
+      "inner_stop metric undefined or contains one class/constant target; no seed search",
+      "encoder/buffer digest changes",
+      "prediction nonfinite or row bijection fails",
+      "resource contention/authorization failure; preserve supervisor and worker outcomes"
+    ],
+    "review_checkpoint": "after complete registered batch with paired scores and timing; earlier only on boundary/freeze/identity or decisive failure",
+    "direction_ids": [
+      "DIR-01-HEAD"
+    ],
+    "training_objective": {
+      "loss": "MSELoss",
+      "loss_scale": "standardized_by_inner_fit",
+      "early_stopping_metric": "MAE",
+      "early_stopping_direction": "minimize",
+      "prediction_scale": "original supplied Y, inverse affine exactly once"
+    },
+    "design_type": "one_factor"
+  },
+  {
+    "proposal_id": "R001-bbb_martins-H0",
+    "priority": "P1.2",
+    "hypothesis": "Re-establish an exact same-task current head control; historical512-head run is contextual, not the matched control.",
+    "control_run_or_config": {
+      "kind": "designated_control",
+      "config_id": "bbb_martins-H0-fixed",
+      "historical_context": "R17 baseline is not interchangeable with this control"
+    },
+    "task": "bbb_martins",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "approved_encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+      "input_commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+      "implementation_status": "existing frozen CheMeleon asset; new multitask-dispatch head interface is proposed, not deployed"
+    },
+    "change_only": [],
+    "hold_fixed": [
+      "same approved train/blind-validation input hashes",
+      "same raw-SMILES-group split43 and fit-only transforms",
+      "frozen encoder parameters/buffers/fingerprint path",
+      "head2048->256->1 and initialization per common seed",
+      "AdamW lr0.0005 wd0.0001; all other optimizer options",
+      "batch128/maxepochs50/patience8/min_delta1e-7",
+      "task-specific loss, early-stop definition and prediction scale",
+      "common seeds44/45; paired sampler order"
+    ],
+    "split_id": "bbb_martins__official-train__raw-smiles-group__s43__stop010__v1",
+    "seeds": [
+      44,
+      45
+    ],
+    "metric": "AUROC",
+    "direction": "maximize",
+    "minimum_effect_or_decision_rule": {
+      "kind": "falsifiable_research_gate_not_statistical_significance",
+      "threshold": "absolute +0.005",
+      "provenance": "repair001 research recommendation permitted by USER-REPAIR-001; not measured noise floor or established business effect",
+      "screen": "both paired seeds improve in favorable direction; mean improvement reaches threshold; all finite/identity/freeze checks pass",
+      "confirm": "For selected task add BOTH H0/H1 seed46 only; reuse44/45. Third improvement nonnegative and three-seed mean reaches the same original task gate. No significance/generalization claim.",
+      "sensitivity": "report decisions at zero and twice this gate as robustness description; do not retroactively choose a more favorable threshold",
+      "data_used": "inner_stop initially (selection-biased); official_valid feedback only via separately authorized host; same conditions rechecked on aggregate official_valid if host releases scores",
+      "statistic": "MAE: arithmetic mean of seedwise (H0-H1)/H0, require H0>0; other metrics: arithmetic mean of H1-H0",
+      "zero_control_MAE": "No epsilon; mark no improvement possible under relative gate"
+    },
+    "success_criterion": "Freeze/input/finite/checkpoint/export fixtures pass and a reproducible paired baseline exists; no claimed improvement for control.",
+    "falsification_criterion": "Any identity/freeze/nonfinite/undefined-metric failure invalidates this control and dependent candidate.",
+    "compute_budget": {
+      "head_fits": 2,
+      "max_epochs_per_fit": 50,
+      "max_optimizer_steps_per_fit_upper_bound": 600,
+      "unique_encoder_dataset_passes_shared_with_control_candidate_and_seeds": 2,
+      "test_dataset_passes_default": 0,
+      "time_seconds": null,
+      "estimate_method": "measure approved encoder/setup once per task, then per-fit head time; total includes failed attempts and role turnaround; no GPU-hour extrapolation from Caco2"
+    },
+    "dependencies": [
+      "G00-READ-BOUNDARY",
+      "G01-ASSET-IDENTITY",
+      "G02-INPUT-SPLIT-bbb_martins",
+      "G03-METRIC-INTERFACE-bbb_martins",
+      "G04-CACHE-EXPORT",
+      "G05-RESOURCE-AND-AUTH"
+    ],
+    "within_current_scope": {
+      "research_proposal": true,
+      "execution": false,
+      "new_score_retrieval": false
+    },
+    "stage": "screen",
+    "exact_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "bbb_martins",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "bbb_martins",
+          "role_selector": "train",
+          "rows": 1421,
+          "per_file_sha256": "b3223c2fa0fff26ab990b4dbafbbe435a8ceb6114d76488bc3be27a68dfe23b9",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 203,
+          "sha256": "d1c0d3a7bf02e124c67dd3baba4cae8f9b7cacd2039cb215fcdbee99fa79c1bb",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 406,
+          "sha256": "19deb430b339574eec9f0b9e04acca64adc2c3979bf200634bb03cbbeda99ef5",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "bbb_martins__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "binary_classification",
+        "positive_label": 1,
+        "transform": "none",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": false,
+        "prediction_scale": "sigmoid(logit) continuous P(Y=1), no threshold, no target scaling",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.1,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "BCEWithLogitsLoss",
+        "target_scale": "binary_0_1",
+        "reduction": "mean",
+        "pos_weight": 1.0,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed_source": "$proposal.seeds; instantiate one run per scalar seed"
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "sigmoid of finite logits cast to float64; same probabilities as export, no threshold or clipping",
+        "metric": "AUROC",
+        "definition": "continuous-score ROC AUC with averaged tied ranks",
+        "direction": "maximize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "AUROC",
+        "external_direction": "maximize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "preparation_mode": "new_code",
+    "reuse_assets": [
+      "approved CheMeleon frozen checkpoint",
+      "identity-matched RAW fingerprint cache only; fit-transformed cache requires exact split/fit-row/transform identity"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "controller explicitly approves this exact matrix after all task-specific zero-fit gates; never automatic",
+    "skip_or_stop_if": [
+      "any gate fails",
+      "inner_stop metric undefined or contains one class/constant target; no seed search",
+      "encoder/buffer digest changes",
+      "prediction nonfinite or row bijection fails",
+      "resource contention/authorization failure; preserve supervisor and worker outcomes"
+    ],
+    "review_checkpoint": "after complete registered batch with paired scores and timing; earlier only on boundary/freeze/identity or decisive failure",
+    "direction_ids": [
+      "DIR-01-HEAD"
+    ],
+    "training_objective": {
+      "loss": "BCEWithLogitsLoss",
+      "loss_scale": "binary_0_1",
+      "early_stopping_metric": "AUROC",
+      "early_stopping_direction": "maximize",
+      "prediction_scale": "sigmoid(logit) continuous P(Y=1), no threshold, no target scaling"
+    },
+    "design_type": "control"
+  },
+  {
+    "proposal_id": "R001-bbb_martins-H1",
+    "priority": "P1.2",
+    "hypothesis": "Holding encoder, rows, split, head width, objective and optimizer fixed, dropout0.3 improves stability/metric compared with0.1.",
+    "control_run_or_config": "R001-bbb_martins-H0",
+    "task": "bbb_martins",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "approved_encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+      "input_commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+      "implementation_status": "existing frozen CheMeleon asset; new multitask-dispatch head interface is proposed, not deployed"
+    },
+    "change_only": [
+      "head.dropout:0.1->0.3"
+    ],
+    "hold_fixed": [
+      "same approved train/blind-validation input hashes",
+      "same raw-SMILES-group split43 and fit-only transforms",
+      "frozen encoder parameters/buffers/fingerprint path",
+      "head2048->256->1 and initialization per common seed",
+      "AdamW lr0.0005 wd0.0001; all other optimizer options",
+      "batch128/maxepochs50/patience8/min_delta1e-7",
+      "task-specific loss, early-stop definition and prediction scale",
+      "common seeds44/45; paired sampler order"
+    ],
+    "split_id": "bbb_martins__official-train__raw-smiles-group__s43__stop010__v1",
+    "seeds": [
+      44,
+      45
+    ],
+    "metric": "AUROC",
+    "direction": "maximize",
+    "minimum_effect_or_decision_rule": {
+      "kind": "falsifiable_research_gate_not_statistical_significance",
+      "threshold": "absolute +0.005",
+      "provenance": "repair001 research recommendation permitted by USER-REPAIR-001; not measured noise floor or established business effect",
+      "screen": "both paired seeds improve in favorable direction; mean improvement reaches threshold; all finite/identity/freeze checks pass",
+      "confirm": "For selected task add BOTH H0/H1 seed46 only; reuse44/45. Third improvement nonnegative and three-seed mean reaches the same original task gate. No significance/generalization claim.",
+      "sensitivity": "report decisions at zero and twice this gate as robustness description; do not retroactively choose a more favorable threshold",
+      "data_used": "inner_stop initially (selection-biased); official_valid feedback only via separately authorized host; same conditions rechecked on aggregate official_valid if host releases scores",
+      "statistic": "MAE: arithmetic mean of seedwise (H0-H1)/H0, require H0>0; other metrics: arithmetic mean of H1-H0",
+      "zero_control_MAE": "No epsilon; mark no improvement possible under relative gate"
+    },
+    "success_criterion": "Meet predeclared paired screen rule; retain as candidate only, not a proven generalization winner.",
+    "falsification_criterion": "At least one paired delta nonpositive or mean below gate: do not promote by this gate; distinguish no effect from low power.",
+    "compute_budget": {
+      "head_fits": 2,
+      "max_epochs_per_fit": 50,
+      "max_optimizer_steps_per_fit_upper_bound": 600,
+      "unique_encoder_dataset_passes_shared_with_control_candidate_and_seeds": 2,
+      "test_dataset_passes_default": 0,
+      "time_seconds": null,
+      "estimate_method": "measure approved encoder/setup once per task, then per-fit head time; total includes failed attempts and role turnaround; no GPU-hour extrapolation from Caco2"
+    },
+    "dependencies": [
+      "G00-READ-BOUNDARY",
+      "G01-ASSET-IDENTITY",
+      "G02-INPUT-SPLIT-bbb_martins",
+      "G03-METRIC-INTERFACE-bbb_martins",
+      "G04-CACHE-EXPORT",
+      "G05-RESOURCE-AND-AUTH"
+    ],
+    "within_current_scope": {
+      "research_proposal": true,
+      "execution": false,
+      "new_score_retrieval": false
+    },
+    "stage": "screen",
+    "exact_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "bbb_martins",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "bbb_martins",
+          "role_selector": "train",
+          "rows": 1421,
+          "per_file_sha256": "b3223c2fa0fff26ab990b4dbafbbe435a8ceb6114d76488bc3be27a68dfe23b9",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 203,
+          "sha256": "d1c0d3a7bf02e124c67dd3baba4cae8f9b7cacd2039cb215fcdbee99fa79c1bb",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 406,
+          "sha256": "19deb430b339574eec9f0b9e04acca64adc2c3979bf200634bb03cbbeda99ef5",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "bbb_martins__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "binary_classification",
+        "positive_label": 1,
+        "transform": "none",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": false,
+        "prediction_scale": "sigmoid(logit) continuous P(Y=1), no threshold, no target scaling",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.3,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "BCEWithLogitsLoss",
+        "target_scale": "binary_0_1",
+        "reduction": "mean",
+        "pos_weight": 1.0,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed_source": "$proposal.seeds; instantiate one run per scalar seed"
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "sigmoid of finite logits cast to float64; same probabilities as export, no threshold or clipping",
+        "metric": "AUROC",
+        "definition": "continuous-score ROC AUC with averaged tied ranks",
+        "direction": "maximize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "AUROC",
+        "external_direction": "maximize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "preparation_mode": "new_code",
+    "reuse_assets": [
+      "approved CheMeleon frozen checkpoint",
+      "identity-matched RAW fingerprint cache only; fit-transformed cache requires exact split/fit-row/transform identity"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "controller explicitly approves this exact matrix after all task-specific zero-fit gates; never automatic",
+    "skip_or_stop_if": [
+      "any gate fails",
+      "inner_stop metric undefined or contains one class/constant target; no seed search",
+      "encoder/buffer digest changes",
+      "prediction nonfinite or row bijection fails",
+      "resource contention/authorization failure; preserve supervisor and worker outcomes"
+    ],
+    "review_checkpoint": "after complete registered batch with paired scores and timing; earlier only on boundary/freeze/identity or decisive failure",
+    "direction_ids": [
+      "DIR-01-HEAD"
+    ],
+    "training_objective": {
+      "loss": "BCEWithLogitsLoss",
+      "loss_scale": "binary_0_1",
+      "early_stopping_metric": "AUROC",
+      "early_stopping_direction": "maximize",
+      "prediction_scale": "sigmoid(logit) continuous P(Y=1), no threshold, no target scaling"
+    },
+    "design_type": "one_factor"
+  },
+  {
+    "proposal_id": "R001-cyp2d6_veith-H0",
+    "priority": "P1.3",
+    "hypothesis": "Re-establish an exact same-task current head control; historical512-head run is contextual, not the matched control.",
+    "control_run_or_config": {
+      "kind": "designated_control",
+      "config_id": "cyp2d6_veith-H0-fixed",
+      "historical_context": "R17 baseline is not interchangeable with this control"
+    },
+    "task": "cyp2d6_veith",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "approved_encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+      "input_commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+      "implementation_status": "existing frozen CheMeleon asset; new multitask-dispatch head interface is proposed, not deployed"
+    },
+    "change_only": [],
+    "hold_fixed": [
+      "same approved train/blind-validation input hashes",
+      "same raw-SMILES-group split43 and fit-only transforms",
+      "frozen encoder parameters/buffers/fingerprint path",
+      "head2048->256->1 and initialization per common seed",
+      "AdamW lr0.0005 wd0.0001; all other optimizer options",
+      "batch128/maxepochs50/patience8/min_delta1e-7",
+      "task-specific loss, early-stop definition and prediction scale",
+      "common seeds44/45; paired sampler order"
+    ],
+    "split_id": "cyp2d6_veith__official-train__raw-smiles-group__s43__stop010__v1",
+    "seeds": [
+      44,
+      45
+    ],
+    "metric": "AUPRC",
+    "direction": "maximize",
+    "minimum_effect_or_decision_rule": {
+      "kind": "falsifiable_research_gate_not_statistical_significance",
+      "threshold": "absolute +0.01 local AP",
+      "provenance": "repair001 research recommendation permitted by USER-REPAIR-001; not measured noise floor or established business effect",
+      "screen": "both paired seeds improve in favorable direction; mean improvement reaches threshold; all finite/identity/freeze checks pass",
+      "confirm": "For selected task add BOTH H0/H1 seed46 only; reuse44/45. Third improvement nonnegative and three-seed mean reaches the same original task gate. No significance/generalization claim.",
+      "sensitivity": "report decisions at zero and twice this gate as robustness description; do not retroactively choose a more favorable threshold",
+      "data_used": "inner_stop initially (selection-biased); official_valid feedback only via separately authorized host; same conditions rechecked on aggregate official_valid if host releases scores",
+      "statistic": "MAE: arithmetic mean of seedwise (H0-H1)/H0, require H0>0; other metrics: arithmetic mean of H1-H0",
+      "zero_control_MAE": "No epsilon; mark no improvement possible under relative gate"
+    },
+    "success_criterion": "Freeze/input/finite/checkpoint/export fixtures pass and a reproducible paired baseline exists; no claimed improvement for control.",
+    "falsification_criterion": "Any identity/freeze/nonfinite/undefined-metric failure invalidates this control and dependent candidate.",
+    "compute_budget": {
+      "head_fits": 2,
+      "max_epochs_per_fit": 50,
+      "max_optimizer_steps_per_fit_upper_bound": 3600,
+      "unique_encoder_dataset_passes_shared_with_control_candidate_and_seeds": 2,
+      "test_dataset_passes_default": 0,
+      "time_seconds": null,
+      "estimate_method": "measure approved encoder/setup once per task, then per-fit head time; total includes failed attempts and role turnaround; no GPU-hour extrapolation from Caco2"
+    },
+    "dependencies": [
+      "G00-READ-BOUNDARY",
+      "G01-ASSET-IDENTITY",
+      "G02-INPUT-SPLIT-cyp2d6_veith",
+      "G03-METRIC-INTERFACE-cyp2d6_veith",
+      "G04-CACHE-EXPORT",
+      "G05-RESOURCE-AND-AUTH"
+    ],
+    "within_current_scope": {
+      "research_proposal": true,
+      "execution": false,
+      "new_score_retrieval": false
+    },
+    "stage": "screen",
+    "exact_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "cyp2d6_veith",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "cyp2d6_veith",
+          "role_selector": "train",
+          "rows": 9191,
+          "per_file_sha256": "f9ddcf3ef3bfda8ec7ccfc3f3882296f3562861df01a28432560781bc9eaa1d6",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 1313,
+          "sha256": "8a8f539ba9648d5cbeafa133853f4dffa4526b08a277133b86014bde00949e6d",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 2626,
+          "sha256": "45e6e276b45169003f4e73c795fa4ea059780cfce04c1d06fdb1852b8849dccc",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "cyp2d6_veith__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "binary_classification",
+        "positive_label": 1,
+        "transform": "none",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": false,
+        "prediction_scale": "sigmoid(logit) continuous P(Y=1), no threshold, no target scaling",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.1,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "BCEWithLogitsLoss",
+        "target_scale": "binary_0_1",
+        "reduction": "mean",
+        "pos_weight": 1.0,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed_source": "$proposal.seeds; instantiate one run per scalar seed"
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "sigmoid of finite logits cast to float64; same probabilities as export, no threshold or clipping",
+        "metric": "AP",
+        "definition": "average precision over grouped identical scores, no trapezoidal PR interpolation",
+        "direction": "maximize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "AUPRC",
+        "external_direction": "maximize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "preparation_mode": "new_code",
+    "reuse_assets": [
+      "approved CheMeleon frozen checkpoint",
+      "identity-matched RAW fingerprint cache only; fit-transformed cache requires exact split/fit-row/transform identity"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "controller explicitly approves this exact matrix after all task-specific zero-fit gates; never automatic",
+    "skip_or_stop_if": [
+      "any gate fails",
+      "inner_stop metric undefined or contains one class/constant target; no seed search",
+      "encoder/buffer digest changes",
+      "prediction nonfinite or row bijection fails",
+      "resource contention/authorization failure; preserve supervisor and worker outcomes"
+    ],
+    "review_checkpoint": "after complete registered batch with paired scores and timing; earlier only on boundary/freeze/identity or decisive failure",
+    "direction_ids": [
+      "DIR-01-HEAD"
+    ],
+    "training_objective": {
+      "loss": "BCEWithLogitsLoss",
+      "loss_scale": "binary_0_1",
+      "early_stopping_metric": "AP",
+      "early_stopping_direction": "maximize",
+      "prediction_scale": "sigmoid(logit) continuous P(Y=1), no threshold, no target scaling"
+    },
+    "design_type": "control"
+  },
+  {
+    "proposal_id": "R001-cyp2d6_veith-H1",
+    "priority": "P1.3",
+    "hypothesis": "Holding encoder, rows, split, head width, objective and optimizer fixed, dropout0.3 improves stability/metric compared with0.1.",
+    "control_run_or_config": "R001-cyp2d6_veith-H0",
+    "task": "cyp2d6_veith",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "approved_encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+      "input_commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+      "implementation_status": "existing frozen CheMeleon asset; new multitask-dispatch head interface is proposed, not deployed"
+    },
+    "change_only": [
+      "head.dropout:0.1->0.3"
+    ],
+    "hold_fixed": [
+      "same approved train/blind-validation input hashes",
+      "same raw-SMILES-group split43 and fit-only transforms",
+      "frozen encoder parameters/buffers/fingerprint path",
+      "head2048->256->1 and initialization per common seed",
+      "AdamW lr0.0005 wd0.0001; all other optimizer options",
+      "batch128/maxepochs50/patience8/min_delta1e-7",
+      "task-specific loss, early-stop definition and prediction scale",
+      "common seeds44/45; paired sampler order"
+    ],
+    "split_id": "cyp2d6_veith__official-train__raw-smiles-group__s43__stop010__v1",
+    "seeds": [
+      44,
+      45
+    ],
+    "metric": "AUPRC",
+    "direction": "maximize",
+    "minimum_effect_or_decision_rule": {
+      "kind": "falsifiable_research_gate_not_statistical_significance",
+      "threshold": "absolute +0.01 local AP",
+      "provenance": "repair001 research recommendation permitted by USER-REPAIR-001; not measured noise floor or established business effect",
+      "screen": "both paired seeds improve in favorable direction; mean improvement reaches threshold; all finite/identity/freeze checks pass",
+      "confirm": "For selected task add BOTH H0/H1 seed46 only; reuse44/45. Third improvement nonnegative and three-seed mean reaches the same original task gate. No significance/generalization claim.",
+      "sensitivity": "report decisions at zero and twice this gate as robustness description; do not retroactively choose a more favorable threshold",
+      "data_used": "inner_stop initially (selection-biased); official_valid feedback only via separately authorized host; same conditions rechecked on aggregate official_valid if host releases scores",
+      "statistic": "MAE: arithmetic mean of seedwise (H0-H1)/H0, require H0>0; other metrics: arithmetic mean of H1-H0",
+      "zero_control_MAE": "No epsilon; mark no improvement possible under relative gate"
+    },
+    "success_criterion": "Meet predeclared paired screen rule; retain as candidate only, not a proven generalization winner.",
+    "falsification_criterion": "At least one paired delta nonpositive or mean below gate: do not promote by this gate; distinguish no effect from low power.",
+    "compute_budget": {
+      "head_fits": 2,
+      "max_epochs_per_fit": 50,
+      "max_optimizer_steps_per_fit_upper_bound": 3600,
+      "unique_encoder_dataset_passes_shared_with_control_candidate_and_seeds": 2,
+      "test_dataset_passes_default": 0,
+      "time_seconds": null,
+      "estimate_method": "measure approved encoder/setup once per task, then per-fit head time; total includes failed attempts and role turnaround; no GPU-hour extrapolation from Caco2"
+    },
+    "dependencies": [
+      "G00-READ-BOUNDARY",
+      "G01-ASSET-IDENTITY",
+      "G02-INPUT-SPLIT-cyp2d6_veith",
+      "G03-METRIC-INTERFACE-cyp2d6_veith",
+      "G04-CACHE-EXPORT",
+      "G05-RESOURCE-AND-AUTH"
+    ],
+    "within_current_scope": {
+      "research_proposal": true,
+      "execution": false,
+      "new_score_retrieval": false
+    },
+    "stage": "screen",
+    "exact_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "cyp2d6_veith",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "cyp2d6_veith",
+          "role_selector": "train",
+          "rows": 9191,
+          "per_file_sha256": "f9ddcf3ef3bfda8ec7ccfc3f3882296f3562861df01a28432560781bc9eaa1d6",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 1313,
+          "sha256": "8a8f539ba9648d5cbeafa133853f4dffa4526b08a277133b86014bde00949e6d",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 2626,
+          "sha256": "45e6e276b45169003f4e73c795fa4ea059780cfce04c1d06fdb1852b8849dccc",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "cyp2d6_veith__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "binary_classification",
+        "positive_label": 1,
+        "transform": "none",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": false,
+        "prediction_scale": "sigmoid(logit) continuous P(Y=1), no threshold, no target scaling",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.3,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "BCEWithLogitsLoss",
+        "target_scale": "binary_0_1",
+        "reduction": "mean",
+        "pos_weight": 1.0,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed_source": "$proposal.seeds; instantiate one run per scalar seed"
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "sigmoid of finite logits cast to float64; same probabilities as export, no threshold or clipping",
+        "metric": "AP",
+        "definition": "average precision over grouped identical scores, no trapezoidal PR interpolation",
+        "direction": "maximize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "AUPRC",
+        "external_direction": "maximize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "preparation_mode": "new_code",
+    "reuse_assets": [
+      "approved CheMeleon frozen checkpoint",
+      "identity-matched RAW fingerprint cache only; fit-transformed cache requires exact split/fit-row/transform identity"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "controller explicitly approves this exact matrix after all task-specific zero-fit gates; never automatic",
+    "skip_or_stop_if": [
+      "any gate fails",
+      "inner_stop metric undefined or contains one class/constant target; no seed search",
+      "encoder/buffer digest changes",
+      "prediction nonfinite or row bijection fails",
+      "resource contention/authorization failure; preserve supervisor and worker outcomes"
+    ],
+    "review_checkpoint": "after complete registered batch with paired scores and timing; earlier only on boundary/freeze/identity or decisive failure",
+    "direction_ids": [
+      "DIR-01-HEAD"
+    ],
+    "training_objective": {
+      "loss": "BCEWithLogitsLoss",
+      "loss_scale": "binary_0_1",
+      "early_stopping_metric": "AP",
+      "early_stopping_direction": "maximize",
+      "prediction_scale": "sigmoid(logit) continuous P(Y=1), no threshold, no target scaling"
+    },
+    "design_type": "one_factor"
+  },
+  {
+    "proposal_id": "R001-clearance_hepatocyte_az-H0",
+    "priority": "P1.4",
+    "hypothesis": "Re-establish an exact same-task current head control; historical512-head run is contextual, not the matched control.",
+    "control_run_or_config": {
+      "kind": "designated_control",
+      "config_id": "clearance_hepatocyte_az-H0-fixed",
+      "historical_context": "R17 baseline is not interchangeable with this control"
+    },
+    "task": "clearance_hepatocyte_az",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "approved_encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+      "input_commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+      "implementation_status": "existing frozen CheMeleon asset; new multitask-dispatch head interface is proposed, not deployed"
+    },
+    "change_only": [],
+    "hold_fixed": [
+      "same approved train/blind-validation input hashes",
+      "same raw-SMILES-group split43 and fit-only transforms",
+      "frozen encoder parameters/buffers/fingerprint path",
+      "head2048->256->1 and initialization per common seed",
+      "AdamW lr0.0005 wd0.0001; all other optimizer options",
+      "batch128/maxepochs50/patience8/min_delta1e-7",
+      "task-specific loss, early-stop definition and prediction scale",
+      "common seeds44/45; paired sampler order"
+    ],
+    "split_id": "clearance_hepatocyte_az__official-train__raw-smiles-group__s43__stop010__v1",
+    "seeds": [
+      44,
+      45
+    ],
+    "metric": "Spearman",
+    "direction": "maximize",
+    "minimum_effect_or_decision_rule": {
+      "kind": "falsifiable_research_gate_not_statistical_significance",
+      "threshold": "absolute +0.03",
+      "provenance": "repair001 research recommendation permitted by USER-REPAIR-001; not measured noise floor or established business effect",
+      "screen": "both paired seeds improve in favorable direction; mean improvement reaches threshold; all finite/identity/freeze checks pass",
+      "confirm": "For selected task add BOTH H0/H1 seed46 only; reuse44/45. Third improvement nonnegative and three-seed mean reaches the same original task gate. No significance/generalization claim.",
+      "sensitivity": "report decisions at zero and twice this gate as robustness description; do not retroactively choose a more favorable threshold",
+      "data_used": "inner_stop initially (selection-biased); official_valid feedback only via separately authorized host; same conditions rechecked on aggregate official_valid if host releases scores",
+      "statistic": "MAE: arithmetic mean of seedwise (H0-H1)/H0, require H0>0; other metrics: arithmetic mean of H1-H0",
+      "zero_control_MAE": "No epsilon; mark no improvement possible under relative gate"
+    },
+    "success_criterion": "Freeze/input/finite/checkpoint/export fixtures pass and a reproducible paired baseline exists; no claimed improvement for control.",
+    "falsification_criterion": "Any identity/freeze/nonfinite/undefined-metric failure invalidates this control and dependent candidate.",
+    "compute_budget": {
+      "head_fits": 2,
+      "max_epochs_per_fit": 50,
+      "max_optimizer_steps_per_fit_upper_bound": 350,
+      "unique_encoder_dataset_passes_shared_with_control_candidate_and_seeds": 2,
+      "test_dataset_passes_default": 0,
+      "time_seconds": null,
+      "estimate_method": "measure approved encoder/setup once per task, then per-fit head time; total includes failed attempts and role turnaround; no GPU-hour extrapolation from Caco2"
+    },
+    "dependencies": [
+      "G00-READ-BOUNDARY",
+      "G01-ASSET-IDENTITY",
+      "G02-INPUT-SPLIT-clearance_hepatocyte_az",
+      "G03-METRIC-INTERFACE-clearance_hepatocyte_az",
+      "G04-CACHE-EXPORT",
+      "G05-RESOURCE-AND-AUTH"
+    ],
+    "within_current_scope": {
+      "research_proposal": true,
+      "execution": false,
+      "new_score_retrieval": false
+    },
+    "stage": "screen",
+    "exact_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "clearance_hepatocyte_az",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "clearance_hepatocyte_az",
+          "role_selector": "train",
+          "rows": 848,
+          "per_file_sha256": "5075b6a07d08d50c22a3a434e4708eb34b2d310b612a0a1c523bd153c11ba1f0",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 122,
+          "sha256": "c5d813115fa6ca174dcc55fefbac8924bc6ee865e254cd167929eda493a7aea8",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 243,
+          "sha256": "104ed6e16c206737f97c2e814ae36aa8acce459d94d39df78bbc07eb0ac2ef90",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "clearance_hepatocyte_az__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.1,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed_source": "$proposal.seeds; instantiate one run per scalar seed"
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "Spearman",
+        "definition": "Pearson correlation of average tied ranks",
+        "direction": "maximize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "Spearman",
+        "external_direction": "maximize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "preparation_mode": "new_code",
+    "reuse_assets": [
+      "approved CheMeleon frozen checkpoint",
+      "identity-matched RAW fingerprint cache only; fit-transformed cache requires exact split/fit-row/transform identity"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "controller explicitly approves this exact matrix after all task-specific zero-fit gates; never automatic",
+    "skip_or_stop_if": [
+      "any gate fails",
+      "inner_stop metric undefined or contains one class/constant target; no seed search",
+      "encoder/buffer digest changes",
+      "prediction nonfinite or row bijection fails",
+      "resource contention/authorization failure; preserve supervisor and worker outcomes"
+    ],
+    "review_checkpoint": "after complete registered batch with paired scores and timing; earlier only on boundary/freeze/identity or decisive failure",
+    "direction_ids": [
+      "DIR-01-HEAD"
+    ],
+    "training_objective": {
+      "loss": "MSELoss",
+      "loss_scale": "standardized_by_inner_fit",
+      "early_stopping_metric": "Spearman",
+      "early_stopping_direction": "maximize",
+      "prediction_scale": "original supplied Y, inverse affine exactly once"
+    },
+    "design_type": "control"
+  },
+  {
+    "proposal_id": "R001-clearance_hepatocyte_az-H1",
+    "priority": "P1.4",
+    "hypothesis": "Holding encoder, rows, split, head width, objective and optimizer fixed, dropout0.3 improves stability/metric compared with0.1.",
+    "control_run_or_config": "R001-clearance_hepatocyte_az-H0",
+    "task": "clearance_hepatocyte_az",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "approved_encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+      "input_commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+      "implementation_status": "existing frozen CheMeleon asset; new multitask-dispatch head interface is proposed, not deployed"
+    },
+    "change_only": [
+      "head.dropout:0.1->0.3"
+    ],
+    "hold_fixed": [
+      "same approved train/blind-validation input hashes",
+      "same raw-SMILES-group split43 and fit-only transforms",
+      "frozen encoder parameters/buffers/fingerprint path",
+      "head2048->256->1 and initialization per common seed",
+      "AdamW lr0.0005 wd0.0001; all other optimizer options",
+      "batch128/maxepochs50/patience8/min_delta1e-7",
+      "task-specific loss, early-stop definition and prediction scale",
+      "common seeds44/45; paired sampler order"
+    ],
+    "split_id": "clearance_hepatocyte_az__official-train__raw-smiles-group__s43__stop010__v1",
+    "seeds": [
+      44,
+      45
+    ],
+    "metric": "Spearman",
+    "direction": "maximize",
+    "minimum_effect_or_decision_rule": {
+      "kind": "falsifiable_research_gate_not_statistical_significance",
+      "threshold": "absolute +0.03",
+      "provenance": "repair001 research recommendation permitted by USER-REPAIR-001; not measured noise floor or established business effect",
+      "screen": "both paired seeds improve in favorable direction; mean improvement reaches threshold; all finite/identity/freeze checks pass",
+      "confirm": "For selected task add BOTH H0/H1 seed46 only; reuse44/45. Third improvement nonnegative and three-seed mean reaches the same original task gate. No significance/generalization claim.",
+      "sensitivity": "report decisions at zero and twice this gate as robustness description; do not retroactively choose a more favorable threshold",
+      "data_used": "inner_stop initially (selection-biased); official_valid feedback only via separately authorized host; same conditions rechecked on aggregate official_valid if host releases scores",
+      "statistic": "MAE: arithmetic mean of seedwise (H0-H1)/H0, require H0>0; other metrics: arithmetic mean of H1-H0",
+      "zero_control_MAE": "No epsilon; mark no improvement possible under relative gate"
+    },
+    "success_criterion": "Meet predeclared paired screen rule; retain as candidate only, not a proven generalization winner.",
+    "falsification_criterion": "At least one paired delta nonpositive or mean below gate: do not promote by this gate; distinguish no effect from low power.",
+    "compute_budget": {
+      "head_fits": 2,
+      "max_epochs_per_fit": 50,
+      "max_optimizer_steps_per_fit_upper_bound": 350,
+      "unique_encoder_dataset_passes_shared_with_control_candidate_and_seeds": 2,
+      "test_dataset_passes_default": 0,
+      "time_seconds": null,
+      "estimate_method": "measure approved encoder/setup once per task, then per-fit head time; total includes failed attempts and role turnaround; no GPU-hour extrapolation from Caco2"
+    },
+    "dependencies": [
+      "G00-READ-BOUNDARY",
+      "G01-ASSET-IDENTITY",
+      "G02-INPUT-SPLIT-clearance_hepatocyte_az",
+      "G03-METRIC-INTERFACE-clearance_hepatocyte_az",
+      "G04-CACHE-EXPORT",
+      "G05-RESOURCE-AND-AUTH"
+    ],
+    "within_current_scope": {
+      "research_proposal": true,
+      "execution": false,
+      "new_score_retrieval": false
+    },
+    "stage": "screen",
+    "exact_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "clearance_hepatocyte_az",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "clearance_hepatocyte_az",
+          "role_selector": "train",
+          "rows": 848,
+          "per_file_sha256": "5075b6a07d08d50c22a3a434e4708eb34b2d310b612a0a1c523bd153c11ba1f0",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 122,
+          "sha256": "c5d813115fa6ca174dcc55fefbac8924bc6ee865e254cd167929eda493a7aea8",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 243,
+          "sha256": "104ed6e16c206737f97c2e814ae36aa8acce459d94d39df78bbc07eb0ac2ef90",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "clearance_hepatocyte_az__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.3,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed_source": "$proposal.seeds; instantiate one run per scalar seed"
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "Spearman",
+        "definition": "Pearson correlation of average tied ranks",
+        "direction": "maximize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "Spearman",
+        "external_direction": "maximize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "preparation_mode": "new_code",
+    "reuse_assets": [
+      "approved CheMeleon frozen checkpoint",
+      "identity-matched RAW fingerprint cache only; fit-transformed cache requires exact split/fit-row/transform identity"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "controller explicitly approves this exact matrix after all task-specific zero-fit gates; never automatic",
+    "skip_or_stop_if": [
+      "any gate fails",
+      "inner_stop metric undefined or contains one class/constant target; no seed search",
+      "encoder/buffer digest changes",
+      "prediction nonfinite or row bijection fails",
+      "resource contention/authorization failure; preserve supervisor and worker outcomes"
+    ],
+    "review_checkpoint": "after complete registered batch with paired scores and timing; earlier only on boundary/freeze/identity or decisive failure",
+    "direction_ids": [
+      "DIR-01-HEAD"
+    ],
+    "training_objective": {
+      "loss": "MSELoss",
+      "loss_scale": "standardized_by_inner_fit",
+      "early_stopping_metric": "Spearman",
+      "early_stopping_direction": "maximize",
+      "prediction_scale": "original supplied Y, inverse affine exactly once"
+    },
+    "design_type": "one_factor"
+  },
+  {
+    "proposal_id": "R001-ld50_zhu-H0",
+    "priority": "P1.5",
+    "hypothesis": "Re-establish an exact same-task current head control; historical512-head run is contextual, not the matched control.",
+    "control_run_or_config": {
+      "kind": "designated_control",
+      "config_id": "ld50_zhu-H0-fixed",
+      "historical_context": "R17 baseline is not interchangeable with this control"
+    },
+    "task": "ld50_zhu",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "approved_encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+      "input_commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+      "implementation_status": "existing frozen CheMeleon asset; new multitask-dispatch head interface is proposed, not deployed"
+    },
+    "change_only": [],
+    "hold_fixed": [
+      "same approved train/blind-validation input hashes",
+      "same raw-SMILES-group split43 and fit-only transforms",
+      "frozen encoder parameters/buffers/fingerprint path",
+      "head2048->256->1 and initialization per common seed",
+      "AdamW lr0.0005 wd0.0001; all other optimizer options",
+      "batch128/maxepochs50/patience8/min_delta1e-7",
+      "task-specific loss, early-stop definition and prediction scale",
+      "common seeds44/45; paired sampler order"
+    ],
+    "split_id": "ld50_zhu__official-train__raw-smiles-group__s43__stop010__v1",
+    "seeds": [
+      44,
+      45
+    ],
+    "metric": "MAE",
+    "direction": "minimize",
+    "minimum_effect_or_decision_rule": {
+      "kind": "falsifiable_research_gate_not_statistical_significance",
+      "threshold": "relative 1% reduction versus matched H0",
+      "provenance": "repair001 research recommendation permitted by USER-REPAIR-001; not measured noise floor or established business effect",
+      "screen": "both paired seeds improve in favorable direction; mean improvement reaches threshold; all finite/identity/freeze checks pass",
+      "confirm": "For selected task add BOTH H0/H1 seed46 only; reuse44/45. Third improvement nonnegative and three-seed mean reaches the same original task gate. No significance/generalization claim.",
+      "sensitivity": "report decisions at zero and twice this gate as robustness description; do not retroactively choose a more favorable threshold",
+      "data_used": "inner_stop initially (selection-biased); official_valid feedback only via separately authorized host; same conditions rechecked on aggregate official_valid if host releases scores",
+      "statistic": "MAE: arithmetic mean of seedwise (H0-H1)/H0, require H0>0; other metrics: arithmetic mean of H1-H0",
+      "zero_control_MAE": "No epsilon; mark no improvement possible under relative gate"
+    },
+    "success_criterion": "Freeze/input/finite/checkpoint/export fixtures pass and a reproducible paired baseline exists; no claimed improvement for control.",
+    "falsification_criterion": "Any identity/freeze/nonfinite/undefined-metric failure invalidates this control and dependent candidate.",
+    "compute_budget": {
+      "head_fits": 2,
+      "max_epochs_per_fit": 50,
+      "max_optimizer_steps_per_fit_upper_bound": 1600,
+      "unique_encoder_dataset_passes_shared_with_control_candidate_and_seeds": 2,
+      "test_dataset_passes_default": 0,
+      "time_seconds": null,
+      "estimate_method": "measure approved encoder/setup once per task, then per-fit head time; total includes failed attempts and role turnaround; no GPU-hour extrapolation from Caco2"
+    },
+    "dependencies": [
+      "G00-READ-BOUNDARY",
+      "G01-ASSET-IDENTITY",
+      "G02-INPUT-SPLIT-ld50_zhu",
+      "G03-METRIC-INTERFACE-ld50_zhu",
+      "G04-CACHE-EXPORT",
+      "G05-RESOURCE-AND-AUTH"
+    ],
+    "within_current_scope": {
+      "research_proposal": true,
+      "execution": false,
+      "new_score_retrieval": false
+    },
+    "stage": "screen",
+    "exact_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "ld50_zhu",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "ld50_zhu",
+          "role_selector": "train",
+          "rows": 3970,
+          "per_file_sha256": "749c76c38fdf4fb147f8fa5ae4dfa247cca26b152461a1e52234bca441626daa",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 1937,
+          "sha256": "814330b9411c74632916423faeaf5534cc2507a0c569240b971f883eb9043800",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 1478,
+          "sha256": "ddf437d076faebad8fb5e74a85379643f3e05824fa5a8aeaf37f725edf8cad5d",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "ld50_zhu__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.1,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed_source": "$proposal.seeds; instantiate one run per scalar seed"
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "MAE",
+        "definition": "mean absolute error on original Y",
+        "direction": "minimize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "MAE",
+        "external_direction": "minimize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "preparation_mode": "new_code",
+    "reuse_assets": [
+      "approved CheMeleon frozen checkpoint",
+      "identity-matched RAW fingerprint cache only; fit-transformed cache requires exact split/fit-row/transform identity"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "controller explicitly approves this exact matrix after all task-specific zero-fit gates; never automatic",
+    "skip_or_stop_if": [
+      "any gate fails",
+      "inner_stop metric undefined or contains one class/constant target; no seed search",
+      "encoder/buffer digest changes",
+      "prediction nonfinite or row bijection fails",
+      "resource contention/authorization failure; preserve supervisor and worker outcomes"
+    ],
+    "review_checkpoint": "after complete registered batch with paired scores and timing; earlier only on boundary/freeze/identity or decisive failure",
+    "direction_ids": [
+      "DIR-01-HEAD"
+    ],
+    "training_objective": {
+      "loss": "MSELoss",
+      "loss_scale": "standardized_by_inner_fit",
+      "early_stopping_metric": "MAE",
+      "early_stopping_direction": "minimize",
+      "prediction_scale": "original supplied Y, inverse affine exactly once"
+    },
+    "design_type": "control"
+  },
+  {
+    "proposal_id": "R001-ld50_zhu-H1",
+    "priority": "P1.5",
+    "hypothesis": "Holding encoder, rows, split, head width, objective and optimizer fixed, dropout0.3 improves stability/metric compared with0.1.",
+    "control_run_or_config": "R001-ld50_zhu-H0",
+    "task": "ld50_zhu",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "approved_encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+      "input_commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+      "implementation_status": "existing frozen CheMeleon asset; new multitask-dispatch head interface is proposed, not deployed"
+    },
+    "change_only": [
+      "head.dropout:0.1->0.3"
+    ],
+    "hold_fixed": [
+      "same approved train/blind-validation input hashes",
+      "same raw-SMILES-group split43 and fit-only transforms",
+      "frozen encoder parameters/buffers/fingerprint path",
+      "head2048->256->1 and initialization per common seed",
+      "AdamW lr0.0005 wd0.0001; all other optimizer options",
+      "batch128/maxepochs50/patience8/min_delta1e-7",
+      "task-specific loss, early-stop definition and prediction scale",
+      "common seeds44/45; paired sampler order"
+    ],
+    "split_id": "ld50_zhu__official-train__raw-smiles-group__s43__stop010__v1",
+    "seeds": [
+      44,
+      45
+    ],
+    "metric": "MAE",
+    "direction": "minimize",
+    "minimum_effect_or_decision_rule": {
+      "kind": "falsifiable_research_gate_not_statistical_significance",
+      "threshold": "relative 1% reduction versus matched H0",
+      "provenance": "repair001 research recommendation permitted by USER-REPAIR-001; not measured noise floor or established business effect",
+      "screen": "both paired seeds improve in favorable direction; mean improvement reaches threshold; all finite/identity/freeze checks pass",
+      "confirm": "For selected task add BOTH H0/H1 seed46 only; reuse44/45. Third improvement nonnegative and three-seed mean reaches the same original task gate. No significance/generalization claim.",
+      "sensitivity": "report decisions at zero and twice this gate as robustness description; do not retroactively choose a more favorable threshold",
+      "data_used": "inner_stop initially (selection-biased); official_valid feedback only via separately authorized host; same conditions rechecked on aggregate official_valid if host releases scores",
+      "statistic": "MAE: arithmetic mean of seedwise (H0-H1)/H0, require H0>0; other metrics: arithmetic mean of H1-H0",
+      "zero_control_MAE": "No epsilon; mark no improvement possible under relative gate"
+    },
+    "success_criterion": "Meet predeclared paired screen rule; retain as candidate only, not a proven generalization winner.",
+    "falsification_criterion": "At least one paired delta nonpositive or mean below gate: do not promote by this gate; distinguish no effect from low power.",
+    "compute_budget": {
+      "head_fits": 2,
+      "max_epochs_per_fit": 50,
+      "max_optimizer_steps_per_fit_upper_bound": 1600,
+      "unique_encoder_dataset_passes_shared_with_control_candidate_and_seeds": 2,
+      "test_dataset_passes_default": 0,
+      "time_seconds": null,
+      "estimate_method": "measure approved encoder/setup once per task, then per-fit head time; total includes failed attempts and role turnaround; no GPU-hour extrapolation from Caco2"
+    },
+    "dependencies": [
+      "G00-READ-BOUNDARY",
+      "G01-ASSET-IDENTITY",
+      "G02-INPUT-SPLIT-ld50_zhu",
+      "G03-METRIC-INTERFACE-ld50_zhu",
+      "G04-CACHE-EXPORT",
+      "G05-RESOURCE-AND-AUTH"
+    ],
+    "within_current_scope": {
+      "research_proposal": true,
+      "execution": false,
+      "new_score_retrieval": false
+    },
+    "stage": "screen",
+    "exact_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "ld50_zhu",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "ld50_zhu",
+          "role_selector": "train",
+          "rows": 3970,
+          "per_file_sha256": "749c76c38fdf4fb147f8fa5ae4dfa247cca26b152461a1e52234bca441626daa",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 1937,
+          "sha256": "814330b9411c74632916423faeaf5534cc2507a0c569240b971f883eb9043800",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 1478,
+          "sha256": "ddf437d076faebad8fb5e74a85379643f3e05824fa5a8aeaf37f725edf8cad5d",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "ld50_zhu__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.3,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed_source": "$proposal.seeds; instantiate one run per scalar seed"
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "MAE",
+        "definition": "mean absolute error on original Y",
+        "direction": "minimize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "MAE",
+        "external_direction": "minimize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "preparation_mode": "new_code",
+    "reuse_assets": [
+      "approved CheMeleon frozen checkpoint",
+      "identity-matched RAW fingerprint cache only; fit-transformed cache requires exact split/fit-row/transform identity"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "controller explicitly approves this exact matrix after all task-specific zero-fit gates; never automatic",
+    "skip_or_stop_if": [
+      "any gate fails",
+      "inner_stop metric undefined or contains one class/constant target; no seed search",
+      "encoder/buffer digest changes",
+      "prediction nonfinite or row bijection fails",
+      "resource contention/authorization failure; preserve supervisor and worker outcomes"
+    ],
+    "review_checkpoint": "after complete registered batch with paired scores and timing; earlier only on boundary/freeze/identity or decisive failure",
+    "direction_ids": [
+      "DIR-01-HEAD"
+    ],
+    "training_objective": {
+      "loss": "MSELoss",
+      "loss_scale": "standardized_by_inner_fit",
+      "early_stopping_metric": "MAE",
+      "early_stopping_direction": "minimize",
+      "prediction_scale": "original supplied Y, inverse affine exactly once"
+    },
+    "design_type": "one_factor"
+  },
+  {
+    "proposal_id": "R001-solubility_aqsoldb-H0",
+    "priority": "P1.6",
+    "hypothesis": "Re-establish an exact same-task current head control; historical512-head run is contextual, not the matched control.",
+    "control_run_or_config": {
+      "kind": "designated_control",
+      "config_id": "solubility_aqsoldb-H0-fixed",
+      "historical_context": "R17 baseline is not interchangeable with this control"
+    },
+    "task": "solubility_aqsoldb",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "approved_encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+      "input_commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+      "implementation_status": "existing frozen CheMeleon asset; new multitask-dispatch head interface is proposed, not deployed"
+    },
+    "change_only": [],
+    "hold_fixed": [
+      "same approved train/blind-validation input hashes",
+      "same raw-SMILES-group split43 and fit-only transforms",
+      "frozen encoder parameters/buffers/fingerprint path",
+      "head2048->256->1 and initialization per common seed",
+      "AdamW lr0.0005 wd0.0001; all other optimizer options",
+      "batch128/maxepochs50/patience8/min_delta1e-7",
+      "task-specific loss, early-stop definition and prediction scale",
+      "common seeds44/45; paired sampler order"
+    ],
+    "split_id": "solubility_aqsoldb__official-train__raw-smiles-group__s43__stop010__v1",
+    "seeds": [
+      44,
+      45
+    ],
+    "metric": "MAE",
+    "direction": "minimize",
+    "minimum_effect_or_decision_rule": {
+      "kind": "falsifiable_research_gate_not_statistical_significance",
+      "threshold": "relative 1% reduction versus matched H0",
+      "provenance": "repair001 research recommendation permitted by USER-REPAIR-001; not measured noise floor or established business effect",
+      "screen": "both paired seeds improve in favorable direction; mean improvement reaches threshold; all finite/identity/freeze checks pass",
+      "confirm": "For selected task add BOTH H0/H1 seed46 only; reuse44/45. Third improvement nonnegative and three-seed mean reaches the same original task gate. No significance/generalization claim.",
+      "sensitivity": "report decisions at zero and twice this gate as robustness description; do not retroactively choose a more favorable threshold",
+      "data_used": "inner_stop initially (selection-biased); official_valid feedback only via separately authorized host; same conditions rechecked on aggregate official_valid if host releases scores",
+      "statistic": "MAE: arithmetic mean of seedwise (H0-H1)/H0, require H0>0; other metrics: arithmetic mean of H1-H0",
+      "zero_control_MAE": "No epsilon; mark no improvement possible under relative gate"
+    },
+    "success_criterion": "Freeze/input/finite/checkpoint/export fixtures pass and a reproducible paired baseline exists; no claimed improvement for control.",
+    "falsification_criterion": "Any identity/freeze/nonfinite/undefined-metric failure invalidates this control and dependent candidate.",
+    "compute_budget": {
+      "head_fits": 2,
+      "max_epochs_per_fit": 50,
+      "max_optimizer_steps_per_fit_upper_bound": 2000,
+      "unique_encoder_dataset_passes_shared_with_control_candidate_and_seeds": 2,
+      "test_dataset_passes_default": 0,
+      "time_seconds": null,
+      "estimate_method": "measure approved encoder/setup once per task, then per-fit head time; total includes failed attempts and role turnaround; no GPU-hour extrapolation from Caco2"
+    },
+    "dependencies": [
+      "G00-READ-BOUNDARY",
+      "G01-ASSET-IDENTITY",
+      "G02-INPUT-SPLIT-solubility_aqsoldb",
+      "G03-METRIC-INTERFACE-solubility_aqsoldb",
+      "G04-CACHE-EXPORT",
+      "G05-RESOURCE-AND-AUTH"
+    ],
+    "within_current_scope": {
+      "research_proposal": true,
+      "execution": false,
+      "new_score_retrieval": false
+    },
+    "stage": "screen",
+    "exact_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "solubility_aqsoldb",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "solubility_aqsoldb",
+          "role_selector": "train",
+          "rows": 5045,
+          "per_file_sha256": "744ee3d69e3f0d9230894a62a95bc64ea15b2d6d44f1a5fb890c5c3260ce89c2",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 2940,
+          "sha256": "3ced20ec95adf2e8250f0be25a945d611f828f599569799bfabd0718c258fcf6",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 1997,
+          "sha256": "ad5814c7b77ff79de9c99b97d667ab8762e78933a4f0147030c6615d3111ce90",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "solubility_aqsoldb__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.1,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed_source": "$proposal.seeds; instantiate one run per scalar seed"
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "MAE",
+        "definition": "mean absolute error on original Y",
+        "direction": "minimize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "MAE",
+        "external_direction": "minimize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "preparation_mode": "new_code",
+    "reuse_assets": [
+      "approved CheMeleon frozen checkpoint",
+      "identity-matched RAW fingerprint cache only; fit-transformed cache requires exact split/fit-row/transform identity"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "controller explicitly approves this exact matrix after all task-specific zero-fit gates; never automatic",
+    "skip_or_stop_if": [
+      "any gate fails",
+      "inner_stop metric undefined or contains one class/constant target; no seed search",
+      "encoder/buffer digest changes",
+      "prediction nonfinite or row bijection fails",
+      "resource contention/authorization failure; preserve supervisor and worker outcomes"
+    ],
+    "review_checkpoint": "after complete registered batch with paired scores and timing; earlier only on boundary/freeze/identity or decisive failure",
+    "direction_ids": [
+      "DIR-01-HEAD"
+    ],
+    "training_objective": {
+      "loss": "MSELoss",
+      "loss_scale": "standardized_by_inner_fit",
+      "early_stopping_metric": "MAE",
+      "early_stopping_direction": "minimize",
+      "prediction_scale": "original supplied Y, inverse affine exactly once"
+    },
+    "design_type": "control"
+  },
+  {
+    "proposal_id": "R001-solubility_aqsoldb-H1",
+    "priority": "P1.6",
+    "hypothesis": "Holding encoder, rows, split, head width, objective and optimizer fixed, dropout0.3 improves stability/metric compared with0.1.",
+    "control_run_or_config": "R001-solubility_aqsoldb-H0",
+    "task": "solubility_aqsoldb",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "approved_encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+      "input_commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+      "implementation_status": "existing frozen CheMeleon asset; new multitask-dispatch head interface is proposed, not deployed"
+    },
+    "change_only": [
+      "head.dropout:0.1->0.3"
+    ],
+    "hold_fixed": [
+      "same approved train/blind-validation input hashes",
+      "same raw-SMILES-group split43 and fit-only transforms",
+      "frozen encoder parameters/buffers/fingerprint path",
+      "head2048->256->1 and initialization per common seed",
+      "AdamW lr0.0005 wd0.0001; all other optimizer options",
+      "batch128/maxepochs50/patience8/min_delta1e-7",
+      "task-specific loss, early-stop definition and prediction scale",
+      "common seeds44/45; paired sampler order"
+    ],
+    "split_id": "solubility_aqsoldb__official-train__raw-smiles-group__s43__stop010__v1",
+    "seeds": [
+      44,
+      45
+    ],
+    "metric": "MAE",
+    "direction": "minimize",
+    "minimum_effect_or_decision_rule": {
+      "kind": "falsifiable_research_gate_not_statistical_significance",
+      "threshold": "relative 1% reduction versus matched H0",
+      "provenance": "repair001 research recommendation permitted by USER-REPAIR-001; not measured noise floor or established business effect",
+      "screen": "both paired seeds improve in favorable direction; mean improvement reaches threshold; all finite/identity/freeze checks pass",
+      "confirm": "For selected task add BOTH H0/H1 seed46 only; reuse44/45. Third improvement nonnegative and three-seed mean reaches the same original task gate. No significance/generalization claim.",
+      "sensitivity": "report decisions at zero and twice this gate as robustness description; do not retroactively choose a more favorable threshold",
+      "data_used": "inner_stop initially (selection-biased); official_valid feedback only via separately authorized host; same conditions rechecked on aggregate official_valid if host releases scores",
+      "statistic": "MAE: arithmetic mean of seedwise (H0-H1)/H0, require H0>0; other metrics: arithmetic mean of H1-H0",
+      "zero_control_MAE": "No epsilon; mark no improvement possible under relative gate"
+    },
+    "success_criterion": "Meet predeclared paired screen rule; retain as candidate only, not a proven generalization winner.",
+    "falsification_criterion": "At least one paired delta nonpositive or mean below gate: do not promote by this gate; distinguish no effect from low power.",
+    "compute_budget": {
+      "head_fits": 2,
+      "max_epochs_per_fit": 50,
+      "max_optimizer_steps_per_fit_upper_bound": 2000,
+      "unique_encoder_dataset_passes_shared_with_control_candidate_and_seeds": 2,
+      "test_dataset_passes_default": 0,
+      "time_seconds": null,
+      "estimate_method": "measure approved encoder/setup once per task, then per-fit head time; total includes failed attempts and role turnaround; no GPU-hour extrapolation from Caco2"
+    },
+    "dependencies": [
+      "G00-READ-BOUNDARY",
+      "G01-ASSET-IDENTITY",
+      "G02-INPUT-SPLIT-solubility_aqsoldb",
+      "G03-METRIC-INTERFACE-solubility_aqsoldb",
+      "G04-CACHE-EXPORT",
+      "G05-RESOURCE-AND-AUTH"
+    ],
+    "within_current_scope": {
+      "research_proposal": true,
+      "execution": false,
+      "new_score_retrieval": false
+    },
+    "stage": "screen",
+    "exact_config": {
+      "interface_id": "admet-frozen-breadth-repair001-proposed",
+      "task": "solubility_aqsoldb",
+      "scientific_asset_id": "chemeleon",
+      "encoder": {
+        "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_code_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+        "feature_dim": 2048,
+        "encoding_batch_size": 64,
+        "mode": "eval",
+        "autograd": false,
+        "freeze_parameters": true,
+        "freeze_buffers": true,
+        "dtype": "float32",
+        "pooling": "unchanged approved CheMeleonEmbedder fingerprint path",
+        "parse_failure_policy": "preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction"
+      },
+      "inputs": {
+        "train": {
+          "source_archive_sha256": "4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4",
+          "task_selector": "solubility_aqsoldb",
+          "role_selector": "train",
+          "rows": 5045,
+          "per_file_sha256": "744ee3d69e3f0d9230894a62a95bc64ea15b2d6d44f1a5fb890c5c3260ce89c2",
+          "per_file_sha_status": "registered in SRC-SCAFFOLD input_hashes; host must match actual approved train file before use; not a new download",
+          "columns": [
+            "Drug_ID",
+            "Drug",
+            "Y"
+          ]
+        },
+        "validation": {
+          "role": "blind_validation",
+          "rows": 2940,
+          "sha256": "3ced20ec95adf2e8250f0be25a945d611f828f599569799bfabd0718c258fcf6",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "test": {
+          "role": "test",
+          "rows": 1997,
+          "sha256": "ad5814c7b77ff79de9c99b97d667ab8762e78933a4f0147030c6615d3111ce90",
+          "columns": [
+            "Drug_ID",
+            "Drug"
+          ]
+        },
+        "row_identity": [
+          "task",
+          "split",
+          "row_index"
+        ],
+        "preserve_raw_smiles_and_labels": true,
+        "drug_id_is_not_key": true
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "group_key": "exact raw Drug string",
+        "algorithm": "codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order",
+        "reference": "training-science L254–360",
+        "class_stratification": false,
+        "one_class_or_constant_metric_policy": "fail task preparation; no seed search or metric substitution; redesign requires explicit review",
+        "split_id": "solubility_aqsoldb__official-train__raw-smiles-group__s43__stop010__v1"
+      },
+      "feature_preprocessing": {
+        "fit_partition": "inner_fit_only",
+        "statistics_dtype": "float32",
+        "method": "legacy_mean_std",
+        "std_ddof": 0,
+        "replace_std_below": 1e-08,
+        "replacement_std": 1.0,
+        "clip": null,
+        "nonfinite_raw_features": "abort; parse failure zeros are explicit, not arbitrary NaN imputation",
+        "refit_for_each_split": true,
+        "reuse_raw_not_scaled_features": true
+      },
+      "target": {
+        "kind": "regression",
+        "positive_label": null,
+        "transform": "fit-only mean/std ddof0, std0->1",
+        "fit_partition": "inner_fit_only",
+        "physical_units": "not inferred; supplied numeric Y scale",
+        "inverse_transform_at_prediction": true,
+        "prediction_scale": "original supplied Y, inverse affine exactly once",
+        "prediction_clipping": null
+      },
+      "head": {
+        "hidden_dims": [
+          256
+        ],
+        "activation": "ReLU",
+        "dropout": 0.3,
+        "output_dim": 1,
+        "output_activation_during_loss": "identity",
+        "bias": true,
+        "batch_norm": false,
+        "layer_norm": false,
+        "residual": false,
+        "initializer": "torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical",
+        "trainable_parameter_count": 524801
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "amsgrad": false,
+        "scheduler": "none",
+        "weight_decay_applies_to": "all head parameters",
+        "encoder_parameters_in_optimizer": false
+      },
+      "loss": {
+        "name": "MSELoss",
+        "target_scale": "standardized_by_inner_fit",
+        "reduction": "mean",
+        "pos_weight": null,
+        "sample_weight": "uniform"
+      },
+      "training": {
+        "batch_size": 128,
+        "max_epochs": 50,
+        "gradient_accumulation_steps": 1,
+        "gradient_clip_norm": null,
+        "precision": "float32",
+        "mixed_precision": false,
+        "shuffle_each_epoch": true,
+        "sampler": "CPU torch.Generator seeded by fixed model_seed",
+        "drop_last": false,
+        "num_workers": 0,
+        "python_numpy_torch_seed": "same scalar model_seed for each expanded run",
+        "official_valid_used_for_gradients_or_early_stopping": false,
+        "head_train_mode_during_updates": true,
+        "encoder_stays_eval_during_head_training": true,
+        "torch_cuda_manual_seed_all": "scalar model_seed",
+        "deterministic_algorithms": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "unsupported_nondeterministic_op": "fail acceptance; do not silently downgrade",
+        "model_seed_source": "$proposal.seeds; instantiate one run per scalar seed"
+      },
+      "early_stopping": {
+        "partition": "inner_stop_from_official_train",
+        "head_mode": "eval no dropout",
+        "metric_input": "inverse transformed original-Y outputs",
+        "metric": "MAE",
+        "definition": "mean absolute error on original Y",
+        "direction": "minimize",
+        "patience": 8,
+        "min_delta": 1e-07,
+        "ties": "retain earlier epoch",
+        "restore_best": true,
+        "evaluate_every_epochs": 1,
+        "undefined_or_nonfinite": "stop and flag; do not substitute zero"
+      },
+      "artifacts": {
+        "save_best_and_last": true,
+        "save_optimizer_and_all_rng": true,
+        "save_train_fit_stop_predictions": true,
+        "save_blind_predictions": true,
+        "save_full_encoder_parameter_buffer_digests": true,
+        "record_worker_and_supervisor_exit_separately": true,
+        "prediction_export_precision": "float64 serialization of finite outputs; unchanged template metadata",
+        "save_test_predictions_when": "only after separate full-candidate inference approval; no default test pass per head"
+      },
+      "evaluation": {
+        "primary_selection_dataset": "inner_stop_train_only; optimistic screening proxy, not official-valid score",
+        "official_valid_scope": "aggregate feedback only through authorized host evaluator; no new scoring in this research",
+        "selection_claim": "screening signal only, not independent generalization estimate",
+        "normalization": "none; task metric only; no inferred official aggregate formula",
+        "external_metric": "MAE",
+        "external_direction": "minimize",
+        "official_valid_feedback_schedule": "future controller-authorized batch after frozen screen identities; zero new score calls in repair001"
+      },
+      "execution_authorized": false
+    },
+    "preparation_mode": "new_code",
+    "reuse_assets": [
+      "approved CheMeleon frozen checkpoint",
+      "identity-matched RAW fingerprint cache only; fit-transformed cache requires exact split/fit-row/transform identity"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "controller explicitly approves this exact matrix after all task-specific zero-fit gates; never automatic",
+    "skip_or_stop_if": [
+      "any gate fails",
+      "inner_stop metric undefined or contains one class/constant target; no seed search",
+      "encoder/buffer digest changes",
+      "prediction nonfinite or row bijection fails",
+      "resource contention/authorization failure; preserve supervisor and worker outcomes"
+    ],
+    "review_checkpoint": "after complete registered batch with paired scores and timing; earlier only on boundary/freeze/identity or decisive failure",
+    "direction_ids": [
+      "DIR-01-HEAD"
+    ],
+    "training_objective": {
+      "loss": "MSELoss",
+      "loss_scale": "standardized_by_inner_fit",
+      "early_stopping_metric": "MAE",
+      "early_stopping_direction": "minimize",
+      "prediction_scale": "original supplied Y, inverse affine exactly once"
+    },
+    "design_type": "one_factor"
+  }
+]

@@ -1,0 +1,84 @@
+import os,socket,json,subprocess,time,datetime,signal,xml.etree.ElementTree as E,hashlib
+from pathlib import Path
+assert socket.gethostname().split('.')[0]=='h100' and os.getuid()==os.getgid()==1012
+R=Path('[TASK_WORKSPACE]/admet/breadth-six24-20261102');assert R.resolve(strict=True)==R
+UUID='GPU-35a86dc6-fed8-1242-6674-9b2e9e89b80b';INDEX=5
+python='[TASK_WORKSPACE]/admet/hainan-skill-pilot-20261030/venv/bin/python3'
+assert not (R/'raw/job-start.json').exists()
+started=time.monotonic();cancel={'requested':False};signal.signal(signal.SIGHUP,signal.SIG_IGN);signal.signal(signal.SIGTERM,lambda *_:cancel.update(requested=True))
+def now():return datetime.datetime.now(datetime.timezone.utc).isoformat()
+def ident(pid):
+ raw=(Path('/proc')/str(pid)/'stat').read_text();v=raw.rsplit(')',1)[1].split();return {'pid':pid,'start_ticks':v[19],'pgid':int(v[2]),'state':v[0],'start_stat':raw}
+def save(name,value):
+ with (R/'raw'/name).open('x') as f:json.dump(value,f,indent=2);f.flush();os.fsync(f.fileno())
+def query(argv):
+ at=now()
+ try:c=subprocess.run(argv,capture_output=True,text=True,timeout=12);d={'at':at,'argv':argv,'actual_exit':c.returncode,'stdout':c.stdout,'stderr':c.stderr}
+ except Exception as e:d={'at':at,'argv':argv,'actual_exit':None,'error':repr(e)}
+ with (R/'raw/resource-observations.jsonl').open('a') as f:f.write(json.dumps(d)+'\n');f.flush();os.fsync(f.fileno())
+ if d['actual_exit']!=0:raise RuntimeError('unknown resource query')
+ return d['stdout']
+def health():
+ g=E.fromstring(query(['/usr/bin/nvidia-smi','-i',UUID,'-q','-x'])).find('gpu')
+ for key,value in {'uuid':UUID,'gpu_recovery_action':'None','compute_mode':'Default','remapped_rows/remapped_row_pending':'No','remapped_rows/remapped_row_failure':'No','ecc_errors/volatile/sram_uncorrectable_parity':'0','ecc_errors/volatile/sram_uncorrectable_secded':'0','ecc_errors/volatile/dram_uncorrectable':'0'}.items():assert g.findtext(key)==value,(key,g.findtext(key))
+ return g
+m=json.loads((R/'source/runtime-source-manifest.json').read_text())
+for name,value in m.items():
+ f=R/name;assert f.resolve(strict=True)==f and f.stat().st_nlink==1 and hashlib.sha256(f.read_bytes()).hexdigest()==value['sha256']
+pre=[]
+for i in range(3):
+ g=health();pids=[x.findtext('pid') for x in g.findall('processes/process_info')];assert not pids
+ assert int(g.findtext('fb_memory_usage/free').split()[0])>8192 and int(g.findtext('utilization/gpu_util').split()[0])==0
+ pre.append({'at':now(),'uuid':UUID,'index':INDEX,'pids':pids,'used':g.findtext('fb_memory_usage/used'),'free':g.findtext('fb_memory_usage/free'),'compute':g.findtext('utilization/gpu_util'),'health':g.findtext('gpu_recovery_action')})
+ if i<2:time.sleep(1)
+save('prelaunch.json',{'samples':pre,'concurrency':1,'CPU_threads':2,'RAM_target_GiB':8,'GPU_memory_target_MiB':4096,'whole_budget_seconds':7200,'method':'fixed scientific24 calculation, sampled own-only resource control, no generic workflow engine','host_loadavg':Path('/proc/loadavg').read_text()})
+env={'PATH':str(Path(python).parent)+':/usr/bin:/bin','ADMET_RUN_ROOT':str(R),'CUDA_VISIBLE_DEVICES':UUID,'HOME':str(R/'home'),'TMPDIR':str(R/'tmp'),'JOBLIB_MULTIPROCESSING':'0','PYTHONDONTWRITEBYTECODE':'1','LD_PRELOAD':str(R/'support/thread-names-v2.so'),'CUBLAS_WORKSPACE_CONFIG':':4096:8'}
+argv=['/usr/bin/strace','-f','-qq','-yy','-s','200','-e','trace=%file,write,writev,pwrite64,ftruncate,mmap,msync,close,dup,dup2,dup3,fchdir,fchmod,fchown,fsetxattr,fremovexattr,fallocate,copy_file_range,sendfile,landlock_create_ruleset,landlock_add_rule,landlock_restrict_self,prctl','-o',str(R/'raw/write.strace'),python,'-I','-B','-u',str(R/'source/compute.py')]
+with (R/'raw/train.log').open('xb') as log:
+ child=subprocess.Popen(argv,env=env,cwd=R,stdout=log,stderr=subprocess.STDOUT,stdin=subprocess.DEVNULL,start_new_session=True)
+ leader=ident(child.pid);owned={child.pid:leader};save('job-start.json',{'at':now(),'argv':argv,'identity':leader,'parent':ident(os.getpid()),'gpu_uuid':UUID,'gpu_index':INDEX});reason=None;rounds=0
+ try:
+  while child.poll() is None:
+   if cancel['requested'] or time.monotonic()-started>7200:reason='cancelled_or_total_compute_budget';break
+   f=R/'raw/compute-start.json'
+   if f.exists():
+    d=json.loads(f.read_text());ticks=d['start_stat'].rsplit(')',1)[1].split()[19]
+    try:v=ident(d['pid'])
+    except FileNotFoundError:v=None
+    if v is not None:
+     assert v['start_ticks']==ticks and v['pgid']==child.pid;owned[v['pid']]=v
+     rss=[int(x.split()[1]) for x in (Path('/proc')/str(v['pid'])/'status').read_text().splitlines() if x.startswith('VmRSS:')]
+     if rss and rss[0]>8*1024**2:reason='own_RSS_exceeds8GiB';break
+   apps=query(['/usr/bin/nvidia-smi','-i',UUID,'--query-compute-apps=gpu_uuid,pid,used_gpu_memory','--format=csv,noheader,nounits']);selected=[]
+   for line in apps.splitlines():
+    a=[x.strip() for x in line.split(',')]
+    if a[0]==UUID:selected.append((int(a[1]),int(a[2])))
+   if any(pid not in owned for pid,mem in selected):reason='other_selected_GPU_job_appeared';break
+   if sum(mem for pid,mem in selected)>4096:reason='own_total_GPU_memory_exceeds4GiB';break
+   query(['/usr/bin/nvidia-smi','pmon','-i','5','-s','um','-c','1']);rounds+=1
+   if rounds%4==0:health()
+   available=[int(x.split()[1]) for x in Path('/proc/meminfo').read_text().splitlines() if x.startswith('MemAvailable:')][0]
+   if available<32*1024**2:reason='host_available_memory_below32GiB';break
+   with (R/'raw/host-observations.jsonl').open('a') as f:f.write(json.dumps({'at':now(),'loadavg':Path('/proc/loadavg').read_text(),'available_memory_KiB':available})+'\n')
+   time.sleep(1)
+ except Exception as e:reason='monitor_unknown:'+repr(e)
+ finally:
+  signals=[]
+  if child.poll() is None:
+   for old in reversed(list(owned.values())):
+    try:
+     if ident(old['pid'])['start_ticks']!=old['start_ticks']:continue
+     h=os.pidfd_open(old['pid']);signal.pidfd_send_signal(h,signal.SIGTERM);os.close(h);signals.append({'pid':old['pid'],'signal':15,'handle':'pidfd'})
+    except (FileNotFoundError,ProcessLookupError):pass
+   try:child.wait(timeout=3)
+   except subprocess.TimeoutExpired:
+    for old in reversed(list(owned.values())):
+     try:
+      if ident(old['pid'])['start_ticks']!=old['start_ticks']:continue
+      h=os.pidfd_open(old['pid']);signal.pidfd_send_signal(h,signal.SIGKILL);os.close(h);signals.append({'pid':old['pid'],'signal':9,'handle':'pidfd'})
+     except (FileNotFoundError,ProcessLookupError):pass
+    child.wait(timeout=3)
+  code=child.wait();elapsed=time.monotonic()-started;done=(R/'raw/study-complete.json').exists()
+  save('job-exit.json',{'at':now(),'actual_strace_wait_exit':code,'reason':reason,'elapsed_seconds':elapsed,'own_identities':list(owned.values()),'signals':signals,'science_complete_file':done,'monitor_rounds':rounds})
+print(json.dumps({'actual_strace_wait_exit':code,'reason':reason,'elapsed_seconds':elapsed,'complete':done}))
+raise SystemExit(0 if code==0 and reason is None and done else 70)

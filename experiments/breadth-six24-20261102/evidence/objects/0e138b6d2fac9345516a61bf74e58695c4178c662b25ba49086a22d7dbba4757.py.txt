@@ -1,0 +1,255 @@
+"""Main independent synthetic checks. No training, pretrained weights or valid Y.
+
+Run with existing mini scientific dependencies. All file writes are within the
+given work directory. Production learning entry is replaced only to capture its
+arguments; parameter-update calls are prohibited throughout this check.
+"""
+import ast
+import copy
+import csv
+import json
+from pathlib import Path
+import sys
+from unittest.mock import patch
+
+import numpy as np
+import torch
+from admet_breadth import common, cache, data_io, heads, metrics, pipeline, trainer
+from admet_breadth.encoder import CheMeleonEmbedder
+from admet_breadth.predictions_io import export_submission, check_coverage
+
+torch.set_num_threads(2)
+data_root, contract_path, work = map(Path, sys.argv[1:4])
+work.mkdir(parents=True, exist_ok=True)
+contract = metrics.load_task_metrics(contract_path)
+checks = []
+
+def check(name, fn):
+    fn()
+    checks.append(name)
+
+def refuses(fn):
+    try:
+        fn()
+    except (common.InterfaceError, TypeError):
+        return
+    raise AssertionError("invalid input accepted")
+
+def cfg(task):
+    return dict(
+        run_id="synthetic-" + task, task=task, kind=common.task_kind(task),
+        pretrained_sha256=common.CHEMELEON_SHA256,
+        head=dict(feature_dim=2048, hidden_dim=128, activation="relu", dropout=.1,
+                  optimizer="AdamW", lr=.0003, weight_decay=.0001,
+                  batch_size=128, max_epochs=50, patience=8, seed=44),
+        split=dict(method="raw_smiles_group_shuffle", seed=43, stop_fraction=.1),
+        monitor_metric=contract[task]["metric"],
+        monitor_direction=contract[task]["direction"])
+
+class FixtureEmbedder:
+    feature_dim = 2048
+    def embed(self, strings):
+        # Explicitly synthetic features, not CheMeleon output.
+        return (np.repeat(np.arange(len(strings), dtype=np.float32)[:, None],
+                          2048, axis=1), np.ones(len(strings), dtype=bool))
+
+def synthetic_pipeline(task):
+    root = work / "synthetic" / task
+    root.mkdir(parents=True, exist_ok=True)
+    p = pipeline.TaskPipeline(task, root, root, contract_path)
+    p.rows = {
+        "train": [dict(Drug_ID="duplicate" if i < 2 else "", Drug="fixture"+str(i),
+                       Y=str(i % 2 if p.kind == "classification" else 10+4*i))
+                  for i in range(5)],
+        "valid": [dict(Drug_ID="", Drug="blind-fixture"+str(i)) for i in range(3)],
+        "test": [dict(Drug_ID="duplicate", Drug="blind-fixture"+str(i)) for i in range(3)]}
+    p.source_sha = {s: common.sha256_hex(common.canonical_json_bytes(rows))
+                    for s, rows in p.rows.items()}
+    p.make_internal_split()
+    p.build_cache(FixtureEmbedder())
+    return p
+
+def fit_only_and_pipeline():
+    p = synthetic_pipeline("caco2_wang")
+    X, _ = p.load_cache("train")
+    fit, stop = p.split_record["fit_row_indices"], p.split_record["stop_row_indices"]
+    p.fit_transforms()
+    np.testing.assert_allclose(p.scaler.mean, X[fit].mean(axis=0))
+    assert p.scaler.fit_n_rows == len(fit)
+    mu = p.scaler.mean.copy()
+    # Change only stop rows in a valid new cache; fit statistics remain unchanged.
+    class StopOutlier(FixtureEmbedder):
+        def embed(self, strings):
+            features, mask = super().embed(strings)
+            for i, text in enumerate(strings):
+                if text == p.rows["train"][stop[0]]["Drug"]:
+                    features[i] = 1000000.
+            return features, mask
+    p.build_cache(StopOutlier())
+    p.fit_transforms()
+    np.testing.assert_array_equal(mu, p.scaler.mean)
+    refuses(lambda: p.fit_transforms(X))
+    refuses(lambda: cache.fit_feature_scaler(X, fit))
+    captured = {}
+    def no_learning(**kwargs):
+        captured.update(kwargs)
+        return "fixture-model", {"no_learning": True}
+    with patch.object(pipeline, "train_head", no_learning):
+        model, _ = p.fit_head(cfg(p.task), "cpu", preparation=False)
+    assert model == "fixture-model"
+    raw = np.array(data_io.train_labels(p.rows["train"], p.task))
+    np.testing.assert_array_equal(captured["y_stop"], raw[stop])
+    np.testing.assert_allclose(captured["y_fit"], p.target_scaler.transform(raw[fit]), atol=1e-6)
+    p.split_record["fit_row_indices"].append(stop[0])
+    refuses(p.fit_transforms)
+
+def stop_scale():
+    scaler = cache.TargetScaler(mean=12., std=2.)
+    # Model logits [1,4] mean original predictions [14,20].
+    r = trainer.evaluate_stop("regression", [1.,4.], [14.,20.],
+                              metrics.EarlyStopMonitor("MAE","minimize"), 1, scaler)
+    assert r["value"] == 0.
+    r = trainer.evaluate_stop("regression", [1.,4.], [13.,18.],
+                              metrics.EarlyStopMonitor("MAE","minimize"), 1, scaler)
+    assert r["value"] == 1.5
+    r = trainer.evaluate_stop("classification", [-10.,10.], [0.,1.],
+                              metrics.EarlyStopMonitor("AUROC","maximize"), 1)
+    assert r["value"] == 1.
+
+def bad_metrics():
+    m = metrics.EarlyStopMonitor("Spearman","maximize")
+    refuses(lambda: m.observe([0.,1.,2.],[3.,3.,3.],1))
+    refuses(lambda: m.observe([0.,1.,2.],[0.,1.,2.],2))
+    assert m.best_epoch is None and m.undefined_epochs == [1]
+    m = metrics.EarlyStopMonitor("MAE","minimize")
+    refuses(lambda: m.observe([0.,1.],[0.,float("nan")],1))
+    refuses(lambda: m.observe([0.,1.],[0.,1.],2))
+    for f in [metrics.auroc, metrics.average_precision]:
+        refuses(lambda f=f: f([.2,1.],[.1,.9]))
+    assert metrics.auroc([0,0,1,1],[.1,.4,.35,.8]) == .75
+    assert abs(metrics.average_precision([0,0,1,1],[.1,.4,.35,.8])-5/6) < 1e-12
+    assert metrics.auroc([0,1],[.5,.5]) == .5
+    assert metrics.average_precision([0,1],[.5,.5]) == .5
+    assert metrics.spearman([1,1,2],[3,3,1]) == -1.
+    tie = metrics.EarlyStopMonitor("MAE","minimize")
+    tie.observe([0.,1.],[.2,1.2],1)
+    tie.observe([0.,1.],[.2,1.2],2)
+    assert tie.best_epoch == 1 and tie.should_stop(9,8)
+
+def configuration():
+    for task in common.TASKS:
+        trainer.validate_config(cfg(task), contract)
+        wrong = cfg(task)
+        wrong["monitor_metric"] = "MAE" if wrong["kind"] == "classification" else "AUROC"
+        wrong["monitor_direction"] = "minimize" if wrong["monitor_metric"] == "MAE" else "maximize"
+        refuses(lambda: trainer.validate_config(wrong, contract))
+    wrong = cfg("ames"); wrong["pretrained_sha256"] = "0"*64
+    refuses(lambda: trainer.validate_config(wrong,contract))
+    p = synthetic_pipeline("caco2_wang"); p.fit_transforms()
+    refuses(lambda: p.fit_head(cfg("ppbr_az"),"cpu",preparation=False))
+
+def selection_and_freeze():
+    m = heads.build_head(2048,128,.1,44)
+    different = heads.build_head(2048,128,.1,45)
+    chosen = copy.deepcopy(m.state_dict())
+    last = copy.deepcopy(different.state_dict())
+    assert not torch.equal(chosen["0.weight"], last["0.weight"])
+    trainer.restore_best_head(different,chosen)
+    for k in chosen:
+        assert torch.equal(chosen[k],different.state_dict()[k])
+    assert not different.training
+    # Actual encoder invariant method, on a tiny synthetic module (no asset load).
+    enc = CheMeleonEmbedder.__new__(CheMeleonEmbedder)
+    enc.model = torch.nn.BatchNorm1d(2).eval()
+    for par in enc.model.parameters(): par.requires_grad_(False)
+    enc.frozen_state = enc.state_digest()
+    enc.assert_frozen()
+    # Loading another fixture buffer state tests the rejection; no optimization.
+    state = copy.deepcopy(enc.model.state_dict())
+    state["running_mean"] = torch.ones(2)
+    enc.model.load_state_dict(state)
+    refuses(enc.assert_frozen)
+    tree = ast.parse(Path(trainer.__file__).read_text())
+    f = next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=="train_head")
+    calls = {n.func.id for n in ast.walk(f) if isinstance(n,ast.Call) and isinstance(n.func,ast.Name)}
+    assert {"evaluate_stop","restore_best_head"} <= calls
+
+def checkpoint_roundtrip():
+    p=synthetic_pipeline("caco2_wang");p.fit_transforms()
+    m=p.new_head(128,.1,44).eval()
+    expected=p.predict_split(m,"test","cpu")
+    path=work/"fixture_untrained_head.pt"
+    heads.save_head(path,task=p.task,kind=p.kind,model=m,
+                    scaler_dict=p.scaler.to_dict(),
+                    target_scaler_dict=p.target_scaler.to_dict(),
+                    train_config=cfg(p.task)["head"])
+    loaded,_,scaler,target=heads.load_head(path,"cpu")
+    p.scaler,p.target_scaler=scaler,target
+    assert p.predict_split(loaded,"test","cpu")==expected
+    for key in m.state_dict():
+        assert torch.equal(m.state_dict()[key],loaded.state_dict()[key])
+
+def cache_rejection():
+    p=synthetic_pipeline("ames")
+    rows=p.rows["test"]; sha=p.source_sha["test"]; cr=p.cache_dir()
+    refuses(lambda: cache.load_raw_cache(cr,p.task,"test",rows[::-1],sha))
+    refuses(lambda: cache.load_raw_cache(cr,p.task,"test",rows,"wrong"))
+    arr, mask, meta=cache.cache_paths(cr,p.task,"test")
+    raw=arr.read_bytes(); arr.write_bytes(raw[:-4]+b"xxxx")
+    refuses(lambda:p.load_cache("test"));arr.write_bytes(raw)
+    md=json.loads(meta.read_text());md["contract"]["encoder_checkpoint_sha256"]="wrong"
+    meta.write_text(json.dumps(md))
+    refuses(lambda:p.load_cache("test"))
+    class BadFinite(FixtureEmbedder):
+        def embed(self,strings):
+            X,ok=super().embed(strings);X[0,0]=np.nan;return X,ok
+    refuses(lambda: cache.build_raw_cache(BadFinite(),"ames","test",rows,sha,work/"bad"))
+    refuses(lambda: cache.fill_raw(np.array([[np.inf]],dtype=np.float32)))
+
+def all_tasks_and_template():
+    totals={s:0 for s in ("train","valid","test")}
+    outputs=[]
+    for task in common.TASKS:
+        p=pipeline.TaskPipeline(task,data_root,work/"profile"/task,contract_path)
+        counts=p.load();p.make_internal_split()
+        for s,n in counts.items():totals[s]+=n
+        data_io.train_labels(p.rows["train"],task)
+        q=synthetic_pipeline(task);q.fit_transforms()
+        model=q.new_head(128,.1,44);before=copy.deepcopy(model.state_dict())
+        recs=q.predict_split(model,"test","cpu")
+        assert check_coverage(recs,{(task,"test",i) for i in range(3)})["ok"]
+        assert all(torch.equal(before[k],model.state_dict()[k]) for k in before)
+        outputs.extend(dict(task=task,split="test",row_index=i,
+                            y_pred=.5 if p.kind=="classification" else 0.)
+                       for i in range(counts["test"]))
+    assert totals==dict(train=53695,valid=11735,test=16379)
+    template=data_root/"submission_template.csv";dest=work/"submission_FIXTURE.csv"
+    export_submission(template,outputs,dest,fixture=True)
+    with template.open(encoding="utf-8-sig",newline="") as f:a=list(csv.reader(f))
+    with dest.open(encoding="utf-8-sig",newline="") as f:b=list(csv.reader(f))
+    assert a[0]==b[0]
+    assert all(x[:4]+x[5:]==y[:4]+y[5:] for x,y in zip(a[1:],b[1:]))
+    assert len(a)==len(b)==16380
+    assert template.read_bytes().startswith(b"\xef\xbb\xbf")==dest.read_bytes().startswith(b"\xef\xbb\xbf")
+    for rows in [outputs[:-1],outputs+[outputs[0]],outputs+[dict(task="ames",split="test",row_index=999999,y_pred=.5)]]:
+        refuses(lambda:export_submission(template,rows,work/"invalid.csv",fixture=True))
+    bad=copy.deepcopy(outputs);bad[0]["y_pred"]=1.1
+    refuses(lambda:export_submission(template,bad,work/"invalid.csv",fixture=True))
+    print(json.dumps({"real_input_counts":totals,"synthetic_pipeline_tasks":22,
+                      "synthetic_template_rows":len(outputs)}))
+
+def forbidden(*a,**k): raise AssertionError("parameter update forbidden in acceptance")
+with patch.object(torch.Tensor,"backward",forbidden), patch.object(torch.optim.AdamW,"step",forbidden):
+    for name,fn in [
+        ("fit_only_production_boundary_and_raw_stop_transfer",fit_only_and_pipeline),
+        ("production_monitor_scale",stop_scale),
+        ("undefined_nonfinite_binary_ties",bad_metrics),
+        ("all22_configuration_and_task_identity",configuration),
+        ("best_head_selection_and_buffer_freeze",selection_and_freeze),
+        ("safe_untrained_head_roundtrip",checkpoint_roundtrip),
+        ("cache_identity_nonfinite",cache_rejection),
+        ("all22_data_and_synthetic_prediction_template",all_tasks_and_template)]:
+        check(name,fn)
+print(json.dumps({"passed":checks,"count":len(checks),"training_steps":0,
+                  "pretrained_weights_loaded":False,"valid_Y_read":False,
+                  "real_CUDA_and_learning":"not_verified"},ensure_ascii=False))

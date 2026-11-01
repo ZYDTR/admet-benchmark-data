@@ -1,0 +1,105 @@
+"""Exact host metric functions; no trainer or returned model code."""
+from __future__ import annotations
+import math
+from typing import Any
+class HarnessError(ValueError):
+    def __init__(self, code, message, details=None):
+        super().__init__(code+": "+message)
+METRICS = {"MAE":("regression","mean_absolute_error","minimize"), "Spearman":("regression","pearson_correlation_of_average_ranks","maximize"), "AUROC":("classification","mann_whitney_average_ranks","maximize"), "AUPRC":("classification","average_precision","maximize")}
+
+def _average_ranks(values: list[float]) -> list[float]:
+    order = sorted(range(len(values)), key=values.__getitem__)
+    ranks = [0.0] * len(values)
+    start = 0
+    while start < len(order):
+        stop = start + 1
+        while stop < len(order) and values[order[stop]] == values[order[start]]:
+            stop += 1
+        rank = (start + 1 + stop) / 2.0
+        for position in range(start, stop):
+            ranks[order[position]] = rank
+        start = stop
+    return ranks
+
+def _mae(pairs: list[tuple[float, float]]) -> float:
+    errors = [abs(truth - prediction) for truth, prediction in pairs]
+    if all(math.isfinite(error) for error in errors):
+        scale = max(errors)
+        return 0.0 if scale == 0.0 else scale * (math.fsum(error / scale for error in errors) / len(errors))
+    # Finite operands can overflow on subtraction. Scale first in that case;
+    # an unrepresentable final result is rejected by the caller.
+    scale = max(abs(value) for pair in pairs for value in pair)
+    return scale * (math.fsum(abs(truth / scale - prediction / scale)
+                             for truth, prediction in pairs) / len(pairs))
+
+def _spearman(pairs: list[tuple[float, float]]) -> float:
+    left = _average_ranks([truth for truth, _ in pairs])
+    right = _average_ranks([prediction for _, prediction in pairs])
+    mean = (len(pairs) + 1) / 2.0
+    left = [value - mean for value in left]
+    right = [value - mean for value in right]
+    covariance = math.fsum(x * y for x, y in zip(left, right))
+    result = covariance / math.sqrt(math.fsum(x * x for x in left)) / math.sqrt(math.fsum(y * y for y in right))
+    return max(-1.0, min(1.0, result))
+
+def _auroc(pairs: list[tuple[float, float]]) -> float:
+    positive = sum(truth == 1.0 for truth, _ in pairs)
+    negative = len(pairs) - positive
+    ranks = _average_ranks([prediction for _, prediction in pairs])
+    rank_sum = math.fsum(rank for rank, (truth, _) in zip(ranks, pairs) if truth == 1.0)
+    return (rank_sum - positive * (positive + 1) / 2.0) / (positive * negative)
+
+def _average_precision(pairs: list[tuple[float, float]]) -> float:
+    ordered = sorted(pairs, key=lambda pair: pair[1], reverse=True)
+    positives = sum(truth == 1.0 for truth, _ in pairs)
+    start = cumulative_positive = 0
+    terms = []
+    while start < len(ordered):
+        stop = start + 1
+        while stop < len(ordered) and ordered[stop][1] == ordered[start][1]:
+            stop += 1
+        group_positive = sum(truth == 1.0 for truth, _ in ordered[start:stop])
+        cumulative_positive += group_positive
+        terms.append((group_positive / positives) * (cumulative_positive / stop))
+        start = stop
+    return math.fsum(terms)
+
+def _task_result(task: dict[str, str], pairs: list[tuple[float, float]], missing: int) -> dict[str, Any]:
+    metric = task["metric"]
+    result: dict[str, Any] = {
+        "kind": task["kind"], "metric": metric, "n": len(pairs), "missing": missing,
+        "records": len(pairs) + missing, "status": "undefined", "value": None, "reason": None,
+        "local_definition": METRICS[metric][1], "direction": METRICS[metric][2],
+        "official_equivalence": "unconfirmed", "label_contract_status": task["label_contract_status"],
+    }
+    if task["kind"] == "classification":
+        result["n_positive"] = sum(truth == 1.0 for truth, _ in pairs)
+        result["n_negative"] = len(pairs) - result["n_positive"]
+        result["one_class_policy"] = "undefined_for_local_model_comparison"
+    if not pairs:
+        result["reason"] = "no_labeled_records" if missing else "no_records"
+        return result
+    if task["kind"] == "classification" and (result["n_positive"] == 0 or result["n_negative"] == 0):
+        result["reason"] = "one_class"
+        return result
+    if metric == "Spearman":
+        if len(pairs) < 2:
+            result["reason"] = "insufficient_samples"
+            return result
+        constant_true = len({truth for truth, _ in pairs}) == 1
+        constant_pred = len({prediction for _, prediction in pairs}) == 1
+        if constant_true or constant_pred:
+            result["reason"] = ("constant_true_and_prediction" if constant_true and constant_pred
+                                else "constant_true" if constant_true else "constant_prediction")
+            return result
+    function = {"MAE": _mae, "Spearman": _spearman, "AUROC": _auroc, "AUPRC": _average_precision}[metric]
+    try:
+        value = function(pairs)
+    except (OverflowError, ZeroDivisionError) as exc:
+        raise HarnessError("EVALUATION_NUMERIC_ERROR", "Metric could not be computed as a finite number.",
+                           {"metric": metric}) from exc
+    if not math.isfinite(value):
+        raise HarnessError("EVALUATION_NUMERIC_ERROR", "Metric result exceeds finite floating-point range.",
+                           {"metric": metric})
+    result.update({"status": "ok", "value": value})
+    return result

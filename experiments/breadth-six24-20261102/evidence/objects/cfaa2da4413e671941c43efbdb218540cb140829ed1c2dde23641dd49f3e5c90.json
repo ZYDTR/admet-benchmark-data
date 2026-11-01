@@ -1,0 +1,123 @@
+[
+  {
+    "issue_id": "ISS-CACO2-MONITOR-01",
+    "status": "open",
+    "severity": "medium",
+    "category": "scientific_comparison",
+    "statement": "MAE monitor appears descriptively better in 2/3 seeds but no independent generalization or significance claim is supported.",
+    "affected_run_ids": [
+      "hainan-agentled-mse-s44-20261102",
+      "hainan-agentled-mse-s45-20261102",
+      "hainan-agentled-mse-s46-20261102",
+      "hainan-agentled-mae-s44-20261102",
+      "hainan-agentled-mae-s45-20261102",
+      "hainan-agentled-mae-s46-20261102"
+    ],
+    "evidence_refs": [
+      "turn432510view0",
+      "turn906269view2"
+    ],
+    "hypothesis": "Raw-scale MAE early stopping may better align selection with external MAE.",
+    "counterevidence": "Seed46 favors MSE; only three seeds and the same reused 91-row validation set; seed46 MSE resumed checkpoint and runtime/cache paths differ.",
+    "impact": "Do not replace MSE globally; preserve monitor as Caco2-only candidate.",
+    "proposed_resolution": "If separately authorized, confirm on matched fresh seeds and fixed split with identical cached representation path and checkpoint policy.",
+    "verification_criterion": "Paired deltas across preregistered seeds plus full execution identity; no p-value from three seeds.",
+    "related_proposal_ids": []
+  },
+  {
+    "issue_id": "ISS-RUNNER-21TASK-02",
+    "status": "open",
+    "severity": "high",
+    "category": "implementation_readiness",
+    "statement": "The new Caco2 branch proves caching and checkpoint resume only for Caco2; the other 21 task interfaces remain unverified.",
+    "affected_run_ids": [],
+    "evidence_refs": [
+      "turn432510view3",
+      "turn525567view4"
+    ],
+    "hypothesis": "A zero-fit preparation stage can validate task-specific input/output, target transforms and scoring before training.",
+    "counterevidence": "Historical Mini22 implementation and task metrics provide reusable evidence, but not proof of current runner support.",
+    "impact": "All non-Caco2 training proposals remain blocked_assets until task fixtures pass.",
+    "proposed_resolution": "Prepare one-task fixtures and validate train-only fit transforms, frozen encoder checks, prediction scale and template row mapping.",
+    "verification_criterion": "Per-task fixture passes with exact task/split/row_index mapping and immutable encoder/buffer hashes.",
+    "related_proposal_ids": []
+  },
+  {
+    "issue_id": "ISS-DATA-PROFILE-03",
+    "status": "open",
+    "severity": "high",
+    "category": "data_quality",
+    "statement": "Task-level history shows extreme sample-size and class-balance differences; solubility valid skeleton anomaly is flagged in historical review.",
+    "affected_run_ids": [],
+    "evidence_refs": [
+      "turn917600view1",
+      "turn917600view2"
+    ],
+    "hypothesis": "Adaptive task selection improves information per unit compute compared with uniform shallow tuning.",
+    "counterevidence": "Selection may bias toward easy/large tasks and historical splits may not match current task source state.",
+    "impact": "Do not launch broad screen before raw per-task manifest/profile audit.",
+    "proposed_resolution": "Audit raw train/valid/test row counts, missingness, label classes, SMILES/scaffold groups and target distributions without modifying rows.",
+    "verification_criterion": "Signed per-task profile table; no cleaning/deduplication/relabelling; all row IDs reconciled.",
+    "related_proposal_ids": []
+  },
+  {
+    "issue_id": "ISS-VALID-ADAPT-04",
+    "status": "open",
+    "severity": "high",
+    "category": "evaluation_bias",
+    "statement": "Validation has been reused across historical comparisons; a new Chat session does not reset adaptive overfitting.",
+    "affected_run_ids": [],
+    "evidence_refs": [
+      "turn525567view0",
+      "turn917600view4"
+    ],
+    "hypothesis": "Predeclared screen/confirm stages and task-level aggregate feedback reduce opportunistic selection.",
+    "counterevidence": "Official rules permit valid tuning, so strict one-look policy is recommendation rather than hard rule.",
+    "impact": "Treat improvements as selection-stage evidence, not final generalization.",
+    "proposed_resolution": "Record every valid use, predeclare candidate and decision rules, keep row-level truth/residual private.",
+    "verification_criterion": "Evaluation-use ledger updated and every score linked to run/task/split/metric/receipt.",
+    "related_proposal_ids": []
+  },
+  {
+    "issue_id": "ISS-RESOURCE-SHARING-05",
+    "status": "open",
+    "severity": "high",
+    "category": "runtime_compliance",
+    "statement": "GPU0 sharing failure remains a failure; GPU1 acceptance is limited to the observed idle-resident serial small-head branch.",
+    "affected_run_ids": [
+      "hainan-agentled-mse-s44-20261102",
+      "hainan-agentled-mse-s45-20261102",
+      "hainan-agentled-mse-s46-20261102",
+      "hainan-agentled-mae-s44-20261102",
+      "hainan-agentled-mae-s45-20261102",
+      "hainan-agentled-mae-s46-20261102"
+    ],
+    "evidence_refs": [
+      "turn567649view1"
+    ],
+    "hypothesis": "A narrow GPU1 low-load serial branch may be operationally viable under fresh prechecks.",
+    "counterevidence": "No direct resident workload latency/throughput proof; one historical observation missing; no universal concurrent safety evidence.",
+    "impact": "Never generalize to arbitrary shared GPU or erase GPU0 failed attempts.",
+    "proposed_resolution": "Require fresh health, ownership and resource checks; abort on observed contention; report all failed attempts separately.",
+    "verification_criterion": "Per-run resource observations and explicit branch scope; no claim of zero impact without direct measurement.",
+    "related_proposal_ids": []
+  },
+  {
+    "issue_id": "ISS-EVIDENCE-READ-06",
+    "status": "open",
+    "severity": "high",
+    "category": "evidence_completeness",
+    "statement": "The required 23 original-source reading contract was not completed in this session.",
+    "affected_run_ids": [],
+    "evidence_refs": [
+      "turn556217view0",
+      "turn556217view1"
+    ],
+    "hypothesis": "Remaining sources can be read through exact registered URIs in a subsequent audit pass.",
+    "counterevidence": "No evidence that unread sources are inaccessible; current limitation is not attempted or not completed reading.",
+    "impact": "Scientific status remains needs_evidence; Q2/Q3 and row-identity claims are bounded.",
+    "proposed_resolution": "Read each remaining R-entry at its exact URI, capture commit/SHA, line count and observed facts.",
+    "verification_criterion": "23/23 entry_ids with original read evidence and all Q0-Q7 dependencies cross-referenced.",
+    "related_proposal_ids": []
+  }
+]

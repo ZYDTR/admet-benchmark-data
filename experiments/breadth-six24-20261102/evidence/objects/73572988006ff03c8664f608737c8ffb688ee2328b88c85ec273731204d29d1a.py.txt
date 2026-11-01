@@ -1,0 +1,148 @@
+"""Shared constants and stdlib file helpers for the breadth ADMET interface.
+
+Import-safe: no torch, no network, no file writes at import time.
+Row identity contract (SKILL 3.0.0 / TASK.md): a row is addressed by
+(task, split, original 0-based row index). Drug_ID is an attribute that may be
+blank or repeat; it is never a primary key and rows are never deduplicated.
+"""
+
+from __future__ import annotations
+
+import csv
+import hashlib
+import json
+import math
+import os
+import zlib
+from pathlib import Path
+from typing import Any, Iterable, Mapping, Sequence
+
+TASKS: tuple[str, ...] = (
+    "ames", "bbb_martins", "bioavailability_ma", "caco2_wang",
+    "clearance_hepatocyte_az", "clearance_microsome_az",
+    "cyp2c9_substrate_carbonmangels", "cyp2c9_veith",
+    "cyp2d6_substrate_carbonmangels", "cyp2d6_veith",
+    "cyp3a4_substrate_carbonmangels", "cyp3a4_veith", "dili",
+    "half_life_obach", "herg", "hia_hou", "ld50_zhu",
+    "lipophilicity_astrazeneca", "pgp_broccatelli", "ppbr_az",
+    "solubility_aqsoldb", "vdss_lombardo",
+)
+
+NEW_INTERFACES: tuple[str, ...] = tuple(t for t in TASKS if t != "caco2_wang")
+COMPAT_REFERENCE_TASK = "caco2_wang"
+
+CLASSIFICATION_TASKS: frozenset[str] = frozenset({
+    "ames", "bbb_martins", "bioavailability_ma",
+    "cyp2c9_substrate_carbonmangels", "cyp2c9_veith",
+    "cyp2d6_substrate_carbonmangels", "cyp2d6_veith",
+    "cyp3a4_substrate_carbonmangels", "cyp3a4_veith",
+    "dili", "herg", "hia_hou", "pgp_broccatelli",
+})
+
+REGRESSION_TASKS: frozenset[str] = frozenset(TASKS) - CLASSIFICATION_TASKS
+
+# Frozen scientific asset identity (input/context/asset.json, verified on download).
+CHEMELEON_SHA256 = "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651"
+CHEMELEON_MD5 = "6a80b54fdb7de37ef0374d302f01e8ce"
+CHEMELEON_SIZE = 34859448
+CHEMELEON_URL = "https://zenodo.org/records/15460715/files/chemeleon_mp.pt"
+FEATURE_DIM = 2048
+
+# Policy for rows RDKit cannot parse: keep the row, keep the explicit mask,
+# fill the raw embedding with this constant (existing zero-fill strategy).
+GLOBAL_FILL_VALUE = 0.0
+
+SPLITS: tuple[str, ...] = ("train", "valid", "test")
+
+TEMPLATE_ROWS = 16379
+
+
+class InterfaceError(ValueError):
+    """Raised for invalid configuration, identity, cache or export inputs."""
+
+
+def task_kind(task: str) -> str:
+    if task not in TASKS:
+        raise InterfaceError(f"unknown task: {task!r}")
+    return "classification" if task in CLASSIFICATION_TASKS else "regression"
+
+
+def read_csv_rows(path: Path | str) -> list[dict[str, str]]:
+    """Read a split CSV preserving every original row in file order.
+
+    utf-8-sig absorbs the BOM where present (test files and template carry one);
+    LF/CRLF both handled by newline="". No field is modified.
+    """
+    with open(path, newline="", encoding="utf-8-sig") as fh:
+        return list(csv.DictReader(fh))
+
+
+def sha256_file(path: Path | str) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def sha256_hex(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def canonical_json_bytes(obj: Any) -> bytes:
+    return json.dumps(obj, sort_keys=True, separators=(",", ":"),
+                      ensure_ascii=False, allow_nan=False).encode("utf-8")
+
+
+def write_json(path: Path, obj: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    with open(tmp, "w", encoding="utf-8") as fh:
+        json.dump(obj, fh, ensure_ascii=False, indent=2)
+        fh.write("\n")
+    os.replace(tmp, path)
+
+
+def read_json(path: Path | str) -> Any:
+    with open(path, encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def _is_number(x: Any) -> bool:
+    return isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(float(x))
+
+
+def array_digest(arr: Any) -> dict[str, Any]:
+    """Content-bound digest of a numpy array (shape/dtype/bytes/finiteness)."""
+    import numpy as np
+    a = np.asarray(arr)
+    raw = a.tobytes(order="C")
+    return {
+        "shape": list(a.shape),
+        "dtype": str(a.dtype),
+        "c_contiguous": bool(a.flags["C_CONTIGUOUS"]),
+        "bytes": len(raw),
+        "sha256": sha256_hex(raw),
+        "crc32": format(zlib.crc32(raw) & 0xFFFFFFFF, "08x"),
+        "nan_count": int(np.isnan(a).sum()) if np.issubdtype(a.dtype, np.floating) else 0,
+        "inf_count": int(np.isinf(a).sum()) if np.issubdtype(a.dtype, np.floating) else 0,
+    }
+
+
+def row_identity_sha256(rows: Sequence[Mapping[str, str]]) -> str:
+    """Digest over the FULL ordered (Drug_ID, Drug) table of a split."""
+    return sha256_hex(canonical_json_bytes([[r["Drug_ID"], r["Drug"]] for r in rows]))
+
+
+def parse_float(value: Any, *, label: str, pos: int) -> float:
+    try:
+        v = float(value)
+    except (TypeError, ValueError):
+        raise InterfaceError(f"{label}: invalid numeric value at row index {pos}: {value!r}") from None
+    if not math.isfinite(v):
+        raise InterfaceError(f"{label}: non-finite value at row index {pos}: {value!r}")
+    return v
+
+
+def sorted_unique(items: Iterable[Any]) -> list[Any]:
+    return sorted(set(items))

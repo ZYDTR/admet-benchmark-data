@@ -1,0 +1,522 @@
+{
+  "schema_version": 2,
+  "request_id": "admet-agentled-six-pro-20261102-001",
+  "round_id": "six-seed-paired-and-breadth-20261102",
+  "manifest_sha256": "87788a22149be39cd7b41e68fc0a5df048bb9971a0878eaa1a755092292d2d0d",
+  "status": "needs_evidence",
+  "read_receipt_summary": {
+    "required_read_count": 23,
+    "completed_original_or_partial_reads": 18,
+    "fully_verified_23_of_23": false,
+    "note": "Receipts identify directly opened originals or explicitly partial/index-only reads. This is not a claim that 23/23 were completed; the remaining registered entries are listed as not_read."
+  },
+  "read_receipt_entry_ids": [
+    "R00-entry",
+    "R01-current",
+    "R02-rules",
+    "R03-research",
+    "R04-history",
+    "R05-issues",
+    "R06-assets",
+    "R07-shared",
+    "R09-source-decision-contract.json",
+    "R10-source-runner-evidence.md.txt",
+    "R12-source-review-output.json",
+    "R14-source-six-run-comparison.json",
+    "R15-source-evaluation-use-ledger.json",
+    "R16-source-scientific-assets.json",
+    "R17-prior-S-764562710384d47e",
+    "R18-prior-H-d5a45626b5031f31d644",
+    "R20-plus-official-contract-20261029",
+    "R20-plus-policy"
+  ],
+  "read_checks": [
+    {
+      "check_id": "C1",
+      "method": "Decimal arithmetic on the three paired score values in turn432510view0; compute d_s=MAEmonitor-MSEmonitor, arithmetic means and sample SD with n-1 denominator.",
+      "result": "d=[-0.01041466115384623,-0.01557688226373623,+0.00062561198901090]; means 0.4313630049157508433 and 0.4229076944395603233; paired mean -0.00845531047619052; paired-delta sample SD 0.00827704635187567.",
+      "status": "passed"
+    },
+    {
+      "check_id": "C2",
+      "method": "For each run compare total optimizer steps to resumed steps; new steps=total-resumed.",
+      "result": "MSE seed46: 185-30=155; other runs resumed=0.",
+      "status": "passed"
+    },
+    {
+      "check_id": "C3",
+      "method": "Count history ledger logical runs and task scoring entries; rely on context README and evaluation ledger, not number of tasks as number of runs.",
+      "result": "Context README records 11 logical runs and 32 formal task scores (1 Mini22 group + 10 Caco2 single-task logical runs). Main-controller Decimal recomputation does not add a formal score.",
+      "status": "partial"
+    },
+    {
+      "check_id": "C4",
+      "method": "Unique tuple count defined by schema: (asset, asset_versions, task, full scientific config, split, seed).",
+      "result": "No new experiment matrix authorized or verified; next_experiments is empty; proposed budget arithmetic only.",
+      "status": "passed"
+    },
+    {
+      "check_id": "C5",
+      "method": "Compare START_HERE/current README/failure report/runner evidence to separate scientific acceptance from resource compliance.",
+      "result": "Six scientific artifacts accepted for analysis; GPU0 failure retained; GPU1 narrow conditional branch only.",
+      "status": "passed"
+    },
+    {
+      "check_id": "C6",
+      "method": "Read official rule snapshot and user-confirmed policy as separate sources.",
+      "result": "Official snapshot prohibits external data and requires SMILES/3D input, template y_pred only and reproducibility; frozen pretrained encoder is separately grounded in user-reported organizer confirmation/local policy.",
+      "status": "partial"
+    }
+  ],
+  "findings": [
+    "Six Caco2 runs scientifically analyzable within controller-admitted scope; this does not erase runtime failures.",
+    "MAE early-stop selection has descriptive paired advantage only.",
+    "Non-Caco2 current runner readiness is not established.",
+    "All next-batch work remains proposal_only."
+  ],
+  "missing_evidence": [
+    {
+      "entry_id": "R08-source-RESEARCH_BRIEF.md",
+      "reason": "Not fully opened in this session; exact URI is in formal reading contract.",
+      "impact": "Research brief details and historical claims may be missing."
+    },
+    {
+      "entry_id": "R11-source-CHAT_PROMPT.md",
+      "reason": "20,016-byte full template not fully opened.",
+      "impact": "Cannot claim all template fields and historical prompt amendments independently audited."
+    },
+    {
+      "entry_id": "R13-source-REPORT.md",
+      "reason": "Full original report object not opened; wrapper document only points to it.",
+      "impact": "Some primary acceptance evidence not independently reread."
+    },
+    {
+      "entry_id": "R19-prior-H-2cdcdf014e443ab866c8",
+      "reason": "670,837-byte full prior 84-fit matrix not read.",
+      "impact": "Cannot independently reconcile every previous proposal/config row; prior review summary only used."
+    },
+    {
+      "entry_id": "R20-plus-source-map",
+      "reason": "Source map original not opened.",
+      "impact": "Cannot fully audit all official/user/local source attribution distinctions."
+    },
+    {
+      "entry_id": "R15-source-evaluation-use-ledger.json",
+      "reason": "Only context summary used; full ledger JSON not fully opened.",
+      "impact": "32 score count accepted from context, lifetime reads remain unknown."
+    },
+    {
+      "entry_id": "task-level raw source data",
+      "reason": "Not all per-task original split files and predictions read/reconstructed.",
+      "impact": "No row-level alignment or per-task anomaly conclusion."
+    }
+  ],
+  "not_assessed": [
+    "Full source SHA re-computation from raw bytes",
+    "All 23 original files line counts",
+    "All task/split/row_index alignment from prediction files",
+    "Per-task raw train/valid/test label and molecular structure diagnostics",
+    "Complete independent replay of every run source/checkpoint",
+    "External literature verification for all proposed molecular encoders"
+  ],
+  "comparison_groups": [
+    {
+      "group_id": "Caco2-monitor-paired",
+      "run_ids": [
+        "hainan-agentled-mse-s44-20261102",
+        "hainan-agentled-mse-s45-20261102",
+        "hainan-agentled-mse-s46-20261102",
+        "hainan-agentled-mae-s44-20261102",
+        "hainan-agentled-mae-s45-20261102",
+        "hainan-agentled-mae-s46-20261102"
+      ],
+      "metric": "MAE",
+      "direction": "minimize",
+      "split": "official_valid",
+      "n": 91,
+      "interpretation": "paired descriptive saved-model comparison; no independent generalization"
+    }
+  ],
+  "stop_reasons": [
+    "No training authorized; proposal_only.",
+    "Do not access out-of-scope row-level valid truth/residuals or test labels.",
+    "Do not treat GPU0 sharing as passed or generalize GPU1 conditional acceptance.",
+    "Do not treat non-Caco2 interfaces/assets as ready without fixtures."
+  ],
+  "decision_coverage": [
+    {
+      "question_id": "Q0",
+      "status": "partial",
+      "answer_summary": "独立Decimal复算三组配对差、组均值/样本SD；MAE monitor 2胜1负。保留loss相同、早停不同、GPU/缓存/恢复混杂及GPU0失败。",
+      "answer_location": "analysis.md#Q0 六项配对复算",
+      "evidence_refs": [
+        "turn432510view0",
+        "turn906269view2",
+        "turn567649view1"
+      ],
+      "unresolved": [
+        "未在本会话独立重建全部六个run的逐行预测与特征缓存",
+        "未完整阅读所有run原始源码/状态文件"
+      ],
+      "affected_decisions": [
+        "Caco2后续只建议小规模确认，不宣布MAE monitor普遍优越"
+      ]
+    },
+    {
+      "question_id": "Q1",
+      "status": "partial",
+      "answer_summary": "比较Caco2深挖、22项平均浅调、自适应覆盖；推荐先零fit审计再自适应扩覆盖。",
+      "answer_location": "analysis.md#Q1 策略裁决",
+      "evidence_refs": [
+        "turn525567view2",
+        "turn525567view4",
+        "turn567649view1",
+        "turn917600view2"
+      ],
+      "unresolved": [
+        "21项逐任务准备度和单位成本信息量未测"
+      ],
+      "affected_decisions": [
+        "主控扩大覆盖假设有条件成立，不是事实"
+      ]
+    },
+    {
+      "question_id": "Q2",
+      "status": "partial",
+      "answer_summary": "列出22项本地指标方向、历史valid样本数/已知类别结构和初筛优先级；未冒充逐任务异常审计。",
+      "answer_location": "analysis.md#Q2 22任务初筛",
+      "evidence_refs": [
+        "turn906269view4",
+        "turn917600view1",
+        "turn917600view0"
+      ],
+      "unresolved": [
+        "原始split逐任务缺失/重复/scaffold/标签尺度/预测分布未逐项审查",
+        "官方指标等价性未确认"
+      ],
+      "affected_decisions": [
+        "不能据此批准任何非Caco2训练"
+      ]
+    },
+    {
+      "question_id": "Q3",
+      "status": "partial",
+      "answer_summary": "给小/中/大预算情景、fit计数和成本公式；next_experiments保持空数组，因21项精确runner配置未核实且本轮proposal_only。",
+      "answer_location": "next_batch_guide.md#预算情景；analysis.md#Q3",
+      "evidence_refs": [
+        "turn525567view0",
+        "turn567649view1",
+        "turn432510view3"
+      ],
+      "unresolved": [
+        "各任务实际编码/训练/评分成本未知",
+        "无可核验的非Caco2 config_only配置"
+      ],
+      "affected_decisions": [
+        "所有新任务必须先准备验收并由主控登记"
+      ]
+    },
+    {
+      "question_id": "Q4",
+      "status": "partial",
+      "answer_summary": "说明raw representation cache与fit后变换缓存、row identity、逐任务装配/ensemble/joint multitask区别和模板导出验收。",
+      "answer_location": "analysis.md#Q4；next_batch_guide.md#缓存与完整候选导出",
+      "evidence_refs": [
+        "turn432510view3",
+        "turn567649view0"
+      ],
+      "unresolved": [
+        "其他21任务缓存接口与预测行映射未实测"
+      ],
+      "affected_decisions": [
+        "缓存复用只限身份完全匹配资产；其他任务阻断"
+      ]
+    },
+    {
+      "question_id": "Q5",
+      "status": "partial",
+      "answer_summary": "区分训练loss、早停、外部指标；记录valid历史复用与反馈边界。",
+      "answer_location": "analysis.md#Q5",
+      "evidence_refs": [
+        "turn525567view0",
+        "turn917600view4",
+        "turn432510view0"
+      ],
+      "unresolved": [
+        "每任务指标实现/阈值噪声未核实；官方AP/AUPRC与Spearman ties未确认"
+      ],
+      "affected_decisions": [
+        "禁止将三seed SD当置信区间；训练方只收汇总诊断"
+      ]
+    },
+    {
+      "question_id": "Q6",
+      "status": "partial",
+      "answer_summary": "提供head、optimizer、loss、representation、ensemble参数空间与触发/停止分支。",
+      "answer_location": "search_space.json；analysis.md#Q6",
+      "evidence_refs": [
+        "turn917600view0",
+        "turn917600view2",
+        "turn432510view3"
+      ],
+      "unresolved": [
+        "外部候选论文/官方仓库未逐个检索；部分参数不是当前runner已支持字段"
+      ],
+      "affected_decisions": [
+        "全部新方向保持proposal_only或blocked"
+      ]
+    },
+    {
+      "question_id": "Q7",
+      "status": "partial",
+      "answer_summary": "区分GPU程序秒、训练turn全时长、取回评分和角色至回报；建议集中准备、共享身份匹配缓存、批量训练/评分。",
+      "answer_location": "analysis.md#Q7；next_batch_guide.md#周转",
+      "evidence_refs": [
+        "turn525567view0",
+        "turn567649view1"
+      ],
+      "unresolved": [
+        "完整Pro往返独立耗时和部分角色时间线未复算；时间有重叠"
+      ],
+      "affected_decisions": [
+        "不能将阶段时长简单相加或推断普适并发安全"
+      ]
+    }
+  ],
+  "read_receipt": [
+    {
+      "entry_id": "R00-entry",
+      "layer": "mandatory_decision_context",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/START_HERE.md",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "56cfbc45d84944038e109d7ba92d7440824ebd79d24fa9b4f4da2781f8e5a154"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web:turn648774view3",
+      "observed_fact": "阅读顺序、6/6状态及资源范围",
+      "limitation": "原文打开；未独立复算源字节SHA"
+    },
+    {
+      "entry_id": "R01-current",
+      "layer": "mandatory_decision_context",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/current/README.md",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "ac4a07b27efc6301e244ebeef7766f557a105084e376e017a215c02511ffdcba"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web:turn525567view5",
+      "observed_fact": "六项分数、配置、配对差与限制",
+      "limitation": "入口页已读；不是全部原件"
+    },
+    {
+      "entry_id": "R02-rules",
+      "layer": "mandatory_decision_context",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/context/README.md",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "2d2dc42640d14ac91855e18e04e5bbb8f5efacdc82c8de63e55f7a2fbfebf4c5"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web:turn525567view0",
+      "observed_fact": "aggregate_only与累计valid使用",
+      "limitation": "入口页已读；关联规则原件未全读"
+    },
+    {
+      "entry_id": "R03-research",
+      "layer": "mandatory_decision_context",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/research/README.md",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "3868343d1bcba84fd6458e37eb261bb957f87fd2d0673090a85ab282315c7e40"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web:turn525567view2",
+      "observed_fact": "Q0-Q7及交付合同",
+      "limitation": "入口页已读；关联模板未全读"
+    },
+    {
+      "entry_id": "R04-history",
+      "layer": "mandatory_decision_context",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/history/README.md",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "91cc8481414207ff9f75ba46c1067394935bcdc10cc71509f31430e2b6dfad75"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web:turn525567view1",
+      "observed_fact": "33条历史记录导航",
+      "limitation": "历史索引已读；非33条原件全读"
+    },
+    {
+      "entry_id": "R05-issues",
+      "layer": "mandatory_decision_context",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/issues/README.md",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "1946dc6efd9978e457b2d9ac7fb365fd1b77afe19315a68717efac7aee04f287"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web:turn525567view3",
+      "observed_fact": "MAE两胜一负、GPU0/GPU1更正",
+      "limitation": "入口页已读；events.json未读"
+    },
+    {
+      "entry_id": "R06-assets",
+      "layer": "mandatory_decision_context",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/assets/README.md",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "3c44b514589e2aa873f8720fcb4fa605acb9b9968be4c9103c1576d4b52a2078"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web:turn525567view4",
+      "observed_fact": "科学资产准备度导航",
+      "limitation": "入口页已读"
+    },
+    {
+      "entry_id": "R07-shared",
+      "layer": "mandatory_decision_context",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/current/failures-and-resources.md",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "34dabb9179fc60471dd5128f33ae041c1b92956082782c47b4fcb0d7aefd1e20"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web:turn567649view1",
+      "observed_fact": "GPU0失败、GPU1条件接受与恢复",
+      "limitation": "原件打开；未独立重放全部系统调用"
+    },
+    {
+      "entry_id": "R09-source-decision-contract.json",
+      "layer": "mandatory_decision_context",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/evidence/objects/45acd7d65dcc88bee472b4b27bd1fdeb9e74f0a5285f42c00ed0b82358595778.json",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "45acd7d65dcc88bee472b4b27bd1fdeb9e74f0a5285f42c00ed0b82358595778"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web:turn906269view4",
+      "observed_fact": "22任务ID与本地指标方向",
+      "limitation": "原件打开；官方等价性未确认"
+    },
+    {
+      "entry_id": "R10-source-runner-evidence.md.txt",
+      "layer": "mandatory_decision_context",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/evidence/objects/485ae3b871d08400a335b75effbfc0fcde443d311ebae2bb6d31f714811f53d0.md.txt",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "485ae3b871d08400a335b75effbfc0fcde443d311ebae2bb6d31f714811f53d0"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web:turn432510view3",
+      "observed_fact": "Caco2缓存/恢复实测，21项接口待验",
+      "limitation": "原件打开"
+    },
+    {
+      "entry_id": "R12-source-review-output.json",
+      "layer": "mandatory_decision_context",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/evidence/objects/144d41be12a9d39d45e064644289c999facd2e87d0ce76b1b56045c41071ca72.json",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "144d41be12a9d39d45e064644289c999facd2e87d0ce76b1b56045c41071ca72"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web:turn432510view1",
+      "observed_fact": "review-output schema与枚举",
+      "limitation": "原件打开"
+    },
+    {
+      "entry_id": "R14-source-six-run-comparison.json",
+      "layer": "mandatory_decision_context",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/evidence/objects/61f8795f1040539fb3e67a50d4a9a67a3e397bec6df2ab3ab67911e5498357b9.json",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "61f8795f1040539fb3e67a50d4a9a67a3e397bec6df2ab3ab67911e5498357b9"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web:turn432510view0",
+      "observed_fact": "逐seed分数、steps、配对差",
+      "limitation": "原件打开"
+    },
+    {
+      "entry_id": "R15-source-evaluation-use-ledger.json",
+      "layer": "mandatory_decision_context",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/evidence/objects/f37f1b0cec261606f46260aa1f2727e475d53a800a4bba77113a5d6c73a8ab59.json",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "f37f1b0cec261606f46260aa1f2727e475d53a800a4bba77113a5d6c73a8ab59"
+      },
+      "read_mode": "partial",
+      "evidence_locator": "web:turn525567view0",
+      "observed_fact": "累计32评分与11逻辑run的context摘要",
+      "limitation": "完整ledger未打开；仅部分"
+    },
+    {
+      "entry_id": "R16-source-scientific-assets.json",
+      "layer": "mandatory_decision_context",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/history/archive-20261101/originals/S-d764c93e890f1a40.json",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web:turn917600view0",
+      "observed_fact": "CheMeleon ready，MiniMol/MoLFormer未ready",
+      "limitation": "资产清单原件打开"
+    },
+    {
+      "entry_id": "R17-prior-S-764562710384d47e",
+      "layer": "mandatory_decision_context",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/history/archive-20261101/originals/S-764562710384d47e.json",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "ce8375c1c1eb6291eae6439dee77e082486c6e573e844004ce39d43d69890e8c"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web:turn917600view1",
+      "observed_fact": "22项历史valid n/metric/部分类别数",
+      "limitation": "历史split；原件打开"
+    },
+    {
+      "entry_id": "R18-prior-H-d5a45626b5031f31d644",
+      "layer": "mandatory_decision_context",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/evidence/H-d5a45626b5031f31d644.md.txt",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "e92ced46c6c02f159f956b08d3e630e0d5763f096be5247f59821e9f9e7544af"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web:turn917600view2",
+      "observed_fact": "前轮广度方案复核与限制",
+      "limitation": "复核报告打开；84-fit矩阵未读"
+    },
+    {
+      "entry_id": "R20-plus-official-contract-20261029",
+      "layer": "mandatory_rules_original",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/history/archive-20261101/originals/S-a95c8473d1769a29.json",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "f8a99bd337ed165f2f508e9303d2354594bb5bdec213797d5c582eeacfa06a55"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web:turn917600view3",
+      "observed_fact": "赛事规则快照",
+      "limitation": "原件打开；公开规则非冻结条件全部来源"
+    },
+    {
+      "entry_id": "R20-plus-policy",
+      "layer": "mandatory_rules_original",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/evidence/H-3db7c2d1e67d40641a20.json",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "9845a36a3bc3be11818dd070150657d4232eab67774027fa040c7ddf2ac192b0"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web:turn917600view4",
+      "observed_fact": "用户确认冻结encoder与本地valid使用边界",
+      "limitation": "政策原件打开；与公开规则分开"
+    }
+  ]
+}

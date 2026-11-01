@@ -1,0 +1,69 @@
+"""Reconstruct ONLY fully observed public aggregate JSON text; verify byte identity.
+No predictions are rescored, no labels are fetched, no model code is executed.
+The input tables below are a literal transcription from the current web reads.
+"""
+from pathlib import Path
+import json, hashlib
+P=Path(__file__).resolve().parents[1]
+S=P/'sources'
+def save_verified(name, obj, expected):
+    b=(json.dumps(obj,ensure_ascii=False,indent=2)+'\n').encode()
+    alternatives=[b,b[:-1]]
+    for raw in alternatives:
+        if hashlib.sha256(raw).hexdigest()==expected:
+            (S/name).write_bytes(raw)
+            return {'path':'sources/'+name,'bytes':len(raw),'sha256':expected,'byte_identity':'matched_registered_sha256','acquisition':'reconstructed from completely displayed browser text; exact hash independently matched'}
+    (S/(name+'.reconstructed')).write_bytes(b)
+    return {'path':'sources/'+name+'.reconstructed','bytes':len(b),'sha256':hashlib.sha256(b).hexdigest(),'registered_sha256':expected,'byte_identity':'NOT_MATCHED','acquisition':'browser transcription; not original bytes'}
+rows=[
+('ames','classification','AUROC',1137,'0.7966064051881135',479,658),
+('bbb_martins','classification','AUROC',203,'0.8936738752174994',149,54),
+('bioavailability_ma','classification','AUROC',64,'0.7441860465116279',43,21),
+('caco2_wang','regression','MAE',91,'0.4260650306813186',None,None),
+('clearance_hepatocyte_az','regression','Spearman',122,'0.35760632366306705',None,None),
+('clearance_microsome_az','regression','Spearman',111,'0.48732952225400383',None,None),
+('cyp2c9_substrate_carbonmangels','classification','AUPRC',67,'0.42099418064714555',12,55),
+('cyp2c9_veith','classification','AUPRC',1210,'0.7594504271256293',406,804),
+('cyp2d6_substrate_carbonmangels','classification','AUPRC',67,'0.46377724431807144',14,53),
+('cyp2d6_veith','classification','AUPRC',1313,'0.6907342342611147',250,1063),
+('cyp3a4_substrate_carbonmangels','classification','AUROC',67,'0.7293906810035843',36,31),
+('cyp3a4_veith','classification','AUPRC',1233,'0.877172798563802',581,652),
+('dili','classification','AUROC',48,'0.8615384615384616',13,35),
+('half_life_obach','regression','Spearman',67,'0.0737000716718027',None,None),
+('herg','classification','AUROC',66,'0.8968253968253969',42,24),
+('hia_hou','classification','AUROC',58,'0.9666666666666667',48,10),
+('ld50_zhu','regression','MAE',1937,'1.0435887458260573',None,None),
+('lipophilicity_astrazeneca','regression','MAE',420,'0.53964650071',None,None),
+('pgp_broccatelli','classification','AUROC',122,'0.9054017737167428',61,61),
+('ppbr_az','regression','MAE',279,'20.83183522548387',None,None),
+('solubility_aqsoldb','regression','MAE',2940,'11.113363941834361',None,None),
+('vdss_lombardo','regression','Spearman',113,'-0.016927405626888218',None,None)]
+defs={'AUROC':'mann_whitney_average_ranks','AUPRC':'average_precision','MAE':'mean_absolute_error','Spearman':'pearson_correlation_of_average_ranks'}
+r17={'ok':True,'schema_version':1,'scope':'local_per_task_metrics_only','split_id':'official-valid-20261029-v6','label_contract_status':'confirmed','official_equivalence':'unconfirmed','record_count':11735,'task_count':22,'tasks':{}}
+for task,kind,metric,n,value,pos,neg in rows:
+    d={'kind':kind,'metric':metric,'n':n,'missing':0,'records':n,'status':'ok','value':float(value),'reason':None,'local_definition':defs[metric],'direction':'minimize' if metric=='MAE' else 'maximize','official_equivalence':'unconfirmed','label_contract_status':'confirmed'}
+    if pos is not None:d.update(n_positive=pos,n_negative=neg,one_class_policy='undefined_for_local_model_comparison')
+    r17['tasks'][task]=d
+r17['warnings']=[{'code':'AUPRC_OFFICIAL_DEFINITION_UNCONFIRMED','tasks':[t for t,k,m,*_ in rows if m=='AUPRC'],'local_definition':'average_precision','official_equivalence':'unconfirmed','message':'Local AP groups equal scores at the same threshold and uses no trapezoidal interpolation.'}]
+r17['task_schema']={'path':'<LOCAL_PRIVATE_PATH>','sha256':'ca1d8fb7f6998b699ccce84988bc65ddfd7c72381c3c8a06d766b48a59162e6c'}
+r17['records_source']={'path':'<LOCAL_PRIVATE_PATH>','sha256':'90ba7d7ff9f3e4b3ad083168073d87758ce0fbdef50146fbf05f8d022dc94b55'}
+receipts=[save_verified('R17.json',r17,'ce8375c1c1eb6291eae6439dee77e082486c6e573e844004ce39d43d69890e8c')]
+score_rows=[
+('mse',44,0.41727108770329663,[0.5979445820859518,0.03543401673626375,0.29576972200000107,0.7290825550000006,1.4813995569999996],[37,27,19,8]),
+('mse',45,0.4477993207692307,[0.7008818995476085,0.08926389885714289,0.2767386669999974,0.9215527009999995,1.6276660440000006],[40,27,16,8]),
+('mse',46,0.4290186062747252,[0.6498213248159137,0.07413732741758244,0.2689810210000001,0.8566532550000003,1.7972104789999985],[42,23,18,8]),
+('mae',44,0.4068564265494504,[0.5866024574920775,0.034522353934066004,0.27997446499999956,0.8396759319999996,1.361388227],[40,26,17,8]),
+('mae',45,0.43222243850549447,[0.6546263727615556,0.02200017257142856,0.279085660999999,0.8136310849999999,1.6964535919999992],[42,22,19,8]),
+('mae',46,0.4296442182637361,[0.6287129651709341,0.0751237855164836,0.30449583499999733,0.762510818,1.7184589149999985],[36,30,17,8])]
+def make_score(row):
+    mon,seed,v,agg,bins=row
+    a=dict(zip(['rmse','signed_mean_error','median_absolute_error','p90_absolute_error','p95_absolute_error'],agg))
+    a['absolute_error_bin_counts']=dict(zip(['lt_0.25','0.25_to_lt_0.5','0.5_to_lt_1','ge_1'],bins))
+    return {'task':'caco2_wang','split':'official_valid','n':91,'metric':'MAE','direction':'minimize','value':v,'status':'ok','definition':'mean(abs(supplied_numeric_Y - y_pred))','official_aggregate_score':None,'diagnostic_aggregates':a,'run_id':f'hainan-agentled-{mon}-s{seed}-20261102'}
+common='supplied-scale Caco2 official_valid MAE; not official aggregate score; not independent final generalization'
+old={'task_id':'admet-agent-led-stable-two-score-20261102-001','scores':[make_score(r) for r in score_rows[:2]],'scope':common,'sharing_acceptance':'not_passed','publication':'not authorized this phase'}
+new={'task_id':'admet-agentled-remaining-four-score-20261102-001','scores':[make_score(r) for r in score_rows[2:]],'scope':common,'sharing_acceptance':'GPU1 conditional idle-resident branch; GPU0 historical failure retained','publication':'not authorized this phase'}
+receipts.append(save_verified('scores-two.json',old,'7e0d8a9ff81657e4de4dd6effe3b5ab5f10302ecc1fdfd71c56b004e929708a3'))
+receipts.append(save_verified('scores-four.json',new,'f37f584c8ced3b83a796fac05b9becee14d653a6e0a9bbac35e5597b794fb2e8'))
+(P/'audit/source-byte-checks.json').write_text(json.dumps(receipts,ensure_ascii=False,indent=2)+'\n')
+print(json.dumps(receipts,indent=2,ensure_ascii=False))

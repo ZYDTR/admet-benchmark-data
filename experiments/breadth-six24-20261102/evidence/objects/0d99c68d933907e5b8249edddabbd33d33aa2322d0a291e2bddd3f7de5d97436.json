@@ -1,0 +1,252 @@
+[
+  {
+    "direction_id": "DIR-00-PREP",
+    "linked_issues": [
+      "ISS-RUNNER-21TASK-02",
+      "ISS-DATA-PROFILE-03"
+    ],
+    "rationale": "Runner/label/row identity is the dominant gating uncertainty; a zero-fit audit has high information value and no GPU learning cost.",
+    "evidence_refs": [
+      "turn432510view3",
+      "turn917600view1"
+    ],
+    "counterevidence": "Preparation has nonzero human/CPU cost and may reveal many tasks are not ready.",
+    "candidate_models_or_modules": [
+      "CheMeleon frozen encoder",
+      "per-task target/head adapter"
+    ],
+    "parameters": {
+      "audit_fields": [
+        "task/split row counts",
+        "missing labels",
+        "class counts",
+        "SMILES/scaffold grouping",
+        "target scale/ties/outliers",
+        "encoder and tokenizer hashes",
+        "row_index mapping",
+        "prediction inverse transform",
+        "template y_pred alignment"
+      ],
+      "fit_count": 0
+    },
+    "combination_constraints": "No label edits, row deletion, deduplication, pseudo-labels, external data or valid truth exposure.",
+    "search_method": "Run deterministic zero-fit fixtures for all 21 non-Caco2 tasks; shortlist only after pass.",
+    "configuration_count_or_counting_rule": "21 task fixtures; 0 model fits; shared environment check once plus per-task identity checks.",
+    "seeds": [],
+    "estimated_run_count": 0,
+    "cost_assumptions": "CPU/agent time only; calibrate from measured fixture duration.",
+    "readiness": "ready_for_preparation_only",
+    "priority": "P0",
+    "scope_status": "within_current_scope"
+  },
+  {
+    "direction_id": "DIR-01-HEAD",
+    "linked_issues": [
+      "ISS-CACO2-MONITOR-01",
+      "ISS-RUNNER-21TASK-02"
+    ],
+    "rationale": "Small MLP head is the proven Caco2 architecture; test regularization/capacity only after task runner and assets are verified.",
+    "evidence_refs": [
+      "turn432510view3",
+      "turn432510view0"
+    ],
+    "counterevidence": "No evidence yet that same feature dimension/target distributions transfer uniformly across tasks.",
+    "candidate_models_or_modules": [
+      "frozen CheMeleon + task-specific MLP head"
+    ],
+    "parameters": {
+      "hidden_width": [
+        128,
+        256,
+        512
+      ],
+      "dropout": [
+        0.0,
+        0.1,
+        0.3
+      ],
+      "weight_decay": [
+        1e-05,
+        0.0001,
+        0.001
+      ],
+      "combination_rule": "screen one factor at a time around 256/dropout0.1/wd1e-4; do not full factorial"
+    },
+    "combination_constraints": "Same split, model seeds, cached representation, preprocessing fit rows and training objective; compare to exact same-task baseline.",
+    "search_method": "One-factor screen then paired seed confirmation; never use cross-task shared threshold without task-specific evidence.",
+    "configuration_count_or_counting_rule": "3 widths + 2 dropout alternatives + 2 wd alternatives = 7 candidate configs plus one control per task if runner accepts these exact fields.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 16,
+    "cost_assumptions": "Two seeds × (7 candidates + control) = 16 fits per task; only after config fields are verified.",
+    "readiness": "blocked_until_runner_config_and_fixture",
+    "priority": "P1",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "DIR-02-OPT",
+    "linked_issues": [
+      "ISS-VALID-ADAPT-04"
+    ],
+    "rationale": "Optimization stability may dominate small-data tasks; learning rate is a controlled one-factor candidate.",
+    "evidence_refs": [
+      "turn432510view3"
+    ],
+    "counterevidence": "Current six-run comparison did not test optimizer or learning-rate changes.",
+    "candidate_models_or_modules": [
+      "AdamW task head"
+    ],
+    "parameters": {
+      "lr": [
+        0.0001,
+        0.0003,
+        0.0005,
+        0.001
+      ],
+      "weight_decay_fixed": 0.0001,
+      "batch_size_fixed": 128,
+      "max_epochs": 50,
+      "patience": 8
+    },
+    "combination_constraints": "Change lr only; keep head, dropout, split, seeds and monitor fixed; verify batch-size feasibility for each task.",
+    "search_method": "Coarse log-scale screen, retain at most one alternative for confirmation.",
+    "configuration_count_or_counting_rule": "4 LR candidates; use existing 0.0005 as control (4 configs total).",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 8,
+    "cost_assumptions": "4 configs × 2 seeds per task; runner support not established for non-Caco2.",
+    "readiness": "blocked_until_task_runner",
+    "priority": "P2",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "DIR-03-LOSS",
+    "linked_issues": [
+      "ISS-VALID-ADAPT-04"
+    ],
+    "rationale": "Regression loss sensitivity and classification imbalance may require task-specific objective selection.",
+    "evidence_refs": [
+      "turn906269view4",
+      "turn917600view1"
+    ],
+    "counterevidence": "No per-task residuals or current loss implementation audit in this session; AP official equivalence unresolved.",
+    "candidate_models_or_modules": [
+      "BCEWithLogitsLoss",
+      "standardized MSE",
+      "Huber"
+    ],
+    "parameters": {
+      "classification": {
+        "loss": "BCEWithLogitsLoss",
+        "pos_weight": "train-fit class ratio only; ablate only after baseline"
+      },
+      "regression": {
+        "loss": [
+          "standardized MSE",
+          "Huber"
+        ],
+        "huber_delta": [
+          0.5,
+          1.0
+        ]
+      },
+      "early_stopping": "explicit task metric and direction"
+    },
+    "combination_constraints": "Never combine pos_weight, loss and architecture in one initial comparison; all statistics fit on train fit rows only.",
+    "search_method": "Baseline first; then one loss factor with common seeds; probability output via sigmoid; regression inverse-transform to original Y.",
+    "configuration_count_or_counting_rule": "Classification baseline + one class-weight ablation; regression MSE control + Huber delta 0.5 and 1.0 = 3 configs/task.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 6,
+    "cost_assumptions": "3 configs × 2 seeds/task; task-specific implementation blocked.",
+    "readiness": "new_code_and_metric_validation_required",
+    "priority": "P2",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "DIR-04-REP",
+    "linked_issues": [
+      "ISS-RUNNER-21TASK-02"
+    ],
+    "rationale": "Pooling/representation choice may matter more than head tuning, but must follow frozen asset provenance and cache identity.",
+    "evidence_refs": [
+      "turn917600view0",
+      "turn432510view3"
+    ],
+    "counterevidence": "MiniMol and MoLFormer are not training-ready; other candidates have license/asset/input blockers.",
+    "candidate_models_or_modules": [
+      "CheMeleon pooled frozen representation",
+      "MiniMol",
+      "MoLFormer 10pct",
+      "classical features"
+    ],
+    "parameters": {
+      "pooling": [
+        "CLS",
+        "mean"
+      ],
+      "normalization": [
+        "none",
+        "train-fit standardization"
+      ],
+      "encoder_update": "forbidden; all params and buffers frozen"
+    },
+    "combination_constraints": "Compare one representation/pooling factor at a time; new encoders require independent source/license/asset SHA and full-input fixture; do not use external fitting or extra data.",
+    "search_method": "Zero-fit asset audit then single-task pilot proposal after approval.",
+    "configuration_count_or_counting_rule": "2 pooling choices per ready encoder; candidate encoders blocked until provenance and loader acceptance.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 4,
+    "cost_assumptions": "Representation compute shared only when encoder/version/input identity matches; otherwise one encoding per split/asset.",
+    "readiness": "CheMeleon ready for Caco2 branch only; other assets blocked/deferred",
+    "priority": "P3",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "DIR-05-ENSEMBLE",
+    "linked_issues": [
+      "ISS-CACO2-MONITOR-01",
+      "ISS-VALID-ADAPT-04"
+    ],
+    "rationale": "Averaging independent seed predictions can reduce variance if member errors are not perfectly correlated.",
+    "evidence_refs": [
+      "turn432510view0"
+    ],
+    "counterevidence": "Only three seed outputs in Caco2 and no permitted row-level error correlation analysis; task-wise compatibility not established.",
+    "candidate_models_or_modules": [
+      "same-task seed ensemble"
+    ],
+    "parameters": {
+      "members": [
+        2,
+        3,
+        5
+      ],
+      "weights": [
+        "uniform"
+      ],
+      "calibration": "none unless separately justified"
+    },
+    "combination_constraints": "Only same task/split/target scale; ensemble weights must not be tuned on test; use validation selection history disclosure.",
+    "search_method": "First establish multiple stable members, then compare uniform mean to best single model as separate proposal.",
+    "configuration_count_or_counting_rule": "One ensemble per selected task/member count; no additional encoder fits if member predictions already exist.",
+    "seeds": [
+      44,
+      45,
+      46
+    ],
+    "estimated_run_count": 0,
+    "cost_assumptions": "Inference/score cost only if existing compatible predictions are available.",
+    "readiness": "research_only",
+    "priority": "P4",
+    "scope_status": "proposal_only"
+  }
+]

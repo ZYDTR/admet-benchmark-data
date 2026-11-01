@@ -1,0 +1,66 @@
+{
+  "not_an_execution_matrix": true,
+  "confirm": {
+    "select_from": [
+      "lipophilicity_astrazeneca",
+      "bbb_martins",
+      "cyp2d6_veith",
+      "clearance_hepatocyte_az",
+      "ld50_zhu",
+      "solubility_aqsoldb"
+    ],
+    "maximum_tasks": 2,
+    "eligibility": "Both paired seed improvements and task-specific proposed gate pass; no unresolved source/freeze/metric/row issues; host approves released aggregates",
+    "ranking": "Primary: coverage complementarity (different metric families when feasible); secondary: worst paired improvement divided by task gate; tertiary: observed information per full wall cost; lexicographic task ID tie break; does not create official normalized score",
+    "configuration": "same exact H0/H1 scientific configs; add seed46 ONLY; seeds44/45 reused, no split change",
+    "budget_max_extra_fits": 4,
+    "review_node": "one pooled confirm review; never autopromote from a single new head"
+  },
+  "reserve_replacements": [
+    {
+      "blocked_task": "bbb_martins",
+      "candidate_task": "pgp_broccatelli",
+      "reason": "same AUROC family;122valid balanced61/61, but weaker sample size and different biology; not equivalent endpoint",
+      "action": "separate controller registration of H0/H1 seeds44/45 after gates; not part of24fits"
+    },
+    {
+      "blocked_task": "cyp2d6_veith",
+      "candidate_task": "cyp2c9_veith",
+      "reason": "same localAP family,1210valid406/804; preserve task-specific input/loss hashes",
+      "action": "separate controller registration; skip failing task, do not force fill"
+    },
+    {
+      "blocked_task": "clearance_hepatocyte_az",
+      "candidate_task": "clearance_microsome_az",
+      "reason": "same rank metric but different target;111valid; same limitations",
+      "action": "separate registration and gates"
+    }
+  ],
+  "no_auto_replacement": [
+    "lipophilicity_astrazeneca",
+    "ld50_zhu",
+    "solubility_aqsoldb"
+  ],
+  "failure_branches": [
+    {
+      "trigger": "all six H1 candidates fail the proposed improvement gate",
+      "action": "stop dropout expansion; inspect existing train-only scale/conditioning and task structure; consider DIR-06-SCALE for regression, not silently larger grid",
+      "new_fits_automatic": 0
+    },
+    {
+      "trigger": "improvement mean positive but seed signs disagree",
+      "action": "do not call winner; controller may choose paired seed46 diagnostic under separate budget, or decline due low expected information",
+      "new_fits_automatic": 0
+    },
+    {
+      "trigger": "LD50/solubility numerical range failure or gross shift persists",
+      "action": "return scaling/conditioning hypothesis and existing aggregate range evidence; no raw valid residuals, clipping or label cleaning",
+      "new_fits_automatic": 0
+    },
+    {
+      "trigger": "freeze/data identity/role/resource boundary failure",
+      "action": "stop affected branch immediately, preserve worker and supervisor records; no scientific score waiver",
+      "new_fits_automatic": 0
+    }
+  ]
+}

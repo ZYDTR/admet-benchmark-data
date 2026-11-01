@@ -1,0 +1,31 @@
+#define _GNU_SOURCE
+#include <dlfcn.h>
+#include <fcntl.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+/* Narrow compatibility: discard only this process's task naming writes. */
+static int own_comm(const char *p) {
+    if (!p) return 0;
+    char prefix[80];
+    snprintf(prefix,sizeof(prefix),"/proc/%ld/task/",(long)getpid());
+    const char *tail=NULL;
+    if (!strncmp(p,"/proc/self/task/",16)) tail=p+16;
+    else if (!strncmp(p,prefix,strlen(prefix))) tail=p+strlen(prefix);
+    if (!tail || *tail<'0' || *tail>'9') return 0;
+    char *end;strtoul(tail,&end,10);
+    return !strcmp(end,"/comm");
+}
+static int access_at(int dir,const char *p,int flags,mode_t mode) {
+    int (*real_openat)(int,const char*,int,...)=dlsym(RTLD_NEXT,"openat");
+    if (own_comm(p) && (flags&(O_WRONLY|O_RDWR))) return real_openat(AT_FDCWD,"/dev/null",O_WRONLY|O_CLOEXEC,0);
+    return real_openat(dir,p,flags,mode);
+}
+int open(const char *p,int flags,...) { mode_t m=0;if(flags&O_CREAT){va_list a;va_start(a,flags);m=va_arg(a,int);va_end(a);}return access_at(AT_FDCWD,p,flags,m); }
+int open64(const char *p,int flags,...) { mode_t m=0;if(flags&O_CREAT){va_list a;va_start(a,flags);m=va_arg(a,int);va_end(a);}return access_at(AT_FDCWD,p,flags,m); }
+int openat(int d,const char *p,int flags,...) { mode_t m=0;if(flags&O_CREAT){va_list a;va_start(a,flags);m=va_arg(a,int);va_end(a);}return access_at(d,p,flags,m); }
+int openat64(int d,const char *p,int flags,...) { mode_t m=0;if(flags&O_CREAT){va_list a;va_start(a,flags);m=va_arg(a,int);va_end(a);}return access_at(d,p,flags,m); }
+FILE *fopen(const char *p,const char *mode) { FILE *(*real)(const char*,const char*)=dlsym(RTLD_NEXT,"fopen");return real(own_comm(p) && strpbrk(mode,"wa+") ? "/dev/null":p,mode); }
+FILE *fopen64(const char *p,const char *mode) { FILE *(*real)(const char*,const char*)=dlsym(RTLD_NEXT,"fopen64");return real(own_comm(p) && strpbrk(mode,"wa+") ? "/dev/null":p,mode); }

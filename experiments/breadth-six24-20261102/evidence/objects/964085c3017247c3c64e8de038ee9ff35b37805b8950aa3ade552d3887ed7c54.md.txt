@@ -1,0 +1,43 @@
+# repair-001 原件回收与网关核对
+
+同一真实 Pro Chat 的一次原生补全发送已完成，修订原件现已完整收回。研究科学验收由主控审读原件裁定；此回收不增加训练或评分授权。
+
+原始 ZIP：source/audit.zip，328254 bytes，SHA256 494d0b3152e4d51c6b44263e82328164a199d7035f8da4c2333e70a685bdd255。实际 Library 文件页为 https://chatgpt.com/space/file/libfile_88df6ba3eff48191af71ddd1a2067611 。57 个常规文件，CRC、路径/类型/碰撞检查通过；解包原字节 2,578,643。六件在 source/extracted 根目录，共 321499 bytes；全部附加件、历史副本及被动脚本均原样保留，未执行返回代码。
+
+清单 source/extracted/delivery-manifest.json：10,379 bytes，SHA256 57d5805aac579e7dc86c94c6e838b97b8b5c64545d848ee7e39134d1ed0a7c3b。56 条文件的字节数与SHA256全部吻合，57成员恰为清单56条加清单自身。request/round/input身份一致。37个JSON严格解析通过；v2字段、根类型、14 issue/12 proposal/15 direction ID和引用闭合通过。
+
+任务表 audit/task-table.json：22项，与输入R17逐项核对valid n、类别计数、缺失、metric/direction、既有baseline分数、local definition、来源SHA和split，零差异；valid n总计11735。只检查已有汇总，没有读取逐行valid标签或新增评分。证据 source-and-matrix-checks.json、source-reference-22-tasks.json。
+
+当前实际推荐为六任务（lipophilicity_astrazeneca、bbb_martins、cyp2d6_veith、clearance_hepatocyte_az、ld50_zhu、solubility_aqsoldb）×H0/H1×seed44/45，共24唯一fit；小档四任务16。六对完整exact_config的差异均仅/head/dropout，0.1→0.3；全部12条是new_code建议，执行false。中档可条件追加两任务两个配置的seed46，声明最多再加4、累计28；大档声明60。历史84配置与场景展开的独立核对现已完成，结果见下方补充。
+
+Pro将Q0–Q7标answered、科学status=complete，并声明23必读原文记录及601自检；这些声明不替代主控科学验收，也不证明实现/训练已准入。R19报告明确区分84科学配置核对与670837字节原始包装文件整份SHA未本地重算。
+
+传输记录：native补全send1次成功，blocked native read重试0，Browser send0。渲染用户正文8031字节与8032封口文本仅末尾LF差异；普通Copy两次未更新剪贴板，其负证据保留，实际送达以DOM逐字比对及主控独立验收为据。Browser曾两次显示无法加载对话，普通读取恢复后见本次终稿。正文下载按钮及一次Library AX下载未产生本地件；后以真实Library页语义click和下载事件核对，事件15000ms超时，但实际ZIP已于19:59:54.156693Z写入Downloads，字节/hash/CRC确认成功。没有因事件超时重复已成功的下载。
+
+周转：本次首见最终回复 2026-11-01T19:54:05.426Z；发送至该观测跨度 3093.470s是上界跨度，模型界面另显示48m5s，非推定精确结束时间。当前网关原生turn仍inProgress，startedAt1793559507，completedAt=null；到本报告快照角色经过 65.20 min，同请求自准备开始墙钟 113.28 min。上一正式turn已真实结束18:57:05Z，duration1395187ms。各区间相互重叠，不相加。
+
+主控发送验收已实际消费；加载故障也已亲读并指派原网关继续唯一取回责任。完整原件回传回执与主控后续消费另存。本报告为原件交付时的核对快照，追加检查只写网关文件，不改任何Pro原件或旧execution。
+
+## 追加独立核对完成
+
+R19返回的84个完整full_config与实际输入原件逐元组、逐配置完全相同，84唯一元组集合一致；其来源仍明确为未执行历史建议。回收的R17及两份scores均与实际输入原字节一致。新包的首版九件历史副本（包含原ZIP）与第一版原件逐字节相同；旧execution78件及本次7冻结文件和MESSAGE均未变。
+
+小/中/大三档实际展开分别16/24/60唯一fit，小⊆中⊆大，中比小多8，大比中多36。中档任意两任务追加H0/H1 seed46的15种选择均新增4、累计28。24行首批展开与12条proposal的显式seed实例化后完整配置一致；仅移除training.model_seed_source说明注释再注入数值seed，初次把该注释也比较的负记录保留。六对H0/H1仅/head/dropout不同。配对mean/sample_sd与本网关由真实原始scores作的Decimal50复算完全一致。analysis正文22行任务表与audit表逐字段吻合；valid字段/既有分数/方向/类别统计此前已独立对照R17。
+
+23条read_receipt的entry_id/layer/URI/source_version均与输入合同一致，全部声明original；这仍是读取声明，不冒充逐次可见工具执行证明。Q0–Q7字段与ID齐全，全部由Pro声明answered；主控负责科学质量和是否推进到准备/训练的最终判断。
+
+已另行从实际Space最新delivery-manifest(8).json原件下载并保留source/delivery-manifest-standalone.json；10379bytes和SHA57d5805aac579e7dc86c94c6e838b97b8b5c64545d848ee7e39134d1ed0a7c3b与ZIP清单完全一致，排除旧版本误配。独立清单下载事件也15s超时，实际文件mtime与原字节保留证明成功。
+
+## 实际交接与最后页面状态
+
+主控实际接手证据在main-substantive-consumption.json：主控原生turn01a198b5-e1cd-7803-890e-9e61eb5fe8c3已完成多条读取analysis全文、guide及全部研究JSON/完整配置的命令，退出0；其公开进展明确正在审读六任务24fit依据、公平对照及代码准备。下一负责人为主控01a18c09-2621-7eb0-865e-0198147e5a5c，下一检查点为独立科学验收及准备侧接口/预算判断。已超出仅received/review_pending，本网关原件回收与交接范围完成。
+
+全部本地原件和独立清单回收后，正常返回原Chat保留现场时新见Cloudflare“请稍候”页面。该阶段没有再读被阻native接口、重试页面、处理挑战或发送消息，现场证据post-collection-challenge.json/.png保留。它不改变此前已取得的完整本地原件、观测到的终稿或主控实际阅读。原Chat标签保留供后续；不把最后页面挑战倒写成原件回收失败。
+
+最终网关记录快照 2026-11-01T20:12:42.716943+00:00：本次角色经过74.26分钟，同请求墙钟122.35分钟；当前原生turn的真实completedAt仍null，不用报告时间冒充角色结束。详见TIMING.json。
+
+## 后续实际终态与主控验收
+
+2026-11-01T20:15:04.246Z原生元数据观测：补全角色turn `01a1987a-30b0-7ce2-90ca-287ae354159d` 已completed，实际完成时间 2026-11-01T20:13:38Z（北京时间 2026-11-02T04:13:38+08:00），durationMs=4511736，即75分11.736秒。此前记录时completedAt=null属当时真实状态，原快照已保留；本次追加观测不倒填早前快照。自同请求准备开始到该原生终态的秒精度墙钟为7396秒（123分16秒），与原生durationMs的精度分开保留，不叠加模型等待/下载重叠区间。
+
+主控已实际消费原件与verification-closed回报，独立验收报告 `[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/controller/pro-repair-intake-001/REPORT.md` 明确采纳六任务24fit，并已实际派给原Sol/xhigh进入`breadth-six24-20261102`；这不是声称新24fit已经执行或CUDA训练验收通过。主控明确本次运输/交接范围收口。全部原件及页面挑战证据保留；本次仅补记原生终态与主控接续，没有继续Pro或派出新任务。

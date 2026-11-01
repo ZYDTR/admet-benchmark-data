@@ -1,0 +1,606 @@
+[
+  {
+    "direction_id": "DIR-00-PREP",
+    "linked_issues": [
+      "ISS-RUNNER-21TASK-02",
+      "ISS-DATA-PROFILE-03"
+    ],
+    "rationale": "先关闭数据/指标/缓存接口不确定性，避免把标签或scale错误当模型容量问题。",
+    "evidence_refs": [
+      "SRC-R10",
+      "SRC-R17",
+      "SRC-RUNNER"
+    ],
+    "counterevidence": "零fit准备也有Agent/CPU成本；不能借fixture全量编码或训练。",
+    "candidate_models_or_modules": [
+      "frozen CheMeleon interface",
+      "task-specific adapters"
+    ],
+    "parameters": {
+      "gates": "audit/preparation-gates.json",
+      "fit_count": 0,
+      "scope": "approved train.Y + blind inputs; synthetic metric fixtures"
+    },
+    "combination_constraints": "不读取validY/testY；不清洗去重，不更新任何参数；准备轻量固定输入检查，不全量模型推理。",
+    "search_method": "共享环境检查一次，6首批任务逐项fixture；其余21任务profile可并行只读，结果由主控过滤。",
+    "configuration_count_or_counting_rule": "0fits; preparation tasks are not next_experiments entries",
+    "seeds": [],
+    "estimated_run_count": 0,
+    "cost_assumptions": "Per task unless stated; use exact shared-control union. Raw frozen cache shared only on identity match. T=setup+unique encoding+unique heads+batch score+role/research wall intervals; unmeasured times remain unknown.",
+    "readiness": "ready_for_design; zero-fit preparation requires role-scoped dispatch",
+    "priority": "P0",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "DIR-01-HEAD",
+    "linked_issues": [
+      "ISS-RUNNER-21TASK-02",
+      "ISS-REPAIR-DEDUP-09"
+    ],
+    "rationale": "先测试可解释的正则差异；H0/H1只改dropout，跨四种metric与两种shift压力观察是否迁移。",
+    "evidence_refs": [
+      "SRC-R19",
+      "SRC-R17",
+      "SRC-SCAFFOLD"
+    ],
+    "counterevidence": "强dropout可能欠拟合；已有差异不能证明全任务同收益。宽度/学习率/容量不可同时改后归因dropout。",
+    "candidate_models_or_modules": [
+      "frozen CheMeleon + MLP"
+    ],
+    "parameters": {
+      "baseline": {
+        "hidden_dims": [
+          256
+        ],
+        "dropout": 0.1,
+        "weight_decay": 0.0001
+      },
+      "unique_configs": [
+        {
+          "hidden_dims": [
+            128
+          ],
+          "dropout": 0.1,
+          "weight_decay": 0.0001
+        },
+        {
+          "hidden_dims": [
+            256
+          ],
+          "dropout": 0.1,
+          "weight_decay": 0.0001
+        },
+        {
+          "hidden_dims": [
+            512
+          ],
+          "dropout": 0.1,
+          "weight_decay": 0.0001
+        },
+        {
+          "hidden_dims": [
+            256
+          ],
+          "dropout": 0.0,
+          "weight_decay": 0.0001
+        },
+        {
+          "hidden_dims": [
+            256
+          ],
+          "dropout": 0.3,
+          "weight_decay": 0.0001
+        },
+        {
+          "hidden_dims": [
+            256
+          ],
+          "dropout": 0.1,
+          "weight_decay": 1e-05
+        },
+        {
+          "hidden_dims": [
+            256
+          ],
+          "dropout": 0.1,
+          "weight_decay": 0.001
+        }
+      ],
+      "selected_first_batch": "six tasks H0(dropout.1) / H1(.3), identical others"
+    },
+    "combination_constraints": "一次仅改变width/dropout/wd一项；同task/split/seed；不能全笛卡尔积。",
+    "search_method": "先已展开H0/H1；无信号停止此方向，宽度/wd留reserve而非自动追加。",
+    "configuration_count_or_counting_rule": "3 widths (including baseline)+2 alternate dropout+2 alternate wd=7 configs;2seeds=14total/task. After exact H0/H1 both-seed screen exists:10additional/task for remaining5 configs.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 14,
+    "cost_assumptions": "Per task unless stated; use exact shared-control union. Raw frozen cache shared only on identity match. T=setup+unique encoding+unique heads+batch score+role/research wall intervals; unmeasured times remain unknown.",
+    "readiness": "new_code task interface required; encoder asset existing",
+    "priority": "P1",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "DIR-02-OPT",
+    "linked_issues": [
+      "ISS-VALID-ADAPT-04"
+    ],
+    "rationale": "区分欠训练与过拟合；lr变化有明确控制，比联合换优化器更可解释。",
+    "evidence_refs": [
+      "SRC-R19",
+      "SRC-BESTCONFIG"
+    ],
+    "counterevidence": "历史最佳512/.001/seed42混杂，不能只因其分数好就断言lr.001优越。",
+    "candidate_models_or_modules": [
+      "AdamW head"
+    ],
+    "parameters": {
+      "lr": [
+        0.0001,
+        0.0003,
+        0.0005,
+        0.001
+      ],
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "scheduler": "none"
+    },
+    "combination_constraints": "只改变lr，其余含dropout.1固定。",
+    "search_method": "对单个已准备task做4点粗筛；最多留一替代，之后共同seed确认。",
+    "configuration_count_or_counting_rule": "4configs×2=8total/task, control.0005×2 shared;6additional/task when baseline exists.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 8,
+    "cost_assumptions": "Per task unless stated; use exact shared-control union. Raw frozen cache shared only on identity match. T=setup+unique encoding+unique heads+batch score+role/research wall intervals; unmeasured times remain unknown.",
+    "readiness": "new_code fields can be mapped; not a current run authorization",
+    "priority": "P2",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "DIR-03-LOSS",
+    "linked_issues": [
+      "ISS-SHIFT-TAIL-12",
+      "ISS-VALID-ADAPT-04"
+    ],
+    "rationale": "回归极端输出提示研究鲁棒损失，但先排除实现/尺度问题。",
+    "evidence_refs": [
+      "SRC-RANGES",
+      "SRC-R17"
+    ],
+    "counterevidence": "没有逐行残差，不能假定离群标签；Huber可能牺牲尾部大误差且不解决OOD或输入病态。",
+    "candidate_models_or_modules": [
+      "standardized MSE",
+      "Huber new loss"
+    ],
+    "parameters": {
+      "loss": [
+        "MSELoss",
+        "HuberLoss delta0.5",
+        "HuberLoss delta1.0"
+      ],
+      "scale": "inner_fit Y affine standardized; inverse exactly once",
+      "reduction": "mean"
+    },
+    "combination_constraints": "dropout.1与全部固定；不改Y、不裁剪预测、不用valid定义delta。",
+    "search_method": "仅MAE回归task且scale fixture通过后；先MSE对照，比较Huber两δ。",
+    "configuration_count_or_counting_rule": "3configs×2=6total/task; baselineMSE2 shared =>4additional.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 6,
+    "cost_assumptions": "Per task unless stated; use exact shared-control union. Raw frozen cache shared only on identity match. T=setup+unique encoding+unique heads+batch score+role/research wall intervals; unmeasured times remain unknown.",
+    "readiness": "new_code; no loss experiment executed",
+    "priority": "P2",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "DIR-04-REP",
+    "linked_issues": [
+      "ISS-REP-POOLING-10",
+      "ISS-PRETRAIN-SOURCE-14"
+    ],
+    "rationale": "候选表示互补性可能比头部微调更重要，但必须先证明资产/输入链。",
+    "evidence_refs": [
+      "SRC-R16",
+      "SRC-ENCODER",
+      "EXT-MINIMOL",
+      "EXT-MOLFORMER"
+    ],
+    "counterevidence": "换底座同时改维度、参数量、预训练任务等，是pipeline bundle，不能只归因表示质量。MoLFormer本地未ready且长SMILES不能静默截断。",
+    "candidate_models_or_modules": [
+      "CheMeleon2048 graph fingerprint",
+      "MiniMol512 GINE fingerprint",
+      "MoLFormer-XL-both-10pct official pooler_output"
+    ],
+    "parameters": {
+      "CheMeleon": "keep approved MeanAggregation->fingerprint path, no CLS grid",
+      "MiniMol": "512 dims per upstream; version and checkpoint hash pending",
+      "MoLFormer": "10pct exact variant; approved pinned revision/tokenizer/hash; pooler_output; full-length-input fixture",
+      "head": "256 hidden / dropout.1 baseline for initial bundle; dimensional effect reported"
+    },
+    "combination_constraints": "冻结参数和buffers；仅批准权重；不下载预训练数据；先asset审核，编码版本不同必须新rawcache。",
+    "search_method": "先单task三pipeline对照(若全资产通过)，再测相同head/容量敏感性；不得直接放入当前exact矩阵。",
+    "configuration_count_or_counting_rule": "Up to3ready pipelines×2seeds=6total/task; CheMcontrol2 shared =>up to4additional; encoding up to3 distinct feature pipelines.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 6,
+    "cost_assumptions": "Per task unless stated; use exact shared-control union. Raw frozen cache shared only on identity match. T=setup+unique encoding+unique heads+batch score+role/research wall intervals; unmeasured times remain unknown.",
+    "readiness": "CheM existing; MiniMol/MoLFormer blocked_assets until source/version/license/full-input gates",
+    "priority": "P3",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "DIR-05-ENSEMBLE",
+    "linked_issues": [
+      "ISS-CACO2-MONITOR-01",
+      "ISS-VALID-ADAPT-04"
+    ],
+    "rationale": "同任务均匀平均预测是低新增训练成本的方差研究。",
+    "evidence_refs": [
+      "SRC-SCORE2",
+      "SRC-SCORE4"
+    ],
+    "counterevidence": "误差相关未知；均值可变差；不能混Y尺度或依据test调权；官方再评分仍需授权。",
+    "candidate_models_or_modules": [
+      "uniform same-task seed ensemble"
+    ],
+    "parameters": {
+      "members": [
+        2,
+        3
+      ],
+      "weights": "uniform only",
+      "member_selection": "preregister all members of same config/seed set; no cherry-pick",
+      "output": "mean probabilities or inverse-transformed original-Y predictions"
+    },
+    "combination_constraints": "先有相同task/split/目标尺度成员；不直接平均不同任务/未逆变换logits。",
+    "search_method": "用现有合规成员产物提出一次aggregate比较；没有现成成员则另算其fits。",
+    "configuration_count_or_counting_rule": "0newfits if compatible member outputs exist;1or2 extra candidate evaluations/task, separately authorized.",
+    "seeds": [],
+    "estimated_run_count": 0,
+    "cost_assumptions": "Per task unless stated; use exact shared-control union. Raw frozen cache shared only on identity match. T=setup+unique encoding+unique heads+batch score+role/research wall intervals; unmeasured times remain unknown.",
+    "readiness": "research_only; prediction artifact compatibility and evaluator permission required",
+    "priority": "P3",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "DIR-06-SCALE",
+    "linked_issues": [
+      "ISS-SHIFT-TAIL-12"
+    ],
+    "rationale": "train-fit特征缩放可能放大稀有维度；优先独立检查分母/数值条件而非裁剪异常预测。",
+    "evidence_refs": [
+      "SRC-RANGES",
+      "SRC-R19",
+      "SRC-BASELINE"
+    ],
+    "counterevidence": "量纲变换不保证排序/MAE改善；robust scale对binary稀疏指纹可能IQR=0。",
+    "candidate_models_or_modules": [
+      "fit-only feature standardizer",
+      "robust feature scaler"
+    ],
+    "parameters": {
+      "feature_scale": [
+        "legacy mean/std ddof0",
+        "median/IQR"
+      ],
+      "zero_denominator_policy": "IQR abs<1e-8 =>1, exactly documented",
+      "target_scale": "unchanged fit mean/std",
+      "raw_input": "unchanged; no clipping or deletion"
+    },
+    "combination_constraints": "只换feature scaling，不换Y/loss/head；每splitfit；缓存区分raw与scaled。",
+    "search_method": "若训练输入condition/range异常且导出inverse正确，做2种scaler共同seed对照；报告train-fit/stop的feature摘要，不用validY。",
+    "configuration_count_or_counting_rule": "2configs×2=4total/task, baseline2 shared =>2additional;0new encoder passes with rawcache.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 4,
+    "cost_assumptions": "Per task unless stated; use exact shared-control union. Raw frozen cache shared only on identity match. T=setup+unique encoding+unique heads+batch score+role/research wall intervals; unmeasured times remain unknown.",
+    "readiness": "new_code; requires numeric fixture and permission for feature transform",
+    "priority": "P1",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "DIR-07-CLASS-WEIGHT",
+    "linked_issues": [
+      "ISS-METRIC-PARITY-11",
+      "ISS-DATA-PROFILE-03"
+    ],
+    "rationale": "CYP正例稀少任务可研究训练loss权重与AP，但不从valid比例反推。",
+    "evidence_refs": [
+      "SRC-R17",
+      "SRC-R19"
+    ],
+    "counterevidence": "加权BCE可能损害概率校准或AUROC/AP；不能把概率阈值优化当排名提升。",
+    "candidate_models_or_modules": [
+      "BCEWithLogitsLoss head"
+    ],
+    "parameters": {
+      "pos_weight": [
+        1,
+        "n_negative_fit/n_positive_fit"
+      ],
+      "source": "inner_fit only; if either class absent, fail gate",
+      "loss_reduction": "mean",
+      "all_else": "H0 identical"
+    },
+    "combination_constraints": "只改pos_weight，保持样本、模型、seed；禁止按valid/test比例设置或重采样删除行。",
+    "search_method": "选已准备AP任务先做unweighted/weighted对照，先满足metric实现一致。",
+    "configuration_count_or_counting_rule": "2configs×2=4total/task;2additional if unweighted baseline exists.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 4,
+    "cost_assumptions": "Per task unless stated; use exact shared-control union. Raw frozen cache shared only on identity match. T=setup+unique encoding+unique heads+batch score+role/research wall intervals; unmeasured times remain unknown.",
+    "readiness": "new_code; class-count fixture required",
+    "priority": "P2",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "DIR-08-LINEAR-CAPACITY",
+    "linked_issues": [
+      "ISS-SHIFT-TAIL-12"
+    ],
+    "rationale": "线性头提供低容量诊断：若胜过MLP，先问过拟合/尺度，而非扩大网络。",
+    "evidence_refs": [
+      "SRC-R19",
+      "SRC-RANGES"
+    ],
+    "counterevidence": "线性头可能无法表达非线性关系；参数少不是自动泛化好。",
+    "candidate_models_or_modules": [
+      "2048->1 linear head",
+      "2048->256->1 MLP"
+    ],
+    "parameters": {
+      "head": [
+        "linear no hidden/dropout",
+        "H0 MLP256 dropout.1"
+      ],
+      "optimizer": "same AdamW .0005/.0001",
+      "loss": "same task loss"
+    },
+    "combination_constraints": "比较整体head结构效果；称bundle(capacity+activation+dropout removal)，不能声称仅width变化。",
+    "search_method": "在高方差/数值尾部task优先；使用共同seed和同split。",
+    "configuration_count_or_counting_rule": "2configs×2=4total/task, baseline2 shared =>2additional.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 4,
+    "cost_assumptions": "Per task unless stated; use exact shared-control union. Raw frozen cache shared only on identity match. T=setup+unique encoding+unique heads+batch score+role/research wall intervals; unmeasured times remain unknown.",
+    "readiness": "new_code model factory; not config_only for legacy strict head schema",
+    "priority": "P2",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "DIR-09-STOPPING",
+    "linked_issues": [
+      "ISS-CACO2-MONITOR-01",
+      "ISS-VALID-ADAPT-04"
+    ],
+    "rationale": "不平滑排名指标和小停止集可能导致早停方差；明确loss与monitor分离。",
+    "evidence_refs": [
+      "SRC-SCORE2",
+      "SRC-SCORE4",
+      "SRC-R19"
+    ],
+    "counterevidence": "首批已经固定原patience8；改patience/epochs不能当同一历史control；多个停止准则继续适应valid。",
+    "candidate_models_or_modules": [
+      "task metric early stop",
+      "training-loss monitor control"
+    ],
+    "parameters": {
+      "factor_a": "patience8 vs16, max_epochs50 fixed",
+      "factor_b": "task metric vs standardized MSE for regression, never simultaneously withfactor_a",
+      "min_delta": 1e-07,
+      "earliest_tie": "retain earlier"
+    },
+    "combination_constraints": "每轮只选择a或b，不做二因素；同一训练轨迹多monitorcheckpoint可作后续设计但必须真实保存，不事后假定。",
+    "search_method": "先小停止集/seed分歧证据才触发；Caco2monitor已三seed描述性，不自动再扫。",
+    "configuration_count_or_counting_rule": "One selected2config contrast×2=4total/task;2additional to exactbaseline. No more than one factor contrast per dispatch.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 4,
+    "cost_assumptions": "Per task unless stated; use exact shared-control union. Raw frozen cache shared only on identity match. T=setup+unique encoding+unique heads+batch score+role/research wall intervals; unmeasured times remain unknown.",
+    "readiness": "new_code monitor registry or verified Caco2 field; matched-path required",
+    "priority": "P3",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "DIR-10-SPLIT-STABILITY",
+    "linked_issues": [
+      "ISS-VALID-ADAPT-04"
+    ],
+    "rationale": "同一split上的seed仅测优化波动，补第二split才能观察分区敏感性。",
+    "evidence_refs": [
+      "SRC-R19",
+      "SRC-POLICY"
+    ],
+    "counterevidence": "新split仍来自同officialtrain，officialvalid仍复用；不是新的外部测试。组整体划分可能单类/constant，不能挑seed直到好看。",
+    "candidate_models_or_modules": [
+      "paired H0/H1 across grouped splits"
+    ],
+    "parameters": {
+      "split_seeds": [
+        43,
+        73
+      ],
+      "model_seeds": [
+        44,
+        45
+      ],
+      "configs": [
+        "H0",
+        "H1"
+      ],
+      "group": "exact raw SMILES strings",
+      "scaler": "fit anew per split"
+    },
+    "combination_constraints": "两个config都跨相同split；单候选跨split不能声称比较排名；rawcache可共享但scaledcache不能混用。",
+    "search_method": "先confirm表现与成本可接受时，主控登记第二split73；失败则保留失败而不搜索替代split。",
+    "configuration_count_or_counting_rule": "2configs×2modelseeds×2splits=8total/task; originalsplit43 quartet shared =>4additional.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 8,
+    "cost_assumptions": "Per task unless stated; use exact shared-control union. Raw frozen cache shared only on identity match. T=setup+unique encoding+unique heads+batch score+role/research wall intervals; unmeasured times remain unknown.",
+    "readiness": "new_code split manifest and refit fixture",
+    "priority": "P3",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "DIR-11-SMILES-FEATURES",
+    "linked_issues": [
+      "ISS-REP-POOLING-10",
+      "ISS-SHIFT-TAIL-12"
+    ],
+    "rationale": "不改CheM fingerprint内部池化，另加可追溯的SMILES分子尺寸/环计数作为输入补充，检验环/无环偏移。",
+    "evidence_refs": [
+      "SRC-SCAFFOLD",
+      "SRC-ENCODER"
+    ],
+    "counterevidence": "count features可能学会split捷径，尤其AMES单骨架与LD50/sol无环valid；不能据valid结构挑逐分子规则。",
+    "candidate_models_or_modules": [
+      "frozen fingerprint + deterministic RDKit descriptors"
+    ],
+    "parameters": {
+      "features": [
+        "none",
+        "atom_count,bond_count,ring_count,formal_charge"
+      ],
+      "descriptor_version": "pin approved RDKit; raw SMILES unchanged",
+      "descriptor_scaling": "inner_fit mean/std only",
+      "concatenate_dim": "2048+4"
+    },
+    "combination_constraints": "只增加固定四特征，其他相同；新featurizer hash/输入维度/参数量变化属于feature-pipeline bundle；无外部数据。",
+    "search_method": "仅在明确shift诊断后小范围；不能按validY选择描述符或补丁预测。",
+    "configuration_count_or_counting_rule": "2pipelines×2=4total/task; baseline2 shared=>2additional; existing fingerprint reuse; lightweight descriptor generation cost separate.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 4,
+    "cost_assumptions": "Per task unless stated; use exact shared-control union. Raw frozen cache shared only on identity match. T=setup+unique encoding+unique heads+batch score+role/research wall intervals; unmeasured times remain unknown.",
+    "readiness": "new_code and featurizer approval; not first batch",
+    "priority": "P3",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "DIR-12-MULTITASK",
+    "linked_issues": [
+      "ISS-RUNNER-21TASK-02",
+      "ISS-VALID-ADAPT-04"
+    ],
+    "rationale": "共享新adapter可能帮助小任务，但与逐任务装配完全不同，应单列而非包装ensemble。",
+    "evidence_refs": [
+      "SRC-R16",
+      "SRC-POLICY",
+      "SRC-R19"
+    ],
+    "counterevidence": "负迁移、目标尺度/采样权重和跨任务分子重叠会混杂；新batch成本不等于几个单头fits。",
+    "candidate_models_or_modules": [
+      "frozen CheM + trainable shared adapter + per-task heads"
+    ],
+    "parameters": {
+      "initial_task_family": [
+        "clearance_hepatocyte_az",
+        "clearance_microsome_az"
+      ],
+      "shared_adapter_dim": [
+        128,
+        256
+      ],
+      "loss_weights": "each task mean loss then arithmetic mean, target standardized within task fit",
+      "sampling": "alternating task-balanced batches; no row deletion"
+    },
+    "combination_constraints": "全encoder冻结；各任务fit/stop隔离，跨task角色重叠汇总给主控审批；不使用valid/test标签；与对应两个单任务heads对照。",
+    "search_method": "只有单任务基线稳定、共享目标合理且主控明确允许joint模块后；只推断整体联合pipeline效果。",
+    "configuration_count_or_counting_rule": "2adapter widths×2seeds=4joint-training jobs plus 2tasks×2seeds=4standalone controls =>8logical jobs if none cached; report jobs and per-task heads separately, not8independent endpoint experiments.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 8,
+    "cost_assumptions": "Per task unless stated; use exact shared-control union. Raw frozen cache shared only on identity match. T=setup+unique encoding+unique heads+batch score+role/research wall intervals; unmeasured times remain unknown.",
+    "readiness": "blocked design authorization and new_code; no matrix entry",
+    "priority": "P4",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "DIR-13-RESUME-FAIRNESS",
+    "linked_issues": [
+      "ISS-RESOURCE-SHARING-05",
+      "ISS-CACO2-MONITOR-01"
+    ],
+    "rationale": "恢复正确性与计算节省重要，但不应让baseline fresh/candidate resume混杂。",
+    "evidence_refs": [
+      "SRC-R07",
+      "SRC-R13",
+      "SRC-R14"
+    ],
+    "counterevidence": "六项主控已有恢复验收；本轮不重复模型工程任务。未落盘更新不应从checkpoint反推。",
+    "candidate_models_or_modules": [
+      "head/optimizer/RNG checkpoint protocol"
+    ],
+    "parameters": {
+      "checkpoint_contents": [
+        "model",
+        "optimizer",
+        "Python/NumPy/CPU/CUDA RNG",
+        "best/history",
+        "split/cache identities"
+      ],
+      "resume_policy": "same boundary policy for paired runs; fresh planned screen, resume only supervised interruption"
+    },
+    "combination_constraints": "资源故障仍记为故障；逻辑fit恢复不是额外新seed，尝试时间另计；不能抹除失败attempt。",
+    "search_method": "准备阶段合成fixture断点往返；真实实验仅在已授权run发生中断时恢复。",
+    "configuration_count_or_counting_rule": "0new scientific fits for fixture; any resumed logical fit retains original identity, failed attempts cost separately.",
+    "seeds": [],
+    "estimated_run_count": 0,
+    "cost_assumptions": "Per task unless stated; use exact shared-control union. Raw frozen cache shared only on identity match. T=setup+unique encoding+unique heads+batch score+role/research wall intervals; unmeasured times remain unknown.",
+    "readiness": "existing Caco2 evidence reusable; new task serializer fixture required",
+    "priority": "P1",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "DIR-14-REJECTED-CALIBRATION",
+    "linked_issues": [
+      "ISS-METRIC-PARITY-11"
+    ],
+    "rationale": "对AUROC/AP优先做排序能力，不把单调概率校准当主要提分手段。",
+    "evidence_refs": [
+      "EXT-AP",
+      "SRC-R09"
+    ],
+    "counterevidence": "严格单调变换保持排序，因此一般不会改善相同tie结构的AUROC/AP；数值压缩可反而增加ties。",
+    "candidate_models_or_modules": [
+      "no first-batch calibration"
+    ],
+    "parameters": {
+      "temperature": "not selected",
+      "threshold_tuning": "not selected"
+    },
+    "combination_constraints": "禁止test调阈值或人工改概率；若未来真实目标要求校准需另立目标与合法内部validation。",
+    "search_method": "明确负面方向，避免无效搜索。",
+    "configuration_count_or_counting_rule": "0fits",
+    "seeds": [],
+    "estimated_run_count": 0,
+    "cost_assumptions": "Per task unless stated; use exact shared-control union. Raw frozen cache shared only on identity match. T=setup+unique encoding+unique heads+batch score+role/research wall intervals; unmeasured times remain unknown.",
+    "readiness": "deferred_not_selected",
+    "priority": "P4",
+    "scope_status": "proposal_only"
+  }
+]

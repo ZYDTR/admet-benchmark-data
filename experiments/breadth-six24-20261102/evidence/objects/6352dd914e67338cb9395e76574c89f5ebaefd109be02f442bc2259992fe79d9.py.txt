@@ -1,0 +1,171 @@
+from pathlib import Path
+import json,re
+P=Path(__file__).resolve().parents[1]
+props=json.loads((P/'next_experiments.json').read_text());S=json.loads((P/'audit/scenarios.json').read_text())
+text='''# 下一批具体派发指南 · repair-001
+
+request_id=`admet-agentled-six-pro-20261102-001`；round_id=`six-seed-paired-and-breadth-20261102`；input manifest=`87788a22149be39cd7b41e68fc0a5df048bb9971a0878eaa1a755092292d2d0d`。
+
+本文件是**研究设计/主控审议稿**。当前只允许aggregate_only分析；下一批proposal_only。本轮未训练、全量编码或新评分。下文未来执行步骤只有在主控另行批准后才成立；准备方不能凭本指南操作海南、读取逐行valid真值、追加run或上传赛事。
+
+## 1. 主控选定的建议批次，而非等待执行方猜范围
+
+推荐medium：四类指标核心任务lipo/BBB/CYP2D6 Veith/hepatocyte clearance，加LD50/solubility两个结构与数值压力任务。每task的H0/H1分别dropout0.1/0.3，其余相同；model seeds44/45、split43，24唯一fit。精确数据JSON是`next_experiments.json`，12条各一个task、一个完整config、一个split、两个model seeds；所有条目`preparation_mode=new_code`。没有准备任务混入训练数组，没有泛称task-native metric，没有已经训练的伪结果。
+
+H0不是历史Mini22的512头，也不是别的task的Caco2模型；它是本任务当前拟定256头的匹配control。H1只改dropout。现有历史模型分数仅作上下文。全部24fit的completed_exact_fits=0；历史R19的84fit从未执行，不能抵扣这24。
+
+| proposal ID | task | config | model seeds | external metric / direction | 准备状态 |
+|---|---|---|---|---|---|
+'''
+for p in props:
+ text+=f"| {p['proposal_id']} | {p['task']} | {'H0' if p['design_type']=='control' else 'H1'}：dropout={p['exact_config']['head']['dropout']} | 44,45 | {p['metric']} / {p['direction']} | new_code；G00–G05未实测 |\n"
+text+='''
+完整配置固定：CheMeleon checkpoint SHA `c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651`，登记approved encoder code SHA `3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712`，原2048 fingerprint路径不变，eval/no_grad且参数和buffers冻结。实际runtime代码/依赖与登记版本的对应必须由准备方证明，不因本文写了hash就视为已通过。输入科学commit固定`092d21ddaeb44f305a0628bef15fb6232ea8eb4b`。不从最新上游文档自动升级生产环境。
+
+## 2. 零fit准备任务及验收职责
+
+### G00-READ-BOUNDARY · 主控投影与数据权限
+
+**责任**：主控生成角色最小化投影；准备方核对。**输入**：本指南、每task approved train.Y、盲valid/test输入身份、批准科学资产、必要代码与原模板身份；不发整个历史包含答案的包。**输出**：`role-input-manifest.json`，列源角色、hash、获准用途；敏感数据缺席断言和访问日志。
+
+**保持**：原始行、标签、SMILES、顺序；禁止清洗/去重/伪标签/外部数据/test拟合。**验收**：valid/test输入只含blind列，非盲label路径不可访问；不跟旧公开答案链接；只从train拟合任何学习统计。**失败**：整批停止并交主控，不由准备方用公开链接补齐。零fit仅做只读元数据、数学合成fixture及少量批准输入的无参数更新检查，不做全量encoderforward。
+
+### G01-ASSET-IDENTITY · 私有依赖与冻结接口
+
+**责任**：准备方，主控独立核验。**输入**：上节批准weights/encoder身份、R16资产表、当前运行环境。**输出**：`asset-readiness.json`、依赖版本清单、源码diff、freeze/hash fixture、失败原文。
+
+**变更**：在项目私有目录准备必要依赖与新task dispatcher；不修改他人环境/共享系统、不在未授权远程主机操作。**保持**：CheMeleon BondMessagePassing→原MeanAggregation→fingerprint语义，2048维；不加CLS/任意mean池化。所有encoder参数`requires_grad=false`，eval时buffers亦不得变化；optimizer仅包含head参数。
+
+**零fitfixture**：使用已准入train中的极少量指定行，前后encoder state/buffer digest一致，输出shape(N,2048)、dtype与有限性符合合同；parse failure按已有政策保留零embedding和mask，不删行。构建head/optimizer检查参数ID交集为空；不执行optimizer.step。真实head非零更新与恢复后的训练等价，只能在未来获准训练时验收，不伪称准备阶段已有结果。
+
+**失败/替代**：权重hash、代码版本或输入覆盖不一致则该资产blocked；不能临时换MiniMol/MoLFormer、换更大checkpoint或下载外部预训练数据。
+
+### G02-INPUT-SPLIT-<task> · 数据身份与train-only分区
+
+**责任**：准备方；数据身份由主控确认。**输入**：每条exact_config.inputs中具体train/blindvalid/test hash及行数。R19原来train per-file SHA未知，本次从既有SMILES统计原件的input_hashes登记了每task expected train SHA；准备方必须与实际批准train文件逐字节匹配，而非相信这个登记值即可。
+
+**输出**：`input-check-<task>.json`、`split-manifest-<task>.json`、`train-profile-<task>.json`。列train/valid/test三种行数，split内row_index键唯一性，Drug_ID重复/空值，仅作诊断不删除。train.Y profile列dtype、finite、min/quantiles/max、分类counts、ties/constant；这些是待产生测量，不从valid标签汇总代替。
+
+**split43确切算法**：按exact raw Drug字符串分组；唯一key按codepoint排序；CPython `random.Random(43).shuffle`；取完整groups直到≥max(1,round(0.1*n))，不得吃完所有groups；保留输入行序。Python round规则和版本写入manifest。分类当前不额外stratify，不能静默变算法。保存fit/stop row IDs、hash、具体n及train-fit/stop类别结构；实际group大小意味着n不一定正好90/10。
+
+**验收**：fit∩stop为空、并集为全部train行，原SMILES group不跨分区；与外部blindvalid/test不混用；没有标签/行修复。任何一类缺失或排名目标常量导致指标undefined则fail task preparation，不能换seed直到好看。若需stratified-group重设计，主控登记新split_id，两边config都换后再审，不继续沿用旧对照。
+
+### G03-METRIC-INTERFACE-<task> · 新代码的明确生产接口
+
+**责任**：准备方实现，独立验收者用手算fixture对照。**输出**：`interface-map.json`、源码版本/diff、`metric-fixtures.json`、config schema校验结果。
+
+旧Caco2严格runner公开验证了现有MSE/MAE monitor、缓存与恢复；没有证据它已接受全部分类/AP/Spearman字段。因此本批不是config_only。新interface_id是`admet-frozen-breadth-repair001-proposed`；`head.hidden_dims`、`optimizer.lr`、`optimizer.weight_decay`、`loss.name`、`early_stopping.metric/direction`等是拟议显式合同，不得把width/wd/“task-native”伪装成已有生产字段。适配器必须列每字段到真实实现的映射、允许值、拒绝未知字段策略；实际code hash准备后登记。
+
+**固定生产语义**：
+- head2048→256(ReLU,dropout)→1，bias=true，无BN/LN/residual，524801可训练参数。两config同seed初始化weights应相同；sampler独立CPU generator同seed，batch顺序一致。
+- AdamW lr0.0005、weight_decay0.0001、betas0.9/0.999、eps1e−8、amsgrad=false、scheduler=none，所有head参数decay、encoder不入optimizer。
+- batch128、max_epochs50、patience8、min_delta1e−7、earlier tie、每epoch评估、restore_best；float32/noAMP/no_gradclip、workers0、drop_last=false。Python/NumPy/Torch/CPU-CUDA seeds都绑定该run唯一model seed；strict deterministic若不支持则fail，不静默降级。
+- 分类BCEWithLogitsLoss、target0/1、pos_weight1、mean，输出sigmoid(logit)连续正类概率，earlystop head.eval。BBB AUROC maximize，CYP2D6 Veith AUPRC字段按本地AP maximize。
+- 回归MSELoss，target仅由inner_fit mean/std ddof0标准化，std0→1；导出逆变换恰一次。Lipo/LD50/solubility MAE minimize；hepatocyte Spearman maximize。原Y单位未证实不猜物理单位或再取log。
+
+**必须通过的数学fixture（这些是定义测试，不是新的valid评分）**：
+
+| fixture | 输入 | 预期 |
+|---|---|---|
+| MAE | y=[0,2,4], p=[1,2,1] | 4/3 |
+| AUROC ties | y=[0,1,0,1], score=[.1,.4,.4,.9] | 0.875（平均秩） |
+| AP ties | 同上，按相同score整组阈值 | 5/6；不得换梯形PR面积 |
+| Spearman ties | y=[1,1,3], p=[3,2,1] | −sqrt(3)/2，平均并列秩 |
+| sigmoid | logit=0 | p=0.5；不是阈值label |
+| Y逆变换 | fitY=[10,12]→μ11/σ1，z_pred=2 | 导出13，不是2或24 |
+| 常量feature | fit同值、std<1e−8 | 以1替代分母，不inf/NaN |
+| undefined | one-class AUROC/AP或常量rank目标 | fail/明确undefined，不填0并继续 |
+
+fixture误差容忍是数值实现测试（例如float64 metric1e−12、float32逆变换1e−6），不是未来模型收益阈值。该容忍可由实际dtype细化并登记，不能用它证明科学显著。
+
+### G04-CACHE-EXPORT · 两层缓存与完整候选行映射
+
+**raw cache**：checkpoint/实际encoder/featurizer/tokenizer/hash、输入原字节hash、task/split/row_index、raw Drug identity、dtype/feature_dim、parse mask；只存冻结表示。**scaled cache**再绑定split_id、inner_fit rows/hash、scaler算法/参数hash，不跨split误复用。Feature统计mean/std在inner_fit以float32/ddof0计算，std<1e−8→1；不使用valid/test统计，不裁剪特征或Y。
+
+**零fit验收**：调换一行、重复Drug_ID、空ID、错split、错featureversion必须触发失败；不能只看N×2048 shape通过。synthetic scaler测试和少量approved input回写验证raw与scaled路径；拟合统计的对象必须可审计。不要为了取shortcut将valid全量features计算混入零fit准备。
+
+**模板**：官方template SHA `8ee41589d2c98e7b93081c058b3f928ac09bea4b3ffc899fa13677051e9baa20`，16379行，cols task/sample_idx/drug_id/smiles/y_pred/metric，BOM/CRLF。内部row_index与sample_idx基准显式映射，task+sample_idx唯一；Drug_ID不作主键。只写y_pred，其他单元/顺序/格式diff必须为空，分类范围[0,1]、回归连续finite、逆变换只一次。恒等模板fixture文件标`NOT_A_CANDIDATE`，不得用合成常数输出冒充模型预测。
+
+未来仅训练六任务时，其余16必须接回已准入baseline的真实预测接口与身份，形成逐任务model lineage；无法核验任何任务则完整候选未就绪，不能人手补行。逐任务head装配≠seed ensemble≠joint multitask，三种方案的可训练共享部分和评价分别登记。
+
+### G05-RESOURCE-AND-AUTH · 决策权限与共享资源
+
+**责任**：主控/实际执行Agent。**输入**：所有passed gates、完整确定矩阵、实际资源/他人作业观测、明确预算与授权。**输出**：不可变dispatch manifest、资源检查、owned process范围、取消/恢复策略。
+
+GPU0历史失败不撤销；GPU1只证明当时有限条件，不适用于今后任意共享。不要求零显存、不固定3并发，也不固定必须GPU1：选择真实满足当前负载和不影响他人的资源；没有别人吞吐/延迟证据则限制结论范围。业务worker状态和supervisor状态独立保存；哪怕模型产物科学可用，资源失败照记。失败attempt耗时计入预算；恢复保留同logical fit身份、总步/已恢复步/新增步，不能重复算新seed或擦除之前失败。
+
+**授权是必要条件**：通过全部fixture仅意味可审议执行；无主控正式release仍零训练、零全量编码、零新评分。
+
+## 3. 执行后才产生的验收产物（本轮不伪造）
+
+每run返回：proposal/run/task/asset版本、精确expanded config与hash、split/scaler/cache identity、seed、epochs/bestepoch/total/resumed/newsteps、optimizer/head参数集合、前后encoder参数/buffers摘要、所有RNG/checkpoint、loss/monitor/metric方向、有限性/概率/原Y尺度检查、预测行映射、worker和supervisor结果、资源观测与事件时间。
+
+同seedH0/H1若除了dropout还有任何科学变化（learning rate、early-stop耐心、重新split、转换或featureversion），不能继续按one_factor解读；应停下由主控登记bundle或新对照。运行设备/恢复差异即使不在科学config中，也须标混杂并考虑受控重跑是否值得，不能强行要求抹平退出码。
+
+每task baseline与candidate产物齐全后再统一取回已授权的task/group级指标；评分者另保留真值私有路径，给训练方只输出准入的汇总和技术诊断，不给逐行truth/residual/errorlookup或易反推答案的小差分。
+
+## 4. 预注册科学判据与后续分支
+
+将改善统一为正数。MAE每seed `r=(MAE_H0−MAE_H1)/MAE_H0`；H0为0时不加epsilon，标该gate不可改善。其他metric每seed `d=metric_H1−metric_H0`。screen两个共同seed均>0，平均达到MAE相对0.01、AUROC0.005、AP0.01、Spearman0.03才具备候选资格。
+
+这是**本修复的可证伪研究建议**，非已知噪声/业务阈值/统计置信度；来源是最新repair允许提出明确阈值，未冒充历史测量。报告0倍和2倍gate的敏感性，不在看结果后改规则以确保通过。inner_stop用于epoch与candidate选择有乐观偏差；外部official_valid若主控授权释放，保持config/规则冻结再据汇总复核。新seed仍不使valid独立。
+
+**条件confirm**：从六task中最多2个，优先不同metric族，再按最差paired提升/gate、实际完整成本、task字典序破tie；选择过程由主控复核。双方H0/H1只追加seed46；44/45已有八fits不重跑。新增seed改善非负、三seed平均仍达到原gate方可保留为更稳定候选；仍不宣布独立泛化。条件任务未决定前只存`audit/conditional-followups.json`，不得用`task=TBD`混入精确next_experiments。
+
+| 触发 | 主控可选动作 | 默认不做 |
+|---|---|---|
+| screen无候选过gate | 停dropout扩搜；查train-only scale/condition，审议DIR06/03/08 | 不自动上large或全84fit |
+| 平均改善但seed方向不一致 | 记录不稳定；可单独批准双方seed46诊断或不追 | 不挑胜出seed，不声称通过 |
+| LD50/solubility范围/结构风险持续 | 对照既有汇总查逆变换、scaler、featurizer；保留无环结构风险 | 不读取逐行valid残差，不裁剪/清洗预测 |
+| 多task稳定改善 | 按上述规则最多两taskconfirm；之后另提uniform ensemble | 不额外调ensemble权重/用test反馈 |
+| 身份/标签/冻结/资源故障 | 立即停止受影响分支、保留两类退出，回主控 | 不等整批结束、不以好分豁免 |
+
+**具体reserve替代**：BBB gate失败时可另审PGP（同AUROC但不是同生物终点）；CYP2D6 Veith失败可另审CYP2C9 Veith（AP）；hep clearance失败可另审microsome clearance（Spearman）。每替代任务需要自己的原件hash、fixture、H0/H1 seeds44/45并另登记；不自动算进24、不强行保持六task数量。lipo/LD50/solubility失败没有自动替代，因为替换会改变设计目的。
+
+## 5. 三档预算、编码与唯一fit账
+
+三档是互斥选择/包含关系，不是累加授权。配置仅H0/H1，全部split43；modelseeds如下。
+
+| 档位 | tasks | model seeds | baseline fits | candidate fits | unique total | 完成精确fits | 冷raw编码分区passes |
+|---|---|---|---:|---:|---:|---:|---:|
+'''
+for s in S['scenarios']:
+ text+=f"| {s['scenario']} | {', '.join(s['task_ids'])} | {s['model_seeds']} | {s['shared_control_fit_count']} | {s['candidate_fit_count']} | {s['unique_fit_count']} | 0 | {s['raw_encoding_cold_cache_dataset_passes']} |\n"
+text+='''
+small是medium子集，增加两压力task只多8fit；large包含medium且引入四新task/第三seed，总60，不是在24上再加60。medium条件confirm最多4额外fit，union28；large在这种confirm后尚需32fit。`audit/scenarios.json`枚举全部15种两task确认集合对账。
+
+raw编码只对同asset/版本/input分区一次，不随config或modelseed重算；small/medium/large分别16458/30350/48979行train+blindvalid，8/12/20个分区pass，1个共享模型加载会话（可用条件下）；test暂缓，完整候选另批准时再4/6/10pass。已有历史cache身份全部匹配可把相应pass降0，未验收不得先报“零编码成本”。fit-scaler分别4/6/10次；若未来新增split73，则scaler重拟合但rawcache可复用。
+
+秒数未知而不是零：先批准的实际运行记录每task编码/加载/逐epoch/head/评分取回/回报，再据实际硬件、train行数、分子大小、bestepoch修正成本区间。不要用valid n代替train n估训练成本。成本模型分解shared准备、unique encoder passes、unique fits、失败attempts、评分批量、整理、授权等待、研究；跨角色timer重叠不重复相加。
+
+## 6. 批次与周转
+
+当前已有观测：程序520.7901s含导入/CPU/失败，两个训练原生turn4895.984s，取回四分数程序270.4201s与该角色至回报661.5655s不同。用户补的本轮准备597.928s、释放等待810s、release→send180.968s；模型send→completion仅知(223.312,310.657]s；首次最终件→ZIP保留146.685s不等于单条下载；快照formal17.61min/requestwall41.07min且completedAt未知。这些数据不可相加成“总GPU”或“总模型”时间。
+
+**现场方案A**：只读profiles/fixture/静态schema核验并行建议→主控一次锁定矩阵/授权→共享raw编码缓存→成对heads按实际资源运行→集中评分/回收→整批研究。把metadata和输出校验前置到等待期可以减少空等，但不提前训练或全量编码。正常不每个头回Chat；重大边界故障立即回主控。不要引入通用固定编排引擎。
+
+**替代B**：若新代码/资源故障风险高，主控另发lipo+BBB的H0/H1×44/45八fit作为明确子集。代价是一轮额外调度/评分等待、暂不覆盖AP/Spearman；失败时停止后续而非自动替换。通过也不自动释放余下16fit，需要原先授权覆盖或再次明确release。
+
+各角色记录start/ready/released/work_started/work_finished/report_seen/completedAt及钟源；模型完成被轮询夹住就保留区间，不用首次观测代精确完成。wall总量按时间区间并集/关键路径；下载、回收核对、正式turn和请求墙钟各有起点。共享资源仅按现场不影响别人任务的证据，不从一次GPU1成功推断普适安全。
+
+## 7. 派发前的最终签核表
+
+主控逐task核验：具体proposal存在；asset真实而非执行LLM；inputs hash和blind列正确；split/scaler未含外部行；H0/H1仅dropout不同；loss/monitor/metric/output定义可执行；freeze包含buffers；预测可映射原模板；所有gates通过；资源和预算批准；唯一fit集合去重；失败/恢复政策不抹除失败。
+
+准备交付与训练交付分开。准备包不得包含预测答案或一个私自试训结果。未来训练包必须能复核非零head更新、冻结encoder以及所有必要身份。关闭准备问题不是自动解除aggregate_only或proposal_only；本修复的科学研究答完，也不让任何Agent自行扩大下一批。
+
+证据与对应问题：身份/角色见SRC-PROMPT、SRC-POLICY、SRC-RULES；接口/资产见SRC-R10/R16/R19/RUNNER/ENCODER；任务分数结构见SRC-R17/SCAFFOLD/RANGES；运行见SRC-R07/R13；全部精确URI在audit/sources.json，相关稳定issue IDs在issues.json。'''
+(P/'next_batch_guide.md').write_text(text,encoding='utf-8')
+# Tighten explicit thresholds consistently, without any change to fit scientific configs.
+for p in props:
+ rule=p['minimum_effect_or_decision_rule']
+ rule['statistic']='MAE: arithmetic mean of seedwise (H0-H1)/H0, require H0>0; other metrics: arithmetic mean of H1-H0'
+ rule['zero_control_MAE']='No epsilon; mark no improvement possible under relative gate'
+ rule['confirm']='For selected task add BOTH H0/H1 seed46 only; reuse44/45. Third improvement nonnegative and three-seed mean reaches the same original task gate. No significance/generalization claim.'
+(P/'next_experiments.json').write_text(json.dumps(props,ensure_ascii=False,indent=2)+'\n')
+a=(P/'analysis.md').read_text()
+a=a.replace('第三差非负、三对均值仍有利','第三差非负、三对均值仍达到原gate')
+a=a.replace('条件确认需seed46双方，','MAE gate先计算每seed相对改善(H0−H1)/H0再取算术平均；其他metric取H1−H0的算术平均。条件确认需seed46双方，')
+a=re.sub(r'(?m)^(\|[^\n]*\|)\n\n(?=\|)',r'\1\n',a)
+(P/'analysis.md').write_text(a,encoding='utf-8')
+print('guide bytes',(P/'next_batch_guide.md').stat().st_size)

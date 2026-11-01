@@ -1,0 +1,78 @@
+"""One concrete scientific run. No transport, scheduling, model agent or retry."""
+import ctypes,json,os,resource,sys,time
+from pathlib import Path
+sys.path.insert(0,str(Path(__file__).resolve().parent))
+import common_guarded_v3
+sys.modules['common_guarded']=common_guarded_v3
+from common_guarded import ROOT,GPU_UUID,environment,now,safe,write_json
+assert sys.platform=='linux' and os.getuid()==os.getgid()==1012 and ROOT==Path('[TASK_WORKSPACE]/admet/breadth-six24-20261102/_final-tensors03')
+record={'at':now(),'pid':os.getpid(),'start_stat':Path('/proc/self/stat').read_text(),'gpu_uuid':GPU_UUID,'root':str(ROOT)}
+with safe(ROOT/'raw/compute-start.json').open('x') as stream:json.dump(record,stream);stream.flush();os.fsync(stream.fileno())
+os.environ.clear();os.environ.update(environment());os.chdir(ROOT)
+allowed=sorted(os.sched_getaffinity(0))
+def cpu_ticks():
+    out={}
+    for line in Path('/proc/stat').read_text().splitlines():
+        key,*values=line.split()
+        if key.startswith('cpu') and key[3:].isdigit():
+            v=list(map(int,values));out[int(key[3:])]=(sum(v[:8]),v[3]+v[4])
+    return out
+first=cpu_ticks();time.sleep(.5);second=cpu_ticks()
+ratios={i:1-(second[i][1]-first[i][1])/max(1,second[i][0]-first[i][0]) for i in allowed}
+affinity=sorted(allowed,key=lambda i:ratios[i])[:2];assert len(affinity)==2;os.sched_setaffinity(0,affinity);os.nice(19)
+
+resource.setrlimit(resource.RLIMIT_CORE,(0,0));resource.setrlimit(resource.RLIMIT_FSIZE,(450*1024**2,450*1024**2))
+lib=ctypes.CDLL(None,use_errno=True);lib.syscall.restype=ctypes.c_long
+abi=lib.syscall(444,ctypes.c_void_p(),ctypes.c_size_t(0),ctypes.c_uint(1));assert abi>=1,(abi,ctypes.get_errno())
+handled=sum(1<<i for i in [1,*range(4,13)])
+if abi>=2:handled|=1<<13
+if abi>=3:handled|=1<<14
+class Ruleset(ctypes.Structure):_fields_=[('handled_access_fs',ctypes.c_uint64)]
+class Beneath(ctypes.Structure):_pack_=1;_fields_=[('allowed_access',ctypes.c_uint64),('parent_fd',ctypes.c_int32)]
+attr=Ruleset(handled);fd=lib.syscall(444,ctypes.byref(attr),ctypes.sizeof(attr),0);assert fd>=0,ctypes.get_errno()
+def allow(path,access):
+    descriptor=os.open(path,os.O_PATH|os.O_CLOEXEC)
+    try:
+        rule=Beneath(access,descriptor);assert lib.syscall(445,fd,1,ctypes.byref(rule),0)==0,(str(path),ctypes.get_errno())
+    finally:os.close(descriptor)
+allow(ROOT,handled)
+devices=[]
+for pattern in ('nvidia[0-9]*','nvidiactl','nvidia-uvm','nvidia-uvm-tools','nvidia-modeset'):
+    for path in Path('/dev').glob(pattern):
+        if path.is_char_device():allow(path,1<<1);devices.append(str(path))
+allow(Path('/dev/null'),1<<1)
+assert lib.prctl(38,1,0,0,0)==0;assert lib.syscall(446,fd,0)==0,ctypes.get_errno();os.close(fd)
+write_json(ROOT/'raw/protection.json',dict(record,landlock_abi=abi,handled_access=handled,allowed_write_tree=str(ROOT),device_write_handles=devices,affinity=affinity,nice=os.getpriority(os.PRIO_PROCESS,0),selected_cpu_busy_ratios={i:ratios[i] for i in affinity},fs_size_limit=450*1024**2,coverage='filesystem mutation classes handled by Landlock; device IO and own prctl thread naming are separate'))
+sys.path.insert(0,str(ROOT.parent/'source/src'))
+sys.path.insert(0,str(ROOT.parent/'source'))
+
+
+
+import torch,numpy as np
+from study import equal,digest_state
+assert os.environ['CUDA_VISIBLE_DEVICES']==''
+torch.set_num_threads(2);torch.set_num_interop_threads(1)
+B=ROOT.parent;t=json.loads((B/'source/TASK.json').read_text());mapping=json.loads((B/'source/config-mapping.json').read_text());outputs=json.loads((B/'attempts/02/raw/study-complete.json').read_text())['output_directories'];checks=[]
+for item in mapping:
+ rid=item['run_id'];r=B/outputs[rid];a=r/'artifacts';ev=json.loads((a/'training-evidence.json').read_text())
+ initial=torch.load(a/'head-initial.pt',map_location='cpu',weights_only=True);best=torch.load(a/'head-best.pt',map_location='cpu',weights_only=True);last=torch.load(a/'head-last.pt',map_location='cpu',weights_only=True);state=torch.load(a/'training-state-last.pt',map_location='cpu',weights_only=True)
+ assert initial['run_id']==state['run_id']==rid and state['config']==initial['config']==item['expanded']
+ assert best['task']==last['task']==item['consumed']['task'] and best['train_config']==last['train_config']==item['consumed']['head']
+ assert equal(best['state_dict'],state['best_state_dict']) and equal(last['state_dict'],state['last_state_dict'])
+ assert equal(last['optimizer_state'],state['optimizer_state']) and equal(last['rng_state'],state['rng_state'])
+ assert all(torch.isfinite(x).all() for x in [*best['state_dict'].values(),*last['state_dict'].values()])
+ assert any(not torch.equal(initial['state_dict'][k],best['state_dict'][k]) for k in initial['state_dict'])
+ assert sum(x.numel() for x in best['state_dict'].values())==524801
+ assert best['progress']['epoch']==ev['best_epoch'] and best['progress']['steps']==ev['best_step']
+ assert last['progress']['cumulative_steps']==state['progress']['cumulative_steps']==ev['optimizer_steps']>0
+ assert all(int(v['step'])==ev['optimizer_steps'] for v in state['optimizer_state']['state'].values())
+ rng=state['rng_state'];assert {'python','numpy','torch_cpu','torch_cuda','sampler'}==set(rng)
+ assert rng['numpy']['keys'].shape==(624,) and rng['numpy']['name']=='MT19937' and len(rng['torch_cuda'])==1
+ assert digest_state(initial['state_dict'])==ev['head_initial_state_sha256'] and digest_state(best['state_dict'])==ev['head_best_state_sha256']
+ history=state['history'];assert len(history)==ev['epochs'] and history==ev['history'] and len(state['batch_evidence'])==ev['optimizer_steps']
+ for epoch in history:
+  rows=[v for v in state['batch_evidence'] if v['epoch']==epoch['epoch']]
+  weighted=sum(v['loss']*v['rows'] for v in rows)/sum(v['rows'] for v in rows)
+  assert abs(weighted-epoch['train_loss'])<1e-12 and all(np.isfinite(v['loss']) and np.isfinite(v['gradient_l1']) and v['gradient_l1']>0 for v in rows)
+ checks.append({'run_id':rid,'actual_best_last_optimizer_RNG_tensor_identity':True,'initial_to_best_changed':True,'parameters':524801,'last_steps':ev['optimizer_steps'],'best_steps':ev['best_step'],'all_batch_loss_gradients_finite':True,'sample_weighted_train_mode_epoch_loss_recomputed':True,'full_rng_including_numpy_cuda_and_sampler_present':True})
+write_json(ROOT/'raw/tensor-verification.json',{'checks':checks,'CUDA_hidden':True,'training_steps':0});print(json.dumps({'checks':checks,'CUDA_hidden':True,'training_steps':0}))

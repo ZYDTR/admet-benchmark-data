@@ -1,0 +1,596 @@
+# ADMET 深度研究 · repair-001
+
+request_id：`admet-agentled-six-pro-20261102-001`  
+round_id：`six-seed-paired-and-breadth-20261102`  
+input manifest SHA256：`87788a22149be39cd7b41e68fc0a5df048bb9971a0878eaa1a755092292d2d0d`  
+科学输入 commit：`092d21ddaeb44f305a0628bef15fb6232ea8eb4b`  
+本轮：`aggregate_only`；下一批：`proposal_only`；修复不创建新研究请求、不执行训练/全量编码/新评分/赛事上传。
+
+## 0. 修复裁决与阅读导航
+
+**推荐从“按错误样本量扩覆盖”改为“有对照的有限覆盖＋明确的分布偏移压力测试”。** 首批确定建议为 lipophilicity、BBB、CYP2D6 Veith、hepatocyte clearance 四种指标代表任务，加 LD50、solubility 两个结构偏移/极端输出压力任务。每任务 H0/H1 仅改变 dropout 0.1→0.3，共同 model seeds 44/45、split43，共 **12条具体proposal、24个唯一新fit**；至多两任务同时补H0/H1的seed46，最多新增4，累计28。全部须主控另行批准，且任务级准备验收未通过就跳过，绝不自动凑数。
+
+本结论不是宣称广度策略已经被验证最优。本轮能证明的是首版的若干排序依据错误、已有任务之间结构差异很大、广度方案可以设计为可反驳的有限实验。没有预算匹配的下一阶段Caco2新对照，也没有新训练结果，因此尚不能量化“广度优于继续Caco2”的因果收益。选择有限广度，是为了买到四类指标与两类已知风险的信息，而非为了任务覆盖率本身。
+
+**修复内容**：13项valid n按R17重建，22项总计由错误14591改为11735；从两份scores原件而非比较摘要复算Q0；23合同entry原文阅读完成；R19的21任务84科学配置逐项展开、配置SHA核对、逐任务裁决；空next_experiments改成具体new_code矩阵；修正shared-control/confirm去重；移除CheMeleon的CLS/mean泛化建议；补真实周转区间。首版文件原样保留在`history/first-edition/`，它不是修复后的事实来源。
+
+文内`[SRC-…]`是可解析证据ID，精确URI、版本/登记SHA、读取定位在`audit/sources.json`。原始分数与R17本地字节SHA已匹配；其他登记SHA不冒充本轮独立计算。详细核算见`audit/`，建议矩阵见`next_experiments.json`，准备与条件分支见guide。研究答案完成不等于工程、许可、资源或训练已准入。
+
+### 0.1 阅读方法与诚实边界
+
+正式PROMPT全部647浏览器行按重叠窗口实读，REQUEST身份文件已读。23个必读entry均用其精确原件打开；R11是历史未填模板，不用它的占位符反推本轮缺信息；R10 entry_id与URI的`.txt`差异只是字段别名。R19很大：分段读取21种task完整科学配置，并逐项读取/核对全部84配置SHA，解析出的完整配置和核验表已保存；没有声称原670837字节wrapper已经本地下载或逐字转录全部重复包装字段。[SRC-PROMPT,SRC-REQUEST,SRC-R10,SRC-R11,SRC-R19]
+
+当前没有可调用的subagent/delegate接口。本轮没有伪造代理，而由主模型分规则、统计、科学接口、数据结构、反证、运行周转六方面交叉审查。独立性来自原始scores与比较摘要的来源分离、Decimal与Fraction两种算术、R17与R19计数交叉、配置原件SHA及去重集合检查；这些不是“独立研究员一致意见”。
+
+容器直连下载失败不等于原件不可达；浏览器可读取。R17与两份scores按浏览器原文恢复后，原字节数和SHA完全吻合。其余原件为原文实读＋登记SHA，不伪称全库独立hash审计。不读取旧公开链接中的逐行valid答案；本次追加的历史链接只到既有任务级scores/aggregate-scores，未跟随其中truth引用。未执行返回的模型、checkpoint、训练源码。[SRC-SCORE2,SRC-SCORE4,SRC-R17,SRC-BESTSCORES]
+
+## 1. Q0 · 六项结果：保留什么，不能推断什么
+
+### 1.1 从两份原始scores重算
+
+计算输入是`SRC-SCORE2`的MSE seed44/45及`SRC-SCORE4`的MSE seed46/MAE seed44/45/46；不是R14配对摘要。分别读取JSON十进制token，Decimal precision=50；`d_s=MAE(MAE-selected,s)−MAE(MSE-selected,s)`，均值`Σx/n`，样本标准差`√[Σ(x−mean)²/(n−1)]`。再用Fraction的`Σx²/(n−1)−(Σx)²/[n(n−1)]`独立核对方差，并以标准库float stdev作第三个容差检查。全部是已保存汇总数的算术，不是新增valid评分。[SRC-SCORE2,SRC-SCORE4；audit/caco2-recomputation.json]
+
+| model seed | MSE选轮保存模型的valid MAE | MAE选轮保存模型的valid MAE | MAE选轮−MSE选轮 |
+|---:|---:|---:|---:|
+| 44 | 0.41727108770329663 | 0.4068564265494504 | -0.01041466115384623 |
+| 45 | 0.4477993207692307 | 0.43222243850549447 | -0.01557688226373623 |
+| 46 | 0.4290186062747252 | 0.4296442182637361 | 0.0006256119890109 |
+
+三对分数的描述统计：
+
+| 统计口径 | 均值 | 样本SD（分母n−1） |
+|---|---:|---:|
+| MSE选轮，3seeds | 0.4313630049157508433333 | 0.0153985521161253904216 |
+| MAE选轮，3seeds | 0.4229076944395603233333 | 0.0139604514813743953408 |
+| 成对差，3pairs | -0.00845531047619052 | 0.0082770463518756714847 |
+
+末位与首版或二进制float摘要的差异来自对源文件十进制token精确运算；不改变结论。MAE选轮两胜一负，平均差−0.00845531047619052；不能把3个seed的SD称为置信区间，不能从2/3胜出宣布显著性或普遍优越。三对都使用同一91行official_valid，六个数不是六份独立外部数据。
+
+### 1.2 loss、monitor、保存时点与实际执行路径
+
+六项训练loss均是**standardized MSE**。对照改变的是内部早停monitor：standardized MSE versus raw-scale MAE。外部比较一直是原Y尺度MAE、越低越好。共同科学配置为冻结CheMeleon2048→256→1、ReLU、dropout0.1、AdamW lr0.0005/wd0.0001、batch128、max50/patience8，raw-SMILES grouped split43，fit573/stop64。R14逐seed配置差异仅monitor和run_id；这不消除真实运行路径差异。[SRC-R14,SRC-R10]
+
+| run简称 | epochs / best epoch | 总steps | checkpoint已含steps | 新增steps |
+|---|---:|---:|---:|---:|
+| mse-s44 | 20 / 12 | 100 | 0 | 100 |
+| mse-s45 | 39 / 31 | 195 | 0 | 195 |
+| mse-s46 | 37 / 29 | 185 | 30 | 155 |
+| mae-s44 | 17 / 9 | 85 | 0 | 85 |
+| mae-s45 | 14 / 6 | 70 | 0 | 70 |
+| mae-s46 | 23 / 15 | 115 | 0 | 115 |
+
+每epoch五步，与fit573、batch128一致。MSE seed46从6epoch/30steps的持久化checkpoint恢复到37epoch/185steps，新增155；此前可能发生但未落盘的更新仍未知，不能填0，也不能把185都计成全新步。MSE44 fresh encoding，MSE45/46及MAE三项 cached representations；GPU0/GPU1、资源监控和恢复路径不同。因此这是“相同计划科学配置下保存产物的描述性比较”，不是无混杂因果实验。[SRC-R07,SRC-R14]
+
+### 1.3 汇总误差并不显示所有尾部同时改善
+
+六份scores中`|error|≥1`均为8/91，未随MAE选轮消失。seed44的MAE和RMSE下降，但p90从约0.729升至0.840；seed45 p90改善而p95从约1.628升至1.696；seed46 MAE略差而RMSE下降、median变大。因而“整体MAE略改善”不能改写为“所有误差切片/尾部变好”。没有逐行残差时无法知道是否是同一8个分子，不能声称修复了某些具体分子或归因某化学子群。[SRC-SCORE2,SRC-SCORE4]
+
+### 1.4 历史最好必须连到真实配置
+
+历史最好MAE **0.37862513598901104**来自`hainan-frozen-training-20261031`，不是本批seed44。原配置为hidden512、dropout0.1、lr0.001、wd0.0001、batch128、epochs50/patience8、seed42；实际14epoch/70steps、best6。当前本批hidden256、lr0.0005、model seeds44–46、split43，另有缓存/恢复差异。因此本批最好0.4068564265494504未超过历史最好，但差距不证明MAE monitor无效，也不证明512头或较大学习率单独有效。[SRC-BESTSCORES,SRC-BESTCONFIG,SRC-BESTREPORT]
+
+同一历史链还有skill-follow 0.3891885939780218、index-cycle 0.42147216141758237、mae-monitor 0.40302117308791197，均为已保存的Caco2任务级汇总，而不是本轮新增评分；Mini22基线Caco2 0.4260650306813186是另一组配置。不同run的历史搜索和valid重复使用不能被新会话清零。[SRC-BESTSCORES,SRC-INDEXSCORE,SRC-MAESCORE,SRC-R17,SRC-R15]
+
+### 1.5 科学有效性和GPU运行失败分别裁定
+
+主控对六项稳定模型、91行valid/182行test盲预测、冻结参数/buffers、缓存身份、optimizer/RNG恢复和CPU盲重建已有明确验收；本研究在该准入范围分析，不把未重复加载模型当Q0永远无法回答。与此同时，GPU0共享失败仍失败：对方SM下降、本任务负载、缺失值填零/连续阈值和暂停策略都不能证明无影响。GPU1仅当次“闲置驻留、低负载、串行小头”条件被接受，没有直接对方吞吐/延迟证明，不能推广任意共享安全。GPU1 attempt02的−15失败、修订CPU-tick条件后新分支、seed46恢复都保留独立记录。[SRC-R07,SRC-R13]
+
+11尝试=6完成+5失败/中途。逻辑fit恢复、失败attempt成本、评分逻辑run是三个计数。科学分数不能豁免资源/授权失败；运行失败也不自动使主控已核准保存产物不能作有限科学分析。**Q0答案：保留raw-MAE monitor为Caco2候选，但不升级为全任务规则或泛化胜者。**
+
+## 2. Q1 · 三种策略与主控倾向的反证
+
+| 策略 | 有利证据 | 主要反证与适用条件 | 本轮选择 |
+|---|---|---|---|
+| 继续深挖Caco2 | 缓存/恢复/盲重建最成熟；MAE选轮有配对信号；历史更好配置尚未拆解 | 91行valid已反复用；不同头/lr/seed/路径混杂；继续优化可能主要追逐此valid；也不能声称已无提升空间 | 保留回退研究方向，不把首批预算继续全投这里 |
+| 平均浅调22项 | 能形成统一baseline与覆盖表；历史Mini22已给所有任务任务级分数 | 并非22同样信息量：DILI48、HIA58、half-life67；AMES单骨架；LD50/solubility全无环；AP正例数与指标稳定性不同 | 不选；84fit旧矩阵保留为可审查候选，不默认执行 |
+| 有限自适应覆盖 | 四类指标各有可解释对照，兼顾两个已知结构/数值压力任务；共享encoder减重复开销 | 新runner须准备；更广不一定更好；无直接Caco2预算匹配反事实；大valid仍可缺结构代表性 | 选择，主控按24fit确定首批审议，之后只按规则少量确认 |
+
+首版把hERG646、half-life667、DILI475当作中大valid的理由被原件推翻；LD50反而是1937而非128。这改变了科学排序，不只是表格勘误。进一步的反证是：即使样本数纠正，AMES的1137个valid集中在一种非空Murcko骨架；LD50和solubility的valid均无环。这阻止从“样本多”直接跳到“对真实化学空间更有代表性”。[SRC-R17,SRC-SCAFFOLD]
+
+为何首批不是恰好随机挑六个：前四项提供MAE、AUROC、AP、Spearman四种评价/目标接口的诊断覆盖；后两项分别是毒性与溶解度的分布偏移压力测试，且已有预测范围风险，必须与较稳妥的lipo对照区分。预算紧时只保留前四项16fit；扩到六项不是以任务数达标，而是增加两项可明确证伪的结构/数值假设。若资源预算不支持24，主控选择小档，不隐性缩短某一候选的epochs让对照失真。
+
+**扩大覆盖假设的失败证据**包括：多数任务在零fit中发现身份/metric不成立；新接口准备与编码成本压过可取得信息；H1在四种指标都不比H0稳定；偏移任务仍产生非有限或无法解释输出；共享资产不能证明身份。此时停止扩展，返回数值/表示或受控Caco2历史配置拆解，而不是自动启用剩余84fit。
+
+## 3. Q2 · 22任务全景：来源、分区、分数、结构与排序
+
+### 3.1 完整源值表（自动生成，不手抄）
+
+以下baseline分数均来自R17的同一历史组：`official-valid-20261029-v6`，`local_per_task_metrics_only`，缺失标签汇总均0，官方实现等价性均未确认。train/test行数来自R19各任务inputs，Caco2由真实配置交叉；它们不是新增读取test标签。除Caco2另有历史/最新六项外，不能把这些旧baseline称为本轮新head的结果。[SRC-R17,SRC-R19,SRC-BESTCONFIG]
+
+| task | train n | valid n | test n | metric/方向 | R17已有baseline value | valid正/负 |
+|---|---:|---:|---:|---|---:|---|
+| ames | 4684 | 1137 | 1457 | AUROC ↑ | 0.7966064051881135 | 479/658 |
+| bbb_martins | 1421 | 203 | 406 | AUROC ↑ | 0.8936738752174994 | 149/54 |
+| bioavailability_ma | 448 | 64 | 128 | AUROC ↑ | 0.7441860465116279 | 43/21 |
+| caco2_wang | 637 | 91 | 182 | MAE ↓ | 0.4260650306813186 | —（回归） |
+| clearance_hepatocyte_az | 848 | 122 | 243 | Spearman ↑ | 0.35760632366306705 | —（回归） |
+| clearance_microsome_az | 770 | 111 | 221 | Spearman ↑ | 0.48732952225400383 | —（回归） |
+| cyp2c9_substrate_carbonmangels | 467 | 67 | 135 | AUPRC ↑ | 0.42099418064714555 | 12/55 |
+| cyp2c9_veith | 8463 | 1210 | 2419 | AUPRC ↑ | 0.7594504271256293 | 406/804 |
+| cyp2d6_substrate_carbonmangels | 465 | 67 | 135 | AUPRC ↑ | 0.46377724431807144 | 14/53 |
+| cyp2d6_veith | 9191 | 1313 | 2626 | AUPRC ↑ | 0.6907342342611147 | 250/1063 |
+| cyp3a4_substrate_carbonmangels | 468 | 67 | 135 | AUROC ↑ | 0.7293906810035843 | 36/31 |
+| cyp3a4_veith | 8628 | 1233 | 2467 | AUPRC ↑ | 0.877172798563802 | 581/652 |
+| dili | 331 | 48 | 96 | AUROC ↑ | 0.8615384615384616 | 13/35 |
+| half_life_obach | 465 | 67 | 135 | Spearman ↑ | 0.0737000716718027 | —（回归） |
+| herg | 457 | 66 | 132 | AUROC ↑ | 0.8968253968253969 | 42/24 |
+| hia_hou | 403 | 58 | 117 | AUROC ↑ | 0.9666666666666667 | 48/10 |
+| ld50_zhu | 3970 | 1937 | 1478 | MAE ↓ | 1.0435887458260573 | —（回归） |
+| lipophilicity_astrazeneca | 2940 | 420 | 840 | MAE ↓ | 0.53964650071 | —（回归） |
+| pgp_broccatelli | 851 | 122 | 245 | AUROC ↑ | 0.9054017737167428 | 61/61 |
+| ppbr_az | 1952 | 279 | 559 | MAE ↓ | 20.83183522548387 | —（回归） |
+| solubility_aqsoldb | 5045 | 2940 | 1997 | MAE ↓ | 11.113363941834361 | —（回归） |
+| vdss_lombardo | 791 | 113 | 226 | Spearman ↑ | -0.016927405626888218 | —（回归） |
+
+**对账**：train **53695**、valid **11735**、test **16379**，三者不能互换；valid=sum(R17.tasks[*].n)=R17.record_count。13项更正与原值在`audit/task-count-reconciliation.json`；全部13个分类任务正+负=n，9个回归不编造类别数。first-edition总数14591减去应改净差2856=11735。每个任务有source commit/SHA/JSON pointer，保存在`audit/task-table.json`。
+
+AUROC为Mann–Whitney average ranks；AUPRC字段在本地原件具体指grouped tied thresholds的average precision，**不是默认梯形PR-AUC**；Spearman为average-rank之后Pearson；MAE为原Y尺度绝对误差均值。官方总分公式和官方实现等价未补齐，故不跨metric相加或把归一化推断当官方提分。[SRC-R09,SRC-R17,EXT-AP]
+
+### 3.2 逐任务投入/跳过判断
+
+共同准备度：已有CheMeleon底座、历史22任务pipeline和Caco2新版缓存/恢复证据；**其余21任务新版runner仍须new_code/fixture验收**。共同成本未知：编码受分子大小/数量和硬件影响，训练受fit行数/epoch/停止行为影响；不能按valid n估GPU秒。表中priority是研究设计判断，不是测得ROI。训练标签分位数、train-fit类别计数和当前split后的stop计数尚未在这些汇总中完整给出，均是具体准备产物，不用valid类别数代替。[SRC-R10,SRC-R16,SRC-BASELINE]
+
+| task | 建议投入/旧矩阵处理 | 已知证据、风险、反证与具体改进因素 |
+|---|---|---|
+| solubility_aqsoldb | 首批H0/H1 | valid2940全部空Murcko；历史预测尾部极端。保留dropout对照但替换“普通大样本优先”为shift压力探针；先scale/行身份gate。 |
+| ppbr_az | large候选 | valid279不是131；MAE20.83/极端输出使scale/Huber诊断比马上dropout sweep更优先；移large/reserve。 |
+| ld50_zhu | 首批H0/H1 | valid1937不是128；全部空Murcko而train3970非空；选择为第二独立MAE shift压力探针，不宣称多样性。 |
+| lipophilicity_astrazeneca | 首批H0/H1 | valid420不是4200；train2940，结构覆盖相对分散，作为MAE核心对照而非最大样本。 |
+| vdss_lombardo | large候选 | valid113、ρ−.0169；有改进空间但小样本/极端输出和尺度不明；先diagnostic，large候选。 |
+| half_life_obach | 诊断优先/延期 | valid67不是667；ρ.0737且输出范围极端；小样本不应仅因低分投入宽搜，延期至scale与label profile。 |
+| cyp2d6_substrate_carbonmangels | 诊断优先/延期 | valid67正14负53；小正例数AP不稳定，先统一AP fixture和类别profile；不因旧S1就自动执行。 |
+| ames | large候选 | valid1137单一非空骨架；不能把大n当结构广度。延期large，把它视作骨架集中压力任务。 |
+| bioavailability_ma | 诊断优先/延期 | valid64/正43负21；小n高方差，非首批。 |
+| dili | 诊断优先/延期 | valid48不是475，正13负35；高AUROC不能支撑精确排序收益，撤销首版中高投入。 |
+| bbb_martins | 首批H0/H1 | valid203正149负54、134非空骨架；AUROC核心，但test99/406空骨架说明仍有shift。 |
+| clearance_hepatocyte_az | 首批H0/H1 | valid122ρ.3576；train848，选Spearman核心，需ties/constant fixture，不声称大样本。 |
+| clearance_microsome_az | 条件reserve | valid111ρ.4873；与hep同族但不同endpoint，作为阻断替代或后续，不首批重复覆盖。 |
+| cyp2c9_substrate_carbonmangels | 诊断优先/延期 | valid67正12负55；低正例AP慎重，原S1B保留备用不自动训练。 |
+| cyp2c9_veith | large候选 | valid1210正406负804；AP备用/large与2d6对照，避免首批三种CYP平分预算。 |
+| cyp2d6_veith | 首批H0/H1 | valid1313不是1124；AP.6907正250负1063；最大AP验证集且中等指标，作为AP核心，但test10.4%空骨架需披露。 |
+| cyp3a4_substrate_carbonmangels | 诊断优先/延期 | valid67正36负31；相对平衡但小n，仅reserve。 |
+| cyp3a4_veith | 条件reserve | valid1233而非1200，AP.8772；比2d6当前高，首批新增信息可能更少，reserve，不以高分证明无空间。 |
+| herg | 诊断优先/延期 | valid66不是646，正42负24；撤销大样本候选解释，转小样本后续。 |
+| hia_hou | 诊断优先/延期 | valid58不是578，负例10；AUROC.9667接近上限且少数类少，低优先。 |
+| pgp_broccatelli | 条件reserve | valid122不是1212，正负61/61；BBB阻断时同metric替代，但不是同生物终点。 |
+| caco2_wang | 不增加首批fit，保留已有模型/候选 | 91valid、六项paired证据和历史最好均已读；先避免继续适应同valid。后续若回到Caco2，需同路径拆512/256与lr，不直接拿历史最佳当同配置对照。 |
+
+任务因素不是都归为dropout：AP任务优先确认tie/正类合同和train-only类别权重；Spearman任务优先确认constant/ties/原Y逆变换；MAE数值尾部任务优先缩放/Huber与低容量诊断；hERG/DILI/HIA等小任务优先共同seed/split稳定性而不是大网格。没有逐行valid真值或残差，不提供个体错误归因、残差聚类或标签修正建议。
+
+### 3.3 骨架与预测范围带来的额外诊断
+
+SMILES-only骨架汇总是已存在的只读统计，不读取Y：AMES valid1137全部单一非空骨架；BBB valid203中134种非空骨架、最大组12，但test406中99空骨架；CYP2D6 Veith valid1313有893种非空骨架，test2626中273空骨架；lipo valid420有239非空骨架、最大组25；hep clearance valid122有72非空骨架、最大组10；LD50 valid1937与solubility valid2940均全部空骨架。空Murcko骨架主要对应无环分子，**不是空SMILES、缺标签、缺行或单一化学家族**；也不能从它反推原始split算法。train/valid结构差异提示域偏移，但没有标签联结分析就不能证明性能差由它造成。[SRC-SCAFFOLD]
+
+历史预测范围汇总显示solubility最低约−900、PPBR约−713、half-life约−956，LD50约−118。原Y可能已做任务规定变换，不能把负值直接宣判物理不可能；范围汇总也不等于对应分子的误差。正确行动是验证实际Y尺度、fit-only标准化分母、输入特征范围、逆变换恰一次、缺失/parse mask、输出序列化，而不是把预测裁剪成“看起来合理”。该范围原件未明确逐项partition，因此本报告不把这些极值称为valid残差或test误差。[SRC-RANGES,SRC-BASELINE]
+
+solubility test有两个既有SMILES解析失败行，历史策略保留行并使用确定零raw embedding；本轮不新增清洗/删除。必须保留parse mask和行身份，把这一限制报告给主控；任何替代处理需另行明确批准，不能手工填答案。[SRC-BASELINE,SRC-R19]
+
+## 4. R19：此前84fit方案的实质审读与去留
+
+84条不是84条训练结果，也不是本次默认执行量。它们是21任务×H0/H1×model seeds44/45，split43；S1十任务40fit、S1B十一任务44fit，原S2最多24也是条件建议。`audit/r19-expanded-configs.json`保留全部完整科学配置；`r19-config-hash-checks.json`保留84个原件hash定位及本地canonical hash；`r19-disposition.json`逐任务列原四配置hash、保留/修改/延期/替代依据。[SRC-R19,SRC-R18]
+
+逐task的处理已经列在3.2，不能只读摘要后照搬旧S1。共同保留的是冻结2048 fingerprint、train-fit-only预处理、H0/H1单dropout因素、相同split和共同seeds、明确任务loss/monitor。共同修改是：补train源hash的实际匹配门槛；移除推断官方归一化值作为选优尺度；按正确valid n和结构覆盖重排；将新版接口标new_code；把test全量预测延迟到已批准完整候选导出；confirm只追加新seed双方对照，不重复已有fits。
+
+本轮没有改动首版/历史84配置本身。新矩阵是单独版本，若与历史配置不同（接口标识、输入身份补充、评价/导出计划），不把历史未执行条目视为“已完成baseline”。六项Caco2也不是这些新任务的匹配control。[SRC-R19,USER-REPAIR-001]
+
+## 5. Q3 · 确定矩阵、小/中/大情景与去重
+
+### 5.1 首批确定建议：12条proposal，不含准备占位项
+
+| task | metric / early stopping | H0 | H1 | split / model seeds | 唯一fits |
+|---|---|---|---|---|---:|
+| lipophilicity_astrazeneca | MAE / MAE | dropout0.1 | dropout0.3 | raw-SMILES-group43 / 44,45 | 4 |
+| bbb_martins | AUROC / AUROC | dropout0.1 | dropout0.3 | raw-SMILES-group43 / 44,45 | 4 |
+| cyp2d6_veith | AUPRC / AP | dropout0.1 | dropout0.3 | raw-SMILES-group43 / 44,45 | 4 |
+| clearance_hepatocyte_az | Spearman / Spearman | dropout0.1 | dropout0.3 | raw-SMILES-group43 / 44,45 | 4 |
+| ld50_zhu | MAE / MAE | dropout0.1 | dropout0.3 | raw-SMILES-group43 / 44,45 | 4 |
+| solubility_aqsoldb | MAE / MAE | dropout0.1 | dropout0.3 | raw-SMILES-group43 / 44,45 | 4 |
+
+H0是本任务新基线，H1唯一变化为dropout。全部hidden_dims=[256]、ReLU、bias、无BN/LN/residual，输入2048输出1，524801可训练参数；AdamW lr5e−4、wd1e−4、betas(0.9,0.999)、eps1e−8、amsgrad=false、无scheduler；batch128、max_epochs50、patience8、min_delta1e−7、早期tie保留较早epoch；float32、无AMP/clip、num_workers0、不drop_last。所有参数/buffers冻结；仅head在optimizer中。编码B64，原MeanAggregation→fingerprint路径不变。完整字段而非缩略名在每条exact_config展开。
+
+split不是“随机抽90%行”：exact raw Drug字符串分组，排序唯一key，CPython Random43 shuffle，按完整组取到至少round(0.1*n)停止集行，不吞掉所有组；保留原顺序。重复SMILES不跨fit/stop，但不删除重复行。其实际fit/stop n与类别/constant情况必须登记，不能从总数凭空算整数90/10。失败不换seed直到出好分。独立sampler generator与model seed绑定，H0/H1同seed初始weights/采样顺序相同；dropout训练噪声差异是实验因素的一部分。[SRC-R19]
+
+分类loss=BCEWithLogitsLoss，binary0/1、pos_weight1，最终sigmoid(logit)正类连续概率；AUROC/AP早停max，不能输出阈值分类。回归loss=MSELoss on inner-fit standardized Y，按原Y MAE min或Spearman max早停；逆变换仅一次。Spearman/MAE对同一训练loss取不同保存模型，不把monitor称作loss。AP严格采用原件非插值同分组定义。legacy Caco2 runner仅明确支持两个现有monitor；新任务的这些字段是**拟实现的new_code合同**，不是声称当前严格schema已经接受。[SRC-RUNNER,SRC-R19,SRC-R09]
+
+### 5.2 三档不是三个累加计划
+
+| 情景 | 明确任务集合 | configs / seeds / split | 唯一fit | 共同control / candidate | 已完成精确fit | 冷缓存编码train+blindvalid分区pass | 延后test额外pass |
+|---|---|---|---:|---|---:|---:|---:|
+| small | lipophilicity_astrazeneca, bbb_martins, cyp2d6_veith, clearance_hepatocyte_az | H0/H1；[44, 45]；split43 | 16 | 8 / 8 | 0 | 8 | 4 |
+| medium | lipophilicity_astrazeneca, bbb_martins, cyp2d6_veith, clearance_hepatocyte_az, ld50_zhu, solubility_aqsoldb | H0/H1；[44, 45]；split43 | 24 | 12 / 12 | 0 | 12 | 6 |
+| large | lipophilicity_astrazeneca, bbb_martins, cyp2d6_veith, clearance_hepatocyte_az, ld50_zhu, solubility_aqsoldb, ames, cyp2c9_veith, ppbr_az, vdss_lombardo | H0/H1；[44, 45, 46]；split43 | 60 | 30 / 30 | 0 | 20 | 10 |
+
+推荐medium=24fit。small是其前四任务16fit子集；medium比small新增8；large包含medium并扩到十任务与seed46，总60，比尚未confirm的medium新增36。large增加的AMES、CYP2C9、PPBR、VDSS分别代表骨架集中、第二AP体系、数值尺度风险和弱rank任务，不是随机凑十项，也不是获得large执行授权。
+
+条件确认不是先写未知task的占位proposal：最多从medium选两任务，沿用两个config/split，旧seed44/45八个fits复用，只加双方seed46四个fits，总≤28。所有15种两任务组合均在审计中检查；选一任务额外2、选零额外0。large若在两任务confirm后启用，新增32而非再加60。[audit/scenarios.json]
+
+**首版反例修正**：DIR01的width128/256/512含基线256，再加dropout0/.3、wd1e−5/1e−3，是7唯一config，2seed=14；不是8/16。首版“W1四任务一配置两seed8＋W2其中两任务同配置三seed6”有4重叠，union10、增量2。本版有明确H0/H1两配置，medium24→最多28，不能将旧14套到新定义。唯一fit键包含asset/version/task/full scientific config/split/seed；阶段名、proposal名和是否重复发送不产生新fit。
+
+### 5.3 编码与成本：精确数量，未知秒数
+
+模型seed、head、dropout不影响冻结raw embedding，因此同task/同输入/同encoder只编码一次；fit预处理按split拟合一次，H0/H1及seeds可共享同一不可变统计对象。small涉及train+blindvalid16458行，medium30350行，large48979行；冷缓存分别8/12/20个数据分区pass，encoder加载在同一可用会话可一次，不能混称8/12/20次模型训练。未来test分区分别另4/6/10pass；当前不默认每头预测test。来源中已有历史cache，不代表本机已核对可复用；命中时相应pass降0，仍需hash/行身份/featurizer验收。
+
+成本表达为：共享准备/资产核对＋各唯一输入分区编码＋各唯一head fit（含失败attempt实际花费）＋批量取回评分＋整理/回收＋研究往返＋释放等待。不得将相互包含的角色wall timer与其中程序timer再次相加。每task需记录T_encode、行数/解析失败、T_head每epoch和steps、best/stopped epoch、loader/import、评分/回报时间。先批准的一小组实际运行用于校准，不在本轮以无依据GPU小时填表。Caco2的520.7901程序秒含CPU/import/失败，不能按24/6比例乘成新任务预算；旧Mini22 ARM CPU编码约988s/head阶段25.84s也不能搬成当前CUDA承诺。[SRC-R07,SRC-BASELINE]
+
+## 6. Q4 · 冻结表示、缓存、候选装配与模板
+
+**raw cache**键至少包括checkpoint SHA、实际encoder/featurizer/tokenizer实现与版本、dtype/计算路径、原始输入字节hash、task/split/row_index清单、SMILES处理策略。CheMeleon是图消息传递+MeanAggregation输出的2048 fingerprint；不存在应在该fingerprint上泛扫的CLS token。“mean”是已批准encoder内部聚合语义，不是后续任意平均2048特征。更换encoder/特征拼接/池化实现必须形成新feature身份，不能复用同一个rawcache名字。[SRC-ENCODER,SRC-R19]
+
+**fit-transform cache**键再包含split身份、fit行ID/hash、统计dtype、scaler算法/阈值和实际参数hash；只由当前train inner_fit计算。不能把含stop/valid/test统计的缩放缓存跨split复用；未改变模型seed可以共享统计，但变split一定重拟合。target inverse需将原Y、训练标准化Y与导出Y三个空间区分。
+
+逐任务装配是对22任务分别选已批准head/scaler/目标转换并按行输出完整候选，不是联合多任务。若本批只训练六任务，其余16任务必须由已核准、身份匹配的历史baseline补齐；这是一份混合来源候选，须逐任务记录lineage，不宣称22新模型。未证明旧predictor可在当前模板重建，则完整候选导出门槛未过，不能填空或拷贝答案。
+
+Ensemble仅同一task/同split/同Y尺度的多个成员预测组合；uniform probability/original-Y mean另作为候选评价，不把“最好的单seed”与挑选后ensemble混为未选择估计。Joint multitask则是新的共享可训练adapter/多loss方案，可能负迁移，必须单独核准，不能混入首批dropout单因素比较。
+
+模板硬要求保留task、sample_idx、drug_id、smiles、metric和原顺序，只有y_pred可变。模板16379行，task+sample_idx可唯一定位，Drug_ID有重复/空值，不能仅按Drug_ID merge；内部task/split/row_index与sample_idx的基准要显式映射。UTF-8 BOM/CRLF、原字段序和数值有限性一起验收；分类[0,1]连续值，回归原Y连续值；不可手工补预测。模型产物需weights、optimizer、RNG、best/history、split/scaler/cache manifest和版本，以支持未来盲重建；本轮不重复运行已验收模型。[SRC-RULES,SRC-POLICY,SRC-R19,SRC-R13]
+
+## 7. Q5 · 验证、阈值与累计使用账
+
+### 7.1 三层指标不混写
+
+训练loss决定梯度；inner_stop monitor决定保存epoch；official_valid task metric是已授权主控可释放的外部汇总。三者可能不同，不能说“统一task-native metric”。首批分类BCE、回归stdMSE固定，早停分别AUROC/AP/MAE/Spearman并明确方向。按task做paired difference：MAE取H0−H1（改善正），其他取H1−H0；不同单位不直接平均。
+
+拟定筛选阈值：MAE相对H0下降≥1%，AUROC绝对≥0.005，本地AP≥0.01，Spearman≥0.03，且两个共同seed均正向。**这是repair-001用户允许的可证伪研究建议，不是实测噪声下界、业务价值或显著性**。正式旧prompt原先要求阈值有依据/待定；最新修复指令允许明确研究阈值，因此这里把来源和未验证性质同时登记。可报告0阈值与2倍阈值的决策敏感性，但不得看结果后选一个方便的阈值宣称胜利。若H0 MAE=0，相对改善未定义，报告该任务无该gate下改善空间，不加任意epsilon制造收益。
+
+MAE gate先计算每seed相对改善(H0−H1)/H0再取算术平均；其他metric取H1−H0的算术平均。条件确认需seed46双方，第三差非负、三对均值仍达到原gate；这只是算法/初始化稳定性，不是新的样本外泛化。若一正一负，默认不晋级；主控可以另行登记“测不确定性”的paired seed46，而非把它伪称已过成功门槛。top2按不同metric覆盖优先、最差paired improvement相对预设gate、实测完整成本排序；排序比值只是规划尺度，不是官方综合分。
+
+### 7.2 inner_stop与official_valid的适应偏差
+
+inner_stop既选epoch又筛H0/H1，是乐观的筛选代理；增加model seed不消除分区偏差。若controller允许固定批次取回official_valid汇总，需在取回前锁定configs/IDs/规则；只看task/group级汇总和技术诊断，不转发逐行真值、残差或可回推单分子的差分。建议整批一次回收而非每头一次Chat，这是治理建议，不是把官方允许valid调参改成禁令。
+
+后续若需要split敏感性，两个configs都在split43/73与共同seeds44/45下比较，每split重拟合；只有候选跨split、baseline不跨split不能称稳定排名。第二split仍来自相同officialtrain，官方valid仍复用，不会创造独立最终测试。未知真实性能与统计不确定性用限制陈述，不把3seeds做p值或伪CI。
+
+### 7.3 R15实际去重
+
+| ledger组 | 完成逻辑run | 正式任务评分 | 已记录正式truth文件读取 | 主控复算（不增加正式评分） |
+|---|---:|---:|---:|---:|
+| baseline22 | 1组 | 22 | unknown/null | 不据缺项填0 |
+| pro-first | 2 | 2 | unknown/null | 不据缺项填0 |
+| pro-index | 1 | 1 | 1 | 按独立原件登记 |
+| pro-mae | 1 | 1 | 1 | 按独立原件登记 |
+| agent-two | 2 | 2 | 1 | 2个分数复算 |
+| agent-four | 4 | 4 | 1 | 4个分数复算 |
+| 合计 | **11** | **32** | 已知正式下界4，生命周期未知 | 另记录两次主控读取，不加6正式评分 |
+
+11=1+2+1+1+2+4；32=22+2+1+1+2+4。baseline22是一组逻辑run，不能当22逻辑run；主控复算不是新正式评分；null不是0。repair-001新增逐行truth读取0、使用标签/预测计算新metric0，只算已有聚合值。原件访问次数与评分次数不等价。[SRC-R15；audit/ledger-recomputation.json]
+
+## 8. Q6 · 多方向研究：不是一张无限笛卡尔积
+
+`search_space.json`完整给出15方向，均有证据、反证、精确参数、组合约束、去重计数、成熟度和触发；下列是科学解释与取舍，不代表全部同时开跑。
+
+| 方向 | 可派发的具体比较 | 主反证与为何不混入首批 |
+|---|---|---|
+| DIR-00准备 | G00–G05零fit，task profile/metric/cache/template fixtures | 准备也有CPU/人时；不借fixture进行训练或全量编码 |
+| DIR-01头部正则 | H0/H1 dropout.1/.3先行；后续width128/256/512、dropout0/.1/.3、wd1e−5/1e−4/1e−3只做单因素7唯一组合 | dropout可能欠拟合；7×2=14含基线，不另加一次基线 |
+| DIR-02优化 | lr1e−4/3e−4/5e−4/1e−3，其余H0固定，4×2=8总、已有control后新增6 | 历史最好还改width/seed，不能从其推断lr因果 |
+| DIR-03鲁棒loss | MSE versus Huberδ0.5/1.0，train-fit标准化Y；3×2=6含MSE | 不知道标签是否离群；Huber不能治OOD或尺度实现错误 |
+| DIR-04冻结表示 | CheM2048、MiniMol512、MoLFormer10pct官方pooler；先资产/长输入fixture | 均是pipeline bundle，维度/预训练/容量混杂；不假装本地ready |
+| DIR-05均匀ensemble | 同task同尺度2/3seeds均值，已有成员时新增fit0 | 误差相关/选择偏差未知，新的取回评分仍需授权 |
+| DIR-06特征缩放 | legacy mean/std vs inner-fit median/IQR，IQR近0→1；不改Y/loss | 稀疏特征IQR常0，鲁棒缩放也可能损失有用尺度；先数值fixture |
+| DIR-07类权重 | BCE pos_weight1 vs inner-fit nneg/npos，不能用valid比率 | 可能恶化校准或排序；不能把输出阈值调优当AP提升 |
+| DIR-08低容量诊断 | 2048→1 linear vs H0MLP，承认结构/激活/dropout整体bundle | 线性头欠拟合可能；“参数少”不自动更可信 |
+| DIR-09早停 | patience8/16（max50不变），或固定patience比较monitor；一次只选一个因素 | 不平滑小stop集可过拟合，不能事后更换保存准则 |
+| DIR-10分区稳定 | H0/H1×model44/45×split43/73=8总，已有split43后新增4 | 不是新外部测试；单类/常量失败不搜索splitseed补救 |
+| DIR-11分子计数补充 | 原fingerprint拼接固定atom/bond/ring/formal-charge四特征，fit-only缩放 | 易学split捷径；不是修复CLS池化，也不能逐分子看valid答案设计规则 |
+| DIR-12联合多任务 | 两种clearance，shared adapter128/256＋各taskhead，train-only平衡loss | 负迁移/跨任务角色重叠，必须另批准；逻辑训练job与任务头数分别计 |
+| DIR-13恢复公平 | 同配对checkpoint/optimizer/RNG协议，失败attempt另记 | 本轮不重复已验收真实模型；恢复不能隐瞒故障 |
+| DIR-14否决方向 | 不把单调temperature/阈值调整作为AUROC/AP主提分路线 | 排序保持通常不改排名指标；有限精度ties反而会损害 |
+
+首批使用H0/H1而非立刻换底座，是因为其准入和解释成本最低，且旧84矩阵已有明确对照设计；这不是认定它最有效。若两种压力任务表现数值失稳，优先DIR-06/03/08而非更多dropout；若四个核心任务稳定但dropout无收益，停止该局部方向，考虑不同表示。若发现新底座缺许可/完整输入支持，保留blocked_assets，不让执行方临时挑替代权重。
+
+MiniMol作者仓库当前说明512维fingerprint、10M规模，且页面有setup.py；这仅表明上游当前有路径，不能抹除历史本地404/loader失败。MoLFormer的10pct版本和官方pooler_output可作为独立研究来源，但不是fullXL；其当前兼容版本建议不授权升级项目环境。两者预训练数据存在不代表本项目可以下载或新增那些数据；用户允许冻结预训练的具体例外与公开禁止外部数据规则分开记录，需主控核对资产来源/许可和参数buffers冻结。[EXT-MINIMOL,EXT-MOLFORMER,SRC-R16,SRC-POLICY,SRC-RULES]
+
+KPGT的额外信息链、Uni-Mol的构象和完整输入覆盖、SMI-TED的资产/接口、MolE的checkpoint链、TabPFN的版本/许可及其并非分子encoder的问题仍是原科学表中的研究/阻断事项；没有新来源证明其本地ready，本轮不替它们填造参数和运行结果。执行用GLM/DeepSeek/Qwen不是scientific_asset_id。[SRC-R16]
+
+## 9. Q7 · 真实整段周转：事件、区间与现场优化
+
+### 9.1 原批次的不同计时口径
+
+本批11尝试累计GPU program约520.7901s，包含import/CPU/失败等，不能称纯GPU核计算；两个训练原生turn合计4895.984s。新四项评分取回程序270.4201s与评分角色至回报661.5655s是不同范围；前两项为保留分数，不重加一次新评分。旧Mini22 ARM CPU编码约988s与cached head/export阶段25.84s说明共享编码有潜在价值，但硬件/代码/任务不同；历史Pro breadth观察113.65min也不是模型纯算时长。[SRC-R07,SRC-BASELINE,SRC-R18,SRC-R02]
+
+### 9.2 用户本轮给出的观测时间线（UTC钟面，不擅自补日历日期）
+
+| 事件/区间 | 已知值 | 可推断和不可推断 |
+|---|---|---|
+| 网关准备原生turn | 18:10:22Z–18:20:20Z；597928ms | 约597.928s；秒级钟面相减598s，精度差0.072s不构造矛盾 |
+| 等待正式释放 | 至18:33:50Z，810s | 与前后阶段串行等待，但不等于研究计算 |
+| 释放至正式发送 | 18:33:50Z→18:36:50.968Z，180.968s | 交接/排队/发布路径未分解，不全归模型推理 |
+| 正式发送 | 18:36:50.968Z | 模型完成区间计时的起点 |
+| 仍分析观测 | 18:40:34.280Z | 完成必在此之后；距发送223.312s |
+| 首次见最终件 | 18:42:01.625Z | 完成不晚于此；距发送310.657s只是上界 |
+| ZIP保留 | 18:44:28.310Z | 距首次最终件146.685s；是观测/保留跨度，不是单条下载耗时 |
+| 网关报告快照 | 18:51:26Z | formal turn报告17.61min、请求墙钟41.07min；completedAt当时仍unknown |
+
+所以模型完成时刻在 **(18:40:34.280Z, 18:42:01.625Z]**，发送到完成在 **(223.312,310.657]s**。这不是“Pro恰好310.657s”。发送到ZIP保留457.342s也是包含研究/观测/回收的跨度。17.61min的formal-turn口径显然不等于发送到首次最终件的310.657s；不同起点、系统收尾/轮询可能嵌套，不能把17.61、41.07、810s和上述区间相加。完整请求41.07min包含准备和等待；单条下载耗时无权冒充整个Thread。以上是主控给出的实测观测，本轮做时差算术而未独立接入网关仪表。[USER-REPAIR-001；audit/turnaround-recomputation.json]
+
+### 9.3 现场优化方案A：共享准备和缓存，批量回收
+
+准备阶段将规则/资产/依赖检查共享一次，再让只读任务profiles、metric合成fixture、模板行映射核验在实际资源允许时独立推进；这里的“并行”是派发建议，本轮没有真实subagent执行证据。将通过的task与失败task分开登记，主控一次锁定本批矩阵和授权，而不是每个head单独往返Chat。实际运行时只读rawcache共享，CPU后处理可与下一已批准task的资源检查重叠；是否训练并发由当前CPU/RAM/GPU/他人任务实测决定，不设固定3并发或显存清零门槛。
+
+训练端在一个任务目录里同时准备H0/H1共同split/scaler与seeds，逐run保留worker业务返回、supervisor退出和失败原因。拿到整批固定预测身份后集中评分、统一取回任务级汇总和时间账，再做深评审。遇标签/冻结/身份/他人资源边界故障立即回主控，其他常规单头完成不触发Chat。该流程是Agent现场按证据做决策，不恢复退役通用固定编排引擎。
+
+优化重点应先是810s释放等待、180.968s交接、回收/核对的可见瓶颈和多次上下文重建，而非只压短头训练。可把只读metadata包、source-SHA核对、proposal静态验证、身份清单提前到授权等待期；不能把真实训练/全量encoderforward挪进等待区偷跑。一次共享encoder会话能减少加载，前提是输出、版本和资源隔离可核实。
+
+### 9.4 替代方案B：预注册的两任务micro-batch
+
+若新接口/资源不确定性比共享批处理收益更大，主控可从small核心选 **lipo＋BBB** 的H0/H1×44/45先发8fit；这是明确子集不是新默认矩阵。代价是少覆盖AP/Spearman、增加一次批间控制/评分往返；优点是先暴露回归逆变换和分类概率路径错误。若任一task工程故障、资源冲突或准备成本高于主控预算，暂停后续16fit，只返回证据，不自动改lr/换task/换GPU。若二者接口通过但科学无改善，也不能推出AP/Spearman无价值，后续是否继续由原假设和预算决定。
+
+下一轮应存角色start/ready/released/work_started/work_finished/report_seen/completedAt等原生时间，区分精确timestamp与轮询上下界；跨角色总wall按事件并集/关键路径，不求timer总和。共享安全的证据必须与当次别人任务相关；无吞吐或延迟观测就继续标“未直接证明无影响”，不以模型分数或退出码正常代替资源合规。
+
+## 10. 交叉核验与修复事件
+
+| 关键主张 | 首次审查来源 | 分离来源/独立计算 | 反例或局限 | 本次裁定 |
+|---|---|---|---|---|
+| 六项MAE配对 | 两份原scores | Decimal50 vs Fraction方差；再对R14摘要 | seed46反向；同valid/运行混杂 | 保留描述性结论，不宣布显著性 |
+| 22任务valid n和分数 | R17精确字节SHA | JSON逐字段/分类加和/11735总计；R19inputs交叉 | train/test尺度不同；首版13项错 | 更正并重排所有当前产物 |
+| 六项可分析但GPU0失败 | 主控R13/R07 | R14运行路径、attempt/恢复核对 | GPU1缺直接他人性能观测 | 科学接受与合规分开保留 |
+| R19科学配置覆盖 | 分段原文21task bases | 84canonical科学config SHA逐项核验 | wrapper原字节未下载、原SHA未独算 | 完成所需逐task/config研究，不虚称全库重放 |
+| proposal_only允许new_code设计 | 正式PROMPT/R12 | 最新repair指令明确 | 实施仍需gates/授权 | 12完整proposal，非空且不执行 |
+| 24screen→28confirm上限 | 明确H0/H1配置 | 全15种2task确认集合的哈希去重 | 选0/1task增量不同；没有未来分数 | 额外最多4，不重复44/45 |
+| CheM不适用CLS网格 | 实际encoder源码 | R19指纹合同、上游模型接口对照 | 新底座输出维度/池化不同 | 当前路径不变，新资产单独准入 |
+| 周转310.657为上界 | 用户观测时刻 | 独立时间差算术 | completedAt未知，重叠计时 | 用区间/关键路径，不冒充纯推理时长 |
+
+`issues.json`保留六个旧ID并追加repair事件。首版数字错误、空矩阵误解、fit去重、池化泛化四项作为独立修复问题留痕；阅读缺口已关闭，未来工程/资源/metric等价/资产许可等仍open。关闭研究的阅读或计数问题不意味着解除训练边界。
+
+### 10.1 明确未做与不确定项
+
+没有训练、权重更新、全量新编码、模型重载、checkpoint执行、test拟合、真实新valid评分或赛事上传；没有逐行valid标签/残差访问。没有实际子代理。没有声称所有来源字节SHA都独立计算。未无差别读完全历史库/全部原始数据，不因此漏掉本轮23合同项及科学决策所需R19配置。对未测的train.Y分位数、stop类别数、当下主机资产状态、全量输入兼容性、真实GPU/Thread成本，给明确准备验收，而不是未来实验虚构结果。
+
+因此Q0–Q7在其要求的“基于现有证据回答＋具体设计＋未知说明”范围均已作答；`review.status=complete`表示这份研究修复合同完成，**不表示所有科学假设已证实、所有issue关闭或所有proposal可执行**。官方指标等价/资产准备/未来收益仍不确定，在对应问题、gates和issues中保留，不为全局通过伪造事实。
+
+## 附录A · 关键原件与来源索引
+
+全量含精确URI/版本/hash读取限度的机器可读表在`audit/sources.json`；下面列直接决策依赖的索引。R17和两scores为本地原字节SHA已核验；其他SHA仅在明确标注时是独立计算，不能以回显代替检验。
+
+**SRC-R00** — 总入口；渐进顺序和科学/运行范围
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/START_HERE.md
+
+读取定位：`turn884091view2`。
+
+**SRC-R01** — 六项结果、配对设计和限制
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/current/README.md
+
+读取定位：`turn785775view3`。
+
+**SRC-R02** — aggregate_only与累计valid账
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/context/README.md
+
+读取定位：`turn420145view3`。
+
+**SRC-R03** — Q0–Q7和返回合同入口
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/research/README.md
+
+读取定位：`turn432814view3`。
+
+**SRC-R04** — 33条历史登记导航；不将索引等同所有历史原件
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/history/README.md
+
+读取定位：`turn420145view4;turn785775view1;turn718572view4;turn483929view0;turn928162view0`。
+
+**SRC-R05** — GPU0失败、GPU1条件接受；旧问题不消失
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/issues/README.md
+
+读取定位：`turn785775view2`。
+
+**SRC-R06** — 科学底座与执行LLM分开；21任务runner未验收
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/assets/README.md
+
+读取定位：`turn718572view3`。
+
+**SRC-R07** — 11次尝试、恢复、GPU共享条件和时间口径
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/current/failures-and-resources.md
+
+读取定位：`turn442396view2`。
+
+**SRC-R08** — 本轮研究问题和已填输入；不是未来待取材料
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/evidence/objects/07ba1f2d9ab5981de8dac497f57311d6b161407b1de4dd68a1bdf11bdd657a7f.md.txt
+
+读取定位：`turn205951view2`。
+
+**SRC-R09** — 22任务的本地metric/direction；Q0–Q7验收标准
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/evidence/objects/45acd7d65dcc88bee472b4b27bd1fdeb9e74f0a5285f42c00ed0b82358595778.json
+
+读取定位：`turn785064view5;turn483929view1;turn483929view2`。
+
+**SRC-R10** — Caco2缓存/恢复实测，新增任务需要new_code准备
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/evidence/objects/485ae3b871d08400a335b75effbfc0fcde443d311ebae2bb6d31f714811f53d0.md.txt
+
+读取定位：`turn718572view2`。
+
+**SRC-R11** — 历史未填模板，不覆盖当前已填PROMPT；交付/变更因子/去重要求
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/evidence/objects/05e2e8bfffc7c555ce873e5316ece02d779ac665c601d7153cd58e564f2e85fa.md.txt
+
+读取定位：`turn205951view3;turn718572view0;turn487525view0`。
+
+**SRC-R12** — 根类型、所有必需字段和枚举
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/evidence/objects/144d41be12a9d39d45e064644289c999facd2e87d0ce76b1b56045c41071ca72.json
+
+读取定位：`turn432814view2;turn540712view0`。
+
+**SRC-R13** — 六项稳定模型/预测和主控验收；不等于运行全通过
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/evidence/objects/8295116e4736c8028a119aaaf6e55b04dc1790f89524518ef9a28a02cd6a97b9.md.txt
+
+读取定位：`turn205951view4`。
+
+**SRC-R14** — 配置差异、epochs/best/steps和执行混杂；仅作核验而非C1分数输入
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/evidence/objects/61f8795f1040539fb3e67a50d4a9a67a3e397bec6df2ab3ab67911e5498357b9.json
+
+读取定位：`turn442396view3;turn563344view0`。
+
+**SRC-R15** — 六组计数去重32任务评分/11逻辑run；未知访问量是null
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/evidence/objects/f37f1b0cec261606f46260aa1f2727e475d53a800a4bba77113a5d6c73a8ab59.json
+
+读取定位：`turn718572view1;turn487525view1;turn563344view1`。
+
+**SRC-R16** — CheMeleon可复用；MiniMol/MoLFormer本地资产未ready，其他方向有边界
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/history/archive-20261101/originals/S-d764c93e890f1a40.json
+
+读取定位：`turn487525view2;turn785064view4`。
+
+**SRC-R17** — 逐任务分数、valid n、类别数和metric定义；合计11735
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/history/archive-20261101/originals/S-764562710384d47e.json
+
+读取定位：`turn432814view0;turn205951view0;turn205951view1`。
+
+**SRC-R18** — 前轮84fit是未执行方案；归一化总分属推断；inner_stop筛选乐观
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/evidence/H-d5a45626b5031f31d644.md.txt
+
+读取定位：`turn487525view3`。
+
+**SRC-R19** — 21任务×H0/H1×seed44/45；84完整科学配置解析并逐SHA匹配；原wrapper未下载
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/evidence/H-2cdcdf014e443ab866c8.json
+
+读取定位：`audit/r19-config-hash-checks.json`。
+
+**SRC-RULES** — 官方规则快照：外部数据、SMILES/3D、模板只填y_pred和复现
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/history/archive-20261101/originals/S-a95c8473d1769a29.json
+
+读取定位：`turn762095view0;turn785064view0;turn785064view1`。
+
+**SRC-POLICY** — 用户确认冻结预训练例外和角色数据投影；不把旧公开链接当权限
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/evidence/H-3db7c2d1e67d40641a20.json
+
+读取定位：`turn762095view1;turn785064view2;turn785064view3;turn483929view3`。
+
+**SRC-MAP** — 官方公开/用户转述/本地治理三类来源分开
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/evidence/H-e275f0ef9a4955741956.md.txt
+
+读取定位：`turn487525view4`。
+
+**SRC-SCORE2** — two original scores; exact bytes matched
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/evidence/objects/7e0d8a9ff81657e4de4dd6effe3b5ab5f10302ecc1fdfd71c56b004e929708a3.json
+
+读取定位：`turn442396view0`。
+
+**SRC-SCORE4** — four original scores; exact bytes matched
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/evidence/objects/f37f584c8ced3b83a796fac05b9becee14d653a6e0a9bbac35e5597b794fb2e8.json
+
+读取定位：`turn442396view1`。
+
+**SRC-SCAFFOLD** — targeted original metadata and task scaffold summaries; not all2312 lines
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/history/archive-20261101/originals/S-68b623177bcc7159.json
+
+读取定位：`turn539193view0;turn721858view0;turn445538view0;turn445538view1;turn445538view2;turn849010view3;turn849010view4;turn849210view0;turn849210view1;turn849210view2;turn540712view2;turn540712view3`。
+
+**SRC-RANGES** — full historical prediction range aggregate; not labeled residuals; partition not inferred
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/history/archive-20261101/originals/S-616fd441ee2c48b2.json
+
+读取定位：`turn721858view1`。
+
+**SRC-BASELINE** — baseline22 model/run/encoder counts, timings, 2 invalid SMILES and prediction extremes
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/history/archive-20261101/originals/S-74987a34c418c461.md.txt
+
+读取定位：`turn838531view0`。
+
+**SRC-ENCODER** — 101 lines inert source read; BondMessagePassing, MeanAggregation, 2048 fingerprint; no code run
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/evidence/objects/7f7a582135830cd166719cdf09b64ca004d88e5710e058d620df72094393b59a.py.txt
+
+读取定位：`turn203957view1`。
+
+**SRC-RUNNER** — targeted input validation and supported fields/monitors; full481line replay not performed
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/evidence/objects/9409aacd2dac9814e38831c4aeaf8d7d7597fb62d8df8688c6082594ad1f5c78.py.txt
+
+读取定位：`turn203957view2`。
+
+**SRC-BESTCONFIG** — full87lines; historical best run head512/lr.001/seed42, currenthead256/lr.0005/otherseeds
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/history/archive-20261101/originals/S-a875c49c4ef3f7da.json
+
+读取定位：`turn678610view3`。
+
+**SRC-BESTREPORT** — historical 14epochs70stepsbest6; validated frozen and blind reload scope
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/history/archive-20261101/originals/S-2e8f80a254694f54.md.txt
+
+读取定位：`turn539193view1`。
+
+**SRC-SKILLFOLLOW** — head256/seed43, 19epochs95steps; science vs strict skill failure separated
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/history/archive-20261101/originals/S-d76e1996855c0b80.json
+
+读取定位：`turn445538view4`。
+
+**SRC-BESTSCORES** — Read only saved task/group aggregates, not linked truth. Best .37862513598901104 tied to hainan-frozen-training-20261031.
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/eaec280cf142839597fe75ce748cd2b9a8a897d4/experiments/public-repo-20261031/scoring/scores.json
+
+读取定位：`turn678610view0`。
+
+**SRC-INDEXSCORE** — Saved aggregate .42147216141758237, not new scoring.
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/1c5592e98f3fff1c29369bd521f39e0cc044f3d3/experiments/progressive-index-e2e-20261031/batches/progressive-index-e2e-20261031/aggregate-scores.json
+
+读取定位：`turn678610view1`。
+
+**SRC-MAESCORE** — Saved aggregate .40302117308791197, no truth link followed.
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/batches/monitor-mae-e2e-20261101/aggregate-scores.json
+
+读取定位：`turn678610view2`。
+
+**EXT-MINIMOL** — Official upstream current README, 512dim output/10M model/MIT code; does not prove frozen local assets installed or checkpoint license accepted.
+
+https://github.com/graphcore-research/minimol
+
+读取定位：`turn341913view2`。
+
+**EXT-MOLFORMER** — Official modelcard 10pct variant, feature extractor/pooler_output; current compatibility advice not auto upgrade approval.
+
+https://huggingface.co/ibm-research/MoLFormer-XL-both-10pct
+
+读取定位：`turn341913view1`。
+
+**EXT-AP** — AP non-interpolated weighted precision by recall increment; not trapezoidal PR AUC.
+
+https://scikit-learn.org/stable/modules/generated/sklearn.metrics.average_precision_score.html
+
+读取定位：`turn563344view3`。
+
+**EXT-CHEMELEON** — Authors repository metadata; local accepted encoder source is stronger for exact pooling implementation.
+
+https://github.com/JacksonBurns/chemeleon
+
+读取定位：`turn744965search23;turn463460view0`。
+
+**SRC-PROMPT** — All647 browser lines covered by overlapping windows; originalQ0–Q7 and23sourcecontract apply
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/c56cd0e379c25d0e68542bc3a759e0f0474c549c/experiments/agent-led-six-pro-request-20261102/PROMPT.txt
+
+读取定位：`turn884091view0;turn123627view0;turn420145view0;turn785775view0;turn123627view1;turn420145view1;turn123627view2;turn420145view2;turn123627view3;turn341913view0;turn540712view1`。
+
+**SRC-REQUEST** — Identity file read; same request/round/input manifest
+
+https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/c56cd0e379c25d0e68542bc3a759e0f0474c549c/experiments/agent-led-six-pro-request-20261102/REQUEST.json
+
+读取定位：`turn884091view1`。
+

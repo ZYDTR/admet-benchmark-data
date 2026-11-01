@@ -1,0 +1,68 @@
+{
+  "request_id": "admet-breadth-six24-retrieve-20261102-001",
+  "created_at": "2026-11-01T21:31:42.189874+00:00",
+  "source_main_thread": "01a18c09-2621-7eb0-865e-0198147e5a5c",
+  "executor_thread": "01a18fe4-ea7d-7642-9f26-1b7748a8a056",
+  "model": "gpt-6.1-sol",
+  "reasoning": "xhigh",
+  "goal": "Complete quality retrieval, one batch24 host valid score, indexed publication candidate; root approval precedes concrete publication.",
+  "skill_version": "1.1.0",
+  "skill": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/skills/hainan-training-retrieval/SKILL.md",
+  "normative_snapshot": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/retrieval/batch24-001/context/MANIFEST.json",
+  "scientific_acceptance": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/controller/final-training-intake-001/REPORT.md",
+  "artifact_index": {
+    "path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/ARTIFACT_INDEX.json",
+    "sha256": "625835b3645282a4358ff8c604779c8122747e0bf3e2851c5925be522b339e7e"
+  },
+  "operator_manifest": {
+    "path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/evidence-manifest.json",
+    "sha256": "c48060214835b50f1812f70eb82a87dccec8ecfeee513d7590962479cfd251e6"
+  },
+  "remote_read_roots": [
+    "[TASK_WORKSPACE]/admet/breadth-six24-20261102"
+  ],
+  "allowed_local_read_roots": [
+    "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102",
+    "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/control",
+    "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/exchange",
+    "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102"
+  ],
+  "historical_sources": "Read actual sources explicitly routed by control/history-registry.json and prior frozen public candidate; no unrelated workspace scan.",
+  "readonly_dependency": "Existing pilot venv metadata only, no recursive environment copy or writes.",
+  "local_write_root": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/retrieval/batch24-001",
+  "protected_roots": [
+    "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator",
+    "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/input",
+    "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/science",
+    "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/TASK.json",
+    "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/controller/final-training-intake-001"
+  ],
+  "source_policy": "Recursively inventory whole approved run incl all failure attempts, code, arrays, temporary/unknown files; preserve originals. Reuse byte-identical local objects only after verification and register them separately.",
+  "must_retrieve": "36 raw embedding/parse-mask NPY remote-only objects and other run files absent locally, all scientific/environment/failure originals. Remote progress duplicates may be content-deduplicated with explicit source mapping, not silently dropped.",
+  "uncompressed_byte_budget": 8589934592,
+  "archive_byte_budget": 8589934592,
+  "wall_budget": "No arbitrary auto-cutoff; bounded transport retry per connection Skill, meaningful block callback.",
+  "scoring_task": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/retrieval/batch24-001/SCORING_TASK.json",
+  "candidate": {
+    "path": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/breadth-six24-20261102/retrieval/batch24-001/candidate",
+    "publish_now": false,
+    "intended_repository": "ZYDTR/admet-benchmark-data",
+    "intended_prefix": "experiments/breadth-six24-20261102",
+    "historical_candidate": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/retrieval/final-six-candidate-001/candidate",
+    "history_registry": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/control/history-registry.json",
+    "prior_pro_and_root_review": "[PROJECT_WORKSPACE]/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/controller/pro-repair-intake-001",
+    "history_policy": "Full logical index, latest batch plus all history; cite already-published fixed objects instead of recopying when appropriate. Include Pro originals/repair, Qwen failures/root repair, all24 current results and all current failures. Roles separate from molecular assets.",
+    "label_scope": "aggregate_only for new publication; do not newly publish private valid truth or residuals",
+    "no_secrets_or_connection_material": true
+  },
+  "no_remote_writes": true,
+  "no_train_or_inference": true,
+  "no_official_upload": true,
+  "no_new_threads_agents_timers": true,
+  "callback": {
+    "thread": "01a18c09-2621-7eb0-865e-0198147e5a5c",
+    "when": "completion or material block",
+    "content": "real outputs, manifests, scores, full-thread timing and candidate digest; await root publication admission",
+    "human_authorized_chain": true
+  }
+}

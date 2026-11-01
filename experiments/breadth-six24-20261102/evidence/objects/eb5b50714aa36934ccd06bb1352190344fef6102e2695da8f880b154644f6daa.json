@@ -1,0 +1,49 @@
+{
+  "request_id": "admet-agentled-six-pro-20261102-001",
+  "round_id": "six-seed-paired-and-breadth-20261102",
+  "review_method": "Single-model evidence audit; no actual subagent interface was available in this runtime.",
+  "cross_checks": [
+    {
+      "claim": "MAE monitor lower mean valid MAE than MSE monitor",
+      "primary": "turn432510view0",
+      "independent": "Decimal recomputation in this delivery",
+      "counterexample": "seed46 MSE monitor is lower",
+      "disposition": "descriptive only"
+    },
+    {
+      "claim": "MSE seed46 resumed training",
+      "primary": "turn432510view0",
+      "independent": "185 total - 30 resumed = 155 new steps",
+      "counterexample": "unpersisted updates after earlier stop unknown",
+      "disposition": "report resumed and new steps separately"
+    },
+    {
+      "claim": "Six runs scientifically usable",
+      "primary": "turn567649view2 / turn525567view5",
+      "independent": "current README, runner evidence, failure report cross-check",
+      "counterexample": "GPU0 resource sharing failure remains",
+      "disposition": "scientific acceptance scoped; runtime compliance not fully passed"
+    },
+    {
+      "claim": "21 non-Caco2 tasks should receive training",
+      "primary": "turn525567view4",
+      "independent": "asset registry and runner evidence",
+      "counterexample": "new interfaces not yet prepared; small/imbalanced tasks",
+      "disposition": "zero-fit preparation first"
+    },
+    {
+      "claim": "Expand coverage rather than Caco2 deep dive",
+      "primary": "turn525567view2",
+      "independent": "historical 22-task profile and Caco2 best-vs-history comparison",
+      "counterexample": "unit costs and task readiness unknown",
+      "disposition": "conditional adaptive breadth only"
+    }
+  ],
+  "limitations": [
+    "No actual subagents were available.",
+    "The 23-source required read contract was not fully completed.",
+    "No source SHA was independently recomputed from raw bytes in this environment.",
+    "No model, training code, pickle or checkpoint was executed.",
+    "No new scoring or row-level validation truth access occurred."
+  ]
+}

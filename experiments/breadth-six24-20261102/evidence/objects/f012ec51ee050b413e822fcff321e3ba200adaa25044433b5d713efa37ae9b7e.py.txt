@@ -1,0 +1,210 @@
+"""Row loading, identity auditing and the deterministic raw-SMILES group split.
+
+Split semantics follow input/reference/caco2/training_science.py (approved grouping
+rule): groups keyed by the raw Drug string (no canonicalization/dedup), codepoint-sorted
+keys, permutation from a dedicated random.Random(seed) instance, whole-group stop
+selection until round(fraction*total) rows are covered, last group never consumed.
+
+Import-safe: stdlib + numpy only; importing never trains, writes or opens files.
+"""
+
+from __future__ import annotations
+
+import math
+import random
+import csv as _csv
+from pathlib import Path
+from typing import Any, Iterable, Mapping, Sequence
+
+from .common import (InterfaceError, SPLITS, parse_float, sha256_hex,
+                     canonical_json_bytes, task_kind)
+
+SHUFFLE_ALGORITHM = ("CPython random.Random(seed).shuffle(seq) (Fisher-Yates via _randbelow) "
+                     "over codepoint-sorted raw Drug group keys")
+
+# Scientific parameter envelope admitted by validate_config (TASK.md item 3).
+ADMITTED_HIDDEN_DIMS = (128, 256, 512)
+ADMITTED_DROPOUT = (0.0, 0.1, 0.3)
+ADMITTED_LR = (1e-4, 3e-4, 5e-4, 1e-3)
+ADMITTED_WEIGHT_DECAY = (1e-5, 1e-4, 1e-3)
+ADMITTED_BATCH_SIZE = 128
+ADMITTED_MAX_EPOCHS = 50
+ADMITTED_PATIENCE = 8
+ADMITTED_MODEL_SEEDS = (44, 45, 46)
+ADMITTED_SPLIT_SEED = 43
+ADMITTED_STOP_FRACTION = 0.1
+MIN_DELTA = 1e-7
+
+
+def check_rows_identity(rows: Sequence[Mapping[str, str]], *, require_y: bool,
+                        label: str) -> dict[str, Any]:
+    """Validate row identity fields without mutating anything.
+
+    Row position is authoritative; blank/repeated Drug_ID are preserved, never used
+    as keys. When require_y, every Y must parse to a finite float; blind rows must
+    not carry Y. Returns an audit record (duplicate IDs, blank-ID positions,
+    repeated raw Drug strings).
+    """
+    if len(rows) == 0:
+        raise InterfaceError(f"{label}: zero rows")
+    ids: list[str] = []
+    for pos, row in enumerate(rows):
+        rid = row.get("Drug_ID")
+        smi = row.get("Drug")
+        if not isinstance(rid, str):
+            raise InterfaceError(f"{label}: missing/non-string Drug_ID at row index {pos}")
+        if not isinstance(smi, str):
+            raise InterfaceError(f"{label}: missing/non-string Drug at row index {pos}")
+        if not require_y and "Y" in row:
+            raise InterfaceError(f"{label}: blind input must not contain Y")
+        ids.append(rid)
+        if require_y:
+            parse_float(row.get("Y"), label=f"{label}.Y", pos=pos)
+    counts = {i: ids.count(i) for i in set(ids)}
+    dupes = sorted(k for k, v in counts.items() if v > 1)
+    drug_counts = build_drug_groups(rows)
+    return {
+        "rows": len(rows),
+        "duplicate_drug_ids": dupes,
+        "blank_drug_id_rows": [i for i, rid in enumerate(ids) if rid == ""],
+        "multi_row_raw_drugs": sorted(k for k, v in drug_counts.items() if len(v) > 1),
+    }
+
+
+def build_drug_groups(rows: Sequence[Mapping[str, str]]) -> dict[str, list[int]]:
+    """Map each raw Drug string to its ordered original row indices."""
+    groups: dict[str, list[int]] = {}
+    for idx, row in enumerate(rows):
+        groups.setdefault(row["Drug"], []).append(idx)
+    return groups
+
+
+def assign_internal_stop(total_rows: int, validation_fraction: float) -> int:
+    if total_rows <= 0:
+        raise InterfaceError("total_rows must be positive")
+    if not 0 < validation_fraction < 1:
+        raise InterfaceError("validation_fraction must be in (0, 1)")
+    target = max(1, int(round(total_rows * validation_fraction)))
+    if target >= total_rows:
+        raise InterfaceError("stop selection would leave the fit set empty")
+    return target
+
+
+def select_stop_groups(group_order: Sequence[str], group_sizes: Mapping[str, int],
+                       total_rows: int, target_rows: int) -> list[str]:
+    """Walk the shuffled group order taking whole groups until target coverage.
+
+    Never consumes every group (fit stays non-empty). Deterministic given inputs.
+    """
+    if not group_order:
+        raise InterfaceError("no groups to select from")
+    if len(set(group_order)) != len(group_order):
+        raise InterfaceError("group_order contains duplicate keys")
+    if sum(int(group_sizes[k]) for k in group_order) != total_rows:
+        raise InterfaceError("group sizes do not sum to total_rows")
+    stop: list[str] = []
+    taken = 0
+    for key in group_order:
+        if taken >= target_rows and stop:
+            break
+        if len(stop) + 1 == len(group_order):  # last group must stay in fit
+            break
+        stop.append(key)
+        taken += int(group_sizes[key])
+    if not stop or len(stop) == len(group_order):
+        raise InterfaceError("could not select a non-empty, non-exhaustive stop set")
+    return stop
+
+
+def split_train_stop_groups(rows: Sequence[Mapping[str, str]], seed: int,
+                            validation_fraction: float) -> dict[str, Any]:
+    """Deterministic raw-SMILES-group split of official train into fit / internal-stop."""
+    if not isinstance(seed, int) or isinstance(seed, bool) or seed < 0:
+        raise InterfaceError(f"split seed must be a non-negative int, got {seed!r}")
+    audit = check_rows_identity(rows, require_y=True, label="train")
+    groups = build_drug_groups(rows)
+    ordered_keys = sorted(groups)
+    sizes = {k: len(groups[k]) for k in ordered_keys}
+    n = len(rows)
+    target = assign_internal_stop(n, validation_fraction)
+    rng = random.Random(seed)
+    shuffled = list(ordered_keys)
+    rng.shuffle(shuffled)
+    stop_keys = select_stop_groups(shuffled, sizes, n, target)
+    stop_set = set(stop_keys)
+    fit_indices: list[int] = []
+    stop_indices: list[int] = []
+    for key, idxs in groups.items():
+        (stop_indices if key in stop_set else fit_indices).extend(idxs)
+    fit_indices.sort()
+    stop_indices.sort()
+    if not fit_indices or not stop_indices:
+        raise InterfaceError("split produced an empty fit or stop set")
+    overlap = set(fit_indices) & set(stop_indices)
+    if overlap:
+        raise InterfaceError(f"fit/stop overlap: {sorted(overlap)[:10]}")
+    if sorted(fit_indices + stop_indices) != list(range(n)):
+        raise InterfaceError("fit+stop does not cover every original row exactly once")
+    cross = {rows[i]["Drug"] for i in fit_indices} & {rows[i]["Drug"] for i in stop_indices}
+    if cross:
+        raise InterfaceError(f"raw Drug strings cross fit/stop boundary: {sorted(cross)[:5]}")
+    payload: dict[str, Any] = {
+        "method": "raw_smiles_group_shuffle",
+        "seed": seed,
+        "validation_fraction": validation_fraction,
+        "shuffle_algorithm": SHUFFLE_ALGORITHM,
+        "python_random_engine": "random.Random (Mersenne Twister MT19937)",
+        "total_rows": n,
+        "distinct_raw_drugs": len(groups),
+        "duplicate_raw_drug_groups_count": sum(1 for k in ordered_keys if sizes[k] > 1),
+        "drug_id_audit": {
+            "allow_duplicate_drug_id": True,
+            "duplicate_drug_ids_count": len(audit["duplicate_drug_ids"]),
+            "note": "row position is authoritative; Drug_ID repeats legitimately",
+        },
+        "target_stop_rows": target,
+        "stop_group_count": len(stop_keys),
+        "fit_rows": len(fit_indices),
+        "stop_rows": len(stop_indices),
+        "fit_row_indices": fit_indices,
+        "stop_row_indices": stop_indices,
+    }
+    payload["split_record_sha256"] = sha256_hex(canonical_json_bytes(payload))
+    return payload
+
+
+def load_split_table(data_root, task: str, split: str) -> list[dict[str, str]]:
+    """Production CSV boundary for one task/split; returns every original row unchanged."""
+    data_root = Path(data_root)
+    path = data_root / task / f"{split}.csv"
+    if not path.is_file():
+        raise InterfaceError(f"missing input csv: {path}")
+    expected = ["Drug_ID", "Drug", "Y"] if split == "train" else ["Drug_ID", "Drug"]
+    with open(path, newline="", encoding="utf-8-sig") as fh:
+        reader = _csv.reader(fh)
+        header = next(reader, None)
+        if header != expected:
+            raise InterfaceError(f"{task}/{split}: header {header} != {expected}")
+        rows: list[dict[str, str]] = []
+        for i, cells in enumerate(reader):
+            if len(cells) != len(expected):
+                raise InterfaceError(
+                    f"{task}/{split}: malformed row at index {i}: {len(cells)} fields")
+            rows.append(dict(zip(expected, cells)))
+    return rows
+
+
+def train_labels(rows: Sequence[Mapping[str, str]], task: str) -> list[float]:
+    kind = task_kind(task)
+    out: list[float] = []
+    for i, r in enumerate(rows):
+        v = parse_float(r["Y"], label=f"{task}.train.Y", pos=i)
+        if kind == "classification" and v not in (0.0, 1.0):
+            raise InterfaceError(f"{task}: non-binary classification label at row {i}: {v!r}")
+        out.append(v)
+    return out
+
+
+def load_task_table(data_root, task: str) -> dict[str, list[dict[str, str]]]:
+    """Load all three official splits of one task with header/shape checks."""
+    return {split: load_split_table(data_root, task, split) for split in SPLITS}

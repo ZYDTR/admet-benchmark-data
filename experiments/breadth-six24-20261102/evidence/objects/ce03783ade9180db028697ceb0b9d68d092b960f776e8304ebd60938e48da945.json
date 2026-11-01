@@ -1,0 +1,986 @@
+[
+  {
+    "task": "solubility_aqsoldb",
+    "old_stage": "S1",
+    "old_is_executed": false,
+    "old_four_configs": [
+      {
+        "tag": "H0",
+        "seed": 44,
+        "sha256": "2b264ebc69c99f51fa0bf8ce0b4297dadb93c8cdb559b222b0ac8c48095934e2"
+      },
+      {
+        "tag": "H0",
+        "seed": 45,
+        "sha256": "e8b531972dd14c40af5e1c6d701bb4ff9c45bb6493f0697a2379f577029d5a6b"
+      },
+      {
+        "tag": "H1",
+        "seed": 44,
+        "sha256": "86c01a654015e3de4da6b6cdbe92464513f44af1e989273b39c33e32208a8ccf"
+      },
+      {
+        "tag": "H1",
+        "seed": 45,
+        "sha256": "dcace149c845aa720c1a1f3c0a87d162ae9eb3e5408858324f7dd856b5e801d8"
+      }
+    ],
+    "decision": "retain_scientific_contrast_modify_scope",
+    "reason": "valid2940全部空Murcko；历史预测尾部极端。保留dropout对照但替换“普通大样本优先”为shift压力探针；先scale/行身份gate。",
+    "retain": [
+      "H0/H1 dropout.1/.3 contrast",
+      "fixed frozen2048 fingerprint",
+      "head256/ReLU and AdamW.0005/.0001",
+      "split43 + shared modelseeds44/45",
+      "train-fit-only transforms",
+      "task-explicit loss/monitor/output"
+    ],
+    "modify": [
+      "bind registered train file SHA from SMILES-profile input identity",
+      "remove inferred official score normalization/reference for selection",
+      "source-correct task priority",
+      "new_code explicit gates rather than pretend current multi-task runner ready",
+      "test inference deferred to approved full-candidate export",
+      "conditional confirm both configs add46, deduplicate44/45"
+    ],
+    "replacement_proposal_ids": [
+      "R001-solubility_aqsoldb-H0",
+      "R001-solubility_aqsoldb-H1"
+    ]
+  },
+  {
+    "task": "ppbr_az",
+    "old_stage": "S1",
+    "old_is_executed": false,
+    "old_four_configs": [
+      {
+        "tag": "H0",
+        "seed": 44,
+        "sha256": "d0525e271f221b5597e7e9686f5b4c84ff7a5023d3cbfa2cfb4daf1cfdcd62cd"
+      },
+      {
+        "tag": "H0",
+        "seed": 45,
+        "sha256": "d7d009979b77b48c91ab8c9d08720933b4d0c31b342e329acae85cb31aed454f"
+      },
+      {
+        "tag": "H1",
+        "seed": 44,
+        "sha256": "6f0730d4362b650ebde75800559958259c09a0c1a8e73c5793971389cb6e104a"
+      },
+      {
+        "tag": "H1",
+        "seed": 45,
+        "sha256": "1416a9a6dea61a0800df9cbfdb5b0ad72f8050716d47eb273857114c4674c8d7"
+      }
+    ],
+    "decision": "defer_large",
+    "reason": "valid279不是131；MAE20.83/极端输出使scale/Huber诊断比马上dropout sweep更优先；移large/reserve。",
+    "retain": [
+      "H0/H1 dropout.1/.3 contrast",
+      "fixed frozen2048 fingerprint",
+      "head256/ReLU and AdamW.0005/.0001",
+      "split43 + shared modelseeds44/45",
+      "train-fit-only transforms",
+      "task-explicit loss/monitor/output"
+    ],
+    "modify": [
+      "bind registered train file SHA from SMILES-profile input identity",
+      "remove inferred official score normalization/reference for selection",
+      "source-correct task priority",
+      "new_code explicit gates rather than pretend current multi-task runner ready",
+      "test inference deferred to approved full-candidate export",
+      "conditional confirm both configs add46, deduplicate44/45"
+    ],
+    "replacement_proposal_ids": []
+  },
+  {
+    "task": "ld50_zhu",
+    "old_stage": "S1",
+    "old_is_executed": false,
+    "old_four_configs": [
+      {
+        "tag": "H0",
+        "seed": 44,
+        "sha256": "79ff750b835d3f473302924ffa3062be4face996a0e390055e8504b1e94132fe"
+      },
+      {
+        "tag": "H0",
+        "seed": 45,
+        "sha256": "6e7eb7f87ecc9793359eebe1c6882c5aee3edfda68871e49c5a2a8b1ed746551"
+      },
+      {
+        "tag": "H1",
+        "seed": 44,
+        "sha256": "c016dc3b9844cc7531deb3c70a16ebee15d61a0308bfc6f21156da4d4f59bf6b"
+      },
+      {
+        "tag": "H1",
+        "seed": 45,
+        "sha256": "e8aca7f1ceb990cecbc6ba488806485a3707f6d07ec8bc23a6f404050405edd5"
+      }
+    ],
+    "decision": "retain_scientific_contrast_modify_scope",
+    "reason": "valid1937不是128；全部空Murcko而train3970非空；选择为第二独立MAE shift压力探针，不宣称多样性。",
+    "retain": [
+      "H0/H1 dropout.1/.3 contrast",
+      "fixed frozen2048 fingerprint",
+      "head256/ReLU and AdamW.0005/.0001",
+      "split43 + shared modelseeds44/45",
+      "train-fit-only transforms",
+      "task-explicit loss/monitor/output"
+    ],
+    "modify": [
+      "bind registered train file SHA from SMILES-profile input identity",
+      "remove inferred official score normalization/reference for selection",
+      "source-correct task priority",
+      "new_code explicit gates rather than pretend current multi-task runner ready",
+      "test inference deferred to approved full-candidate export",
+      "conditional confirm both configs add46, deduplicate44/45"
+    ],
+    "replacement_proposal_ids": [
+      "R001-ld50_zhu-H0",
+      "R001-ld50_zhu-H1"
+    ]
+  },
+  {
+    "task": "lipophilicity_astrazeneca",
+    "old_stage": "S1",
+    "old_is_executed": false,
+    "old_four_configs": [
+      {
+        "tag": "H0",
+        "seed": 44,
+        "sha256": "1b5fac7f2a1d43b0f071ab8b5d03f5c2cad9c3ec6e50e7c920f549e83e0a60b9"
+      },
+      {
+        "tag": "H0",
+        "seed": 45,
+        "sha256": "b3fd79cb26df08b124d194f4eb350f576296921b71bc2aae216b4f20fc72ecde"
+      },
+      {
+        "tag": "H1",
+        "seed": 44,
+        "sha256": "ee9edeb98cb2ab76005f076832e59b24fa4f6ef505b9793e1d8a8161c21a9c10"
+      },
+      {
+        "tag": "H1",
+        "seed": 45,
+        "sha256": "9b7230448816e77bd8012c8a990a8744a250d654f52a1ad29ecf31ecce171230"
+      }
+    ],
+    "decision": "retain_scientific_contrast_modify_scope",
+    "reason": "valid420不是4200；train2940，结构覆盖相对分散，作为MAE核心对照而非最大样本。",
+    "retain": [
+      "H0/H1 dropout.1/.3 contrast",
+      "fixed frozen2048 fingerprint",
+      "head256/ReLU and AdamW.0005/.0001",
+      "split43 + shared modelseeds44/45",
+      "train-fit-only transforms",
+      "task-explicit loss/monitor/output"
+    ],
+    "modify": [
+      "bind registered train file SHA from SMILES-profile input identity",
+      "remove inferred official score normalization/reference for selection",
+      "source-correct task priority",
+      "new_code explicit gates rather than pretend current multi-task runner ready",
+      "test inference deferred to approved full-candidate export",
+      "conditional confirm both configs add46, deduplicate44/45"
+    ],
+    "replacement_proposal_ids": [
+      "R001-lipophilicity_astrazeneca-H0",
+      "R001-lipophilicity_astrazeneca-H1"
+    ]
+  },
+  {
+    "task": "vdss_lombardo",
+    "old_stage": "S1",
+    "old_is_executed": false,
+    "old_four_configs": [
+      {
+        "tag": "H0",
+        "seed": 44,
+        "sha256": "dc5c6f1784b8a00d3db21eab50bfc6f821624e78848a3aced504dadbffe98dc7"
+      },
+      {
+        "tag": "H0",
+        "seed": 45,
+        "sha256": "eaf7f159e5307b8458459eaeb6226fabf74a06fbc5cab6b0a2390f2ad788d09f"
+      },
+      {
+        "tag": "H1",
+        "seed": 44,
+        "sha256": "484ea449157b161f0d88e3242b986136a44431734f2073ac9a80c1a7c36191d3"
+      },
+      {
+        "tag": "H1",
+        "seed": 45,
+        "sha256": "f4b4fd4bbd54436d3029cd00f53c39327705452f3ca3d08e25d50a8dfa631cad"
+      }
+    ],
+    "decision": "defer_large",
+    "reason": "valid113、ρ−.0169；有改进空间但小样本/极端输出和尺度不明；先diagnostic，large候选。",
+    "retain": [
+      "H0/H1 dropout.1/.3 contrast",
+      "fixed frozen2048 fingerprint",
+      "head256/ReLU and AdamW.0005/.0001",
+      "split43 + shared modelseeds44/45",
+      "train-fit-only transforms",
+      "task-explicit loss/monitor/output"
+    ],
+    "modify": [
+      "bind registered train file SHA from SMILES-profile input identity",
+      "remove inferred official score normalization/reference for selection",
+      "source-correct task priority",
+      "new_code explicit gates rather than pretend current multi-task runner ready",
+      "test inference deferred to approved full-candidate export",
+      "conditional confirm both configs add46, deduplicate44/45"
+    ],
+    "replacement_proposal_ids": []
+  },
+  {
+    "task": "half_life_obach",
+    "old_stage": "S1",
+    "old_is_executed": false,
+    "old_four_configs": [
+      {
+        "tag": "H0",
+        "seed": 44,
+        "sha256": "97b88a8eafe686c128fc3c50fb1d8eee06237d7f9e02f3aa74a10d367c14ee7a"
+      },
+      {
+        "tag": "H0",
+        "seed": 45,
+        "sha256": "c811fe6a620413610853bc1f6039e61bcd6019802fe1b1245cc0eccb47344007"
+      },
+      {
+        "tag": "H1",
+        "seed": 44,
+        "sha256": "264f687d82c27d1f086ac5051044bc0ce690785d91fe8d0e0be29deb08c7fbb0"
+      },
+      {
+        "tag": "H1",
+        "seed": 45,
+        "sha256": "13cb90f28969898ea1a0230f74059a31d6a7aca7169b121f66bcaee985f6c892"
+      }
+    ],
+    "decision": "defer_diagnostic_first",
+    "reason": "valid67不是667；ρ.0737且输出范围极端；小样本不应仅因低分投入宽搜，延期至scale与label profile。",
+    "retain": [
+      "H0/H1 dropout.1/.3 contrast",
+      "fixed frozen2048 fingerprint",
+      "head256/ReLU and AdamW.0005/.0001",
+      "split43 + shared modelseeds44/45",
+      "train-fit-only transforms",
+      "task-explicit loss/monitor/output"
+    ],
+    "modify": [
+      "bind registered train file SHA from SMILES-profile input identity",
+      "remove inferred official score normalization/reference for selection",
+      "source-correct task priority",
+      "new_code explicit gates rather than pretend current multi-task runner ready",
+      "test inference deferred to approved full-candidate export",
+      "conditional confirm both configs add46, deduplicate44/45"
+    ],
+    "replacement_proposal_ids": []
+  },
+  {
+    "task": "cyp2d6_substrate_carbonmangels",
+    "old_stage": "S1",
+    "old_is_executed": false,
+    "old_four_configs": [
+      {
+        "tag": "H0",
+        "seed": 44,
+        "sha256": "1cb0ec4de77d5a56419e77114f4e4a5ad938a6f5442af2925f158eb18031c840"
+      },
+      {
+        "tag": "H0",
+        "seed": 45,
+        "sha256": "3273bec42537251f64d84ce3aa4b56bb4ab597d5cfd268b29cbbfa509ebb2ed7"
+      },
+      {
+        "tag": "H1",
+        "seed": 44,
+        "sha256": "6a0f98c876f41e427ac54cd68e6a8c3f32c2d5159543cbee4a66bbd042d083c9"
+      },
+      {
+        "tag": "H1",
+        "seed": 45,
+        "sha256": "5a58ef77edf25fa97f1e6174a46daef873b94cc4098c6dd3eb6059c44fbd44c5"
+      }
+    ],
+    "decision": "defer_diagnostic_first",
+    "reason": "valid67正14负53；小正例数AP不稳定，先统一AP fixture和类别profile；不因旧S1就自动执行。",
+    "retain": [
+      "H0/H1 dropout.1/.3 contrast",
+      "fixed frozen2048 fingerprint",
+      "head256/ReLU and AdamW.0005/.0001",
+      "split43 + shared modelseeds44/45",
+      "train-fit-only transforms",
+      "task-explicit loss/monitor/output"
+    ],
+    "modify": [
+      "bind registered train file SHA from SMILES-profile input identity",
+      "remove inferred official score normalization/reference for selection",
+      "source-correct task priority",
+      "new_code explicit gates rather than pretend current multi-task runner ready",
+      "test inference deferred to approved full-candidate export",
+      "conditional confirm both configs add46, deduplicate44/45"
+    ],
+    "replacement_proposal_ids": []
+  },
+  {
+    "task": "ames",
+    "old_stage": "S1",
+    "old_is_executed": false,
+    "old_four_configs": [
+      {
+        "tag": "H0",
+        "seed": 44,
+        "sha256": "6c185d1fc14ef56c06cedd3958d4ab767ee5f7b32493eb1d695b9dfd54cec13a"
+      },
+      {
+        "tag": "H0",
+        "seed": 45,
+        "sha256": "3a30875e0b158dd4aa94a23ffdcaf0b41c61f59a093d6171fd0ae16b04080a3e"
+      },
+      {
+        "tag": "H1",
+        "seed": 44,
+        "sha256": "51f1de7bd0d404c22b7b5393ca89cf536b2bc0ef2fd8c07abecf71b4e7b72e61"
+      },
+      {
+        "tag": "H1",
+        "seed": 45,
+        "sha256": "7e86375d295ade12a209da074c0f5c6c9f97b54815f2913c9220c6c3cec3dba5"
+      }
+    ],
+    "decision": "defer_large",
+    "reason": "valid1137单一非空骨架；不能把大n当结构广度。延期large，把它视作骨架集中压力任务。",
+    "retain": [
+      "H0/H1 dropout.1/.3 contrast",
+      "fixed frozen2048 fingerprint",
+      "head256/ReLU and AdamW.0005/.0001",
+      "split43 + shared modelseeds44/45",
+      "train-fit-only transforms",
+      "task-explicit loss/monitor/output"
+    ],
+    "modify": [
+      "bind registered train file SHA from SMILES-profile input identity",
+      "remove inferred official score normalization/reference for selection",
+      "source-correct task priority",
+      "new_code explicit gates rather than pretend current multi-task runner ready",
+      "test inference deferred to approved full-candidate export",
+      "conditional confirm both configs add46, deduplicate44/45"
+    ],
+    "replacement_proposal_ids": []
+  },
+  {
+    "task": "bioavailability_ma",
+    "old_stage": "S1",
+    "old_is_executed": false,
+    "old_four_configs": [
+      {
+        "tag": "H0",
+        "seed": 44,
+        "sha256": "42f80130568940550e62220941c2a9f44a6c2ec818c6b0eea7433b0e1e6216d2"
+      },
+      {
+        "tag": "H0",
+        "seed": 45,
+        "sha256": "1e5e89b18af9f2d2239e27c8764e45c7b5016425ff3d378e8b3f3660d46c68d8"
+      },
+      {
+        "tag": "H1",
+        "seed": 44,
+        "sha256": "215f6f804e998f62f45079eaca610d040ac76afebf72fbd15bb355153c831c9b"
+      },
+      {
+        "tag": "H1",
+        "seed": 45,
+        "sha256": "062ab3919205a178f831731251fca8cf7c41a1971bc47683ef346b15c4865731"
+      }
+    ],
+    "decision": "defer_diagnostic_first",
+    "reason": "valid64/正43负21；小n高方差，非首批。",
+    "retain": [
+      "H0/H1 dropout.1/.3 contrast",
+      "fixed frozen2048 fingerprint",
+      "head256/ReLU and AdamW.0005/.0001",
+      "split43 + shared modelseeds44/45",
+      "train-fit-only transforms",
+      "task-explicit loss/monitor/output"
+    ],
+    "modify": [
+      "bind registered train file SHA from SMILES-profile input identity",
+      "remove inferred official score normalization/reference for selection",
+      "source-correct task priority",
+      "new_code explicit gates rather than pretend current multi-task runner ready",
+      "test inference deferred to approved full-candidate export",
+      "conditional confirm both configs add46, deduplicate44/45"
+    ],
+    "replacement_proposal_ids": []
+  },
+  {
+    "task": "dili",
+    "old_stage": "S1",
+    "old_is_executed": false,
+    "old_four_configs": [
+      {
+        "tag": "H0",
+        "seed": 44,
+        "sha256": "f466eb29c1b0574d12010772747e191aa245bdeb64a512720e06571d8bf7a65e"
+      },
+      {
+        "tag": "H0",
+        "seed": 45,
+        "sha256": "3500845f5a7952b192c9e26633327b84e7101e2648c2ab9ce3f23a68306be80b"
+      },
+      {
+        "tag": "H1",
+        "seed": 44,
+        "sha256": "c634713ee9e3ddcb4f78404012cd597578ddf85dade039e1d425dcfc018fdf1f"
+      },
+      {
+        "tag": "H1",
+        "seed": 45,
+        "sha256": "0d237d4a39e3207952992b56bc0ba5d244d61c182d099a731a07c028b77576bc"
+      }
+    ],
+    "decision": "defer_diagnostic_first",
+    "reason": "valid48不是475，正13负35；高AUROC不能支撑精确排序收益，撤销首版中高投入。",
+    "retain": [
+      "H0/H1 dropout.1/.3 contrast",
+      "fixed frozen2048 fingerprint",
+      "head256/ReLU and AdamW.0005/.0001",
+      "split43 + shared modelseeds44/45",
+      "train-fit-only transforms",
+      "task-explicit loss/monitor/output"
+    ],
+    "modify": [
+      "bind registered train file SHA from SMILES-profile input identity",
+      "remove inferred official score normalization/reference for selection",
+      "source-correct task priority",
+      "new_code explicit gates rather than pretend current multi-task runner ready",
+      "test inference deferred to approved full-candidate export",
+      "conditional confirm both configs add46, deduplicate44/45"
+    ],
+    "replacement_proposal_ids": []
+  },
+  {
+    "task": "bbb_martins",
+    "old_stage": "S1B",
+    "old_is_executed": false,
+    "old_four_configs": [
+      {
+        "tag": "H0",
+        "seed": 44,
+        "sha256": "87f52c848031ea8421e58994e7e56acc005bbeaa26aa8c78f3cbfb49c680fb0c"
+      },
+      {
+        "tag": "H0",
+        "seed": 45,
+        "sha256": "d8dbdd6e5443435cdc67a03856b42301a04328f616e0099dd08ecf8c09d4282e"
+      },
+      {
+        "tag": "H1",
+        "seed": 44,
+        "sha256": "cce47aadbf3f6f4aaa424c3f495aef601191a4c9cb21e515d84c81640375c739"
+      },
+      {
+        "tag": "H1",
+        "seed": 45,
+        "sha256": "5e18ed0dd656c4ccc8803a6a0bac5db3ae94a2ca728029afda9ccb6c7bb76d3e"
+      }
+    ],
+    "decision": "retain_scientific_contrast_modify_scope",
+    "reason": "valid203正149负54、134非空骨架；AUROC核心，但test99/406空骨架说明仍有shift。",
+    "retain": [
+      "H0/H1 dropout.1/.3 contrast",
+      "fixed frozen2048 fingerprint",
+      "head256/ReLU and AdamW.0005/.0001",
+      "split43 + shared modelseeds44/45",
+      "train-fit-only transforms",
+      "task-explicit loss/monitor/output"
+    ],
+    "modify": [
+      "bind registered train file SHA from SMILES-profile input identity",
+      "remove inferred official score normalization/reference for selection",
+      "source-correct task priority",
+      "new_code explicit gates rather than pretend current multi-task runner ready",
+      "test inference deferred to approved full-candidate export",
+      "conditional confirm both configs add46, deduplicate44/45"
+    ],
+    "replacement_proposal_ids": [
+      "R001-bbb_martins-H0",
+      "R001-bbb_martins-H1"
+    ]
+  },
+  {
+    "task": "clearance_hepatocyte_az",
+    "old_stage": "S1B",
+    "old_is_executed": false,
+    "old_four_configs": [
+      {
+        "tag": "H0",
+        "seed": 44,
+        "sha256": "a399663b0d4914fb52b433649e603f1c33d0c0997111d498c7a3a19620ce7c22"
+      },
+      {
+        "tag": "H0",
+        "seed": 45,
+        "sha256": "699d95cc460e25fa1efbccaed7327b67db18ac6b90e4ef7a5307f68dcef86566"
+      },
+      {
+        "tag": "H1",
+        "seed": 44,
+        "sha256": "66f742682a47bdf0f43e72a826c7f9e7d8b39bf2799030fb4c5aa6aeb6288995"
+      },
+      {
+        "tag": "H1",
+        "seed": 45,
+        "sha256": "a6dd7ced246da4348999850778a4fae79127cfdde79c387b9c4a9f91aeb76db3"
+      }
+    ],
+    "decision": "retain_scientific_contrast_modify_scope",
+    "reason": "valid122ρ.3576；train848，选Spearman核心，需ties/constant fixture，不声称大样本。",
+    "retain": [
+      "H0/H1 dropout.1/.3 contrast",
+      "fixed frozen2048 fingerprint",
+      "head256/ReLU and AdamW.0005/.0001",
+      "split43 + shared modelseeds44/45",
+      "train-fit-only transforms",
+      "task-explicit loss/monitor/output"
+    ],
+    "modify": [
+      "bind registered train file SHA from SMILES-profile input identity",
+      "remove inferred official score normalization/reference for selection",
+      "source-correct task priority",
+      "new_code explicit gates rather than pretend current multi-task runner ready",
+      "test inference deferred to approved full-candidate export",
+      "conditional confirm both configs add46, deduplicate44/45"
+    ],
+    "replacement_proposal_ids": [
+      "R001-clearance_hepatocyte_az-H0",
+      "R001-clearance_hepatocyte_az-H1"
+    ]
+  },
+  {
+    "task": "clearance_microsome_az",
+    "old_stage": "S1B",
+    "old_is_executed": false,
+    "old_four_configs": [
+      {
+        "tag": "H0",
+        "seed": 44,
+        "sha256": "b9155c75fb2fec58263b10138d2db3b8a8cff4667f35b39896ea7d0ce9a68a4b"
+      },
+      {
+        "tag": "H0",
+        "seed": 45,
+        "sha256": "87ea89885fe05ba0828cb23372721228b71fe7bcbc1280c11f2f71cb4a15b7a9"
+      },
+      {
+        "tag": "H1",
+        "seed": 44,
+        "sha256": "3be5f213e704069c28f4019573e927f314129682fd7a42c326e3ae83b8df2d22"
+      },
+      {
+        "tag": "H1",
+        "seed": 45,
+        "sha256": "fa4407dc5e48731817bc49b599eb9e54a7b05e6d66c63feec320ef6043bdf2d3"
+      }
+    ],
+    "decision": "defer_reserve",
+    "reason": "valid111ρ.4873；与hep同族但不同endpoint，作为阻断替代或后续，不首批重复覆盖。",
+    "retain": [
+      "H0/H1 dropout.1/.3 contrast",
+      "fixed frozen2048 fingerprint",
+      "head256/ReLU and AdamW.0005/.0001",
+      "split43 + shared modelseeds44/45",
+      "train-fit-only transforms",
+      "task-explicit loss/monitor/output"
+    ],
+    "modify": [
+      "bind registered train file SHA from SMILES-profile input identity",
+      "remove inferred official score normalization/reference for selection",
+      "source-correct task priority",
+      "new_code explicit gates rather than pretend current multi-task runner ready",
+      "test inference deferred to approved full-candidate export",
+      "conditional confirm both configs add46, deduplicate44/45"
+    ],
+    "replacement_proposal_ids": []
+  },
+  {
+    "task": "cyp2c9_substrate_carbonmangels",
+    "old_stage": "S1B",
+    "old_is_executed": false,
+    "old_four_configs": [
+      {
+        "tag": "H0",
+        "seed": 44,
+        "sha256": "7db3548fd0fbaef2b4a58416fcb458d3d8c3de3bc12bed4ca8929d25eb452bbf"
+      },
+      {
+        "tag": "H0",
+        "seed": 45,
+        "sha256": "e5d2415fa4883d73f1db61d5b95978b3789db7b09cf605cc509d33715e8bc13b"
+      },
+      {
+        "tag": "H1",
+        "seed": 44,
+        "sha256": "9db0abcf908078d13e9ce523fc9df5f849a3be288c4c83846a3530af48112835"
+      },
+      {
+        "tag": "H1",
+        "seed": 45,
+        "sha256": "94f5fa613aceae107961fee1f34a906107ad9049434cd2864d7675c43e8e98b6"
+      }
+    ],
+    "decision": "defer_diagnostic_first",
+    "reason": "valid67正12负55；低正例AP慎重，原S1B保留备用不自动训练。",
+    "retain": [
+      "H0/H1 dropout.1/.3 contrast",
+      "fixed frozen2048 fingerprint",
+      "head256/ReLU and AdamW.0005/.0001",
+      "split43 + shared modelseeds44/45",
+      "train-fit-only transforms",
+      "task-explicit loss/monitor/output"
+    ],
+    "modify": [
+      "bind registered train file SHA from SMILES-profile input identity",
+      "remove inferred official score normalization/reference for selection",
+      "source-correct task priority",
+      "new_code explicit gates rather than pretend current multi-task runner ready",
+      "test inference deferred to approved full-candidate export",
+      "conditional confirm both configs add46, deduplicate44/45"
+    ],
+    "replacement_proposal_ids": []
+  },
+  {
+    "task": "cyp2c9_veith",
+    "old_stage": "S1B",
+    "old_is_executed": false,
+    "old_four_configs": [
+      {
+        "tag": "H0",
+        "seed": 44,
+        "sha256": "f07c23da9f5b85912b0af9e002a4f90dc9470830eb34c7a12be3c0869c80b40b"
+      },
+      {
+        "tag": "H0",
+        "seed": 45,
+        "sha256": "608fe05b0c22e9b67a4ced18bb2b853169d3102a827c35ecf838cdb8b0da6e31"
+      },
+      {
+        "tag": "H1",
+        "seed": 44,
+        "sha256": "a9cdf127caf4f5db5a25784d7e061757656c1fbb722bca404f7be4a69cf49a9d"
+      },
+      {
+        "tag": "H1",
+        "seed": 45,
+        "sha256": "e48afcb867e49cc335dfc270ccc24abd67ab0f00869cbd89cbb41f7c1c4257c6"
+      }
+    ],
+    "decision": "defer_large",
+    "reason": "valid1210正406负804；AP备用/large与2d6对照，避免首批三种CYP平分预算。",
+    "retain": [
+      "H0/H1 dropout.1/.3 contrast",
+      "fixed frozen2048 fingerprint",
+      "head256/ReLU and AdamW.0005/.0001",
+      "split43 + shared modelseeds44/45",
+      "train-fit-only transforms",
+      "task-explicit loss/monitor/output"
+    ],
+    "modify": [
+      "bind registered train file SHA from SMILES-profile input identity",
+      "remove inferred official score normalization/reference for selection",
+      "source-correct task priority",
+      "new_code explicit gates rather than pretend current multi-task runner ready",
+      "test inference deferred to approved full-candidate export",
+      "conditional confirm both configs add46, deduplicate44/45"
+    ],
+    "replacement_proposal_ids": []
+  },
+  {
+    "task": "cyp2d6_veith",
+    "old_stage": "S1B",
+    "old_is_executed": false,
+    "old_four_configs": [
+      {
+        "tag": "H0",
+        "seed": 44,
+        "sha256": "291c299537125237407065fde15d8e52e5f04480be4e13912db76da3c4c65d00"
+      },
+      {
+        "tag": "H0",
+        "seed": 45,
+        "sha256": "392ccdd15073519b0334722d1d46e5ca547d8c717535d4b0d89e3818a4d1c658"
+      },
+      {
+        "tag": "H1",
+        "seed": 44,
+        "sha256": "6cede40a91da79f55e8a16c3dcb8abff93ff7c4fc0866bd87fe0dfff9556f507"
+      },
+      {
+        "tag": "H1",
+        "seed": 45,
+        "sha256": "9de02d6992932715f0b199962a01bf6ca94bfe5b509d0fd5eb087a96226ba57a"
+      }
+    ],
+    "decision": "retain_scientific_contrast_modify_scope",
+    "reason": "valid1313不是1124；AP.6907正250负1063；最大AP验证集且中等指标，作为AP核心，但test10.4%空骨架需披露。",
+    "retain": [
+      "H0/H1 dropout.1/.3 contrast",
+      "fixed frozen2048 fingerprint",
+      "head256/ReLU and AdamW.0005/.0001",
+      "split43 + shared modelseeds44/45",
+      "train-fit-only transforms",
+      "task-explicit loss/monitor/output"
+    ],
+    "modify": [
+      "bind registered train file SHA from SMILES-profile input identity",
+      "remove inferred official score normalization/reference for selection",
+      "source-correct task priority",
+      "new_code explicit gates rather than pretend current multi-task runner ready",
+      "test inference deferred to approved full-candidate export",
+      "conditional confirm both configs add46, deduplicate44/45"
+    ],
+    "replacement_proposal_ids": [
+      "R001-cyp2d6_veith-H0",
+      "R001-cyp2d6_veith-H1"
+    ]
+  },
+  {
+    "task": "cyp3a4_substrate_carbonmangels",
+    "old_stage": "S1B",
+    "old_is_executed": false,
+    "old_four_configs": [
+      {
+        "tag": "H0",
+        "seed": 44,
+        "sha256": "c0e27819a4b157fd67a290faa22877b36f4b6115a1dabbd0a47a8de4bb6c0809"
+      },
+      {
+        "tag": "H0",
+        "seed": 45,
+        "sha256": "dfcc611154d5dfb092c5b970fa8002fb96511a4616e0851c77a82fd1e6da78d5"
+      },
+      {
+        "tag": "H1",
+        "seed": 44,
+        "sha256": "311721fe1dddbd342aa6f989bd4ba54934a240434d8e97522f98a7ca9c51e050"
+      },
+      {
+        "tag": "H1",
+        "seed": 45,
+        "sha256": "cf46c423d58b6600bcfeae3e406992c513f4402e5d7977016baa8a4edd83e8a5"
+      }
+    ],
+    "decision": "defer_diagnostic_first",
+    "reason": "valid67正36负31；相对平衡但小n，仅reserve。",
+    "retain": [
+      "H0/H1 dropout.1/.3 contrast",
+      "fixed frozen2048 fingerprint",
+      "head256/ReLU and AdamW.0005/.0001",
+      "split43 + shared modelseeds44/45",
+      "train-fit-only transforms",
+      "task-explicit loss/monitor/output"
+    ],
+    "modify": [
+      "bind registered train file SHA from SMILES-profile input identity",
+      "remove inferred official score normalization/reference for selection",
+      "source-correct task priority",
+      "new_code explicit gates rather than pretend current multi-task runner ready",
+      "test inference deferred to approved full-candidate export",
+      "conditional confirm both configs add46, deduplicate44/45"
+    ],
+    "replacement_proposal_ids": []
+  },
+  {
+    "task": "cyp3a4_veith",
+    "old_stage": "S1B",
+    "old_is_executed": false,
+    "old_four_configs": [
+      {
+        "tag": "H0",
+        "seed": 44,
+        "sha256": "a9e0940a31b57aa603ff98f8ba82fef12d810f8b076461214e0f354aae028ec0"
+      },
+      {
+        "tag": "H0",
+        "seed": 45,
+        "sha256": "fe0dde1061c5124acee2b92a1ef6cd21068e9d7625d5fac3664a59dfd9d53a3e"
+      },
+      {
+        "tag": "H1",
+        "seed": 44,
+        "sha256": "4b63ca7347131928f2cdc81db66db16c345f9dc6e73807f347c6fe2ce8a84316"
+      },
+      {
+        "tag": "H1",
+        "seed": 45,
+        "sha256": "f5c0c5e2f71b92215dbc7b7f51d5bc54ac5e0f8e479f996b1832787319a9464c"
+      }
+    ],
+    "decision": "defer_reserve",
+    "reason": "valid1233而非1200，AP.8772；比2d6当前高，首批新增信息可能更少，reserve，不以高分证明无空间。",
+    "retain": [
+      "H0/H1 dropout.1/.3 contrast",
+      "fixed frozen2048 fingerprint",
+      "head256/ReLU and AdamW.0005/.0001",
+      "split43 + shared modelseeds44/45",
+      "train-fit-only transforms",
+      "task-explicit loss/monitor/output"
+    ],
+    "modify": [
+      "bind registered train file SHA from SMILES-profile input identity",
+      "remove inferred official score normalization/reference for selection",
+      "source-correct task priority",
+      "new_code explicit gates rather than pretend current multi-task runner ready",
+      "test inference deferred to approved full-candidate export",
+      "conditional confirm both configs add46, deduplicate44/45"
+    ],
+    "replacement_proposal_ids": []
+  },
+  {
+    "task": "herg",
+    "old_stage": "S1B",
+    "old_is_executed": false,
+    "old_four_configs": [
+      {
+        "tag": "H0",
+        "seed": 44,
+        "sha256": "3c081a0e867d3463b150d26a30eb4508d8d8ad67977567784f904d215aa8d94c"
+      },
+      {
+        "tag": "H0",
+        "seed": 45,
+        "sha256": "efcdf65cd483d57796716154c4e6a67b97e5f8a21a2cae3a6c4ac7f9a651655d"
+      },
+      {
+        "tag": "H1",
+        "seed": 44,
+        "sha256": "3935fc62edfc29eb5ba954a8777f33d0b0d603f88f12f67b7e0b3c82b3386bf9"
+      },
+      {
+        "tag": "H1",
+        "seed": 45,
+        "sha256": "fbfc69d0aed8521c83f7f0b0fca30546caf977016be24977598ee6f0718fe09c"
+      }
+    ],
+    "decision": "defer_diagnostic_first",
+    "reason": "valid66不是646，正42负24；撤销大样本候选解释，转小样本后续。",
+    "retain": [
+      "H0/H1 dropout.1/.3 contrast",
+      "fixed frozen2048 fingerprint",
+      "head256/ReLU and AdamW.0005/.0001",
+      "split43 + shared modelseeds44/45",
+      "train-fit-only transforms",
+      "task-explicit loss/monitor/output"
+    ],
+    "modify": [
+      "bind registered train file SHA from SMILES-profile input identity",
+      "remove inferred official score normalization/reference for selection",
+      "source-correct task priority",
+      "new_code explicit gates rather than pretend current multi-task runner ready",
+      "test inference deferred to approved full-candidate export",
+      "conditional confirm both configs add46, deduplicate44/45"
+    ],
+    "replacement_proposal_ids": []
+  },
+  {
+    "task": "hia_hou",
+    "old_stage": "S1B",
+    "old_is_executed": false,
+    "old_four_configs": [
+      {
+        "tag": "H0",
+        "seed": 44,
+        "sha256": "67f30ce10f67abc175ec5e65583339701da093bab748479b3ab950af451564d9"
+      },
+      {
+        "tag": "H0",
+        "seed": 45,
+        "sha256": "283a7c8a7a1b99836329b26a256ccf9c8e275961f4b21573c7c195cdad32b3d7"
+      },
+      {
+        "tag": "H1",
+        "seed": 44,
+        "sha256": "3b698ac75e420a81ecb3c4367920f67fa7ada9aef0d948c3f1e8c8c3a9eef82c"
+      },
+      {
+        "tag": "H1",
+        "seed": 45,
+        "sha256": "56fdf67c5a461780f6e2739a6445e2063a05645a57151ee0b63920cc9936ebed"
+      }
+    ],
+    "decision": "defer_diagnostic_first",
+    "reason": "valid58不是578，负例10；AUROC.9667接近上限且少数类少，低优先。",
+    "retain": [
+      "H0/H1 dropout.1/.3 contrast",
+      "fixed frozen2048 fingerprint",
+      "head256/ReLU and AdamW.0005/.0001",
+      "split43 + shared modelseeds44/45",
+      "train-fit-only transforms",
+      "task-explicit loss/monitor/output"
+    ],
+    "modify": [
+      "bind registered train file SHA from SMILES-profile input identity",
+      "remove inferred official score normalization/reference for selection",
+      "source-correct task priority",
+      "new_code explicit gates rather than pretend current multi-task runner ready",
+      "test inference deferred to approved full-candidate export",
+      "conditional confirm both configs add46, deduplicate44/45"
+    ],
+    "replacement_proposal_ids": []
+  },
+  {
+    "task": "pgp_broccatelli",
+    "old_stage": "S1B",
+    "old_is_executed": false,
+    "old_four_configs": [
+      {
+        "tag": "H0",
+        "seed": 44,
+        "sha256": "f45e49e940d40fe63f7f5aab7710a4cb0e942d00b8ed572b18382051e44375b6"
+      },
+      {
+        "tag": "H0",
+        "seed": 45,
+        "sha256": "264a3fb026e6dcc4d12a9a80636defa6e471e5489a3598dbff3c0f34d284a71c"
+      },
+      {
+        "tag": "H1",
+        "seed": 44,
+        "sha256": "7ecb790a1c9fd138f83678cc2e5f18f74a59808de2dbef69cf65e8e0755f9298"
+      },
+      {
+        "tag": "H1",
+        "seed": 45,
+        "sha256": "b33ae20a02182f4a33e97dbb6cd8336ce2c715f5db59e4372227a0ea23215bbb"
+      }
+    ],
+    "decision": "defer_reserve",
+    "reason": "valid122不是1212，正负61/61；BBB阻断时同metric替代，但不是同生物终点。",
+    "retain": [
+      "H0/H1 dropout.1/.3 contrast",
+      "fixed frozen2048 fingerprint",
+      "head256/ReLU and AdamW.0005/.0001",
+      "split43 + shared modelseeds44/45",
+      "train-fit-only transforms",
+      "task-explicit loss/monitor/output"
+    ],
+    "modify": [
+      "bind registered train file SHA from SMILES-profile input identity",
+      "remove inferred official score normalization/reference for selection",
+      "source-correct task priority",
+      "new_code explicit gates rather than pretend current multi-task runner ready",
+      "test inference deferred to approved full-candidate export",
+      "conditional confirm both configs add46, deduplicate44/45"
+    ],
+    "replacement_proposal_ids": []
+  }
+]

@@ -1,0 +1,73 @@
+"""Offline aggregate-only audit. No model imports, training, inference, or network."""
+import json, hashlib, re, statistics, copy
+from pathlib import Path
+from decimal import Decimal, localcontext
+from fractions import Fraction
+from datetime import datetime
+import sys
+sys.path.insert(0,str(Path(__file__).parent))
+from r19_metadata import M
+P=Path(__file__).resolve().parents[1]
+def put(path,obj):
+ (P/path).parent.mkdir(parents=True,exist_ok=True)
+ (P/path).write_text(json.dumps(obj,ensure_ascii=False,indent=2)+'\n')
+def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+def canonical(x):return json.dumps(x,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()
+R=json.loads((P/'sources/R17.json').read_text())
+sc=[]
+for fn in ['scores-two.json','scores-four.json']:
+ data=json.loads((P/'sources'/fn).read_text(),parse_float=Decimal)
+ for r in data['scores']:
+  r['source_file']='sources/'+fn;r['source_sha256']=sha(P/'sources'/fn);sc.append(r)
+by={r['run_id']:r for r in sc}
+with localcontext() as ctx:
+ ctx.prec=50
+ pairs=[]; groups={}
+ def stats(a):
+  mu=sum(a)/Decimal(len(a));var=sum((x-mu)**2 for x in a)/Decimal(len(a)-1)
+  return {'n':len(a),'mean':str(mu),'sample_variance':str(var),'sample_sd':str(var.sqrt())}
+ for seed in [44,45,46]:
+  a=by[f'hainan-agentled-mse-s{seed}-20261102'];b=by[f'hainan-agentled-mae-s{seed}-20261102']
+  pairs.append({'seed':seed,'mse_run':a['run_id'],'mae_run':b['run_id'],'mse_value':str(a['value']),'mae_value':str(b['value']),'delta_mae_minus_mse':str(b['value']-a['value']),'input_sources':[{'path':x['source_file'],'sha256':x['source_sha256']} for x in [a,b]]})
+ for mode in ['mse','mae']:
+  groups[mode]=stats([by[f'hainan-agentled-{mode}-s{s}-20261102']['value'] for s in [44,45,46]])
+ groups['paired_delta']=stats([Decimal(x['delta_mae_minus_mse']) for x in pairs])
+ independent={}
+ for mode,arr in [('mse',[x['mse_value'] for x in pairs]),('mae',[x['mae_value'] for x in pairs]),('paired_delta',[x['delta_mae_minus_mse'] for x in pairs])]:
+  f=[Fraction(x) for x in arr];mean=sum(f)/len(f);var=sum(x*x for x in f)/(len(f)-1)-sum(f)**2/(len(f)*(len(f)-1))
+  m=Decimal(mean.numerator)/Decimal(mean.denominator);v=Decimal(var.numerator)/Decimal(var.denominator)
+  independent[mode]={'rational_mean':str(mean),'rational_sample_variance':str(var),'decimal_mean':str(m),'sd_float_statistics':statistics.stdev(map(float,arr)),'matches_decimal_mean_tolerance_1e_45':abs(m-Decimal(groups[mode]['mean']))<Decimal('1e-45'),'matches_decimal_variance_tolerance_1e_45':abs(v-Decimal(groups[mode]['sample_variance']))<Decimal('1e-45')}
+stepdata={'mse':[(20,12,100,0),(39,31,195,0),(37,29,185,30)],'mae':[(17,9,85,0),(14,6,70,0),(23,15,115,0)]}
+step=[]
+for mode,rs in stepdata.items():
+ for seed,(ep,best,total,resume) in zip([44,45,46],rs):
+  step.append({'run_id':f'hainan-agentled-{mode}-s{seed}-20261102','epochs':ep,'best_epoch':best,'total_steps':total,'resumed_steps':resume,'new_steps':total-resume,'check_total_equals_epochs_times_5':total==ep*5,'source':'R14 original runs; R07/R13 acceptance'})
+put('audit/caco2-recomputation.json',{'mode':'aggregate_only; existing saved scores; no new evaluation','formula':'d_s=MAE_monitor_s-MSE_monitor_s; mean=sum/n; sample_sd=sqrt(sum((x-mean)^2)/(n-1)); Decimal precision50','pairs':pairs,'statistics':groups,'second_arithmetic_implementation':independent,'steps':step,'diagnostic_aggregates':[json.loads(json.dumps(x,default=str)) for x in sc],'comparison_summary_not_used_as_numeric_input':True})
+counts={m[0]:{'train':m[1],'valid':m[2],'test':m[3]} for m in M}
+counts['caco2_wang']={'train':637,'valid':91,'test':182}
+wrong={'cyp2d6_substrate_carbonmangels':54,'cyp2d6_veith':1124,'cyp3a4_veith':1200,'dili':475,'half_life_obach':667,'herg':646,'hia_hou':578,'ld50_zhu':128,'lipophilicity_astrazeneca':4200,'pgp_broccatelli':1212,'ppbr_az':131,'solubility_aqsoldb':998,'vdss_lombardo':106}
+rows=[]
+for t,x in R['tasks'].items():
+ assert counts[t]['valid']==x['n']
+ if x['kind']=='classification': assert x['n_positive']+x['n_negative']==x['n']
+ rows.append({'task':t,'metric':x['metric'],'direction':x['direction'],'existing_baseline_value':x['value'],'local_definition':x['local_definition'],'valid_n':x['n'],'valid_n_positive':x.get('n_positive'),'valid_n_negative':x.get('n_negative'),'valid_missing':x['missing'],'train_n':counts[t]['train'],'test_n':counts[t]['test'],'split_id':R['split_id'],'score_source':{'entry_id':'R17-prior-S-764562710384d47e','commit':'092d21ddaeb44f305a0628bef15fb6232ea8eb4b','sha256':sha(P/'sources/R17.json'),'json_pointer':'/tasks/'+t},'train_test_count_source':'R19 full scientific config inputs; Caco2 original config S-a875c49c4ef3f7da','official_equivalence':x['official_equivalence'],'additional_caco2_status':'latest six-run and historical-best overlay in caco2-recomputation.json / analysis; not replacing baseline cohort' if t=='caco2_wang' else None})
+put('audit/task-table.json',rows)
+put('audit/task-count-reconciliation.json',{'valid_total':sum(x['valid_n'] for x in rows),'R17_record_count':R['record_count'],'train_total':sum(x['train_n'] for x in rows),'test_total':sum(x['test_n'] for x in rows),'first_edition_valid_total':sum(wrong.get(t,x['n']) for t,x in R['tasks'].items()),'corrected_entries':[{ 'task':t,'first_edition_valid_n':n,'R17_valid_n':R['tasks'][t]['n'],'delta':R['tasks'][t]['n']-n} for t,n in wrong.items()],'classification_count_checks_passed':13,'regression_task_count':9})
+# Entire scientific configurations from R19, verified against all84 visible original configuration hashes.
+r19=json.loads((P/'audit/r19-expanded-configs.json').read_text())
+refs=['turn432814view1','turn759904view0','turn759904view1','turn928162view1','turn652876view0','turn561807view0','turn561807view1','turn928162view2','turn652876view1','turn561807view2','turn561807view3','turn928162view3','turn652876view2','turn561807view4','turn759904view2','turn561807view5','turn652876view3','turn561807view6','turn759904view3','turn561807view7','turn652876view4','turn561807view8','turn759904view4','turn561807view9','turn652876view5','turn561807view10','turn292513view9','turn759904view5','turn579906view0','turn314558view0','turn759904view6','turn314558view1','turn579906view1','turn314558view2','turn759904view7','turn314558view3','turn759904view8','turn314558view4','turn314558view5','turn314558view6','turn314558view7','turn314558view8','turn314558view9','turn314558view10','turn579906view4','turn314558view11','turn759904view9','turn314558view12','turn579906view5','turn135611view0','turn759904view10','turn135611view1','turn135611view2','turn135611view3','turn135611view4','turn135611view5','turn135611view6','turn135611view7','turn135611view8','turn135611view9','turn135611view10','turn135611view11','turn135611view12','turn135611view13']+[f'turn571771view{i}' for i in range(12)]+[f'turn292513view{i}' for i in range(1,9)]
+assert len(refs)==len(r19)==84
+checks=[]
+for i,(x,ref) in enumerate(zip(r19,refs)):
+ computed=hashlib.sha256(canonical(x['full_config'])).hexdigest()
+ assert computed==x['scientific_config_sha256']
+ checks.append({'index':i,'task':x['task'],'config_tag':x['config_tag'],'seed':x['model_seed'],'computed_canonical_sha256':computed,'source_config_sha256_observed':x['scientific_config_sha256'],'source_hash_web_evidence':ref,'source_hash_line':198+192*i,'comparison_method':'Source hash visually read in web result and compared with locally reconstructed sorted-key canonical JSON; not an automated download of original wrapper','matches':True})
+put('audit/r19-config-hash-checks.json',{'source_original_bytes':670837,'source_original_sha256_declared':'fa5caf201db27daadd0d7dc2fe86e194fd98b55f1745b290e18f5b09e9711d96','original_file_byte_hash_independently_recomputed':False,'scientific_configurations_reconstructed':84,'scientific_configurations_hash_matched':84,'checks':checks,'limitation':'Original full wrapper not downloaded; 21 distinct task scientific bases and all84 config hashes read in segmented original views. No claim that every repeated prose or packaging field was independently transcribed.'})
+# Ledger counts from all6 original entries, null is not zero.
+ledger=[('baseline-22',['baseline-22'],22,None,None,0),('pro-first',['hainan-frozen-training-20261031','hainan-skill-follow-20261031'],2,None,None,0),('pro-index',['hainan-index-cycle-20261031'],1,1,1,0),('pro-mae',['hainan-mae-monitor-20261101'],1,1,1,0),('agent-two',[f'hainan-agentled-mse-s{s}-20261102' for s in [44,45]],2,1,2,2),('agent-four',['hainan-agentled-mse-s46-20261102']+[f'hainan-agentled-mae-s{s}-20261102' for s in [44,45,46]],4,1,4,4)]
+put('audit/ledger-recomputation.json',{'source':'R15 f37f1b0cec261606f46260aa1f2727e475d53a800a4bba77113a5d6c73a8ab59.json','entries':[{'ledger_group':a,'logical_run_ids':b,'formal_task_scores':c,'formal_truth_reads_recorded':d,'metric_calls_recorded':e,'controller_recomputations_separate_not_additional_scores':f} for a,b,c,d,e,f in ledger],'formal_task_scores':sum(x[2] for x in ledger),'completed_logical_runs':len({r for x in ledger for r in x[1]}),'known_formal_truth_reads_lower_bound':sum(x[3] or 0 for x in ledger),'separate_controller_truth_reads_recorded':2,'total_lifetime_truth_reads':None,'repair_new_truth_reads':0,'repair_new_metric_calls_on_predictions_labels':0})
+def dt(s): return datetime.fromisoformat('2026-11-01T'+s+'+00:00')
+# Dates are supplied as Z timestamps without day in repair text; day inferred from Nov2 Asia local request and packet as-of. Keep day unasserted in final timing.
+sent=dt('18:36:50.968');analysis=dt('18:40:34.280');seen=dt('18:42:01.625');saved=dt('18:44:28.310')
+put('audit/turnaround-recomputation.json',{'source':'USER-REPAIR-001 timing supplied by controller; not independently instrumented model timestamps','date_scope':'UTC clock times as supplied; no new assertion of UTC calendar date','preparation_duration_reported_ms':597928,'prep_clock_start':'18:10:22Z','prep_clock_end':'18:20:20Z','prep_clock_rounded_span_s':598,'release_wait_s':810,'release_clock':'18:33:50Z','release_to_send_s':180.968,'formal_send_clock':'18:36:50.968Z','still_analyzing_clock':'18:40:34.280Z','final_first_observed_clock':'18:42:01.625Z','send_to_completion_open_lower_bound_s':(analysis-sent).total_seconds(),'send_to_completion_closed_upper_bound_s':(seen-sent).total_seconds(),'completion_interval':'(18:40:34.280Z,18:42:01.625Z]','zip_retained_clock':'18:44:28.310Z','first_observed_final_to_zip_retained_span_s':(saved-seen).total_seconds(),'formal_send_to_zip_retained_span_s':(saved-sent).total_seconds(),'snapshot_clock':'18:51:26Z','snapshot_formal_turn_minutes_reported':17.61,'snapshot_request_wall_minutes_reported':41.07,'completedAt_at_snapshot':None,'warning':'These are nested/overlapping wall spans, not additive stages. ZIP retention interval is not an isolated download duration; observed upper bound is not exact model runtime.'})
+print('Audits:',len(rows),'tasks',sum(x['valid_n'] for x in rows),'valid; scores',len(sc),'R19',len(r19))

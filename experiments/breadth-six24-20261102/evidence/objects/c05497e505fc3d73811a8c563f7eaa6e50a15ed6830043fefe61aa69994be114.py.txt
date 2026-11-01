@@ -1,0 +1,141 @@
+"""Frozen CheMeleon fingerprint embedder (the only SMILES -> vector boundary).
+
+Lazy torch/chemprop imports keep this module import-safe without the scientific
+stack. The checkpoint is size+MD5+SHA256 verified on every load, built from its
+own hyper_parameters with chemprop BondMessagePassing + MeanAggregation (per
+asset.json scope; no token CLS pooling assumed), placed in eval(), grads disabled,
+and never exposed to an optimizer. Unparseable rows come back as NaN with an
+explicit boolean mask; the caller applies the documented zero-fill policy —
+nothing here cleans or drops rows.
+"""
+
+from __future__ import annotations
+
+import hashlib
+from pathlib import Path
+
+from .common import (CHEMELEON_MD5, CHEMELEON_SHA256, CHEMELEON_SIZE,
+                     FEATURE_DIM, InterfaceError)
+
+
+def verify_checkpoint(path: Path | str) -> dict:
+    """Raise unless ``path`` is exactly the pinned CheMeleon weight file."""
+    path = Path(path)
+    if not path.is_file():
+        raise InterfaceError(f"missing CheMeleon checkpoint: {path}")
+    size = path.stat().st_size
+    if size != CHEMELEON_SIZE:
+        raise InterfaceError(f"size mismatch: {size} != {CHEMELEON_SIZE} for {path}")
+    md5 = hashlib.md5()
+    sha = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            md5.update(chunk)
+            sha.update(chunk)
+    if md5.hexdigest() != CHEMELEON_MD5:
+        raise InterfaceError(f"md5 mismatch: {md5.hexdigest()} != {CHEMELEON_MD5}")
+    if sha.hexdigest() != CHEMELEON_SHA256:
+        raise InterfaceError(f"sha256 mismatch: {sha.hexdigest()} != {CHEMELEON_SHA256}")
+    return {"path": str(path), "size": size, "md5": md5.hexdigest(),
+            "sha256": sha.hexdigest()}
+
+
+class CheMeleonEmbedder:
+    """Frozen, gradient-disabled CheMeleon fingerprint extractor (2048-dim)."""
+
+    def __init__(self, checkpoint: Path | str, device: str | None = None,
+                 batch_size: int = 64):
+        import torch
+        from chemprop import nn
+        from chemprop.models import MPNN
+        from chemprop.nn import RegressionFFN
+
+        self.checkpoint_meta = verify_checkpoint(checkpoint)
+        if device is None:
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+        if device.startswith("cuda") and not torch.cuda.is_available():
+            raise InterfaceError(f"requested device {device!r} but CUDA is unavailable")
+        self.device = device
+        self.batch_size = int(batch_size)
+        if self.batch_size <= 0:
+            raise InterfaceError("batch_size must be positive")
+
+        raw = torch.load(checkpoint, map_location="cpu", weights_only=True)
+        for key in ("hyper_parameters", "state_dict"):
+            if key not in raw:
+                raise InterfaceError(f"checkpoint missing '{key}'")
+        mp = nn.BondMessagePassing(**raw["hyper_parameters"])
+        mp.load_state_dict(raw["state_dict"], strict=True)
+        model = MPNN(message_passing=mp, agg=nn.MeanAggregation(),
+                     predictor=RegressionFFN(input_dim=mp.output_dim))  # predictor unused
+        model.eval()
+        model.to(device)
+        for p in model.parameters():
+            p.requires_grad_(False)
+        self.model = model
+        self.feature_dim = int(mp.output_dim)
+        if self.feature_dim != FEATURE_DIM:
+            raise InterfaceError(f"encoder dim {self.feature_dim} != {FEATURE_DIM}")
+        self.encoding_calls = 0
+        self.encoded_smiles_count = 0
+        self.frozen_state = self.state_digest()
+
+    def state_digest(self):
+        """Identity of all parameters AND buffers, including eval-time state."""
+        h = hashlib.sha256()
+        for name, tensor in sorted(self.model.state_dict().items()):
+            value = tensor.detach().cpu().contiguous().numpy()
+            h.update(name.encode())
+            h.update(str((value.shape, value.dtype)).encode())
+            h.update(value.tobytes())
+        return h.hexdigest()
+
+    def assert_frozen(self) -> None:
+        if self.model.training:
+            raise InterfaceError("encoder is not in eval() mode")
+        trainable = [n for n, p in self.model.named_parameters() if p.requires_grad]
+        if trainable:
+            raise InterfaceError(f"encoder has trainable params: {trainable[:5]}")
+        if self.state_digest() != self.frozen_state:
+            raise InterfaceError("encoder parameters or buffers changed")
+
+    def embed(self, smiles: list[str]):
+        """Return (float32 [n, d] with NaN on unparseable rows, bool [n] parse mask).
+
+        No gradients are taken. Each call increments auditable counters so the
+        bounded-distinct-SMILES budget can be enforced by callers/reports.
+        """
+        import numpy as np
+        import torch
+        from chemprop import featurizers
+        from chemprop.data import BatchMolGraph
+        from rdkit import Chem, RDLogger
+
+        self.assert_frozen()
+        RDLogger.DisableLog("rdApp.*")
+        featurizer = featurizers.SimpleMoleculeMolGraphFeaturizer()
+        self.encoding_calls += 1
+        self.encoded_smiles_count += len(smiles)
+
+        n = len(smiles)
+        out = np.full((n, self.feature_dim), np.nan, dtype=np.float32)
+        ok = np.zeros(n, dtype=bool)
+        with torch.no_grad():
+            for start in range(0, n, self.batch_size):
+                chunk = smiles[start:start + self.batch_size]
+                mols, idx = [], []
+                for i, smi in enumerate(chunk):
+                    mol = Chem.MolFromSmiles(smi)
+                    if mol is not None:
+                        mols.append(mol)
+                        idx.append(start + i)
+                if not mols:
+                    continue
+                bmg = BatchMolGraph([featurizer(m) for m in mols])
+                bmg.to(device=self.model.device)
+                out[idx] = self.model.fingerprint(bmg).numpy(force=True).astype(np.float32)
+                ok[idx] = True
+        if np.isnan(out[ok]).any() or np.isinf(out[ok]).any():
+            raise InterfaceError("encoder produced non-finite values on parsed rows")
+        self.assert_frozen()
+        return out, ok
