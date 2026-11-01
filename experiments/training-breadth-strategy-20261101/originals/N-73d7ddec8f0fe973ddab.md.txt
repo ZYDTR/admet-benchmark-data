@@ -1,0 +1,60 @@
+# 恢复已执行，第一项预检监督125，六项均未学习
+
+请求 `admet-contract-follow-recovery-execution-20261101-003`。本次使用冻结训练Skill2.0.1与主控修正的
+outer/watch。九文件已追加部署，唯一一次恢复已启动；首项预检监督失败后batch停止，其余五项未启动。
+旧锁、科学/PLAN/规则、core及已准入outer/watch均未改，不重投。下一责任人为主控新故障准入。
+
+## 实际GPU与部署
+
+消费10:53观察后按固定Windows双层严格主机密钥路由直接复核。三次共同合格集合选中的是
+**GPU6 / <REGISTERED_GPU>**，见`current-reconcile.json`和
+`selection-current.json`。任务提示的GPU5只是候选；最早故障回传中写“GPU5”是表述错误，以本次
+三次原件、六profile及目标凭据一致的GPU6为准。没有沿用陈旧快照或采用占用卡共享分支。
+
+核验原372件、旧PID/启动身份及未开始batch/learning状态后，按已准入make_binding派生六profile，
+仅GPU/index/enabled/stage改变；新路径均为`operator/recovery-01/`。精确ZIP只包含六profile及批次
+outer/watch/binding九件，不含test binding。接收器核验原件、canonical祖先/非链接/单链接、完整帧与
+全部摘要后逐件xb追加。五项实际反例拒绝截断、篡改、相对逃逸、绝对路径和链接。源码与review先于
+发送保存在`append-receiver.py`及`append-review.json`；目标回执在`append-receipt.json`。
+
+`launch-once.py`只启动已绑定watch一次，独占launcher请求记录，watch继续使用新请求锁；core保留
+global batch/learning独占锁。actual-dependency-interface.json验证真实本机toy PID调用实际依赖签名。
+这项新增接口检查在目标启动后完成，不能把它算作启动前已测；此前主控已对固定outer/watch接口验收。
+
+## 预检故障与各层真实退出
+
+第一项`hainan-paired-mse-s44-20261101`的监督器在result_bytes扫描时，遇到刚枚举出的
+`worker-start.json.fc9ce5929a32486d837916c98468215e.tmp`已不存在，strict resolve抛FileNotFoundError。
+源码链为`pipeline.monitor → resource_checks.result_bytes → common_guarded.safe(existing=True)`。
+目标轨迹第3381–3383行记录创建/写入/关闭该文件，第3431行记录对同一文件成功rename至worker-start.json，
+随后ENOENT。精确摘录见`temporary-file-evidence.json`，完整异常见该run的pipeline-exit.json。
+这项证据不改变旧VmRSS125的未知根因，也没有真实目录外写入失败被改判为成功。
+
+预检strace子进程实际-15，监督器125，pipeline、job_waiter、batch均125；outer实际wait batch125，
+watch实际wait outer125，launcher实际wait watcher125，SSH实际125。worker终止信号在原始trace中
+单独核对，直接worker wait码不可用，记null。两层不同PID及退出不合并为一个worker码。
+`RUN_RESULTS.json`、`raw/recovery-launch-once.stdout`和目标`raw/recovery-01/`保留所有身份/真实wait原件。
+
+首项`training_started=false`、`learning_attempt_registered=false`，学习入口正确跳过，未完成CUDA
+预检/编码/新头训练/冻结证明或预测。其他五项为not_started_after_first_run_failure，不能记成已失败学习。
+
+## 证据、边界与资源
+
+417件七目录快照逐件hash取回，压缩1,233,025字节，见`fetch-verification.json`和`remote-snapshot/`。
+各run另有`raw/execution-02/remote-snapshot/`。`postcheck.json`确认原372件和新9件不变、环境元数据及
+解释器不变、11个登记进程无匹配活动实例。GPU释放按登记PID核对，不要求别人卡上任务停止。
+
+实际清理使用匹配身份的pidfd信号，仅自己的worker与strace，未按组或共享UID清场。
+取回的预检trace经原已准入解析器审读，目录外成功文件改动0、unresolved0、pending0；路径适配仅为
+本地取回文件映射，解析逻辑未改。该结果证明本次已执行的窄文件轨迹，不代表学习、全机或IOCTL隔离。
+没有私有valid真值读取、评分或上传；新增模型组合与学习次数均为0。
+
+## 时间和预算
+
+原生turn从10:56:44 UTC开始；目标watcher启动于10:58:20.856862 UTC，setup实际96.856862秒，
+在新增600内。累计transport setup约1843.402862/2400秒；旧450秒超时和历史账不重置。
+后续取回/审读/回传工作与实际进程等待单列在`TIMING.json`，完整原生turn另记，不以96秒冒充整项。
+
+outer实际耗时8.062054秒，自报remaining5355.579888秒。以本机传输事件覆盖完整失败启动区间，保守
+扣账11.172842秒，执行额度从5363.641942降至**5352.469100秒**。总5400还包括旧36.358058秒扣账；
+原总截止不延长。任何后续恢复均须主控登记、消费上述剩余和已存在锁，不能直接重跑当前脚本。

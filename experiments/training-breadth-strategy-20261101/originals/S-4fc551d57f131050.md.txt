@@ -1,0 +1,23 @@
+# 只读比较已有实验
+
+## 成功条件
+
+明确报告 comparable、incomparable 或 insufficient_evidence。比较不启动新训练，不要求当前有 Docker，也不把不存在的 run 或无证据数字包装成成绩。
+
+核对两边的真实 run 状态、产物哈希、模型/配置变量和逐任务评价记录。completed 只说明执行器完成，不证明指标已经同口径；runtime 允许的 metrics JSON 需由 B/C 按评价契约填充足够信息。
+
+## 可比性依据
+
+逐任务确认标签含义、单位/变换/正类、样本键、y_true 和缺失模式、评价实现与版本一致。相同 split_id 或相同样本数不足以证明同一批数据。完整 records 文件包含 y_pred，两模型的文件哈希本来就会不同；比较样本身份时排除 y_pred，依据 `(task,sample_id,y_true)` 及缺失模式核验。
+
+本地指标定义见 [evaluation](evaluation.md)。AP 与梯形 PR 面积不默认等价；不能把同名 AUPRC 当作同一实现。MAE 越低越好，其余本地指标越高越好。undefined 保留原因，不填 0；只对证据足够的任务给范围明确的差值。
+
+记录种子和比较设计，不机械要求所有种子相同，也不凭一次差异宣称统计显著。未知官方聚合公式时不生成官方总分；任务之间可能有权衡，不强行选赢家。
+
+## 当前工具与缺证据行为
+
+`evaluate` 可从显式的验证记录计算本地逐任务结果；当前没有自动 compare CLI，也没有自动验证跨 run 数据同一性的保证。Agent 应按上面的证据完成只读比较。如果原始验证记录/指标版本未保留，列出缺项并写 insufficient_evidence，不靠猜测补齐。
+
+## 输出
+
+JSON 至少包含 `comparison_id`、`status`、`run_ids`、`evidence`（文件路径与哈希）、`comparability_checks`、`per_task`、`limitations`、`next_action`。保存到新的 `deliverables/comparisons/` 文件，不改原 run。无可比较 run 时可以只在任务交接中记录该事实，后续负责人补证据；不得为满足“输出”而制造虚假实验。

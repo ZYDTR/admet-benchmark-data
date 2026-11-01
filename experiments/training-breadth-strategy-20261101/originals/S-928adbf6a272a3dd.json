@@ -1,0 +1,401 @@
+[
+  {
+    "task": "caco2_wang",
+    "asset_versions": {
+      "encoder": "CheMeleon c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "feature": "P-CACHE immutable cache",
+      "preprocess": "legacy_z_train_fit",
+      "head": "current MLP"
+    },
+    "metric": "official_valid MAE; internal stop MAE secondary",
+    "direction": "minimize",
+    "within_current_scope": true,
+    "proposal_id": "P-CACHE",
+    "priority": "P0",
+    "stage": "screen",
+    "hypothesis": "cache reader enables exact representation pairing",
+    "control_run_or_config": "hainan-mae-monitor-20261101; prior hainan-index-cycle-20261031",
+    "change_only": [
+      "cache loader+validator"
+    ],
+    "hold_fixed": [
+      "encoder",
+      "rows",
+      "split",
+      "labels"
+    ],
+    "split_id": "train/valid/test row identity",
+    "seeds": [],
+    "minimum_effect_or_decision_rule": "no fabricated threshold; report paired per-seed differences",
+    "success_criterion": "exact SHA/identity accepted; bitflip/row swap rejected",
+    "falsification_criterion": "any mismatched cache accepted",
+    "compute_budget": "0 runs; suggestion only, no execution authorized",
+    "dependencies": [
+      "approved npz and identity artifacts"
+    ],
+    "preparation_mode": "new_code",
+    "reuse_assets": [],
+    "estimated_run_count": 0,
+    "trigger": "initial",
+    "skip_or_stop_if": "identity/freeze/label check fails",
+    "review_checkpoint": "after complete registered batch",
+    "exact_config": {
+      "dtype": "float32",
+      "dim": 2048,
+      "identity": [
+        "task",
+        "split",
+        "row_index",
+        "Drug_ID",
+        "Drug"
+      ]
+    }
+  },
+  {
+    "task": "caco2_wang",
+    "asset_versions": {
+      "encoder": "CheMeleon c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "feature": "P-CACHE immutable cache",
+      "preprocess": "legacy_z_train_fit",
+      "head": "current MLP"
+    },
+    "metric": "official_valid MAE; internal stop MAE secondary",
+    "direction": "minimize",
+    "within_current_scope": true,
+    "proposal_id": "P-MONITOR-PAIR",
+    "priority": "P1",
+    "stage": "confirm",
+    "hypothesis": "raw-scale MAE selection may outperform standardized MSE selection",
+    "control_run_or_config": "hainan-mae-monitor-20261101; prior hainan-index-cycle-20261031",
+    "change_only": [
+      "monitor raw MAE vs standardized MSE"
+    ],
+    "hold_fixed": [
+      "cache SHA",
+      "split seed43",
+      "model seed",
+      "initial head",
+      "MSE loss",
+      "head config"
+    ],
+    "split_id": "raw_smiles_group_shuffle seed43 573/64",
+    "seeds": [
+      17,
+      43,
+      71
+    ],
+    "minimum_effect_or_decision_rule": "no fabricated threshold; report paired per-seed differences",
+    "success_criterion": "raw MAE lower valid MAE in >=2/3 seeds; mean paired delta negative",
+    "falsification_criterion": "sign unstable or gain vanishes with exact cache",
+    "compute_budget": "6 runs; suggestion only, no execution authorized",
+    "dependencies": [
+      "P-CACHE accepted"
+    ],
+    "preparation_mode": "config_only",
+    "reuse_assets": [],
+    "estimated_run_count": 6,
+    "trigger": "after P-CACHE and controller registration",
+    "skip_or_stop_if": "identity/freeze/label check fails",
+    "review_checkpoint": "after complete registered batch",
+    "exact_config": {
+      "width": 256,
+      "dropout": 0.1,
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "wd": 0.0001,
+      "batch": 128,
+      "loss": "MSE",
+      "monitors": [
+        "raw_MAE",
+        "standardized_MSE"
+      ],
+      "split_seed": 43
+    }
+  },
+  {
+    "task": "caco2_wang",
+    "asset_versions": {
+      "encoder": "CheMeleon c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "feature": "P-CACHE immutable cache",
+      "preprocess": "legacy_z_train_fit",
+      "head": "current MLP"
+    },
+    "metric": "official_valid MAE; internal stop MAE secondary",
+    "direction": "minimize",
+    "within_current_scope": true,
+    "proposal_id": "P-HEAD-SCREEN",
+    "priority": "P1",
+    "stage": "screen",
+    "hypothesis": "head width/LR may change bias variance",
+    "control_run_or_config": "hainan-mae-monitor-20261101; prior hainan-index-cycle-20261031",
+    "change_only": [
+      "width OR LR, one factor each"
+    ],
+    "hold_fixed": [
+      "raw-MAE monitor",
+      "MSE",
+      "dropout0.1",
+      "AdamW wd0.0001",
+      "batch128",
+      "split43"
+    ],
+    "split_id": "raw_smiles_group_shuffle seed43",
+    "seeds": [
+      17,
+      43,
+      71
+    ],
+    "minimum_effect_or_decision_rule": "no fabricated threshold; report paired per-seed differences",
+    "success_criterion": "valid MAE improves in >=2/3 seeds",
+    "falsification_criterion": "no stable gain or instability",
+    "compute_budget": "15 runs; suggestion only, no execution authorized",
+    "dependencies": [
+      "P-CACHE accepted"
+    ],
+    "preparation_mode": "config_only",
+    "reuse_assets": [],
+    "estimated_run_count": 15,
+    "trigger": "after cache accepted/controller registration",
+    "skip_or_stop_if": "identity/freeze/label check fails",
+    "review_checkpoint": "after complete registered batch",
+    "exact_config": {
+      "configs": [
+        [
+          256,
+          0.0005
+        ],
+        [
+          128,
+          0.0005
+        ],
+        [
+          512,
+          0.0005
+        ],
+        [
+          256,
+          0.0002
+        ],
+        [
+          256,
+          0.001
+        ]
+      ],
+      "tuple": "width,lr",
+      "dropout": 0.1,
+      "wd": 0.0001,
+      "batch": 128
+    }
+  },
+  {
+    "task": "caco2_wang",
+    "asset_versions": {
+      "encoder": "CheMeleon c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "feature": "P-CACHE immutable cache",
+      "preprocess": "legacy_z_train_fit",
+      "head": "current MLP"
+    },
+    "metric": "official_valid MAE; internal stop MAE secondary",
+    "direction": "minimize",
+    "within_current_scope": true,
+    "proposal_id": "P-SEED-SPLIT",
+    "priority": "P2",
+    "stage": "confirm",
+    "hypothesis": "one split may overstate performance",
+    "control_run_or_config": "hainan-mae-monitor-20261101; prior hainan-index-cycle-20261031",
+    "change_only": [
+      "split seed"
+    ],
+    "hold_fixed": [
+      "model seed43",
+      "selected config",
+      "cache",
+      "loss",
+      "monitor"
+    ],
+    "split_id": "raw_smiles_group_shuffle split seeds11/43/97",
+    "seeds": [
+      43
+    ],
+    "minimum_effect_or_decision_rule": "no fabricated threshold; report paired per-seed differences",
+    "success_criterion": "ranking stable across splits",
+    "falsification_criterion": "ranking reverses materially",
+    "compute_budget": "3 runs; suggestion only, no execution authorized",
+    "dependencies": [
+      "screen results"
+    ],
+    "preparation_mode": "config_only",
+    "reuse_assets": [],
+    "estimated_run_count": 3,
+    "trigger": "after candidate selection",
+    "skip_or_stop_if": "identity/freeze/label check fails",
+    "review_checkpoint": "after complete registered batch",
+    "exact_config": {
+      "model_seed": 43,
+      "split_seeds": [
+        11,
+        43,
+        97
+      ]
+    }
+  },
+  {
+    "task": "caco2_wang",
+    "asset_versions": {
+      "encoder": "CheMeleon c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "feature": "P-CACHE immutable cache",
+      "preprocess": "legacy_z_train_fit",
+      "head": "current MLP"
+    },
+    "metric": "official_valid MAE; internal stop MAE secondary",
+    "direction": "minimize",
+    "within_current_scope": true,
+    "proposal_id": "P-SCALE-CLIP",
+    "priority": "P2",
+    "stage": "reserve",
+    "hypothesis": "extreme z may warrant scaler test; C-SCALE unproven",
+    "control_run_or_config": "hainan-mae-monitor-20261101; prior hainan-index-cycle-20261031",
+    "change_only": [
+      "scaler only"
+    ],
+    "hold_fixed": [
+      "cache",
+      "split",
+      "head",
+      "MSE",
+      "optimizer",
+      "monitor"
+    ],
+    "split_id": "split43",
+    "seeds": [
+      17,
+      43,
+      71
+    ],
+    "minimum_effect_or_decision_rule": "no fabricated threshold; report paired per-seed differences",
+    "success_criterion": "stable lower valid MAE across seeds",
+    "falsification_criterion": "no gain or signal suppressed",
+    "compute_budget": "9 runs; suggestion only, no execution authorized",
+    "dependencies": [
+      "P-CACHE",
+      "controller approval"
+    ],
+    "preparation_mode": "new_code",
+    "reuse_assets": [
+      "current approved features"
+    ],
+    "estimated_run_count": 9,
+    "trigger": "after screen and prep acceptance",
+    "skip_or_stop_if": "identity/freeze/label check fails",
+    "review_checkpoint": "after complete registered batch",
+    "exact_config": {
+      "scalers": [
+        "legacy_z",
+        "clip_z_6",
+        "robust_median_iqr"
+      ],
+      "fit_rows_only": true
+    }
+  },
+  {
+    "task": "caco2_wang",
+    "asset_versions": {
+      "encoder": "CheMeleon c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "feature": "P-CACHE immutable cache",
+      "preprocess": "legacy_z_train_fit",
+      "head": "current MLP"
+    },
+    "metric": "official_valid MAE; internal stop MAE secondary",
+    "direction": "minimize",
+    "within_current_scope": true,
+    "proposal_id": "P-SUPERVISOR",
+    "priority": "P1",
+    "stage": "screen",
+    "hypothesis": "fault snapshots and exit propagation can remove ambiguous supervisor state",
+    "control_run_or_config": "hainan-mae-monitor-20261101; prior hainan-index-cycle-20261031",
+    "change_only": [
+      "supervisor observability only"
+    ],
+    "hold_fixed": [
+      "completed run untouched",
+      "no relaunch"
+    ],
+    "split_id": "not applicable",
+    "seeds": [],
+    "minimum_effect_or_decision_rule": "no fabricated threshold; report paired per-seed differences",
+    "success_criterion": "worker and OS codes reconcile",
+    "falsification_criterion": "missing snapshots or mismatch",
+    "compute_budget": "0 runs; suggestion only, no execution authorized",
+    "dependencies": [
+      "supervisor source from controller"
+    ],
+    "preparation_mode": "new_code",
+    "reuse_assets": [],
+    "estimated_run_count": 0,
+    "trigger": "initial preparation only",
+    "skip_or_stop_if": "identity/freeze/label check fails",
+    "review_checkpoint": "after complete registered batch",
+    "exact_config": {
+      "capture": [
+        "proc_stat",
+        "proc_status",
+        "start_ticks",
+        "wait_status",
+        "timestamps"
+      ],
+      "propagate_rc": true
+    }
+  },
+  {
+    "task": "caco2_wang",
+    "asset_versions": {
+      "encoder": "CheMeleon c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "feature": "P-CACHE immutable cache",
+      "preprocess": "legacy_z_train_fit",
+      "head": "current MLP"
+    },
+    "metric": "official_valid MAE; internal stop MAE secondary",
+    "direction": "minimize",
+    "within_current_scope": true,
+    "proposal_id": "P-ALT-BACKBONE",
+    "priority": "P3",
+    "stage": "reserve",
+    "hypothesis": "alternative frozen representation may improve generalization",
+    "control_run_or_config": "hainan-mae-monitor-20261101; prior hainan-index-cycle-20261031",
+    "change_only": [
+      "encoder family"
+    ],
+    "hold_fixed": [
+      "task rows/split/metric"
+    ],
+    "split_id": "task-specific",
+    "seeds": [
+      17,
+      43,
+      71
+    ],
+    "minimum_effect_or_decision_rule": "no fabricated threshold; report paired per-seed differences",
+    "success_criterion": "frozen interface/cache identity verified",
+    "falsification_criterion": "assets/license/adapter missing",
+    "compute_budget": "0 runs; suggestion only, no execution authorized",
+    "dependencies": [
+      "approved repo/revision/weights SHA/license"
+    ],
+    "preparation_mode": "blocked_assets",
+    "reuse_assets": [],
+    "estimated_run_count": 0,
+    "trigger": "only after asset readiness review",
+    "skip_or_stop_if": "identity/freeze/label check fails",
+    "review_checkpoint": "after complete registered batch",
+    "exact_config": {
+      "candidates": [
+        "MiniMol",
+        "MoLFormer",
+        "GLM",
+        "DeepSeek",
+        "Qwen"
+      ],
+      "versions": "controller must pin"
+    }
+  }
+]

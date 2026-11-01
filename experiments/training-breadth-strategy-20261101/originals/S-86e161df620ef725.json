@@ -1,0 +1,119 @@
+{
+  "at": "2026-10-31T08:51:10.019321+00:00",
+  "stage1_runtime_accepted": true,
+  "run_id": "hainan-index-cycle-20261031",
+  "source_files_verified": [
+    "source/runtime/README.md",
+    "source/runtime/common_guarded.py",
+    "source/runtime/linux_boundary.py",
+    "source/runtime/readonly_recovery.py",
+    "source/runtime/resource_checks.py",
+    "source/runtime/runtime-profile.json",
+    "source/runtime/supervisor.py",
+    "tests/fake_worker.py",
+    "tests/test_runtime.py"
+  ],
+  "raw_subprocess_cases_crosschecked": [
+    {
+      "case": "active-duplicate",
+      "outer_returncode": 0,
+      "state": "succeeded",
+      "success": true
+    },
+    {
+      "case": "exception",
+      "outer_returncode": 1,
+      "state": "child_failed",
+      "success": false
+    },
+    {
+      "case": "signal-child",
+      "outer_returncode": 143,
+      "state": "child_failed",
+      "success": false
+    },
+    {
+      "case": "duplicate",
+      "outer_returncode": 0,
+      "state": "succeeded",
+      "success": true
+    },
+    {
+      "case": "monitor",
+      "outer_returncode": 125,
+      "state": "monitor_or_launch_failed",
+      "success": false
+    },
+    {
+      "case": "exit7",
+      "outer_returncode": 7,
+      "state": "child_failed",
+      "success": false
+    },
+    {
+      "case": "precheck",
+      "outer_returncode": 125,
+      "state": "precheck_failed",
+      "success": false
+    },
+    {
+      "case": "science-gate",
+      "outer_returncode": 78,
+      "state": "stage_one_gate_closed",
+      "success": false
+    },
+    {
+      "case": "success",
+      "outer_returncode": 0,
+      "state": "succeeded",
+      "success": true
+    },
+    {
+      "case": "signal-supervisor",
+      "outer_returncode": 143,
+      "state": "cancelled",
+      "success": false
+    },
+    {
+      "case": "timeout",
+      "outer_returncode": 124,
+      "state": "timed_out",
+      "success": false
+    },
+    {
+      "case": "malformed",
+      "outer_returncode": 126,
+      "state": "unknown",
+      "success": false
+    },
+    {
+      "case": "wrong-token",
+      "outer_returncode": 126,
+      "state": "unknown",
+      "success": false
+    },
+    {
+      "case": "missing",
+      "outer_returncode": 126,
+      "state": "unknown",
+      "success": false
+    }
+  ],
+  "training_authorized_to_launch_now": false,
+  "scientific_accepted": false,
+  "next_gate": "Terra and main scientific source acceptance, then reviewed runtime adapter and formal execution",
+  "limitations": [
+    "local fake subprocesses only",
+    "Linux guard, current hardware, CUDA, scientific freeze and remote resource release unverified",
+    "supervisor core currently emits offline_fake_task true; production adapter must bind truthful stage fields and receipt semantics",
+    "scientific runner uses legacy common_guarded signatures; production adapter must connect accepted interfaces and be reviewed"
+  ],
+  "reviewed_sources": [
+    "source/runtime/supervisor.py",
+    "source/runtime/common_guarded.py",
+    "source/runtime/linux_boundary.py",
+    "source/runtime/resource_checks.py",
+    "source/runtime/readonly_recovery.py",
+    "source/runtime/runtime-profile.json"
+  ]
+}

@@ -1,0 +1,98 @@
+# 本地逐任务评价
+
+入口：`admet_harness.evaluation.evaluate_records(task_schema_path, records_path)`。
+只使用 Python 标准库，执行时不联网、不下载数据，也不需要 sklearn/scipy。
+
+输入是**已经获得合法标签的本地验证记录**。公开提交模板没有真实测试标签，不能拿它计算测试指标，也不能查询外部数据库补齐标签。调用者负责从同一次验证划分、同一模型运行产生这些记录；本模块核验结构和数值，不证明数据来源或划分不存在泄漏。
+
+## 输入契约
+
+`task_schema_path` 可以使用项目的 `competition/task_schema.json`。最低需要非空 `tasks` 数组，每项包含非空字符串 `task`、`kind`、`metric`；允许保留来源等额外元数据。支持组合为 regression/MAE、regression/Spearman、classification/AUROC、classification/AUPRC。同名任务不得重复。
+
+标签语义、单位和变换尚未确认时，仍可对显式提供的数值做本地计算，输出会包含 `label_contract_status` 和 `LABEL_CONTRACT_UNCONFIRMED` 警告；这不解除正式训练的数据接入条件。模块不会推断单位、翻转标签、对数转换或自动选择预测方向。
+
+下面是完整的**合成教学示例**，不是任何比赛分子的标签。将其分别保存为任务定义和评价记录，即可通过 API 运行。
+
+任务定义：
+
+```json
+{
+  "schema_version": 1,
+  "label_contract_status": "unconfirmed",
+  "tasks": [
+    {"task": "demo_mae", "kind": "regression", "metric": "MAE"},
+    {"task": "demo_rank", "kind": "regression", "metric": "Spearman"},
+    {"task": "demo_roc", "kind": "classification", "metric": "AUROC"},
+    {"task": "demo_pr", "kind": "classification", "metric": "AUPRC"}
+  ]
+}
+```
+
+评价记录：
+
+```json
+{
+  "schema_version": 1,
+  "split_id": "synthetic-demo-only",
+  "records": [
+    {"task": "demo_mae", "sample_id": "a", "y_true": 1, "y_pred": 2},
+    {"task": "demo_mae", "sample_id": "b", "y_true": 3, "y_pred": 1},
+    {"task": "demo_mae", "sample_id": "c", "y_true": null, "y_pred": 0},
+    {"task": "demo_rank", "sample_id": "a", "y_true": 1, "y_pred": 1},
+    {"task": "demo_rank", "sample_id": "b", "y_true": 1, "y_pred": 2},
+    {"task": "demo_rank", "sample_id": "c", "y_true": 2, "y_pred": 3},
+    {"task": "demo_roc", "sample_id": "a", "y_true": 1, "y_pred": 0.8},
+    {"task": "demo_roc", "sample_id": "b", "y_true": 0, "y_pred": 0.8},
+    {"task": "demo_roc", "sample_id": "c", "y_true": 1, "y_pred": 0.3},
+    {"task": "demo_roc", "sample_id": "d", "y_true": 0, "y_pred": 0.1},
+    {"task": "demo_pr", "sample_id": "a", "y_true": 1, "y_pred": 0.9},
+    {"task": "demo_pr", "sample_id": "b", "y_true": 0, "y_pred": 0.9},
+    {"task": "demo_pr", "sample_id": "c", "y_true": 1, "y_pred": 0.1}
+  ]
+}
+```
+
+```python
+import json
+from pathlib import Path
+from admet_harness.evaluation import evaluate_records
+
+report = evaluate_records(Path("demo_schema.json"), Path("demo_records.json"))
+print(json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False))
+```
+
+该例预期：`demo_mae=1.5`（`n=2, missing=1`）、`demo_rank=sqrt(3)/2`、`demo_roc=5/8`、`demo_pr=7/12`。
+
+记录顶层必须恰好包含 `schema_version: 1`、非空字符串 `split_id` 和数组 `records`。每条记录必须恰好包含 `task`、`sample_id`、`y_true`、`y_pred`。`(task, sample_id)` 在文件内唯一，缺失标签的记录也不得重复。`sample_id` 是本地验证样本标识，不会自动转换成提交模板的 `sample_idx`。
+
+`y_true` 为 JSON 数字或 `null`；`y_pred` 必须为有限 JSON 数字。字符串数字和布尔值不接受，NaN/Infinity 也不接受。即使标签为 `null`，预测仍必须有限。分类的非空标签必须是数值 `0` 或 `1`，分数越大表示更倾向于标签 `1`；允许负数或大于 1 的置信度分数，不自动做 sigmoid、阈值化或裁剪。
+
+## 指标定义与无定义情况
+
+| 指标 | 本地定义 | 方向 | 无定义时的处理 |
+|---|---|---|---|
+| MAE | 有效标签的绝对误差均值 | 越小越好 | 无有效标签时返回 undefined |
+| Spearman | 相等值使用平均秩，再计算两组秩的 Pearson 相关 | 越大越好 | 少于 2 个有效样本，或真实值/预测恒定时 undefined |
+| AUROC | 正类秩和对应的 Mann–Whitney 形式；相等预测使用平均秩 | 越大越好 | 有效标签只有一个类别时 undefined |
+| AUPRC | **本地 average precision**：将相同预测分数合并为同一阈值，累加 `本次召回增量 × 当前精确率`，不做梯形插值 | 越大越好 | 本项目对只有一个类别的验证子集也返回 undefined |
+
+AP 的单类处理属于本项目用于模型比较的约定；例如全为正类时，某些库会返回 AP=1，本模块会明确报告 `one_class`。不可将这一约定说成官方规则。
+
+AP 与梯形 PR 面积不同。例如真实标签 `[1,0,1]`、分数 `[0.9,0.8,0.7]` 的 AP 是 `5/6`，梯形面积是 `19/24`；两种计算不能混用。所有 AUPRC 任务输出 `local_definition="average_precision"` 和 `official_equivalence="unconfirmed"`。**赛题尚未公布足以核对的具体实现，所以这里不声称与官方 AUPRC 完全等价。**
+
+所有 schema 中的任务都会出现在输出，即使某任务没有记录。每项包含：`n`（参与计算的标签数）、`missing`（null 标签数）、`records`（前两者之和）、`metric`、`value`、`status`、`reason`、本地定义和标签契约状态。无定义时 `value=null, status="undefined"`；不填 0，不用 NaN，也不静默跳过。`no_records` 与 `no_labeled_records` 分开报告。分类额外报告正负样本数。
+
+输入错误（重复 ID、未知任务、错误标签、非有限数、错误 JSON 等）抛出结构化 `HarnessError`，附错误码以及路径、记录索引或 JSON 行列位置。结果同时记录任务定义和评价输入的 SHA-256，便于绑定实验；哈希本身不证明来源合法。
+
+## 官方与本地的边界
+
+模块不会计算、猜测或输出“官方总分”。不同任务的 MAE、相关系数与分类指标不能因数量相同就直接平均成官方成绩。只比较相同 `split_id`、相同样本集/缺失模式、相同标签变换和相同评价版本的结果；这里记录 `split_id`，但不独立证明两个文件确实采用相同划分。
+
+数值计算正确，不代表正类定义、单位、预测方向或模型数据来源已核实。正式选模仍需要数据成员确认标签契约、验证划分和方法，见 [架构契约](rfc.md) 与 [模型适配器](model-adapter.md)。
+
+定义参考：
+
+- [scikit-learn average_precision_score](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.average_precision_score.html)：召回增量加权精确率，与梯形积分区分。
+- [scikit-learn roc_auc_score](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.roc_auc_score.html)：二分类支持正类概率或未阈值化分数。
+- [SciPy spearmanr](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.spearmanr.html)：秩相关及常量输入时无定义。
+- [本赛题官方页面](http://www.aiinnovation.com.cn/web/#/trackDetail?id=159)：任务指标与现有规则；总分与细节不能从该页面自行推断。

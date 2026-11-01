@@ -1,0 +1,61 @@
+{
+  "observed_at": "2026-10-30T12:23:56.312164+00:00",
+  "request": "Review old DeepSeek preparation failures, write brief Skill, launch two fresh isolated DeepSeek tests in existing Context Infrastructure project",
+  "target": {
+    "host": "<PREPARATION_HOST_ALIAS>",
+    "service": "mini-opencode",
+    "project_directory": "<PRIVATE_RUNTIME_PATH>",
+    "projectID": "890c641656b89e802d31560be2c399e22eab00ab"
+  },
+  "changes": [
+    "Added 26-line ml-preparation-only Skill, local index and mini native skill discovery",
+    "Added scoped routing note to Mac mini operations Skill",
+    "Created two independent task input/output packages with no old messages or output code",
+    "Created exactly two new native OpenCode sessions with explicit DeepSeek1017 model",
+    "Started quiet follow-up heartbeat deepseek-skill"
+  ],
+  "checks": [
+    {
+      "name": "old_trace_and_code_review",
+      "status": "pass",
+      "evidence": "OLD_REVIEW.md"
+    },
+    {
+      "name": "zero_initial_messages_no_parent",
+      "status": "pass",
+      "evidence": "dispatch-model.json / dispatch-data-eval.json"
+    },
+    {
+      "name": "correct_root_and_ui_visibility",
+      "status": "pass",
+      "evidence": "root-list-check.json / root-list-ui.png"
+    },
+    {
+      "name": "runtime_model_and_skill_load",
+      "status": "pass",
+      "evidence": "launch-audit.json"
+    },
+    {
+      "name": "no_nested_children_at_launch",
+      "status": "pass",
+      "evidence": "launch-audit.json"
+    },
+    {
+      "name": "fresh_input_hash_and_no_validation_test_Y",
+      "status": "pass",
+      "evidence": "package-receipt.json / local-input-verification.json"
+    },
+    {
+      "name": "independent_output_and_behavior_acceptance",
+      "status": "not_verified",
+      "evidence": "One worker still running; ACCEPTANCE.md registered and synthetic fixtures prepared"
+    }
+  ],
+  "rollback": "Task records and old originals are retained. Remove only this installed Skill discovery link if requested; do not abort active sessions or overwrite unrelated configuration. No service restart was performed.",
+  "limitations": [
+    "Prompt and task acceptance contracts were clarified together with Skill; not a Skill-only causal ablation",
+    "Fresh messages and disjoint task packages provide conversation/work-file separation, not OS security isolation",
+    "Two runs cannot establish always-correct behavior"
+  ],
+  "automation_id": "deepseek-skill"
+}

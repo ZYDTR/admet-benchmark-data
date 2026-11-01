@@ -1,0 +1,35 @@
+# 上下文恢复与写回
+
+## 读取层次
+
+根入口保留任务范围与不能丢的边界；索引仅帮助选择能力。状态文件和 task 是当前事实，专项 Skill 定义完成条件，详细契约与运行工具按需访问。没有必要把原始日志都塞进上下文。
+
+`status` 读取已有任务摘要；`context --skill <id>` 返回单个技能正文及其可按需读取的资源路径，不递归加载整库。技能意图由 Agent 判断，命令不使用关键词匹配模拟智能路由。
+
+## 交接输入
+
+```json
+{
+  "task_id": "data-intake",
+  "owner": "B",
+  "status": "blocked",
+  "goal": "接入官方数据",
+  "summary": "已完成公开规则核对，尚未取得报名后的训练包。",
+  "next_action": "取得官方训练包后确认标签定义并登记来源。",
+  "blockers": ["官方训练包缺失"],
+  "evidence": ["competition/contract.json"],
+  "decisions": ["不从公开 TDC 下载替代训练数据。"]
+}
+```
+
+保存示例为项目相对路径后调用 `checkpoint --input <路径> --expected-revision 1`。创建新任务用 revision 0，更新任务使用读取到的当前 revision。工具自动记录证据哈希、时间和递增版本，并保留 context/history 历史；冲突报 REVISION_CONFLICT，读取新状态并合并，不强行覆盖。并发锁若因进程崩溃残留，先核对没有活跃写入者，再由维护者移除，不能自动猜测。
+
+status 可为 ready、in_progress、blocked、done；blocked 要有具体阻塞，done 要有实际证据且没有未解决阻塞。evidence 仅接受项目内文件。schema_version/revision/时间由工具生成，不从输入覆盖。
+
+## 事实晋升
+
+实验记录首先作为观察保留。多次或独立验证支持一个稳定结论后，写到 context/decisions.md，附证据、日期和适用范围。若会重复影响 Agent 行为，再由 skill-authoring 修订技能并重跑路由验证。反例出现则修订或撤回；不能让旧记录默默成为永久真理。
+
+## 三人协作
+
+各任务有单一负责人。代码模块可分开修改；共享契约变更需通知依赖方。重大数据/评价变更由 B 与 C 核对，运行和提交由 A 与相应负责人核对。普通超参数尝试可在既定边界内自动进行，不需要全队审批每次实验。

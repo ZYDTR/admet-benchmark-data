@@ -1,0 +1,36 @@
+# 首版冻结 CheMeleon 基线交付
+
+2026-10-30，主 Codex 完成首版固定配置训练、本地验证及全量提交候选。四个 OpenCode 准备会话已结束，不存在仍等待 DeepSeek 的任务。准备对比与原始缺陷见[验收报告](acceptance/report.md)。
+
+## 交付与范围
+
+- [提交候选 CSV](runs/chemeleon-host-v3-20261030/result/submission.csv)：22任务，16,379行，模板所有非预测字段、顺序、BOM、CRLF均保留，所有值有限且逐行对应测试预测。SHA256 `0d63f50c507f7e8c01c5dd4568122cb9bf5d801fd62dcfbb5843dbbf24878683`。
+- [完整本地验证报告](<LOCAL_PRIVATE_PATH>)：22任务、11,735行，宿主固定评分器逐行核对私有原件与无标签投影后评分。精确成绩与标签保持在宿主私有区，未发给准备 Agent；标签未用于训练、早停或选参。
+- [22个训练头](runs/chemeleon-host-v3-20261030/result/model/heads/)、[配置及内部早停记录](runs/chemeleon-host-v3-20261030/result/model/metrics.json)、[验证预测](runs/chemeleon-host-v3-20261030/result/predictions/valid_predictions.csv)、[测试预测](runs/chemeleon-host-v3-20261030/result/predictions/test_predictions.csv)、[环境](runs/chemeleon-host-v3-20261030/result/environment.json)。
+- [运行事件](runs/chemeleon-host-v3-20261030/events.jsonl)、[产物核验](runs/chemeleon-host-v3-20261030/host-artifact-verification.json)、[取回哈希比对](runs/chemeleon-host-v3-20261030/transfer-verification.json)、[宿主评分回执](runs/chemeleon-host-v3-20261030/host-grading-receipt.json)。
+
+这里只建立单一固定基线，未执行超参搜索、融合或赛方提交。没有官方总分；AUPRC使用本地 average precision，与官方实现等价性未确认。
+
+## 实际训练
+
+冻结 CheMeleon 编码器生成2048维表示，22个任务各训练一个512隐层、ReLU、dropout0.1的MLP头。AdamW学习率0.001、weight decay0.0001、batch128、seed42，最大50轮，内部早停耐心8轮。官方 train 共53,695行，其中48,327行拟合、5,368行用于内部早停；标准化仅拟合内部训练部分。官方 valid 只用于训练完成后的本地评分。
+
+无已登记清洗版本；使用已核验官方训练/测试与无Y验证投影，不去重、不删行、不改变Y。编码过程同一分片内对相同SMILES复用计算，再恢复全部原始行身份。81,809行中仅测试solubility_aqsoldb的零基1159、1160两行无法解析，保留行并采用预先固定的零特征填充，其余编码有限。未使用LLM伪标签或外部训练标签。
+
+mini ARM64限额容器实际运行，2 CPU、4GiB、128进程、无网络、非root、只读代码和输入。依赖为torch2.7.1、chemprop2.2.1、RDKit2025.9.6等，完整版本见环境文件。编码器权重SHA256 `c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651`，运行前后摘要核对且预检确认冻结和批次一致性。没有调用海南算力。
+
+## 运行故障与恢复
+
+准备会话全部结束后，主Codex修复了原版缓存、行身份和安全checkpoint读取问题。v1在编码前因日志Path序列化错误退出；v2完成全部特征约988秒后，在追加events.jsonl时遇到EAGAIN而退出，正式训练尚未开始。具体文件锁来源未证明，未将该异常归因于DeepSeek。
+
+v3使用Docker stdout记录阶段事件，并将输出放到mini独占runner目录。先核验97个源码/输入文件和全部66份特征缓存，再复用只读缓存完成22头训练、预测、导出；本次后半段总耗时25.84秒。没有重跑编码或修改训练配置。v3初次创建缺少空result挂载点，尚未执行代码；补目录后启动同一created容器。最终退出码0、非OOM。
+
+37个结果文件约97.75MB，取回后全部与mini端逐文件SHA一致；22个checkpoint哈希与预测清单一致；预测阶段使用保存后重新加载的模型。代码、输入及编码器资产在执行后仍与冻结摘要一致。
+
+## 质量限制
+
+本地验证显示不同任务表现不均衡。回归预测范围检查发现solubility最低约-900、ppbr最低约-713、half_life最低约-956，均为实际模型输出而非文件缺失；完整范围见[prediction-range-review.json](runs/chemeleon-host-v3-20261030/prediction-range-review.json)。这些是需后续改善的基线行为，当前文件不能称为经过优化的最终方案。没有用这轮valid成绩继续调参或筛换模型，也没有后处理截断这些输出。
+
+模型训练、完整覆盖和本地评分已经完成，不能由此推断模型达到SOTA或官方排名。原始准备交付、失败版本、当前模型和记录都已保留。
+
+监控心跳 `admet` 已在完成上述工作后删除，后续不再定期唤醒。运行记录、原件和全部模型产物保留。

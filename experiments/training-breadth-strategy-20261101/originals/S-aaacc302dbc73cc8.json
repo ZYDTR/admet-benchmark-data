@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "cycle_id": "progressive-index-e2e-20261031",
+  "created_at": "2026-10-31T08:28:22.411382+00:00",
+  "state": "preparing",
+  "run_id": "hainan-index-cycle-20261031",
+  "request_id": "admet-progressive-index-pro-20261031-002",
+  "owner_thread_id": "private-role-298cc5edc25e",
+  "roles": {
+    "training": "private-role-78713649c4c9",
+    "retrieval": "private-role-45108974a7af",
+    "gateway": "private-role-d3ccfb533c01",
+    "terra": "private-role-718a07757988"
+  },
+  "budget": {
+    "new_training_runs": 1,
+    "concurrent_training_jobs": 1,
+    "gpu_execution_hours_max": 0.25,
+    "training_timeout_seconds": 900,
+    "setup_seconds_max": 2700,
+    "new_pro_requests": 1,
+    "new_private_valid_evaluations": 1,
+    "overall_wall_seconds": 14400
+  },
+  "scientific_scope": "Caco2 frozen CheMeleon + MLP256, fixed train-only raw-SMILES-grouped internal split seed43, head seed43; enrich process evidence; not HPO or causal quality comparison",
+  "publication_repository": "https://github.com/ZYDTR/admet-benchmark-data",
+  "publication_prefix": "experiments/progressive-index-e2e-20261031",
+  "analysis_target": {
+    "creation_mode": "create_new_once_after_packet_acceptance",
+    "creator_role": "gateway",
+    "required_model": "Pro",
+    "maximum_analysis_requests": 1,
+    "no_placeholder_messages": true,
+    "actual_chat_id": null
+  },
+  "stop_after": "six review files returned, independently accepted, issue/claim events and next guidelines archived",
+  "stop_conditions": [
+    "identity/frozen/input hard violation",
+    "resource budget exceeded",
+    "unknown launch/send until reconciled",
+    "run failure preserved; no automatic second training run"
+  ],
+  "no_new_controller_heartbeat": true
+}

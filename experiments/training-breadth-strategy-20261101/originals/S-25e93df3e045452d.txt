@@ -1,0 +1,18 @@
+# A path: CheMeleon frozen encoder + per-task small MLP heads.
+# Python 3.11 (reference-harness requirement; CheMeleon was developed on 3.11).
+#
+# Install torch FIRST with the wheel matching the machine (chemprop only needs
+# any torch>=2.0, these pins match the publisher's reference environment):
+#   CPU : pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cpu
+#   CUDA: pip install torch==2.6.0 (default cu124 wheels) or pick from
+#         https://pytorch.org/get-started/previous-versions/
+#
+# The pins below are the versions from the pinned CheMeleon reference
+# environment (github.com/JacksonBurns/chemeleon README "Exact Versions",
+# commit b5e5bd88) that are directly imported by this package:
+torch==2.6.0
+chemprop==2.2.1        # publisher entry requires chemprop>=2.2.0; 2.2.1 is the version the atom-encoding facts were verified against
+rdkit==2024.09.6       # matches the CheMeleon reference env; note: the 2026-10-30 data audit used RDKit 2025.09.6 - uncoded.json records the ACTUAL runtime failures, whichever rdkit is installed
+numpy==1.26.4
+# chemprop pulls lightning, pandas, scipy, etc. transitively; only the four
+# packages above are imported directly by chemeleon_baseline.

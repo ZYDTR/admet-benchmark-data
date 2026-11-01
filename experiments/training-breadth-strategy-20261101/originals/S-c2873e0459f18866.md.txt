@@ -1,0 +1,65 @@
+# 正式运行契约
+
+本文件定义已实现的 CLI 后端行为。当前示例故意保持 pending：没有官方训练包、模型适配器或固定容器镜像时，正式训练必须报具体阻塞，不以合成夹具替代。
+
+## 原始输入清单
+
+`config/data_manifest.json` schema_version=1。顶层只接受 `schema_version,dataset_id,status,review,files`。status 必须为 `approved`，review 必须有 reviewer、reviewed_at 和项目内非空证据文件 evidence。审查字段是团队自报记录，不能认证审查人的身份，也不能自行证明来源合法。
+
+files 每项：`id,path,role,sha256,source_kind,source_url,evidence`。role 为 train、validation、test 或 submission_template；source_kind 必须为 competition_official；source_url 指向 aiinnovation.com.cn 官方站点；evidence 指向下载及来源核验记录。path 必须在 data/official/ 下，且为项目内普通文件；拒绝符号链接、硬链接、路径逃逸、重复 ID/路径和哈希变化。URL 和 SHA-256 均不能单独证明数据来源。
+
+路径去重使用解析后的规范位置，`train.csv` 与 `./train.csv` 不能分别登记为训练和验证输入。同样，模型输出、指标和 result.json 必须是三个不同的实际文件，不能用路径别名兼任。
+
+check-data 检查清单里全部输入。训练计划只读取并挂载 train/validation，预测只读取并挂载 test/submission_template；未使用角色的文件可以暂未到位，但其元数据仍须格式合法。派生特征在受约束训练代码内生成；不能冒充官方原始输入登记。
+
+## 配置
+
+参考 config/run.example.json。未知顶层字段或 limits 字段会报错，不能悄悄忽略。
+
+必需字段：schema_version、run_id、phase、manifest、task_schema、adapter_dir、adapter_sha256、adapter_review、image、image_review、seed、model、initialization、checkpoint。limits 和 gpus 有默认值。run_id 为 1–64 位小写字母/数字/连字符/下划线，首字符为字母或数字，且不允许覆盖已存在的 runs/run_id。
+
+phase 为 train 或 predict。当前团队策略只接受 initialization=random；train 的 checkpoint 必须为 null。predict 的 checkpoint 为 `{run_id,path,sha256}`，引用已有 completed train run 的 checkpoint 类型产物，实际文件、运行记录和所声明 hash 必须一致。此追溯不等于自动完成从头重训。
+
+task_schema 要求 label_contract_status=confirmed、tasks 非空、task 唯一、每项 label_status=confirmed，并明确 kind、metric、unit、transform、missing_encoding、evidence；分类任务还需 positive_class。未知字段值不能仅通过把状态改为 confirmed 来掩盖。任务名和完整覆盖仍由队伍的数据契约及提交检查共同验证。
+
+当前 unit、transform、missing_encoding 和分类 positive_class 的 schema 均为非空字符串；不接受 null、空白、数字或容器。无量纲/未变换/无缺失应分别明确写为 `dimensionless`、`identity`、`none` 等说明；正类字段写出标签值与含义。
+
+adapter_review/image_review 必须有 reviewer 和项目内 evidence。adapter_dir 仅包含审查后的代码与配置文档；拒绝隐藏文件、缓存、权重、数据文件和符号/硬链接。digest 算法：按相对 POSIX 路径排序，形成 `{path,sha256,size_bytes}` 列表；以 `json.dumps(list,sort_keys=True,separators=(',',':'),ensure_ascii=False)` UTF-8 序列化后取 SHA-256。使用 runtime.adapter_digest 计算；更改代码后必须重新确认摘要。
+
+扩展名筛选只是防误放机制，不能识别代码常量或 JSON 中所有外部信息；队友仍需检查代码/配置内容。审查证据的路径留在快照内，独立原始证据文件需团队另外保存，不应误认为基础 run 包已经包含全部来源材料。
+
+image 必须是本地 `sha256:<64位小写十六进制>` 镜像 ID。执行前 docker image inspect 验证实际 ID，不允许自动 pull。镜像构建和依赖安装在单独的联网准备阶段；审查镜像中是否预置数据、缓存、权重及凭据。这里不能仅靠 hash 检查镜像内容合法性。
+
+limits：cpus 1–128（默认 2），memory_mb 256–1048576（默认 4096），pids 16–4096（默认 256），timeout_seconds 1–604800（默认 3600）。gpus 0–8，默认 0；GPU 执行依赖目标主机的 NVIDIA 容器配置，当前环境未实测。
+
+## 固定适配器接口
+
+命令固定为 `python3 /adapter/train.py` 或 `predict.py`，参数固定：`--inputs /control/inputs.json --config /control/model.json --output /output`。预测额外有 `--checkpoint /checkpoint/model`。不接受任意 argv、网络、环境或挂载透传。
+
+inputs.json：`{schema_version:1,dataset_id,files:[{id,role,path,sha256}]}`，path 是容器中 /inputs/ 下的只读快照路径。model.json：`{schema_version:1,run_id,phase,seed,model,task_schema}`。model 内不应出现凭据；常见凭据字段名会被拒绝，不能据此保证识别全部秘密。
+
+成功训练必须写 /output/result.json：`{"schema_version":1,"phase":"train","checkpoint":"model.pt","metrics":"metrics.json"}`。两个路径指向不同、非空、相对于 /output 的普通文件，metrics 必须为 JSON object。
+
+成功预测必须写 /output/result.json：`{"schema_version":1,"phase":"predict","predictions":"predictions.json"}`。预测记录的具体 schema 见提交接口文档；runtime 只确认产物存在与来源，提交模块负责完整语义校验。
+
+## 执行、错误与产物
+
+CLI `plan` 是只读检查：输出精确 Docker 参数、将要挂载的路径和 hash，不创建 runs 目录、不启动 Docker。CLI `run` 在验证本地镜像后，独占新建 run_id 目录，将本次实际使用的输入、代码、配置、任务契约和 checkpoint 做快照，拷贝后再次核验 hash。
+
+独占创建运行目录后立即写 preparing 记录，再创建快照；配置只从已核验摘要的冻结副本解析。计划之后配置被修改或损坏时，记录 failed 和具体错误，不留下没有 run.json 的已占用 run_id。
+
+Docker 固定 --network none、--pull never、--read-only、--cap-drop ALL、no-new-privileges、非 root UID/GID；只读挂载代码/输入/控制文件，独立可写 output 与 tmpfs 缓存。不会挂载整个项目、个人主目录、全局缓存或 Docker socket。CPU/内存/进程/超时限制从受限配置读取。超时后显式尝试 docker rm --force，并报告清理结果。
+
+快照目录统一为 0755，快照普通文件为 0444，包含嵌套代码目录与 checkpoint 目录；即使宿主 umask=077，非 root worker 也能遍历只读挂载。独立输出目录保留仅 worker 可写的权限安排。
+
+runs/run_id/run.json 记录 preparing → running → completed 或 failed；不会把 failed run 改名重跑覆盖。plan.json 保存执行计划；snapshot 保存冻结输入；artifacts 保存结果；logs 保存 stdout/stderr。执行成功并不等于独立测试过网络隔离，所以 isolation_runtime_tested 仍为 false，需另行集成验证。
+
+错误以 HarnessError 的 code/message/details 暴露；Docker 不存在、本地镜像缺失、数据未确认、hash 不匹配均拒绝正式运行。没有宿主机无隔离 fallback。外层 Agent/MCP/浏览器或拥有任意 shell 的调用者不受此执行器自动约束。
+
+宿主为 root 时，执行器把本次独立输出目录交给非 root worker 用户；文件系统不支持该所有权设置时，返回 OUTPUT_OWNERSHIP_UNAVAILABLE 并保持失败状态，不通过放宽到任意用户可写来绕过。请在支持的本地文件系统或非 root 宿主账户运行。
+
+## 本地证据包
+
+CLI `bundle` 只接受 completed run 和新的 deliverables/*.tar.gz 输出。核对记录内文件 hash，使用固定允许列表打包代码快照、控制文件、运行记录、计划、日志和声明的模型/指标/预测产物，拒绝链接及逃逸；不打包 snapshot/inputs 的官方原始数据，也不复制 predict run 的父 checkpoint。包内 BUNDLE_INDEX.json 列出逐文件摘要。
+
+这是团队自备的复现材料格式，不是官方已公布要求；打包成功不表示从头训练已复现。包中可能含项目路径、模型及日志，交给审核方之前应由队友检查内容范围；工具不自动上传任何东西。若需要完整训练链，分别保存并核对 train 和 predict 的包及父运行引用。

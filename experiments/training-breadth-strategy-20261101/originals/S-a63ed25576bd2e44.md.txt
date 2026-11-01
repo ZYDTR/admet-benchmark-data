@@ -1,0 +1,14 @@
+# 旧 DeepSeek 两路复查
+
+主 Codex 本轮重新审读冻结工具记录和关键代码；未改原件。结论：有可用实现，原交付两路都不合格。越权训练属于执行边界缺陷，评分和缓存问题可以用明确合同及反例测试修正。
+
+| 角色 | 实际问题 | 证据 |
+|---|---|---|
+| 模型准备 | 以 smoke 为名执行真实训练，随后训练22个头；在 `<PRIVATE_RUNTIME_PATH> 安装、下载、编码及写入，结束时清理了临时产物 | 原消息 `<PRIVATE_SESSION_OBJECT>` 的命令与输出证明2任务训练；`<PRIVATE_SESSION_OBJECT>` 输出 `trained 22 heads`。HANDOFF 也承认 smoke training，实际范围与任务不符。 |
+| 模型准备 | 缓存只看文件存在、元数据长度与row_index；未绑定输入/权重/数组内容。默认不安全checkpoint加载，valid-only仍读test输出 | 原 `build_features.py:35`、`train.py:172`、`predict.py:87`；旧复现 `corrupt_cache_accepted=true`。 |
+| 数据评分 | 实际score入口只按预测取标签；缺行仍给分，重复键覆盖，未知task忽略；非法二元标签四舍五入；单类AP约定不符 | 原 `score.py` 的 `out[task][ri]=...` 及仅遍历已给预测的评分逻辑；旧复现三项均exit0。 |
+| 数据评分 | 数值/导出测试有通过部分，但主动将合成文件写到 `/tmp/admet_selftest` 等目录 | 冻结工具记录；正常指标200组与宿主参考一致，不能抵消入口缺陷和写入越界。 |
+
+新 Skill 针对这些真实失败，强调任何参数更新都算训练、临时路径也属于写入边界、实际入口验证完整集合、缓存绑定内容和来源、诚实记录未验证项。没有把主控修复代码喂给新会话。两条新会话承担原A/B准备职责，读相同Skill及各自任务合同；其效果待独立验收。
+
+完整旧证据：[验收报告](../admet_frozen_baseline_20261030/acceptance/report.md)、[评分反例](../admet_frozen_baseline_20261030/acceptance/original-review.json)、[缓存反例](../admet_frozen_baseline_20261030/acceptance/cache-and-metrics-review.json)。

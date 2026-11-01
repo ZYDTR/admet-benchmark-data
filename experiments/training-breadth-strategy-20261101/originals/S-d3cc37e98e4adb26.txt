@@ -1,0 +1,51 @@
+PASS config: registered config validates
+PASS config: missing split_config fails
+PASS config: multi-layer hidden_dims fails
+PASS config: lr<=0 fails
+PASS config: non-int seed fails
+PASS config: unknown split method fails
+PASS config: fraction 0 fails
+PASS config: zero rows fails
+PASS config: duplicate role/path fails
+PASS config: training_only_new_head=false fails
+PASS split: same seed reproducible incl. record hash
+PASS split: immune to global random state
+PASS split: immune to numpy global state
+PASS split: fit/stop non-empty and disjoint
+PASS split: exact coverage of all original rows
+PASS split: raw SMILES never crosses boundary
+PASS split: duplicate-SMILES groups stay whole
+PASS split: duplicate Y values preserved unmodified
+PASS split: seed changes assignment
+PASS split: blank Drug_ID fails
+PASS split: blank Drug fails
+PASS split: invalid Y fails
+PASS split: empty table fails
+PASS split: fraction >= all-but-one group fails
+PASS split: negative seed fails
+PASS split: all-duplicate dataset keeps one whole group per side
+PASS identity: duplicate Drug_ID allowed+audited on train
+PASS identity: uniqueness mode rejects dup ids
+PASS real-train: 637 rows fully partitioned
+PASS real-train: stop ~10%
+PASS real-train: no raw SMILES leakage
+PASS real-train: reproducible under poisoned RNG
+PASS real-train: different seed gives different stop set
+PASS metrics: standardized mse value
+PASS metrics: mae/mse values
+PASS metrics: nan fails
+PASS metrics: inf scale fails
+PASS metrics: shape mismatch fails
+PASS metrics: empty fails
+PASS identity: content digest stable
+PASS identity: reordered rows change identity hash
+PASS identity: encoder version bound
+PASS identity: wrong shape fails
+PASS identity: wrong dtype fails
+PASS identity: mask length mismatch fails
+PASS rng: state is JSON plain
+PASS rng: restore reproducible
+PASS optimizer payload: steps plain int
+
+48 passed, 0 failed
+exit=0

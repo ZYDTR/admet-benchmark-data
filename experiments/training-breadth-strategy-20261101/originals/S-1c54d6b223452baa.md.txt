@@ -1,0 +1,52 @@
+# CheMeleon 冻结编码器基线（A 路：准备交付）
+
+CheMeleon 冻结 D-MPNN 编码器 + 22 个任务各自独立的小型 MLP 头。本目录只含可运行代码、资产/依赖清单和非训练自检；训练与整批特征计算由主 Codex 执行。完整交接说明（已做检查、未验证项、下一条命令）见 [HANDOFF.md](HANDOFF.md)。
+
+## 前置
+
+- Python 3.11 环境，按 [requirements.txt](requirements.txt) 安装（torch 先装，CPU/CUDA wheel 自选）。
+- 权重文件 `chemeleon_mp.pt`（34,859,448 字节，MD5 `6a80b54fdb7de37ef0374d302f01e8ce`，MIT）：
+  下载 `https://zenodo.org/records/15460715/files/chemeleon_mp.pt`，例如放到 `assets/chemeleon_mp.pt`。代码从不自动下载，加载时强制核对大小与 MD5。
+
+## 运行（在 `output/model/` 目录下）
+
+```bash
+# 0) 数据快照自检（纯标准库，装环境前就能跑）
+python -m chemeleon_baseline.selfcheck data
+
+# 1) 冻结编码器加载冒烟（不训练、不更新参数；验证大小/MD5/冻结/digest 前后一致）
+python -m chemeleon_baseline.selfcheck encoder --weights ../../assets/chemeleon_mp.pt \
+    --report ../../runs/selfcheck_encoder.json
+
+# 2) 提取并缓存全部 22 任务的冻结指纹（约 46,202 个唯一 SMILES）
+python -m chemeleon_baseline.features \
+    --data-root ../../data --weights ../../assets/chemeleon_mp.pt \
+    --out ../../runs/features --device cuda:0 --batch-size 256 --threads 8
+
+# 3) 每任务训练独立 MLP 头（固定 v1 配置，无搜索；只用各任务 train 行）
+python -m chemeleon_baseline.train \
+    --features ../../runs/features --out ../../runs/train_v1 \
+    --device cuda:0 --threads 8 --seed 42
+
+# 4) 生成 valid/test 预测（统一列 task,split,row_index,y_pred）
+python -m chemeleon_baseline.predict \
+    --data-root ../../data --features ../../runs/features \
+    --heads ../../runs/train_v1/heads --out ../../runs/predictions \
+    --device cuda:0 --threads 8
+
+# 5) 产物审计（预测覆盖/有限性/分类值域）
+python -m chemeleon_baseline.selfcheck cache --features ../../runs/features
+python -m chemeleon_baseline.selfcheck artifacts --predictions ../../runs/predictions
+```
+
+CPU 机器把 `--device cuda:0` 换成 `--device cpu`（features 一步最慢，预计数十分钟级；train 在 CPU 上全部 22 任务约几小时，GPU 上约几分钟）。
+
+小范围冒烟（可选，先验证管线再跑全量）：给 0/2/4 步都加 `--tasks dili`，输出目录换成 `../../runs/smoke_*`。注意冒烟用的特征缓存只覆盖所选任务，正式运行需重新对全部任务跑第 2 步生成独立缓存目录。
+
+## 产物
+
+- `runs/features/`：`fingerprints.npy`、`keys.json`（SMILES sha256→行号）、`uncoded.json`（无法编码的串+原因+受影响行）、`fallback_vector.npy`（仅 train 拟合的回退向量）、`metadata.json`（权重哈希、编码器 digest、版本、覆盖统计）。
+- `runs/train_v1/heads/<task>.pt` × 22：每任务头（含 train 拟合的输入/Y 标准化参数与缓存身份指纹）。
+- `runs/predictions/valid_predictions.csv`、`test_predictions.csv`：列固定 `task,split,row_index,y_pred`；回归已还原原 Y 尺度；分类为 P(Y=1)。fallback 行另有 `predictions_provenance.json` 标记。
+
+预测文件交给 B 路（`output/data-eval/`）做覆盖检查与评分；真实验证标签由主 Codex 独立持有。

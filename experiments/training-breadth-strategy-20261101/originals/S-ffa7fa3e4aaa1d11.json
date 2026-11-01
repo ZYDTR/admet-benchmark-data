@@ -1,0 +1,52 @@
+{
+  "auditor": "parent independent offline parser; no child audit code imported",
+  "manifest_files": 26,
+  "manifest_mismatches": [],
+  "traces": [
+    {
+      "path": "raw/cuda01.strace",
+      "sha256": "0fe2900a6db18276ae0d994a071fa54b14d1a4415dca4ee43e7a1440628e442f",
+      "counts": {
+        "openat": 135,
+        "inside": 45,
+        "write": 49,
+        "unlink": 60,
+        "mkdir": 14,
+        "ipc_fd": 15,
+        "symlink": 57,
+        "mmap": 51,
+        "anonymous_memory": 7,
+        "unlinkat": 1,
+        "rmdir": 1
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {
+        "/dev/null": 8,
+        "/dev/nvidiactl": 63,
+        "/dev/nvidia0": 11,
+        "/dev/nvidia1": 11,
+        "/dev/nvidia2": 11,
+        "/dev/nvidia3": 21,
+        "/dev/nvidia4": 11,
+        "/dev/nvidia5": 11,
+        "/dev/nvidia6": 11,
+        "/dev/nvidia7": 11,
+        "/dev/nvidia-uvm": 5
+      },
+      "denied_counts": {
+        "EEXIST": 68,
+        "EACCES": 57,
+        "ENOENT": 2
+      },
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    }
+  ],
+  "limitations": [
+    "Conservative traced filesystem syscall review only; not whole-server proof, ioctl/device partitioning or SSH-daemon audit.",
+    "Relative paths without annotated dirfd and unresolved inherited descriptors are reported, not silently passed.",
+    "Argument parser is narrow; exact positive findings independently checked against original line numbers."
+  ]
+}

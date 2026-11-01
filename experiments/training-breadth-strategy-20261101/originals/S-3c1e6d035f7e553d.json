@@ -1,0 +1,106 @@
+{
+  "generated_at": "2026-10-31",
+  "task_dir": "adhoc_jobs/admet_progressive_cycle_20261031/preparation",
+  "role": "leaf-preparer-output",
+  "boundary": "no training, no parameter updates, no batch feature extraction, no installs/downloads, no remote ops; all writes confined to output/",
+  "inputs": [
+    {
+      "path": "input/config.json",
+      "sha256": "ac024e8a76723031a57173f9f3e35e9bf9812018375bcfa43114a7e4220f4895"
+    },
+    {
+      "path": "input/data/train.csv",
+      "sha256": "3061c58d3601d081e5459a2de03dc1d189243c4b5683d1b7288577a29fed4d6f",
+      "rows": 637
+    },
+    {
+      "path": "input/data/valid.csv",
+      "sha256": "41370e87d89a96a7481425dae1bf7c45184bd116b353e96719b2afcd0a8a5ca3",
+      "rows": 91
+    },
+    {
+      "path": "input/data/test.csv",
+      "sha256": "d87dac944bedcefb216bce57ba5a8de93d3781172c66653b937e5065b9c2579c",
+      "rows": 182
+    },
+    {
+      "path": "input/reference/encoder.py",
+      "sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+      "note": "read-only reused, unmodified"
+    },
+    {
+      "path": "input/reference/train_remote_v3.py",
+      "sha256": "2549520c1c7f12049b3ddb206208f689afbe863b9cad8f0e84ec38852410c076",
+      "note": "behavioral reference only"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "output/train_remote_v4.py",
+      "sha256": "8f25c3e299c20f62583ede1aa343bd93360e71d5acb493293d18864a0a953094",
+      "role": "host-integrated production script (main() entry, torch imports lazy)"
+    },
+    {
+      "path": "output/training_science.py",
+      "sha256": "bf764fca8f2a4d72941ebf4e11edf0c5bbf430134d6b170aa316ec672b56c3f6",
+      "role": "tested pure helpers imported by train_remote_v4 (stdlib+numpy)"
+    },
+    {
+      "path": "output/tests/test_training_science.py",
+      "sha256": "0d23d294347fbe55ba9087c089781043a17bfc236a039dc74fd3b13cb282c955",
+      "role": "offline acceptance tests"
+    },
+    {
+      "path": "output/tests/results.txt",
+      "sha256": "bc4efad9c107b6ef87b896acb99e45dcc1fdcc9e65e341a5db8651fb71d64f97",
+      "role": "test log: 48 passed 0 failed exit 0"
+    },
+    {
+      "path": "output/split-preview.json",
+      "sha256": "f309cc3b2bee06fa297f99a61484014f8942648e0a765c213652265b5fe58108",
+      "role": "deterministic split record preview for registered config (573 fit / 64 stop)"
+    },
+    {
+      "path": "output/checks.md",
+      "sha256": "52ca52bc58781472d0322a693f3358a331c89adb4f7031984f80ab68153f7544",
+      "role": "commands run, results, environment errors preserved, unverified list"
+    },
+    {
+      "path": "output/HANDOFF.md",
+      "sha256": "2220f07cc9542c1f0df1b0c22909ac17522f320daaacf0d487a5ceabe6704ce5",
+      "role": "integration instructions for control thread"
+    },
+    {
+      "path": "output/manifest.json",
+      "role": "this file (hash self-excluded)"
+    }
+  ],
+  "registered_run": {
+    "run_id": "hainan-index-cycle-20261031",
+    "task": "caco2_wang",
+    "encoder": "frozen CheMeleon c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+    "head": "MLP hidden_dims=[256], dropout=0.1",
+    "optimizer": "AdamW lr=0.0005 weight_decay=0.0001",
+    "epochs": 50,
+    "patience": 8,
+    "batch_size": 128,
+    "model_seed": 43,
+    "split": {
+      "method": "raw_smiles_group_shuffle",
+      "seed": 43,
+      "validation_fraction": 0.1,
+      "fit_rows": 573,
+      "stop_rows": 64,
+      "split_record_sha256": "a10dc9fdbcf2f83fe9cabd2410e05c83f4a028628282858fc50a577b2441126d"
+    },
+    "monitor": "internal_validation_standardized_mse",
+    "preprocessing": "legacy_z_train_fit"
+  },
+  "verification_status": {
+    "static_parse_compile": "pass",
+    "pure_helper_unit_tests": "pass (48/48)",
+    "real_data_split_invariants": "pass (read-only helper execution)",
+    "simulated_host_path_no_torch": "pass",
+    "torch_cuda_end_to_end": "NOT TESTED - torch absent in preparation env, installation forbidden"
+  }
+}

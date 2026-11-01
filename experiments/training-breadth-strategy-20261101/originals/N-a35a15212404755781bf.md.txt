@@ -1,0 +1,37 @@
+# 启动外层恢复候选，仅本机
+
+请求 `admet-contract-follow-transport-recovery-20261101-001`。未访问远端、未训练、未改已准入core或旧件。
+候选等待主控准入；原故障的历史OS退出码和缺失XML仍保持unknown。
+
+`outer.py`把前置验证、系统查询、GPU拒绝和batch等待纳入同一终态finally；每条查询先以独占文件
+保存真实返回码、stdout/stderr或异常原始字段，再进行判定。未知启动保留attempt标记及release null。
+`watch.py`持有实际outer子进程并wait，另存真实OS退出码与stdout/stderr；因此不依赖outer自报退出。
+生产入口不接受fixture、任意命令或目标参数，固定h100/UID1012/新路径；fixture只在不部署的
+`offline_entry.py`。生产GPU命令固定`/usr/bin/nvidia-smi`，路径尚待目标只读核验。
+
+实际6个子进程反例通过：坏GPU利用率字段78、查询退出9导致外层78、prepare异常78、预算不足124、
+模拟启动不明70/release null、父等待器真实wait得到outer78。坏字段用原已准入GPU检查器解析，原始
+100%字段和stderr先落盘，批次调用为0。生产CLI fixture注入被78拒绝。468件旧封存文件hash全部不变。
+每个测试的真实argv/stdout/stderr/OS退出在`raw/offline/`，结果在`raw/test-results.json`。
+
+## 将来经主控准入后的追加安装/对账/启动顺序
+
+1. 消费原观察链并现场重新核验；没有合格卡即等待，不部署或启动。只读核原PID/lifetime、七目录原
+   372件摘要、旧launch receipt和host-start-request锁摘要；任何batch/learning/attempt/artifact存在即只对账。
+2. `make_binding.build`仅从新合格GPU记录及主控剩余额度派生六profile，除GPU/index/enabled/stage外与
+   原base逐字段相同。只生成新`<run>/operator/recovery-01/execution-profile.json`和批次新路径的
+   `outer.py`、`watch.py`、`binding.json`。不覆盖任何旧profile、dispatch、源码或锁。
+3. 未来精确帧接收器须由主控/执行方按新白名单封口：只允许上述新增路径，验证当前祖先canonical/
+   非链接/非多硬链接及全部长度/SHA，逐文件xb写，已有任一目标则对账。本文没有执行或声称验收该接收器。
+4. 未来launcher只Popen新watch.py一次；watcher独占创建`state/host-start-recovery-01.lock`，保存真实
+   子进程身份和wait。日志/outcome均在`raw/recovery-01/`独占追加。原host-start-request锁保留。
+5. outer再核旧PID及未学习状态、所有372件原始部署字节、六新profile的完整准入；查询原件先落盘。
+   新dispatch仅在prelaunch通过后以xb写`operator/recovery-01/batch-dispatch.json`，deadline不晚于
+   min(原截止, 实际recovery开始+剩余5363.641942秒−5秒收尾预留)。然后全局host-batch-start锁xb，
+   固定core的batch-lifetime和per-run锁继续独占，实际batch算法一字未改。
+6. 任何新失败启动的全部elapsed计为扣账；outcome记录新的remaining。失败不重试、不清锁、不重放。
+   当绑定尚无法验证时remaining为null，额外失败elapsed仍保留，由主控从已知总额扣账。
+
+候选测试没有证明生产Linux/pidfd/CUDA/现场资源、成功批次学习或未来追加接收器已通过。
+本次fixture适配器只验证共同外层的失败路径，生产分支仍须目标准入。完整本角色与累计两项额度见
+`TIMING.json`；本地toy测试耗时不扣GPU学习额度，既有36.358058秒扣账及5363.641942秒上限不变。

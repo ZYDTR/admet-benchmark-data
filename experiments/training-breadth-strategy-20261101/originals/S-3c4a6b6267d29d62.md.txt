@@ -1,0 +1,38 @@
+# 提交接口
+
+## 预测记录
+
+`export-submission` 接收 JSON，顶层字段严格固定：
+
+```json
+{
+  "schema_version": 1,
+  "run_id": "predict-candidate-001",
+  "model_artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "predictions": [
+    {"task": "ames", "sample_idx": "0", "y_pred": 0.63}
+  ]
+}
+```
+
+示例仅说明 schema；实际需覆盖模板每一行，hash 必须来自实际权重。task 和 sample_idx 是原字符串，y_pred 是有限 JSON 数字，不是字符串或布尔值。未知键、重复键、缺项和多余预测都拒绝。顺序可以不同，程序按模板键恢复原顺序。
+
+导出把 JSON 数字通过 Python `float` 规范化后写入 CSV；来源验证使用同样的数值转换。整数输入超过浮点精确表示范围可能舍入，实际模型应输出符合任务语义的有限预测值。
+
+## 命令
+
+```bash
+python3 scripts/harness.py inspect-template --template data/official/submission_template.csv
+python3 scripts/harness.py export-submission --template data/official/submission_template.csv --predictions runs/predict-candidate-001/artifacts/predictions.json --output deliverables/ExampleTeam-小分子药物预测技术创新赛-20261105.csv --prediction-kind score
+python3 scripts/harness.py validate-submission --template data/official/submission_template.csv --submission deliverables/ExampleTeam-小分子药物预测技术创新赛-20261105.csv --prediction-kind score
+```
+
+命令中的文件应来自实际运行。路径不存在会报告错误。最终阶段额外运行 `verify-candidate --submission <候选路径>` 将 sidecar 与真实 completed predict/train 运行记录、权重和产物哈希交叉检查；这项检查同样不证明历史上未使用外部数据。
+
+## 校验含义
+
+validate 检查列顺序、行数、非预测字段原字符串、有限数值与显式概率范围。它不检查模型好坏、不计算未知官方总分、不宣称平台已经接受。
+
+export 独占创建 CSV 和同名 `.provenance.json`，不覆盖旧候选。sidecar 明确标记 declared_not_verified：记录文件自报的 run_id/hash 还不等于真实运行来源。verify-candidate 核对本地运行链，并依据 run.json 中记录哈希的冻结输入控制文件、manifest 和模板快照确认真正使用的分子清单；计划文件只作交叉检查。队友仍需审核来源与方法。
+
+分类 score 可超出 0–1，probability 才限制到该区间；回归不施加此范围。原始空 drug_id 和前导零保持；不 canonicalize 模板 SMILES，不人工修值。

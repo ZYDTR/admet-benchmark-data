@@ -1,0 +1,75 @@
+# 独立反证审查：保留哪些结论，撤回哪些推论
+
+请求：`admet-public-repo-pro-20261031-001`；round `public-repo-round001`；固定 commit `eaec280cf142839597fe75ce748cd2b9a8a897d4`；manifest SHA256 `dbdec244caa8ddb106721877cf93625c1957b9184985c07b1cf751eed5d70505`。
+
+本路线是对主线程 `decision-draft.md`、实现、表示、统计/预测、head-search和复现路线的反证检查，不是赞同票。使用标准库只读解析当前包；没有执行归档源码、pickle、模型、推理、训练、评分、安装或读取任何额外valid/test真值。读取范围和限制见 `independent-skeptic-read-receipt.json`。本文简称F=`hainan-frozen-training-20261031`、S=`hainan-skill-follow-20261031`；定位 `F/...`/`S/...` 均展开为 `runs/<run_id>/...`。
+
+## 1. 主结论
+
+**当前公开科学证据支持保留两个正式run；现有差值不支持单因素优胜或冻结底座排名。标准化值得优先受控检验，但没有被证明是质量瓶颈。** 首批4个缩放策略×3共同seed=12次未来fit是有信息量的筛查，结论必须限定为固定头、LR、split及有限预算下的完整输入处理策略；更强的泛化结论依赖锁定候选后的独立角色评价。当前授权fit仍为0。
+
+`needs_evidence`应准确指向完整历史ledger、F1真实复测、部分原始审计/规则响应、未验证误差切片及独立优胜证据，不能误写为两run未读到、评分未完成或全部准备必须停止。私有标签的故意不发布不应触发索取私有标签。
+
+## 2. 逐项反证裁定
+
+|关键主张|首次审查来源|本路线独立复核证据|反例或其他解释|裁定与影响|
+|---|---|---|---|---|
+|跨run wrapper SHA不同表示底座变动|实现/表示路线讨论|两run `artifacts/encoder-before.json`/`encoder-after.json`全部11项；`source/encoder.py:62–85,124`；另读官方Chemprop v2.2.1 `fingerprint:125–133`|只有unused predictor四张量跨run不同；fingerprint调用mp、agg、bn，不调用predictor|**驳回此解冻推论。**各run自身before/after相等、mp与3个登记buffer跨run相同。未读外部权重bytes、训练时全部依赖实现，不能称独立重放。|
+|冻结证据覆盖任意buffer、任意时刻|可能过强的“完整冻结”措辞|F `train_remote_v3.py:35–43`摘要迭代state_dict；编码器全部参数requires_grad=false、eval/no_grad、优化器分离；15次记录前向均符合|state_dict通常不含nonpersistent buffer；before/after相等本身不证明中途从未变动再恢复|**收窄为登记persistent状态+调用/优化器/历史验收一致支持。**未来适配器应列named_buffers全部登记（含persistent标志），不是指控当前已有未冻buffer。|
+|同编码器即可互换两个缓存|统计/实现路线|本路线独立标准库解码六NPZ，逐值比较：train max差3.5762786865e-7，valid/test2.3841857910e-7；全部分区实际存在不相等浮点值|不同raw bytes不等于不同预训练权重；CUDA数值细节只是候选解释|**接受需要固定缓存身份，驳回“缓存完全相同”。**配对实验选择一套已准入raw cache，不混用；不声称微差就是分差原因。|
+|高z是已经证明的误差主因|head/表示/失败分布路线|已保存train特征+已保存transform，F row327/feature1279 z871.66526029；S同处871.66041931；S row129/feature1507 z1637.41477926；各点处于internal stop|没有这些行的预测/残差；输入极值不等于误差。valid row18分歧0.762979而F-transform maxz6.991752；row73 maxz222.342551但分歧0.746828，故高z不解释全部分歧|**驳回已证因果，接受优先机制假设。**成功看预登记MAE，不看z是否减小；不删行/裁Y/用盲数据调阈值。|
+|robust median/IQR天然修复稀疏激活|head-search提出反例|独立查fit列：F/S feature1279有572/573个零；S feature1507有570/573个零|IQR为0，仍须退化分母规则；clip/floor也可能丢有效稀有信号|**驳回自动修复。**保留raw、现有z、预设clip、fit-only floor作对照，所有阈值标探索候选。|
+|F比S好，所以512宽或LR更大更好|主线程与统计路线|完整两CSV直接均值/行身份；全部epoch+history一致；各preprocessing索引集合交集8；config及源码diff|width/LR/seed/fit/stop/target transform同时变；MAE与RMSE排名相反|**只接受描述性的固定91行MAE差。**不能给单因素结论、显著性、seed波动、整体赛事分数或未测集成成绩。|
+|F1导致S正式科学产物必然无效|复现/实现路线|S `historical-acceptance.md:9–17,23–31,37–55`；两run `raw/train01-exit.json`；S失败`cuda01`业务日志|历史验收明确正式训练前环境已确认，冻结/输入/资源验收通过；未证明F1导致错身份/解冻/标签污染|**驳回自动废弃正式产物；F1保持open/investigating。**失败cuda01只是预检，不是第三个模型。真实Follow复测未发生，不能关闭F1。|
+|监督器失败返回码已可靠传播|复现路线新发现|两supervisor及attempt02末尾67–75：写JSON/print rc但没有sys.exit(rc)；S `raw/cuda01-supervisor.log:1`记录业务exit_code1|公开包没有完整上层gate_and_train代码，调用者可能读业务JSON；不能据静态尾部推断所有历史调用都错判|**接受接口缺陷/设计风险，收窄历史因果。**新协议传播业务失败并核run/attempt/config/hash/时间绑定，不能只看shell0或complete存在。|
+|现有原文缺失就无法提出任何方案|规则/复现路线|`official-contract-20261029.snapshot.json:R01–R10,U01–U05`，CURRENT_RULES/current-policy，rule-source-metadata:18–23|原始API response bytes未公开，但当前用户明确冻结边界且现有规则衍生件足以定义本次准备范围|**收窄缺口影响。**不冒称逐字读原始完整规则；冻结许可不再重复询问，准备可继续，资格细节/原始原文核验仍needs_evidence。|
+|三个seed和新G01足以证明未调参数据泛化|主线程首批设计|两历史run用完637原train行；当前91 valid已有反馈；G01仅train内新角色分配|seed重复不增加独立化学数据；反复筛选internal stop产生选择偏差；新分组也不能抹去历史使用|**驳回终评解释。**P01是screen；P24锁定后outer仅补充前瞻稳健性，不称全新终评。|
+|MiniMol/MoLFormer已能直接运行|表示路线/旧研究卡|`research/current-research-context.md:5–10`；新资产卡仍本地SHA缺失|论文方法贴近和历史pilot优先级不等于当前完整加载、覆盖、冻结、资源验收|**维持idle_incomplete。**可同时准备，不获得训练授权；TabPFN2.6也不可用v2资产代替。|
+
+## 3. 本路线的直接计算回执
+
+计算方法是csv全行解析；预测join使用确切`task=caco2_wang, split, row_index`并同时比较`Drug_ID,Drug`，不使用非唯一ID单独join。valid均值为读取预测CSV后筛选`split=valid`的十进制算术和/91，未从MAE推算。结果详见 `independent-skeptic-calculations.json`。
+
+|run|全部预测|valid|直接valid均值|optimizer_steps|best epoch，1起算|全部epoch|
+|---|---:|---:|---:|---:|---:|---:|
+|F|273|91|-5.33833475429670329670329670329670329670329670329670329670330|70|6|14|
+|S|273|91|-5.30125041584615384615384615384615384615384615384615384615385|95|11|19|
+
+两个run的每个预测行身份、计数、唯一任务/分区/行号和有限数检查均通过。CSV所有epoch与training-evidence.history逐字段一致，每epoch5更新；argmin与best记录一致。input train637/valid91/test182；raw Drug唯一数634/91/181，ID唯一数581/89/177；官方分区间raw SMILES交集为0。两个内部划分均573/64、行集合无交叉且并集0..636；F的fit182/stop184、S的fit605/stop606共享raw SMILES。保留这些重复行，改未来分组角色，不能删除或平均标签。
+
+`independent-skeptic-feature-check.json`给出六缓存的全量float32比较、三个train机制点和五个盲预测分歧反例。它没有残差或新预测，因此不提供哪行预测错误的结论。
+
+## 4. 首批设计可接受，但要限定问题
+
+4个policy×3共同head seed=12未来fit，不与完整D01的7配置×3seed=21混淆。历史F/S不能抵扣新G01的对照。共同cache、split、初始化/批次/dropout随机流、head、AdamW、loss、monitor及budget固定；三seed不能给可信样本置信区间。
+
+固定LR的raw/z比较只回答固定优化设置下的策略优劣。raw改变梯度尺度、权重惩罚相对尺度，若raw差不能断言raw表示信号没价值。建议另预登记条件敏感性：仅control+一个候选scale ×两个LR（例如当前锚点5e-4/1e-3）×3共同seed，最多4配置12fits；相同已验证配置可按完整身份抵扣，避免开放全乘。此建议仍没有执行授权。
+
+当前新草稿G01已明确定义：RDKit2024.09.6 canonical isomeric SMILES只作group_key；按SHA256(UTF8("G01-r001|42|"+group_key))排序并用group_key破平局；整组加入stop直到至少64行，其余fit；原Drug不改，实际索引/计数/hash待主控准入后生成。该定义比笼统“group split”可执行；不能假造实际hash。需显式保留解析失败即block、全组不跨角色、全部637行原Y恰好一次覆盖。G01不是scaffold-unseen，也不是新外部终评。
+
+floor处理还需固定真实population std/ddof0、量化算法（例如linear）、正std筛选阈值、常量维fallback；不能对已经把小std替换为1的数组再取q05。裁剪6是TFM方法先例，不保证当前MLP适用。
+
+## 5. 已检查草稿JSON发现的可修正问题
+
+本节是对首次出现的24方向/24建议版本审查，**不是最终修订文件已通过验收**。主线程已收到下列反馈。
+
+1. **P10/D10 PCA对照不一致。**P10 head为linear、change_only=PCA，而control指C0的MLP512。应使用同linear的no-PCA对照，并计入其3seed；可写4配置/12 head fits+3 PCA fits，或3PCA配置9fits另加3控制fits-if-absent。
+2. **P14/P15的control字段需显式两同头CHEM控制。**正文虽说linear/MLP128对称比较，但结构化control仍C0。应锁定对应CHEM×{linear,MLP128}，缺失时6fits另计。不能让执行者按C0-512自行解释。
+3. **P17 concat需要同MLP64单分支控制。**P14/P15准备的是linear/MLP128，不能抵扣此处MLP64对照；两融合共享CHEM控制，三个单分支最多另需9fits。
+4. **P19/P21/P22须匹配head或改为完整pipeline比较。**新表示的MLP128/linear不等C0-512；change_only encoder与此对照矛盾。P20如果只换预测器，MLP对照也应使用同clip6处理，不应默认C0无clip。
+5. **OUTER3需完整确定算法。**首次草稿只有hash-assigned balanced。还须固定hash前缀/排序/整组分配最少行fold及平局次序、每fold inner-stop比例和取整；未生成索引前保持pending，禁止以不同实现产生的fold混组。
+6. **成本语言与实际分支一致。**D12 pooling尚可能需要新编码，不宜笼统称no new encoder run；PCA变换拟合和新表示控制/编码费用与head拟合分开。现有短作业计时不是跨模型小时预算证据。
+
+## 6. 未读/未验证项及缺口处理
+
+本路线没有读取未发布原始strace、外部权重bytes、私有valid/test真值、私有带标签评分工作文件、完整训练时site-packages、上层gate_and_train原件；没有重评分或重新验收运行。完整历史experiments/issues/denied hypotheses总表不在当前包，不能宣称覆盖全部历史或虚构旧issue编号。原始官方API响应仅有来源和hash，读到的是结构化规则快照与用户确认映射。
+
+ANALYSIS_BUNDLE本路线阅读核心入口/评分与历史验收节选，并以对应原源码/表/JSON复核；未逐行重新阅读整份2234行bundle，不能用该文件hash当全篇语义阅读证明。科学实现、完整epoch、完整预测CSV和六raw特征数值覆盖如回执说明。外部其他候选论文与权重由表示路线检索，本路线仅核当前ready状态及精确版本风险，没有冒称所有原论文独立复现。
+
+最终 `next_batch_guide.md` 在本报告生成时尚未交到本路线，**无反馈泄漏检查尚未完成**。指南必须只含允许的技术投影，不引导OpenCode打开ANALYSIS_BUNDLE、comparison、scoring、analysis或未经投影的issues；精确valid分数、逐行残差、signed error校准反馈不能进入准备输入。可留训练内部评估协议、问题ID与参数规格。最终交付后需单独检查。
+
+新的模型资格硬失败（encoder状态/gradient/优化器交集、身份错行、label越界、成功资源边界越界等）应使该新run只保留故障证据；本轮未发现足以把两已验收正式run按此规则整体除名的新直接证据。
+
+## 7. 后续草稿修订核对（26方向/26建议）
+
+主线程采纳第5节的实质修改后，本路线重新解析并阅读相应结构化字段：P10改同linear/no-PCA控制且4配置12head fits+3PCA fits；P14/P15对称CHEM两头控制；P17另计同MLP64单分支最多9fits；P19/P20/P21/P22明确相应控制和缺失控制费用；G01 floor新增精确quantile/常量规则；OUTER3新增确定hash/整组分配与inner-stop算法，首轮canonical18fits和可选scaffold18fits分开。P25限定2scale×2LR×3seed=12的条件敏感性，P26目标affine参数化储备2×3=6。这些修订是规格一致性改进，没有实际训练或质量验证。对应草稿字节已保存到 `agent-reviews/skeptic-draft-snapshots/`。仍建议最后核查P26共同MAE monitor不能静默引用C0-MSE；D12/P12新编码费用应条件化；C0 bias decay应固定到所有头参数包括bias。最终准备指南仍待单独实读。

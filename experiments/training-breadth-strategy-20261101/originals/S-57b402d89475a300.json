@@ -1,0 +1,1557 @@
+{
+  "schema_version": "admet-research-review/1.0",
+  "request_id": "admet-public-repo-pro-20261031-001",
+  "round_id": "public-repo-round001",
+  "packet_version": 2,
+  "manifest_sha256": "dbdec244caa8ddb106721877cf93625c1957b9184985c07b1cf751eed5d70505",
+  "source_commit": "eaec280cf142839597fe75ce748cd2b9a8a897d4",
+  "authorization": "proposal_only",
+  "asset_catalog_reference": "search_space.json:asset_catalog",
+  "shared_contracts": {
+    "implementation_state": "All new code/spec versions are preparation designs, not implemented/hashed/accepted. Asset IDs resolve to complete asset_catalog in search_space.json, included in this delivery.",
+    "H0": [
+      "原始train637/盲valid91/test182、原Y/Drug和行身份",
+      "同pair固定cache/split、init/batch/dropout随机流及选择预算，除声明改动",
+      "全部获准外部参数/buffer冻结；外层标签不参与选择"
+    ],
+    "M0_raw_Y_MAE": "MAE of supplied numeric Y, minimize; train-inner stopping or protected outer evaluation; official91 valid scored only by separately authorized controller.",
+    "DECISION_V1": {
+      "minimum_effect": null,
+      "rule": "逐预登记seed/split报告配对MAE差；均值降低只作暂时筛选，再锁定确认。方向翻转或增益与实测算法波动相近则inconclusive；无虚构CI/显著性。"
+    },
+    "PASS_V1": "资格与覆盖全部通过，收益在锁定确认单元保留，且非额外搜索预算所致；只声明测试范围。",
+    "FAIL_V1": "资格通过后无稳定配对改善、尾部变差或仅挑seed获益则不晋级。冻结/身份/资源边界失败只invalidate该run并登记故障，不作为科学假设反证、不参与质量比较。",
+    "deduplication": "Only identical full data/cache/split/code/config/seed identities can share fits. All current authorized execution counts are0.",
+    "asset_spec_versions": "所有新feature/preprocess/head字段为review-r001/v1规格版本，具体图/参数由direction_id解析到search_space.json。它们不是已实现代码版本；执行前必须补实际source/config/hash。C*只指前一阶段已锁定完整配置，未锁定不得执行。",
+    "version_resolution": "encoder ID→search_space.asset_catalog确切revision/SHA；feature/preprocess/head的r001-spec→同direction_id参数与约束、C0和guide W项。未列差异继承锁定控制；linear无dropout；MLP为ReLU/dropout.1、单隐层所列宽度。所有spec待实现及source/config hash，runtime未验收；unresolved不能执行。 MLP输入维度取feature contract，隐藏宽度与其余图固定；feature改变引起的参数量变化必须披露。"
+  },
+  "control_configuration": {
+    "id": "C0-r001-spec",
+    "implementation_version": "new unified head runner review-r001/v1, not yet implemented or hashed",
+    "encoder": "CHEM",
+    "feature": "CACHE_A",
+    "preprocess": "legacy_z: inner-fit mean/population std; std<1e-8 ->1; no clipping; target affine z, inverse once",
+    "head": "2048->512->1/ReLU/dropout0.1/new random parameters only",
+    "optimizer": "AdamW lr0.001 weight_decay0.0001 betas(.9,.999) eps1e-8; all head parameters including biases in one decayed group, matching existing implementation",
+    "loss": "standardized MSE",
+    "monitor": "internal standardized MSE",
+    "batch_size": 128,
+    "max_epochs": 50,
+    "patience": 8,
+    "split_id": "G01-r001-proposed",
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "note": "structural reference to A, not claimed to reproduce A because split/runner differ; new matched baseline required",
+    "min_delta": 1e-07,
+    "tie_rule": "no strict improvement over min_delta keeps previous best; separate new raw-MAE protocol uses predeclared min_delta=0"
+  },
+  "split_contracts": [
+    {
+      "id": "G01-r001-proposed",
+      "status": "specification_only_indices_hash_pending",
+      "algorithm": "Use RDKit2024.09.6 canonical isomeric SMILES only as group key, never replace model input Drug. Sort groups by SHA256(UTF8(\"G01-r001|42|\"+group_key)), tie-break group_key. Add whole groups to inner_stop until at least64 rows; remaining rows inner_fit. Preserve within-group original row indices; register exact realized counts/hash and zero group intersection. No valid/test Y or metric in assignment. If canonical identity cannot be established, block G01; raw-string S42 replay is a separate historical diagnostic, not a silent substitute."
+    },
+    {
+      "id": "OUTER3-r001-proposed",
+      "status": "specification_only_indices_hash_pending",
+      "algorithm": "For canonical family, group as G01. For scaffold sensitivity, use RDKit2024.09.6 nonempty nonstereo Murcko scaffold key, but each empty-scaffold molecule uses its canonical-isomeric group. Sort group keys by SHA256(UTF8(\"OUTER3-r001|42|\"+family+\"|\"+key)), tie-break key. In that order assign each whole group to fold with smallest current row count, ties lowest fold index0,1,2. For each outer fold, on remaining rows sort groups by SHA256(UTF8(\"INNER-r001|\"+family+\"|\"+fold_index+\"|\"+key)); tie-break group key; inner_stop receives whole groups until at least max(1,ceil(.1*n_remaining)) rows; others inner_fit. Original Drug/Y never rewritten. Every realized mapping/hash/count must be registered; no performance-driven split retries."
+    }
+  ],
+  "budget_tiers": [
+    {
+      "tier": "preparation",
+      "authorized_training_runs": 0,
+      "authorized_inference_jobs": 0,
+      "authorized_HPO_jobs": 0,
+      "authorized_installs": 0
+    },
+    {
+      "tier": "preferred_first_batch_after_approval",
+      "proposal_ids": [
+        "P01"
+      ],
+      "configurations": 4,
+      "common_seeds": 3,
+      "fits": 12
+    },
+    {
+      "tier": "reduced_screen_after_approval",
+      "proposal_ids": [
+        "P01"
+      ],
+      "rule": "4 policies x seed42=4; predeclared control and one challenger add seeds43,44=4; total8 fits. Selection-biased screen, cannot replace locked confirmation.",
+      "fits": 8
+    },
+    {
+      "tier": "confirmation_after_approval",
+      "proposal_ids": [
+        "P24"
+      ],
+      "configurations": 2,
+      "outer_folds": 3,
+      "common_seeds": 3,
+      "fits": 18
+    }
+  ],
+  "selection_boundaries": "No exact-valid-score transfer to preparation; global valid is already feedback. Outer CV uses historically explored train and is not untouched final testing. Minimum meaningful delta remains null until evidence/domain justification.",
+  "experiments": [
+    {
+      "proposal_id": "P01",
+      "direction_id": "D01",
+      "tier": "recommended_first_batch",
+      "priority": "P1",
+      "hypothesis": "train-fit特征处理可改善稀疏激活放大下的MAE。",
+      "control_run_or_config": "C0",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "CHEM",
+        "feature": "CACHE_A",
+        "preprocess": "D01_four_policies/r001-spec",
+        "head": "MLP_C0/r001-spec"
+      },
+      "change_only": "特征处理四策略",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "4策略×3seed在G01配对MAE支持后才锁定确认；z变小本身不算收益",
+      "falsification_criterion": "z减小但MAE未改善、seed/group方向不稳或有用尾部受损；不删行",
+      "compute_budget": {
+        "configurations": 4,
+        "runs": {
+          "fits_if_authorized": 12,
+          "existing_control_reuse": 0,
+          "new_encodes_if_CACHE_A_accepted": 0,
+          "approved_now": 0
+        },
+        "cost_ref": "D01"
+      },
+      "dependencies": [
+        "W01",
+        "W02",
+        "W03",
+        "W04",
+        "另行主控授权"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "SCALE",
+        "IMPL_A",
+        "TFM"
+      ]
+    },
+    {
+      "proposal_id": "P02",
+      "direction_id": "D06",
+      "tier": "recommended_follow_up",
+      "priority": "P1",
+      "hypothesis": "只改选epoch指标为raw-MAE可能改善目标指标。",
+      "control_run_or_config": "P01锁定PP+C0 MSE loss/monitor控制",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "CHEM",
+        "feature": "CACHE_A",
+        "preprocess": "locked_PP/r001-spec",
+        "head": "MLP_C0/r001-spec"
+      },
+      "change_only": "checkpoint monitor",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "PASS_V1",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": 2,
+        "runs": {
+          "fits": 6,
+          "approved_now": 0
+        },
+        "cost_ref": "D06"
+      },
+      "dependencies": [
+        "W01",
+        "W02",
+        "W03",
+        "W04",
+        "P01 preprocessing selection locked",
+        "主控授权"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "CURVE",
+        "SCORE",
+        "IMPL_A"
+      ]
+    },
+    {
+      "proposal_id": "P03",
+      "direction_id": "D03",
+      "tier": "recommended_follow_up",
+      "priority": "P2",
+      "hypothesis": "width与LR的有限2x2可分离历史混杂。",
+      "control_run_or_config": "C*的width512/LR.001单元",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "CHEM",
+        "feature": "CACHE_A",
+        "preprocess": "locked_PP/r001-spec",
+        "head": "HEAD_D03/r001-spec"
+      },
+      "change_only": "width×LR声明2x2",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "PASS_V1",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": 4,
+        "runs": {
+          "fits": 12,
+          "approved_now": 0
+        },
+        "cost_ref": "D03"
+      },
+      "dependencies": [
+        "W01",
+        "W02",
+        "W03",
+        "W04",
+        "另行主控授权"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "IMPL_A",
+        "IMPL_B",
+        "CURVE"
+      ]
+    },
+    {
+      "proposal_id": "P04",
+      "direction_id": "D05",
+      "tier": "recommended_follow_up",
+      "priority": "P2",
+      "hypothesis": "同一raw-MAE选择下L1/Huber可能优于MSE。",
+      "control_run_or_config": "CMAE",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "CHEM",
+        "feature": "CACHE_A",
+        "preprocess": "locked_PP/r001-spec",
+        "head": "MLP_C0/r001-spec"
+      },
+      "change_only": "loss",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "PASS_V1",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": 5,
+        "runs": {
+          "fits": 15,
+          "approved_now": 0
+        },
+        "cost_ref": "D05"
+      },
+      "dependencies": [
+        "W01",
+        "W02",
+        "W03",
+        "W04",
+        "另行主控授权"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "SCORE",
+        "IMPL_A",
+        "IMPL_B"
+      ]
+    },
+    {
+      "proposal_id": "P05",
+      "direction_id": "D02",
+      "tier": "exploration_reserve",
+      "priority": "P2",
+      "hypothesis": "较小或不同深度的新头可能改善偏差方差取舍。",
+      "control_run_or_config": "C*",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "CHEM",
+        "feature": "CACHE_A",
+        "preprocess": "locked_PP/r001-spec",
+        "head": "HEAD_D02/r001-spec"
+      },
+      "change_only": "head计算图/容量",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "PASS_V1",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": 6,
+        "runs": {
+          "fits": 18,
+          "approved_now": 0
+        },
+        "cost_ref": "D02"
+      },
+      "dependencies": [
+        "W01",
+        "W02",
+        "W03",
+        "W04",
+        "另行主控授权"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "CURVE",
+        "IMPL_A",
+        "IMPL_B"
+      ]
+    },
+    {
+      "proposal_id": "P06",
+      "direction_id": "D04",
+      "tier": "exploration_reserve",
+      "priority": "P2",
+      "hypothesis": "单轴dropout/AdamW decay可检验正则作用。",
+      "control_run_or_config": "C*",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "CHEM",
+        "feature": "CACHE_A",
+        "preprocess": "locked_PP/r001-spec",
+        "head": "HEAD_D04/r001-spec"
+      },
+      "change_only": "一条正则轴",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "PASS_V1",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": {
+          "count": 6,
+          "rule": "3 dropout @wd=1e-4 +4 wd @dropout=.1 -1 shared control"
+        },
+        "runs": {
+          "fits": 18,
+          "approved_now": 0
+        },
+        "cost_ref": "D04"
+      },
+      "dependencies": [
+        "W01",
+        "W02",
+        "W03",
+        "W04",
+        "另行主控授权"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "CURVE",
+        "IMPL_A"
+      ]
+    },
+    {
+      "proposal_id": "P07",
+      "direction_id": "D08",
+      "tier": "exploration_reserve",
+      "priority": "P2/P3",
+      "hypothesis": "有限optimizer/LR完整策略可检验优化敏感性。",
+      "control_run_or_config": "C*",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "CHEM",
+        "feature": "CACHE_A",
+        "preprocess": "locked_PP/r001-spec",
+        "head": "HEAD_D08/r001-spec"
+      },
+      "change_only": "optimizer-LR profile",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "PASS_V1",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": 7,
+        "runs": {
+          "fits": 21,
+          "approved_now": 0
+        },
+        "cost_ref": "D08"
+      },
+      "dependencies": [
+        "W01",
+        "W02",
+        "W03",
+        "W04",
+        "另行主控授权"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "IMPL_A",
+        "IMPL_B"
+      ]
+    },
+    {
+      "proposal_id": "P08",
+      "direction_id": "D09",
+      "tier": "exploration_reserve",
+      "priority": "P3",
+      "hypothesis": "单轴batch/schedule/clip可影响稳定性。",
+      "control_run_or_config": "C*",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "CHEM",
+        "feature": "CACHE_A",
+        "preprocess": "locked_PP/r001-spec",
+        "head": "HEAD_D09/r001-spec"
+      },
+      "change_only": "一条训练控制轴",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "PASS_V1",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": {
+          "count": 8,
+          "rule": "4 batch +3 schedule +3 clipping -2 duplicate base"
+        },
+        "runs": {
+          "fits": 24,
+          "approved_now": 0
+        },
+        "cost_ref": "D09"
+      },
+      "dependencies": [
+        "W01",
+        "W02",
+        "W03",
+        "W04",
+        "另行主控授权"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "IMPL_A",
+        "CURVE"
+      ]
+    },
+    {
+      "proposal_id": "P09",
+      "direction_id": "D07",
+      "tier": "exploration_reserve",
+      "priority": "P3",
+      "hypothesis": "延长patience/epoch可能改变checkpoint质量。",
+      "control_run_or_config": "C*",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "CHEM",
+        "feature": "CACHE_A",
+        "preprocess": "locked_PP/r001-spec",
+        "head": "HEAD_D07/r001-spec"
+      },
+      "change_only": "epoch/patience profile",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "PASS_V1",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": 3,
+        "runs": {
+          "fits": 9,
+          "approved_now": 0
+        },
+        "cost_ref": "D07"
+      },
+      "dependencies": [
+        "W01",
+        "W02",
+        "W03",
+        "W04",
+        "另行主控授权"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "CURVE"
+      ]
+    },
+    {
+      "proposal_id": "P10",
+      "direction_id": "D10",
+      "tier": "exploration_reserve",
+      "priority": "P3",
+      "hypothesis": "train-fit PCA可能去除冗余，但也可能丢有效方向。",
+      "control_run_or_config": "CLIN",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "CHEM",
+        "feature": "CACHE_A",
+        "preprocess": "fixed_PP+PCA/r001-spec",
+        "head": "linear/r001-spec"
+      },
+      "change_only": "PCA维度",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "PASS_V1",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": 4,
+        "runs": {
+          "deterministic_PCA_fits": 3,
+          "head_fits": 12,
+          "approved_now": 0
+        },
+        "cost_ref": "D10"
+      },
+      "dependencies": [
+        "W01",
+        "W02",
+        "W03",
+        "W04",
+        "另行主控授权"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "SCALE",
+        "RESEARCH"
+      ]
+    },
+    {
+      "proposal_id": "P11",
+      "direction_id": "D11",
+      "tier": "exploration_reserve",
+      "priority": "P3",
+      "hypothesis": "冻结向量后的residual bottleneck可能有增量。",
+      "control_run_or_config": "C*",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "CHEM",
+        "feature": "CACHE_A",
+        "preprocess": "locked_PP/r001-spec",
+        "head": "HEAD_D11/r001-spec"
+      },
+      "change_only": "向量后外置新模块",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "PASS_V1",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": 3,
+        "runs": {
+          "fits": 9,
+          "approved_now": 0
+        },
+        "cost_ref": "D11"
+      },
+      "dependencies": [
+        "W01",
+        "W02",
+        "W03",
+        "W04",
+        "另行主控授权"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "IMPL_A",
+        "RESEARCH"
+      ]
+    },
+    {
+      "proposal_id": "P12",
+      "direction_id": "D12",
+      "tier": "exploration_reserve",
+      "priority": "P3",
+      "hypothesis": "固定池化或分子大小特征可能补充信息。",
+      "control_run_or_config": "C*的author_mean",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "CHEM",
+        "feature": "CHEM_pooling/r001-spec",
+        "preprocess": "locked_PP/r001-spec",
+        "head": "MLP_C0/r001-spec"
+      },
+      "change_only": "池化/大小信息",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "PASS_V1",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": 3,
+        "runs": {
+          "fits": 9,
+          "additional_feature_jobs": "0 only if exact aggregation equivalence and atom counts verified; otherwise new frozen encoding required",
+          "approved_now": 0
+        },
+        "cost_ref": "D12"
+      },
+      "dependencies": [
+        "W03",
+        "W04",
+        "W05",
+        "aggregation equivalence or node-feature adapter verified",
+        "主控授权"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "FREEZE",
+        "RESEARCH"
+      ]
+    },
+    {
+      "proposal_id": "P13",
+      "direction_id": "D13",
+      "tier": "parallel_preparation_then_benchmark",
+      "priority": "P1/P2",
+      "hypothesis": "简单/非外部学习表示是检验冻结预训练价值的控制。",
+      "control_run_or_config": "C*完整pipeline",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "CLASSIC",
+        "feature": "Morgan/RDKit/r001-spec",
+        "preprocess": "CLASSIC_innerfit/r001-spec",
+        "head": "median_mean_Ridge_RF_MLP64/r001-spec"
+      },
+      "change_only": "特征+预测器完整方案",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "PASS_V1",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": {
+          "count": 14,
+          "rule": "2 constant +2 radius*4 ridge +2 descriptor RF +2 radius*1 MLP"
+        },
+        "runs": {
+          "deterministic_fits": 10,
+          "stochastic_fits": 12,
+          "total_fits": 22,
+          "approved_now": 0
+        },
+        "cost_ref": "D13"
+      },
+      "dependencies": [
+        "W01",
+        "W02",
+        "W04",
+        "W05",
+        "controller qualification/resource authorization"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "RESEARCH",
+        "DATA"
+      ]
+    },
+    {
+      "proposal_id": "P14",
+      "direction_id": "D14",
+      "tier": "parallel_preparation_then_benchmark",
+      "priority": "P2",
+      "hypothesis": "MiniMol不同图预训练信息可能改善表示。",
+      "control_run_or_config": "CHEADS",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "MINI",
+        "feature": "MINI_512/r001-spec",
+        "preprocess": "locked_PP/r001-spec",
+        "head": "linear_MLP128/r001-spec"
+      },
+      "change_only": "encoder+对称两头预算",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "PASS_V1",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": 2,
+        "runs": {
+          "head_fits": 6,
+          "matched_CHEM_control_fits_if_absent": 6,
+          "new_feature_families": 1,
+          "approved_now": 0
+        },
+        "cost_ref": "D14"
+      },
+      "dependencies": [
+        "W01",
+        "W02",
+        "W03",
+        "W04",
+        "W06",
+        "asset/load/license/coverage acceptance",
+        "主控授权"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "MINI",
+        "ASSETS"
+      ]
+    },
+    {
+      "proposal_id": "P15",
+      "direction_id": "D15",
+      "tier": "parallel_preparation_then_benchmark",
+      "priority": "P2",
+      "hypothesis": "10pct MoLFormer冻结序列表示可能有增量。",
+      "control_run_or_config": "CHEADS",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "MOL",
+        "feature": "MOL_768/r001-spec",
+        "preprocess": "locked_PP/r001-spec",
+        "head": "linear_MLP128/r001-spec"
+      },
+      "change_only": "encoder+对称两头预算",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "PASS_V1",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": 2,
+        "runs": {
+          "head_fits": 6,
+          "matched_CHEM_control_fits_if_absent": 6,
+          "new_feature_families": 1,
+          "approved_now": 0
+        },
+        "cost_ref": "D15"
+      },
+      "dependencies": [
+        "W01",
+        "W02",
+        "W03",
+        "W04",
+        "W07",
+        "asset/token coverage/repeatability acceptance",
+        "主控授权"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "MOL",
+        "ASSETS"
+      ]
+    },
+    {
+      "proposal_id": "P16",
+      "direction_id": "D16",
+      "tier": "exploration_reserve",
+      "priority": "P2",
+      "hypothesis": "official train内新随机D-MPNN可能优于冻结表示。",
+      "control_run_or_config": "C*完整pipeline",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "SCRATCH",
+        "feature": "new_DMPNN_graph/r001-spec",
+        "preprocess": "target_fit_z/r001-spec",
+        "head": "new_DMPNN_readout/r001-spec"
+      },
+      "change_only": "整个新随机模型",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "PASS_V1",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": 4,
+        "runs": {
+          "fits": 12,
+          "approved_now": 0
+        },
+        "cost_ref": "D16"
+      },
+      "dependencies": [
+        "W01",
+        "W02",
+        "W04",
+        "W05",
+        "new-DL adapter acceptance",
+        "controller resource authorization"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "RESEARCH",
+        "DATA"
+      ]
+    },
+    {
+      "proposal_id": "P17",
+      "direction_id": "D17",
+      "tier": "exploration_reserve",
+      "priority": "P3",
+      "hypothesis": "concat可能比任一匹配单分支有增量。",
+      "control_run_or_config": "C64",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "CHEM+MINI_or_MOL",
+        "feature": "accepted_branch_concat/r001-spec",
+        "preprocess": "locked_PP/r001-spec",
+        "head": "MLP64/r001-spec"
+      },
+      "change_only": "分支concat",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "PASS_V1",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": 2,
+        "runs": {
+          "fits": 6,
+          "component_controls_must_exist": true,
+          "approved_now": 0,
+          "control_fits_if_absent": 9
+        },
+        "cost_ref": "D17"
+      },
+      "dependencies": [
+        "W03",
+        "W04",
+        "W08",
+        "matched accepted single-branch models",
+        "主控授权"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "PRED",
+        "RESEARCH"
+      ]
+    },
+    {
+      "proposal_id": "P18",
+      "direction_id": "D18",
+      "tier": "exploration_reserve",
+      "priority": "P3",
+      "hypothesis": "预设等权组合可能减少随机或表示特定误差。",
+      "control_run_or_config": "已有匹配有效成员",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "accepted_members",
+        "feature": "accepted_member_predictions/r001-spec",
+        "preprocess": "no_fit",
+        "head": "fixed_equal_combiners/r001-spec"
+      },
+      "change_only": "无学习组合",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "仅后续授权锁定评价能建立组合收益；当前相关性不是成功证据",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": 3,
+        "runs": {
+          "additional_fits_if_members_exist": 0,
+          "new_prediction_artifacts": 3,
+          "new_scoring_calls": "separately authorized only",
+          "approved_now": 0
+        },
+        "cost_ref": "D18"
+      },
+      "dependencies": [
+        "W08",
+        "accepted member predictions with identical rows/scope",
+        "controller inference/scoring authorization"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "PRED",
+        "SCORE",
+        "RESEARCH"
+      ]
+    },
+    {
+      "proposal_id": "P19",
+      "direction_id": "D19",
+      "tier": "exploration_reserve",
+      "priority": "P4",
+      "hypothesis": "冻结3D表示可能补充2D/序列信息。",
+      "control_run_or_config": "C128",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "UNI2",
+        "feature": "UNI2_conformers/r001-spec",
+        "preprocess": "conformer_contract_pending",
+        "head": "MLP128/r001-spec"
+      },
+      "change_only": "几何表示/构象数",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "PASS_V1",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": 2,
+        "runs": {
+          "head_fits": 6,
+          "encoding_work": "1 or3 conformers per molecule; cost separate",
+          "approved_now": 0,
+          "control_fits_if_absent": 3
+        },
+        "cost_ref": "D19"
+      },
+      "dependencies": [
+        "W09",
+        "exact software/asset/license",
+        "approved geometry preprocessing",
+        "coverage/cost measurement",
+        "主控授权"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "RESEARCH",
+        "ASSETS"
+      ]
+    },
+    {
+      "proposal_id": "P20",
+      "direction_id": "D20",
+      "tier": "exploration_reserve",
+      "priority": "P4",
+      "hypothesis": "精确TabPFN2.6下游协议可能优于小MLP。",
+      "control_run_or_config": "CTFM",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "TFM26",
+        "feature": "CACHE_A",
+        "preprocess": "innerfit_z_clip6/r001-spec",
+        "head": "frozen_TFM26_pending"
+      },
+      "change_only": "下游预测器/context",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "PASS_V1",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": 2,
+        "runs": {
+          "gradient_training_fits": 0,
+          "context_prediction_jobs": 6,
+          "approved_now": 0,
+          "control_gradient_fits_if_absent": 3
+        },
+        "cost_ref": "D20"
+      },
+      "dependencies": [
+        "W09",
+        "exact2.6 weight/license/context",
+        "competition deep-training qualification decision",
+        "controller resource and inference authorization"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "TFM",
+        "ASSETS"
+      ]
+    },
+    {
+      "proposal_id": "P21",
+      "direction_id": "D21",
+      "tier": "exploration_reserve",
+      "priority": "P4",
+      "hypothesis": "KPGT的知识引导图表示可能有增量。",
+      "control_run_or_config": "CHEADS",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "KPGT",
+        "feature": "KPGT_aux/r001-spec",
+        "preprocess": "locked_PP/r001-spec",
+        "head": "linear_MLP128/r001-spec"
+      },
+      "change_only": "KPGT表示",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "PASS_V1",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": 2,
+        "runs": {
+          "fits": 6,
+          "approved_now": 0,
+          "control_fits_if_absent": 6
+        },
+        "cost_ref": "D21"
+      },
+      "dependencies": [
+        "W09",
+        "auxiliary fitted CDF boundary decision",
+        "asset/load/coverage acceptance",
+        "主控授权"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "RESEARCH",
+        "ASSETS"
+      ]
+    },
+    {
+      "proposal_id": "P22",
+      "direction_id": "D22",
+      "tier": "exploration_reserve",
+      "priority": "P4",
+      "hypothesis": "SMI-TED的不同序列目标可能有后置增量。",
+      "control_run_or_config": "CHEADS",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "SMITED",
+        "feature": "SMITED_variant_pending/r001-spec",
+        "preprocess": "locked_PP/r001-spec",
+        "head": "linear_MLP128/r001-spec"
+      },
+      "change_only": "SMI-TED表示",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "PASS_V1",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": 2,
+        "runs": {
+          "fits": 6,
+          "approved_now": 0,
+          "control_fits_if_absent": 6
+        },
+        "cost_ref": "D22"
+      },
+      "dependencies": [
+        "W09",
+        "P15 informs remaining sequence hypothesis",
+        "asset/license/coverage/resource acceptance",
+        "主控授权"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "RESEARCH",
+        "ASSETS"
+      ]
+    },
+    {
+      "proposal_id": "P23",
+      "direction_id": "D23",
+      "tier": "exploration_reserve",
+      "priority": "P4",
+      "hypothesis": "MolE只有真实checkpoint闭合后才可验证。",
+      "control_run_or_config": "无当前可执行控制",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "MOLE",
+        "feature": "unresolved",
+        "preprocess": "unresolved",
+        "head": "unresolved"
+      },
+      "change_only": "未来实际资产，当前无执行配置",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "PASS_V1",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": {
+          "current_executable": 0,
+          "future_rule": "exact asset accepted then1 representation x2 heads"
+        },
+        "runs": {
+          "current": 0,
+          "future_conditional_head_fits": 6,
+          "approved_now": 0
+        },
+        "cost_ref": "D23"
+      },
+      "dependencies": [
+        "W09",
+        "real checkpoint provenance/license/complete loading",
+        "主控授权"
+      ],
+      "within_current_scope": {
+        "proposal": false,
+        "execution": false
+      },
+      "evidence_refs": [
+        "RESEARCH",
+        "ASSETS"
+      ]
+    },
+    {
+      "proposal_id": "P24",
+      "direction_id": "D24",
+      "tier": "locked_confirmation",
+      "priority": "P2 confirmation",
+      "hypothesis": "锁定挑战者须在额外train内分组留出保留优势。",
+      "control_run_or_config": "COUT",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "CHEM",
+        "feature": "CACHE_A",
+        "preprocess": "locked_PP/r001-spec",
+        "head": "locked_pair"
+      },
+      "change_only": "固定两候选的outer划分",
+      "hold_fixed": "H0",
+      "split_id": "OUTER3-r001-proposed/canonical first; scaffold family is optional separately authorized sensitivity",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "全18配对单元报告，稳定方向只支持train内补充稳健性",
+      "falsification_criterion": "fold/seed排名翻转、收益消失或outer参与选择则不晋级",
+      "compute_budget": {
+        "configurations": {
+          "model_configurations": 2,
+          "first_partition_family": "canonical",
+          "outer_folds": 3
+        },
+        "runs": {
+          "first_confirmation_fits": 18,
+          "optional_scaffold_fits": 18,
+          "approved_now": 0
+        },
+        "cost_ref": "D24"
+      },
+      "dependencies": [
+        "W01",
+        "W02",
+        "W04",
+        "W10",
+        "one challenger locked before outer scores",
+        "controller protected-evaluation authorization"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "DATA",
+        "CURVE",
+        "RESEARCH"
+      ]
+    },
+    {
+      "proposal_id": "P25",
+      "direction_id": "D25",
+      "tier": "conditional_follow_up",
+      "priority": "P2 conditional",
+      "hypothesis": "scale排名可能随LR改变，需有限交互检查。",
+      "control_run_or_config": "legacy_z与P01一个锁定挑战者，各LR配对",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "CHEM",
+        "feature": "CACHE_A",
+        "preprocess": "D25_2scale/r001-spec",
+        "head": "locked_head"
+      },
+      "change_only": "两个scale×两个LR",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "PASS_V1",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": 4,
+        "runs": {
+          "fits": 12,
+          "approved_now": 0
+        },
+        "cost_ref": "D25"
+      },
+      "dependencies": [
+        "W02",
+        "W03",
+        "W04",
+        "P01 complete and two policies locked",
+        "主控授权"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "SCALE",
+        "IMPL_A"
+      ]
+    },
+    {
+      "proposal_id": "P26",
+      "direction_id": "D26",
+      "tier": "exploration_reserve",
+      "priority": "P3",
+      "hypothesis": "可逆target affine参数化可能改变优化但不改变目标。",
+      "control_run_or_config": "CMAE且target fit_z控制",
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": "CHEM",
+        "feature": "CACHE_A",
+        "preprocess": "feature_fixed+target_affine/r001-spec",
+        "head": "locked_head"
+      },
+      "change_only": "target affine",
+      "hold_fixed": "H0",
+      "split_id": "G01-r001-proposed",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metric": "M0_raw_Y_MAE",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "rule": "DECISION_V1"
+      },
+      "success_criterion": "PASS_V1",
+      "falsification_criterion": "FAIL_V1",
+      "compute_budget": {
+        "configurations": 2,
+        "runs": {
+          "fits": 6,
+          "approved_now": 0
+        },
+        "cost_ref": "D26"
+      },
+      "dependencies": [
+        "W02",
+        "W04",
+        "stable loss/monitor baseline",
+        "主控授权"
+      ],
+      "within_current_scope": {
+        "proposal": true,
+        "execution": false
+      },
+      "evidence_refs": [
+        "IMPL_A",
+        "SCALE"
+      ]
+    }
+  ],
+  "evidence_catalog": "review.json.reference_dictionary; analysis.md section8. All references resolve within this six-file delivery.",
+  "control_aliases": {
+    "C0": "control_configuration完整定义；新匹配基线，不抵扣旧A/B",
+    "C*": "前阶段锁定的完整source/asset/cache/transform/head/split/RNG/budget配置；未锁定不得运行",
+    "CMAE": "C*且统一raw-Y MAE monitor；MSE loss控制",
+    "CLIN": "同CHEM/cache/transform和linear头；PCA=None",
+    "CHEADS": "CHEM×{linear,MLP128}，同选择/变换/seed预算；缺失另共享6H",
+    "C64": "CHEM/MINI/MOL分别MLP64；缺失最多9H控制",
+    "C128": "CHEM+MLP128，同处理/选择预算；缺失3H",
+    "CTFM": "CHEM+train_z_clip6+MLP128；缺失3H；预测器完整协议比较",
+    "COUT": "一完整锁定控制+一锁定挑战者，先锁定再取outer评价"
+  }
+}

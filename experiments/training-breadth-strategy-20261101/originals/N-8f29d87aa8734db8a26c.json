@@ -1,0 +1,20 @@
+{
+  "at": "2026-11-01T09:35:28.760868+00:00",
+  "source_sha256": "019131c4f546c60062efd919619437c8b36c4113ed57b13d293de02be1fc7468",
+  "reviewer": "main",
+  "findings": [
+    {
+      "id": "runtime-query-expiry",
+      "status": "confirmed_control_flow",
+      "description": "query enters production expiry/admission gates before query branch; expired running/unknown work must still permit exact-identity read-only reconciliation",
+      "sent_to_owner": true
+    },
+    {
+      "id": "runtime-timeout-cleanup",
+      "status": "needs_failure_path_evidence",
+      "description": "second bounded wait after timeout may itself throw; preserve unknown owned work and actual terminal evidence without claiming release",
+      "sent_to_owner": true
+    }
+  ],
+  "remote_execution": false
+}

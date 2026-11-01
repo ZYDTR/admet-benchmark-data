@@ -1,0 +1,236 @@
+[
+  {
+    "direction_id": "D1",
+    "linked_issues": [
+      "AR001-08",
+      "AR001-18",
+      "AR001-17"
+    ],
+    "rationale": "固定cache才能隔离表示差异并复用编码",
+    "evidence_refs": [
+      "feature-comparison.json",
+      "train_remote_v4.py:L166-L177"
+    ],
+    "counterevidence": "当前npz存在但消费接口未验",
+    "candidate_models_or_modules": [
+      "immutable feature cache"
+    ],
+    "parameters": [
+      {
+        "name": "dtype",
+        "type": "categorical",
+        "values": [
+          "float32"
+        ]
+      },
+      {
+        "name": "dim",
+        "type": "fixed",
+        "values": [
+          2048
+        ]
+      }
+    ],
+    "combination_constraints": "task/split/row identity/input SHA/encoder SHA/dependency版本全部一致",
+    "search_method": "静态接口验收，不训练",
+    "configuration_count_or_counting_rule": "1 cache schema + 5负例",
+    "seeds": [],
+    "estimated_run_count": 0,
+    "cost_assumptions": "mini CPU prep",
+    "readiness": "existing arrays; new loader",
+    "priority": "P0",
+    "scope_status": "within scope"
+  },
+  {
+    "direction_id": "D2",
+    "linked_issues": [
+      "AR001-02",
+      "AR001-05",
+      "AR001-17"
+    ],
+    "rationale": "monitor与feature差异混杂，需配对",
+    "evidence_refs": [
+      "delta.json",
+      "monitor-comparison.json",
+      "feature-comparison.json"
+    ],
+    "counterevidence": "仅微小float差，可能实际影响有限",
+    "candidate_models_or_modules": [
+      "current MLP256"
+    ],
+    "parameters": [
+      {
+        "name": "monitor",
+        "type": "categorical",
+        "values": [
+          "raw_MAE",
+          "standardized_MSE"
+        ]
+      },
+      {
+        "name": "model_seed",
+        "type": "categorical",
+        "values": [
+          17,
+          43,
+          71
+        ]
+      }
+    ],
+    "combination_constraints": "固定cache/split/head/loss/optimizer；2x3=6 runs",
+    "search_method": "paired multi-seed",
+    "configuration_count_or_counting_rule": "2 monitor configs; 6 training runs",
+    "seeds": [
+      17,
+      43,
+      71
+    ],
+    "estimated_run_count": 6,
+    "cost_assumptions": "每头暂估20-60秒；未测批次",
+    "readiness": "cache adapter required",
+    "priority": "P1",
+    "scope_status": "within scope"
+  },
+  {
+    "direction_id": "D3",
+    "linked_issues": [
+      "AR001-13",
+      "AR001-02"
+    ],
+    "rationale": "当前只测256宽MLP",
+    "evidence_refs": [
+      "config.json",
+      "training-evidence.json"
+    ],
+    "counterevidence": "没有已证明更宽/窄必优",
+    "candidate_models_or_modules": [
+      "linear/ridge",
+      "MLP128",
+      "MLP256",
+      "MLP512"
+    ],
+    "parameters": [
+      {
+        "name": "width",
+        "type": "categorical",
+        "values": [
+          128,
+          256,
+          512
+        ]
+      },
+      {
+        "name": "lr",
+        "type": "log_grid",
+        "values": [
+          0.0002,
+          0.0005,
+          0.001
+        ]
+      }
+    ],
+    "combination_constraints": "不做全笛卡尔积；5个单因子configs x3 seeds=15 runs",
+    "search_method": "one-factor screen then confirmation",
+    "configuration_count_or_counting_rule": "5 configs, 15 runs",
+    "seeds": [
+      17,
+      43,
+      71
+    ],
+    "estimated_run_count": 15,
+    "cost_assumptions": "每头20-60秒估计；cache可复用待实现",
+    "readiness": "config only after cache",
+    "priority": "P1",
+    "scope_status": "within scope"
+  },
+  {
+    "direction_id": "D4",
+    "linked_issues": [
+      "AR001-04"
+    ],
+    "rationale": "极端z可能放大低方差维度，但C-SCALE未证",
+    "evidence_refs": [
+      "history/issues.json:L83-L89",
+      "train_remote_v4.py:L180-L190",
+      "claims/current.json:L40-L58"
+    ],
+    "counterevidence": "无误差因果证据",
+    "candidate_models_or_modules": [
+      "legacy z",
+      "clip z",
+      "robust median/IQR"
+    ],
+    "parameters": [
+      {
+        "name": "scaler",
+        "type": "categorical",
+        "values": [
+          "legacy_z",
+          "clip_z_6",
+          "robust_median_iqr"
+        ]
+      }
+    ],
+    "combination_constraints": "fit rows only；固定cache/head/loss/optimizer/monitor；3x3=9 runs",
+    "search_method": "controlled intervention",
+    "configuration_count_or_counting_rule": "3 configs, 9 runs",
+    "seeds": [
+      17,
+      43,
+      71
+    ],
+    "estimated_run_count": 9,
+    "cost_assumptions": "new scaler code and 9 heads",
+    "readiness": "new code",
+    "priority": "P2",
+    "scope_status": "within scope after approval"
+  },
+  {
+    "direction_id": "D5",
+    "linked_issues": [
+      "AR001-10"
+    ],
+    "rationale": "替代冻结底座可能改变表示质量",
+    "evidence_refs": [
+      "history/gaps.json",
+      "history/issues.json:L137-L143"
+    ],
+    "counterevidence": "MiniMol/MoLFormer idle/incomplete；其他底座未完整覆盖",
+    "candidate_models_or_modules": [
+      "MiniMol",
+      "MoLFormer",
+      "GLM",
+      "DeepSeek",
+      "Qwen"
+    ],
+    "parameters": [
+      {
+        "name": "asset_revision",
+        "type": "pinned_identifier",
+        "values": [
+          "controller to provide"
+        ]
+      },
+      {
+        "name": "weights_sha",
+        "type": "sha256",
+        "values": [
+          "controller to provide"
+        ]
+      }
+    ],
+    "combination_constraints": "先准备资产/license/frozen adapter，不与head sweep混跑",
+    "search_method": "asset readiness gate then matched study",
+    "configuration_count_or_counting_rule": "per approved asset; not countable until pinned",
+    "seeds": [
+      17,
+      43,
+      71
+    ],
+    "estimated_run_count": 0,
+    "cost_assumptions": "download/adapter cost unknown",
+    "readiness": "blocked assets",
+    "priority": "P3",
+    "scope_status": "requires separate approval"
+  }
+]

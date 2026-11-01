@@ -1,0 +1,88 @@
+# HANDOFF — B：数据/预测核验、独立评分器、官方格式提交导出
+
+准备会话（叶子执行者）交付。只写 `output/data-eval/`；输入原件只读，未运行任何训练。真实验证评分与训练由主 Codex 执行。
+
+## 目录内容
+
+| 文件 | 作用 |
+| --- | --- |
+| `metrics.py` | 纯标准库实现 AUROC / AP(AUPRC) / MAE / Spearman，含并列分数（ties）处理与非有限值防护。 |
+| `test_metrics.py` | 用固定合成数值+手算答案校验上述指标（`python3 test_metrics.py`）。 |
+| `check_inputs.py` | 模板/train/test/valid 完整性核验（SHA256、BOM、CRLF、行数、列、`sample_idx` 唯一且连续、`sample_idx==test 行位置`、valid 对照 manifest）。 |
+| `predictions_io.py` | 预测文件加载与覆盖检查工具（csv/jsonl/json，`task,split,row_index,y_pred`）。 |
+| `check_coverage.py` | 检查 test 预测对模板的完整覆盖（缺行/多余/重复键）。 |
+| `score.py` | 逐任务评分；真实标签路径由主 Codex 显式传入（`--labels-dir`），自身不查找标签。 |
+| `export_submission.py` | 从 test 预测生成官方格式提交 CSV，仅填 `y_pred`，保留模板其余格式/顺序/16379 行。 |
+| `smoke_test.py` | 端到端自检（指标→覆盖→导出→导出拒绝非法输入→评分），写临时目录不影响原件。 |
+| `input_integrity_report.json` | 本次对真实输入运行 `check_inputs.py` 的完整结果（0 fail / 0 warn）。 |
+
+## 已做检查（对真实输入实测）
+
+用 `check_inputs.py --manifest reference-harness/materials/validation-projection.json` 跑过真实数据，结果全通过：
+
+- **模板**：SHA256 = `8ee41589d2c98e7b93081c058b3f928ac09bea4b3ffc899fa13677051e9baa20`，16379 数据行，UTF-8 BOM，CRLF，表头 `task,sample_idx,drug_id,smiles,y_pred,metric`，22 个任务。
+- **`sample_idx`（据实核对，非假设）**：每个任务内 `sample_idx` 恰为 `0..n-1` 连续且唯一，且逐行等于该任务 `test.csv` 的数据行位置。`test.csv` 与模板逐行 `Drug_ID`/`Drug` 一致（22/22 任务）。
+- **train.csv**：列为 `Drug_ID,Drug,Y`，无空 Y。
+- **valid.csv**：仅 `Drug_ID,Drug`（无 Y），行数与 SHA256 全部匹配 `validation-projection.json` 注册值（22/22）。
+- **模板一处特殊**：`herg` 的 `sample_idx=61`（`drug_id` 为空串）——这是官方原样，导出会保留空 `drug_id`，不得补值或删行。
+- **模板 `task+drug_id` 有 218 个重复对**：属官方原样，导出按 `(task,sample_idx)` 对齐，不受影响。
+
+## 关键设计决定
+
+- **零第三方依赖**：环境无 numpy/sklearn/pandas，故评分器用纯标准库，容器外可直接跑。
+- **AUPRC = Average Precision (AP)**：与 scikit-learn / TDC pr-auc 约定一致；**官方 AUPRC 精确定义与总分聚合公式均未确认（contract U04）**，因此评分器只输出逐任务本地分数，附明确注记，绝不虚构官方总分。
+- **回归输出原 Y 尺度**的 MAE，Spearman 用并列平均秩。
+- **`sample_idx` 映射据实核对**：脚本逐行断言 `sample_idx == test 行位置`，若二者不符会报错（不是假设相等）。
+- **导出只填备好的预测**：缺行/重复/多余/非有限/错 split 一律拒绝写文件，不手工补任何值；输出按 `(task,sample_idx)` 键恢复模板原顺序，输入顺序无关（已验证乱序输入产出逐字节一致）。
+- **格式保真**：直接基于模板原始字节重建，保留 BOM、CRLF、表头、所有非 `y_pred` 单元格原文本与行序；只替换 `y_pred` 单元格。`y_pred` 用 Python float repr 写出（有限数值）。
+
+## 未验证 / 待主 Codex 负责
+
+- **未跑任何真实训练或真实推理**；真实 valid 标签不在本会话，评分器仅用合成标签自测通过，需主 Codex 用真实标签路径运行。
+- **官方总分聚合公式、AUPRC 精确实现、指标不可定义时的处理** 未确认（U04）；本地结果不等于官方成绩。
+- **平台是否接受** 未验证；导出成功 ≠ 已提交。
+- 未核对另一会话（A：模型接入）产物；本目录只依赖 `data/` 共享输入，未读取 `output/model/` 正在改动的代码。
+
+## 主 Codex 下一条运行命令
+
+设工作目录为本项目根（`.../admet_frozen_baseline_deepseek_20261030`）。
+
+1. 输入完整性（建议每次训练前跑）：
+```bash
+python3 output/data-eval/check_inputs.py \
+  --manifest reference-harness/materials/validation-projection.json \
+  --report-json output/data-eval/input_integrity_report.json
+```
+
+2. 工具自检（指标+导出+评分全链路，只写临时目录）：
+```bash
+python3 output/data-eval/smoke_test.py
+```
+
+3. test 预测覆盖检查（推理产出后，预测文件为 `task,split,row_index,y_pred`，split=test）：
+```bash
+python3 output/data-eval/check_coverage.py \
+  --predictions <runs/.../test_predictions.csv> \
+  --template data/official/submission_template.csv
+```
+
+4. 导出官方格式提交（仅填 y_pred；文件名按官方要求 `团队名-赛题名-提交日期.csv`）：
+```bash
+python3 output/data-eval/export_submission.py \
+  --template data/official/submission_template.csv \
+  --predictions <runs/.../test_predictions.csv> \
+  --out deliverables/<Team>-小分子药物预测技术创新赛-20261105.csv
+```
+
+5. 逐任务真实验证评分（真实标签由主 Codex 通过 `--labels-dir` 显式提供，每任务一个 `<task>.csv`，含 `Y` 列，行序即 row_index）：
+```bash
+python3 output/data-eval/score.py \
+  --predictions <runs/.../valid_predictions.csv> \
+  --labels-dir <外置真实标签目录> \
+  --template data/official/submission_template.csv \
+  --out output/data-eval/valid_results.json
+```
+
+## 预测文件接口约定（与 A 会话共享）
+
+`task,split,row_index,y_pred`；`split ∈ {test,valid}`；`row_index` 为该 task/split CSV 的 0-based 数据行位置；`y_pred` 为有限 JSON 数字（分类为正类分数/概率，回归为原 Y 尺度连续值）。支持 `.csv` / `.jsonl` / `.json`。导出仅接受 `split=test`；评分仅用 `split=valid`。

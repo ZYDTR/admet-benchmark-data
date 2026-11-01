@@ -1,0 +1,295 @@
+{
+  "runs": [
+    {
+      "name": "selftest",
+      "returncode": 0,
+      "expected": 0,
+      "pass_condition": true,
+      "command": [
+        "run_admet_eval.py",
+        "selftest",
+        "--report",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/selftest.json"
+      ],
+      "tail": "selftest: 66 checks, 66 passed, 0 failed\nRESULT: PASS\nreport written: <LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/selftest.json\n"
+    },
+    {
+      "name": "verify-inputs",
+      "returncode": 0,
+      "expected": 0,
+      "pass_condition": true,
+      "command": [
+        "run_admet_eval.py",
+        "verify-inputs",
+        "--data-root",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/model/input",
+        "--schema",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/model/input/reference-harness/competition/task_schema.json",
+        "--report",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/verify-inputs.json"
+      ],
+      "tail": "[inputs]\n[template]\n[data_splits]\n[template_test_alignment]\n[reference_schema_crosscheck]\n[input_file_hashes]\nRESULT: PASS\nreport written: <LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/verify-inputs.json\n"
+    },
+    {
+      "name": "model-data",
+      "returncode": 0,
+      "expected": 0,
+      "pass_condition": true,
+      "command": [
+        "-m",
+        "chemeleon_baseline.selfcheck",
+        "data",
+        "--data-root",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/model/input/data",
+        "--report",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/model-data.json"
+      ],
+      "tail": "{\n \"mode\": \"data\",\n \"ran_at\": \"2026-10-30T20:32:00+0800\",\n \"unique_smiles\": {\n  \"train\": 34610,\n  \"valid\": 10417,\n  \"test\": 13818\n },\n \"checks\": {\n  \"tasks\": 22,\n  \"template_rows\": 16379,\n  \"template_alignment\": \"task,sample_idx <-> test.csv row_index identical for all rows\"\n }\n}\nOK: all checks passed\n"
+    },
+    {
+      "name": "score-perfect",
+      "returncode": 0,
+      "expected": 0,
+      "pass_condition": true,
+      "command": [
+        "run_admet_eval.py",
+        "score",
+        "--pred",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/synthetic/valid-perfect.csv",
+        "--labels",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/synthetic/labels",
+        "--data-root",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/model/input",
+        "--report",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/score-perfect.json"
+      ],
+      "tail": "_unofficial_macro_mean[AUROC] = 1.000000 (over 8 scored tasks)\n  local_unofficial_macro_mean[MAE] = 0.000000 (over 5 scored tasks)\n  local_unofficial_macro_mean[Spearman] = 1.000000 (over 4 scored tasks)\n  local_unofficial_macro_mean[all] = 0.772727 (over 22 scored tasks)\nNOTE: values use LOCAL metric definitions; the official AUPRC convention and total-score aggregation are unconfirmed, so no official total is reported.\nRESULT: PASS\nreport written: <LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/score-perfect.json\n"
+    },
+    {
+      "name": "score-missing",
+      "returncode": 1,
+      "expected": 1,
+      "pass_condition": true,
+      "command": [
+        "run_admet_eval.py",
+        "score",
+        "--pred",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/synthetic/valid-missing.csv",
+        "--labels",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/synthetic/labels",
+        "--data-root",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/model/input",
+        "--report",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/score-missing.json"
+      ],
+      "tail": "ERROR: prediction coverage for split 'valid' is not exact: duplicates=0 missing=1 extra=0\n  missing keys (first 5): [('vdss_lombardo', 112)]\n"
+    },
+    {
+      "name": "score-duplicate",
+      "returncode": 1,
+      "expected": 1,
+      "pass_condition": true,
+      "command": [
+        "run_admet_eval.py",
+        "score",
+        "--pred",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/synthetic/valid-duplicate.csv",
+        "--labels",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/synthetic/labels",
+        "--data-root",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/model/input",
+        "--report",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/score-duplicate.json"
+      ],
+      "tail": "ERROR: prediction coverage for split 'valid' is not exact: duplicates=1 missing=0 extra=0\n  duplicate keys (first 5): [('ames', 0)]\n"
+    },
+    {
+      "name": "score-unknown-task",
+      "returncode": 1,
+      "expected": 1,
+      "pass_condition": true,
+      "command": [
+        "run_admet_eval.py",
+        "score",
+        "--pred",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/synthetic/valid-unknown-task.csv",
+        "--labels",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/synthetic/labels",
+        "--data-root",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/model/input",
+        "--report",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/score-unknown-task.json"
+      ],
+      "tail": "ERROR: prediction coverage for split 'valid' is not exact: duplicates=0 missing=0 extra=1\n  extra keys (first 5): [('unregistered_task', 0)]\n"
+    },
+    {
+      "name": "score-nan",
+      "returncode": 1,
+      "expected": 1,
+      "pass_condition": true,
+      "command": [
+        "run_admet_eval.py",
+        "score",
+        "--pred",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/synthetic/valid-nan.csv",
+        "--labels",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/synthetic/labels",
+        "--data-root",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/model/input",
+        "--report",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/score-nan.json"
+      ],
+      "tail": "ERROR: prediction file contract violations: line 2: y_pred 'nan' is not a finite number\n"
+    },
+    {
+      "name": "score-inf",
+      "returncode": 1,
+      "expected": 1,
+      "pass_condition": true,
+      "command": [
+        "run_admet_eval.py",
+        "score",
+        "--pred",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/synthetic/valid-inf.csv",
+        "--labels",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/synthetic/labels",
+        "--data-root",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/model/input",
+        "--report",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/score-inf.json"
+      ],
+      "tail": "ERROR: prediction file contract violations: line 2: y_pred 'inf' is not a finite number\n"
+    },
+    {
+      "name": "score-wrong-split",
+      "returncode": 1,
+      "expected": 1,
+      "pass_condition": true,
+      "command": [
+        "run_admet_eval.py",
+        "score",
+        "--pred",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/synthetic/valid-wrong-split.csv",
+        "--labels",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/synthetic/labels",
+        "--data-root",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/model/input",
+        "--report",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/score-wrong-split.json"
+      ],
+      "tail": "ERROR: prediction coverage for split 'valid' is not exact: duplicates=0 missing=1 extra=0\n  missing keys (first 5): [('ames', 0)]\n"
+    },
+    {
+      "name": "score-negative-index",
+      "returncode": 1,
+      "expected": 1,
+      "pass_condition": true,
+      "command": [
+        "run_admet_eval.py",
+        "score",
+        "--pred",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/synthetic/valid-negative-index.csv",
+        "--labels",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/synthetic/labels",
+        "--data-root",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/model/input",
+        "--report",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/score-negative-index.json"
+      ],
+      "tail": "ERROR: prediction coverage for split 'valid' is not exact: duplicates=0 missing=1 extra=1\n  missing keys (first 5): [('ames', 0)]\n  extra keys (first 5): [('ames', -1)]\n"
+    },
+    {
+      "name": "score-empty",
+      "returncode": 1,
+      "expected": 1,
+      "pass_condition": true,
+      "command": [
+        "run_admet_eval.py",
+        "score",
+        "--pred",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/synthetic/valid-empty.csv",
+        "--labels",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/synthetic/labels",
+        "--data-root",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/model/input",
+        "--report",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/score-empty.json"
+      ],
+      "tail": "ERROR: prediction file has no rows for split 'valid' (splits present: [])\n"
+    },
+    {
+      "name": "export-full",
+      "returncode": 0,
+      "expected": 0,
+      "pass_condition": true,
+      "command": [
+        "run_admet_eval.py",
+        "export",
+        "--pred",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/synthetic/test-full.csv",
+        "--data-root",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/model/input",
+        "--output",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/synthetic-submission.csv",
+        "--check-range",
+        "--report",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/export-full.json"
+      ],
+      "tail": "/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/synthetic-submission.csv\nrows with y_pred written: 16379 (template data rows: 16379)\noutput sha256: 068dd7c095eeed314010a583054b4e0529ab95f1d2e0a28033d231486f6c715e\nmapping: verified: for every task, template sample_idx equals test.csv row_index (0..n-1) in file order and drug_id/smiles match row-by-row\ninternal validation: pass (13 items, warnings: 0)\nRESULT: PASS\nreport written: <LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/export-full.json\n"
+    },
+    {
+      "name": "validate-full",
+      "returncode": 0,
+      "expected": 0,
+      "pass_condition": true,
+      "command": [
+        "run_admet_eval.py",
+        "validate-submission",
+        "--submission",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/synthetic-submission.csv",
+        "--template",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/model/input/data/official/submission_template.csv",
+        "--report",
+        "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/validate-full.json"
+      ],
+      "tail": "emplate data lines=16379 submission data lines=16379\nPASS submission.non_y_pred_fields_identical: mismatches: none\nPASS submission.non_y_pred_raw_format_identical: raw-format deviations: none\nPASS submission.y_pred_finite_non_empty: problems: none\nPASS submission.no_duplicate_task_sample_idx: duplicates: none\nPASS submission.row_order_and_keys_match_template: row order and (task,sample_idx) sequence identical to template\nRESULT: PASS\nreport written: <LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/validate-full.json\n"
+    }
+  ],
+  "edge": {
+    "auc_tie": {
+      "result": [
+        0.5,
+        null
+      ]
+    },
+    "ap_tie": {
+      "result": [
+        0.5,
+        null
+      ]
+    },
+    "ap_all_positive": {
+      "result": [
+        1.0,
+        null
+      ]
+    },
+    "ap_all_negative": {
+      "result": [
+        null,
+        "undefined: AUPRC (local AP) requires at least one positive label"
+      ]
+    },
+    "spearman_constant": {
+      "result": [
+        null,
+        "undefined: zero rank variance (constant input)"
+      ]
+    },
+    "fractional_label": {
+      "exception": "ValueError",
+      "message": "non-binary label 0.4; classification tasks require Y in {0,1}"
+    }
+  },
+  "independent_template_rows": 16379
+}

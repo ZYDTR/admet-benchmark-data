@@ -1,0 +1,58 @@
+# HANDOFF — admet-mae-monitor-prepare-20261101-001
+
+叶子准备任务交接。实际训练由宿主/主控执行；本会话未运行任何参数更新、编码、下载或远端操作。
+
+## 交付物（均在 `output/`）
+
+| 文件 | SHA256 | 说明 |
+|---|---|---|
+| `training_science.py` | f411d462304139db190b15a217348d3a781988fa9fd932f934f595abcde1a582 | 生产 helper，monitor 枚举 + 选轮逻辑 |
+| `train_remote_v4.py` | 64964d6dee8d99c6ba9d58004200b37fa5cc6fddce226784d5534ae21462c03a | 训练入口（供宿主执行），文件名按 TASK 保留 |
+| `config.json` | da5062761b9871a878fd87b19853062cfcc83848935c6eb7b1c90156481dfa77 | 与 input/config.json 逐字节一致（唯一任务配置，monitor=internal_validation_raw_mae） |
+| `encoder.py` | 3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712 | 参考原字节复制（cmp 验证） |
+| `tests/test_preparation_monitor.py` | c00f96e465f9… | 准备期合成反例套件（无训练调用） |
+| `raw/training_science.diff` / `raw/train_remote_v4.diff` | — | 相对 input/reference 的最小 diff |
+| `raw/checks/checks.json` | — | 已执行命令/退出码、通过用例、未验证项 |
+| `output-manifest.json` | — | 全部输出文件摘要（自指文件除外） |
+
+## 唯一科学变化：diff 说明
+
+**training_science.py**
+1. 新增模块常量 `MONITOR_STANDARDIZED_MSE` / `MONITOR_RAW_MAE` / `ALLOWED_MONITORS` / `MIN_DELTA = 1e-7`；`SCHEMA_VERSION` 升至 `admet-monitor-mae-20261101-v5`。
+2. `validate_config`：monitor 检查由单一硬编码改为准确接受两个已定义枚举、拒绝其他任何值（含缺失）。
+3. 新增 `monitor_metric_key(monitor)`、`select_monitor_value(monitor, standardized_mse, raw_scale_metrics)`（MAE 只取逆变换后原尺度 `scale_metrics["mae"]`；NaN/Inf 拒绝；未知 monitor 失败）、`validate_epoch_history(history)`（epoch/steps/两指标有限性/monitor-key-value 一致性）。
+4. `checkpoint_identity(history, index)`：先跑 `validate_epoch_history`；返回行自身 `epoch`/`steps`/`monitor_value`，新增 `monitor`/`monitor_key`/`best_monitor_value`（用生产比较 `value < best - MIN_DELTA` 在前缀上归约，平局保留更早轮）；`internal_validation_standardized_mse` 字段保持真实 MSE 语义（不再把 MAE 值写进 MSE 命名字段）。旧返回键 `best` 更名为 `best_monitor_value`（消费端 train_remote_v4.save_head 同步接通，见 diff）。
+
+**train_remote_v4.py**
+1. epoch 循环内每轮仍在 eval/no_grad 下计算并记录原有 fit/stop 的标准化 MSE 与原尺度 MAE/MSE（日志全保留），新增 history 键 `internal_validation_raw_mae` 与 `monitor/monitor_key/monitor_value`（经 `select_monitor_value`）。
+2. best 比较与早停改用配置选出的值：`if monitor_value < best - MIN_DELTA`（原 `val < best - 1e-7`），patience=8 分支不变；`assert abs(stop_std - val) <= 1e-9` 守卫保留。
+3. `save_head` 元信息：`best_internal_validation_standardized_mse` = 该 checkpoint 时点的真实 stop 组标准化 MSE；新增 `best_monitor_value`（截至该 epoch 的实际所选 best，last 同样指向真实 best 而非 last 自身）、`internal_validation_best_monitor_value` 别名与 `monitor_key`；`monitor_value_at_checkpoint` 为该 epoch 自身 monitor 值。epoch/steps 绑定各自时点（checkpoint_identity 保证）。
+4. `training-evidence.json` 增记 `monitor/monitor_key/min_delta`；`train-runtime.json` 增记 `monitor`。common_guarded 的 ROOT/GPU_UUID/environment/now/safe/sha/write_json 接口及全部既有产物路径、行为保持不变。
+5. 训练 loss 仍为 MSE；优化器仍来自显式配置（AdamW 校验不变）；split/缩放/缓存/精度/数据行零改动。
+
+## 已验证（本环境实际执行，见 checks.json）
+
+- 合同双枚举接受/未知拒绝；config 输入哈希与行审计（valid dupIDs {14,22}、test {1,3,25,PNU200969}，均无重复完整行键）。
+- 真实盲输入经生产 `load_input_tables` 加载不回退到错误限制；空/重复 Drug_ID 合成行三分区全通过；重复完整行键被 split 拒绝；单独运行 valid 不依赖其他分区输出。
+- **MSE 晚于 MAE 最小**的合成序列（mse=[4,2,3,1], mae=[4,1,2,3]）直接调用生产 `checkpoint_identity`：best=(epoch2, steps10, value1.0)，last=(epoch4, steps20, value3.0, best_monitor_value=1.0)。
+- main() 选轮尾部（行 302–322）AST 原文提取驱动：best/last epoch 与累计 steps、patience 停止、min_delta 平局保留更早 best、stop≠val 断言守卫、NaN monitor → PreparationError 且该行不入 history（失败先于 append）。
+- 历史一致性反例 6 路全部拒绝；参考主控套件的无 torch 用例体对新模块逐一复跑通过。
+- packet verify-target exit 0；py_compile；encoder 字节一致；导入 train_remote_v4 无副作用。
+
+## 未验证（缺依赖/边界，须宿主执行）
+
+- **UNV-01 torch 缺失**：真实 Tensor optimizer state 存取 + weights_only 重载 + `load_state_dict` 回载逐 Tensor 相等；torch CPU/独立 generator RNG 捕获重放；`input/reference/test_host_science.py` 整套件对新品运行（其模块级 import torch）。测试文件内 `TorchState`/`ConsumerLink.test_reference_host_suite_against_new_module` 已就位，装好 torch 即自动执行。
+- **UNV-02 CUDA**：capture_training_rng 的 CUDA 分支与设备数身份检查。
+- **UNV-03 训练边界**：main() 全程（编码器冻结证据、CUDA head 更新、cache 身份、原始 train 预测、盲 273 行导出、best 重载预测一致性）——按 Skill 留给宿主。
+- 静态审读：save_head/probe 断言链、rng_replay_ok 写入仅在断言通过后执行（必需检查失败会抛出中断，不会先写 success）。
+
+## 宿主下一条命令（建议）
+
+```bash
+# 在 Hainan 运行根部署 output/{train_remote_v4.py, training_science.py, config.json→source/config.json, encoder.py}
+python3 -m unittest -v test_preparation_monitor.py     # 有 torch 时应 17/17 无 skip（除 CUDA 分支）
+python3 -m unittest -v test_host_science.py            # 参考主控套件对新品
+# 然后按既有 supervisor 流程执行 train_remote_v4.main()
+```
+
+注意：新品 `checkpoint_identity` 返回键变更（`best`→`best_monitor_value` 等），若主控另有直接消费旧键的脚本需同步；`train_remote_v4.save_head` 已接通。

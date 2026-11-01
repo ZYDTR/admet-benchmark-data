@@ -1,0 +1,108 @@
+{
+  "run_id": "hainan-mae-monitor-20261101",
+  "observed_at": "2026-11-01T02:45:03.598349+00:00",
+  "source_work_complete": true,
+  "state": "local_prepared_waiting_main_admission",
+  "runtime_admitted_by_main": false,
+  "target_runtime_verified": false,
+  "training_started": false,
+  "scientific_main_called": false,
+  "model_inference": false,
+  "parameter_updates": 0,
+  "remote_connected": false,
+  "deployed": false,
+  "dependencies_installed": false,
+  "private_valid_truth_or_scores_read": false,
+  "official_upload": false,
+  "entry": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101/source/production-adapter-v1/job_waiter.py",
+  "default_profile": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101/source/production-adapter-v1/adapter-profile.json",
+  "default_profile_execution_enabled": false,
+  "future_execution_profile_template": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101/operator/preflight-01/execution-profile.template.json",
+  "future_target_command_not_executed": [
+    "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/venv/bin/python3",
+    "-I",
+    "-B",
+    "-u",
+    "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-mae-monitor-20261101/source/production-adapter-v1/job_waiter.py",
+    "production",
+    "--profile",
+    "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-mae-monitor-20261101/source/production-adapter-v1/execution-profile.json"
+  ],
+  "runtime_source_manifest": {
+    "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101/source/production-adapter-v1/source-manifest.json",
+    "sha256": "ee05673669f7f02670f620451cb46271410b575f189d11cba3c9f07bdc9032ba",
+    "files": 22
+  },
+  "scientific_authority_manifest_sha256": "d6e30195c4b4d90a9010830d049a3c97e1e2b13e8319b6a4991ed06282625b5b",
+  "main_scientific_acceptance_sha256": "369541b30d8ea64e60face27bd4d4105554f1b5c5190127faf84bb2fb099b010",
+  "plan_sha256": "a6cc7b722a54ee0d9894f8710baca09b05ed0b9f9405f78161a7aa334e3e20f2",
+  "frozen_inputs_manifest_sha256": "64a529b1ec6eefe33a566b6deea378346617303fde9b20330d8728098c926066",
+  "checks": {
+    "suite": {
+      "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101/source/production-adapter-v1/checks/suite-20261101T024158-ad145742/result.json",
+      "sha256": "303e250507dc315b60fcad9499e2b50ab5948af0b54b2a545f104f690caa0107",
+      "passed": true,
+      "checks": 20
+    },
+    "interfaces": {
+      "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101/source/production-adapter-v1/checks/interfaces-20261101T024220-fbd64754/result.json",
+      "sha256": "d96b791b9f2b7d281ace4c1332a0ce4754d2fb52e0584e3080a46889aa072260",
+      "passed": true,
+      "admission_negatives": 13,
+      "checkpoint_metadata_cases": 4,
+      "actual_tensor_serialization_checked": false,
+      "split": {
+        "fit_rows": 573,
+        "stop_rows": 64,
+        "split_record_sha256": "dd0c8ffaadd66cbdf5deb3b98a88b2e580d8ce9ded591ddc7d786bacbb4470ad"
+      }
+    },
+    "proc": {
+      "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101/source/production-adapter-v1/checks/proc-20261101T024229-23c04dbf/result.json",
+      "sha256": "0c9c5f678d9319bc5de00e517140838dafd62e5532b707afed249e9efdc5ab5d",
+      "passed": true,
+      "checks": 11
+    },
+    "waiter": {
+      "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101/source/production-adapter-v1/checks/waiter-20261101T024158-3ef9c8ea/result.json",
+      "sha256": "0014f1bcc0ed366c88588db1166fd9e82aae22979bd8366d781e6a996ff96854",
+      "passed": true,
+      "checks": 8
+    }
+  },
+  "syntax_check": {
+    "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101/operator/preflight-01/syntax-check.json",
+    "files": 20,
+    "passed": true
+  },
+  "immutable_source_check": {
+    "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101/operator/preflight-01/immutable-source-check.json",
+    "checked": 32,
+    "passed": true
+  },
+  "local_dependency_specs": {
+    "numpy": false,
+    "torch": false
+  },
+  "unverified": [
+    "full scientific helper/runner imports and NumPy numeric interfaces",
+    "real Tensor/optimizer/RNG serialization and storage_probe",
+    "actual CUDA/encoder/model execution",
+    "target Linux Landlock/strace/write scope in this run",
+    "fresh target GPU/CPU/RAM/environment availability and enforced limits",
+    "actual learning, outputs, process release and independent scientific acceptance"
+  ],
+  "future_gate": "Main reviews exact runtime manifest/layout, then issues exact one-job dispatch; no current remote authorization.",
+  "scope": "new run and cycle/operator-preflight only; reference and frozen authorities hash-unchanged; no full filesystem audit",
+  "started_at": "2026-11-01T02:27:52.857197+00:00",
+  "elapsed_seconds": 1030.728,
+  "elapsed_minutes": 17.18,
+  "deployment_binding_check": {
+    "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101/source/production-adapter-v1/checks/deployment-20261101T024403-5266636f/result.json",
+    "sha256": "42e5889faca4e0c0d64a6cea4b34d79701fd67d6177f68e8acff8e87fce8099e",
+    "passed": true,
+    "exact_files": 42
+  },
+  "report": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101/operator/preflight-01/report.md",
+  "report_sha256": "d6eaf3c4b6ff10cb7f3986a0a5033e84e07340270fb9588f97b45fb6c5c71f73"
+}

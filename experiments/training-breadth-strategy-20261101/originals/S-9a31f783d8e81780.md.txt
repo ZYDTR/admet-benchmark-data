@@ -1,0 +1,41 @@
+# Qwen 3.8 Flash：MiniMol / MoLFormer 准备
+
+用户在本聊天授权交给 mini OpenCode 的 Qwen 3.8 Flash 准备剩余两个底座。2026-10-31 已派发，当前处于准备中，尚未验收或训练。
+
+## 已派发对象
+
+| 任务 | 会话 ID | 标题 |
+| --- | --- | --- |
+| MiniMol | <PRIVATE_SESSION_OBJECT> | Qwen 3.8 Flash：MiniMol 冻结底座准备 |
+| MoLFormer | <PRIVATE_SESSION_OBJECT> | Qwen 3.8 Flash：MoLFormer 冻结底座准备 |
+
+两条均在 mini 既有 `<PRIVATE_RUNTIME_PATH> 根目录，projectID `890c641656b89e802d31560be2c399e22eab00ab`。无 parent、初始0消息，显式模型 `bailian/qwen3.8-flash`。沿用当前模型限额 context131072/output8192，没有修改模型或全局配置。不是 GLM/DeepSeek 的同提示对比实验。
+
+当前 API `<PRIVATE_SERVICE_ENDPOINT> 经既有隧道连接 mini；凭据只由主机内存读取既有私密文件，不复制进任务包。操作前读 mini 运维 Skill。`dispatch.py` 是主控一次性派发器，不要重跑。请求失败或状态不明先检查已有 ID，不重复投递。
+
+## 独立输入和输出
+
+mini 容器内任务根：`<PRIVATE_RUNTIME_PATH> 宿主对应 `<LOCAL_PRIVATE_PATH>
+
+各角色只读自己的 TASK.md/input，所有交付放各自 output。每路75项输入摘要传输一致，包含原始 train、去标签 valid/test、模板、四份原研究文档及当前准备 Skill v1.1 / policy / source-map 快照。没有提供旧模型结果、真实验证标签、精确成绩或海南凭据。
+
+目标是准备完整冻结编码器、新头训练/推理代码、缓存/行身份/模板出口、固定配置和资产/依赖清单。准备方不训练、不整批编码、不安装、不下载权重、不操作服务器；依赖/真实权重加载缺口须明示。由主控后续审核并负责真实接入和运行。当前用户授权不扩成新的训练、HPO或赛事上传。
+
+## 当前证据
+
+- `dispatch-*.json`：创建身份、零历史、模型和 HTTP204。
+- `service-check.json`：健康1.19.5、project、模型实际限额。
+- `transfer-check.json`：150个输入文件逐个SHA一致。
+- `startup-check.json`：两路busy、实际assistant模型、已完成Skill和TASK读取、无错误、children为0。task工具显式禁用。
+- `ui-project-list.txt`：桌面刷新后，Mac mini 的 context-infrastructure 列表出现两条标题。
+
+已完成一次启动及防嵌套检查，不对运行中模型发送提示或修代码，不操作其他会话。没有创建定时自动化。
+
+## 下次检查与验收
+
+通过既有 API 对上述两个会话做有界只读状态与消息检查。终态前不覆盖原件、不续写、不重派。终态后将原始消息和各自输出复制到本目录独立 originals，记录摘要并复核输入未变，保留失败尝试。主控审阅实际工具轨迹和代码，以静态及固定合成无更新测试核验生产接口、重复/空ID、无Y盲输入、缓存内容/来源/顺序和模板完整覆盖；真实模型加载未测须保留未验证状态。不能把自报完成等同可训练，也不能拿替身测试冒充真实模型接入。未获新授权不追加训练或评分。更新 status 和验收报告后再报告质量结论。
+
+
+## 2026-10-31 专用 Terra 已接管观察
+
+用户随后明确要求专用 gpt-6.1-terra Thread 承担定时观察、终态验收和回传。监控Thread：`private-role-718a07757988`；heartbeat：`opencode`，10分钟，绑定监控自身。队列入口：`../../contexts/infrastructure/opencode_terra_monitor_20261031/registry.json`（相对本目录），完整协议及启用证明在该监控目录。原文“没有创建定时自动化”描述首次派发时状态，现被本次明确授权更新。主控不再为等待这两条任务创建定时；不重复收集或代替Terra验收，收到报告再决定下一步。

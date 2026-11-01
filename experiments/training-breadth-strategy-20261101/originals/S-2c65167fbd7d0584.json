@@ -1,0 +1,102 @@
+{
+  "audit_id": "end-to-end-20261101",
+  "items": [
+    {
+      "id": "AUD-E2E-01",
+      "severity": "high",
+      "finding": "OpenCode原始best-MSE语义错误",
+      "owner": "准备模型",
+      "current_disposition": "当前训练采用主控修复版；原件失败保留",
+      "next_requirement": "已修复当前科学代码；Skill1.4模型行为未测"
+    },
+    {
+      "id": "AUD-E2E-02",
+      "severity": "medium",
+      "finding": "重复完整键测试实际因单组不可划分失败",
+      "owner": "准备模型/验收覆盖",
+      "current_disposition": "本审计生产反例复现；不得据此去重合法输入",
+      "next_requirement": "Skill1.4补目标条件与拒绝原因；后续任务验生产消费接口"
+    },
+    {
+      "id": "AUD-E2E-03",
+      "severity": "medium",
+      "finding": "测试管道退出码和原stdout标注不准确",
+      "owner": "准备模型/验收覆盖",
+      "current_disposition": "最终测试真实14pass3skip；全部失败仍在冻结消息",
+      "next_requirement": "Skill1.4逐尝试原件及真实进程退出码"
+    },
+    {
+      "id": "AUD-E2E-04",
+      "severity": "medium",
+      "finding": "输出encoder硬链接到冻结输入",
+      "owner": "准备模型",
+      "current_disposition": "未见输入字节变化；可写副本隔离不足",
+      "next_requirement": "Skill1.4普通副本及链接关系验收"
+    },
+    {
+      "id": "AUD-E2E-05",
+      "severity": "high",
+      "finding": "worker0监督125、现场stat/status缺失",
+      "owner": "训练运行包装/主控准入",
+      "current_disposition": "科学结果已独立验收，不重训",
+      "next_requirement": "未来运行实现待修复；先最小离线取证/分类/退出反例，真实分支未测"
+    },
+    {
+      "id": "AUD-E2E-06",
+      "severity": "high",
+      "finding": "Pro未充分读取、角色混淆、方案不闭合",
+      "owner": "Pro研究/主控研究准入",
+      "current_disposition": "原指南未下发；保留正确事实和候选方向",
+      "next_requirement": "证据Skill0.4.5/Prompt10已修规范，模型行为待测"
+    },
+    {
+      "id": "AUD-E2E-07",
+      "severity": "high",
+      "finding": "历史包缺22任务基线/完整就绪表",
+      "owner": "主控材料设计",
+      "current_disposition": "本次Caco2范围明确，但不能支撑全项目排名",
+      "next_requirement": "下一次广泛研究前补有出处的任务/底座/执行模型/失败及评分使用史；合成全量覆盖索引"
+    },
+    {
+      "id": "AUD-E2E-08",
+      "severity": "medium",
+      "finding": "旧checker与当次Prompt输出合同不一致",
+      "owner": "主控工具",
+      "current_disposition": "不把允许数组/附加件判为Pro违规",
+      "next_requirement": "已由0.4.5分层检查修复；新Prompt行为未实测"
+    },
+    {
+      "id": "AUD-E2E-09",
+      "severity": "medium",
+      "finding": "控制面状态过期、不同周期v2/v4易混",
+      "owner": "主控文档",
+      "current_disposition": "已更正项目索引、训练Skill与已完成资源登记",
+      "next_requirement": "旧冻结记录不改；按run+stage引用当前状态"
+    },
+    {
+      "id": "AUD-E2E-10",
+      "severity": "medium",
+      "finding": "下载事件超时误判为文件缺失",
+      "owner": "官网提交Sol",
+      "current_disposition": "用户提醒后找到已下载模板；无须再让用户提供路径",
+      "next_requirement": "提交Skill0.1.2本机已知下载位置对账"
+    },
+    {
+      "id": "AUD-E2E-11",
+      "severity": "medium",
+      "finding": "第二上传缺可归属分数且官网无唯一ID",
+      "owner": "官网提交/网站证据",
+      "current_disposition": "第一次显示46.418；第二份仍旧分数，2份未交",
+      "next_requirement": "仅用户手动任务接续；先对账，不自动重传"
+    },
+    {
+      "id": "AUD-E2E-12",
+      "severity": "medium",
+      "finding": "单头研究周转过长、通用分支未实测",
+      "owner": "主控架构",
+      "current_disposition": "真实训练21.74秒，主要耗时在准备验收及交接",
+      "next_requirement": "复用固定包装和封包工具；同缓存批次完成后研究；不削弱硬边界"
+    }
+  ],
+  "historical_issue_ids_overwritten": false
+}

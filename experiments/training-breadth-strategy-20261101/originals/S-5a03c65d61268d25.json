@@ -1,0 +1,1717 @@
+{
+  "schema_version": "admet-research-review/1.0",
+  "request_id": "admet-public-repo-pro-20261031-001",
+  "round_id": "public-repo-round001",
+  "packet_version": 2,
+  "manifest_sha256": "dbdec244caa8ddb106721877cf93625c1957b9184985c07b1cf751eed5d70505",
+  "source_commit": "eaec280cf142839597fe75ce748cd2b9a8a897d4",
+  "authorization": "proposal_only",
+  "asset_catalog": {
+    "CHEM": {
+      "encoder": "CheMeleon/Zenodo15460715/chemeleon_mp.pt",
+      "sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "encoder_adapter_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+      "software": "Chemprop2.2.1; runtime RDKit2024.09.6; torch2.6.0+cu124; numpy1.26.4",
+      "state": "observed_two_completed_runs; new_adapter_not_implemented"
+    },
+    "CACHE_A": {
+      "feature": "A raw MeanAggregation fingerprint,2048,float32; original row order",
+      "train_sha256": "a31fe5a951221d2633e2c0fa94f38e86a80139a2aa21b74e0c977353e6ea6aad",
+      "valid_sha256": "500466c0cce64dd84d58f0e6b6ade174c8b7c905f6b7f532bef46b4c7a670a39",
+      "test_sha256": "caad4ea14d97ff6ad8a4506b7b5c14c639fed02e4f3db53cceed302e49b4cc9f",
+      "state": "observed_read_only; controller acceptance for reuse pending"
+    },
+    "MINI": {
+      "encoder": "MiniMol v1",
+      "code_commit": "41642328affbb35e4950b7b7a9020aa95919b503",
+      "weight_path": "minimol/ckpts/minimol_v1/state_dict.pth",
+      "local_weight_sha256": null,
+      "feature": "gnn:15/global_max_pool/512; verify exact configured architecture",
+      "state": "idle_incomplete; complete loading/license/row coverage pending"
+    },
+    "MOL": {
+      "encoder": "ibm-research/MoLFormer-XL-both-10pct",
+      "revision": "361063d0ad524ef77cf39b08469f6be770dc550f",
+      "local_weight_sha256": null,
+      "feature": "768/pooler_output; tokenizer,custom code and deterministic_eval=true must be pinned",
+      "state": "idle_incomplete; no inference acceptance"
+    },
+    "UNI2": {
+      "encoder": "dptech/Uni-Mol2/84M",
+      "revision": "bf37d253c0f5ac61f468137eb00059978a104ff0",
+      "local_weight_sha256": null,
+      "state": "conditional; conformers/crop/fallback/software revision pending"
+    },
+    "TFM26": {
+      "encoder": "CHEM plus TabPFN2.6",
+      "weight_revision": null,
+      "local_weight_sha256": null,
+      "state": "blocked exact2.6 asset/license/context/competition-training qualification; v2 metadata is not2.6"
+    },
+    "KPGT": {
+      "encoder": "KPGT",
+      "code_commit": "47dc1646c70b2138a157de481d24a1ac35d174cd",
+      "weight_source": "https://figshare.com/s/d488f30c23946cf6898f",
+      "local_weight_sha256": null,
+      "state": "conditional; auxiliary fitted CDF and weight identity pending"
+    },
+    "SMITED": {
+      "encoder": "ibm-research/materials.smi-ted",
+      "revision": "414c3ea0a8603ef49d1c5bb3db336e09877c01ce",
+      "local_weight_sha256": null,
+      "state": "conditional; exact variant/tokenizer/pooling/resources pending"
+    },
+    "MOLE": {
+      "encoder": "MolE",
+      "code_commit": "dd56d319103e973fde0dcaa3537cb36a7b7a9843",
+      "local_weight_sha256": null,
+      "state": "deferred; checkpoint publication chain incomplete"
+    },
+    "CLASSIC": {
+      "encoder": "none",
+      "feature": "RDKit2024.09.6 explicit Morgan/descriptor specification; no external fitted descriptors",
+      "state": "specification_only"
+    },
+    "SCRATCH": {
+      "encoder": "new randomly initialized Chemprop2.2.1 D-MPNN",
+      "feature": "same original SMILES graph contract",
+      "state": "specification_only; all trainable parameters are new, not thawed external weights"
+    }
+  },
+  "scope_definition": "All counts are proposed future work, never authorization. Current training/HPO/inference/install/score budget=0. No external labels, truth reconstruction, test fitting or row/label modification.",
+  "counting_policy": "Count unique full config excluding seed separately from fits. Deduplicate only identical data/cache/split/implementation/config/seed hashes. Historic A/B are not new matched controls. Directions are conditional menus; do not sum them or Cartesian-product them.",
+  "effect_threshold_policy": {
+    "minimum_meaningful_MAE_delta": null,
+    "reason": "matched-run noise and biological/business meaning not established",
+    "decision": "predeclare paired direction and protocol; estimate algorithm variation from matched seeds; unknown sample/generalization uncertainty remains explicit"
+  },
+  "directions": [
+    {
+      "direction_id": "D01",
+      "linked_issues": [
+        "AR001-04",
+        "AR001-08"
+      ],
+      "rationale": "已保存稀疏激活经z标准化产生极值；先检验数值处理而非盲目换模型",
+      "evidence_refs": [
+        "SCALE",
+        "IMPL_A",
+        "TFM"
+      ],
+      "counterevidence": "高z没有残差证明；截断可能丢有效信号；换scale也改变优化几何",
+      "candidate_models_or_modules": [
+        "CHEM + same new MLP"
+      ],
+      "parameters": [
+        {
+          "name": "preprocess",
+          "type": "categorical",
+          "values": [
+            "legacy_z",
+            "raw",
+            "center_only",
+            "row_L2",
+            "z_clip6",
+            "z_clip10",
+            "z_sd_floor_q05"
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "std_definition",
+          "type": "categorical",
+          "values": [
+            "population,inner-fit,float32 as legacy"
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "floor_quantile",
+          "type": "float",
+          "values": [
+            0.05
+          ],
+          "scale": "discrete"
+        }
+      ],
+      "combination_constraints": [
+        "首批只legacy_z/raw/z_clip6/z_sd_floor_q05四项",
+        "q05来自inner-fit真实正std分布，零方差维保持deterministic fallback；不把已替换的1混进分位统计",
+        "clip6来自TFM方法先例，clip10/q05是探索候选，均非效果阈值",
+        "当前任一blind/test分布不用于拟合或选阈值",
+        "floor精确定义: sigma为inner-fit总体std；q=np.quantile(sigma[sigma>=1e-8],.05,method=\"linear\")；空集合q=1；sigma<1e-8时denom=1，否则denom=max(sigma,q)。保持raw feature与Y不变。"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": 7,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "fits": 21,
+        "first_batch_subset_fits": 12,
+        "approved_now": 0
+      },
+      "cost_assumptions": "H；主控准入原始cache后无新增编码",
+      "readiness": "可立即准备；无性能验收",
+      "priority": "P1",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D02",
+      "linked_issues": [
+        "AR001-02",
+        "AR001-06",
+        "AR001-13"
+      ],
+      "rationale": "637训练行上头参数量较多，但尚未证实容量过大",
+      "evidence_refs": [
+        "CURVE",
+        "IMPL_A",
+        "IMPL_B"
+      ],
+      "counterevidence": "在线train loss与eval loss不可直接比；小头也可能欠拟合",
+      "candidate_models_or_modules": [
+        "linear",
+        "MLP"
+      ],
+      "parameters": [
+        {
+          "name": "hidden_dims",
+          "type": "categorical",
+          "values": [
+            [],
+            [
+              64
+            ],
+            [
+              128
+            ],
+            [
+              256
+            ],
+            [
+              512
+            ],
+            [
+              256,
+              64
+            ]
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "activation",
+          "type": "categorical",
+          "values": [
+            "ReLU"
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "dropout",
+          "type": "float",
+          "values": [
+            0.1
+          ],
+          "scale": "discrete"
+        }
+      ],
+      "combination_constraints": [
+        "linear关闭dropout且标诊断，不单独声称满足深度模型要求",
+        "固定其余优化/scale/seed/stop；深度和容量作为架构整体因素",
+        "单层参数数为h*(d+2)+1；d=2048时512为1049601、256为524801"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": 6,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "fits": 18,
+        "approved_now": 0
+      },
+      "cost_assumptions": "H；主控准入原始cache后无新增编码",
+      "readiness": "配置构造器待准备",
+      "priority": "P2",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D03",
+      "linked_issues": [
+        "AR001-02",
+        "AR001-06"
+      ],
+      "rationale": "解开现有同时变化的width与LR",
+      "evidence_refs": [
+        "IMPL_A",
+        "IMPL_B",
+        "CURVE"
+      ],
+      "counterevidence": "历史两分数无法提供两个因素的因果方向",
+      "candidate_models_or_modules": [
+        "MLP"
+      ],
+      "parameters": [
+        {
+          "name": "hidden_dims",
+          "type": "categorical",
+          "values": [
+            [
+              256
+            ],
+            [
+              512
+            ]
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "lr",
+          "type": "float",
+          "values": [
+            0.0005,
+            0.001
+          ],
+          "scale": "log-discrete"
+        }
+      ],
+      "combination_constraints": [
+        "仅改变本方向声明因素；其余使用C0或已锁定C*",
+        "变换只fit当前inner-fit，原行原Y和官方分区不变",
+        "不与全部其他空间交叉"
+      ],
+      "search_method": "2x2有限因子设计；共同seed；不把旧两run冒充新矩阵中的匹配单元",
+      "configuration_count_or_counting_rule": 4,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "fits": 12,
+        "approved_now": 0
+      },
+      "cost_assumptions": "H；主控准入原始cache后无新增编码",
+      "readiness": "公共模板后可准备",
+      "priority": "P2",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D04",
+      "linked_issues": [
+        "AR001-02",
+        "AR001-07"
+      ],
+      "rationale": "检查容量以外的常规正则",
+      "evidence_refs": [
+        "CURVE",
+        "IMPL_A"
+      ],
+      "counterevidence": "无证据说更强正则必好；可能损害表示信号",
+      "candidate_models_or_modules": [
+        "MLP"
+      ],
+      "parameters": [
+        {
+          "name": "dropout",
+          "type": "float",
+          "values": [
+            0.0,
+            0.1,
+            0.3
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "weight_decay",
+          "type": "float",
+          "values": [
+            0.0,
+            1e-05,
+            0.0001,
+            0.001
+          ],
+          "scale": "log-discrete including zero"
+        }
+      ],
+      "combination_constraints": [
+        "用真实AdamW；不改成Adam",
+        "单轴筛选6项，不做3x4全交叉；bias decay规则保持一致并记录"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": {
+        "count": 6,
+        "rule": "3 dropout @wd=1e-4 +4 wd @dropout=.1 -1 shared control"
+      },
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "fits": 18,
+        "approved_now": 0
+      },
+      "cost_assumptions": "H；主控准入原始cache后无新增编码",
+      "readiness": "可准备",
+      "priority": "P2",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D05",
+      "linked_issues": [
+        "AR001-05",
+        "U01"
+      ],
+      "rationale": "直接目标是MAE；MSE代理未必最佳",
+      "evidence_refs": [
+        "SCORE",
+        "IMPL_A",
+        "IMPL_B"
+      ],
+      "counterevidence": "MSE可更平滑；Huber/MAE未在本数据实测",
+      "candidate_models_or_modules": [
+        "MLP"
+      ],
+      "parameters": [
+        {
+          "name": "loss",
+          "type": "categorical",
+          "values": [
+            "MSE",
+            "L1",
+            "Huber_delta_0.5",
+            "Huber_delta_1",
+            "Huber_delta_2"
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "target_transform",
+          "type": "categorical",
+          "values": [
+            "inner-fit affine z only"
+          ],
+          "scale": "discrete"
+        }
+      ],
+      "combination_constraints": [
+        "统一raw-Y MAE选择器；只改loss",
+        "Huber使用torch.nn.HuberLoss(mean)，delta为标准化Y单位，不混SmoothL1缩放",
+        "不再log Y、不裁剪Y、不用生物物理界限；记录delta*train_sd对应的原数值单位"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": 5,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "fits": 15,
+        "approved_now": 0
+      },
+      "cost_assumptions": "H；主控准入原始cache后无新增编码",
+      "readiness": "loss/monitor分离后可准备",
+      "priority": "P2",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D06",
+      "linked_issues": [
+        "AR001-05",
+        "AR001-07"
+      ],
+      "rationale": "内部选择指标与任务指标对齐的收益可单独验证",
+      "evidence_refs": [
+        "CURVE",
+        "SCORE",
+        "IMPL_A"
+      ],
+      "counterevidence": "历史没有epoch预测/各epoch状态，无法事后找MAE最佳epoch",
+      "candidate_models_or_modules": [
+        "same MSE-trained MLP"
+      ],
+      "parameters": [
+        {
+          "name": "monitor",
+          "type": "categorical",
+          "values": [
+            "internal_standardized_MSE",
+            "internal_raw_Y_MAE"
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "max_epochs",
+          "type": "integer",
+          "values": [
+            50
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "patience",
+          "type": "integer",
+          "values": [
+            8
+          ],
+          "scale": "discrete"
+        }
+      ],
+      "combination_constraints": [
+        "loss/optimizer/scale/seed不变，分别执行两种monitor的前瞻轨迹",
+        "若另用一个固定轨迹双selector，记1训练/2候选政策，另立协议，不能算两次独立重复"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": 2,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "fits": 6,
+        "approved_now": 0
+      },
+      "cost_assumptions": "H；主控准入原始cache后无新增编码",
+      "readiness": "选择/记录模块待准备",
+      "priority": "P1",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D07",
+      "linked_issues": [
+        "AR001-05",
+        "AR001-07"
+      ],
+      "rationale": "当前停止best+8成立，但未证明patience和epoch预算最佳",
+      "evidence_refs": [
+        "CURVE"
+      ],
+      "counterevidence": "延长可能仅更贴合64行内部集，增加选择过拟合",
+      "candidate_models_or_modules": [
+        "MLP"
+      ],
+      "parameters": [
+        {
+          "name": "epoch_patience_profiles",
+          "type": "categorical",
+          "values": [
+            [
+              50,
+              8
+            ],
+            [
+              50,
+              16
+            ],
+            [
+              100,
+              16
+            ]
+          ],
+          "scale": "discrete"
+        }
+      ],
+      "combination_constraints": [
+        "固定monitor及loss，min_delta=0或数值比较约定先锁定；旧1e-7只属旧MSE实现",
+        "更长训练是成本变化，不宣称等计算预算"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": 3,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "fits": 9,
+        "approved_now": 0
+      },
+      "cost_assumptions": "H；主控准入原始cache后无新增编码",
+      "readiness": "依赖稳定monitor",
+      "priority": "P3",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D08",
+      "linked_issues": [
+        "AR001-02",
+        "AR001-06"
+      ],
+      "rationale": "现有LR仅两点且混杂，需有限优化检查",
+      "evidence_refs": [
+        "IMPL_A",
+        "IMPL_B"
+      ],
+      "counterevidence": "高梯度L1是跨全部参数总和，无逐batch证据证明爆炸",
+      "candidate_models_or_modules": [
+        "AdamW",
+        "SGD momentum"
+      ],
+      "parameters": [
+        {
+          "name": "optimizer_lr_profiles",
+          "type": "categorical",
+          "values": [
+            [
+              "AdamW",
+              0.0001
+            ],
+            [
+              "AdamW",
+              0.0003
+            ],
+            [
+              "AdamW",
+              0.0005
+            ],
+            [
+              "AdamW",
+              0.001
+            ],
+            [
+              "AdamW",
+              0.003
+            ],
+            [
+              "SGD_momentum_0.9",
+              0.01
+            ],
+            [
+              "SGD_momentum_0.9",
+              0.03
+            ]
+          ],
+          "scale": "discrete"
+        }
+      ],
+      "combination_constraints": [
+        "AdamW beta=(.9,.999),eps=1e-8与参数组版本显式固定",
+        "先3个AdamW中心点；SGD是另一优化完整方案，不由单run判优化器家族优劣"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": 7,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "fits": 21,
+        "approved_now": 0
+      },
+      "cost_assumptions": "H；主控准入原始cache后无新增编码",
+      "readiness": "AdamW优先；SGD储备",
+      "priority": "P2/P3",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D09",
+      "linked_issues": [
+        "AR001-07",
+        "AR001-04"
+      ],
+      "rationale": "检验批次/调度/梯度抑制是否影响稳定性",
+      "evidence_refs": [
+        "IMPL_A",
+        "CURVE"
+      ],
+      "counterevidence": "clip阈值不能从记录的全参数L1最大值直接推导",
+      "candidate_models_or_modules": [
+        "MLP optimizer controls"
+      ],
+      "parameters": [
+        {
+          "name": "batch_size",
+          "type": "integer",
+          "values": [
+            32,
+            64,
+            128,
+            256
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "schedule",
+          "type": "categorical",
+          "values": [
+            "constant",
+            "cosine",
+            "warmup5_cosine"
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "clip_global_L2",
+          "type": "nullable_float",
+          "values": [
+            null,
+            1.0,
+            5.0
+          ],
+          "scale": "discrete"
+        }
+      ],
+      "combination_constraints": [
+        "逐轴改，非4x3x3；baseline=batch128/constant/no_clip",
+        "batch对照先固定epoch预算，步数变化须报告；需要等更新预算时另立对照",
+        "warmup5是候选设计，不是已证明最优；记录clip发生比例"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": {
+        "count": 8,
+        "rule": "4 batch +3 schedule +3 clipping -2 duplicate base"
+      },
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "fits": 24,
+        "approved_now": 0
+      },
+      "cost_assumptions": "H；主控准入原始cache后无新增编码",
+      "readiness": "储备；需per-step日志",
+      "priority": "P3",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D10",
+      "linked_issues": [
+        "AR001-04",
+        "AR001-13"
+      ],
+      "rationale": "2048维高维稀疏表征可用train-fit降维作诊断",
+      "evidence_refs": [
+        "SCALE",
+        "RESEARCH"
+      ],
+      "counterevidence": "PCA可能删低方差但有用的方向，whitening会再放大稀有方向",
+      "candidate_models_or_modules": [
+        "PCA + linear head"
+      ],
+      "parameters": [
+        {
+          "name": "n_components",
+          "type": "nullable_integer",
+          "values": [
+            null,
+            32,
+            64,
+            128
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "whiten",
+          "type": "boolean",
+          "values": [
+            false
+          ],
+          "scale": "discrete"
+        }
+      ],
+      "combination_constraints": [
+        "PCA仅inner-fit；按split缓存，不跨outer-fold共享",
+        "控制为同特征/同小头无PCA；不将外部预拟合PCA带入",
+        "PCA svd_solver=full；仅inner-fit求PCA均值并中心化；同fold确定性transform跨head seed共用，改变solver/RNG另登记。"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": 4,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "deterministic_PCA_fits": 3,
+        "head_fits": 12,
+        "approved_now": 0
+      },
+      "cost_assumptions": "H；主控准入原始cache后无新增编码",
+      "readiness": "仅准备，transform来源须登记",
+      "priority": "P3",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D11",
+      "linked_issues": [
+        "AR001-06",
+        "AR001-13",
+        "U02"
+      ],
+      "rationale": "新模块可以研究非线性与容量控制，但须区别普通MLP等价重复",
+      "evidence_refs": [
+        "IMPL_A",
+        "RESEARCH"
+      ],
+      "counterevidence": "更复杂头未必适合小样本；LoRA/骨干内adapter不自动获准",
+      "candidate_models_or_modules": [
+        "external residual bottleneck head"
+      ],
+      "parameters": [
+        {
+          "name": "module_profiles",
+          "type": "categorical",
+          "values": [
+            {
+              "bottleneck": 64,
+              "blocks": 1,
+              "LayerNorm": true
+            },
+            {
+              "bottleneck": 128,
+              "blocks": 1,
+              "LayerNorm": true
+            },
+            {
+              "bottleneck": 128,
+              "blocks": 2,
+              "LayerNorm": true
+            }
+          ],
+          "scale": "discrete"
+        }
+      ],
+      "combination_constraints": [
+        "新模块置于冻结向量之后；外部参数与所有buffer不变",
+        "仅比较不同的实际计算图，等价MLP不重复计为新方向",
+        "对照参数量/训练预算同时披露"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": 3,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "fits": 9,
+        "approved_now": 0
+      },
+      "cost_assumptions": "H；主控准入原始cache后无新增编码",
+      "readiness": "只允许外置新模块规格，待计划登记",
+      "priority": "P3",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D12",
+      "linked_issues": [
+        "AR001-08",
+        "AR001-13"
+      ],
+      "rationale": "mean pooling可能丢分子规模信息，需确认聚合语义再比较",
+      "evidence_refs": [
+        "FREEZE",
+        "RESEARCH"
+      ],
+      "counterevidence": "pooling改变维度/尺度/头参数量，不能只归因几何优劣",
+      "candidate_models_or_modules": [
+        "CheMeleon mean",
+        "mean+log1p(atom_count)",
+        "sum"
+      ],
+      "parameters": [
+        {
+          "name": "pooling",
+          "type": "categorical",
+          "values": [
+            "author_mean",
+            "mean_plus_atom_count",
+            "sum"
+          ],
+          "scale": "discrete"
+        }
+      ],
+      "combination_constraints": [
+        "严禁改变checkpoint原子编码/权重；新增聚合与cache版本另登记",
+        "是否可由mean*atom_count得到sum须核源码，不从名字猜",
+        "不把MiniMol maxpool与MoLFormer pooler随意套同一实现"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": 3,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "fits": 9,
+        "additional_feature_jobs": "0 only if exact aggregation equivalence and atom counts verified; otherwise new frozen encoding required",
+        "approved_now": 0
+      },
+      "cost_assumptions": "H plus atom-count or node-feature preparation; zero new encoder jobs only after exact aggregation equivalence and existing-cache coverage are verified, otherwise separately budget new frozen encoding",
+      "readiness": "节点/计数接口待补",
+      "priority": "P3",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D13",
+      "linked_issues": [
+        "AR001-13",
+        "U02"
+      ],
+      "rationale": "必要低复杂度/无外部学习特征对照，避免把head成功误当预训练必要",
+      "evidence_refs": [
+        "RESEARCH",
+        "DATA"
+      ],
+      "counterevidence": "经典模型单独参赛的深度训练资格需主控确认；当前均未实测",
+      "candidate_models_or_modules": [
+        "train median/mean",
+        "Morgan+Ridge",
+        "RDKit descriptors+RF",
+        "Morgan+MLP64"
+      ],
+      "parameters": [
+        {
+          "name": "constant",
+          "type": "categorical",
+          "values": [
+            "median",
+            "mean"
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "Morgan_radius",
+          "type": "integer",
+          "values": [
+            2,
+            3
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "bits",
+          "type": "integer",
+          "values": [
+            2048
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "useChirality",
+          "type": "boolean",
+          "values": [
+            true
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "ridge_alpha",
+          "type": "float",
+          "values": [
+            0.1,
+            1,
+            10,
+            100
+          ],
+          "scale": "log-discrete"
+        },
+        {
+          "name": "RF_leaf",
+          "type": "integer",
+          "values": [
+            1,
+            5
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "RF_trees",
+          "type": "integer",
+          "values": [
+            500
+          ],
+          "scale": "discrete"
+        }
+      ],
+      "combination_constraints": [
+        "禁止直接调用外部TDC loader；descriptor字段及版本固定，不用外部拟合CDF",
+        "Ridge固定split时确定性，不虚增3seed；RF/MLP各3seed",
+        "首批只median、r2 Ridge alpha1、r2 MLP64三配置，2+3=5 fits",
+        "Ridge固定sum(e²)+alpha||w||²、fit_intercept=true且不惩罚intercept；Morgan原binary位向量不feature-z；target fit-z并逆变换。"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": {
+        "count": 14,
+        "rule": "2 constant +2 radius*4 ridge +2 descriptor RF +2 radius*1 MLP"
+      },
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "deterministic_fits": 10,
+        "stochastic_fits": 12,
+        "total_fits": 22,
+        "approved_now": 0
+      },
+      "cost_assumptions": "CPU feature + deterministic baseline fits + six RF/six MLP stochastic fits; no pretrained download",
+      "readiness": "接口/明确descriptor列表待准备",
+      "priority": "P1/P2",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D14",
+      "linked_issues": [
+        "AR001-10",
+        "AR001-13"
+      ],
+      "rationale": "MiniMol的冻结fingerprint+新头协议贴近本轮，可补不同预训练信号",
+      "evidence_refs": [
+        "MINI",
+        "ASSETS"
+      ],
+      "counterevidence": "论文预算含搜索/集成；当前资产/完整load/license未验收",
+      "candidate_models_or_modules": [
+        "MINI + linear",
+        "MINI + MLP128"
+      ],
+      "parameters": [
+        {
+          "name": "head",
+          "type": "categorical",
+          "values": [
+            "linear",
+            "MLP128"
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "pooling",
+          "type": "categorical",
+          "values": [
+            "gnn15_global_max"
+          ],
+          "scale": "discrete"
+        }
+      ],
+      "combination_constraints": [
+        "严格记录missing/unexpected keys，禁止遗漏参数随机初始化后冒称预训练",
+        "不执行原benchmark runner，不读其test.Y",
+        "同预算CHEM相同两head控制；同宽不同参数量需披露"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": 2,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "head_fits": 6,
+        "matched_CHEM_control_fits_if_absent": 6,
+        "new_feature_families": 1,
+        "approved_now": 0
+      },
+      "cost_assumptions": "asset admission + one frozen encoding family + H fits",
+      "readiness": "idle_incomplete；依赖待补",
+      "priority": "P2",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D15",
+      "linked_issues": [
+        "AR001-10",
+        "AR001-13"
+      ],
+      "rationale": "公开序列表示可能有不同增量",
+      "evidence_refs": [
+        "MOL",
+        "ASSETS"
+      ],
+      "counterevidence": "full-XL微调成绩不能代表10pct冻结；token/立体信息限制未测",
+      "candidate_models_or_modules": [
+        "MOL + linear",
+        "MOL + MLP128"
+      ],
+      "parameters": [
+        {
+          "name": "head",
+          "type": "categorical",
+          "values": [
+            "linear",
+            "MLP128"
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "deterministic_eval",
+          "type": "boolean",
+          "values": [
+            true
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "pooling",
+          "type": "categorical",
+          "values": [
+            "author_pooler_output"
+          ],
+          "scale": "discrete"
+        }
+      ],
+      "combination_constraints": [
+        "固定revision/tokenizer/custom code；不允许静默truncation/去立体/去盐",
+        "pooler与masked mean是否等价须读实现；未核前不算两个候选",
+        "max202 tokens与原子/字符数分别检查；eval不替代随机性实测"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": 2,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "head_fits": 6,
+        "matched_CHEM_control_fits_if_absent": 6,
+        "new_feature_families": 1,
+        "approved_now": 0
+      },
+      "cost_assumptions": "tokenizer/custom-code audit + new frozen encoding family + H",
+      "readiness": "idle_incomplete；依赖待补",
+      "priority": "P2",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D16",
+      "linked_issues": [
+        "AR001-13"
+      ],
+      "rationale": "需要检测目标任务自身学习表示与冻结限制的取舍",
+      "evidence_refs": [
+        "RESEARCH",
+        "DATA"
+      ],
+      "counterevidence": "637行可能不足，欠收敛不等于该架构无效",
+      "candidate_models_or_modules": [
+        "SCRATCH D-MPNN"
+      ],
+      "parameters": [
+        {
+          "name": "hidden",
+          "type": "integer",
+          "values": [
+            128,
+            256
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "depth",
+          "type": "integer",
+          "values": [
+            2,
+            3
+          ],
+          "scale": "discrete"
+        }
+      ],
+      "combination_constraints": [
+        "全新随机参数，仅official train.Y；无外部权重更新",
+        "与冻结路线按完整方案报告，不声称只改head或等GPU成本"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": 4,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "fits": 12,
+        "approved_now": 0
+      },
+      "cost_assumptions": "G: full newly initialized GNN training; not equivalent to cached-head cost",
+      "readiness": "新adapter待准备",
+      "priority": "P2",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D17",
+      "linked_issues": [
+        "AR001-10",
+        "AR001-13"
+      ],
+      "rationale": "已获准冻结表示可能互补，先有可比较单分支",
+      "evidence_refs": [
+        "PRED",
+        "RESEARCH"
+      ],
+      "counterevidence": "预测相关性不等于残差互补；concat增加参数",
+      "candidate_models_or_modules": [
+        "CHEM+MINI concat",
+        "CHEM+MOL concat"
+      ],
+      "parameters": [
+        {
+          "name": "branches",
+          "type": "categorical",
+          "values": [
+            [
+              "CHEM",
+              "MINI"
+            ],
+            [
+              "CHEM",
+              "MOL"
+            ]
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "head",
+          "type": "categorical",
+          "values": [
+            "MLP64"
+          ],
+          "scale": "discrete"
+        }
+      ],
+      "combination_constraints": [
+        "branch transforms仅inner-fit；禁教师伪标签",
+        "若用stacking另需train-only OOF；本方向只concat，勿混称两者",
+        "保留单分支控制和参数量记录"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": 2,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "fits": 6,
+        "component_controls_must_exist": true,
+        "approved_now": 0,
+        "control_fits_if_absent": 9
+      },
+      "cost_assumptions": "H；主控准入原始cache后无新增编码",
+      "readiness": "依赖两个ready表示及公平单分支",
+      "priority": "P3",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D18",
+      "linked_issues": [
+        "AR001-09",
+        "AR001-12"
+      ],
+      "rationale": "等权集成可测试训练随机性或表示互补，不用valid搜权重",
+      "evidence_refs": [
+        "PRED",
+        "SCORE",
+        "RESEARCH"
+      ],
+      "counterevidence": "现有预测相关性无法证明组合MAE；本轮不生成/评分新组合",
+      "candidate_models_or_modules": [
+        "3seed mean",
+        "3seed median",
+        "2representation equal mean"
+      ],
+      "parameters": [
+        {
+          "name": "aggregation",
+          "type": "categorical",
+          "values": [
+            "mean3seeds",
+            "median3seeds",
+            "mean2representations"
+          ],
+          "scale": "discrete"
+        }
+      ],
+      "combination_constraints": [
+        "权重事先固定；不根据本批signed_mean_error做offset校准",
+        "不得把当前已公布聚合反推出新ensemble成绩",
+        "失败成员不得混入有效集合"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": 3,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "additional_fits_if_members_exist": 0,
+        "new_prediction_artifacts": 3,
+        "new_scoring_calls": "separately authorized only",
+        "approved_now": 0
+      },
+      "cost_assumptions": "aggregation is not free authorization; member fits counted in their directions",
+      "readiness": "依赖匹配成员预测与主控授权",
+      "priority": "P3",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D19",
+      "linked_issues": [
+        "AR001-10",
+        "U02"
+      ],
+      "rationale": "几何表征是有依据的不同信息源，但接入成本高",
+      "evidence_refs": [
+        "RESEARCH",
+        "ASSETS"
+      ],
+      "counterevidence": "本Caco2覆盖/构象重复性未测，历史22任务异常不能移植",
+      "candidate_models_or_modules": [
+        "UNI2 84M + MLP128"
+      ],
+      "parameters": [
+        {
+          "name": "num_conformers",
+          "type": "integer",
+          "values": [
+            1,
+            3
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "conformer_pooling",
+          "type": "categorical",
+          "values": [
+            "mean"
+          ],
+          "scale": "discrete"
+        }
+      ],
+      "combination_constraints": [
+        "只派生同一原行的表示，不增加监督样本/标签；需主控接受此预处理方案",
+        "固定conformer seed和crop/fallback；原行完整保留",
+        "不得因eval就写确定性通过"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": 2,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "head_fits": 6,
+        "encoding_work": "1 or3 conformers per molecule; cost separate",
+        "approved_now": 0,
+        "control_fits_if_absent": 3
+      },
+      "cost_assumptions": "3D generation + frozen encoding + H; no credible hour estimate",
+      "readiness": "条件储备；构象/裁剪/软件版本未锁",
+      "priority": "P4",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D20",
+      "linked_issues": [
+        "AR001-10",
+        "U02"
+      ],
+      "rationale": "TFM前作表明预测器选择也值得研究",
+      "evidence_refs": [
+        "TFM",
+        "ASSETS"
+      ],
+      "counterevidence": "具体2.6资产未闭合，调用fit不是新梯度训练",
+      "candidate_models_or_modules": [
+        "CHEM + TFM26"
+      ],
+      "parameters": [
+        {
+          "name": "n_estimators",
+          "type": "integer",
+          "values": [
+            1,
+            8
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "preprocess",
+          "type": "categorical",
+          "values": [
+            "train_z_clip6"
+          ],
+          "scale": "discrete"
+        }
+      ],
+      "combination_constraints": [
+        "不得换v2/3.5后借用2.6论文身份",
+        "仅本fold train.Y作context；不test-fit任何scaler",
+        "独立确认是否需另一个新训练深度模块满足赛事交付"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": 2,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "gradient_training_fits": 0,
+        "context_prediction_jobs": 6,
+        "approved_now": 0,
+        "control_gradient_fits_if_absent": 3
+      },
+      "cost_assumptions": "TFM context compute and feature subsampling; memory not inferred from checkpoint size",
+      "readiness": "条件储备；权重/许可/上下文/资格待补",
+      "priority": "P4",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D21",
+      "linked_issues": [
+        "AR001-10",
+        "U02"
+      ],
+      "rationale": "KPGT提供不同冻结图预训练，但辅助特征也构成资产",
+      "evidence_refs": [
+        "RESEARCH",
+        "ASSETS"
+      ],
+      "counterevidence": "预拟合CDF未自动被冻结许可涵盖",
+      "candidate_models_or_modules": [
+        "KPGT + linear",
+        "KPGT + MLP128"
+      ],
+      "parameters": [
+        {
+          "name": "head",
+          "type": "categorical",
+          "values": [
+            "linear",
+            "MLP128"
+          ],
+          "scale": "discrete"
+        }
+      ],
+      "combination_constraints": [
+        "核对所谓ecfp实际RDKFingerprint；不给错特征定义",
+        "所有外部拟合参数逐项准入，不能默认接受或无证更换后冒称原模型"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": 2,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "fits": 6,
+        "approved_now": 0,
+        "control_fits_if_absent": 6
+      },
+      "cost_assumptions": "additional graph/auxiliary-feature environment + encoding + H",
+      "readiness": "条件储备，辅助资产未准入",
+      "priority": "P4",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D22",
+      "linked_issues": [
+        "AR001-10",
+        "U02"
+      ],
+      "rationale": "其他序列预训练目标可作后置增量假设",
+      "evidence_refs": [
+        "RESEARCH",
+        "ASSETS"
+      ],
+      "counterevidence": "具体variant与资源/输入覆盖未验收，已有序列分支未完成",
+      "candidate_models_or_modules": [
+        "SMITED + linear",
+        "SMITED + MLP128"
+      ],
+      "parameters": [
+        {
+          "name": "head",
+          "type": "categorical",
+          "values": [
+            "linear",
+            "MLP128"
+          ],
+          "scale": "discrete"
+        }
+      ],
+      "combination_constraints": [
+        "精确variant/tokenizer/层/池化与revision先锁",
+        "不根据模型大或文献胜率排序，不下载外部benchmark标签"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": 2,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "fits": 6,
+        "approved_now": 0,
+        "control_fits_if_absent": 6
+      },
+      "cost_assumptions": "approximately1.16GB publisher asset metadata, not measured VRAM; encoding+H",
+      "readiness": "条件储备；先完成MOL问题",
+      "priority": "P4",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D23",
+      "linked_issues": [
+        "AR001-10",
+        "U02"
+      ],
+      "rationale": "MolE仅在真实权重发布链闭合后成为候选",
+      "evidence_refs": [
+        "RESEARCH",
+        "ASSETS"
+      ],
+      "counterevidence": "当前代码TODO不证明性能差，但不能编造可运行asset",
+      "candidate_models_or_modules": [
+        "MOLE"
+      ],
+      "parameters": [
+        {
+          "name": "checkpoint",
+          "type": "categorical",
+          "values": [
+            "unresolved"
+          ],
+          "scale": "discrete"
+        }
+      ],
+      "combination_constraints": [
+        "仅改变本方向声明因素；其余使用C0或已锁定C*",
+        "变换只fit当前inner-fit，原行原Y和官方分区不变",
+        "不与全部其他空间交叉"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": {
+        "current_executable": 0,
+        "future_rule": "exact asset accepted then1 representation x2 heads"
+      },
+      "seeds": [],
+      "estimated_run_count": {
+        "current": 0,
+        "future_conditional_head_fits": 6,
+        "approved_now": 0
+      },
+      "cost_assumptions": "unknown before asset closure",
+      "readiness": "依赖待补，当前不排执行",
+      "priority": "P4",
+      "scope_status": "research_question_only_not_execution_ready"
+    },
+    {
+      "direction_id": "D24",
+      "linked_issues": [
+        "AR001-12",
+        "AR001-03"
+      ],
+      "rationale": "确认候选对新的train内分组留出是否稳健，并分离seed与split噪声",
+      "evidence_refs": [
+        "DATA",
+        "CURVE",
+        "RESEARCH"
+      ],
+      "counterevidence": "历史已用过全部637行，补充CV不是全新终评；3seed不增加化学覆盖",
+      "candidate_models_or_modules": [
+        "locked control",
+        "one locked challenger"
+      ],
+      "parameters": [
+        {
+          "name": "outer_group_folds",
+          "type": "integer",
+          "values": [
+            3
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "inner_stop_fraction",
+          "type": "float",
+          "values": [
+            0.1
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "head_seed",
+          "type": "integer",
+          "values": [
+            42,
+            43,
+            44
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "grouping_family",
+          "type": "categorical",
+          "values": [
+            "canonical_isomeric",
+            "Murcko_nonempty_else_canonical"
+          ],
+          "scale": "discrete"
+        }
+      ],
+      "combination_constraints": [
+        "外层组只取official train；内层决定epoch，outer标签不参与本fold任何选模",
+        "保留全部原行，不平均冲突Y；empty scaffold不能全并成一族",
+        "先完成全候选锁定再一次性取outer评价；只能作补充稳健性，final hidden generalization remains unknown"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": {
+        "model_configurations": 2,
+        "partition_families": 2,
+        "rule": "2 configs x2 partition families x3 outer folds x3 common seeds"
+      },
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "full_menu_fits": 36,
+        "first_confirmation_canonical_only": 18,
+        "optional_scaffold_confirmation": 18,
+        "approved_now": 0
+      },
+      "cost_assumptions": "18 H fits if only heads; outer fold transformation artifacts separate",
+      "readiness": "候选锁定、外层评价隔离后准备",
+      "priority": "P2 confirmation",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D25",
+      "linked_issues": [
+        "AR001-04",
+        "AR001-02"
+      ],
+      "rationale": "scale改变梯度几何；单LR下不佳不能否定表示信息",
+      "evidence_refs": [
+        "SCALE",
+        "IMPL_A"
+      ],
+      "counterevidence": "额外调参可能仅追逐噪声，须限制为一个预定配套检查",
+      "candidate_models_or_modules": [
+        "two preprocessing policies x AdamW LR"
+      ],
+      "parameters": [
+        {
+          "name": "policies",
+          "type": "categorical",
+          "values": [
+            "legacy_z",
+            "one challenger fixed after P01"
+          ],
+          "scale": "discrete"
+        },
+        {
+          "name": "lr",
+          "type": "float",
+          "values": [
+            0.0003,
+            0.001
+          ],
+          "scale": "log-discrete"
+        }
+      ],
+      "combination_constraints": [
+        "至多两个scale x两个LR，预先锁定本菜单，不扩全空间",
+        "若不同LR翻转排名，归因限定为完整preprocess+optimizer组合",
+        "与P01相同hash的单元可去重，不能仅凭配置名字复用"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": 4,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "fits": 12,
+        "approved_now": 0
+      },
+      "cost_assumptions": "H；主控准入原始cache后无新增编码",
+      "readiness": "P01结果触发的条件检查",
+      "priority": "P2",
+      "scope_status": "proposal_only"
+    },
+    {
+      "direction_id": "D26",
+      "linked_issues": [
+        "AR001-05",
+        "U01"
+      ],
+      "rationale": "只比较数值目标参数化，保持原始Y语义不变",
+      "evidence_refs": [
+        "IMPL_A",
+        "SCALE"
+      ],
+      "counterevidence": "当前逆变换无错误；此方向未证瓶颈，变化会改变优化/正则相对强度",
+      "candidate_models_or_modules": [
+        "new head with reversible target affine transform"
+      ],
+      "parameters": [
+        {
+          "name": "target_transform",
+          "type": "categorical",
+          "values": [
+            "fit_mean_std_z",
+            "fit_mean_center_only"
+          ],
+          "scale": "discrete"
+        }
+      ],
+      "combination_constraints": [
+        "只fit inner-fit；ys=fit std或1，ym=fit mean，输出仅逆变换一次",
+        "raw-Y MAE为共同monitor和评价；不能按std不同直接比较标准化loss",
+        "不log、不clip、不改变原始标签；不得归因生物单位更正确"
+      ],
+      "search_method": "S0",
+      "configuration_count_or_counting_rule": 2,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "estimated_run_count": {
+        "fits": 6,
+        "approved_now": 0
+      },
+      "cost_assumptions": "H；主控准入原始cache后无新增编码",
+      "readiness": "条件储备",
+      "priority": "P3",
+      "scope_status": "proposal_only"
+    }
+  ],
+  "excluded_spaces": [
+    "thawing external encoder parameters or buffers",
+    "teacher pseudo-labels or external target labels",
+    "test-fitted scaler/PCA/transductive training",
+    "deduplication/averaging/dropping original rows or changing Y",
+    "automatic label log/physical clipping",
+    "LoRA/backbone-internal adapters without separate boundary decision",
+    "all637 final refit without internal stopping under current execution contract",
+    "multi-task training on additional task labels not included/registered in this packet"
+  ],
+  "evidence_catalog": "review.json.reference_dictionary; analysis.md section8. All references resolve within this six-file delivery.",
+  "shared_contracts": {
+    "S0": "有限预登记离散配置；仅train内选择；完整身份相同才去重，不与其他方向全交叉",
+    "H": "缓存新头fit；新增编码/transform/匹配control另计",
+    "scope": "全部仅研究/准备建议，执行预算0；当前ready仅指可准备，非runtime验收"
+  }
+}

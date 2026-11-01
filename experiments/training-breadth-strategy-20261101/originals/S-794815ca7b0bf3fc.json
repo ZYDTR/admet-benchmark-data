@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "project": "admet-host-training",
+  "visibility": "team_private",
+  "competition_id": 159,
+  "official_rules_source": "evidence/official-contract-20261029.json",
+  "pretrained_weights": {
+    "admitted": true,
+    "must_remain_frozen": true,
+    "basis": "User reports organizer confirmation; reaffirmed in current chat on 2026-10-30. Not claimed as verbatim public rule.",
+    "runtime_checks": [
+      "requires_grad_false",
+      "eval_mode",
+      "no_grad_encoding",
+      "optimizer_excludes_encoder",
+      "state_dict_including_buffers_sha256_before_after_equal",
+      "checkpoint_file_sha256_before_after_equal",
+      "new_head_parameters_changed"
+    ]
+  },
+  "training_labels": [
+    "official_train_Y"
+  ],
+  "validation_policy": {
+    "training_execution_input": "Drug_ID,Drug only",
+    "official_valid_tuning_allowed": true,
+    "private_host_scoring": true,
+    "pilot_scoring": false,
+    "scoring_executor": "controller_or_designated_retrieval_thread",
+    "designated_retrieval_thread_id": "private-role-45108974a7af",
+    "scoring_location": "local_host_private_evaluation",
+    "scoring_implementation": "reviewed_fixed_host_scorer",
+    "scoring_task_requires_exact_task_and_prediction_identity": true,
+    "analysis_feedback": "scores_and_diagnostics_in_declared_analysis_packet",
+    "feedback_to_preparation_or_training": "technical_guidance_without_private_labels_exact_scores_or_row_residuals",
+    "authorization_basis": "User 2026-10-31 explicitly assigns valid scoring to retrieval Thread and asks Chat to analyze problems and return next-batch instructions.",
+    "historical_first_analysis_chat_id": "private-role-162611f9ee94",
+    "analysis_target_source": "per-cycle registered analysis task, exact request and Chat identity",
+    "analysis_truth_access": {
+      "mode": "declared_verified_source_only",
+      "activation_requires": [
+        "exact task/split/source SHA and row mapping",
+        "registered analysis recipient/request",
+        "evaluation_scope passed by controller"
+      ],
+      "training_or_preparation_access": false,
+      "does_not_authorize_new_publication": true,
+      "current_candidate_source": "already-public caco2_wang/valid.csv SHA63328bf307b850a4a0986165d0800bae5aa737c41bd63f1026d16114d8560bb4",
+      "basis": "User requested autonomous judgment of whether Y is useful and accepted dedicated analysis with progressive context; 2026-10-31 authorizes one fresh full cycle. Historical aggregate-only task contracts remain unchanged."
+    }
+  },
+  "excluded_current": [
+    "external_samples_or_labels",
+    "external_teacher_outputs",
+    "test_fitting",
+    "new_cleaning",
+    "official_upload"
+  ],
+  "hainan_skill": "rules/skills/hainan-compute-access/SKILL.md",
+  "hainan_write_root": "<AUTHORIZED_PROJECT_ROOT>",
+  "pilot_max_concurrent_jobs": 1,
+  "unresolved": [
+    "other_external_fitted_assets",
+    "teacher_or_test_transduction_permission",
+    "official_aggregate_metric_definition"
+  ],
+  "input_version": "official_raw_plus_label_redacted_validation",
+  "cleaned_archive_adopted": false
+}

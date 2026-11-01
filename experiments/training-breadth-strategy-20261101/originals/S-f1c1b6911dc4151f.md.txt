@@ -1,0 +1,72 @@
+# 实际实现与冻结证明审查
+
+范围：request `admet-public-repo-pro-20261031-001`，固定 commit `eaec280cf142839597fe75ce748cd2b9a8a897d4`；manifest `dbdec244caa8ddb106721877cf93625c1957b9184985c07b1cf751eed5d70505`。本次仅静态读源码、解析公开JSON/CSV、标准库解码六份已有特征NPZ并计算已有数值；未执行包内代码、pickle、torch.load、native模型、训练、推理或安装，未读任何valid/test真值，未重评分。
+
+缩写 F=`hainan-frozen-training-20261031`，S=`hainan-skill-follow-20261031`。所有路径相对此公开包，run相对路径均加 `runs/<run_id>/`。
+
+## 1. 当前实现可信范围
+
+### 1.1 冻结证据支持本次两个正式run；跨run总哈希不同不是解冻
+
+直接证据：两run `source/encoder.py:62–85` 固定大小/MD5/SHA256、`torch.load(weights_only=True)`、`BondMessagePassing` 严格加载、MeanAggregation、eval、所有包装参数requires_grad=False；`source/train_remote_v3.py` F:35–59/75–90/113–128（S相应行偏移1或2）按state_dict逐项摘要，优化器参数身份恰为4个新头张量且与编码器集合无交集；每个step断言encoder无梯度。两份 `artifacts/encoder-before.json` 与after完整11状态逐项相等（8参数、3buffer），`artifacts/optimizer-separation.json:1–9` 和 `artifacts/training-evidence.json` 的15次前向事件皆CUDA、no_grad、eval。
+
+跨run总哈希不同；独立逐项比对只有包装模型中未参与fingerprint的4个随机predictor张量不同，4个message_passing张量和3个已记录buffer均同。encoder.py:80明注unused；实际embed调用fingerprint，不调用该predictor（:124）。因此不能从总hash不同推断预训练权重变了。底座checkpoint SHA均为 `c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651`。
+
+反证：若出现message_passing/buffer改变、encoder梯度、optimizer交集、某调用以训练模式运行、资产SHA不符，应拒绝参加性能比较。当前公开材料未见此反例。边界：本次未读取外部权重或依赖实现全文、未重新执行冻结检查；state_dict证据覆盖记录中的persistent状态，不可宣称检查了任意未来模块的非持久buffer或每个时刻内存。历史独立验收是另一次真实核验记录，不能改称本次复现。
+
+### 1.2 输入、变换与行保留有一致证据
+
+源码F:24–33逐项核对原始输入SHA/行数，训练才允许Y；F:56–60按原行顺序生成特征，F:61–68先划分train中的573/64，仅573拟合feature mean/std与target mean/std；未用盲valid/test拟合。prediction输出F:120–130保留task/split/row_index/Drug_ID/Drug，重新加载后导出。
+
+本次完整解析两个 `preprocessing-readable.json` 六数组、用struct反编码验证各数组payload SHA（全部匹配），索引各573/64无交集、并集严格0..636。只使用包内train.Y重新计算目标均值/标准差：float64审计与保存float32来源值最大差3.404e-7和2.597e-8。六NPZ解码后全部feature有限、637/91/182 parse_mask全真；按各自保存573行独立重算feature mean/std，最大差2.478e-7/4.083e-7，与float32聚合量级相符。详见 `agent-reviews/preprocessing-epoch-audit.json` 与 `feature-byte-audit.json`。
+
+反证：如果变换统计只与637全train或包含official valid/test的数据匹配而与573不符，则需隔离本run。当前独立重算支持573拟合。无需把输入scale的数值小差称为泄漏。全量row绑定最终以主线程CSV逐行核验为准，本路线未凭NPZ本身猜测ID。
+
+### 1.3 缺失回退未触发，不能把回退认成目前质量原因
+
+F:63/F:105–111将非有限特征填0再标准化；encoder.py:109–125保留失败分子的原行并用NaN+parse mask标记。但当前全分区全部成功解析且feature非有限计数为0，故当前两run没有使用此回退。它是未来其他任务/底座需验证的行为，不是解释当前分数差的证据。preprocessing feature_std<1e-8设1也保留特征，没有删行去重。
+
+### 1.4 新头确实学习、早停与重载一致；不要把验收当模型表现
+
+两run逐epochCSV与training-evidence.history的全部数值相等；每epoch5步（ceil(573/128)），F为14epoch/70步/best6，S为19epoch/95步/best11，末epoch与best都相差patience8。源码F:95–103在改善时clone最佳状态并在结束后load最佳再保存，不是输出最后epoch。F:115–128重载头及新编码器，头digest匹配，已有重载预测差F valid4.768e-7/test9.537e-7，S两分区9.537e-7，符合已有1e-5相对/绝对比较。训练log独立包含同样14/19条epoch和退出成功。
+
+新头结构F2048→512→1共1,049,601参数，S2048→256→1共524,801；4张量均有非零改变，70/95梯度步均非零有限。记录最大L1梯度6705.45/2547.77是聚合，不含逐batch序列，不能据此断言梯度爆炸。
+
+反证：best没有重载、保存last、没有实际参数更新、步数与循环不一致，会使运行声明失真。当前源码/日志/摘要相互支持。缺口：没有每epoch checkpoint、last checkpoint、optimizer moments/RNG快照，不能本次独立追溯每个最佳参数的完整更新历史，也没有同配置训练复跑证明。
+
+## 2. 新发现：特征标准化值得优先检验，尚不能称已证瓶颈
+
+统计路线发现跨run特征payload SHA不同；本路线实际读取六个NPZ，在只使用zipfile/ast.literal_eval/struct/math的审计中确认：train 1,304,576值中470,121不同，最大绝对差3.5762786865e-7；valid 186,368值中73,893不同，最大差2.3841857910e-7；test 372,736值中138,725不同，最大差2.3841857910e-7。所有parse/finite掩码一致。其数值差小于现有重载容差量级，但不存在逐bit相同缓存；没有checkpoint权重差的证据。CUDA浮点归约/执行细节是可能解释，不是本次已确定原因。源码未调用torch.use_deterministic_algorithms，CUBLAS_WORKSPACE_CONFIG本身不足以保证bitwise训练复现。
+
+更有决策价值的观察：feature_std只在<1e-8时置1；2048维中F/S分别5/6维sd<1e-4，均108维sd==1（含全零维）。按各自既有变换审计，未参与拟合的official train row327出现|z|≈871.7（两run），S的内部holdout row129出现|z|≈1637.4；blind official valid最大|z|≈222.34；test最大≈105.36。它们都是已有特征分布事实，**不是逐行残差、不是对应分子预测一定错误的证明**。使用同一固定transform比较跨run特征数值差，最大标准化差约3.224e-4，远小于上述特征尺度，但本次没有运行模型来界定其输出影响。
+
+证据：源F:63–68，两个preprocessing-readable数组，六NPZ及 `feature-byte-audit.json` 每个split的 `scaled_by_each_recorded_training_transform`；脚本 `feature_byte_audit.py` 可逐项复核。
+
+建议：在相同固定cache、相同split、相同seed/头/学习率/损失下，预注册“现有标准化 / raw features / train-fit方差下限或确定性有界变换”小型消融；新变换只拟合573内部fit或届时预定fit索引，不能根据blind valid/test拟合阈值，不改raw行或标签。候选数值必须标为探索性设计，非有统计依据的最优值；例如feature尺度下限用train-fit非零sd分位数{5%,10%}，或训练新LayerNorm模块/有界输入作为不同机制，分别试而非全笛卡尔积。裁剪可能丢掉罕见但有效的化学信息，robust median/IQR也会因稀疏零特征退化，故不能自动认定更稳更好。若paired holdout/多seed质量未改善，或改善只在单个异常样本上，则降级该假设。
+
+## 3. 科学假设与实现缺陷必须分开
+
+1. **loss/选择指标**：实际训练和内部早停是标准化MSE；官方评价是raw-Y MAE。MSE可作合理代理但不必使MAE最优。首要受控选项是同训练loss保留、仅改内部checkpoint选择为raw-Y MAE并同时记录两种指标；再独立比较MSE/MAE/Huber。不能一次全改后归因给loss。无逐epoch内部MAE或checkpoint，不能从当前曲线倒算MAE最优epoch。
+2. **曲线不等于已证容量过大**：F/S内部eval MSE都在各自最佳之后变坏，训练online loss还下降，支持“继续训练未改善当前内部验证”这个有限观察。training loss在train()/dropout开启且由更新中的每个batch累计，validation在epoch末固定checkpoint/eval()，不是相同模型与模式下的一对train/val loss；不能把比值当严格泛化gap。划分、初始化、shuffle、dropout共同由同一个seed驱动，F/S又同时改变width和LR，不能用二者判断哪个因素好。
+3. **精确优化器**：两source实际均AdamW，非普通Adam（F:75，S:77）。comparison/bundle的“Adam weight decay”摘要需在新记录中更正为AdamW；当前原始配置与真实代码无冲突，因此不使当前run失格。
+4. **配置接口**：F头宽在build_head硬编码512；S按hidden_dims读取，但开头assert宽256/lr0.0005/seed43。现有PLAN与执行吻合，没有证据说两run执行错配置；未来HPO必须提取统一配置驱动构造器、记录resolved config与shape，不能仅改变json就以为架构已变。
+5. **记录改进**：独立split_seed/init_seed/shuffle_seed/dropout或主RNG；每epoch固定mode train-eval/internal-eval raw MAE/MSE、gradient范数/LR/参数组、bestcriterion/best-step/保存摘要、固定cache身份。保留selected与last/checkpoint选择证据；没有新授权不运行任何这些模块。
+
+## 4. F1和边界
+
+历史issue_id `F1` 必须沿用。`S/historical-acceptance.md:9–17` 明载环境检查255后仍部署预检；修订只经过离线故障注入，真实Follow未复测。当前标open/investigating，不可close。“训练交付通过”与“严格Skill未全部通过”同时成立；原记录明载未发现越界写入/他人任务控制且正式训练前环境确认，所以不能把F1直接当成性能分数无效证据。
+
+S/cuda01是被外部占用触发退让的失败预检，只有故障/资源证据，不是第三个模型run。S/cuda02成功预检及train01成功是后续独立阶段。读 `raw/*-exit.json`、监督器/guard代码、历史验收能核对此顺序；不执行源码。audit-summary保留执行方旧“parent pending”字段，后出的historical-acceptance记录主控实际验收，不能只抄旧字段。
+
+完整strace排除，外部权重仅引用，依赖META是之后日期，不是完整训练时依赖实现镜像；未读这些原件，不宣称重新作全部系统隔离审计。若后续主控发现实际冻结、输入身份、成功越界写入等硬失败，应隔离对应run；当前公开包没有足以推翻两正式run科学交付的直接反例。
+
+## 5. 交叉核验
+
+|主张|首次线索|本路线独立证据|反例/不一致|结论|
+|---|---|---|---|---|
+|跨run同一底座即相同cache|统计路线发现feature SHA不同|六NPZ的float32值独立比较|实际仅~1e-7原始数值差，但不是bitwise一致|统一cache身份必要；原因未定，不判模型不同|
+|冻结整体hash不同即解冻|before/after总摘要|逐tensor比较、encoder fingerprint调用链|仅unused随机predictor不同|无解冻证据|
+|巨大train/val loss比证明头过大|epoch曲线|源码train/dropout/online与val/eval时点不同|种子/划分/LR/width多混杂|保留过拟合候选，不作因果结论|
+|训练完成即严格Follow通过|验收首页|历史F1时间线、修订范围|只做离线故障注入无真实复测|F1仍未关闭；训练科学产物可保留|
+|当前缺失填补导致误差|源码zero-fill|六NPZ全部finite、所有parse_mask为true|回退未触发|此解释被本批直接反驳|
+|scale可能放大稀有激活|train-only统计与低sd|既有raw features套用既有transform的数值分布|无残差、无新模型对照|优先提出受控假设，不称已证质量原因|

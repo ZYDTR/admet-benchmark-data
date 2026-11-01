@@ -1,0 +1,124 @@
+{
+  "date": "2026-10-29",
+  "scope": "independent read-only behavior evaluation; no model training",
+  "setup": "fork_turns=none; entry and natural-language request only; no expected answers or routes supplied",
+  "trace_basis": "executing agents reported actual full reads, search hits and actions in messages/final responses",
+  "cases": [
+    {
+      "id": "next-step",
+      "agent": "/root/fresh_training_next_step",
+      "task": "训练集和验证集都不好，想自动扫描深度、宽度、学习率、dropout；没有日志，只做下一步计划，禁止联网、写入和训练。",
+      "read_files": [
+        "AGENTS.md",
+        "context/state.json",
+        "skills/INDEX.md",
+        "skills/experiment/SKILL.md",
+        "docs/training-principles.md",
+        "context/experiments/INDEX.md",
+        "docs/training-diagnosis.md",
+        "docs/search-and-selection.md"
+      ],
+      "result": "先补最小诊断观测与小训练子集计划，不从症状断定容量问题，不开四维搜索；当前正式训练阻塞保持。",
+      "network": false,
+      "writes": false,
+      "training": false,
+      "assessment": "passed"
+    },
+    {
+      "id": "architecture-plan",
+      "agent": "/root/fresh_architecture_study",
+      "task": "AtomMessagePassing 与 BondMessagePassing 固定学习率、宽度、epoch，首次验证高者采用；要求具体有预算的计划，禁止联网、写入和训练。",
+      "read_files": [
+        "AGENTS.md",
+        "context/state.json",
+        "skills/INDEX.md",
+        "skills/experiment/SKILL.md",
+        "docs/training-principles.md",
+        "docs/search-and-selection.md",
+        "context/experiments/INDEX.md",
+        "docs/run-comparison.md",
+        "docs/evaluation.md",
+        "competition/contract.json",
+        "docs/experiment-template.md",
+        "docs/admet-training-pitfalls.md"
+      ],
+      "result": "区分共同配置与等预算配套调参；示例预算明确为草案，包含复跑、停止、逐任务取舍、当前数据前提；无实际成绩。",
+      "network": false,
+      "writes": false,
+      "training": false,
+      "assessment": "passed"
+    },
+    {
+      "id": "data-review",
+      "agent": "/root/fresh_molecular_cleanup",
+      "task": "评估缺失填0、全部去盐去重、全量标准化后随机划分及 Chemprop 归一化描述符；禁止写入、下载资产和训练。此提示未禁止网页查询。",
+      "read_files": [
+        "AGENTS.md",
+        "context/state.json",
+        "skills/INDEX.md",
+        "skills/data-provenance/SKILL.md",
+        "skills/competition-contract/SKILL.md",
+        "skills/experiment/SKILL.md",
+        "config/data_manifest.json",
+        "competition/contract.json",
+        "competition/task_schema.json",
+        "context/tasks/data-intake.json",
+        "docs/data-policy.md",
+        "docs/runtime-contract.md",
+        "docs/admet-training-pitfalls.md",
+        "docs/sources.md"
+      ],
+      "additional_reads": "主题检索有其他项目文档的命中片段；另外读取科学核验技能及公开工具文档。未全文读取所有历史文件。",
+      "result": "采用逐任务 mask；保留结构和测量语义；先分区再训练内拟合；识别 ChEMBL 拟合参数及单文件分区接口缺口。",
+      "network": true,
+      "network_scope": "公开方法/API文档，原提示允许；未下载训练资产。",
+      "writes": false,
+      "training": false,
+      "assessment": "passed"
+    },
+    {
+      "id": "offline-data-review",
+      "agent": "/root/fresh_cleanup_offline",
+      "task": "同类数据适配器方案审查；明确禁止联网、写文件、下载任何资产和启动训练。",
+      "read_files": [
+        "AGENTS.md",
+        "context/state.json",
+        "skills/INDEX.md",
+        "skills/data-provenance/SKILL.md",
+        "skills/competition-contract/SKILL.md",
+        "config/data_manifest.json",
+        "competition/contract.json",
+        "competition/task_schema.json",
+        "context/tasks/data-intake.json",
+        "docs/data-policy.md",
+        "docs/runtime-contract.md",
+        "docs/sources.md",
+        "docs/admet-training-pitfalls.md",
+        "docs/model-adapter.md",
+        "docs/evaluation.md"
+      ],
+      "additional_reads": "一次主题检索包含其他项目文档的少量命中，未全文加载历史日志。",
+      "result": "只用本地资料完成缺失、清洗、划分、外部拟合参数审查，并注明未在线核验当前依赖行为；无虚构实测。",
+      "network": false,
+      "writes": false,
+      "training": false,
+      "assessment": "passed"
+    }
+  ],
+  "notes": [
+    "Original data-review prompt did not forbid public web research; it is not a failed offline test.",
+    "AGENTS explicit task-boundary clause was added before the separate offline-data-review case.",
+    "Runtime implementation unchanged; limited scenarios do not guarantee all future behavior."
+  ],
+  "final_document_sha256": {
+    "AGENTS.md": "1f7f147fe886265a99b4ac7a1d00a20d36815de65ef3f9472c9100aea84e1270",
+    "skills/INDEX.md": "4edfd4724bac9dde0d2ce85960916f11d7f9fc3a9a19fe357321d42257b9ee86",
+    "skills/experiment/SKILL.md": "fa0dcf9d49159cdf85cda8dca1f915ffdb46ea24625caddc64ade5f7a9d38121",
+    "docs/training-principles.md": "f62c1134969ffff856d56112178a9fe323d1722de831b19b1660813691635157",
+    "docs/training-diagnosis.md": "ba0db166d3e3adac75a1edfd8117844359450ab94824ceca5083220bc2973864",
+    "docs/admet-training-pitfalls.md": "5872206d8932d9d449720ee5f0ccfe184ebfcc1b92183a641aa6ffc1876d8768",
+    "docs/search-and-selection.md": "79cda442055bb5fdd93a323985248717b97f0b73a89194eeea985041d4b34e0e",
+    "docs/experiment-template.md": "23fb234eca58606ca5e06366cd77ea14fc07574feadcc059919048c49acd3891",
+    "context/experiments/INDEX.md": "39e1508d1d7215efbaa834c26e3baa51825185b1915e7a4a7afaec78fbbb1821"
+  }
+}

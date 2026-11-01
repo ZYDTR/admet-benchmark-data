@@ -1,0 +1,554 @@
+{
+  "schema_version": "1.0",
+  "request_id": "admet-monitor-mae-pro-20261101-003",
+  "round_id": "monitor-mae-e2e-20261101",
+  "manifest_sha256": "b757b3ecd53d9451c7226907783fc6bc61971ee36a2dbbb8840712892ce51afe",
+  "status": "needs_evidence",
+  "read_receipt": [
+    {
+      "entry_id": "root-repo",
+      "layer": "root",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/README.md",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L2",
+      "observed_fact": "根README指向progressive-index",
+      "limitation": "仅导航"
+    },
+    {
+      "entry_id": "root",
+      "layer": "packet",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/README.md",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L9",
+      "observed_fact": "固定prefix入口和层级导航",
+      "limitation": "索引不替代原件"
+    },
+    {
+      "entry_id": "reading-contract",
+      "layer": "packet",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/reading-contract.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "summary",
+      "evidence_locator": "L0-L130; L700-L790",
+      "observed_fact": "合同声明66项必读original及prior run原件",
+      "limitation": "未逐条遍历66项"
+    },
+    {
+      "entry_id": "manifest",
+      "layer": "packet",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/manifest.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "summary",
+      "evidence_locator": "L0-L85",
+      "observed_fact": "固定packet身份和payload SHA目录",
+      "limitation": "未逐项复算全部hash"
+    },
+    {
+      "entry_id": "context",
+      "layer": "context",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/context/README.md",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L5",
+      "observed_fact": "规则/任务/历史/本批索引",
+      "limitation": "未等于全量原件"
+    },
+    {
+      "entry_id": "source-map",
+      "layer": "context",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/context/current/docs/source-map.md.txt",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L25",
+      "observed_fact": "官方条款/用户决定/本地控制来源区分",
+      "limitation": "被引用原件未全读"
+    },
+    {
+      "entry_id": "policy",
+      "layer": "context",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/context/current/policy.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L47",
+      "observed_fact": "冻结与标签/评分边界",
+      "limitation": "官方合同原文缺"
+    },
+    {
+      "entry_id": "evaluation-scope",
+      "layer": "context",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/context/current/evaluation-scope.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L42",
+      "observed_fact": "91行valid准入、行映射与Y尺度",
+      "limitation": "未本轮重读真值CSV"
+    },
+    {
+      "entry_id": "four-decisions",
+      "layer": "context",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/context/four-decisions.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L20",
+      "observed_fact": "Q1-Q4决定",
+      "limitation": "仅四项"
+    },
+    {
+      "entry_id": "standards-lock",
+      "layer": "context",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/context/standards-lock.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "summary",
+      "evidence_locator": "L0-L48",
+      "observed_fact": "冻结版本与来源sha",
+      "limitation": "未全157行"
+    },
+    {
+      "entry_id": "task-metric",
+      "layer": "context",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/context/tasks-metric.md",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L2",
+      "observed_fact": "Caco2 MAE尺度与test排除",
+      "limitation": "官方聚合未知"
+    },
+    {
+      "entry_id": "history",
+      "layer": "history",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/history/README.md",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L2",
+      "observed_fact": "5runs/24issues且partial",
+      "limitation": "非全项目"
+    },
+    {
+      "entry_id": "runs",
+      "layer": "history",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/history/runs.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L55",
+      "observed_fact": "5 run状态/比较组",
+      "limitation": "其他原件另列"
+    },
+    {
+      "entry_id": "issues",
+      "layer": "history",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/history/issues.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "summary",
+      "evidence_locator": "L0-L219",
+      "observed_fact": "issue IDs/部分状态",
+      "limitation": "未逐项核所有原件"
+    },
+    {
+      "entry_id": "claims-events",
+      "layer": "history",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/history/claims/events.jsonl",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L4",
+      "observed_fact": "CE-FREEZE和CE-DOWNLOAD链",
+      "limitation": "仅5条事件"
+    },
+    {
+      "entry_id": "claims-current",
+      "layer": "history",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/history/claims/current.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L60",
+      "observed_fact": "C-FREEZE refuted、C-SCALE proposed",
+      "limitation": "适用范围窄"
+    },
+    {
+      "entry_id": "gaps",
+      "layer": "history",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/history/gaps.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L22",
+      "observed_fact": "历史覆盖缺口",
+      "limitation": "非全集"
+    },
+    {
+      "entry_id": "batch",
+      "layer": "batch",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/batches/monitor-mae-e2e-20261101/README.md",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L29",
+      "observed_fact": "本批run入口和状态",
+      "limitation": "索引"
+    },
+    {
+      "entry_id": "delta",
+      "layer": "batch",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/batches/monitor-mae-e2e-20261101/delta.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L32",
+      "observed_fact": "差值、同异配置",
+      "limitation": "非源码"
+    },
+    {
+      "entry_id": "monitor-comparison",
+      "layer": "batch",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/batches/monitor-mae-e2e-20261101/monitor-comparison.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L60",
+      "observed_fact": "monitor/epoch/score比较",
+      "limitation": "prior score未重评"
+    },
+    {
+      "entry_id": "feature-comparison",
+      "layer": "batch",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/batches/monitor-mae-e2e-20261101/feature-comparison.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L52",
+      "observed_fact": "三个split float32差异",
+      "limitation": "仅数值矩阵对照"
+    },
+    {
+      "entry_id": "aggregate-score",
+      "layer": "batch",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/batches/monitor-mae-e2e-20261101/aggregate-scores.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L33",
+      "observed_fact": "MAE和误差聚合",
+      "limitation": "官方聚合未知"
+    },
+    {
+      "entry_id": "scoring-summary",
+      "layer": "batch",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/batches/monitor-mae-e2e-20261101/scoring-summary.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L28",
+      "observed_fact": "评分来源与范围",
+      "limitation": "私有receipt未读"
+    },
+    {
+      "entry_id": "feedback",
+      "layer": "batch",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/batches/monitor-mae-e2e-20261101/preparation-feedback.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L47",
+      "observed_fact": "准备反馈投影",
+      "limitation": "禁止整包转交"
+    },
+    {
+      "entry_id": "config",
+      "layer": "current-run",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/runs/hainan-mae-monitor-20261101/source/config.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L49",
+      "observed_fact": "head/seed/split/input hashes",
+      "limitation": "仅Caco2"
+    },
+    {
+      "entry_id": "science-source",
+      "layer": "current-run",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/runs/hainan-mae-monitor-20261101/source/training_science.py",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L614; L301-L360; L418-L492",
+      "observed_fact": "split/metric/monitor helper实际实现",
+      "limitation": "其余逐行不全核"
+    },
+    {
+      "entry_id": "runner-source",
+      "layer": "current-run",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/runs/hainan-mae-monitor-20261101/source/train_remote_v4.py",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L469; L124-L218; L228-L301; L303-L371",
+      "observed_fact": "真实执行路径/损失/monitor/checkpoint",
+      "limitation": "未执行代码"
+    },
+    {
+      "entry_id": "training-evidence",
+      "layer": "current-run",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/runs/hainan-mae-monitor-20261101/artifacts/training-evidence.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L890; L490-L497",
+      "observed_fact": "15 epochs/75 steps/best7/history",
+      "limitation": "未逐行展开全记录"
+    },
+    {
+      "entry_id": "internal-split",
+      "layer": "current-run",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/runs/hainan-mae-monitor-20261101/artifacts/internal-split.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L2676; L46-L49",
+      "observed_fact": "573/64 row split",
+      "limitation": "全行索引未全部比对"
+    },
+    {
+      "entry_id": "encoder-before",
+      "layer": "current-run",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/runs/hainan-mae-monitor-20261101/artifacts/encoder-before.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L101",
+      "observed_fact": "冻结前hash/tensors",
+      "limitation": "清单级"
+    },
+    {
+      "entry_id": "encoder-after",
+      "layer": "current-run",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/runs/hainan-mae-monitor-20261101/artifacts/encoder-after.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L101",
+      "observed_fact": "冻结后hash/tensors",
+      "limitation": "清单级"
+    },
+    {
+      "entry_id": "main-science-acceptance",
+      "layer": "acceptance",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/evidence/main-acceptance/report.md.txt",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L13",
+      "observed_fact": "主控科学验收和监督125根因未知",
+      "limitation": "主控记录非本模型独立代理"
+    },
+    {
+      "entry_id": "main-score-acceptance",
+      "layer": "acceptance",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/evidence/main-scoring-acceptance.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L43",
+      "observed_fact": "Decimal50复算与分数差",
+      "limitation": "未重跑评分器"
+    },
+    {
+      "entry_id": "worker-receipt",
+      "layer": "current-run",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/runs/hainan-mae-monitor-20261101/raw/attempt-01/train/adapter-complete.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L215; L5-L16",
+      "observed_fact": "worker0完成回执",
+      "limitation": "非监督成功"
+    },
+    {
+      "entry_id": "supervisor-status",
+      "layer": "current-run",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/runs/hainan-mae-monitor-20261101/raw/attempt-01/train/status.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L54; L1-L16",
+      "observed_fact": "supervisor125/child0",
+      "limitation": "fault-time stat/status缺失"
+    },
+    {
+      "entry_id": "prior-tensors",
+      "layer": "prior-original",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/1c5592e98f3fff1c29369bd521f39e0cc044f3d3/experiments/progressive-index-e2e-20261031/evidence/71eb2ee4e34b1b2671a071ed9679c6e10f60b95bd6dc2c087fe8a3322d2ab034/tensors.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L14",
+      "observed_fact": "跨run差异仅predictor四张量",
+      "limitation": "未独立加载权重"
+    },
+    {
+      "entry_id": "prior-call-path",
+      "layer": "prior-original",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/1c5592e98f3fff1c29369bd521f39e0cc044f3d3/experiments/progressive-index-e2e-20261031/evidence/575dd14195e2b8f33995b30d8bf03998bbc0dbccedc6727714dba92e816cab29/call-path.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L28",
+      "observed_fact": "Chemprop fingerprint不调用predictor",
+      "limitation": "窄技术检查"
+    },
+    {
+      "entry_id": "prior-training",
+      "layer": "prior-original",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/1c5592e98f3fff1c29369bd521f39e0cc044f3d3/experiments/progressive-index-e2e-20261031/runs/hainan-index-cycle-20261031/artifacts/training-evidence.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "original",
+      "evidence_locator": "L0-L1025; L74-L80; L490-L495",
+      "observed_fact": "prior split/score/run history",
+      "limitation": "未逐行展开"
+    },
+    {
+      "entry_id": "official-contract",
+      "layer": "source-gap",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/dda94bf7f18b75683d814bd26f921fc715ce88c2/experiments/monitor-mae-e2e-20261101/evidence/official-contract-20261029.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "unread",
+      "evidence_locator": "404",
+      "observed_fact": "官方规则完整原件未取回",
+      "limitation": "影响官方条文独立核验"
+    },
+    {
+      "entry_id": "prior-disposition",
+      "layer": "prior-original",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/1c5592e98f3fff1c29369bd521f39e0cc044f3d3/experiments/progressive-index-e2e-20261031/evidence/575dd14195e2b8f33995b30d8bf03998bbc0dbccedc6727714dba92e816cab29/disposition.json",
+      "source_version": "fixed commit or historical commit in URI",
+      "read_mode": "unread",
+      "evidence_locator": "404",
+      "observed_fact": "历史disposition未读",
+      "limitation": "限制CE-FREEZE链原件闭合"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F01",
+      "claim": "本run科学产物可信且主控已接受",
+      "evidence": [
+        "hainan-mae-monitor-20261101/artifacts/training-evidence.json:L490-L497",
+        "evidence/main-acceptance/report.md.txt:L2-L10"
+      ],
+      "counterevidence": "supervisor125仍保留，不能写整体流程全通过"
+    },
+    {
+      "id": "F02",
+      "claim": "MAE下降4.3777%是观测值，不是monitor因果效应",
+      "evidence": [
+        "batches/.../delta.json:L1-L31",
+        "batches/.../feature-comparison.json:L1-L50"
+      ],
+      "counterevidence": "输入/split/head/init相同；但feature非byte-identical"
+    },
+    {
+      "id": "F03",
+      "claim": "MSE仍是训练loss，raw MAE只用于选轮",
+      "evidence": [
+        "source/train_remote_v4.py:L228-L301",
+        "source/training_science.py:L418-L455",
+        "training-evidence.json:L490-L497"
+      ],
+      "counterevidence": "未完成全66原件阅读"
+    },
+    {
+      "id": "F04",
+      "claim": "worker0与supervisor125是不同状态，故障根因未知",
+      "evidence": [
+        "adapter-complete.json:L5-L16",
+        "status.json:L1-L16",
+        "main-acceptance/report.md.txt:L8-L10"
+      ],
+      "counterevidence": "无fault-time stat/status"
+    }
+  ],
+  "missing_evidence": [
+    {
+      "item": "reading-contract余下条目",
+      "impact": "不能声称66项完整原件验收或完整历史审计"
+    },
+    {
+      "item": "official-contract-20261029.json原件",
+      "impact": "不能独立逐字确认赛事条款，仅可区分本地来源映射和用户确认"
+    },
+    {
+      "item": "prior disposition原件",
+      "impact": "CE-FREEZE-02的原件链缺一件；保持窄范围"
+    },
+    {
+      "item": "91行valid CSV与预测逐行本轮独立读取",
+      "impact": "不能在本次文件中新增逐样本误差切片；沿用主控已核验映射/分数"
+    },
+    {
+      "item": "其余22任务和其他底座完整状态",
+      "impact": "不能设计可直接执行的跨任务矩阵或声称底座就绪"
+    },
+    {
+      "item": "subagent派发接口",
+      "impact": "未进行真实并行代理复核；不可把多视角主模型检查称独立代理"
+    },
+    {
+      "item": "reading-contract中已列66项；本轮read_receipt逐项记录40个关键条目，余26项未逐项列明/读取",
+      "impact": "不能声称完成主控要求的66条逐项验收；status保持needs_evidence"
+    }
+  ],
+  "not_assessed": [
+    "所有其他22任务的逐任务质量",
+    "MiniMol/MoLFormer/GLM/DeepSeek/Qwen当前安装/下载/adapter就绪",
+    "ensemble性能",
+    "多seed统计稳定性",
+    "未触碰测试集泛化"
+  ],
+  "comparison_groups": [
+    {
+      "id": "CG1",
+      "runs": [
+        "hainan-index-cycle-20261031",
+        "hainan-mae-monitor-20261101"
+      ],
+      "status": "near-controlled-not-causal",
+      "common": [
+        "task/input hashes/split/row indices/head config/initial head"
+      ],
+      "different": [
+        "monitor/epochs/steps/best epoch/feature payload hashes"
+      ],
+      "metric": "official_valid MAE"
+    }
+  ],
+  "stop_reasons": [
+    "不得将4.38%全归因monitor",
+    "不得将C-SCALE写成根因",
+    "不得重跑当前已完成训练",
+    "不得将worker0改写成supervisor成功",
+    "不得向准备方暴露逐行valid truth/residual"
+  ],
+  "read_checks": [
+    {
+      "check_id": "RC-RULE-01",
+      "claim": "冻结条件来自用户向赛方确认，不应误称公开条款逐字",
+      "source": "context/current/policy.json L6-L18; context/current/docs/source-map.md.txt L5-L18",
+      "method": "核对policy.basis、runtime_checks与source-map provenance区分",
+      "result": "通过：本地政策明确记载user confirmation；完整official-contract原件404，故不对公开条文逐字下结论"
+    },
+    {
+      "check_id": "RC-HISTORY-01",
+      "claim": "CE-FREEZE-02推翻CE-FREEZE-01但仅限登记参数和调用路径",
+      "source": "history/claims/events.jsonl L0-L1; prior tensors.json L2-L13; prior call-path.json L3-L14",
+      "method": "逐字段对照supersedes_event_id、status、四个predictor张量及fingerprint调用路径",
+      "result": "通过窄范围核验；disposition原件404，不能扩大适用范围"
+    },
+    {
+      "check_id": "RC-RUN-01",
+      "claim": "本run配置与训练过程确为256/lr0.0005/seed43、573/64、MSE训练/raw-MAE选轮、75步/epoch7",
+      "source": "source/config.json L1-L47; source/train_remote_v4.py L180-L301; training_science.py L418-L455; training-evidence.json L490-L497; internal-split.json L46-L49",
+      "method": "直接读配置和源码；由history逐epoch比较raw MAE，核对epoch7=35步、patience8、epoch15结束；15*5=75",
+      "result": "通过：training loss为MSE，monitor为inverse-transformed raw MAE"
+    },
+    {
+      "check_id": "RC-SCORE-01",
+      "claim": "MAE差值及相对改善",
+      "source": "delta.json L1-L31; main-scoring-acceptance.json L11-L31",
+      "method": "新旧MAE相减；再除旧MAE乘100；对照主控Decimal50复算",
+      "result": "通过：约0.0184509883296704绝对改善，4.377747813191792%相对改善；不构成因果证明"
+    },
+    {
+      "check_id": "RC-FEATURE-01",
+      "claim": "微小特征差异不能视为逐位相同",
+      "source": "feature-comparison.json L1-L50",
+      "method": "直接检查三个split的unequal scalar计数、max abs、RMS、阈值计数和payload SHA",
+      "result": "通过：三个split hash不同，所有值差小于1e-6；数值近但非byte-identical"
+    },
+    {
+      "check_id": "RC-FAULT-01",
+      "claim": "worker0但supervisor125，根因未知",
+      "source": "adapter-complete.json L5-L16; status.json L1-L16; main acceptance report L8-L10",
+      "method": "分别读取worker receipt与supervisor status；检查fault-time stat/status是否存在",
+      "result": "通过：child0/supervisor125；现场stat/status缺失；Z态/竞态未证"
+    }
+  ]
+}

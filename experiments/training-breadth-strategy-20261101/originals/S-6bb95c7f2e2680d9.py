@@ -1,0 +1,126 @@
+"""Signature-verified, no-download extractor for the CheMeleon fingerprint embedding.
+
+This is the *only* place that turns SMILES into encoder vectors. It is deliberately separate
+from the training code so the frozen part is easy to audit:
+
+* ``CheMeleonEmbedder`` loads the pinned ``chemeleon_mp.pt`` (size + MD5 checked), builds
+  chemprop ``BondMessagePassing`` from the checkpoint's own hyper-parameters, wraps it in an
+  ``MPNN`` with the author-published ``MeanAggregation``, sets ``eval()``, disables grads and
+  never exposes the encoder to an optimizer.
+* ``embed`` returns an ``(n, d)`` float32 matrix plus a boolean parse mask. Rows that RDKit
+  cannot parse come back as NaN and must be filled by the caller under a documented policy.
+
+The torch/chemprop imports are lazy so the module can be imported and statically checked
+without the scientific stack present.
+"""
+
+from __future__ import annotations
+
+import hashlib
+from pathlib import Path
+
+CHEMELEON_SIZE = 34859448
+CHEMELEON_MD5 = "6a80b54fdb7de37ef0374d302f01e8ce"
+CHEMELEON_URL = "https://zenodo.org/records/15460715/files/chemeleon_mp.pt"
+
+
+class EncoderError(RuntimeError):
+    pass
+
+
+def verify_checkpoint(path: Path) -> dict:
+    """Raise ``EncoderError`` unless ``path`` is exactly the pinned CheMeleon weight file."""
+    path = Path(path)
+    if not path.is_file():
+        raise EncoderError(
+            f"missing CheMeleon checkpoint: {path}\n"
+            f"download it from {CHEMELEON_URL} and pass --chemeleon"
+        )
+    size = path.stat().st_size
+    if size != CHEMELEON_SIZE:
+        raise EncoderError(f"size mismatch: {size} != {CHEMELEON_SIZE} for {path}")
+    md5 = hashlib.md5()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            md5.update(chunk)
+    digest = md5.hexdigest()
+    if digest != CHEMELEON_MD5:
+        raise EncoderError(f"md5 mismatch: {digest} != {CHEMELEON_MD5} for {path}")
+    return {"path": str(path), "size": size, "md5": digest}
+
+
+class CheMeleonEmbedder:
+    """Frozen, gradient-disabled CheMeleon fingerprint extractor."""
+
+    def __init__(self, checkpoint: Path, device: str | None = None,
+                 batch_size: int = 64):
+        import torch
+        from chemprop import nn
+        from chemprop.models import MPNN
+        from chemprop.nn import RegressionFFN
+
+        self.checkpoint_meta = verify_checkpoint(checkpoint)
+        if device != "cuda:0" or not torch.cuda.is_available():
+            raise EncoderError("This run requires explicit cuda:0; no CPU fallback")
+        self.device = device
+        self.batch_size = batch_size
+
+        self.asserted_checkpoint_sha256 = hashlib.sha256(Path(checkpoint).read_bytes()).hexdigest()
+        if self.asserted_checkpoint_sha256 != "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651":
+            raise EncoderError("SHA256 mismatch")
+        raw = torch.load(checkpoint, map_location="cpu", weights_only=True)
+        for key in ("hyper_parameters", "state_dict"):
+            if key not in raw:
+                raise EncoderError(f"checkpoint missing '{key}'")
+        mp = nn.BondMessagePassing(**raw["hyper_parameters"])
+        mp.load_state_dict(raw["state_dict"], strict=True)
+        model = MPNN(
+            message_passing=mp,
+            agg=nn.MeanAggregation(),
+            predictor=RegressionFFN(input_dim=mp.output_dim),  # unused
+        )
+        model.eval()
+        model.to(device)
+        for p in model.parameters():
+            p.requires_grad_(False)
+        self.model = model
+        self.feature_dim = int(mp.output_dim)
+
+    def assert_frozen(self) -> None:
+        """Guard called before any downstream training to assert encoder immutability."""
+        if self.model.training:
+            raise EncoderError("encoder is not in eval() mode")
+        trainable = [n for n, p in self.model.named_parameters() if p.requires_grad]
+        if trainable:
+            raise EncoderError(f"encoder has trainable params: {trainable[:5]}")
+
+    def embed(self, smiles: list[str]):
+        """Return (float32 [n, d] with NaN on unparseable rows, bool [n] parse mask)."""
+        import numpy as np
+        import torch
+        from chemprop import featurizers
+        from chemprop.data import BatchMolGraph
+        from rdkit import Chem, RDLogger
+
+        RDLogger.DisableLog("rdApp.*")
+        featurizer = featurizers.SimpleMoleculeMolGraphFeaturizer()
+
+        n = len(smiles)
+        out = np.full((n, self.feature_dim), np.nan, dtype=np.float32)
+        ok = np.zeros(n, dtype=bool)
+        with torch.no_grad():
+            for start in range(0, n, self.batch_size):
+                chunk = smiles[start:start + self.batch_size]
+                mols, idx = [], []
+                for i, smi in enumerate(chunk):
+                    mol = Chem.MolFromSmiles(smi)
+                    if mol is not None:
+                        mols.append(mol)
+                        idx.append(start + i)
+                if not mols:
+                    continue
+                bmg = BatchMolGraph([featurizer(m) for m in mols])
+                bmg.to(device=self.model.device)
+                out[idx] = self.model.fingerprint(bmg).numpy(force=True).astype(np.float32)
+                ok[idx] = True
+        return out, ok

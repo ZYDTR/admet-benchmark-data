@@ -1,0 +1,45 @@
+# Reading and cross-check record
+
+固定入口：`experiments/monitor-mae-e2e-20261101/README.md`；manifest commit `dda94bf7f18b75683d814bd26f921fc715ce88c2`。仓库根README实际指向progressive-index-e2e-20261031；固定prefix README才指向本批。
+reading-contract声明66项必读original。本轮逐项登记40个关键条目，其中官方合同原件与prior disposition返回404，另有26项未逐项列出/读取。因此不得声称66项验收完成；read_receipt详见review.json。
+
+## 独立复核记录
+
+### RC-RULE-01
+- Claim: 冻结条件来自用户向赛方确认，不应误称公开条款逐字
+- Source: context/current/policy.json L6-L18; context/current/docs/source-map.md.txt L5-L18
+- Method: 核对policy.basis、runtime_checks与source-map provenance区分
+- Result: 通过：本地政策明确记载user confirmation；完整official-contract原件404，故不对公开条文逐字下结论
+
+### RC-HISTORY-01
+- Claim: CE-FREEZE-02推翻CE-FREEZE-01但仅限登记参数和调用路径
+- Source: history/claims/events.jsonl L0-L1; prior tensors.json L2-L13; prior call-path.json L3-L14
+- Method: 逐字段对照supersedes_event_id、status、四个predictor张量及fingerprint调用路径
+- Result: 通过窄范围核验；disposition原件404，不能扩大适用范围
+
+### RC-RUN-01
+- Claim: 本run配置与训练过程确为256/lr0.0005/seed43、573/64、MSE训练/raw-MAE选轮、75步/epoch7
+- Source: source/config.json L1-L47; source/train_remote_v4.py L180-L301; training_science.py L418-L455; training-evidence.json L490-L497; internal-split.json L46-L49
+- Method: 直接读配置和源码；由history逐epoch比较raw MAE，核对epoch7=35步、patience8、epoch15结束；15*5=75
+- Result: 通过：training loss为MSE，monitor为inverse-transformed raw MAE
+
+### RC-SCORE-01
+- Claim: MAE差值及相对改善
+- Source: delta.json L1-L31; main-scoring-acceptance.json L11-L31
+- Method: 新旧MAE相减；再除旧MAE乘100；对照主控Decimal50复算
+- Result: 通过：约0.0184509883296704绝对改善，4.377747813191792%相对改善；不构成因果证明
+
+### RC-FEATURE-01
+- Claim: 微小特征差异不能视为逐位相同
+- Source: feature-comparison.json L1-L50
+- Method: 直接检查三个split的unequal scalar计数、max abs、RMS、阈值计数和payload SHA
+- Result: 通过：三个split hash不同，所有值差小于1e-6；数值近但非byte-identical
+
+### RC-FAULT-01
+- Claim: worker0但supervisor125，根因未知
+- Source: adapter-complete.json L5-L16; status.json L1-L16; main acceptance report L8-L10
+- Method: 分别读取worker receipt与supervisor status；检查fault-time stat/status是否存在
+- Result: 通过：child0/supervisor125；现场stat/status缺失；Z态/竞态未证
+
+## 代理并行限制
+当前工具没有subagent/delegate接口；未派发真实subagents。分析采用主模型按规则、源码、history、score和feature文件分路交叉核对，不把多视角当独立代理证据。

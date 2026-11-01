@@ -1,0 +1,176 @@
+# 冻结底座、表示与候选路线独立审查
+
+请求：`admet-public-repo-pro-20261031-001`；固定 commit `eaec280cf142839597fe75ce748cd2b9a8a897d4`，manifest `dbdec244caa8ddb106721877cf93625c1957b9184985c07b1cf751eed5d70505`。本文件是主控整合用的独立路线报告，所有建议均为 `proposal_only`。
+
+简称 F=`hainan-frozen-training-20261031`，S=`hainan-skill-follow-20261031`。包内路径均相对固定目录；外部源码副本只用于静态阅读，位于 `agent-reviews/representation-sources/`。未执行归档源码、模型、pickle、安装、训练、推理或评分；未读取任何额外 valid/test 真值。对已有 train 特征只做标准库数值读取及算术复核。
+
+## 1. 决策结论与可信范围
+
+**先使现有 CheMeleon 比较协议可归因，同时完成 MiniMol/MoLFormer 的准备契约；目前没有证据选出“最好的冻结底座”。** 不是暂停其他研究：已知候选足以形成分层实验空间，但头、输入变换、划分和预算必须成为显式控制项。继续堆更多模型名字的信息收益低于当前受控消融。
+
+当前直接证据只覆盖 CheMeleon 两个完成的 Caco2 run。MiniMol 与 MoLFormer 最新准备状态是 `idle_incomplete`（`research/current-research-context.md:5–8`）；历史候选卡的 `pilot` 只是研究优先级。候选的论文指标、文档“可冻结”、本地接入完成、实际冻结验收、该任务质量是五件不同的事。
+
+这里没有按公开榜单给性能排序；建议优先级依次依据可检验的当前问题、冻结协议相似度、接入证据、成本依赖和可能新增的信息。几何或更大模型后置，不能解释为它们已被实验证明更差。
+
+## 2. 当前表示管线：已证事实与未证解释
+
+### REP-01：两run采用同一个有效编码器；总wrapper哈希不同不能当成解冻
+
+两份 `source/encoder.py` 完全同字节，SHA256 `3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712`；同一外部消息传递checkpoint SHA256 `c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651`。代码 `encoder.py:68–85` 严格加载消息传递权重，MeanAggregation，eval，全部包装参数禁止梯度；`:124` 实际调用 `model.fingerprint`。
+
+本路线独立阅读 Chemprop v2.2.1 官方 `chemprop/models/model.py:125–133`：fingerprint只经过 message_passing、agg、bn，不经过predictor；构造器默认 `batch_norm=False`（:65–76、:93）。当前创建的 RegressionFFN 是unused随机包装件。两个 `encoder-before/after.json` 中实际message_passing的4个参数和3个记录buffer跨run相同；只有4个unused predictor参数跨run不同，各run自身before/after相等。因此支持“有效预训练部分相同”，不支持“总hash不同所以底座被改过”。
+
+反证与边界：若未来出现实际参与前向的参数/buffer改变、训练模式、梯度、优化器交集，应隔离run；当前证据没有该反例。本次没有读取checkpoint本体、没有导入Chemprop重跑。官方v2.2.1源码与记录版本相符，是调用链的独立核对，不是假称恢复了训练时完整site-packages镜像。
+
+### REP-02：cache不能只按模型名命名；极小浮点差不是不同底座的证据
+
+两run `binary-structure.json` 显示相同637/91/182行、2048维、全部有限、parse_mask全真，但feature payload SHA不同。实现路线实际解码六个NPZ报告原始最大差为train 3.5763e-7、valid/test 2.3842e-7，见 `agent-reviews/feature-byte-audit.json`。本路线独立复算了两个train NPZ中的三个指定位置，没有独立重复全量六文件差值计算；应保留这个覆盖区分。
+
+建议后续头比较复用一个被主控接受的固定raw cache，另存split-fit变换；缓存身份至少包括数据字节SHA、task/split/row_index/Drug_ID/原Drug、编码器权重及配置、代码revision、特征层与pooling、tokenizer/原子特征定义、预处理、dtype、随机过程、依赖与设备元数据。缓存必须带parse/finite及回退掩码，不用Drug_ID唯一键覆盖行。数字微差可来自浮点归约，但此原因没有被证实，也不能据此许诺bitwise复现。
+
+### REP-03：输入标准化是可直接检验的风险，不是已证明的错误来源
+
+F `source/train_remote_v3.py:61–68` 先取573/64内部fit/holdout，仅fit行拟合均值/std；sd<1e-8改为1，未对其余z值有界处理。这个train-only过程符合当前标签边界，却可能把罕见激活放大。本路线用zipfile、NPY头和struct独立读原始float32，再配合 `preprocessing-readable.json` 中保存的mean/std，复核：
+
+|run|official train行|特征列|原特征|记录的fit std|所得z|处于内部holdout|
+|---|---:|---:|---:|---:|---:|---|
+|F|327|1279|0.7583030462265015|0.0008699058089405298|871.665260292028|是|
+|S|327|1279|0.7583030462265015|0.0008699106401763856|871.660419311512|是|
+|S|129|1507|0.20594605803489685|0.00012577105371747166|1637.414779259813|是|
+
+可复核记录：`agent-reviews/representations-independent-z-audit.json`。这是已有输入分布，完全没有使用valid/test真值，也不是这些行预测错误的证明。三处std并非都小于1e-4，不能把“扩大最小std阈值就一定解决”当成已证事实；更不能按blind valid/test分布选择最优阈值。
+
+独立方法线索：原始TFM论文 arXiv `2604.16123v2` §4.4 明确只用train统计标准化，并把embedding/descriptor z截到[-6,6]。因此 `clip_z=6` 有可追溯先例，可作为候选；该论文的预测器是TabPFN2.6，不能由此前作保证当前MLP改善。原始特征、现有z、有界z、train-fit方差下限应作有对照的候选。裁剪也可能抹掉真实有效的罕见化学信息；是否有帮助只能由授权后的同split/seed结果检验。
+
+### REP-04：当前差值不能归因给表示或头宽
+
+两个run同时改变head宽度、学习率、seed及内部split；编码器本身相同。F新头2048→512→1，S为2048→256→1；训练代码是AdamW，训练与内部早停用标准化MSE。即使某个完整配置的既有MAE更小，也不能说明某个宽度、更大模型或某个学习率更好。换一个底座也不能修复这个归因问题。
+
+反证：同raw cache、同fit/holdout索引、同head/optimizer/loss/预算、共同初始化种子、仅改变表示，才直接检验表示差异。换表示导致维度不同，同一头宽不等于同一参数量，应同时报告参数量并设置有限的容量敏感性对照。
+
+## 3. 已调研候选的原始协议复核
+
+### 3.1 CheMeleon：当前最就绪，主表却不能给冻结排名背书
+
+包内 `weights/chemeleon-reference.json` 和Zenodo元数据给出文件34,859,448字节、MD5 `6a80b54fdb7de37ef0374d302f01e8ce`、MIT；本次run还有实际SHA及前后状态。Research Square supplement §S4:94–100 明确主评测同时端到端微调D-MPNN和新FNN。§S5及Fig S6区分全程冻结、延迟解冻和默认finetune；图为5个随机4:1划分的平均曲线。此材料证明作者做过冻结消融，不证明冻结表示在当前Caco2最好。冻结许可下不能照搬“训练后再冻结”方案。
+
+### 3.2 MiniMol：方法最贴近，但必须补完整加载、行数与资产验收
+
+固定代码 `41642328affbb35e4950b7b7a9020aa95919b503`；待锁权重路径 `minimol/ckpts/minimol_v1/state_dict.pth`，另有config及base_shape。官方model.py:59使用strict=False且未处理返回的missing/unexpected keys；:60取`gnn:15`；:94是global_max_pool；README:21说明512维。封装会静默stdout/stderr，输出拼接前还用min处理长度，故需显式失败计数与每行映射，不得静默少行。上述代码没有足以替代自有冻结验收的证据。
+
+原论文§3、Appendix A明确冻结fingerprint后训练MLP，pooling为max；成绩含head搜索、5模型集成及重复。固定runner:142–144记录25epochs、5repetitions、5ensemble；Caco2选定head可达到2048宽、4层（:147），不能把其结果当小MLP单run。runner读取TDC并访问test.Y推断任务类型（:177–193）；**不可复制执行这个benchmark流程**。只借方法和结构，数据入口重写为当前合同。README Caco2条目906样本与本包910总行也非同一身份，不能继承其分数。
+
+本地checkpoint SHA、完整权重许可适用范围、加载key清单和原行覆盖均待补；最新状态idle_incomplete。若资产/许可未闭合，先完成其他准备，不能为了赶进度随机初始化遗漏权重后冒充MiniMol。
+
+### 3.3 MoLFormer：公开10pct与full-XL不是同一模型
+
+`ibm-research/MoLFormer-XL-both-10pct` revision `361063d0ad524ef77cf39b08469f6be770dc550f`；发布方safetensors SHA `0795977fe7192c4acdaf052f0e8464af57bc4bb59211271c5e61aaba2637b9c6`，187,248,784字节，Apache-2.0。原论文§3区分冻结与finetune，主下游表以full-XL finetune为默认；这不能迁移成当前10pct冻结成绩。
+
+固定模型卡:57–59说训练预处理去立体信息、canonical SMILES且排除>202tokens；约200atoms是未测试条件，不能和token限制混为一谈。配置hidden_size768，max_position_embeddings202。**固定config的deterministic_eval=false，但README示例显式true**；准备时必须锁定此开关、tokenizer、attention mask、custom code和pooling，并在获准执行后验证重复性，不能只说eval就必确定。本路线没有读取custom modeling全部实现，故不推断具体随机机制。模型卡pooler_output是建议起点；不要未经代码核对就把masked mean与pooler_output当成两个独立候选。
+
+不能静默截断、去立体或丢行；原输入保留，派生表达与覆盖限制明确。若需要修改原输入语义，应先由主控裁定是否仍属于获准派生特征，不能当作清洗默许。当前仍idle_incomplete，不声称已经下载/运行/验收本地权重。
+
+### 3.4 CheMeleon+TabPFN2.6：强方法线索，版本、资格和资产仍未闭合
+
+arXiv2604.16123v2直接研究固定分子表示与固定TFM，不做下游梯度更新；默认8estimators，使用CheMeleon2048维与train-only z及clip[-6,6]，回归预测逆变换。其多seed固定split不等于对新化学域不确定性；文中win含与最优统计不可区分，不能当绝对赢率。部分比较复用已发布预测，不能当统一预算重跑。
+
+包内只有TabPFN-v2资产元数据，不能用v2替代2.6。2.6精确权重SHA、许可、上下文协议、资源与“设计并训练深度模型”交付关系均待补。先作为预测器对照/组合研究；`fit`的命名不自动等于训练新参数。不能据冻结许可自动接受额外预拟合归一化或其他数据。
+
+### 3.5 有根据的储备，停止扩张新名字
+
+|候选|已锁定线索|具体依赖/边界|本轮准备度|
+|---|---|---|---|
+|Morgan/RDKit + 新MLP/线性监督器|当前guide-v2与candidate-evidence列必要对照|锁RDKit版本、radius、bit数、chirality、描述符列表/非有限策略；不加载外部fit的scaler|可立即编写契约/配置，未执行验收|
+|从零小D-MPNN|现有Chemprop实现经验与候选卡|初始化/图特征/全部可训练参数明列，不把小预算未收敛当家族失败|可准备，需新训练授权|
+|Uni-Mol2 84M|HF `bf37d253c0f5ac61f468137eb00059978a104ff0`，`modelzoo/84M/checkpoint.pt`，发布SHA `5b9241630f1cf0b173fb06d1e76096e5daf5f91c3e51b066ba69524dafe60e35`|无现成3D；构象/裁剪/seed/回退固定；v1/v2不能混用；长分子风险来自22任务历史，未证明Caco2有同例|条件后置|
+|KPGT|repo `47dc1646c70b2138a157de481d24a1ac35d174cd`，Figshare权重MIT记录|图+指纹+描述符及外部预拟合CDF的准入；名为ecfp的代码实际RDKFingerprint；完整权重SHA缺口|条件后置|
+|SMI-TED|HF `414c3ea0a8603ef49d1c5bb3db336e09877c01ce`，发布SHA `747a369bfc6fbcbfe9fa8277d554ec6edadacbaa01ce072eaf2d139fcb34d214`|固定light/large及tokenizer/层/池化；约1.16GB权重资产，本地资源未测|序列增量问题仍有价值时准备|
+|MolE|repo `dd56d319103e973fde0dcaa3537cb36a7b7a9843`，CC BY-NC 4.0|官方checkpoint链TODO；具体许可适用需核，不做普遍“禁止参赛”推断|0个可执行配置，待资产证据|
+
+以上后三条主要依赖包内已核metadata/候选卡。本路线未进一步逐个恢复其全部训练论文与执行源码，不应把这张表当独立复现。就当前决策，继续搜更多名字不如闭合已有三个编码器与必要对照。
+
+## 4. 可计算的研究空间：配置数与实际fit次数分开
+
+下面是主控可按资源抽取的建议菜单，不是总预算承诺，更不是全部笛卡尔积。统一暂定共同head seeds=[42,43,44]、固定一个已登记train内split；split_seed与head_seed分开。seed列表是设计选择，不是已测噪声依据。三seed只提供初步稳定性观察；效果门槛须等同配置重复噪声及主控实际业务意义确定，不能先写虚假显著性。
+
+基础控制：复用一个已接受CheMeleon raw cache；保留原始637/91/182行。拟合任何变换只用固定内部fit行。模型选择在train内完成，官方91行valid仅由获准主控评价，test保持盲。后续确认增加train内分组划分时，所有候选同步使用同一新划分，不改官方split、不去重。
+
+|方向ID/假设|明确候选空间|计数与实际run数|固定/约束/反证|准备优先级|
+|---|---|---|---|---|
+|REP-SCALE：极端z降低稳定性|四种输入：现有z；raw；z clip[-6,6]；train非零sd的5%分位作floor后z。floor为fit统计，6来自TFM先例|4配置×3seed=12头训练；首轮可仅现有z/raw/clip=9。控制配置可与其他行去重|同cache/split/头/AdamW/LR/损失/选择指标；不同时改head。若改善不稳定或裁剪恶化，否定“有界必更好”。分位值只是候选，未证明能覆盖已见异常|P0，立即准备|
+|REP-BASE：冻结表示是否有增量|CheM2048、Mini512、MoLFormer768 × {linear，新1层ReLU128}|6配置×3seed=18头训练，3个cache家族；资产不齐则2×2×3=12|同选择/训练预算，每表示最多2头；linear属于诊断，新MLP才满足新模块训练路线。结果只能分完整组合与有控制的表示效应|P1，替代资产未齐前只准备|
+|REP-CAP：同宽不等于同容量|单隐藏层近131k参数：CheM h64=131201；Mini h256=131585；MoL h170=130901|3配置×3seed=9；不与REP-BASE形成全交叉|公式h(d+2)+1，无BN。保留同宽128结果作敏感性；匹配参数数仍不匹配优化难度|P2，依赖REP-BASE|
+|REP-POOL：pooling是否丢失分子大小信息|CheM mean控制；mean拼接log1p(atom_count)；sum；Mini max控制/mean备选|CheM3×3=9；Mini2×3=6；控制可复用，总增量9头fit，且需相应合法特征准备|冻结MP不改参数。sum/mean乘原子数只有在确认真实聚合语义后才可等价计算；不得凭cache名猜。需要补原子计数/节点输出，不能声称现cache足够。改善若只源尺度变化需额外归因|P2/3，条件准备|
+|REP-PROJECT：高维稀疏表示是否需要降维|train-fit PCA维度{64,128,256}、whiten=false；每种接同小线性/固定MLP之一，先固定一种头|3配置×3seed=9；PCA同split只拟合一次；raw控制复用|所有拟合仅train，登记PCA为新fit产物；不沿用外部scaler。若真实目标信号低方差，PCA可能损害，故为储备非默认修复|P3|
+|REP-CLASSIC：外部表示是否优于可计算结构特征|Morgan2048 bits，radius{2,3}，useChirality预登记true；MLP hidden{64,128}；ridge alpha{0.1,1,10}单列诊断|MLP4配置×3seed=12；ridge2×3=6确定性fit（不复制seed）；总18fit。另一个RDKit descriptor-only头为1配置×3seed=3|不能同时调bit数/半径/chirality/所有heads；固定descriptor字段及train-only非有限策略。经典模型不独自宣称满足赛事深度训练|P1必要对照|
+|REP-SCRATCH：目标监督表示能否胜固定表示|从零D-MPNN hidden{128,256}×depth{2,3}，固定读出与训练协议|4配置×3seed=12训练；先2个预选结构×3=6亦可|新参数全部登记、没有外部样本。GPU时间不能与cache头fit混计；如果预算不足收敛，结果只限该预算|P2必要深度对照|
+|REP-FUSION：两个冻结表示是否互补|CheM+Mini concat；CheM+MoL concat，各接一个预登记小MLP；单组件作为对照|2新增配置×3seed=6；单组件控制复用；输出维度2560/2816|不增加外部标签；各branch标准化只fit train；拼接增加参数需报告。没有逐行残差时当前不能说已有错误互补|P2，先有两个受控候选|
+|REP-ADAPTER：增加受训非线性转换是否有用|外置bottleneck{32,128}后固定小读出；与已有单层head机制比较|2配置×3seed=6；不是每模型都跑|只训练计划登记新模块，旧encoder/buffer均不变。与普通MLP等价结构不重复计候选；插入backbone/LoRA另行准入|P3条件准备|
+|REP-ENSEMBLE：训练随机性或表示差异能否被平均降低|先一组相同配置3seed等权平均；另一个预登记跨表示二模型等权平均|已有预测齐备时2个聚合配置，0新训练；新的推理/评分仍须授权|不在91行valid密集搜索权重；不能用相关性计算不存在的ensembleMAE。若不优于单模型，收缩方案|P2，依赖受控预测|
+|REP-3D：几何是否增加有效信息|UniMol2同84M权重；一个固定构象vs固定3构象均值|2配置×3seed=6头fit；两套派生特征缓存，后者每分子3次编码，构象成本另计|先补构象/裁剪/失败/覆盖。不能仅用eval作为构象确定性保证；不在blind数据选构象种子|P3依赖待补|
+|REP-TFM：预测器而非底座是否是瓶颈|精确TabPFN2.6，n_estimators{1,8}，其余协议复现前作|2上下文预测配置；0新增梯度训练；若3共同评估seed则6预测作业，不冒充6train|2.6资产/许可/交付资格先闭合，不能换v2或3.5而沿用论文结论|P3依赖待补|
+|REP-KPGT/REP-SMITED：其他预训练目标增量|每种只预备一个固定资产×{linear,MLP128}；每种2×3=6fit|两者共4配置12fit只是未来上限；各自阻点未补前0可执行|先固定输入辅助资产；SMI-TED仅在序列问题未解决且资源容许时继续，KPGT外部CDF不得默认准入|P3条件储备|
+
+这些空间不相加为“已批准总实验数”；同控制应以完整config hash去重，改变split/seed、超参数或缓存任意项都进入不同run身份。测试、asset检查、encoding作业、train fit、集成和score调用分别记账。简单的模型数×头数×seed数仅适用于表内明定组合；没有依据全面跨乘loss/optimizer/encoder/pooling。
+
+### 建议首批的具体信息顺序
+
+1. **准备公共控制与cache契约**：保留现行完整config一份，另准备解耦split_seed/head_seed、确切AdamW和raw MAE checkpoint选择的受控模板。选择指标的改动与输入尺度改动不要混在第一次因果实验里。由主控先选定哪个模板是新的受控基线。
+2. **优先尺度与头稳定性问题**：同一CheM raw cache检验现有z/raw/clip三者；可先单个共同seed发现执行错误，再补相同三seed；单seed不能选永久冠军。当前是否改善尚未知。
+3. **同时完成Mini/MoL与经典对照的准备**：资产、完整load、接口、冻结参数与buffer、row map、覆盖、参数预算、缓存元数据。准备完成≠运行验收，不能标passed。
+4. **有了受控模板后比较三个表示**，先REP-BASE有限两头；不额外给其中一个大量搜索预算。若资产阻塞，CheM+Morgan/从零对照可先提供有用信息。
+5. **只有结果触发才继续**：容量匹配、pooling、融合、几何/TFM分支按具体未决假设开启。某冻结表现在两个合理头和相同预算下持续无增益，仅暂缓该具体组合；不永久否定整个家族。
+
+## 5. 可派发的准备合同（不训练、不安装、不推理）
+
+### REP-W0：共同cache与实验身份模块
+
+- 输入：当前数据SHA与原始行键；一个controller选定CheM cache；冻结资产清单；固定split索引及头随机seed独立字段。
+- 输出：`FeatureManifest-v1` schema、每行rowmap schema、`CacheKey-v1`规范、train-only transform规格、resolved config与参数计数规则、拒绝条件、合成fixture测试说明；不得包含精确valid分数或残差。
+- 必须覆盖：维度与行数、原行未变、parse/finite/覆盖、数据与asset SHA、算法层/pooling、preprocess/train-fit provenance、同cache比较及可接受数值容差来源。未来重复encoding实测前不能标确定性通过。
+- 阻点回退：先用现有已核raw CheM cache作未来头实验；保留run来源，勿把F/S微差缓存混成同一hash。
+
+### REP-W1：MiniMol冻结适配器准备
+
+- 资产：固定commit、checkpoint/config/base_shape及许可证据；未下载与未验收明确填pending，禁止凭仓库路径补假SHA。
+- 接口：SMILES行序输入→512向量+parse/finite掩码+原行映射；提取层gnn:15、默认maxpool。不得依赖原benchmark runner/TDC。
+- 实现：收集strict=False加载报告，只有经审查的完全匹配或明确允许的unused键才可放行；冻结所有外部参数/包括buffer；不抑制无法追踪的异常。出现少行/未知截断即失败，不用min隐藏。
+- 验收设计：未来在获准最小fixture上核形状/有限值/重排映射、加载清单、前后状态、优化器排除；本轮只写规格与静态测试契约，不运行模型。
+
+### REP-W2：MoLFormer10pct冻结适配器准备
+
+- 资产：权重revision+发布SHA、tokenizer、config、custom code全部固定；离线加载设计与默认下载阻断；不照抄浮动模型别名/compat分支。
+- 输入：原Drug保持；单独记录derived canonical string及立体/多片段变化，exact tokens/unknown/长度统计契约；不得按字符串字符数替代token长度。
+- 配置：deterministic_eval=true显式记录；768dim pooler_output；eval/no_grad/参数buffer冻结及重复性检查规格。先审查pooler实现再考虑替代pooling，避免重复假候选。
+- 受阻回退：长度或解析策略不能获准保全原行时标blocked，不静默截断、不做全量执行；继续CheM/经典对照准备。
+
+### REP-W3：必要对照与尺度候选配置
+
+- 明确Morgan算法、RDKit描述符字段、从零DMPNN参数和容量；区分“无外部学习资产的特征”与“纯经典最终提交资格”。
+- 编写REP-SCALE的三个首批规格以及PCA/方差floor储备规格；所有fit只用登记fit索引；raw Y不再log、不裁剪Y、不改标签。
+- 输出可解析候选config和组合约束，报告每项准确参数数/seed数/预计训练数，控制去重；不把所有spaces展开成无意义笛卡尔积。
+
+### REP-W4：条件资产研究与冻结边界单
+
+- 针对TabPFN2.6、UniMol2、KPGT、SMI-TED、MolE逐项补确切资产/许可/算法协议，不拉取外部benchmark标签、不训练/安装。
+- 先补具体阻点：2.6不能拿v2代替；KPGT外部CDF来源与资格；UniMol2构象随机性与原行覆盖；SMI-TED固定variant；MolE权重发布链。
+- 输出每候选一份ready/block/defer依据，不用“论文好”“repo可用”替代验收。未经主控新的资源及执行授权，状态最高为prepared_not_executed。
+
+## 6. 交叉核验表
+
+|关键主张|首次审查来源|本路线独立复核证据|反例/不一致|结论与不确定性|
+|---|---|---|---|---|
+|wrapper总hash不同说明解冻|实现路线与两份before/after摘要|当前encoder.py调用fingerprint；Chemprop v2.2.1官方fingerprint调用链；逐状态检查|仅unused predictor随机参数不同|当前不构成解冻；完整外部权重/运行时依赖未读取|
+|同encoder代表cache相同|当前binary-structure|两份train NPZ hash及3点数值独立读取；全量差值由实现路线计算|bitwise确实不同，差约1e-7|固定cache关键；数值原因与输出影响未证明|
+|极端标准化是潜在瓶颈|实现路线feature审计|本路线3点z独立重算+代码train-only统计；TFM原文有clip6方法先例|无残差证据；clip可能抹真实信息|值得优先小消融，未证明影响MAE|
+|MiniMol公开成绩可继承|历史candidate card|原论文A2/A3/A4+固定runner搜索/5ensemble/5repeat|本包行数与其README数据不同，原runner访问test.Y|冻结方法相关，但分数与脚本不能直接搬用|
+|MoLFormer默认eval足够|模型卡示例与metadata|固定config deterministic_eval=false vs README显式true|未读完整custom modeling，不知道全部随机机制|必须锁显式开关并未来实测，不能现在写通过|
+|同宽head是公平容量|历史V2指南|参数公式h(d+2)+1，2048/512/768维对比|同宽128分别262401/65793/98561参数|同结构比较+有限近参数量敏感性，不能宣称绝对公平|
+|TabPFN2.6表示路线已就绪|历史候选研究|原论文2.6协议；包内metadata只有v2|版本/许可/新训练资格缺口|保留研究分支，0个已授权执行；不是无用结论|
+|大模型名单越多越好|历史报告建议|当前多因素混杂+两个替代编码器未完成准备|额外模型可能有价值，但尚无本地增量证据|先受控实验和准备验收；广泛参数空间不等于批准全跑|
+
+## 7. 本路线明确未评估的事项
+
+未独立读取外部权重、任何pickle/head checkpoint内容、非公开strace、私有标签/行残差；未重评分、未重跑冻结检查、未测其他编码器输入覆盖/速度/显存/预测质量。历史22任务画像是背景，不能把solubility失败串或388原子个例说成当前Caco2已经存在的问题。当前预测的均值/对齐/评分统计由另一独立路线与主模型核查，本路线不冒领其计算为独立复现。
+
+外部资料精确副本及SHA见 `representation-sources/receipt.json`；本路线阅读覆盖与本地文件SHA见 `representations-read-receipt.json`。原论文方法核验来源：MiniMol `https://arxiv.org/html/2404.14986v1`；MoLFormer `https://arxiv.org/html/2106.09553v3`；TFM `https://arxiv.org/html/2604.16123v2`；CheMeleon Research Square supplement `https://assets-eu.researchsquare.com/files/rs-8834086/v1/c5362286af93146edbbdf1ed.pdf`。这些方法事实不代替包内两run证据，也不是本赛性能结果。

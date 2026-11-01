@@ -1,0 +1,48 @@
+# 知识索引合同 v1
+
+这是索引和证据导航，不能替代训练许可或发布审查。`build_index.py INPUT OUTPUT --source-root ROOT`只读声明源，生成新本地目录；OUTPUT必须不存在。有旧快照时增加`--previous-input OLD_INPUT`，拒绝旧结论事件被删改或旧实体消失；源文件位置可改，已有source_id的摘要不可改。工具不自动向GitHub或Chat发送任何内容，不读取隐式目录中的标签。
+
+推荐公开架构：根`README.md`汇合`context/README.md`、`history/README.md`、`batches/<round>/README.md`。root链接给历史全貌，本批子目录链接给最新变化；二者发送时固定commit。实际演示输出附原始来源链接，但尚未发布、不能当公开可读回执。
+
+输入JSON必需字段：
+
+| 字段 | 内容 |
+|---|---|
+| schema_version/catalog_id/as_of/current_batch | 版本1、快照ID、截止时间、当前批ID |
+| scope | 本快照声明范围，不得把部分历史写全项目 |
+| history_coverage/history_gaps | complete或partial；partial列缺口，complete不得有缺口 |
+| sources | id、相对source-root的path、sha256、title；可选已核验public_uri，URL不是自动发布许可 |
+| context_source_ids | 根规则、数据/评价和角色文档引用 |
+| runs | id、task、state、comparison_group、source_ids；失败和未完成也保留 |
+| issues | id、state、statement、source_ids；问题修复不等于科学假设证实 |
+| batches | id、run_ids、source_ids、delta、missing_evidence |
+| claim_events | 见下方；按发生顺序/明确历史顺序追加，不按文件mtime推断 |
+
+结论事件完整示意（示意ID，不是假装真实执行记录）：
+
+```json
+{
+  "event_id": "CE-002",
+  "claim_id": "C-001",
+  "supersedes_event_id": "CE-001",
+  "occurred_at": null,
+  "time_precision": "historical_order_only",
+  "status": "refuted",
+  "statement": "wrapper总摘要不同足以证明冻结编码器被更新",
+  "reason": "登记张量仅unused predictor跨run不同；各run内部参数和buffer摘要保持一致，调用链不使用该predictor。",
+  "source_ids": ["tensor-audit", "call-path-audit"],
+  "reviewer": "controller",
+  "affected_proposals": ["investigate-freeze-failure"],
+  "scope": "仅登记的两个run和已核验状态，不覆盖未登记内存"
+}
+```
+
+状态为proposed/supported/refuted/inconclusive；scope、证据和理由不可缺。相同claim命题不变；要修订命题另建ID并在理由关联。非首事件必须指向同claim紧邻前事件，所有支持/推翻均需证据和审查者。未来重开也保留整条链。`history/claims/current.json`只是一份自动投影，原事件在`history/claims/events.jsonl`。
+
+生成物：根README、context入口、history入口、runs及issues索引、每条claim的完整变更卡、当前结论JSON、原事件JSONL、本批入口、阅读地图、源摘要和输出manifest。阅读地图按rules/history/current/related_evidence分层；不是对阅读覆盖率或科学真伪的自动判定。
+
+源文件必须在明确source-root内、是普通文件，路径含符号链接或越界拒绝。工具核验原字节hash后只复制已声明来源到evidence/hash目录，并输出本地相对链接，不运行源脚本。源改变时旧快照仍能阅读原字节；下一快照可引用旧evidence目录以同一hash保留历史。输出明确标为local_only；外部发布前必须审读复制的所有源与来源映射，禁止直接上传整个本地索引。public_uri只保存为来源，不自动证明可访问或获得公开授权。对科学字符串只转义展示字符，不能对源做替换。
+
+工具错误保留类型和具体ID/路径，禁止用笼统success或空索引替代。脚本能检查引用和结构，不能证明理由充分；主控必须亲自验收反证范围和受影响方案是否已重新审查。
+
+本地Markdown原件迁移后，其文内相对链接会失去基址。因此原字节快照用`.md.txt`纯文本保存，索引同时链接原位置，并在source-manifest记录relative_links_base。生成导航链接可校验，原文引用的未登记嵌套文件不假装已经快照；公开构建前须补声明来源或明确映射。不能对原Markdown做全局替换以掩盖缺件。

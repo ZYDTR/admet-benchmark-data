@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "verified_on": "2026-10-30",
+  "sources": [
+    {
+      "id": "official-page",
+      "url": "http://www.aiinnovation.com.cn/web/#/trackDetail?id=159",
+      "retrieval": "公开页面调用的只读 getTrack 接口；无需认证",
+      "api_url": "http://www.aiinnovation.com.cn/api/app/getTrack",
+      "request": {
+        "lang": "zh",
+        "id": "159"
+      },
+      "observed_updated_at": "2026-10-26T11:23:49+08:00",
+      "response_sha256": "2ad168aea6346bc8f586d39c50b3ef2393901eb8191f178067e62b558d2ccc2d",
+      "scope": "规则证据，不是训练资产",
+      "previous_response": {
+        "verified_on": "2026-10-28",
+        "response_sha256": "4df57afce44775ab83522d84a287d1691edb357c73104b1dbada2c25c5979bbb"
+      },
+      "retrieval_metadata": "docs/research/2026-10-30/evidence/rule-source-metadata.json"
+    },
+    {
+      "id": "official-template",
+      "url": "http://www.aiinnovation.com.cn/file/down/小分子药物预测技术创新赛-结果提交模板.csv",
+      "sha256": "8ee41589d2c98e7b93081c058b3f928ac09bea4b3ffc899fa13677051e9baa20",
+      "size_bytes": 1477800,
+      "scope": "公开提交模板；未随项目打包，按官方授权来源获取。",
+      "last_verified_on": "2026-10-30"
+    },
+    {
+      "id": "user-data-snapshot",
+      "url": "https://github.com/ZYDTR/admet-benchmark-data",
+      "commit": "0275588ac7a5d3df032ec7dc0794cab21dfcfeeb",
+      "scope": "用户明确提供的研究输入；逐文件审计，不伪造官网来源链",
+      "evidence": "docs/research/2026-10-30/evidence/snapshot-manifest.json"
+    }
+  ],
+  "short_official_excerpts": {
+    "external_data": "【重要更新】本赛题不允许使用其他外部数据。",
+    "audit": "将要求入围团队提交作品源代码进行复现审核",
+    "prediction": "所有预测结果应由模型自动生成，不得人工修改测试集预测结果。"
+  },
+  "training_package": {
+    "available": true,
+    "authority": "user_supplied_research_snapshot",
+    "formally_registered": false,
+    "reason": "用户提供的67CSV快照已审计；正式清单和完整标签契约尚未登记。",
+    "profile": "docs/research/2026-10-30/data-profile.md"
+  }
+}

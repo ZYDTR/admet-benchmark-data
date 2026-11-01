@@ -1,0 +1,1337 @@
+# 下一批盲准备指南（仅准备，不执行训练）
+
+request_id: admet-progressive-index-pro-20261031-002  
+round_id: progressive-index-e2e-20261031  
+manifest_sha256: b8952a9375328c775e8fcae3b3adc5a35ca6025fcc9a48e5a055371e26f7250f  
+版本：blind-preparation-guide-v1；科学状态：needs_evidence。
+
+## 接收与行动边界
+
+本文件可交给无历史上下文的OpenCode准备会话，仍须主控先审查。**不要同时转交analysis.md、review.json、issues.json、search_space.json、next_experiments.json或audit.zip**：它们属于获准分析侧材料，可能含评价诊断或线索。问题ID只是追踪键，不要求准备方打开含答案的报告。
+
+现在只准备适配器、配置、schema、文档与合成数据fixture。不得训练/HPO、模型推理、安装到海南、服务器操作、上传或重新评分；不得加载归档模型/pickle。此前运行已经完成和验收，不需要也不允许为“补日志”重跑。当前训练预算为0。下面12或18均是**未来可能授权的run计数**，不是本指南的执行授权。
+
+外部编码器的所有parameters及buffers冻结；optimizer只能包含主控批准的新模块。许可来自用户转述赛方确认，本地检查是执行控制，不冒充公开条款。只有官方train.Y进入训练和训练内评估；valid/test保持盲输入。原行、原分区、原标签全部保留，重复Drug_ID不是去重键；禁止教师伪标签、额外样本、test拟合、标签修补、额外log或擅自单位换算。
+
+## V0：精确基线与版本合同
+
+固定科学源码commit为`1c5592e98f3fff1c29369bd521f39e0cc044f3d3`。当前run为`hainan-index-cycle-20261031`。先读取该版本`source/config.json`、`source/training_science.py`与`encoder.py`的允许内容；路径以主控提供的已核准清单为准，不递归整个仓库。当前配置明确：头2048→256→1、ReLU、dropout0.1；AdamW，lr0.0005、weight_decay0.0001；batch128；max_epochs50；patience8；model seed43。raw-SMILES group split使用独立seed43，基线fit573/stop64。当前feature模式`legacy_z_train_fit`、monitor`internal_validation_standardized_mse`。目标使用fit-only affine标准化，指标回到原numeric尺度。物理单位未确立。
+
+当前校验器只接受现有单隐藏层等有限配置；多层、不同optimizer、loss、scheduler或pooling需要新增版本并实际验收，不能只改JSON便宣称已实现。所有新版本在文件形成前sha256必须为空或not_materialized，不能预填伪hash。
+
+```json
+{
+  "encoder": {
+    "name": "CheMeleon frozen BondMessagePassing",
+    "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+    "adapter_source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+    "adapter_source_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+    "chemprop": "2.2.1",
+    "freeze_parameters": true,
+    "freeze_buffers": true
+  },
+  "feature": {
+    "name": "2048-d mean-aggregated raw fingerprint",
+    "source_run": "hainan-index-cycle-20261031",
+    "train_array_payload_sha256_recorded": "27716ac421ac80e46adbeeb4190df93e86621f5926634e75f85679109191223a",
+    "dtype": "float32",
+    "independently_verified_array_bytes": false,
+    "cache_file_sha_is_not_array_payload_sha": true
+  },
+  "preprocess": {
+    "baseline": "legacy_z_train_fit",
+    "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+    "feature_statistics": "fit rows only; sd<1e-8 replaced by1 in control",
+    "target_statistics": "fit rows only; affine center/std; inverse before raw-scale metric"
+  },
+  "head": {
+    "baseline": "Linear(2048,256)-ReLU-Dropout(.1)-Linear(256,1)",
+    "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+    "runtime_source_sha256": "3874397451300b2b2c37eb99b5e995d53f0fcc22a7dee00c287d9ebeff65e7e0",
+    "trainable_parameter_count": 524801
+  }
+}
+```
+
+主控应提供下列**盲输入**；这里列的是期望身份，不表示本指南已重新下载和验收。禁止主动寻找其他公开或私有验证真值替代盲对象。
+
+```json
+{
+  "train": {
+    "logical_path": "data/train.csv",
+    "rows": 637,
+    "sha256": "3061c58d3601d081e5459a2de03dc1d189243c4b5683d1b7288577a29fed4d6f",
+    "columns": "Drug_ID,Drug,Y；只有官方train.Y允许用于fit和内部评估"
+  },
+  "valid_blind": {
+    "logical_path": "data/valid.csv",
+    "rows": 91,
+    "sha256": "41370e87d89a96a7481425dae1bf7c45184bd116b353e96719b2afcd0a8a5ca3",
+    "columns": "Drug_ID,Drug；不允许Y或其他答案列"
+  },
+  "test_blind": {
+    "logical_path": "data/test.csv",
+    "rows": 182,
+    "sha256": "d87dac944bedcefb216bce57ba5a8de93d3781172c66653b937e5065b9c2579c",
+    "columns": "Drug_ID,Drug；不允许Y或其他答案列"
+  }
+}
+```
+
+## 准备顺序与派发合同
+
+先做W01及W10边界；W02/W03/W08可准备草案；W04取得合法数组后验身份；W05/W06只扩展所需路径；W07形成配对计划；W09准备复现记录。任何失败都保留blocked及影响，不能“为了完成任务”换版本、降级冻结或打开答案。
+
+### W01 — 建立精确来源、覆盖与权限合同；准备方不补读分析专属材料。
+
+```json
+{
+  "work_item_id": "W01",
+  "issue_ids": [
+    "AR002-01",
+    "AR001-01",
+    "AR001-14",
+    "AR002-07"
+  ],
+  "goal": "建立精确来源、覆盖与权限合同；准备方不补读分析专属材料。",
+  "model_and_asset_versions": {
+    "contract": "V0（本指南下方完整定义）",
+    "new_code_version": "W01-draft-v1-proposed",
+    "new_code_sha256": null,
+    "status": "本报告只提出合同，尚未实现或测试"
+  },
+  "input_contract": [
+    "本指南V0、用户给定request/round/manifest身份",
+    "主控提供已脱敏的允许输入清单；训练/盲输入字节与原行映射",
+    "所有SHA是待本地独立核验的期望值；不可把期望值复制成observed值"
+  ],
+  "output_contract": [
+    "prepare/source-receipts.json：每对象expected/observed hash、bytes、read coverage、scope、receiver、verified=false/true",
+    "prepare/blockers.json：原因、影响、所需已授权对象",
+    "prepare/config-schema.json：拒绝未知版本/额外字段/未准入模型"
+  ],
+  "implementation_scope": "只准备数据/资产身份校验与文档，不获取分析专属valid原Y、分析ZIP、私密聊天、凭据或完整syscall。",
+  "frozen_components": [
+    "外部预训练编码器全部parameters及buffers",
+    "固定checkpoint、featurizer/tokenizer及任何外部拟合状态",
+    "官方原行/原分区/原标签；不得去重或补标签"
+  ],
+  "preparation_steps": [
+    "先检查主控交付对象的bytes和SHA再解析；失败即停止该对象",
+    "使用task/split/original row_index作为主键，Drug_ID/Drug是核对字段而非去重键",
+    "缺读补齐由获准分析侧完成；准备方只接收红线内字段及通过/阻断状态",
+    "记录本轮没有真实subagent接口，不建立虚构任务/审查ID"
+  ],
+  "dependencies": [],
+  "acceptance_checks": [
+    "不接受main或其他commit替换",
+    "所有未见对象verified=false，文件名/hash文本不算原件",
+    "CSV必须正确处理引号、逗号、反斜杠及非唯一Drug_ID",
+    "输出不含任何验证答案或诊断数值"
+  ],
+  "priority": "P0",
+  "budget": {
+    "mode": "preparation_only",
+    "training_runs": 0,
+    "model_inference_runs": 0,
+    "remote_installations": 0,
+    "server_operations": 0,
+    "host_scoring_calls": 0,
+    "uploads": 0,
+    "allowed": "编写文档/配置/静态适配器；纯合成数据的schema/算术fixture，不加载现有模型或运行训练入口。"
+  },
+  "blocked_fallback": "任何身份、权限或必要证据未满足则输出blocked+缺口，不退回使用main、旧缓存或可见验证标签。"
+}
+```
+
+### W02 — 准备故障门控和监控终态分支，不让无效run进入排名。
+
+```json
+{
+  "work_item_id": "W02",
+  "issue_ids": [
+    "F1",
+    "AR001-15",
+    "I-CYCLE002-PREFLIGHT-MONITOR"
+  ],
+  "goal": "准备故障门控和监控终态分支，不让无效run进入排名。",
+  "model_and_asset_versions": {
+    "contract": "V0（本指南下方完整定义）",
+    "new_code_version": "W02-draft-v1-proposed",
+    "new_code_sha256": null,
+    "status": "本报告只提出合同，尚未实现或测试"
+  },
+  "input_contract": [
+    "已公开且允许的状态/退出schema；不取无关进程完整轨迹",
+    "合成进程状态fixture和业务错误码"
+  ],
+  "output_contract": [
+    "prepare/monitor-cases.json：Z/已消失/活进程缺RSS/权限错误/真实超限/子进程非零/外层异常",
+    "prepare/exit-contract.md：业务rc、外层rc、是否开始训练的真值表",
+    "prepare/tests_monitor_contract.py：只对合成fixture执行的测试草案"
+  ],
+  "implementation_scope": "只写/静态验证监控逻辑和最小fixture，不运行服务器监控、不访问海南。",
+  "frozen_components": [
+    "外部预训练编码器全部parameters及buffers",
+    "固定checkpoint、featurizer/tokenizer及任何外部拟合状态",
+    "官方原行/原分区/原标签；不得去重或补标签"
+  ],
+  "preparation_steps": [
+    "将terminal状态与缺RSS作为显式二维分支",
+    "终态缺字段可按已定义语义收尾；活进程缺字段不得默认零资源并通过",
+    "明确父进程返回子业务失败；环境检查失败时不可部署/训练",
+    "资源、冻结、身份失败的记录标fault_only并阻止评分排名"
+  ],
+  "dependencies": [
+    "W01",
+    "W10"
+  ],
+  "acceptance_checks": [
+    "每个负例的预期退出/停止状态明确，未执行的测试标not_run",
+    "v2成功路径不能充当旧环境失败分支已测证明",
+    "异常处理本身失败时fail-closed"
+  ],
+  "priority": "P0",
+  "budget": {
+    "mode": "preparation_only",
+    "training_runs": 0,
+    "model_inference_runs": 0,
+    "remote_installations": 0,
+    "server_operations": 0,
+    "host_scoring_calls": 0,
+    "uploads": 0,
+    "allowed": "编写文档/配置/静态适配器；纯合成数据的schema/算术fixture，不加载现有模型或运行训练入口。"
+  },
+  "blocked_fallback": "任何身份、权限或必要证据未满足则输出blocked+缺口，不退回使用main、旧缓存或可见验证标签。"
+}
+```
+
+### W03 — 准备原行保留与raw-SMILES group split验证器。
+
+```json
+{
+  "work_item_id": "W03",
+  "issue_ids": [
+    "AR001-03",
+    "AR001-02"
+  ],
+  "goal": "准备原行保留与raw-SMILES group split验证器。",
+  "model_and_asset_versions": {
+    "contract": "V0（本指南下方完整定义）",
+    "new_code_version": "W03-draft-v1-proposed",
+    "new_code_sha256": null,
+    "status": "本报告只提出合同，尚未实现或测试"
+  },
+  "input_contract": [
+    "仅official train637的原始Drug_ID/Drug/Y和已登记split配置",
+    "基线split seed43；model seed与split RNG分离"
+  ],
+  "output_contract": [
+    "prepare/split-validator.py",
+    "prepare/split-schema.json：原row_index、group identity、fit/stop归属、split seed",
+    "prepare/synthetic-duplicate-fixtures.json：重复ID、相同SMILES不同Y、不同字符串注释案例"
+  ],
+  "implementation_scope": "保持原行、原标签、原官方分区；内部train划分可分组但不得删重。",
+  "frozen_components": [
+    "外部预训练编码器全部parameters及buffers",
+    "固定checkpoint、featurizer/tokenizer及任何外部拟合状态",
+    "官方原行/原分区/原标签；不得去重或补标签"
+  ],
+  "preparation_steps": [
+    "按原Drug字符串形成group，排序/洗牌实现逐项固定",
+    "验证原索引覆盖恰一次、fit/stop索引互斥和group交集为空",
+    "基线预期fit573/stop64只针对已登记split；新分组规则不硬套此数量",
+    "canonical/scaffold仅作为旁路注释，不重写输入Drug或合并标签"
+  ],
+  "dependencies": [
+    "W01",
+    "W10"
+  ],
+  "acceptance_checks": [
+    "相同raw Drug的重复行必须同组且原Y全保留",
+    "合成测试保证重复Drug_ID不会字典覆盖",
+    "group split RNG不消耗模型初始化或mini-batch RNG",
+    "未经主控提供完整原件不能把全637行校验标passed"
+  ],
+  "priority": "P0",
+  "budget": {
+    "mode": "preparation_only",
+    "training_runs": 0,
+    "model_inference_runs": 0,
+    "remote_installations": 0,
+    "server_operations": 0,
+    "host_scoring_calls": 0,
+    "uploads": 0,
+    "allowed": "编写文档/配置/静态适配器；纯合成数据的schema/算术fixture，不加载现有模型或运行训练入口。"
+  },
+  "blocked_fallback": "任何身份、权限或必要证据未满足则输出blocked+缺口，不退回使用main、旧缓存或可见验证标签。"
+}
+```
+
+### W04 — 准备安全缓存读取与fit-only特征变换消融。
+
+```json
+{
+  "work_item_id": "W04",
+  "issue_ids": [
+    "AR001-04",
+    "AR001-08",
+    "AR002-01"
+  ],
+  "goal": "准备安全缓存读取与fit-only特征变换消融。",
+  "model_and_asset_versions": {
+    "contract": "V0（本指南下方完整定义）",
+    "new_code_version": "W04-draft-v1-proposed",
+    "new_code_sha256": null,
+    "status": "本报告只提出合同，尚未实现或测试"
+  },
+  "input_contract": [
+    "主控提供获准原始数值NPZ、索引及parse mask；不加载pickle/模型",
+    "V0 raw array内容身份；统计仅internal fit行",
+    "C0 legacy_z_train_fit和C3 sd_floor=1e-3的预注册定义"
+  ],
+  "output_contract": [
+    "prepare/cache-identity.schema.json：容器hash与array payload hash分开",
+    "prepare/feature-transforms.py：legacy_z_train_fit/none/center/sd_floor/z_clip纯数组接口",
+    "prepare/feature-grid.json：9个明确配置及单因素抽样顺序",
+    "prepare/feature-fixture-report.schema.json：finite、shape、dtype、mask、maxabs与分位数方法"
+  ],
+  "implementation_scope": "只准备数组级适配器及合成检查；当前不得运行encoder产生新缓存。",
+  "frozen_components": [
+    "外部预训练编码器全部parameters及buffers",
+    "固定checkpoint、featurizer/tokenizer及任何外部拟合状态",
+    "官方原行/原分区/原标签；不得去重或补标签"
+  ],
+  "preparation_steps": [
+    "安全NPZ读取必须allow_pickle=False、限制shape/bytes和允许key；对象数组拒绝",
+    "复核row-index/mask及内容hash；任何解析失败保留原行并阻断，不静默丢行",
+    "将fit mean/std拟合与transform分离；valid/test只允许变换，禁止拟合",
+    "sd_floor定义denominator=max(fit_std,epsilon)；epsilon候选1e-4/1e-3/1e-2",
+    "z_clip候选6/10/20，在fit-only z后逐元素截断；首轮不叠加floor+clip",
+    "设置statistics_dtype和tensor_dtype字段，复制control精度路径而不擅改"
+  ],
+  "dependencies": [
+    "W01",
+    "W03",
+    "W10"
+  ],
+  "acceptance_checks": [
+    "常量列/极小sd/NaN/Inf/行序错位fixture可明确拒绝或按已定义规则处理",
+    "0个valid/test标签被读取；没有合并train+valid估计统计",
+    "新数组未提供时输出blocked，不以JSON摘要替代数组复算",
+    "每个变换版本/参数/fit索引hash纳入cache key"
+  ],
+  "priority": "P1",
+  "budget": {
+    "mode": "preparation_only",
+    "training_runs": 0,
+    "model_inference_runs": 0,
+    "remote_installations": 0,
+    "server_operations": 0,
+    "host_scoring_calls": 0,
+    "uploads": 0,
+    "allowed": "编写文档/配置/静态适配器；纯合成数据的schema/算术fixture，不加载现有模型或运行训练入口。"
+  },
+  "blocked_fallback": "任何身份、权限或必要证据未满足则输出blocked+缺口，不退回使用main、旧缓存或可见验证标签。"
+}
+```
+
+### W05 — 准备训练内monitor/loss分离和可复查的选择事件。
+
+```json
+{
+  "work_item_id": "W05",
+  "issue_ids": [
+    "AR001-05",
+    "AR002-03",
+    "AR001-07"
+  ],
+  "goal": "准备训练内monitor/loss分离和可复查的选择事件。",
+  "model_and_asset_versions": {
+    "contract": "V0（本指南下方完整定义）",
+    "new_code_version": "W05-draft-v1-proposed",
+    "new_code_sha256": null,
+    "status": "本报告只提出合同，尚未实现或测试"
+  },
+  "input_contract": [
+    "配置schema、纯数值合成epoch序列、official train内部划分",
+    "基线monitor=internal_validation_standardized_mse；新选项internal_validation_raw_mae",
+    "MSE训练loss不随monitor自动改变"
+  ],
+  "output_contract": [
+    "prepare/selection-policy.py：min_delta/tie/patience/stop/best事件接口",
+    "prepare/monitor-configs.json：C0与C1",
+    "prepare/loss-configs.json：MSE、L1、SmoothL1 beta=.25/.5/1的显式5点",
+    "prepare/selection-event.schema.json：epoch/global_step/metric space/best digest/reason"
+  ],
+  "implementation_scope": "只写选择/损失配置及纯合成序列测试，不加载历史头、不生成任何模型预测。",
+  "frozen_components": [
+    "外部预训练编码器全部parameters及buffers",
+    "固定checkpoint、featurizer/tokenizer及任何外部拟合状态",
+    "官方原行/原分区/原标签；不得去重或补标签"
+  ],
+  "preparation_steps": [
+    "将训练loss、监控指标和导出指标分开命名",
+    "MAE一律目标inverse回原numeric尺度后计算；MSE控制保留当前精度和min_delta语义",
+    "tie保持最早best或其他预注册规则，不凭观察结果改规则",
+    "best头保存时绑定所选指标、epoch/step与tensor digest；last状态独立命名",
+    "后续loss试验统一用C1 monitor作控制，禁止同时改monitor与loss却声称只改loss"
+  ],
+  "dependencies": [
+    "W01",
+    "W03",
+    "W04",
+    "W10"
+  ],
+  "acceptance_checks": [
+    "相同合成轨迹可确定性回放选轮与停止时刻",
+    "无保存checkpoint的轮次不得生成“重载成功”记录",
+    "所有阈值单位明确；业务最小效应尚未建立，不设伪统计阈值"
+  ],
+  "priority": "P0",
+  "budget": {
+    "mode": "preparation_only",
+    "training_runs": 0,
+    "model_inference_runs": 0,
+    "remote_installations": 0,
+    "server_operations": 0,
+    "host_scoring_calls": 0,
+    "uploads": 0,
+    "allowed": "编写文档/配置/静态适配器；纯合成数据的schema/算术fixture，不加载现有模型或运行训练入口。"
+  },
+  "blocked_fallback": "任何身份、权限或必要证据未满足则输出blocked+缺口，不退回使用main、旧缓存或可见验证标签。"
+}
+```
+
+### W06 — 准备新头/优化器/调度器的版本化工厂及可计算参数空间。
+
+```json
+{
+  "work_item_id": "W06",
+  "issue_ids": [
+    "AR001-06",
+    "AR001-13",
+    "AR001-05"
+  ],
+  "goal": "准备新头/优化器/调度器的版本化工厂及可计算参数空间。",
+  "model_and_asset_versions": {
+    "contract": "V0（本指南下方完整定义）",
+    "new_code_version": "W06-draft-v1-proposed",
+    "new_code_sha256": null,
+    "status": "本报告只提出合同，尚未实现或测试"
+  },
+  "input_contract": [
+    "V0 encoder输出2048维；只允许新头参数训练",
+    "基线256、dropout.1、AdamW lr.0005、wd.0001、batch128",
+    "本指南参数面板；尚未实现的模块必须标proposed"
+  ],
+  "output_contract": [
+    "prepare/head-factory.py及schema草案",
+    "prepare/resolved-config.schema.json：请求值/实际解析值/派生参数量",
+    "prepare/optimizer-ownership.schema.json：新头参数集合与encoder集合交集必须0",
+    "prepare/explicit-grids.json：宽度/架构/正则/优化器/调度/岭目标"
+  ],
+  "implementation_scope": "扩展校验器而不是只改JSON；新代码不导入旧训练入口、不实例化当前模型做推理。",
+  "frozen_components": [
+    "外部预训练编码器全部parameters及buffers",
+    "固定checkpoint、featurizer/tokenizer及任何外部拟合状态",
+    "官方原行/原分区/原标签；不得去重或补标签"
+  ],
+  "preparation_steps": [
+    "单层宽度32/64/128/256/512分别准备参数量65601/131201/262401/524801/1049601；线性2049",
+    "多层候选[128,64]、[256,128]与post-pooling残差128必须新版本并记录参数量混杂",
+    "只放行精确9点dropout/wd、9点optimizer/LR配方及5个scheduler合法组合，不全笛卡尔扩张",
+    "Adam/SGD调度器路径当前不支持，准备分派/step/恢复字段及拒绝未实现分支",
+    "岭目标mean MSE+lambda||w||²、截距不惩罚，lambda0定义min-norm；确定性解不重复算三seed"
+  ],
+  "dependencies": [
+    "W01",
+    "W04",
+    "W05",
+    "W10"
+  ],
+  "acceptance_checks": [
+    "请求配置与实际工厂输出字段逐项一致；不留隐藏硬编码",
+    "只有新增模块参数在optimizer内，encoder任何param/buffer不更新",
+    "单因素对照之外的多项配方明示混杂",
+    "全部新版本hash在实际文件形成后计算，不能预先编造"
+  ],
+  "priority": "P1",
+  "budget": {
+    "mode": "preparation_only",
+    "training_runs": 0,
+    "model_inference_runs": 0,
+    "remote_installations": 0,
+    "server_operations": 0,
+    "host_scoring_calls": 0,
+    "uploads": 0,
+    "allowed": "编写文档/配置/静态适配器；纯合成数据的schema/算术fixture，不加载现有模型或运行训练入口。"
+  },
+  "blocked_fallback": "任何身份、权限或必要证据未满足则输出blocked+缺口，不退回使用main、旧缓存或可见验证标签。"
+}
+```
+
+### W07 — 准备共同seed面板及嵌套train-only确认设计。
+
+```json
+{
+  "work_item_id": "W07",
+  "issue_ids": [
+    "AR001-02",
+    "AR001-12",
+    "AR001-03"
+  ],
+  "goal": "准备共同seed面板及嵌套train-only确认设计。",
+  "model_and_asset_versions": {
+    "contract": "V0（本指南下方完整定义）",
+    "new_code_version": "W07-draft-v1-proposed",
+    "new_code_sha256": null,
+    "status": "本报告只提出合同，尚未实现或测试"
+  },
+  "input_contract": [
+    "V0原始官方train及W03分组工具",
+    "model seeds=[43,47,59]；首批split seed43固定",
+    "预注册C0/C1/C2/C3；每次仅一项差异"
+  ],
+  "output_contract": [
+    "prepare/first-panel.json：4唯一配置×3model seeds=12个未来建议run",
+    "prepare/nested-confirmation.json：2预锁配置×3外层raw-group folds×3seed=18个未来建议run",
+    "prepare/comparison-schema.json：全部成功/故障run、配对差、seed/fold层次、selection decision"
+  ],
+  "implementation_scope": "只建立实验计划和计数器；当前实际训练/HPO/推理/评分均0。",
+  "frozen_components": [
+    "外部预训练编码器全部parameters及buffers",
+    "固定checkpoint、featurizer/tokenizer及任何外部拟合状态",
+    "官方原行/原分区/原标签；不得去重或补标签"
+  ],
+  "preparation_steps": [
+    "C0完全保留基线；C1只改monitor；C2只改hidden_dims=[128]；C3只改feature sd floor",
+    "基线与变体共享同一raw cache、相同split和各model seed；不要把split seed随model seed改变",
+    "外层确认用3个raw-group folds、shuffle seed101；inner split seed43、比例.1，仅inner-fit估计变换",
+    "开放外层结果前锁定控制及一个候选；outer holdout不参与早停或参数选择",
+    "全部fold样本保持原索引/标签；记录实际组分配数量，不强迫每fold等行数"
+  ],
+  "dependencies": [
+    "W01",
+    "W03",
+    "W04",
+    "W05",
+    "W06",
+    "W10"
+  ],
+  "acceptance_checks": [
+    "首批去重后确为12而非把多个共享控制重复计入",
+    "次阶段18与首批12分开申请，不把30当已批预算",
+    "seed不是数据独立样本数；不从3个seed制造精确置信结论",
+    "效应阈值、业务意义和预算由主控预注册；方向不稳判inconclusive"
+  ],
+  "priority": "P1",
+  "budget": {
+    "mode": "preparation_only",
+    "training_runs": 0,
+    "model_inference_runs": 0,
+    "remote_installations": 0,
+    "server_operations": 0,
+    "host_scoring_calls": 0,
+    "uploads": 0,
+    "allowed": "编写文档/配置/静态适配器；纯合成数据的schema/算术fixture，不加载现有模型或运行训练入口。"
+  },
+  "blocked_fallback": "任何身份、权限或必要证据未满足则输出blocked+缺口，不退回使用main、旧缓存或可见验证标签。"
+}
+```
+
+### W08 — 准备其他冻结底座、池化与新模块的资产/适配准入清单。
+
+```json
+{
+  "work_item_id": "W08",
+  "issue_ids": [
+    "AR001-10",
+    "U02",
+    "AR001-16",
+    "AR001-13"
+  ],
+  "goal": "准备其他冻结底座、池化与新模块的资产/适配准入清单。",
+  "model_and_asset_versions": {
+    "contract": "V0（本指南下方完整定义）",
+    "new_code_version": "W08-draft-v1-proposed",
+    "new_code_sha256": null,
+    "status": "本报告只提出合同，尚未实现或测试"
+  },
+  "input_contract": [
+    "仅可公开且允许的模型说明/精确revision配置；未准入权重不可运行",
+    "MiniMol权重revision/checksum/license当前待定",
+    "MoLFormer配置revision=361063d0ad524ef77cf39b08469f6be770dc550f；这不等于权重/remote code已核验"
+  ],
+  "output_contract": [
+    "prepare/assets-gate.json：权重/tokenizer/code/license/encoder buffers/receiver/approved状态",
+    "prepare/adapter-contracts.md：输入原SMILES→固定维度+parse mask+row identity",
+    "prepare/pooling-spec.json：mean/sum/max/mean|max，最后一种维度4096",
+    "prepare/post-pooling-adapter-spec.json：rank32/64/128、gate on/off；新模块边界"
+  ],
+  "implementation_scope": "只准备适配与准入材料，不下载大模型、不安装依赖、不执行encoder。",
+  "frozen_components": [
+    "外部预训练编码器全部parameters及buffers",
+    "固定checkpoint、featurizer/tokenizer及任何外部拟合状态",
+    "官方原行/原分区/原标签；不得去重或补标签"
+  ],
+  "preparation_steps": [
+    "对MiniMol填写待补对象和明确blocker，不根据论文拼出假权重版本",
+    "对MoLFormer核查pooler定义、长度/截断策略、随机feature/eval行为；配置字段不代替实际实现",
+    "所有长输入必须保留行并报告处理策略；禁止静默截断/删除作为默认fallback",
+    "冻结全部外部param/buffer；post-pooling新adapter可训练需主控逐项允许；in-backbone LoRA仍排除",
+    "输出每个候选新缓存与头参数量变化的成本边界，不以其他模型速度替代"
+  ],
+  "dependencies": [
+    "W01",
+    "W10"
+  ],
+  "acceptance_checks": [
+    "任何权重/许可/remote code版本空缺都保持blocked",
+    "准备完成不标模型已测、冻结已通过或质量更好",
+    "baseline cache与新表示不同的事实记录清楚；对照必须重新匹配"
+  ],
+  "priority": "P3",
+  "budget": {
+    "mode": "preparation_only",
+    "training_runs": 0,
+    "model_inference_runs": 0,
+    "remote_installations": 0,
+    "server_operations": 0,
+    "host_scoring_calls": 0,
+    "uploads": 0,
+    "allowed": "编写文档/配置/静态适配器；纯合成数据的schema/算术fixture，不加载现有模型或运行训练入口。"
+  },
+  "blocked_fallback": "资产不齐时继续CheMeleon同底座受控准备；不临时换在线模型或开放拟合状态。"
+}
+```
+
+### W09 — 准备完整状态边界与连续/恢复复现验收计划。
+
+```json
+{
+  "work_item_id": "W09",
+  "issue_ids": [
+    "U05",
+    "AR001-07",
+    "AR002-05"
+  ],
+  "goal": "准备完整状态边界与连续/恢复复现验收计划。",
+  "model_and_asset_versions": {
+    "contract": "V0（本指南下方完整定义）",
+    "new_code_version": "W09-draft-v1-proposed",
+    "new_code_sha256": null,
+    "status": "本报告只提出合同，尚未实现或测试"
+  },
+  "input_contract": [
+    "配置、checkpoint身份schema、optimizer/采样器/RNG/scheduler所有者清单",
+    "仅合成状态fixture；本轮不加载归档pt或pickle"
+  ],
+  "output_contract": [
+    "prepare/checkpoint-contract.json：initial/best/last各自epoch/global_step、head/optimizer/RNG绑定",
+    "prepare/resume-test-plan.md：seed43，固定epoch5边界，连续与恢复两轨迹",
+    "prepare/resource-schema.json：实际elapsed范围、峰值内存含义、超限/缺测处理"
+  ],
+  "implementation_scope": "准备测试和数据契约，不实际训练、断点续训或新模型推理。",
+  "frozen_components": [
+    "外部预训练编码器全部parameters及buffers",
+    "固定checkpoint、featurizer/tokenizer及任何外部拟合状态",
+    "官方原行/原分区/原标签；不得去重或补标签"
+  ],
+  "preparation_steps": [
+    "best/last分别保存；需要resume的状态必须与对应head同一步",
+    "记录Python、numpy、torch CPU/CUDA与独立sampler RNG；恢复后随机抽样测试与优化轨迹测试分列",
+    "未来成对测试先定容差、后看误差；不能从观察差异倒推容差",
+    "保存每次step/batch序列或其可审计摘要，资源峰值区分allocator与进程/设备实际占用",
+    "若预算不足每epoch保存，明确无法回溯任意轮次，不伪造头文件"
+  ],
+  "dependencies": [
+    "W01",
+    "W05",
+    "W06",
+    "W10"
+  ],
+  "acceptance_checks": [
+    "匹配head/optimizer/RNG/scheduler epoch-step，混用即拒绝",
+    "重载allclose不写成重训bitwise",
+    "当前未执行的恢复轨迹验收全部not_run"
+  ],
+  "priority": "P2",
+  "budget": {
+    "mode": "preparation_only",
+    "training_runs": 0,
+    "model_inference_runs": 0,
+    "remote_installations": 0,
+    "server_operations": 0,
+    "host_scoring_calls": 0,
+    "uploads": 0,
+    "allowed": "编写文档/配置/静态适配器；纯合成数据的schema/算术fixture，不加载现有模型或运行训练入口。"
+  },
+  "blocked_fallback": "任何身份、权限或必要证据未满足则输出blocked+缺口，不退回使用main、旧缓存或可见验证标签。"
+}
+```
+
+### W10 — 准备接收者隔离、评价使用账本及不含答案的切片/集成定义。
+
+```json
+{
+  "work_item_id": "W10",
+  "issue_ids": [
+    "AR002-02",
+    "AR001-12",
+    "AR001-09",
+    "AR002-04"
+  ],
+  "goal": "准备接收者隔离、评价使用账本及不含答案的切片/集成定义。",
+  "model_and_asset_versions": {
+    "contract": "V0（本指南下方完整定义）",
+    "new_code_version": "W10-draft-v1-proposed",
+    "new_code_sha256": null,
+    "status": "本报告只提出合同，尚未实现或测试"
+  },
+  "input_contract": [
+    "本指南与主控已核准的技术问题ID；不得接收分析全文、诊断JSON或完整ZIP",
+    "固定的评价用途和接收者登记；实际Chat身份由主控核实"
+  ],
+  "output_contract": [
+    "prepare/usage-ledger.schema.json：每次评价权限、来源、用途、接收者、如何影响选模",
+    "prepare/blind-output-schema.json：task/split/row_index/Drug_ID/Drug/y_pred，不带valid/test标签",
+    "prepare/slice-definitions.json：事前结构/词法定义及分位数算法，不带任何观测分数",
+    "prepare/ensemble-spec.json：固定三seed成员的uniform mean/median，不拟合权重"
+  ],
+  "implementation_scope": "只做无标签技术投影；分析端数值留在主控隔离域。",
+  "frozen_components": [
+    "外部预训练编码器全部parameters及buffers",
+    "固定checkpoint、featurizer/tokenizer及任何外部拟合状态",
+    "官方原行/原分区/原标签；不得去重或补标签"
+  ],
+  "preparation_steps": [
+    "接收前扫描并人工检查任何Y、精确验证分数、逐行误差、答案查表或其编码",
+    "官方train内部结果和官方valid反馈分开登记；重复valid使用明确记作模型选择反馈",
+    "切片从原Drug或获准train-only注释定义，失败不删行；分位数明确method与样本数",
+    "集成成员在看外部成绩前固定；已有成员时0额外训练，未有成员不能伪称已产生",
+    "任何新的valid评分或公开发布均要求主控新授权，本指南不扩大次数"
+  ],
+  "dependencies": [
+    "W01"
+  ],
+  "acceptance_checks": [
+    "执行方输入不含分析附件；仅本指南和主控允许的盲材料",
+    "无label-derived样本白名单/黑名单/权重",
+    "指标定义可复算但不包含本轮答案",
+    "评价账本记录新增反馈，不把同一valid叫未触碰test"
+  ],
+  "priority": "P0",
+  "budget": {
+    "mode": "preparation_only",
+    "training_runs": 0,
+    "model_inference_runs": 0,
+    "remote_installations": 0,
+    "server_operations": 0,
+    "host_scoring_calls": 0,
+    "uploads": 0,
+    "allowed": "编写文档/配置/静态适配器；纯合成数据的schema/算术fixture，不加载现有模型或运行训练入口。"
+  },
+  "blocked_fallback": "任何身份、权限或必要证据未满足则输出blocked+缺口，不退回使用main、旧缓存或可见验证标签。"
+}
+```
+
+## 首批具体配置与计数
+
+| 配置 | 唯一相对C0变化 | 共同model seeds | split |
+|---|---|---|---|
+| C0 | 无；匹配控制 | 43、47、59 | raw-group seed43 |
+| C1 | monitor=internal_validation_raw_mae；loss仍MSE | 同上 | 同上 |
+| C2 | hidden_dims=[128] | 同上 | 同上 |
+| C3 | feature denominator=max(fit_std,1e-3) | 同上 | 同上 |
+
+以上4个唯一配置×3model seeds=12个未来建议训练。C3缺原数组核验即blocked，不以其他变换偷偷替换。C0只在完全相同代码/缓存/配置身份下才可能复用；默认预算不扣减已有单run。首批只准备配置，实际启动0。
+
+后续若主控批准：先锁定控制和一个候选，再做3个外层raw-group folds×3model seeds×2配置=18个训练内嵌套确认run。外层holdout不得用于选epoch、拟合变换或选择该候选；每外层train内再切inner stop。不能把同一internal stop既用于大量HPO又称独立泛化评估。两阶段潜在总数30，但没有任何阶段自动授权。
+
+## 广泛储备的具体范围
+
+宽度32/64/128/256/512共5；架构4；dropout/wd只使用W06的9个明确配方；优化器/LR先4个AdamW，再条件储备2个Adam与3个SGD；训练损失5；目标数值变换3；特征变换9；缓存统计精度2；岭lambda为0、1e-4、1e-3、1e-2、0.1、1、10共7个确定性fit；池化4；scheduler合法组合5；MiniMol新头3、MoLFormer pooling×width为4、新adapter rank×gate为6。上述都是互相共享控制的研究菜单，不能相加当总预算，更不能全笛卡尔组合。
+
+MiniMol与MoLFormer在资产、许可和适配验收完成前保持blocked；论文/模型配置不能替代权重身份和冻结证明。新增post-pooling模块需单列许可。encoder解冻、内置LoRA、教师标签、额外样本、test拟合、验证答案导出的集成权重均不在当前可执行范围。
+
+## 准备完成的回交格式
+
+回交`preparation-manifest.json`，逐件列相对路径、UTF-8原字节长度与SHA256；列resolved_config、计划run数、blocked清单、未测试项和接收者权限。训练/推理/评分调用计数必须仍为0。任何测试只能报告实际执行过的合成/静态检查；不得把“计划测试”标passed。主控依据这些材料单独决定是否授权任何后续执行。
+
+## 附录：无答案的显式参数配置（不授权执行）
+
+### D03
+
+```json
+{
+  "direction_id": "D03",
+  "proposal_id": "P03",
+  "explicit_configurations": [
+    {
+      "width": 32,
+      "config_id": "width-32"
+    },
+    {
+      "width": 64,
+      "config_id": "width-64"
+    },
+    {
+      "width": 128,
+      "config_id": "C2"
+    },
+    {
+      "width": 256,
+      "config_id": "C0"
+    },
+    {
+      "width": 512,
+      "config_id": "width-512"
+    }
+  ],
+  "model_seeds": [
+    43,
+    47,
+    59
+  ],
+  "planned_training_runs_if_all_selected": 15,
+  "approved_runs_now": 0,
+  "readiness": "ready_to_prepare_config_schema"
+}
+```
+### D04
+
+```json
+{
+  "direction_id": "D04",
+  "proposal_id": "P04",
+  "explicit_configurations": [
+    {
+      "config_id": "C0",
+      "mode": "legacy_z_train_fit"
+    },
+    {
+      "mode": "none"
+    },
+    {
+      "mode": "center"
+    },
+    {
+      "config_id": "floor-0.0001",
+      "mode": "sd_floor",
+      "floor": 0.0001
+    },
+    {
+      "config_id": "C3",
+      "mode": "sd_floor",
+      "floor": 0.001
+    },
+    {
+      "config_id": "floor-0.01",
+      "mode": "sd_floor",
+      "floor": 0.01
+    },
+    {
+      "mode": "z_clip",
+      "clip": 6
+    },
+    {
+      "mode": "z_clip",
+      "clip": 10
+    },
+    {
+      "mode": "z_clip",
+      "clip": 20
+    }
+  ],
+  "model_seeds": [
+    43,
+    47,
+    59
+  ],
+  "planned_training_runs_if_all_selected": 27,
+  "approved_runs_now": 0,
+  "readiness": "blocked_on_safe_array_verification_and_transform_implementation"
+}
+```
+### D05
+
+```json
+{
+  "direction_id": "D05",
+  "proposal_id": "P05",
+  "explicit_configurations": [
+    {
+      "architecture": "mlp256"
+    },
+    {
+      "architecture": "mlp128x64"
+    },
+    {
+      "architecture": "mlp256x128"
+    },
+    {
+      "architecture": "project128_residual2"
+    }
+  ],
+  "model_seeds": [
+    43,
+    47,
+    59
+  ],
+  "planned_training_runs_if_all_selected": 12,
+  "approved_runs_now": 0,
+  "readiness": "blocked_on_versioned_head_factory_and_validator_extension"
+}
+```
+### D06
+
+```json
+{
+  "direction_id": "D06",
+  "proposal_id": "P06",
+  "explicit_configurations": [
+    {
+      "dropout": 0,
+      "weight_decay": 0
+    },
+    {
+      "dropout": 0,
+      "weight_decay": 0.0001
+    },
+    {
+      "dropout": 0,
+      "weight_decay": 0.001
+    },
+    {
+      "dropout": 0.1,
+      "weight_decay": 0
+    },
+    {
+      "dropout": 0.1,
+      "weight_decay": 0.0001
+    },
+    {
+      "dropout": 0.1,
+      "weight_decay": 0.001
+    },
+    {
+      "dropout": 0.1,
+      "weight_decay": 0.01
+    },
+    {
+      "dropout": 0.25,
+      "weight_decay": 0.0001
+    },
+    {
+      "dropout": 0.25,
+      "weight_decay": 0.001
+    }
+  ],
+  "model_seeds": [
+    43,
+    47,
+    59
+  ],
+  "planned_training_runs_if_all_selected": 27,
+  "approved_runs_now": 0,
+  "readiness": "ready_to_prepare_selective_grid"
+}
+```
+### D07
+
+```json
+{
+  "direction_id": "D07",
+  "proposal_id": "P07",
+  "explicit_configurations": [
+    {
+      "optimizer": "AdamW",
+      "lr": 0.0001
+    },
+    {
+      "optimizer": "AdamW",
+      "lr": 0.0003
+    },
+    {
+      "optimizer": "AdamW",
+      "lr": 0.0005
+    },
+    {
+      "optimizer": "AdamW",
+      "lr": 0.001
+    },
+    {
+      "optimizer": "Adam",
+      "lr": 0.0003
+    },
+    {
+      "optimizer": "Adam",
+      "lr": 0.0005
+    },
+    {
+      "optimizer": "SGD",
+      "lr": 0.001,
+      "momentum": 0.9
+    },
+    {
+      "optimizer": "SGD",
+      "lr": 0.003,
+      "momentum": 0.9
+    },
+    {
+      "optimizer": "SGD",
+      "lr": 0.01,
+      "momentum": 0.9
+    }
+  ],
+  "model_seeds": [
+    43,
+    47,
+    59
+  ],
+  "planned_training_runs_if_all_selected": 27,
+  "approved_runs_now": 0,
+  "readiness": "AdamW_grid_preparable_other_optimizers_need_dispatcher"
+}
+```
+### D08
+
+```json
+{
+  "direction_id": "D08",
+  "proposal_id": "P08",
+  "explicit_configurations": [
+    {
+      "loss": "MSE"
+    },
+    {
+      "loss": "L1"
+    },
+    {
+      "loss": "SmoothL1",
+      "beta": 0.25
+    },
+    {
+      "loss": "SmoothL1",
+      "beta": 0.5
+    },
+    {
+      "loss": "SmoothL1",
+      "beta": 1
+    }
+  ],
+  "model_seeds": [
+    43,
+    47,
+    59
+  ],
+  "planned_training_runs_if_all_selected": 15,
+  "approved_runs_now": 0,
+  "readiness": "blocked_until_mae_monitor_control_is_prepared"
+}
+```
+### D09
+
+```json
+{
+  "direction_id": "D09",
+  "proposal_id": "P09",
+  "explicit_configurations": [
+    {
+      "target_transform": "raw"
+    },
+    {
+      "target_transform": "fit_center"
+    },
+    {
+      "target_transform": "fit_z"
+    }
+  ],
+  "model_seeds": [
+    43,
+    47,
+    59
+  ],
+  "planned_training_runs_if_all_selected": 9,
+  "approved_runs_now": 0,
+  "readiness": "ready_for_synthetic_identity_checks_training_conditional"
+}
+```
+### D10
+
+```json
+{
+  "direction_id": "D10",
+  "proposal_id": "P10",
+  "explicit_configurations": [
+    {
+      "statistics_dtype": "float64",
+      "tensor_dtype": "float32"
+    },
+    {
+      "statistics_dtype": "float32",
+      "tensor_dtype": "float32"
+    }
+  ],
+  "model_seeds": [
+    43,
+    47,
+    59
+  ],
+  "planned_training_runs_if_all_selected": 6,
+  "approved_runs_now": 0,
+  "readiness": "blocked_on_raw_array_bytes"
+}
+```
+### D11
+
+```json
+{
+  "direction_id": "D11",
+  "proposal_id": "P11",
+  "explicit_configurations": [
+    {
+      "lambda": 0,
+      "objective": "mean_squared_error + lambda * squared_weight_norm",
+      "intercept_penalized": false
+    },
+    {
+      "lambda": 0.0001,
+      "objective": "mean_squared_error + lambda * squared_weight_norm",
+      "intercept_penalized": false
+    },
+    {
+      "lambda": 0.001,
+      "objective": "mean_squared_error + lambda * squared_weight_norm",
+      "intercept_penalized": false
+    },
+    {
+      "lambda": 0.01,
+      "objective": "mean_squared_error + lambda * squared_weight_norm",
+      "intercept_penalized": false
+    },
+    {
+      "lambda": 0.1,
+      "objective": "mean_squared_error + lambda * squared_weight_norm",
+      "intercept_penalized": false
+    },
+    {
+      "lambda": 1,
+      "objective": "mean_squared_error + lambda * squared_weight_norm",
+      "intercept_penalized": false
+    },
+    {
+      "lambda": 10,
+      "objective": "mean_squared_error + lambda * squared_weight_norm",
+      "intercept_penalized": false
+    }
+  ],
+  "model_seeds": [],
+  "planned_training_runs_if_all_selected": 7,
+  "approved_runs_now": 0,
+  "readiness": "blocked_on_deterministic_solver_contract_and_cache_identity"
+}
+```
+### D13
+
+```json
+{
+  "direction_id": "D13",
+  "proposal_id": "P13",
+  "explicit_configurations": [
+    {
+      "group_annotation": "raw"
+    },
+    {
+      "group_annotation": "canonical_annotation_only"
+    },
+    {
+      "group_annotation": "scaffold_annotation_only"
+    }
+  ],
+  "model_seeds": [
+    43,
+    47,
+    59
+  ],
+  "planned_training_runs_if_all_selected": 9,
+  "approved_runs_now": 0,
+  "readiness": "annotation_preparation_ready_training_split_changes_need_controller_review"
+}
+```
+### D14
+
+```json
+{
+  "direction_id": "D14",
+  "proposal_id": "P14",
+  "explicit_configurations": [
+    {
+      "pooling": "mean",
+      "feature_dim": 2048
+    },
+    {
+      "pooling": "sum",
+      "feature_dim": 2048
+    },
+    {
+      "pooling": "max",
+      "feature_dim": 2048
+    },
+    {
+      "pooling": "mean_concat_max",
+      "feature_dim": 4096
+    }
+  ],
+  "model_seeds": [
+    43,
+    47,
+    59
+  ],
+  "planned_training_runs_if_all_selected": 12,
+  "approved_runs_now": 0,
+  "readiness": "blocked_on_approved_adapter_change_and_new_feature_cache"
+}
+```
+### D15
+
+```json
+{
+  "direction_id": "D15",
+  "proposal_id": "P15",
+  "explicit_configurations": [
+    {
+      "schedule": "constant",
+      "warmup_epochs": 0
+    },
+    {
+      "schedule": "cosine",
+      "warmup_epochs": 0
+    },
+    {
+      "schedule": "cosine",
+      "warmup_epochs": 5
+    },
+    {
+      "schedule": "linear",
+      "warmup_epochs": 0
+    },
+    {
+      "schedule": "linear",
+      "warmup_epochs": 5
+    }
+  ],
+  "model_seeds": [
+    43,
+    47,
+    59
+  ],
+  "planned_training_runs_if_all_selected": 15,
+  "approved_runs_now": 0,
+  "readiness": "blocked_on_scheduler_state_and_resume_contract"
+}
+```
+### D16
+
+```json
+{
+  "direction_id": "D16",
+  "proposal_id": "P16",
+  "explicit_configurations": [
+    {
+      "head": "linear"
+    },
+    {
+      "head": "mlp128"
+    },
+    {
+      "head": "mlp256"
+    }
+  ],
+  "model_seeds": [
+    43,
+    47,
+    59
+  ],
+  "planned_training_runs_if_all_selected": 9,
+  "approved_runs_now": 0,
+  "readiness": "blocked_asset_and_license_and_adapter"
+}
+```
+### D17
+
+```json
+{
+  "direction_id": "D17",
+  "proposal_id": "P17",
+  "explicit_configurations": [
+    {
+      "pooling": "documented_pooler",
+      "width": 128
+    },
+    {
+      "pooling": "documented_pooler",
+      "width": 256
+    },
+    {
+      "pooling": "masked_mean",
+      "width": 128
+    },
+    {
+      "pooling": "masked_mean",
+      "width": 256
+    }
+  ],
+  "model_seeds": [
+    43,
+    47,
+    59
+  ],
+  "planned_training_runs_if_all_selected": 12,
+  "approved_runs_now": 0,
+  "readiness": "blocked_weights_tokenizer_remote_code_license_and_length_contract"
+}
+```
+### D18
+
+```json
+{
+  "direction_id": "D18",
+  "proposal_id": "P18",
+  "explicit_configurations": [
+    {
+      "rank": 32,
+      "gate": false
+    },
+    {
+      "rank": 32,
+      "gate": true
+    },
+    {
+      "rank": 64,
+      "gate": false
+    },
+    {
+      "rank": 64,
+      "gate": true
+    },
+    {
+      "rank": 128,
+      "gate": false
+    },
+    {
+      "rank": 128,
+      "gate": true
+    }
+  ],
+  "model_seeds": [
+    43,
+    47,
+    59
+  ],
+  "planned_training_runs_if_all_selected": 18,
+  "approved_runs_now": 0,
+  "readiness": "blocked_new_module_allowlist_and_versioned_implementation"
+}
+```

@@ -1,0 +1,41 @@
+{
+  "task_id": "harness-build",
+  "owner": "A",
+  "status": "done",
+  "goal": "交付可按需路由、可接续、可验证的赛题159工程Harness",
+  "summary": "71项工程测试通过；6个独立冷启动场景完成；独立审查7项具体问题已修复复核；无真实比赛训练或Docker实机验证。",
+  "next_action": "从现有三项blocked任务继续：官方数据接入、模型适配器、目标宿主Docker与Agent权限。不要把工程完成当作训练完成。",
+  "blockers": [],
+  "evidence": [
+    "docs/validation.md",
+    "docs/validation/unit-tests.json",
+    "docs/validation/cold-routes.json",
+    "docs/validation/environment.json"
+  ],
+  "decisions": [
+    "保持八项局部Skill和一个薄入口。",
+    "只读比较不创建训练run；无关请求不加载比赛上下文。",
+    "未知标签、外部资产边界、官方总分和复现容差保留未知。"
+  ],
+  "schema_version": 1,
+  "revision": 1,
+  "updated_at": "2026-10-28T16:06:15.544989+00:00",
+  "evidence_hashes": [
+    {
+      "path": "docs/validation.md",
+      "sha256": "b296083d45557606df2a2f8f6cf992e884ca49fdee5f003c56dec51d29229810"
+    },
+    {
+      "path": "docs/validation/unit-tests.json",
+      "sha256": "9a8be3d5909c130dfb37bd27ee9d6a9aaac6b03248c7e526e689372aef869954"
+    },
+    {
+      "path": "docs/validation/cold-routes.json",
+      "sha256": "cc6cb3ff11e97cbfca7717df43e3ed4067aa855010b861742be2a46477019ea0"
+    },
+    {
+      "path": "docs/validation/environment.json",
+      "sha256": "957d1ecdbeeb43c126e231dd307a694a33910b642c968fc05b546dd65a4f035d"
+    }
+  ]
+}

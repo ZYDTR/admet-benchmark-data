@@ -1,0 +1,30 @@
+# C-FREEZE
+
+命题：跨run wrapper总摘要不同足以证明冻结编码器被更新
+
+当前状态：**refuted**
+
+**CE-FREEZE-01 · proposed**
+
+发生时间：历史顺序已知，精确时刻未知。审查者：controller_import_of_preserved_evidence。
+
+原issues中保留initial hypothesis：总摘要不同是否意味外部编码器变化。这里导入的是疑问，不称它曾被证实。
+
+适用范围：两run已登记wrapper状态
+
+证据：[issues](../../../../../trials/public-repo-20261031/gateway/recovered/audit/deliverables/issues.json)
+
+受影响方案／决策：AR001-16；状态变化后由主控重新审查，不自动执行。
+
+**CE-FREEZE-02 · refuted**
+
+发生时间：历史顺序已知，精确时刻未知。审查者：controller_import_of_preserved_evidence。
+
+跨run不同仅在未被fingerprint调用的随机predictor；各run登记参数及buffer前后相同。因此单凭总摘要不同不能推出冻结失效。
+
+适用范围：仅两个run已登记状态与核验调用链；不代表未登记内存均已证明
+
+证据：[tensors](../../../../../trials/public-repo-20261031/acceptance/independent-registered-encoder-state.json) · [call-path](../../../../../trials/public-repo-20261031/acceptance/primary-source-crosschecks.json) · [disposition](../../../../../issues/public-repo-round001/controller-disposition.json)
+
+受影响方案／决策：AR001-16；状态变化后由主控重新审查，不自动执行。
+

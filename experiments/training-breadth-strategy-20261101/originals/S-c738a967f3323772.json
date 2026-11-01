@@ -1,0 +1,58 @@
+{
+  "observed_at": "2026-10-31T09:48:13.486341+00:00",
+  "reviewer": "main_controller",
+  "session_id": "<PRIVATE_SESSION_OBJECT>",
+  "old_skill_actually_read": [
+    {
+      "message_index": 1,
+      "tool": "read",
+      "status": "completed",
+      "path_suffix": "input/rules/PREPARATION_SKILL.md"
+    }
+  ],
+  "production_helper_counterexamples": [
+    {
+      "case": "duplicate_blind_id",
+      "expected": "accept and preserve original row identity",
+      "actual": "rejected",
+      "error_type": "PreparationError",
+      "error": "valid: duplicate Drug_ID values: ['same']"
+    },
+    {
+      "case": "blank_blind_id",
+      "expected": "accept and preserve original row identity",
+      "actual": "rejected",
+      "error_type": "PreparationError",
+      "error": "valid: blank Drug_ID at row index 0"
+    },
+    {
+      "case": "optimizer_moments",
+      "expected": "exact state and normal param_groups structure",
+      "actual_keys": [
+        "param_groups",
+        "per_param_steps",
+        "state_sha256"
+      ],
+      "moments_preserved": false,
+      "param_groups_extra_list": true
+    },
+    {
+      "case": "actual_torch_step_type",
+      "actual": "raises",
+      "error_type": "TypeError",
+      "error": "Object of type Tensor is not JSON serializable"
+    }
+  ],
+  "static_findings": [
+    "best checkpoint saves final steps, not steps at best epoch",
+    "RNG record lacks PyTorch CPU/CUDA and independent sampling generator",
+    "optimizer type is hardcoded AdamW and absent from explicit config",
+    "RNG reload failure caught but success path continues",
+    "common_guarded legacy signature requires adapter to current generic runtime"
+  ],
+  "torch_version": "2.7.1",
+  "parameter_updates": 0,
+  "training_entry_called": false,
+  "private_valid_read": false,
+  "original_messages_sha256": "e0e301fc1a1523249e627eb49d2762a01fc710658d3bde37621562d127b86d9e"
+}

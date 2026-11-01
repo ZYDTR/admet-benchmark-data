@@ -1,0 +1,34 @@
+{
+  "findings": [
+    {
+      "run_id": "hainan-frozen-training-20261031",
+      "source_sha256": "88f735d627dded78517210e9bdd94cbd13544a61e281dcbcdb4f96490275cf84",
+      "explicit_exit_or_raise_locations": [],
+      "last_lines_start_1_based": 71,
+      "last_lines": [
+        "   except subprocess.TimeoutExpired:os.killpg(p.pid,signal.SIGKILL);p.wait()",
+        "  rc=p.wait()",
+        " if reason:rc=1",
+        " write_json(ROOT/'raw'/f'{phase}-exit.json',{'at':now(),'exit_code':rc,'reason':reason,'elapsed_seconds':time.monotonic()-started,'peak_observed_tree_rss_bytes':peak_rss,'pids_last_observed':ids,'cpu_affinity':affinity})",
+        "print(json.dumps({'phase':phase,'exit_code':rc,'reason':reason}),flush=True)"
+      ],
+      "static_finding": "Caught exception sets reason, finally sets rc=1 and writes phase-exit.json, then prints without explicit nonzero process exit. When write/print succeed this caught failure can leave supervisor process exit 0.",
+      "scope_limit": "Static source finding; no new remote fault injection or training executed."
+    },
+    {
+      "run_id": "hainan-skill-follow-20261031",
+      "source_sha256": "88f735d627dded78517210e9bdd94cbd13544a61e281dcbcdb4f96490275cf84",
+      "explicit_exit_or_raise_locations": [],
+      "last_lines_start_1_based": 71,
+      "last_lines": [
+        "   except subprocess.TimeoutExpired:os.killpg(p.pid,signal.SIGKILL);p.wait()",
+        "  rc=p.wait()",
+        " if reason:rc=1",
+        " write_json(ROOT/'raw'/f'{phase}-exit.json',{'at':now(),'exit_code':rc,'reason':reason,'elapsed_seconds':time.monotonic()-started,'peak_observed_tree_rss_bytes':peak_rss,'pids_last_observed':ids,'cpu_affinity':affinity})",
+        "print(json.dumps({'phase':phase,'exit_code':rc,'reason':reason}),flush=True)"
+      ],
+      "static_finding": "Caught exception sets reason, finally sets rc=1 and writes phase-exit.json, then prints without explicit nonzero process exit. When write/print succeed this caught failure can leave supervisor process exit 0.",
+      "scope_limit": "Static source finding; no new remote fault injection or training executed."
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+Traceback (most recent call last):
+  File "/work/host_run.py", line 56, in <module>
+    phase('features',[SRC/'build_features.py','--chemeleon','/assets/chemeleon_mp.pt',
+  File "/work/host_run.py", line 29, in phase
+    event('phase_end',phase=name,exit_code=p.returncode)
+  File "/work/host_run.py", line 21, in event
+    with events.open('a') as f:
+         ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/pathlib.py", line 1044, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 11] Resource temporarily unavailable: '/work/result/events.jsonl'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/work/host_run.py", line 90, in <module>
+    event('failed',error_type=type(exc).__name__,error=str(exc))
+  File "/work/host_run.py", line 21, in event
+    with events.open('a') as f:
+         ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/pathlib.py", line 1044, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 11] Resource temporarily unavailable: '/work/result/events.jsonl'

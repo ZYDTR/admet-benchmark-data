@@ -1,0 +1,60 @@
+[
+  {
+    "group": "glm",
+    "role": "model",
+    "session_id": "<PRIVATE_SESSION_OBJECT>",
+    "status": {
+      "type": "idle"
+    },
+    "messages": 18,
+    "last_finish": "length",
+    "errors": [],
+    "prompt_sha256": "fbbc1a56c3a4c13e1ce4667af2f96eb9d6fdc9a9395415a63405565a48ee981f",
+    "last_text": [
+      "数据"
+    ]
+  },
+  {
+    "group": "glm",
+    "role": "data-eval",
+    "session_id": "<PRIVATE_SESSION_OBJECT>",
+    "status": {
+      "type": "idle"
+    },
+    "messages": 13,
+    "last_finish": "length",
+    "errors": [],
+    "prompt_sha256": "d125f3ab3fb6f4f4a040ba252b08f75c49dfabc8adbbe45b98bc233ce1514626",
+    "last_text": [
+      "所有"
+    ]
+  },
+  {
+    "group": "deepseek",
+    "role": "model",
+    "session_id": "<PRIVATE_SESSION_OBJECT>",
+    "status": {
+      "type": "busy"
+    },
+    "messages": 61,
+    "last_finish": null,
+    "errors": [],
+    "prompt_sha256": "fbbc1a56c3a4c13e1ce4667af2f96eb9d6fdc9a9395415a63405565a48ee981f",
+    "last_text": []
+  },
+  {
+    "group": "deepseek",
+    "role": "data-eval",
+    "session_id": "<PRIVATE_SESSION_OBJECT>",
+    "status": {
+      "type": "idle"
+    },
+    "messages": 45,
+    "last_finish": "stop",
+    "errors": [],
+    "prompt_sha256": "d125f3ab3fb6f4f4a040ba252b08f75c49dfabc8adbbe45b98bc233ce1514626",
+    "last_text": [
+      "实测 **0 fail/0 warn**，22 任务 test 与模板逐行对齐，`sample_idx` 经核实等于 test 行位置，valid 行数+SHA256 全部匹配 manifest。\n- `metrics.py` + `test_metrics.py` — 纯标准库 AUROC/AP/MAE/Spearman（含 ties），固定合成值手算校验通过。\n- `check_coverage.py` — test 预测覆盖检查（缺/多/重复键）。\n- `score.py` — 逐任务评分，真实标签路径由主 Codex 显式传入；AUPRC=AP，明确标注官方聚合未确认、不输出官方总分。\n- `export_submission.py` — 官方格式导出，保留 BOM/CRLF/16379 行/所有非 y_pred 列与顺序，仅填 y_pred；拒绝缺行/重复/多余/非有限/错 split，不手填。\n- `smoke_test.py` — 端到端自检全通过；`HANDOFF.md` 记录检查项、未验证项与主 Codex 运行命令。\n\n未做任何训练/真实评分，未读取 A 会话代码。"
+    ]
+  }
+]

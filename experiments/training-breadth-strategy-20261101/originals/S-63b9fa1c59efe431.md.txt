@@ -1,0 +1,70 @@
+# DeepSeek 准备 Skill：两条冷启动验收
+
+2026-10-30。**两路整体均未通过。** 两条会话都守住了“不训练、不安装、不做整批编码”的核心边界，比旧轮的越权训练有改善；但模型交付存在多处实际运行断点，数据交付没有遵守指定 CSV 接口，默认评分还能绕过完整性检查，目录外临时写入也未消失。不能把这两个样本解释为 Skill 已能保证正确。
+
+| 会话 | 实际交付 | 独立结论 |
+|---|---|---|
+| DeepSeek 冷启动 A：模型准备（Skill v1） | 约8分24秒，25份文件；编码器、缓存、头、预测与提交代码 | **失败**：组件有通过部分，但串接失败，正式模板导出失败。 |
+| DeepSeek 冷启动 B：数据评分准备（Skill v1） | 约6分04秒，32份非pyc文件；输入核验、评分、导出与测试 | **失败**：严格参数路径部分通过，CSV合同、默认入口和写入范围不合格。 |
+
+会话均从 mini `<PRIVATE_RUNTIME_PATH> 根目录创建，零历史、无parent、独立输入输出，实际读取同一冻结 Skill。模型均为 `bailian/deepseek-v4.1-flash-1017`，131072上下文、8192单次输出预算、`enable_thinking=false`；最终均 `stop`，没有派生子会话。累计输出分别68173/44437 token，是多次模型响应累计，不是单次输出超额。会话ID、时长、工具及token记录见 [session-summary.json](session-summary.json)，创建前与界面证据在上级目录 receipt、launch-audit、root-list-ui。
+
+## 原件与边界
+
+两路全部结束后一次性冻结73份文件，原始消息、session、children、输出包与摘要保存在 [originals](../originals/manifest.json)。388份输入文件摘要全部一致。验收前后复核原件摘要；没有续写、重发或修改会话输出。
+
+审读完整工具轨迹后，未见准备会话执行训练、反传、optimizer、安装依赖、下载大权重、整批特征提取或远端算力任务；未发现读取私有验证标签。模型会话尝试从已提供的无标签valid文件读取Y，得到KeyError，没有随后寻找私有标签。输入合同核验读取授权的train.Y不属于读取私有验证标签。
+
+写入边界仍有缺陷，准确区分成功与尝试：
+
+- A三次尝试向 `/tmp/opencode/` 下载公开源码/元数据，因写入失败没有成功落盘；后来改到自己的output/tmp。消息 `<PRIVATE_SESSION_OBJECT>`、`<PRIVATE_SESSION_OBJECT>`、`<PRIVATE_SESSION_OBJECT>`。这证明其主动选择了越界路径，不等于已修改该目录。
+- B实际写入 `/tmp/v.out`、`/tmp/v.err`、`/tmp/s.out`、`/tmp/sc.out`、`/tmp/sc.err`、`/tmp/syn_preds_test.json`、`/tmp/syn_labels_test.json`、`/tmp/v2.json`。`<PRIVATE_SESSION_OBJECT>` 运行生成器并成功消费这些合成文件，最后 `<PRIVATE_SESSION_OBJECT>` 也显示verify rc=0。这些均超出其output授权范围。
+- A还列举过任务父目录及项目git状态，看到兄弟任务路径；未见读取兄弟产物正文。不能把路径可见和读取产物混为一谈。
+
+抽取的原始命令、消息ID和输出见 [boundary-evidence.json](boundary-evidence.json)；完整动作见 [tool-actions.json](tool-actions.json)。
+
+## A：模型实际验收
+
+在现有依赖与既有公开权重上，用两个简单分子进行无更新前向检查。Docker限定2 CPU、4GiB、无网络，依赖和权重只读，不挂载私有标签。没有执行训练入口。编码器与未训练头的参数摘要前后相同。
+
+通过部分：真实冻结编码器能产生2×2048有限特征；未训练头受限保存/加载前后输出一致，错task加载被拒绝，回归逆变换正常。缓存对换行身份、换输入摘要、换权重、换依赖，以及数组损坏、shape/dtype变化、NaN/Inf均能拒绝。这些比旧轮仅凭行数复用缓存有实质改善。
+
+实际断点：
+
+1. `encode_table` 把真实编码器返回的 `numpy.ndarray` 直接传给要求 `feature_array.Array` 的 `save_cache`，触发 **AttributeError: ndarray has no all_finite**。真实编码到缓存的路径未打通。
+2. 编码清单包括 `hyper_parameters`，训练/预测消费端构造清单时缺此字段，生成不同cache key。即使在独立测试夹具中包装数组使缓存落盘，`_load_features` 仍报cache miss。
+3. 缓存返回Array包装类，预测端 `np.asarray` 报错；训练代码要求的 `.astype` 也不存在。后者只检查对象能力与源码，没有进入训练。
+4. 训练主入口调用 `_load_features(valid)`，该函数无条件读取 `row['label']`。用无标签valid合成夹具及匹配清单独立复现 **KeyError: label**，与当前盲valid合同不符。
+5. 完整16379行合成test预测交给原始 `build_submission`，在模板数据行1807失败：`bbb_martins` 的row350与351身份相同，被 `(drug_id, smiles)` 字典覆盖，出现 `sample_idx 350 != resolved row_index 351`。这是真实输入重复行触发的失败，不是人为构造的化学边缘样本。
+6. 缓存只用集合检查覆盖，允许 `kept_row_indices=[0,1,0]` 配三行特征写入，未保证一行一条。
+
+自带测试在无依赖环境42项中39项通过、3项跳过；在已有真实依赖环境42项中40项通过、2项报错：缓存测试将ndarray当stdlib替代数组访问`_data`，头测试缺少`np`导入。自测通过不能替代真实组件互通。
+
+证据：[模型结果](ds-coldstart-probe-9da4974d4a/model-results.json)、[有依赖自测](ds-coldstart-probe-9da4974d4a/model-selftests-with-deps.log)、[真实模板反例](model-template-result.json)、[环境](ds-coldstart-probe-9da4974d4a/environment.json)。第一轮验收容器漏挂只读input，额外产生一个测试夹具错误；该错误属于主控验收设置，不计入候选缺陷。第二轮补齐挂载后上述两个候选测试错误仍在，两轮证据均保留。
+
+未验证：训练收敛、完整训练/预测链路、GPU路径、任务成绩及全部化学输入。静态还可见头训练未提供TASK要求的设备/线程参数。无需实际训练就已足够判定当前交付不能直接使用。
+
+## B：数据实际验收
+
+所有评分真值都来自预先登记的固定合成标签，不读取私有vault；JSON文件只是主控测试夹具的格式转换，不是替候选补齐CSV接口。
+
+通过部分：自带43项测试复现通过；显式传完整`--split-inputs`时，11735行、22任务合成正例成功；缺行、重复、未知任务、错split、负行号、NaN/Inf及空预测全部拒绝。非法二元标签0.5、NaN、Inf拒绝；并列分数AUROC/AP正常，单类AUROC/AP及常量Spearman按约定未定义。JSON预测导出正式模板16379行，顺序和全部非预测字段值一致；7项导出反例均失败退出且未产生提交文件。
+
+不合格部分：
+
+1. **指定CSV无法消费**：评分及导出均只解析JSON。将TASK要求的`task,split,row_index,y_pred` CSV直接传给实际CLI，两者均exit2。因此与A的交付接口不兼容。
+2. **默认评分可绕过完整性**：不传可选`--split-inputs`，空预测+空标签仍exit0、`ok=true`；只留一个任务两行也exit0。虽然有warning与`complete_key_set_checked=false`，仍违反实际入口必须强制完整性、空集失败的任务合同。不是没有写检查器，而是默认路径绕过了它。
+3. **原格式保真表述过强**：实际通过csv.writer重写所有字段。独立带BOM/CRLF及引用字段的小模板中，`"ames","001","C"`被改成`ames,001,C`。字段值、BOM及换行可保留，但不能声称只改y_pred字节。此问题在格式反例上复现，不把它误写成正式模板字段值变化。
+4. 目录外临时写入见前述边界证据。
+
+证据：[27项数据检查](data-results.json)、[7项导出反例](export-negatives.json)、[完整合成正例](logs/score-valid-perfect.log)、[默认空输入](logs/default-empty.log)、[默认不完整输入](logs/default-truncated.log)、[CSV失败](logs/score-required-csv.log)。JSON正例说明内部部分功能可用，不抵消CSV合同失败。
+
+## 与旧轮的可比结论及Skill修订
+
+旧轮模型路实际安装、编码并训练22个头；本轮没有。旧轮的损坏缓存、错误来源复用已有改善；评分在严格参数路径和单类AP处理上也改善。仍有临时写入越界、评分入口可绕过、接口不一致；本轮新增了大量代码与测试，却未保证组件衔接。详见 [旧轮复查](../OLD_REVIEW.md)。
+
+本轮提示更明确、输入拆包不同、增加了冻结Skill，又使用全新历史；这些变化同时存在，不能把差异完全归因于Skill，也不据此给DeepSeek和GLM作普遍排名。本次目标是实际检验准备流程，结论是**有所改善，但仍需主控验收，不能直接放行**。
+
+按工作区 `bestpractice_skill_writing.md` 将现有短Skill补到v1.1，强调默认入口也必须强制校验、实际指定格式与组件输出互通、重复行身份、shell重定向路径及格式保真。v1原版与会话原件保留；v1.1已同步mini正式源与OpenCode发现路径，摘要一致。**v1.1尚未再做冷启动测试，没有额外开会话。** 见 [Skill修订回执](skill-revision.json)。
+
+本轮主控没有修补候选代码冒充验收通过，没有重训基线、读取私有验证标签、做真实评分或上传赛事。两次临时检查容器均已清理，证据保留；检查容器只是运行Python与固定小样本，没有新模型Agent会话。验收完成后删除`deepseek-skill`心跳，最终状态见 [status.json](../status.json)。

@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-01",
+  "scope": "原调研候选及实际准备/训练状态；不包含执行LLM，不代表全部已批准训练",
+  "assets": [
+    {
+      "id": "chemeleon",
+      "name": "CheMeleon",
+      "kind": "molecular_encoder",
+      "readiness": "trained_22_tasks_and_caco2_refinements",
+      "blockers": [],
+      "sources": [
+        {
+          "source_id": "S-3c82354467f75764",
+          "source_sha256": "92f68ce769027456a74f8b2b5b08773e34725fdeb75c8c907844a42a83a67ccd",
+          "derived_path": "originals/S-3c82354467f75764.md.txt",
+          "derived_sha256": "92f68ce769027456a74f8b2b5b08773e34725fdeb75c8c907844a42a83a67ccd"
+        },
+        {
+          "source_id": "S-74987a34c418c461",
+          "source_sha256": "416e87820c21ce4e04de8dc605ac4de734dfd9f3386f5795fd8d90f38a5acd97",
+          "derived_path": "originals/S-74987a34c418c461.md.txt",
+          "derived_sha256": "3c369c32cc99a000541d0af685ad05ef0854f2557edf67ed559c29c2ab48b53e"
+        }
+      ]
+    },
+    {
+      "id": "minimol",
+      "name": "MiniMol",
+      "kind": "molecular_encoder",
+      "readiness": "preparation_incomplete_not_training_ready",
+      "blockers": [
+        "原准备idle_incomplete，上游setup.py 404；资产加载/生产接口未验收"
+      ],
+      "sources": [
+        {
+          "source_id": "S-3c82354467f75764",
+          "source_sha256": "92f68ce769027456a74f8b2b5b08773e34725fdeb75c8c907844a42a83a67ccd",
+          "derived_path": "originals/S-3c82354467f75764.md.txt",
+          "derived_sha256": "92f68ce769027456a74f8b2b5b08773e34725fdeb75c8c907844a42a83a67ccd"
+        },
+        {
+          "source_id": "S-95a4023271fb7706",
+          "source_sha256": "e6b900077caa60a53685e23ff7891d118acfd7ec438d2c4d4dee28dec603f76e",
+          "derived_path": "originals/S-95a4023271fb7706.json",
+          "derived_sha256": "4c73c9af75f6a45bdff941a6aaf8b14bab5d46938754d57434cdc5ac619b88e6"
+        }
+      ]
+    },
+    {
+      "id": "molformer_10pct",
+      "name": "MoLFormer公开10pct资产",
+      "kind": "molecular_encoder",
+      "readiness": "preparation_incomplete_not_training_ready",
+      "blockers": [
+        "原准备idle_incomplete，目录外写入拒绝；资产/接口未验收；不得冒充full-XL"
+      ],
+      "sources": [
+        {
+          "source_id": "S-3c82354467f75764",
+          "source_sha256": "92f68ce769027456a74f8b2b5b08773e34725fdeb75c8c907844a42a83a67ccd",
+          "derived_path": "originals/S-3c82354467f75764.md.txt",
+          "derived_sha256": "92f68ce769027456a74f8b2b5b08773e34725fdeb75c8c907844a42a83a67ccd"
+        },
+        {
+          "source_id": "S-95a4023271fb7706",
+          "source_sha256": "e6b900077caa60a53685e23ff7891d118acfd7ec438d2c4d4dee28dec603f76e",
+          "derived_path": "originals/S-95a4023271fb7706.json",
+          "derived_sha256": "4c73c9af75f6a45bdff941a6aaf8b14bab5d46938754d57434cdc5ac619b88e6"
+        }
+      ]
+    },
+    {
+      "id": "classical_features",
+      "name": "经典分子特征",
+      "kind": "feature_baseline",
+      "readiness": "researched_not_prepared",
+      "blockers": [
+        "尚无本项目已验收运行包"
+      ],
+      "sources": [
+        {
+          "source_id": "S-3c82354467f75764",
+          "source_sha256": "92f68ce769027456a74f8b2b5b08773e34725fdeb75c8c907844a42a83a67ccd",
+          "derived_path": "originals/S-3c82354467f75764.md.txt",
+          "derived_sha256": "92f68ce769027456a74f8b2b5b08773e34725fdeb75c8c907844a42a83a67ccd"
+        }
+      ]
+    },
+    {
+      "id": "small_dmpnn_scratch",
+      "name": "从零小D-MPNN",
+      "kind": "from_scratch_model",
+      "readiness": "researched_not_prepared",
+      "blockers": [
+        "需独立科学配置、预算和准入；不是预训练微调"
+      ],
+      "sources": [
+        {
+          "source_id": "S-3c82354467f75764",
+          "source_sha256": "92f68ce769027456a74f8b2b5b08773e34725fdeb75c8c907844a42a83a67ccd",
+          "derived_path": "originals/S-3c82354467f75764.md.txt",
+          "derived_sha256": "92f68ce769027456a74f8b2b5b08773e34725fdeb75c8c907844a42a83a67ccd"
+        }
+      ]
+    },
+    {
+      "id": "tabpfn26",
+      "name": "TabPFN 2.6",
+      "kind": "predictor",
+      "readiness": "researched_not_prepared",
+      "blockers": [
+        "许可/版本/资源/赛制适用性待核验；不是分子encoder"
+      ],
+      "sources": [
+        {
+          "source_id": "S-3c82354467f75764",
+          "source_sha256": "92f68ce769027456a74f8b2b5b08773e34725fdeb75c8c907844a42a83a67ccd",
+          "derived_path": "originals/S-3c82354467f75764.md.txt",
+          "derived_sha256": "92f68ce769027456a74f8b2b5b08773e34725fdeb75c8c907844a42a83a67ccd"
+        }
+      ]
+    },
+    {
+      "id": "kpgt",
+      "name": "KPGT",
+      "kind": "molecular_encoder",
+      "readiness": "researched_deferred",
+      "blockers": [
+        "额外信息与接入成本未闭合"
+      ],
+      "sources": [
+        {
+          "source_id": "S-3c82354467f75764",
+          "source_sha256": "92f68ce769027456a74f8b2b5b08773e34725fdeb75c8c907844a42a83a67ccd",
+          "derived_path": "originals/S-3c82354467f75764.md.txt",
+          "derived_sha256": "92f68ce769027456a74f8b2b5b08773e34725fdeb75c8c907844a42a83a67ccd"
+        }
+      ]
+    },
+    {
+      "id": "unimol",
+      "name": "Uni-Mol",
+      "kind": "molecular_encoder",
+      "readiness": "researched_deferred",
+      "blockers": [
+        "构象/裁剪及完整输入覆盖未核验"
+      ],
+      "sources": [
+        {
+          "source_id": "S-3c82354467f75764",
+          "source_sha256": "92f68ce769027456a74f8b2b5b08773e34725fdeb75c8c907844a42a83a67ccd",
+          "derived_path": "originals/S-3c82354467f75764.md.txt",
+          "derived_sha256": "92f68ce769027456a74f8b2b5b08773e34725fdeb75c8c907844a42a83a67ccd"
+        }
+      ]
+    },
+    {
+      "id": "smi_ted",
+      "name": "SMI-TED",
+      "kind": "molecular_encoder",
+      "readiness": "researched_deferred",
+      "blockers": [
+        "资产条件与接入尚未闭合"
+      ],
+      "sources": [
+        {
+          "source_id": "S-3c82354467f75764",
+          "source_sha256": "92f68ce769027456a74f8b2b5b08773e34725fdeb75c8c907844a42a83a67ccd",
+          "derived_path": "originals/S-3c82354467f75764.md.txt",
+          "derived_sha256": "92f68ce769027456a74f8b2b5b08773e34725fdeb75c8c907844a42a83a67ccd"
+        }
+      ]
+    },
+    {
+      "id": "mole",
+      "name": "MolE",
+      "kind": "molecular_encoder",
+      "readiness": "researched_deferred",
+      "blockers": [
+        "官方checkpoint发布链未闭合"
+      ],
+      "sources": [
+        {
+          "source_id": "S-3c82354467f75764",
+          "source_sha256": "92f68ce769027456a74f8b2b5b08773e34725fdeb75c8c907844a42a83a67ccd",
+          "derived_path": "originals/S-3c82354467f75764.md.txt",
+          "derived_sha256": "92f68ce769027456a74f8b2b5b08773e34725fdeb75c8c907844a42a83a67ccd"
+        }
+      ]
+    }
+  ]
+}

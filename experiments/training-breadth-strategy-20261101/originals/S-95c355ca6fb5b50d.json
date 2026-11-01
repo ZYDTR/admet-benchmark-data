@@ -1,0 +1,366 @@
+[
+  {
+    "issue_id": "AR001-01",
+    "status": "open",
+    "severity": "high",
+    "category": "history_coverage",
+    "statement": "历史实验/失败/评分使用史仅部分迁入；本快照5runs/24issues不代表项目全集。",
+    "affected_run_ids": [
+      "hainan-mae-monitor-20261101",
+      "hainan-index-cycle-20261031"
+    ],
+    "evidence_refs": [
+      "history/README.md:L0-L2",
+      "history/gaps.json:L0-L22"
+    ],
+    "hypothesis": "历史遗漏可能影响候选排序和先验判断。",
+    "counterevidence": "本轮核心两run有固定证据。",
+    "impact": "跨任务与其他底座方案只能列储备。",
+    "proposed_resolution": "主控后续补齐mini22任务基线、全部valid使用史及底座就绪账本。",
+    "verification_criterion": "历史索引逐项覆盖并绑定固定commit、run/task/metric。",
+    "related_proposal_ids": [
+      "P-CACHE",
+      "P-BACKBONE"
+    ]
+  },
+  {
+    "issue_id": "AR001-02",
+    "status": "open",
+    "severity": "high",
+    "category": "comparability",
+    "statement": "当前对照虽同输入文件/split/head config/initial head，仍有feature payload差异且没有同配置多seed。",
+    "affected_run_ids": [
+      "hainan-index-cycle-20261031",
+      "hainan-mae-monitor-20261101"
+    ],
+    "evidence_refs": [
+      "batches/.../delta.json:L1-L31",
+      "batches/.../feature-comparison.json:L1-L50"
+    ],
+    "hypothesis": "monitor改变可能贡献部分改善，但特征数值微差及训练轨迹混杂未排除。",
+    "counterevidence": "最大feature差仅2.384e-7且无元素差>1e-6。",
+    "impact": "不能归因4.38%给monitor。",
+    "proposed_resolution": "固定cache、split和共同seeds，单变量对照monitor。",
+    "verification_criterion": "每个seed的两个monitor使用相同feature SHA和initial head SHA；输出paired MAE及seed分布。",
+    "related_proposal_ids": [
+      "P-MONITOR-PAIR"
+    ]
+  },
+  {
+    "issue_id": "AR001-03",
+    "status": "open",
+    "severity": "medium",
+    "category": "split",
+    "statement": "raw Drug分组边界在历史两个内部划分曾各有重复raw SMILES跨fit/stop疑点，需审计当前split记录和group semantics。",
+    "affected_run_ids": [
+      "hainan-index-cycle-20261031",
+      "hainan-mae-monitor-20261101"
+    ],
+    "evidence_refs": [
+      "history/issues.json:L74-L80",
+      "runs/hainan-mae-monitor-20261101/artifacts/internal-split.json:L0-L49"
+    ],
+    "hypothesis": "跨fit/stop重复分子可能使内部stop估计偏乐观。",
+    "counterevidence": "当前split源码明确按raw Drug分组并断言无交叉。",
+    "impact": "影响内部早停可信度；不能据旧摘要断言当前有泄漏。",
+    "proposed_resolution": "对每个当前split重新计算fit/stop raw Drug交集与完整行覆盖。",
+    "verification_criterion": "交集为空、row index互斥且覆盖637行。",
+    "related_proposal_ids": [
+      "P-SPLIT-AUDIT",
+      "P-SEED-SPLIT"
+    ]
+  },
+  {
+    "issue_id": "AR001-04",
+    "status": "investigating",
+    "severity": "high",
+    "category": "preprocessing",
+    "statement": "fit-standardized稀疏特征在holdout曾出现极端|z|，但是否影响预测误差未证。",
+    "affected_run_ids": [
+      "hainan-index-cycle-20261031",
+      "hainan-mae-monitor-20261101"
+    ],
+    "evidence_refs": [
+      "history/issues.json:L83-L89",
+      "runs/hainan-mae-monitor-20261101/source/train_remote_v4.py:L180-L190",
+      "history/claims/current.json:L40-L58"
+    ],
+    "hypothesis": "低方差特征标准化可能放大稀有特征。",
+    "counterevidence": "标准化器只fit fit rows；没有证明极端z与误差关联。",
+    "impact": "可能影响泛化和训练稳定性。",
+    "proposed_resolution": "固定feature cache和split，单独比较legacy z、clip±6、robust scale；阈值6仅为有文献方法先例的探索候选，不视为最优阈值。",
+    "verification_criterion": "train-only scaler；报告z分布、非有限值、stop MAE及梯度；只在多seed稳定改善时保留。",
+    "related_proposal_ids": [
+      "P-SCALE-CLIP"
+    ]
+  },
+  {
+    "issue_id": "AR001-05",
+    "status": "investigating",
+    "severity": "high",
+    "category": "selection_metric",
+    "statement": "旧run以standardized MSE选epoch，新run以original-scale raw MAE选epoch；训练loss两者均MSE。",
+    "affected_run_ids": [
+      "hainan-index-cycle-20261031",
+      "hainan-mae-monitor-20261101"
+    ],
+    "evidence_refs": [
+      "runs/hainan-mae-monitor-20261101/source/train_remote_v4.py:L228-L301",
+      "runs/hainan-mae-monitor-20261101/artifacts/training-evidence.json:L490-L497"
+    ],
+    "hypothesis": "按目标MAE选轮可能优于MSE选轮。",
+    "counterevidence": "仅一对run且feature payload不完全一致。",
+    "impact": "当前最优可证伪的因果问题。",
+    "proposed_resolution": "固定cache下monitor-only paired multi-seed。",
+    "verification_criterion": "每seed相同初始头/feature/split；MAE monitor的配对stop/valid MAE差异可复算。",
+    "related_proposal_ids": [
+      "P-MONITOR-PAIR"
+    ]
+  },
+  {
+    "issue_id": "AR001-07",
+    "status": "open",
+    "severity": "medium",
+    "category": "reproducibility",
+    "statement": "逐batch梯度/每epoch全部checkpoint及完整恢复轨迹材料仍有缺口。",
+    "affected_run_ids": [
+      "hainan-mae-monitor-20261101"
+    ],
+    "evidence_refs": [
+      "history/gaps.json:L8-L19"
+    ],
+    "hypothesis": "当前epoch级history足够复核选轮但不足以逐步重放。",
+    "counterevidence": "best/last、最终optimizer/RNG已有保存与roundtrip。",
+    "impact": "不能宣称精确续训已验收。",
+    "proposed_resolution": "后续runner可选记录每epoch head/optimizer/RNG摘要和逐batch loss/grad摘要。",
+    "verification_criterion": "重载恢复与连续轨迹在固定测试fixture下匹配；不在本轮重跑。",
+    "related_proposal_ids": [
+      "P-REPRO-LOG"
+    ]
+  },
+  {
+    "issue_id": "AR001-08",
+    "status": "open",
+    "severity": "high",
+    "category": "feature_identity",
+    "statement": "同encoder跨run缓存payload hash不同，数值差小但非byte-identical。",
+    "affected_run_ids": [
+      "hainan-index-cycle-20261031",
+      "hainan-mae-monitor-20261101"
+    ],
+    "evidence_refs": [
+      "batches/.../feature-comparison.json:L1-L50",
+      "runs/hainan-mae-monitor-20261101/source/train_remote_v4.py:L166-L177"
+    ],
+    "hypothesis": "后端/硬件/数值精度或runtime引起轻微表示差异。",
+    "counterevidence": "无值差超过1e-6，RMS约1e-8。",
+    "impact": "监控单因素隔离失败。",
+    "proposed_resolution": "建立immutable cache文件、SHA/row identity/schema和读入runner adapter。",
+    "verification_criterion": "两个monitor读入同一cache SHA，数值数组逐元素相同；行身份、dtype、shape、mask全通过。",
+    "related_proposal_ids": [
+      "P-CACHE",
+      "P-MONITOR-PAIR"
+    ]
+  },
+  {
+    "issue_id": "AR001-09",
+    "status": "open",
+    "severity": "medium",
+    "category": "error_analysis",
+    "statement": "当前只发布整体valid聚合，没有授权的细分配对误差聚合。",
+    "affected_run_ids": [
+      "hainan-mae-monitor-20261101"
+    ],
+    "evidence_refs": [
+      "batches/.../aggregate-scores.json:L1-L31",
+      "context/current/evaluation-scope.json:L19-L32"
+    ],
+    "hypothesis": "大误差尾部可能集中在特定可解释化学/表示群。",
+    "counterevidence": "未读取/不允许向准备方传逐行真值和残差。",
+    "impact": "无法定位具体错误来源。",
+    "proposed_resolution": "专职分析者可在授权域内计算非重构的任务/分组汇总，再由主控投影。",
+    "verification_criterion": "分组定义、样本数、run/task/split和来源可审；不含小组差分或个体可还原信息。",
+    "related_proposal_ids": [
+      "P-ERROR-PROJECTION"
+    ]
+  },
+  {
+    "issue_id": "AR001-10",
+    "status": "open",
+    "severity": "high",
+    "category": "backbone_readiness",
+    "statement": "MiniMol/MoLFormer实际idle/incomplete，其他底座最新就绪状态不完整。",
+    "affected_run_ids": [
+      "hainan-mae-monitor-20261101"
+    ],
+    "evidence_refs": [
+      "history/issues.json:L137-L143",
+      "history/gaps.json:L0-L7"
+    ],
+    "hypothesis": "替代冻结底座可能改善表示泛化。",
+    "counterevidence": "本快照没有当前资产/权重/adapter的可执行证明。",
+    "impact": "禁止将其放入首批可运行矩阵。",
+    "proposed_resolution": "单独准备任务私有依赖、下载已批准权重、license/sha审计、轻量不更新参数接口检查。",
+    "verification_criterion": "明确来源/commit/weight SHA/冻结层/池化/输出shape及行序。",
+    "related_proposal_ids": [
+      "P-ALT-BACKBONE"
+    ]
+  },
+  {
+    "issue_id": "AR001-12",
+    "status": "open",
+    "severity": "high",
+    "category": "evaluation_leakage",
+    "statement": "official_valid已用于模型选择反馈；没有未调参最终泛化证据。",
+    "affected_run_ids": [
+      "hainan-mae-monitor-20261101",
+      "hainan-index-cycle-20261031"
+    ],
+    "evidence_refs": [
+      "context/current/evaluation-scope.json:L33-L41",
+      "history/issues.json:L155-L161"
+    ],
+    "hypothesis": "持续以同一valid迭代会产生选择过拟合。",
+    "counterevidence": "官方允许valid调参且主控限制执行方仅接收汇总反馈。",
+    "impact": "不得宣称final generalization。",
+    "proposed_resolution": "完整记录valid反馈参与的选择次数；申请独立外部/赛事盲测决策另议，不使用test拟合。",
+    "verification_criterion": "清楚区分train内部stop、official valid选择、最终盲测。",
+    "related_proposal_ids": [
+      "P-EVAL-LEDGER"
+    ]
+  },
+  {
+    "issue_id": "AR001-13",
+    "status": "open",
+    "severity": "medium",
+    "category": "model_comparison",
+    "statement": "仅同一冻结底座两个MLP配置，没有简单线性头/其他表示匹配实测。",
+    "affected_run_ids": [
+      "hainan-mae-monitor-20261101",
+      "hainan-index-cycle-20261031"
+    ],
+    "evidence_refs": [
+      "history/issues.json:L164-L170"
+    ],
+    "hypothesis": "简单头可能更稳健且更低方差。",
+    "counterevidence": "本次两个run只比较同一256宽MLP。",
+    "impact": "尚未知道head容量收益。",
+    "proposed_resolution": "加入ridge/linear和小MLP对照，固定特征/预处理/seed。",
+    "verification_criterion": "相同cache/split/seeds下paired stop MAE和official valid固定评分。",
+    "related_proposal_ids": [
+      "P-HEAD-SCREEN"
+    ]
+  },
+  {
+    "issue_id": "AR001-15",
+    "status": "open",
+    "severity": "high",
+    "category": "supervisor",
+    "statement": "supervisor写出业务rc后未可靠传播到OS exit；本次worker0而supervisor125。",
+    "affected_run_ids": [
+      "hainan-mae-monitor-20261101"
+    ],
+    "evidence_refs": [
+      "runs/hainan-mae-monitor-20261101/raw/attempt-01/train/status.json:L1-L16",
+      "evidence/main-acceptance/report.md.txt:L8-L10"
+    ],
+    "hypothesis": "PID状态采样/退出回收竞态可能造成监督误判，但未证。",
+    "counterevidence": "fault-time stat/status未保存。",
+    "impact": "未来任务可靠性/观测受影响，不否定已验收科学产物。",
+    "proposed_resolution": "准备新supervisor最小状态采集/退出码传播测试，不重启本run。",
+    "verification_criterion": "注入可控退出态并保留stat/status/waitpid原件，worker与OS码一致。",
+    "related_proposal_ids": [
+      "P-SUPERVISOR"
+    ]
+  },
+  {
+    "issue_id": "AR001-16",
+    "status": "resolved",
+    "severity": "low",
+    "category": "freeze_interpretation",
+    "statement": "跨run wrapper总SHA不同不等于冻结encoder更新；窄范围差异是未参与fingerprint的predictor参数。",
+    "affected_run_ids": [
+      "hainan-frozen-training-20261031",
+      "hainan-skill-follow-20261031"
+    ],
+    "evidence_refs": [
+      "history/claims/events.jsonl:L0-L1",
+      "prior tensors.json:L2-L13",
+      "prior call-path.json:L3-L14"
+    ],
+    "hypothesis": "不再需要把predictor差异当作冻结违规。",
+    "counterevidence": "结论只覆盖登记参数与call path，不证明所有未登记状态。",
+    "impact": "不阻断冻结底座方案。",
+    "proposed_resolution": "保留窄范围；每个新run仍需参数+buffer前后核验。",
+    "verification_criterion": "新run独立freeze checks通过。",
+    "related_proposal_ids": []
+  },
+  {
+    "issue_id": "I-CYCLE003-SUPERVISOR125",
+    "status": "investigating",
+    "severity": "high",
+    "category": "runtime_reliability",
+    "statement": "worker0但监督125，fault-time stat/status缺失，根因未知。",
+    "affected_run_ids": [
+      "hainan-mae-monitor-20261101"
+    ],
+    "evidence_refs": [
+      "adapter-complete.json:L5-L16",
+      "status.json:L1-L16",
+      "main-acceptance/report.md.txt:L8-L10"
+    ],
+    "hypothesis": "PID VmRSS读取失败或进程状态变化导致supervisor误判，仍待证。",
+    "counterevidence": "没有fault-time进程状态原件，不能确定Z-state或竞态。",
+    "impact": "不影响现有产物的主控验收；影响未来可靠性。",
+    "proposed_resolution": "独立准备supervisor修复与故障注入验证，主控另行授权。",
+    "verification_criterion": "在受控场景记录stat/status/wait status和OS退出码，证明错误分类与传播。",
+    "related_proposal_ids": [
+      "P-SUPERVISOR"
+    ]
+  },
+  {
+    "issue_id": "AR001-17",
+    "status": "open",
+    "severity": "high",
+    "category": "causal_identification",
+    "statement": "monitor变化与feature payload变化同时存在，单run比较不能识别monitor因果效应。",
+    "affected_run_ids": [
+      "hainan-index-cycle-20261031",
+      "hainan-mae-monitor-20261101"
+    ],
+    "evidence_refs": [
+      "batches/.../delta.json:L1-L31",
+      "batches/.../feature-comparison.json:L1-L50"
+    ],
+    "hypothesis": "raw-MAE选轮可能有收益，但幅度未识别。",
+    "counterevidence": "其他配置身份一致且feature数值差极小。",
+    "impact": "限制对4.38%改善的解释。",
+    "proposed_resolution": "固定cache paired monitor intervention，多seed。",
+    "verification_criterion": "同cache SHA、split SHA、initial head SHA，monitor是唯一变项。",
+    "related_proposal_ids": [
+      "P-MONITOR-PAIR"
+    ]
+  },
+  {
+    "issue_id": "AR001-18",
+    "status": "open",
+    "severity": "medium",
+    "category": "cache_reuse",
+    "statement": "已存feature artifacts但runner没有已验收的跨run缓存读入接口。",
+    "affected_run_ids": [
+      "hainan-mae-monitor-20261101"
+    ],
+    "evidence_refs": [
+      "source/train_remote_v4.py:L166-L177",
+      "context/current/skills/admet-frozen-training/SKILL.md.txt:L26-L29"
+    ],
+    "hypothesis": "新adapter能降低批量run重复编码成本并实现精确配对。",
+    "counterevidence": "缓存文件已存在且身份记录充分，但消费接口未测。",
+    "impact": "不具备即刻共享编码的能力。",
+    "proposed_resolution": "新增cache input path与严格identity validator。",
+    "verification_criterion": "无参数更新接口检查可拒绝错hash/错序/错dtype，并准确读同SHA缓存。",
+    "related_proposal_ids": [
+      "P-CACHE"
+    ]
+  }
+]

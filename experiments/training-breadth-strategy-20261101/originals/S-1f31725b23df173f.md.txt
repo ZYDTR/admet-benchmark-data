@@ -1,0 +1,7 @@
+本轮接入规则：先读训练Skill/AGENTS/PLAN。当前仅本地运行包装准备，准备科学代码由Qwen提供、Terra与主控验收。主控发布accepted code manifest并发执行消息前，不远端部署或训练。计划仅一项训练，失败保留；不能重放旧run。主控回执线程见cycle授权。
+
+阶段一已完成：运行包装与20项离线检查通过，入口 runtime-readiness.json；源码摘要 operator/runtime-source-manifest.json；真实退出及日志 raw/local-runtime-checks/suite-20261031T084733-e6301f30/。科学入口仍关闭，未远端操作。后续仅按主控验收清单和正式执行消息接续；接入要求 source/runtime/README.md。
+
+执行v1：正式绑定已部署，GPU5完整导入/真实CUDA成功，/proc VmRSS缺失使监督器收尾125，训练正确跳过。47文件原件在acceptance/execution-01/result.json；3登记PID退出、GPU释放、源文件/环境未变。v2候选source/production-adapter-v2/，22+8检查及接口探针通过，未部署。须主控新runtime/formal绑定；raw/attempt-v2独立尝试、全run学习锁保一轮一次，不覆盖v1。
+
+v2正式恢复已完成唯一学习：26epoch/130步，best18/90步，273盲预测+637训练预测，11底座状态不变、4头张量变化；两个阶段和实际OS wait均0。116文件93,643,877字节SHA通过，3轨迹无成功外写/未解析，9登记PID全gone，GPU5健康释放；真实收尾记录终态无RSS分支。入口acceptance/result.json，原件raw/execution-02/remote-snapshot-v2。主控独立RUN_ACCEPTED待定，未评分/发布；不重训，原v1失败和锁保留。

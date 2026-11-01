@@ -1,0 +1,85 @@
+# Offline checks record — admet_progressive_cycle_20261031 / preparation
+
+Date: 2026-10-31. Executor: leaf preparer (no sub-agents, no other sessions, no CLI models).
+Boundary held: no parameter update, no training entrypoint run, no batch feature extraction,
+no installs/downloads, no remote/GPU operations. All writes stayed inside this `output/` tree
+(`PYTHONPYCACHEPREFIX=./.pycache` for every python invocation; no `/tmp` use).
+
+## Environment facts (raw errors preserved)
+
+- Python 3.11.2, numpy present.
+- `python3 -c "import torch"` → `ModuleNotFoundError: No module named 'torch'`. Per TASK.md,
+  torch was NOT installed. Everything requiring torch/chemprop/CUDA/common_guarded remains
+  UNVERIFIED.
+- No flake8/ruff/pyflakes installed → static checking done with `ast` + `py_compile` only.
+
+## Commands actually run and results
+
+1. `sha256sum input/*` — all inputs match `input-manifest.json` and `config.json` hashes
+   (train 3061c58d…, valid 41370e87…, test d87dac94…, config ac024e8a…, encoder 3adfea2d…,
+   v3 reference 2549520c…).
+2. `python3 -m py_compile train_remote_v4.py training_science.py tests/test_training_science.py`
+   → OK (one syntax slip found and fixed during prep; final files compile).
+3. AST scan of both production files: allowed-imports-only, no `open/exec/eval/__import__` calls,
+   `os.*` surface limited to chdir/environ/getpid/getpgid/sched_getaffinity; unbound-name list
+   cross-checked against `_load_late()` globals and host imports (`ROOT,GPU_UUID,environment,now,
+   safe,sha,write_json`, `np,torch,nn,CheMeleonEmbedder`) — consistent. Findings flagged by the
+   scanner as issues were false positives (`from training_science` is a same-directory delivery
+   helper; `os.environ.clear()/update()` are env ops, not filesystem).
+4. `python3 tests/test_training_science.py` → **48 passed, 0 failed, exit 0**
+   (full log: `tests/results.txt`). Covers: registered config validates;坏 config variants fail;
+   group split reproducible incl. under poisoned global `random`/`numpy` state; fit/stop non-empty,
+   disjoint, exact 637-row coverage, no raw-SMILES crossing, duplicate-SMILES groups stay whole,
+   Y untouched; blank/duplicate-ID/invalid-Y/empty-table/fraction-too-large/negative-seed all
+   raise `PreparationError`; metrics values + NaN/inf/shape/empty rejection; feature identity
+   bound to content+row order+encoder meta; CPU RNG snapshot plain-JSON + restore reproducibility;
+   optimizer payload JSON-safe.
+5. Real-data read-only split via the production helper: seed 43, fraction 0.1 →
+   **573 fit / 64 stop rows**, 3 duplicate-raw-SMILES groups kept whole, no leakage; deterministic
+   across runs and immune to global RNG poisoning; seed 42 yields a different stop set.
+   Full record preview (identical structure to what v4 writes to `artifacts/internal-split.json`,
+   plus its source-file hashes): `split-preview.json`
+   (`split_record_sha256 = a10dc9fdbcf2f83fe9cabd2410e05c83f4a028628282858fc50a577b2441126d`).
+6. Simulated-host path exercise (production functions only, synthetic numeric arrays instead of
+   GPU features): validate_config → check_rows_identity → split_train_stop_groups →
+   feature_identity → train-only z-fit → standardized_mse/scale_metrics epoch-log row →
+   capture/restore_cpu_rng_state → optimizer_payload → float10g export formatting. Output ended
+   `SIMULATED-HOST PATH OK`. This exercised NO model, NO backward, NO optimizer.step, NO file
+   writes outside reading task inputs.
+
+## Data findings that shaped the contract (recorded honestly)
+
+- Official train has 26 duplicated `Drug_ID` values (incl. 14 × `-`) and 3 duplicated raw SMILES
+  pairs whose Y values DIFFER between rows. Therefore: row *position* is the authoritative line
+  identity; `Drug_ID` uniqueness is enforced only where the blind-export contract needs it;
+  duplicates keep every original row, no dedup/canonicalization/Y edits; duplicate raw-SMILES
+  groups are forced wholly onto one side of the split (leakage fix vs v3's per-row shuffle).
+- `seed 43` is used for BOTH split_config and head_config in the registered config. The split RNG
+  is a dedicated `random.Random(43)` instance created and consumed strictly BEFORE any model
+  construction/re-seeding, so split identity cannot depend on model init (assertion-free by
+  construction; documented algorithm `CPython random.Random.shuffle`).
+
+## NOT tested (must remain claimed as unverified)
+
+- Any CUDA/GPU behavior, `common_guarded` host接手 (ROOT/GPU_UUID/environment/now/safe/sha/write_json),
+  CheMeleonEmbedder loading/embedding, chemprop featurization, torch training loop execution,
+  `torch.save`/`weights_only=True` round-trip of the new artifact formats, actual npz/csv artifact
+  writes, reload-consistency block, wall-time/RSS/CUDA peak evidence fields.
+- Feature-array dtype path uses real encoder output at runtime (float32 asserted in
+  `feature_identity`); preparation environment substituted synthetic float32 only.
+- The `abs(stop_std - val) <= 1e-9` equality assertion in the epoch loop is reasoned-equivalent
+  (same eval mode, same tensors) but numerically unverified without torch.
+- Dropout makes per-epoch fit/stop eval stochastic; v4 does not add a separate eval RNG seed
+  beyond global seeding — deterministic reproduction across processes is therefore NOT claimed.
+- No end-to-end run has been performed; claiming otherwise would be false.
+
+## Self-reported deviations / honest notes
+
+- One temporary scratch file `output/.scratch_note.txt` was created while drafting and deleted in
+  the same session before handoff; nothing outside `output/` was ever written. All python
+  invocations used `PYTHONPYCACHEPREFIX=./.pycache`, so bytecode cache stayed inside output/
+  (`.pycache/` remains as harmless byproduct).
+- Test fixture initially encoded wrong expected metric values (test bug); production helper math was
+  verified independently and the fixture corrected — final suite recomputed by hand-check passes.
+- `split-preview.json` embeds its own generating context only via data; re-running the documented
+  command reproduces byte-identical content (verified twice during prep).

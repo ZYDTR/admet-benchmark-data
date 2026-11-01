@@ -1,0 +1,76 @@
+
+STDERR
+test_corrupted_array_is_rejected (test_cache_synthetic.CacheTests.test_corrupted_array_is_rejected) ... ok
+test_dep_version_change_forces_miss (test_cache_synthetic.CacheTests.test_dep_version_change_forces_miss) ... ok
+test_failure_partition_enforced (test_cache_synthetic.CacheTests.test_failure_partition_enforced) ... ok
+test_hit_returns_same_array (test_cache_synthetic.CacheTests.test_hit_returns_same_array) ... ERROR
+test_index_shift_same_molecule_forces_miss (test_cache_synthetic.CacheTests.test_index_shift_same_molecule_forces_miss) ... ok
+test_input_content_change_forces_miss (test_cache_synthetic.CacheTests.test_input_content_change_forces_miss) ... ok
+test_manifest_identity_tamper_rejected (test_cache_synthetic.CacheTests.test_manifest_identity_tamper_rejected) ... ok
+test_missing_manifest_is_miss_not_hit (test_cache_synthetic.CacheTests.test_missing_manifest_is_miss_not_hit) ... ok
+test_nonfinite_array_rejected (test_cache_synthetic.CacheTests.test_nonfinite_array_rejected) ... ok
+test_overlapping_failure_and_feature_rejected (test_cache_synthetic.CacheTests.test_overlapping_failure_and_feature_rejected) ... ok
+test_row_order_change_forces_miss (test_cache_synthetic.CacheTests.test_row_order_change_forces_miss) ... ok
+test_weight_hash_change_forces_miss (test_cache_synthetic.CacheTests.test_weight_hash_change_forces_miss) ... ok
+test_wrong_array_backend_format_rejected (test_cache_synthetic.CacheTests.test_wrong_array_backend_format_rejected) ... ok
+setUpClass (test_contract_synthetic.RealPackReadOnlyTests) ... ERROR
+test_input_digest_is_row_order_sensitive (test_contract_synthetic.SyntheticPackTests.test_input_digest_is_row_order_sensitive) ... ok
+test_rejects_bad_header_and_label_in_blind_split (test_contract_synthetic.SyntheticPackTests.test_rejects_bad_header_and_label_in_blind_split) ... ok
+test_rejects_non_numeric_or_nonfinite_train_label (test_contract_synthetic.SyntheticPackTests.test_rejects_non_numeric_or_nonfinite_train_label) ... ok
+test_row_identity_and_no_dedup (test_contract_synthetic.SyntheticPackTests.test_row_identity_and_no_dedup) ... ok
+test_template_mapping_ok_and_rejects_mismatch (test_contract_synthetic.SyntheticPackTests.test_template_mapping_ok_and_rejects_mismatch) ... ok
+test_encoder_weights_verifier_rejects_wrong_size (test_head_and_submission_synthetic.HeadArtifactTests.test_encoder_weights_verifier_rejects_wrong_size) ... ok
+test_load_head_rejects_wrong_task (test_head_and_submission_synthetic.HeadArtifactTests.test_load_head_rejects_wrong_task) ... ok
+test_save_load_roundtrip_regression_scale (test_head_and_submission_synthetic.HeadArtifactTests.test_save_load_roundtrip_regression_scale) ... ERROR
+test_submission_refuses_missing_prediction (test_head_and_submission_synthetic.SubmissionTests.test_submission_refuses_missing_prediction) ... ok
+test_submission_subset_preserves_template (test_head_and_submission_synthetic.SubmissionTests.test_submission_subset_preserves_template) ... ok
+test_verify_submission_detects_tamper (test_head_and_submission_synthetic.SubmissionTests.test_verify_submission_detects_tamper) ... ok
+test_asset_lock_missing_and_mismatch_refused (test_products_synthetic.AssetGuardTests.test_asset_lock_missing_and_mismatch_refused) ... ok
+test_right_size_wrong_md5_refused (test_products_synthetic.AssetGuardTests.test_right_size_wrong_md5_refused) ... ok
+test_wrong_size_weights_refused (test_products_synthetic.AssetGuardTests.test_wrong_size_weights_refused) ... ok
+test_metrics_on_synthetic_labels (test_products_synthetic.MetricsSyntheticTests.test_metrics_on_synthetic_labels) ... ok
+test_undefined_cases_recorded_not_fabricated (test_products_synthetic.MetricsSyntheticTests.test_undefined_cases_recorded_not_fabricated) ... ok
+test_refuses_duplicate_key (test_products_synthetic.ProductTests.test_refuses_duplicate_key) ... ok
+test_refuses_empty_expected (test_products_synthetic.ProductTests.test_refuses_empty_expected) ... ok
+test_refuses_missing_and_extra (test_products_synthetic.ProductTests.test_refuses_missing_and_extra) ... ok
+test_refuses_wrong_header (test_products_synthetic.ProductTests.test_refuses_wrong_header) ... ok
+test_refuses_wrong_split_and_nonfinite (test_products_synthetic.ProductTests.test_refuses_wrong_split_and_nonfinite) ... ok
+test_roundtrip_ok (test_products_synthetic.ProductTests.test_roundtrip_ok) ... ok
+test_write_refuses_nonfinite (test_products_synthetic.ProductTests.test_write_refuses_nonfinite) ... ok
+
+======================================================================
+ERROR: test_hit_returns_same_array (test_cache_synthetic.CacheTests.test_hit_returns_same_array)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/candidate/tests/test_cache_synthetic.py", line 66, in test_hit_returns_same_array
+    blob = pack_f32(self.feats.obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/candidate/mini_linalg.py", line 132, in pack_f32
+    return struct.pack(f"<{len(arr._data)}f", *arr._data)
+                               ^^^^^^^^^
+AttributeError: 'numpy.ndarray' object has no attribute '_data'
+
+======================================================================
+ERROR: setUpClass (test_contract_synthetic.RealPackReadOnlyTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/candidate/tests/test_contract_synthetic.py", line 107, in setUpClass
+    cls.tasks = list_tasks(REAL_ROOT)
+                ^^^^^^^^^^^^^^^^^^^^^
+  File "/candidate/dataio.py", line 73, in list_tasks
+    raise InputContractError(f"missing benchmark dir: {bench}")
+errors.InputContractError: missing benchmark dir: /input/data/official/data_benchmark
+
+======================================================================
+ERROR: test_save_load_roundtrip_regression_scale (test_head_and_submission_synthetic.HeadArtifactTests.test_save_load_roundtrip_regression_scale)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/candidate/tests/test_head_and_submission_synthetic.py", line 112, in test_save_load_roundtrip_regression_scale
+    y = np.array([1.0, 3.0, 5.0])
+        ^^
+NameError: name 'np' is not defined
+
+----------------------------------------------------------------------
+Ran 36 tests in 0.126s
+
+FAILED (errors=3)

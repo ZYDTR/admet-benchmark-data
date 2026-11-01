@@ -1,0 +1,30 @@
+# C-DOWNLOAD
+
+命题：下载事件超时说明本轮实际文件下载失败
+
+当前状态：**refuted**
+
+**CE-DOWNLOAD-01 · proposed**
+
+发生时间：历史顺序已知，精确时刻未知。审查者：controller_import_of_preserved_evidence。
+
+下载事件等待超时，原失败回执已保存；当时还没有系统文件的独立确认。
+
+适用范围：本次原audit.zip请求
+
+证据：[download-timeout](../../evidence/43964c3d4eae10d9a08e63675c4bea37331c4af4040626dead67d6a65b6ac824/audit-download-failed.json)
+
+受影响方案／决策：gateway-recovery；状态变化后由主控重新审查，不自动执行。
+
+**CE-DOWNLOAD-02 · refuted**
+
+发生时间：历史顺序已知，精确时刻未知。审查者：controller_import_of_preserved_evidence。
+
+系统下载实际成功；文件身份、六件SHA和ZIP CRC通过。超时的是工具事件捕获，真实传输完成时间仍未知。
+
+适用范围：本次原audit.zip，不推广为所有超时均成功
+
+证据：[download-correction](../../evidence/f57a1def74641fec2034a6a61cb49488819dfdf6d14b3756c0352155c8ca29c7/audit-download-event-correction.json) · [round](../../evidence/bffbdbf1e51cc911c593cb78e1681aa32964dd58d725a4a0ca4ee3ec5b38f61f/report.md)
+
+受影响方案／决策：gateway-recovery；状态变化后由主控重新审查，不自动执行。
+

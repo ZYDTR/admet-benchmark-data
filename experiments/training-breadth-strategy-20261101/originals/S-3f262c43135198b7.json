@@ -1,0 +1,68 @@
+{
+  "request_id": "admet-mae-monitor-prepare-20261101-001",
+  "role": "leaf preparation executor (no agents/sessions/CLI models spawned, no training, no installs/downloads, no server access)",
+  "skill": {
+    "path_read": "adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/preparation/input/rules/PREPARATION_SKILL.md",
+    "version": "v1.2",
+    "sha256_verified": "cf9101e0178633e5f2d9dc64f9fd1ad3bc96ad020e649fb1a3c82fbe04b7b409",
+    "reference_read": "input/rules/references/observed-failures.md (sha 4c880c39a086ce8e60506b48a8ce9cb5e41027b8d65a9a384ca54585ee67a2fc)"
+  },
+  "task": {
+    "path_read": "adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/preparation/TASK.md",
+    "sha256_verified": "9a5268caca2b829c94ae91e7ee5eb31928b7281b2133fd80030127818e42baf6"
+  },
+  "packet_verifier": {
+    "command": "python3 input/rules/scripts/preparation_packet.py verify-target --task-root <abs> --project-root <PRIVATE_RUNTIME_PATH>",
+    "exit_code": 0,
+    "stdout_recorded_in": "raw/checks/packet_verify.txt",
+    "target_project_identity": "<PRIVATE_RUNTIME_PATH> (matches PACKET.project_directory)"
+  },
+  "clause_to_code_to_evidence": [
+    {
+      "clause": "派发与读取合同：先读任务内 Skill 再执行 TASK；交接写实际路径/版本/SHA 与条款→生产函数→检查映射",
+      "production_code": "n/a (process)",
+      "evidence": "sha256sum CHK-01 + packet verify-target CHK-02 (this file)"
+    },
+    {
+      "clause": "边界：不训练、不整批编码、只写自身输出目录（含临时/缓存）",
+      "production_code": "tests/test_preparation_monitor.py 全程无 fit/backward/opt.step/main() 调用；AST 审计确认驱动尾部(行302-322)不含参数更新调用 (CHK-07)",
+      "evidence": "所有 tempfile.TemporaryDirectory(dir=output/raw/tmp)；PYTHONDONTWRITEBYTECODE + 事后清理 __pycache__；未越界动作记录"
+    },
+    {
+      "clause": "行身份：空/重复 ID 合法，重复完整键才拒绝；盲分区不索取 label；单 split 运行不依赖其他输出",
+      "production_code": "training_science.load_input_tables / check_rows_identity（本任务未改动其语义）",
+      "evidence": "IdentityBoundary.test_real_blind_inputs_load_without_label_request（真实 valid/test 经生产入口）、test_synthetic_empty_and_duplicate_ids_every_split、test_duplicate_complete_train_rows_rejected_by_split、test_blind_split_run_does_not_depend_on_other_outputs — 全部 exit 0"
+    },
+    {
+      "clause": "配置与状态身份：两种 monitor 准确接受、未知拒绝；best/last 各绑自己 epoch/steps/值；不把 MAE 写入 MSE 命名字段；min_delta=1e-7、平局保留更早 best、patience=8",
+      "production_code": "validate_config(monitor枚举)、monitor_metric_key、select_monitor_value、validate_epoch_history、checkpoint_identity、train_remote_v4 行302-322选轮+save_head",
+      "evidence": "MonitorConfig.* 、SelectionLoop.test_mae_minimal_epoch_wins_when_mse_minimizes_later（MSE晚最小/MAE早最小序列直调生产 checkpoint_identity）、test_extracted_production_tail_best_last_patience_tie_nan（原文提取尾驱动 best/last steps、patience、tie、NaN）、test_history_consistency_failures（6路反例拒绝）"
+    },
+    {
+      "clause": "评分与导出：MAE 来自目标逆变换后的原尺度指标，不得用 batch loss 或标准化 MAE 替代",
+      "production_code": "select_monitor_value 仅接受 scale_metrics 输出的 mae（train_remote_v4 eval_pack 在 pred*ys+ym 后调用，保持原实现）",
+      "evidence": "MonitorSelection.test_select_value_uses_declared_sources / test_scale_metrics_rejects_non_finite_and_mismatched；eval_pack 路径静态审读（diff 未触碰）"
+    },
+    {
+      "clause": "恢复材料：真实 Tensor optimizer state、全部实际 RNG、必需检查失败不得吞掉后写 success",
+      "production_code": "optimizer_payload/state_equal/capture_training_rng/restore_training_rng（保持参考实现）+ probe 断言链（train_remote_v4 行346-378）",
+      "evidence": "已验证部分：测试替身证明选轮/元信息与其接口联通。UNV-01/02：torch+CUDA 缺失，TorchState 两用例与参考主控套件对新品运行为【未验证】，测试就位待宿主执行；断言链为静态审读而非实跑"
+    },
+    {
+      "clause": "反例验收：正常路径成功 + 生产入口拒绝真正非法输入；生产端输出接真实消费端；缺依赖明确列出",
+      "production_code": "同上各生产函数 + ConsumerLink",
+      "evidence": "checks.json passed_tests 14 项 exit 0；ConsumerLink.test_reference_host_suite_nontorch_cases_standalone 复跑参考无-torch用例体；skipped_unverified 列 UNV-01/02/03"
+    },
+    {
+      "clause": "交接：代码/清单/HANDOFF/skill-use/检查记录；区分已验证/静态审读/推断/未验证；源文件 SHA 形成后才计算",
+      "production_code": "output/{HANDOFF.md, output-manifest.json, raw/checks/*}",
+      "evidence": "manifest 在最终内容写入后生成且排除自指；input-reverify.json 复核全部输入哈希"
+    }
+  ],
+  "failures_encountered": [
+    "首版测试对真实数据假设『存在重复完整行』错误：实测 valid/test 的重复 Drug_ID 均对应不同 Drug，无重复完整键；按合同改为审计 dupIDs 集合+完整键唯一性断言（非放宽合同）。",
+    "AST 提取驱动的多次迭代错误（break 作用域、UnboundLocalError、steps 记账顺序）均为测试载体缺陷，未修改生产代码语义；最终版本以行号锚定 tail 并断言语句形状 [Assert,Assign,Expr,Expr,If]。",
+    "环境缺 torch/chemprop：相关存取检查如实记为未验证，未自制替身冒充通过。"
+  ],
+  "boundary_report": "未运行模型 CLI、未派生 Agent/session、未访问服务器、未安装下载；曾一次运行 py_compile 指向不存在目录（无害失败），无越界读写；所有临时文件位于 output/raw/tmp。"
+}

@@ -1,0 +1,19 @@
+# 冻结底座首版基线
+
+2026-10-30。用户要求将准备工作交给 OpenCode/mini 会话，实际训练由主 Codex 执行。先完成一个可评价、可生成全量提交预测的冻结底座基线，优先 CheMeleon + 新训练小型 MLP；MiniMol 留作后续对照。本轮无需继续广泛调研。
+
+本项目是独立候选实验目录。参考 research/ 内 V2 纲领、候选卡和数据画像；reference-harness/ 保存现行 Harness 的接口与来源参考。用户已确认允许冻结外部预训练权重。历史 Harness 只支持随机初始化属于工程现状，不能当成冻结权重的赛规禁令。
+
+输入保留官方训练/测试原件，以及已登记的无 Y 验证副本。data/official/data_benchmark/<task>/train.csv、test.csv；data/blind_validation/<task>/valid.csv；data/official/submission_template.csv。train 含 Drug_ID,Drug,Y，valid/test 仅 Drug_ID,Drug。不清洗、不删行、不合并重复测量；预测保持原始 task/split/row_index，row_index 为 CSV 数据行从 0 开始的位置。验证真标签由主 Codex 独立评分，不给准备会话。推理数值文件统一包含 task,split,row_index,y_pred。模板 sample_idx 映射必须据实核对，不能猜与 row_index 相同。
+
+准备会话是叶子执行者，只亲自完成分配部分，禁止再派 Agent、创建其他 thread/session、fork worktree 或调用其他模型进程。不得联系其他会话。不得访问服务器、凭据、项目外私人数据或上传比赛。不运行任何训练、反向传播、optimizer.step、fit 或含训练的测试；允许轻量静态检查和不更新参数的接口自检。只写自己负责的 output 子目录，原件只读。主 Codex 负责取得资产、环境安装、运行训练/推理、真实验证评分和合并交付。
+
+## A：模型接入准备
+
+在 output/model/ 交付冻结 CheMeleon 提取向量、按任务训练独立小型 MLP、保存/加载模型以及生成 valid/test 预测的代码和简短运行说明。给出精确依赖、资产版本和下载入口，检查输入覆盖与冻结状态，记录无法编码的行并提供可审查的程序化完整覆盖方案。支持有界 CPU 和单 GPU 参数，特征缓存可以复用；仅 train 拟合变换、回归输出还原原 Y 尺度。第一版固定一套简单训练配置，不做搜索。训练及整批特征计算留给主 Codex。自行阅读需要的官方资料，不重写通用 Harness。
+
+## B：数据、评分与提交准备
+
+在 output/data-eval/ 交付输入/模板完整性核验、预测覆盖检查、容器外逐任务评分和提交 CSV 导出的代码及简短运行说明。评分器只处理普通数据文件，真实标签路径由主 Codex 显式提供；用合成固定数值检查 AUROC/AP/MAE/Spearman 的实现，不运行训练。保留官方模板除 y_pred 外的值、格式、顺序和所有16379行；检测错序、缺行、重复键和非有限值，不手工补预测。明确本地 AP 及未确认的官方聚合，输出逐任务结果，不虚构官方总分。
+
+两路均在各自目录写 HANDOFF.md，说明已做检查、未验证项以及主 Codex 的下一条运行命令。避免读取另一会话正在改动的代码，按上述共享输入/输出约定独立准备。

@@ -1,0 +1,20 @@
+本run是monitor-mae-e2e-20261101唯一拟训练任务。先读PLAN与当前派发；当前只做本地运行包装准备，科学主控准入见PLAN引用。先前Qwen的旧best-MSE字段错误原件保留，主控修复经过真实生产定义反例。等待主控对新的运行包装与绑定准入后才部署/训练；不要重放旧run。
+
+本地准备已完成，见 `operator/preflight-01/readiness.json`、`report.md` 和
+`source/production-adapter-v1/source-manifest.json`。运行入口为有限
+`job_waiter.py`，默认 profile 关闭；主控先复核摘要、布局与模板，再正式绑定唯一一次作业。
+本阶段未连接海南、未部署、未调用科学 main、未编码/推理、未训练或安装依赖。
+NumPy/Torch 本机缺失，真实 Tensor 存取、CUDA 和本次 Linux 边界尚未验证；不能把
+离线 toy 与元数据 serializer 结果冒充实际训练/存取通过。所有旧run状态、PID、锁及完成凭据不参与新run准入。
+
+主控已正式准入精确运行源码，独立报告在cycle acceptance/runtime-adapter-v1；正式请求admet-monitor-mae-e2e-20261101:main:execute-one:v1及run/admission文档接续本阶段。原PLAN和默认关闭profile保留。先核实目标/环境/资源，外层真实CUDA与存取预检通过才执行唯一学习；当前活跃turn见cycle status，不重复启动。
+
+## 部署传输恢复v2
+原execution-01上传35.23MB在55秒截止超时，未发送job_waiter。主控两次精确接收进程/目录只读对账及旧自有权重摘要核验通过；历史远端退出码仍未知。已写新的367163字节接收方案，旧权重在自有目录间核验复制，最终47件逐字不变，7项本地反例通过。按Best Practice补充项目训练Skill并冻结给原执行Thread。恢复正式决策与派发在acceptance/deployment-transport-recovery-v2，活动turn private-role-7a8b8b366876；只恢复这次未启动部署/唯一学习，不重投、不另建训练或主控心跳。待实际接收/预检/训练回传后继续独立验收。
+
+## 2026-11-01 资源接续v3
+v2恢复时GPU0被他人占用，未发送小包/启动作业。主控03:09 UTC三次只读复核，当前六张健康卡均有进程、另两张要求Reset，未证明可安全共享。已登记waiting_for_resources，原automation-5观察Thread确认消费；任意合格卡释放后回主控再绑定派发，不固定GPU0、不重投已发操作。验收在cycle acceptance/resource-selection-v3/report.md；本地换卡派生包8项检查通过，新版训练Skill及引用已冻结在该目录skill-supplement，下一实际派发须明确指定使用。当前已准入runtime仍要求0 MiB，小残余候选应先主控审读证据，不能静默放行。未有新部署/训练/评分/Chat正式发送，无主控新心跳。
+
+2026-11-01 11:26北京：主控消费11:23 GPU0/2释放回报，核对原始摘要、XML/compute-apps/pmon与已准入运行检查。已向原Sol/xhigh执行Thread发送admet-monitor-mae-e2e-20261101:main:resume-resource:v3，活动turn private-role-c3f18d30633f。使用资源接续新版冻结Skill和已验重绑定工具，部署前允许选择当前合格卡；原科学/数据/PLAN/runtime与单次学习额度不变。注册从等待转为执行方复核阶段，尚未观测到实际学习。准入及回执见acceptance/resource-selection-v3/release-20261101T032301；后续必须由主控消费原执行方真实终态继续，不重派或另建心跳。
+
+2026-11-01资源v4与用户分工纠正：v3执行方正确拒绝原0 MiB门槛，未部署/学习；主控按任务预计需求与余量改资源判定，取消0/4MiB已用上限，21项函数检查+7项完整绑定/准入检查通过。科学/数据/PLAN不变，六件覆盖绑定中仅一个运行函数有变更。正式材料acceptance/residual-memory-v4；旧草稿和失败保留。原执行Thread活动turn private-role-22a8241d80f9，未观察到真实训练完成。新版训练/观察Skill已冻结派发，既有automation-5更新为普通资源信号直接给waiting原训练Thread；主控只做准入、实质故障和最终验收。协议control/resource-handoff-v4.json，实际状态run/operator/execution-04/status.json，唯一学习和原预算不变。不要继续使用v3主控中转或未派发4MiB上限草稿。

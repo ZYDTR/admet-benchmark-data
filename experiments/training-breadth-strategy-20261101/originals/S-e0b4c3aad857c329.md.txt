@@ -1,0 +1,100 @@
+# CheMeleon 外部权重：离线只读核验
+
+核验日期：2026-10-30。范围仅限当前项目已有材料；未联网、未下载权重、未运行模型，未修改项目。结论反映本地留存证据，不声称本次重新核验了线上发布状态。
+
+## 结论
+
+**按当前项目记录，CheMeleon 可以按“外部预训练权重全程冻结”的条件继续接入。具体 `chemeleon_mp.pt` 权重已有发布方明确的 MIT 许可证元数据证据。正式运行尚未完成：权重未下载校验，冻结资产接口和真实模型适配器未实现，本地输入覆盖、冻结状态及效果未验证。** [E1–E3,E5]
+
+这里需要分别判断“赛方允许这种使用方式”“这个具体资产的授权证据”“工程是否已经接好”；目前前两项已有明确依据，第三项仍有待办。
+
+## 1. 当前确切的权重许可证据
+
+最直接证据是项目保存的发布方 Zenodo API 响应，针对的资源类型就是 `model`，同时列出具体权重文件和 `metadata.license.id = "mit-license"`。因此这条许可证据直接对应模型发布记录及其列出的权重，不只是从 GitHub 代码许可证推断。[E2]
+
+| 项目 | 本地证据中的确切值 |
+| --- | --- |
+| 发布记录 | Zenodo `15460715`；标题 `CheMeleon Foundation Model` |
+| DOI | `10.5281/zenodo.15460715` |
+| 发布日期 | `2025-05-18` |
+| 资源类型 | `metadata.resource_type.type = "model"` |
+| 许可字段 | `metadata.license.id = "mit-license"` |
+| 访问状态 | `metadata.access_right = "open"`；记录 `status = "published"` |
+| 权重文件 | `chemeleon_mp.pt` |
+| 文件大小 | `34,859,448` 字节 |
+| 发布方校验和 | `md5:6a80b54fdb7de37ef0374d302f01e8ce` |
+| 关联代码版本 | 证据卡固定提交 `b5e5bd88a7070c3f278e7e65e85b792617bf125c`，入口 `chemeleon_fingerprint.py` |
+
+表中发布记录、许可和文件数据来自原始响应 [E2]；代码提交及入口来自候选证据卡和来源索引 [E1,E4]。
+
+**证据边界：**发布方 MD5 不是本次下载后实际计算的校验结果。候选卡明确写明未下载权重、未计算本地 SHA-256；本次也未执行这些操作。本次读取了发布方许可证标识，没有读取独立 MIT 许可证全文或检查下载包内声明。因此可以准确报告“该具体权重发布记录标记 MIT”，不能报告“本地权重包已经核验并完成准入”。[E1,E2,E4]
+
+线上定位信息来自离线快照，供后续定位，本次未访问：[具体发布记录](https://zenodo.org/records/15460715)、[API](https://zenodo.org/api/records/15460715)。
+
+## 2. 赛方冻结规则：来源和范围
+
+| 层级 | 当前项目记录 | 应如何理解 |
+| --- | --- | --- |
+| 官方公开规则 | `competition/contract.json` 的 R01：不允许使用其他外部数据；R09：遵守所用开源项目许可证；R02：设计并训练深度学习模型 | 这些记录归属于 `official_rules`。[E3] |
+| 用户转述赛方确认 | UC01：“用户已向赛方确认外部预训练权重可以使用，但必须冻结。”2026-10-30 登记，状态 `user_confirmed` | 已有许可依据，不需要再重复询问“冻结外部预训练权重是否一概允许”。该证据来源是用户明确转述，不是已取得的公开 FAQ 或赛方原始书面回函。[E3,E4] |
+| 使用范围 | 只覆盖冻结预训练权重 | 不自动覆盖额外样本、目标标签、教师输出或外部拟合变换；测试分子能否用于无监督预训练或拟合参数仍是 U03，未确认。[E3] |
+| 项目执行决定 | 新增 head 可用比赛 train 训练；外部编码器保持冻结 | 这是 `model-adapter` 任务的实现决定；不能把解冻 CheMeleon 微调包装成符合冻结条件。[E5] |
+
+“全程冻结”需要在实际实现和运行证据中成立。作为后续工程验收，可检查外部编码器参数不进入优化器、不会收到梯度更新，并保存运行前后参数/状态的检查结果；这些是落实规则的验收建议，不冒充赛方已逐项公布的技术条款。
+
+当前执行器只接受 `initialization=random`。这反映尚未完成的接口实现，不能据此重新判定政策禁止冻结权重；也不能靠更改声明、伪造资产类型或允许运行时联网来绕过缺失接口。[E3,E6,E7]
+
+## 3. 还没做完的事项
+
+### CheMeleon 本身
+
+1. **固定并验证实际资产。** 尚未下载上述确切文件、核对实际字节与发布方大小/MD5、计算本地 SHA-256；需同时固定代码、配置、依赖和许可材料，形成可追溯资产记录。[E1,E4]
+2. **实现冻结加载、审计与缓存接口。** 项目任务明确记录真实适配器和冻结资产接口都未实现。官方 fingerprint 入口在缺少本地权重时会自动下载，正式接入应显式指定已经审查的本地资产。[E1,E5,E6]
+3. **验证冻结状态和输入全行覆盖。** 尚未做实际加载、提取和冻结运行检查。证据卡记录本批有两个默认 RDKit 解析失败串；Chemprop v2.2.1 对元素 1–36 和 I 有独立类别，其余进入 unknown。需要确定失败行处理和映射完整性，不能随意改动冻结 checkpoint 的输入维度。[E1]
+4. **完成有限的本地实验。** 固定表示加新 head 的训练、效果、成本与同预算比较尚未运行。目前 CheMeleon 的状态是值得首轮 `pilot`，没有成为已经验证的本赛优选。论文主表微调成绩不能充当本赛冻结结果；已有冻结消融也显示 head 与设置会影响表现。[E1]
+
+### 正式运行共同依赖
+
+- **正式数据登记与标签契约：** 用户提供的 67 CSV 快照已有审计记录，但未登记成正式数据清单；单位、历史变换、生物正类等语义仍有未确认部分。它们影响相关变换及正式执行器门槛，不妨碍原始 Y 的基线设计。[E6,E8,E10]
+- **目标镜像与隔离验证：** 固定镜像、受限容器集成和实际隔离仍未完成。`host-runtime.json` 的 2026-10-28 记录仍以“当前执行环境没有 Docker”为阻塞；本次没有重新探测主机环境。[E7,E9,E10]
+- **真实训练与复现：** 尚无真实比赛训练、成绩或从头重训复现证据。已有研究卡、工程测试或合成演示不能替代这些运行结果。[E1,E10]
+
+因此，下一步工作是把这一已获条件许可且有具体 MIT 元数据的资产接入、固定并验证；无需重启所有模型调研，也无需重问已有 UC01 覆盖的冻结许可。
+
+## 4. 引用定位
+
+所有本地路径相对于项目根目录 `<PRIVATE_RUNTIME_PATH>
+
+- [E1] `docs/research/2026-10-30/candidate-evidence.md`：开头证据范围、CheMeleon 项及第 3 节。
+- [E2] `docs/research/2026-10-30/evidence/chemeleon-zenodo-metadata.json`：发布方原始响应。
+- [E3] `competition/contract.json`：`official_rules` R01/R02/R09、`user_confirmations` UC01、`team_defaults` T01/T03、`unresolved` U02/U03。
+- [E4] `docs/research/2026-10-30/source-index.md`：R01、R02、M04。
+- [E5] `context/tasks/model-adapter.json`：summary、decisions、next_action。
+- [E6] `docs/data-policy.md`：官方规则与团队默认、准入材料、派生数据。
+- [E7] `docs/runtime-contract.md`：运行配置与当前初始化限制、固定镜像、运行隔离及未验证说明。
+- [E8] `context/tasks/data-intake.json`：summary、decisions。
+- [E9] `context/tasks/host-runtime.json`：status、blockers、next_action；记录日期 2026-10-28。
+- [E10] `context/state.json`：blockers、not_verified。
+
+## 5. 实际阅读路径顺序
+
+以下记录实际工具结果的阅读顺序。相同批次内并行读取，内部文件 I/O 的严格先后无法由工具结果确认；表中顺序是实际返回顺序，不将并行批次伪称为串行执行。路径均在上述项目根目录内。
+
+| 阅读序号 | 调用批次 | 路径 | 阅读方式 |
+| --- | --- | --- | --- |
+| 1 | 1 | `AGENTS.md` | 全文；任务入口 |
+| 2 | 2 | `skills/INDEX.md` | 全文；选择主技能 |
+| 3 | 2 | `context/state.json` | 全文；当前状态 |
+| 4 | 3 | `skills/data-provenance/SKILL.md` | 全文；主技能 |
+| 5 | 4 | `competition/contract.json` | 全文；规则来源与确认范围 |
+| 6 | 4 | `docs/research/2026-10-30/candidate-evidence.md` | `rg -n -i -C 15 'chemeleon'`，只读取匹配结果及上下文 |
+| 7 | 5 | `docs/research/2026-10-30/evidence/chemeleon-zenodo-metadata.json` | 全文；具体权重原始元数据 |
+| 8 | 5 | `context/tasks/model-adapter.json` | 全文；适配器和冻结接口待办 |
+| 9 | 5 | `docs/research/2026-10-30/source-index.md` | `rg` 检索 M04、CheMeleon、规则来源等匹配行 |
+| 10 | 6 | `docs/research/2026-10-30/source-index.md` | 定向读取第 1–11 行及第 33–36 行，取得 R01/R02 与 M04 正文 |
+| 11 | 6 | `docs/runtime-contract.md` | `rg` 检索冻结、初始化和权重相关条款及邻近上下文 |
+| 12 | 6 | `docs/data-policy.md` | `rg` 检索冻结、预训练、权重、拟合、标签和教师相关条款及邻近上下文 |
+| 13 | 7 | `context/tasks/data-intake.json` | 全文；正式数据登记待办 |
+| 14 | 7 | `context/tasks/host-runtime.json` | 全文；运行环境待办 |
+
+未读取任何 `validation` 目录内容或 `revision-and-validation.md`；未读取项目外其他文件。没有执行 harness 状态/检查命令、模型或测试，也没有更改任务状态。唯一写入是用户指定的本答复文件：`<PRIVATE_RUNTIME_PATH>

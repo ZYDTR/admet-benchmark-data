@@ -1,0 +1,37 @@
+{
+  "reviewer": "execution_thread_self_validation",
+  "independent_parent_acceptance": "pending",
+  "checks_passed": true,
+  "training_completed": true,
+  "prediction_completed": true,
+  "freeze_verified": true,
+  "write_scope_verified": true,
+  "own_resources_released": true,
+  "scoring_performed": false,
+  "upload_performed": false,
+  "optimizer_steps": 95,
+  "prediction_rows": 273,
+  "configuration": {
+    "hidden_dims": [
+      256
+    ],
+    "dropout": 0.1,
+    "lr": 0.0005,
+    "weight_decay": 0.0001,
+    "batch_size": 128,
+    "epochs": 50,
+    "patience": 8,
+    "val_fraction_from_train": 0.1,
+    "seed": 43
+  },
+  "evidence_check": "operator/evidence-check.json",
+  "supplemental_checks": "operator/supplemental-checks.json",
+  "checker_adapter": "operator/checker-adapter.json",
+  "limitations": [
+    "Same existing execution chat, not a cold-start agent test.",
+    "The first CUDA preflight yielded to a foreign process. Completed training used a freshly verified healthy idle GPU; intentional shared training and parallel own jobs were not tested.",
+    "Execution self-check does not replace parent independent code/trajectory/source review.",
+    "No private valid labels or official scoring/submission.",
+    "Landlock/strace do not provide full read, ioctl, hardware partition, or whole-system isolation."
+  ]
+}

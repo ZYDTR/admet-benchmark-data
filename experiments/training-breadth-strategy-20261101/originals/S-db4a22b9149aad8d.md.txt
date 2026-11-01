@@ -1,0 +1,195 @@
+# OpenCode 下一批准备会话指南：只准备，不执行实验
+
+request_id: `admet-public-repo-pro-20261031-001`；round_id: `public-repo-round001`；packet_version: `2`  
+材料 commit: `eaec280cf142839597fe75ce748cd2b9a8a897d4`  
+manifest_sha256: `dbdec244caa8ddb106721877cf93625c1957b9184985c07b1cf751eed5d70505`
+
+## 入口与共同合同 G
+
+你的目标是准备可审查的适配器、配置、数据合同和验收计划，交主控核验、授权后才进入执行。当前授权训练/HPO/推理/安装/远端操作/评分/上传均为0。不要自行把本文的拟合数量变成任务队列，不安装到海南，不访问私有验证标签，不运行归档模型或pickle。所有新增模块版本先写`review-r001/v1-spec`；代码/资产SHA在真实准备后登记，未产生的不得编造。
+
+**可用输入投影：**主控提供的当前规则技术投影；本固定目录的`rules/CURRENT_RULES.md`、`rules/current-policy.json`、`rules/official-contract-20261029.snapshot.json`；`data/train.csv`及盲`data/valid.csv`、`data/test.csv`；两run `source/`内科学源码/配置；`weights/chemeleon-reference.json`；主控抽取的资产版本/许可元数据。当前冻结条件源自用户已向赛方确认；旧随机初始化或固定Docker限制不能覆盖当前合同。
+
+**不进入准备输入：**ANALYSIS_BUNDLE、comparison、scoring目录、本轮analysis/review、未经技术投影的issues，以及私有带标签工作文件。不要主动浏览包内其他目录或仓库其他分区寻找标签。问题只按下述ID和技术描述处理。研究资产通过主控提供的元数据投影与原论文/官方代码核对，不调用TDC/benchmark自动下载器。本文没有官方验证精确分数或逐行残差。
+
+输入合同：任务`caco2_wang`；train637行，列`Drug_ID,Drug,Y`；盲valid91/test182行，列`Drug_ID,Drug`。原行、原分区、原Y、原Drug均不可改。身份键`task,split,row_index`，row_index为该官方分区零起算原行号；Drug_ID非唯一，必须额外核对Drug_ID和Drug，不能单键join。训练只用inner_fit的原train.Y；inner_stop仅早停，外层确认集仅评价。所有fit型变换仅用当前inner_fit，记录fit-row hash。
+
+数据SHA：train=`3061c58d3601d081e5459a2de03dc1d189243c4b5683d1b7288577a29fed4d6f`；blindvalid=`41370e87d89a96a7481425dae1bf7c45184bd116b353e96719b2afcd0a8a5ca3`；blindtest=`d87dac944bedcefb216bce57ba5a8de93d3781172c66653b937e5065b9c2579c`。读取时处理UTF-8 BOM但不改源bytes。
+
+共同输出合同：每工作项交`design.md`、明确接口/配置schema、`asset-manifest.json`、依赖/阻断表、`acceptance-plan.json`和来源引用。若另获代码准备许可，可加适配器/静态fixture，但不能借此运行真实编码或训练。状态分别为`prepared_static`、`runtime_validated`、`execution_authorized`；后两项当前保持false，所有未做检查为`not_run`。不写“测试通过”代替待执行计划。
+
+预测合同：每原行恰好一个有限值；键及Drug文本保持；禁止人工offset、手工改预测、隐藏丢行、静默截断/零填充。最终官方模板转换由另行授权主控处理，本轮不生成赛事上传文件。冻结合同：外部encoder的全部参数及buffer保持原值；eval/no_grad、优化器与新参数白名单、不漏nonpersistent buffer，登记文件SHA和全部named状态；只更新计划列明的新模块。
+
+成本只用可计算单元表达：H=缓存新头fit，G=新随机图模型训练，E=冻结编码，P=PCA拟合，C=冻结上下文预测。不同单位不等价。缺本地资源测量就写TBD，不从旧短作业推断新模型小时数。以下所有run数都是将来建议，当前执行预算0。
+
+## 版本表
+
+|代号|锁定或待补版本|准备状态|
+|---|---|---|
+|CHEM|Zenodo15460715；checkpoint SHA `c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651`；encoder.py SHA `3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712`|已有历史实现；新通用适配器仍待准备|
+|CACHE_A|2048维MeanAggregation原始float32；train SHA `a31fe5a951221d2633e2c0fa94f38e86a80139a2aa21b74e0c977353e6ea6aad`，valid `500466c0cce64dd84d58f0e6b6ade174c8b7c905f6b7f532bef46b4c7a670a39`，test `caad4ea14d97ff6ad8a4506b7b5c14c639fed02e4f3db53cceed302e49b4cc9f`|主控核准复用后使用；不得混另一套缓存|
+|环境|Chemprop2.2.1、RDKit2024.09.6、torch2.6.0+cu124、numpy1.26.4、Python3.12.3|历史实际版本；新环境需另行锁定，不自行安装|
+|MINI|code `41642328affbb35e4950b7b7a9020aa95919b503`；`minimol/ckpts/minimol_v1/state_dict.pth`；gnn15/maxpool512|idle_incomplete，本地权重SHA/完整load未验收|
+|MOL|`ibm-research/MoLFormer-XL-both-10pct` revision `361063d0ad524ef77cf39b08469f6be770dc550f`；pooler768|idle_incomplete；tokenizer/custom code/本地权重SHA待补|
+|UNI2|UniMol2/84M revision `bf37d253c0f5ac61f468137eb00059978a104ff0`|软件/构象/资产SHA待补|
+|TFM26|TabPFN2.6确切资产未闭合，不能用v2或其他版本代替|条件储备|
+|KPGT|code `47dc1646c70b2138a157de481d24a1ac35d174cd`|checkpoint和辅助拟合CDF准入待补|
+|SMITED|revision `414c3ea0a8603ef49d1c5bb3db336e09877c01ce`|variant/tokenizer/pooling/SHA待补|
+|MOLE|code `dd56d319103e973fde0dcaa3537cb36a7b7a9843`|实际checkpoint发布链未闭合，不能排执行|
+
+## W01：阶段门禁与实验登记
+
+- **work_item_id / issue_ids：**W01；F1、AR001-01、AR001-15。
+- **goal：**任何前置失败阻止后续阶段；补全历史登记对齐接口。
+- **model_and_asset_versions：**无新增模型；门禁schema `review-r001/v1-spec`，历史文件只作只读证据。
+- **input_contract：**G；主控提供脱敏历史registry和返回码技术投影，不接收评价分数。
+- **output_contract：**`stage-receipt.schema.json`、`experiment-registry.schema.json`、失败传播设计、故障注入验收清单。
+- **implementation_scope：**外层shell/监督器/receipt交界；不改写历史日志，不远端复测。
+- **frozen_components：**全部模型/历史证据不变。
+- **preparation_steps：**定义run/phase/attempt、source/config/input/asset hash、开始结束时间、process_rc/business_rc和结果状态；显式传递业务失败；阶段状态机只消费身份匹配且新鲜的成功receipt。索要已有issue/run/failure/否定假设ID的技术登记，保留未知，不自行关闭F1。
+- **dependencies：**主控历史registry投影；无需外部模型安装。
+- **acceptance_checks：**计划覆盖非零码、异常、超时、旧receipt、错run/hash、缺产物及恢复路径；任何失败不得进入下一阶段。静态检查与将来真实Follow复测分开登记。
+- **priority / budget：**P0；当前仅设计，0训练/推理/远端测试。
+- **blocked_fallback：**缺完整registry就保留局部ID映射和needs_evidence；缺实际复测不能关闭F1，不妨碍其他离线规格准备。
+
+## W02：统一配置、随机流与划分
+
+- **work_item_id / issue_ids：**W02；AR001-02、AR001-03、AR001-06、AR001-12。
+- **goal：**配置真实控制计算图，并使配对实验共享数据、划分与随机性。
+- **model_and_asset_versions：**CHEM/CACHE_A；新head/config factory `review-r001/v1-spec`；分组RDKit2024.09.6。
+- **input_contract：**G；仅原train与技术源码/config。
+- **output_contract：**head/optimizer schema、resolved-config schema、split registry、parameter-count与optimizer-group检查计划。
+- **implementation_scope：**消除头宽硬编码和固定参数assert；拆分split_seed、init_seed、batch_seed、dropout_seed。每个共同seed s∈{42,43,44}绑定后三者为(s,s,s)，split恒定；实现必须说明独立generator或保存/恢复各随机流的方法。
+- **frozen_components：**CHEM及其全部buffers；只构造新头。
+- **preparation_steps：**C0：2048→512→1，ReLU，dropout.1；AdamW lr.001、wd.0001、betas(.9,.999)、eps1e-8，全部头参数含bias同一decay组；MSE loss/内部MSE monitor，batch128、max50、patience8。C0是新匹配基线，不冒充历史run重放。预登记head []/[64]/[128]/[256]/[512]/[256,64]；linear关闭dropout。首批不把所有参数交叉。
+- **划分规格：**G01以canonical isomeric SMILES仅作group_key，绝不替换输入Drug。按SHA256(UTF8(`G01-r001|42|`+group_key))排序，平局按key；整组放入inner_stop直到≥64行，其余inner_fit。全部原行恰好一次；实际数量与hash待生成。解析失败则阻断，不静默退回raw split。历史S42索引只可作独立回放诊断。
+- **外层规格：**OUTER3先canonical家族；可选Murcko非空骨架，空骨架按各canonical组，不能把所有无环分子并为一组。按SHA256(UTF8(`OUTER3-r001|42|`+family+`|`+key))排序并key破平局，逐整组分给当前行数最少的fold，平局选0/1/2最小序号。每fold剩余train按SHA256(UTF8(`INNER-r001|`+family+`|`+fold_index+`|`+key))排序，平局按key；整组取inner_stop直到≥max(1,ceil(.1*n_remaining))。不得为分数重抽split；实际索引/hash未生成前标pending。
+- **dependencies：**W01；主控认可分组规格及后续生成权限。
+- **acceptance_checks：**配置与实际维度/参数数/optimizer组一致；split全覆盖/零组交集；相同pair随机流及batch顺序可核；所有索引/版本/hash登记。未动态构造的模型仍not_run。
+- **priority / budget：**P0；当前0fit。
+- **blocked_fallback：**分组实现未闭合就不排G01/P24；静态配置菜单可继续，不把两个历史run当匹配对照。
+
+## W03：冻结缓存与train-only变换
+
+- **work_item_id / issue_ids：**W03；AR001-04、AR001-08、AR001-11、AR001-16；P01/P10/P12/P25。
+- **goal：**配对头消费同一原始缓存；明确稀疏激活处理机制。
+- **model_and_asset_versions：**CHEM/CACHE_A；feature-transform `review-r001/v1-spec`。
+- **input_contract：**G；主控准入的原始缓存、rowmap和资产哈希；不把盲数据统计用于fit或选阈值。
+- **output_contract：**cache manifest、transform schema、按split保存的fit参数、freeze验收计划。
+- **implementation_scope：**只准备缓存接口与新变换；不重新编码。encoder身份与unused wrapper predictor身份分开登记，但不削弱任何外部状态冻结要求。
+- **frozen_components：**外部参数、全部named_buffers及checkpoint文件；缓存raw bytes不可覆盖。
+- **preparation_steps：**首批四策略：legacy_z；raw；z后clip[-6,6]；std floor。legacy为fit总体mean/std、std<1e-8时分母1。floor先取真实sigma≥1e-8集合的q05（linear quantile，空集合q=1），小于阈值维分母1，否则max(sigma,q)。保留center_only、row_L2、clip10储备；row_L2为每行向量除其L2 norm，零向量保持零。PCA None/32/64/128、whiten=false、svd_solver=full，仅inner_fit拟合PCA均值并中心化；同fold确定性transform跨head seed共用；no-PCA也用相同linear头。每split单独transform，不缓存跨fold拟合结果。
+- **dependencies：**W02；CACHE_A来源/rowmap准入；冻结状态规格。
+- **acceptance_checks：**cache涵盖全部原行、finite/mask、feature维数、dtype、pooling、模型/code/runtime/data SHA；拟合行与声明一致；全部buffer登记persistent标志；optimizer只含新模块。计划验证eval/no_grad/重复编码与checkpoint重载，不把未执行项写通过。
+- **priority / budget：**P0准备；首批未来4配置×3共同seed=12H、当前0。相同完整身份才去重复用。
+- **blocked_fallback：**缓存身份未准入则只交接口规格，待另授权编码；不在两个近似缓存之间无记录切换。高z缩小不是质量验收。
+
+## W04：loss、monitor、早停与最小充分记录
+
+- **work_item_id / issue_ids：**W04；AR001-05、AR001-07；U01/U05。
+- **goal：**分别检验训练目标与checkpoint选择，未来能解释停止/重载。
+- **model_and_asset_versions：**统一runner/head `review-r001/v1-spec`；保持已锁encoder/cache/transform。
+- **input_contract：**G；内部fit/stop的train.Y，不接收官方valid标签或精确反馈。
+- **output_contract：**loss/monitor配置、epoch与checkpoint schemas、训练/评价角色合同。
+- **implementation_scope：**只准备记录和选择逻辑。target仅fit均值/总体std的affine z或mean-center-only；输出逆变换一次，不log/clipY。
+- **frozen_components：**所有外部encoder/buffers；变换只fit声明行。
+- **preparation_steps：**loss∈MSE/L1/Huber(delta=.5,1,2)，Huber明确torch.nn.HuberLoss(mean)，delta为标准化Y单位；monitor独立∈标准化MSE/raw-Y MAE。P02固定MSE loss只改monitor；P04统一raw-MAE monitor只改loss；P26也统一raw-MAE monitor只改target affine。声明min_delta（旧MSE为1e-7；跨新指标不继承隐含容差）、tie规则、best epoch、patience/max预算及重载顺序。
+- **记录清单：**每epoch同eval模式的fit/stop MAE/MSE、online loss另列；step/LR/梯度L2/clip比例摘要；best/last状态、optimizer/RNG与独立seed、实际停止原因、总步数、resolved-config/source/asset/split/hash。保存训练内部预测供合法切片；原始标签不进入对外反馈。记录损坏/缺失也必须显式状态。
+- **dependencies：**W01/W02/W03。
+- **acceptance_checks：**模拟选择器tie/NaN/缺指标路径；最佳状态先恢复再输出；计划核训练/保存/重新加载一致。未来记录预算只覆盖所回答问题，不要求无条件保存所有epoch巨量二进制。历史没有的日志不可补造。
+- **priority / budget：**P0准备；P02未来2×3=6H；P04为5×3=15H；P26为2×3=6H，非同时授权。
+- **blocked_fallback：**无合法epoch指标/完整checkpoint则不声称选择或续训通过；不能拿旧loss事后虚构MAE最佳epoch。
+
+## W05：简单对照与新随机D-MPNN
+
+- **work_item_id / issue_ids：**W05；AR001-13；U02。
+- **goal：**判断冻结表示是否胜过低复杂度或任务内从零学习方案。
+- **model_and_asset_versions：**RDKit2024.09.6；新随机Chemprop2.2.1 D-MPNN；无外部拟合descriptor资产。
+- **input_contract：**G，原SMILES和train.Y；禁止外部benchmark loader。
+- **output_contract：**统一fit/predict接口、Morgan/descriptor完整定义、配置及资格待核项。
+- **implementation_scope：**median/mean；Morgan2048 radius2/3 chirality=true +Ridge alpha .1/1/10/100；Ridge固定fit_intercept=true、目标函数sum(e²)+alpha||w||²（intercept不惩罚）、Morgan位向量不做feature z，target用fit affine z并逆变换；明确descriptor列表+RF500 trees、leaf1/5；Morgan+MLP64；新D-MPNN hidden128/256×depth2/3及固定readout。
+- **frozen_components：**经典方法无外部学习状态；D-MPNN全部为新随机参数，不是解冻外部权重。
+- **preparation_steps：**定义缺失descriptor处理（不得删行）、split内fit、输出行身份；列出每配置参数/计算量；经典单独参赛是否满足深度模型要求留主控决定，作为科学控制仍有价值。
+- **dependencies：**W01/W02/W04；主控资格及资源判断。
+- **acceptance_checks：**确定性模型不虚增seed重复；相同对照预算/数据；无额外样本；原行全覆盖；未训练性能保持unknown。
+- **priority / budget：**P1/P2；完整14配置=10确定性fit+12随机fit=22；小子集median+r2 Ridge(alpha1)+r2 MLP64共3配置5fit。D-MPNN4×3=12G，另计。当前0。
+- **blocked_fallback：**若资格未定，仅保留诊断控制；不可把CPU控制费用与全GNN训练费用当同一单位。
+
+## W06：MiniMol冻结适配
+
+- **work_item_id / issue_ids：**W06；AR001-10、AR001-13；P14。
+- **goal：**把论文候选变成有明确身份与失败策略的准备包。
+- **model_and_asset_versions：**MINI版本表，权重/config/base_shape的实际SHA待主控取得。
+- **input_contract：**G；gnn15、maxpool512仅为待核接口；不复制原benchmark runner的标签读取路径。
+- **output_contract：**adapter规格、严格load差异表、资产/许可证清单、缓存及双头配置。
+- **implementation_scope：**新linear和MLP128，encoder冻结；不训练/安装/下载未批准模型。
+- **frozen_components：**全部MiniMol权重及buffers；missing/unexpected keys不能以strict=False掩盖随机未载参数。
+- **preparation_steps：**逐层映射checkpoint/config/base_shape；梳理featurizer、pooling、异常路径及输出顺序；禁止silent min-length截断、缺行或默认零向量；为全部原行设计覆盖验收。
+- **dependencies：**W01–W04；主控资产字节、许可和load验收。
+- **acceptance_checks：**零未解释load键、输出N×512且rowmap一致、finite、冻结和重复编码/重载计划；未实际运行全标not_run。
+- **priority / budget：**P2并行准备；未来2头×3seed=6H+E；缺匹配CHEM×{linear,MLP128}另6H，两替代底座可共享完全相同控制。当前0。
+- **blocked_fallback：**维持idle_incomplete/blocked，不把未加载参数视为“新头”，不先跑再补身份。
+
+## W07：MoLFormer冻结适配
+
+- **work_item_id / issue_ids：**W07；AR001-10、AR001-13；P15。
+- **goal：**锁定10pct序列资产、token覆盖与确定性语义。
+- **model_and_asset_versions：**MOL固定revision；768维author pooler；tokenizer/custom code与本地权重SHA待补。
+- **input_contract：**G，原Drug不去立体、不去盐、不静默截断。
+- **output_contract：**tokenizer/input schema、逐行长度/覆盖检查计划、pooling与deterministic_eval决策、双头配置。
+- **implementation_scope：**deterministic_eval=true明确写入；eval不等于随机性已验证；不复用full-XL微调成绩作为此资产效果。
+- **frozen_components：**外部模型/tokenizer拟合状态及buffers；只新linear/MLP128。
+- **preparation_steps：**核202 tokens、原子数、字符数是不同限制；固定special tokens/padding/mask；超长处理必须报阻断或有主控明确方案，不隐藏裁剪。读具体pooler代码，未证明不同前不把pooler与masked mean算两个候选。
+- **dependencies：**W01–W04，revision/custom-code审查、资产及输入覆盖准入。
+- **acceptance_checks：**无静默截断/顺序丢失，N×768与rowmap对应；冻结及重复编码计划；trusted custom code须版本绑定，不自动执行。
+- **priority / budget：**P2并行准备；未来6H+E，缺CHEM对应双头最多共享6H；当前0。
+- **blocked_fallback：**覆盖/确定性未闭合则维持idle_incomplete，继续其他头规格准备。
+
+## W08：外置新模块、融合与集成
+
+- **work_item_id / issue_ids：**W08；AR001-09、AR001-13；P11/P17/P18。
+- **goal：**形成可证伪的容量或表示互补方案。
+- **model_and_asset_versions：**已准入CHEM/MINI/MOL缓存；新模块review-r001/v1-spec。
+- **input_contract：**G；各分支同rowmap和同split；成员资格全部通过才可组合。
+- **output_contract：**计算图/参数量、concat与单分支控制配置、无学习等权组合协议。
+- **implementation_scope：**冻结向量之后的residual bottleneck：64×1block、128×1、128×2，LayerNorm明确；concat CHEM+MINI或CHEM+MOL接MLP64；mean3seed/median3seed/mean2representation。
+- **frozen_components：**全部encoder不变；骨干内adapter/LoRA不在本合同。
+- **preparation_steps：**区分新计算图与等价MLP；concat按分支inner-fit变换；匹配CHEM/MINI/MOL各MLP64控制。集成权重预先固定，不根据验证反馈搜权重。若以后研究stacking，另立仅train-OOF方案，不把concat叫stacking。
+- **dependencies：**W03/W04；相关单分支完整接受；主控新模块/组合授权。
+- **acceptance_checks：**参数量和控制预算透明；原行一一对齐；无教师标签；对照与组合的评价角色隔离。相关性不是互补质量验收。
+- **priority / budget：**P3；bottleneck9H；concat6H+最多9H缺失单分支控制；成员已有时3种集成额外fit0但仍需新推理/评分授权。当前0。
+- **blocked_fallback：**任何成员未就绪先保留单分支；不将失败成员混入有效集合。
+
+## W09：条件资产及协议补证据
+
+- **work_item_id / issue_ids：**W09；AR001-10、AR001-14；U02；P19–P23。
+- **goal：**闭合资产、外部拟合状态、输入覆盖和方法资格，再决定是否排入实验。
+- **model_and_asset_versions：**UNI2/TFM26/KPGT/SMITED/MOLE版本表；缺字节SHA保持null。
+- **input_contract：**G及主控允许的官方资产元数据；不取外部评测标签或训练样本。
+- **output_contract：**逐资产准入卡、变换/依赖图、费用假设和blocked清单。
+- **implementation_scope：**UniMol2先1/3构象及固定seed/crop/fallback；TFM须确切2.6版本/许可/内部预处理与context；KPGT核辅助CDF及实际RDKFingerprint；SMI-TED核variant/tokenizer/pooling；MolE先真实checkpoint链。
+- **frozen_components：**所有获准外部参数/buffers/拟合状态原样冻结；未准入CDF不能自动当普通代码使用。
+- **preparation_steps：**构象只派生同原行表示不增监督样本；TFM fit/in-context不能冒称新增梯度训练，单独核赛事深度训练要求；不以不同TabPFN版本冒名；资产不明即阻断，不按论文排名替代验收。
+- **dependencies：**W01–W04；主控资产/资格/资源决策。
+- **acceptance_checks：**每个资产URL/revision/SHA/license/load/输入覆盖/外部拟合状态可追溯；runtime未测不通过；构象/分词失败不删原行。
+- **priority / budget：**P4。UniMol2两构象策略6H+缺控制3H及几何/E费用；TFM两ensemble_count策略6C+缺同clip6 CHEM-MLP128控制3H；KPGT/SMITED各6H+缺共享CHEM双头6H；MolE当前可执行配置0。当前全部0执行。
+- **blocked_fallback：**交证据需求，不下载凑版本，不编造就绪时间；继续CHEM/MINI/MOL较近方向。
+
+## W10：评价隔离、误差切片与交付
+
+- **work_item_id / issue_ids：**W10；AR001-01、AR001-09、AR001-12；U04/U05；P24。
+- **goal：**选择与确认隔离，给主控可计算的评价计划。
+- **model_and_asset_versions：**锁定一个控制和一个挑战者；实际完整config/asset/code/split/hash待登记。
+- **input_contract：**G；准备角色不读取任何精确官方valid评分。官方评分只交主控固定评分器；不在此重评分。
+- **output_contract：**预登记比较组/失败总表/切片定义、聚合评价接口、交付清单与技术反馈投影schema。
+- **implementation_scope：**只设计，不计算新模型预测/集成成绩。MAE按原numeric Y、越低越好；官方多任务总分未知就只报任务。
+- **frozen_components：**已锁候选和评价协议，不随外层结果继续调参。
+- **preparation_steps：**先train内筛查，再锁候选做OUTER3；每fold内部fit/stop独立，外层Y不参与该fold选epoch/调参。提前定义大小、结构新颖性、稀疏激活、重复测量、train-Y尾部等切片，阈值来源限定train，输出n/聚合metric/配对差；不索取私有逐行残差。最低有意义效应暂null，待有噪声或业务依据才设置，不能凭愿望写显著阈值。
+- **dependencies：**W01/W02/W04；候选锁定；主控评价及资源授权。
+- **acceptance_checks：**所有seed/fold/失败均记录；配对条件一致；同模式指标；内部筛选次数公开；不把seed重复当独立化学样本；当前已用train的外层结果只能是补充稳健性证据，不称全新未调参终评。
+- **priority / budget：**P2确认；2配置×3fold×3seed=18H，scaffold敏感性另18H；若含GNN按G另估。当前0。
+- **blocked_fallback：**缺配对/未锁定/无受保护评价就保留inconclusive；仍交准备包，不伪造泛化提升。
+
+## 交接完成条件
+
+逐W项给`prepared/blocked/not_started`、真实产物路径/hash、未测项、依赖和主控下一步决定。对所有提案用“配置数”和“实际fit/编码/上下文任务数”两个字段；同完整身份才可合并控制。只交技术投影，不转发完整研究评分材料。主控完成核验并另行给出资源/执行授权后，才可能进入运行阶段。

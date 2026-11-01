@@ -1,0 +1,18 @@
+# 赛事提交专用入口
+
+本目录归属 [ADMET项目唯一入口](../AGENTS.md)。当前专用 GPT-6.1 Sol Thread 接手原Terra的内置 Browser 登录、官网提交和取分，身份见 `thread.json`。使用 [提交Skill](../skills/competition-submission/SKILL.md)。旧Thread记录保留，不作为当前执行者。
+
+用户手动触发：在专用Thread说“提交CURRENT批次”或“查看上次提交分数”。用户明确选择某批时使用对应批次。除此之外不自动上传、不建心跳、不跟随训练完成事件。训练循环仍维持原来的不自动官网提交边界。
+
+- `CURRENT.json`：当前可供手动提交的批次指针。更新指针不等于自动提交授权。
+- `batches/<batch_id>/REQUEST.json`：当次用户范围、顺序、预算和来源。
+- `batches/<batch_id>/manifest.json`：每个完整候选、来源模型、数据行数和SHA。
+- `batches/<batch_id>/candidates/<candidate_id>/submission.csv`：可上传的完整CSV；上传用队名/赛题/日期文件名在attempts中另存，不能改字节。
+- `batches/<batch_id>/attempts/`：独立提交记录、官网链接/编号/分数、截图、整段耗时和失败证据。
+- `batches/<batch_id>/status.json`：已提交/评测中/已出分/额度用尽/需要本人处理等状态。
+- `RESULTS.jsonl`：追加历史事件，不覆盖旧成绩。
+- `thread.json`：专用Thread真实ID与首次派发回执。
+
+首批 existing-models-20261101 有4个完整候选，每份16379行/22任务。01是Mini全量基线，02/03/04只分别采用三次海南Caco2训练的182行test预测，其余21任务来自01。不是4套全量重新训练。只做模型原预测搬运，没有平均、裁剪、补标签。首批已过本地格式/行身份/来源检查，当前官网页面与实际评分待专用Thread核验。官网曾规定末次有效提交为准；每次都要读当前规则和已有提交历史，不假定平台自动保留最好分。
+
+后续完整候选封口后放入新的batches目录，保持旧批次及回执不可覆盖。材料准备者可登记manifest和CURRENT；只有用户手动触发专用Thread才进行官网提交。缺少完整候选时明确报告，不用旧成绩冒充新结果。

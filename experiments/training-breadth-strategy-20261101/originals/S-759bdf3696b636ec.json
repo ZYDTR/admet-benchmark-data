@@ -1,0 +1,2650 @@
+{
+  "commit": "0275588ac7a5d3df032ec7dc0794cab21dfcfeeb",
+  "audit_date": "2026-10-30",
+  "source": "https://github.com/ZYDTR/admet-benchmark-data",
+  "authority": "User-supplied data snapshot; not independently proven official training package",
+  "limits": [
+    "No test labels read into audit records or analyzed",
+    "Raw SMILES equality is string identity, not chemically canonical equivalence",
+    "No chemistry toolkit installed; chemical validity/stereochemistry/scaffold equivalence not established",
+    "Label statistics do not establish units, log transforms, or assay semantics"
+  ],
+  "tasks": {
+    "ames": {
+      "splits": {
+        "train": {
+          "rows": 4684,
+          "unique_raw_smiles": 4667,
+          "duplicate_raw_smiles_extra_rows": 17,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 3,
+          "raw_smiles_length_max": 175,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 385,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 4684,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.5604184457728437,
+            "median": 1.0,
+            "unique_numeric_values": 2,
+            "zero_count": 2059,
+            "one_count": 2625,
+            "positive_fraction": 0.5604184457728437,
+            "minority_count": 2059
+          }
+        },
+        "valid": {
+          "rows": 1137,
+          "unique_raw_smiles": 1135,
+          "duplicate_raw_smiles_extra_rows": 2,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 8,
+          "raw_smiles_length_max": 78,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 38,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 1137,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.4212840809146878,
+            "median": 0.0,
+            "unique_numeric_values": 2,
+            "zero_count": 658,
+            "one_count": 479,
+            "positive_fraction": 0.4212840809146878,
+            "minority_count": 479
+          }
+        },
+        "test": {
+          "rows": 1457,
+          "unique_raw_smiles": 1453,
+          "duplicate_raw_smiles_extra_rows": 4,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 5,
+          "raw_smiles_length_max": 121,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 181
+        }
+      },
+      "headers": {
+        "train": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "valid": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "test": [
+          "Drug_ID",
+          "Drug"
+        ]
+      },
+      "metric": [
+        "AUROC"
+      ],
+      "unexpected_test_fields": [],
+      "same_task_overlap": {
+        "train_valid": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "train_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "valid_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        }
+      },
+      "template_test_mapping": {
+        "template_rows": 1457,
+        "test_rows": 1457,
+        "exact_ordered_nonprediction_match": true,
+        "field_mismatch_counts": {
+          "sample_idx": 0,
+          "drug_id": 0,
+          "smiles": 0
+        }
+      },
+      "cross_task_overlap": {
+        "valid_rows_with_raw_smiles_in_another_tasks_train": 550,
+        "test_rows_with_raw_smiles_in_another_tasks_train": 246
+      }
+    },
+    "bbb_martins": {
+      "splits": {
+        "train": {
+          "rows": 1421,
+          "unique_raw_smiles": 1384,
+          "duplicate_raw_smiles_extra_rows": 37,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 8,
+          "raw_smiles_length_min": 8,
+          "raw_smiles_length_max": 383,
+          "dot_containing_rows": 82,
+          "at_sign_containing_rows": 475,
+          "duplicate_smiles_with_distinct_label_strings": 7,
+          "labels": {
+            "rows": 1421,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.7558057705840957,
+            "median": 1.0,
+            "unique_numeric_values": 2,
+            "zero_count": 347,
+            "one_count": 1074,
+            "positive_fraction": 0.7558057705840957,
+            "minority_count": 347
+          }
+        },
+        "valid": {
+          "rows": 203,
+          "unique_raw_smiles": 197,
+          "duplicate_raw_smiles_extra_rows": 6,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 8,
+          "raw_smiles_length_max": 182,
+          "dot_containing_rows": 8,
+          "at_sign_containing_rows": 56,
+          "duplicate_smiles_with_distinct_label_strings": 1,
+          "labels": {
+            "rows": 203,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.7339901477832512,
+            "median": 1.0,
+            "unique_numeric_values": 2,
+            "zero_count": 54,
+            "one_count": 149,
+            "positive_fraction": 0.7339901477832512,
+            "minority_count": 54
+          }
+        },
+        "test": {
+          "rows": 406,
+          "unique_raw_smiles": 394,
+          "duplicate_raw_smiles_extra_rows": 12,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 2,
+          "raw_smiles_length_min": 3,
+          "raw_smiles_length_max": 338,
+          "dot_containing_rows": 15,
+          "at_sign_containing_rows": 106
+        }
+      },
+      "headers": {
+        "train": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "valid": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "test": [
+          "Drug_ID",
+          "Drug"
+        ]
+      },
+      "metric": [
+        "AUROC"
+      ],
+      "unexpected_test_fields": [],
+      "same_task_overlap": {
+        "train_valid": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "train_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 2
+        },
+        "valid_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        }
+      },
+      "template_test_mapping": {
+        "template_rows": 406,
+        "test_rows": 406,
+        "exact_ordered_nonprediction_match": true,
+        "field_mismatch_counts": {
+          "sample_idx": 0,
+          "drug_id": 0,
+          "smiles": 0
+        }
+      },
+      "cross_task_overlap": {
+        "valid_rows_with_raw_smiles_in_another_tasks_train": 65,
+        "test_rows_with_raw_smiles_in_another_tasks_train": 157
+      }
+    },
+    "bioavailability_ma": {
+      "splits": {
+        "train": {
+          "rows": 448,
+          "unique_raw_smiles": 448,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 3,
+          "raw_smiles_length_max": 193,
+          "dot_containing_rows": 1,
+          "at_sign_containing_rows": 175,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 448,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.7857142857142857,
+            "median": 1.0,
+            "unique_numeric_values": 2,
+            "zero_count": 96,
+            "one_count": 352,
+            "positive_fraction": 0.7857142857142857,
+            "minority_count": 96
+          }
+        },
+        "valid": {
+          "rows": 64,
+          "unique_raw_smiles": 64,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 16,
+          "raw_smiles_length_max": 173,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 21,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 64,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.671875,
+            "median": 1.0,
+            "unique_numeric_values": 2,
+            "zero_count": 21,
+            "one_count": 43,
+            "positive_fraction": 0.671875,
+            "minority_count": 21
+          }
+        },
+        "test": {
+          "rows": 128,
+          "unique_raw_smiles": 128,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 15,
+          "raw_smiles_length_max": 167,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 49
+        }
+      },
+      "headers": {
+        "train": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "valid": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "test": [
+          "Drug_ID",
+          "Drug"
+        ]
+      },
+      "metric": [
+        "AUROC"
+      ],
+      "unexpected_test_fields": [],
+      "same_task_overlap": {
+        "train_valid": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "train_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "valid_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        }
+      },
+      "template_test_mapping": {
+        "template_rows": 128,
+        "test_rows": 128,
+        "exact_ordered_nonprediction_match": true,
+        "field_mismatch_counts": {
+          "sample_idx": 0,
+          "drug_id": 0,
+          "smiles": 0
+        }
+      },
+      "cross_task_overlap": {
+        "valid_rows_with_raw_smiles_in_another_tasks_train": 55,
+        "test_rows_with_raw_smiles_in_another_tasks_train": 107
+      }
+    },
+    "caco2_wang": {
+      "splits": {
+        "train": {
+          "rows": 637,
+          "unique_raw_smiles": 634,
+          "duplicate_raw_smiles_extra_rows": 3,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 56,
+          "raw_smiles_length_min": 2,
+          "raw_smiles_length_max": 190,
+          "dot_containing_rows": 6,
+          "at_sign_containing_rows": 277,
+          "duplicate_smiles_with_distinct_label_strings": 3,
+          "labels": {
+            "rows": 637,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": -7.7600002,
+            "max": -3.51,
+            "mean": -5.203767316012559,
+            "median": -5.0499268,
+            "unique_numeric_values": 466,
+            "zero_count": 0,
+            "one_count": 0
+          }
+        },
+        "valid": {
+          "rows": 91,
+          "unique_raw_smiles": 91,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 2,
+          "raw_smiles_length_min": 19,
+          "raw_smiles_length_max": 221,
+          "dot_containing_rows": 2,
+          "at_sign_containing_rows": 45,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 91,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": -7.3400002,
+            "max": -3.9978395,
+            "mean": -5.3117670868131865,
+            "median": -5.223299,
+            "unique_numeric_values": 85,
+            "zero_count": 0,
+            "one_count": 0
+          }
+        },
+        "test": {
+          "rows": 182,
+          "unique_raw_smiles": 181,
+          "duplicate_raw_smiles_extra_rows": 1,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 5,
+          "raw_smiles_length_min": 14,
+          "raw_smiles_length_max": 195,
+          "dot_containing_rows": 1,
+          "at_sign_containing_rows": 107
+        }
+      },
+      "headers": {
+        "train": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "valid": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "test": [
+          "Drug_ID",
+          "Drug"
+        ]
+      },
+      "metric": [
+        "MAE"
+      ],
+      "unexpected_test_fields": [],
+      "same_task_overlap": {
+        "train_valid": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 9
+        },
+        "train_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 5
+        },
+        "valid_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 2
+        }
+      },
+      "template_test_mapping": {
+        "template_rows": 182,
+        "test_rows": 182,
+        "exact_ordered_nonprediction_match": true,
+        "field_mismatch_counts": {
+          "sample_idx": 0,
+          "drug_id": 0,
+          "smiles": 0
+        }
+      },
+      "cross_task_overlap": {
+        "valid_rows_with_raw_smiles_in_another_tasks_train": 18,
+        "test_rows_with_raw_smiles_in_another_tasks_train": 40
+      }
+    },
+    "clearance_hepatocyte_az": {
+      "splits": {
+        "train": {
+          "rows": 848,
+          "unique_raw_smiles": 712,
+          "duplicate_raw_smiles_extra_rows": 136,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 136,
+          "raw_smiles_length_min": 17,
+          "raw_smiles_length_max": 194,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 315,
+          "duplicate_smiles_with_distinct_label_strings": 136,
+          "labels": {
+            "rows": 848,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 3.0,
+            "max": 150.0,
+            "mean": 42.338915094339626,
+            "median": 17.58,
+            "unique_numeric_values": 300,
+            "zero_count": 0,
+            "one_count": 0
+          }
+        },
+        "valid": {
+          "rows": 122,
+          "unique_raw_smiles": 105,
+          "duplicate_raw_smiles_extra_rows": 17,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 17,
+          "raw_smiles_length_min": 22,
+          "raw_smiles_length_max": 80,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 47,
+          "duplicate_smiles_with_distinct_label_strings": 17,
+          "labels": {
+            "rows": 122,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 3.0,
+            "max": 150.0,
+            "mean": 50.643524590163935,
+            "median": 28.5,
+            "unique_numeric_values": 80,
+            "zero_count": 0,
+            "one_count": 0
+          }
+        },
+        "test": {
+          "rows": 243,
+          "unique_raw_smiles": 203,
+          "duplicate_raw_smiles_extra_rows": 40,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 40,
+          "raw_smiles_length_min": 2,
+          "raw_smiles_length_max": 205,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 86
+        }
+      },
+      "headers": {
+        "train": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "valid": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "test": [
+          "Drug_ID",
+          "Drug"
+        ]
+      },
+      "metric": [
+        "Spearman"
+      ],
+      "unexpected_test_fields": [],
+      "same_task_overlap": {
+        "train_valid": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "train_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "valid_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        }
+      },
+      "template_test_mapping": {
+        "template_rows": 243,
+        "test_rows": 243,
+        "exact_ordered_nonprediction_match": true,
+        "field_mismatch_counts": {
+          "sample_idx": 0,
+          "drug_id": 0,
+          "smiles": 0
+        }
+      },
+      "cross_task_overlap": {
+        "valid_rows_with_raw_smiles_in_another_tasks_train": 93,
+        "test_rows_with_raw_smiles_in_another_tasks_train": 210
+      }
+    },
+    "clearance_microsome_az": {
+      "splits": {
+        "train": {
+          "rows": 770,
+          "unique_raw_smiles": 770,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 14,
+          "raw_smiles_length_max": 143,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 243,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 770,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 3.0,
+            "max": 150.0,
+            "mean": 35.75390909090909,
+            "median": 14.13,
+            "unique_numeric_values": 246,
+            "zero_count": 0,
+            "one_count": 0
+          }
+        },
+        "valid": {
+          "rows": 111,
+          "unique_raw_smiles": 111,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 17,
+          "raw_smiles_length_max": 82,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 45,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 111,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 3.0,
+            "max": 150.0,
+            "mean": 34.29117117117117,
+            "median": 14.0,
+            "unique_numeric_values": 62,
+            "zero_count": 0,
+            "one_count": 0
+          }
+        },
+        "test": {
+          "rows": 221,
+          "unique_raw_smiles": 221,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 19,
+          "raw_smiles_length_max": 136,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 73
+        }
+      },
+      "headers": {
+        "train": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "valid": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "test": [
+          "Drug_ID",
+          "Drug"
+        ]
+      },
+      "metric": [
+        "Spearman"
+      ],
+      "unexpected_test_fields": [],
+      "same_task_overlap": {
+        "train_valid": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "train_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "valid_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        }
+      },
+      "template_test_mapping": {
+        "template_rows": 221,
+        "test_rows": 221,
+        "exact_ordered_nonprediction_match": true,
+        "field_mismatch_counts": {
+          "sample_idx": 0,
+          "drug_id": 0,
+          "smiles": 0
+        }
+      },
+      "cross_task_overlap": {
+        "valid_rows_with_raw_smiles_in_another_tasks_train": 97,
+        "test_rows_with_raw_smiles_in_another_tasks_train": 203
+      }
+    },
+    "cyp2c9_substrate_carbonmangels": {
+      "splits": {
+        "train": {
+          "rows": 467,
+          "unique_raw_smiles": 465,
+          "duplicate_raw_smiles_extra_rows": 2,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 1,
+          "raw_smiles_length_min": 3,
+          "raw_smiles_length_max": 225,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 244,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 467,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.1948608137044968,
+            "median": 0.0,
+            "unique_numeric_values": 2,
+            "zero_count": 376,
+            "one_count": 91,
+            "positive_fraction": 0.1948608137044968,
+            "minority_count": 91
+          }
+        },
+        "valid": {
+          "rows": 67,
+          "unique_raw_smiles": 66,
+          "duplicate_raw_smiles_extra_rows": 1,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 12,
+          "raw_smiles_length_max": 105,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 39,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 67,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.1791044776119403,
+            "median": 0.0,
+            "unique_numeric_values": 2,
+            "zero_count": 55,
+            "one_count": 12,
+            "positive_fraction": 0.1791044776119403,
+            "minority_count": 12
+          }
+        },
+        "test": {
+          "rows": 135,
+          "unique_raw_smiles": 135,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 20,
+          "raw_smiles_length_max": 184,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 81
+        }
+      },
+      "headers": {
+        "train": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "valid": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "test": [
+          "Drug_ID",
+          "Drug"
+        ]
+      },
+      "metric": [
+        "AUPRC"
+      ],
+      "unexpected_test_fields": [],
+      "same_task_overlap": {
+        "train_valid": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "train_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "valid_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        }
+      },
+      "template_test_mapping": {
+        "template_rows": 135,
+        "test_rows": 135,
+        "exact_ordered_nonprediction_match": true,
+        "field_mismatch_counts": {
+          "sample_idx": 0,
+          "drug_id": 0,
+          "smiles": 0
+        }
+      },
+      "cross_task_overlap": {
+        "valid_rows_with_raw_smiles_in_another_tasks_train": 64,
+        "test_rows_with_raw_smiles_in_another_tasks_train": 120
+      }
+    },
+    "cyp2c9_veith": {
+      "splits": {
+        "train": {
+          "rows": 8463,
+          "unique_raw_smiles": 8463,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 9,
+          "raw_smiles_length_max": 340,
+          "dot_containing_rows": 369,
+          "at_sign_containing_rows": 1915,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 8463,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.3390050809405648,
+            "median": 0.0,
+            "unique_numeric_values": 2,
+            "zero_count": 5594,
+            "one_count": 2869,
+            "positive_fraction": 0.3390050809405648,
+            "minority_count": 2869
+          }
+        },
+        "valid": {
+          "rows": 1210,
+          "unique_raw_smiles": 1210,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 11,
+          "raw_smiles_length_max": 193,
+          "dot_containing_rows": 63,
+          "at_sign_containing_rows": 253,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 1210,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.33553719008264465,
+            "median": 0.0,
+            "unique_numeric_values": 2,
+            "zero_count": 804,
+            "one_count": 406,
+            "positive_fraction": 0.33553719008264465,
+            "minority_count": 406
+          }
+        },
+        "test": {
+          "rows": 2419,
+          "unique_raw_smiles": 2419,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 2,
+          "raw_smiles_length_max": 301,
+          "dot_containing_rows": 106,
+          "at_sign_containing_rows": 569
+        }
+      },
+      "headers": {
+        "train": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "valid": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "test": [
+          "Drug_ID",
+          "Drug"
+        ]
+      },
+      "metric": [
+        "AUPRC"
+      ],
+      "unexpected_test_fields": [],
+      "same_task_overlap": {
+        "train_valid": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "train_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "valid_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        }
+      },
+      "template_test_mapping": {
+        "template_rows": 2419,
+        "test_rows": 2419,
+        "exact_ordered_nonprediction_match": false,
+        "field_mismatch_counts": {
+          "sample_idx": 0,
+          "drug_id": 2419,
+          "smiles": 0
+        }
+      },
+      "cross_task_overlap": {
+        "valid_rows_with_raw_smiles_in_another_tasks_train": 992,
+        "test_rows_with_raw_smiles_in_another_tasks_train": 1948
+      }
+    },
+    "cyp2d6_substrate_carbonmangels": {
+      "splits": {
+        "train": {
+          "rows": 465,
+          "unique_raw_smiles": 463,
+          "duplicate_raw_smiles_extra_rows": 2,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 1,
+          "raw_smiles_length_min": 3,
+          "raw_smiles_length_max": 225,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 230,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 465,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.28817204301075267,
+            "median": 0.0,
+            "unique_numeric_values": 2,
+            "zero_count": 331,
+            "one_count": 134,
+            "positive_fraction": 0.28817204301075267,
+            "minority_count": 134
+          }
+        },
+        "valid": {
+          "rows": 67,
+          "unique_raw_smiles": 67,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 26,
+          "raw_smiles_length_max": 188,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 46,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 67,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.208955223880597,
+            "median": 0.0,
+            "unique_numeric_values": 2,
+            "zero_count": 53,
+            "one_count": 14,
+            "positive_fraction": 0.208955223880597,
+            "minority_count": 14
+          }
+        },
+        "test": {
+          "rows": 135,
+          "unique_raw_smiles": 134,
+          "duplicate_raw_smiles_extra_rows": 1,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 22,
+          "raw_smiles_length_max": 187,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 86
+        }
+      },
+      "headers": {
+        "train": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "valid": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "test": [
+          "Drug_ID",
+          "Drug"
+        ]
+      },
+      "metric": [
+        "AUPRC"
+      ],
+      "unexpected_test_fields": [],
+      "same_task_overlap": {
+        "train_valid": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "train_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "valid_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        }
+      },
+      "template_test_mapping": {
+        "template_rows": 135,
+        "test_rows": 135,
+        "exact_ordered_nonprediction_match": true,
+        "field_mismatch_counts": {
+          "sample_idx": 0,
+          "drug_id": 0,
+          "smiles": 0
+        }
+      },
+      "cross_task_overlap": {
+        "valid_rows_with_raw_smiles_in_another_tasks_train": 62,
+        "test_rows_with_raw_smiles_in_another_tasks_train": 122
+      }
+    },
+    "cyp2d6_veith": {
+      "splits": {
+        "train": {
+          "rows": 9191,
+          "unique_raw_smiles": 9191,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 9,
+          "raw_smiles_length_max": 311,
+          "dot_containing_rows": 358,
+          "at_sign_containing_rows": 1758,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 9191,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.19812860406919813,
+            "median": 0.0,
+            "unique_numeric_values": 2,
+            "zero_count": 7370,
+            "one_count": 1821,
+            "positive_fraction": 0.19812860406919813,
+            "minority_count": 1821
+          }
+        },
+        "valid": {
+          "rows": 1313,
+          "unique_raw_smiles": 1313,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 14,
+          "raw_smiles_length_max": 402,
+          "dot_containing_rows": 58,
+          "at_sign_containing_rows": 294,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 1313,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.19040365575019041,
+            "median": 0.0,
+            "unique_numeric_values": 2,
+            "zero_count": 1063,
+            "one_count": 250,
+            "positive_fraction": 0.19040365575019041,
+            "minority_count": 250
+          }
+        },
+        "test": {
+          "rows": 2626,
+          "unique_raw_smiles": 2626,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 2,
+          "raw_smiles_length_max": 340,
+          "dot_containing_rows": 133,
+          "at_sign_containing_rows": 666
+        }
+      },
+      "headers": {
+        "train": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "valid": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "test": [
+          "Drug_ID",
+          "Drug"
+        ]
+      },
+      "metric": [
+        "AUPRC"
+      ],
+      "unexpected_test_fields": [],
+      "same_task_overlap": {
+        "train_valid": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "train_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "valid_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        }
+      },
+      "template_test_mapping": {
+        "template_rows": 2626,
+        "test_rows": 2626,
+        "exact_ordered_nonprediction_match": false,
+        "field_mismatch_counts": {
+          "sample_idx": 0,
+          "drug_id": 2626,
+          "smiles": 0
+        }
+      },
+      "cross_task_overlap": {
+        "valid_rows_with_raw_smiles_in_another_tasks_train": 1001,
+        "test_rows_with_raw_smiles_in_another_tasks_train": 2155
+      }
+    },
+    "cyp3a4_substrate_carbonmangels": {
+      "splits": {
+        "train": {
+          "rows": 468,
+          "unique_raw_smiles": 466,
+          "duplicate_raw_smiles_extra_rows": 2,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 1,
+          "raw_smiles_length_min": 3,
+          "raw_smiles_length_max": 226,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 237,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 468,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.5128205128205128,
+            "median": 1.0,
+            "unique_numeric_values": 2,
+            "zero_count": 228,
+            "one_count": 240,
+            "positive_fraction": 0.5128205128205128,
+            "minority_count": 228
+          }
+        },
+        "valid": {
+          "rows": 67,
+          "unique_raw_smiles": 67,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 15,
+          "raw_smiles_length_max": 187,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 48,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 67,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.5373134328358209,
+            "median": 1.0,
+            "unique_numeric_values": 2,
+            "zero_count": 31,
+            "one_count": 36,
+            "positive_fraction": 0.5373134328358209,
+            "minority_count": 31
+          }
+        },
+        "test": {
+          "rows": 135,
+          "unique_raw_smiles": 134,
+          "duplicate_raw_smiles_extra_rows": 1,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 12,
+          "raw_smiles_length_max": 169,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 82
+        }
+      },
+      "headers": {
+        "train": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "valid": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "test": [
+          "Drug_ID",
+          "Drug"
+        ]
+      },
+      "metric": [
+        "AUROC"
+      ],
+      "unexpected_test_fields": [],
+      "same_task_overlap": {
+        "train_valid": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "train_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "valid_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        }
+      },
+      "template_test_mapping": {
+        "template_rows": 135,
+        "test_rows": 135,
+        "exact_ordered_nonprediction_match": true,
+        "field_mismatch_counts": {
+          "sample_idx": 0,
+          "drug_id": 0,
+          "smiles": 0
+        }
+      },
+      "cross_task_overlap": {
+        "valid_rows_with_raw_smiles_in_another_tasks_train": 61,
+        "test_rows_with_raw_smiles_in_another_tasks_train": 123
+      }
+    },
+    "cyp3a4_veith": {
+      "splits": {
+        "train": {
+          "rows": 8628,
+          "unique_raw_smiles": 8628,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 2,
+          "raw_smiles_length_max": 402,
+          "dot_containing_rows": 402,
+          "at_sign_containing_rows": 1794,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 8628,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.39951321279554936,
+            "median": 0.0,
+            "unique_numeric_values": 2,
+            "zero_count": 5181,
+            "one_count": 3447,
+            "positive_fraction": 0.39951321279554936,
+            "minority_count": 3447
+          }
+        },
+        "valid": {
+          "rows": 1233,
+          "unique_raw_smiles": 1233,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 11,
+          "raw_smiles_length_max": 260,
+          "dot_containing_rows": 48,
+          "at_sign_containing_rows": 228,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 1233,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.47120843471208435,
+            "median": 0.0,
+            "unique_numeric_values": 2,
+            "zero_count": 652,
+            "one_count": 581,
+            "positive_fraction": 0.47120843471208435,
+            "minority_count": 581
+          }
+        },
+        "test": {
+          "rows": 2467,
+          "unique_raw_smiles": 2467,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 13,
+          "raw_smiles_length_max": 301,
+          "dot_containing_rows": 99,
+          "at_sign_containing_rows": 502
+        }
+      },
+      "headers": {
+        "train": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "valid": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "test": [
+          "Drug_ID",
+          "Drug"
+        ]
+      },
+      "metric": [
+        "AUPRC"
+      ],
+      "unexpected_test_fields": [],
+      "same_task_overlap": {
+        "train_valid": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "train_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "valid_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        }
+      },
+      "template_test_mapping": {
+        "template_rows": 2467,
+        "test_rows": 2467,
+        "exact_ordered_nonprediction_match": false,
+        "field_mismatch_counts": {
+          "sample_idx": 0,
+          "drug_id": 2467,
+          "smiles": 0
+        }
+      },
+      "cross_task_overlap": {
+        "valid_rows_with_raw_smiles_in_another_tasks_train": 1001,
+        "test_rows_with_raw_smiles_in_another_tasks_train": 1981
+      }
+    },
+    "dili": {
+      "splits": {
+        "train": {
+          "rows": 331,
+          "unique_raw_smiles": 331,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 12,
+          "raw_smiles_length_max": 174,
+          "dot_containing_rows": 4,
+          "at_sign_containing_rows": 0,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 331,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.5226586102719033,
+            "median": 1.0,
+            "unique_numeric_values": 2,
+            "zero_count": 158,
+            "one_count": 173,
+            "positive_fraction": 0.5226586102719033,
+            "minority_count": 158
+          }
+        },
+        "valid": {
+          "rows": 48,
+          "unique_raw_smiles": 48,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 5,
+          "raw_smiles_length_max": 72,
+          "dot_containing_rows": 8,
+          "at_sign_containing_rows": 0,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 48,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.2708333333333333,
+            "median": 0.0,
+            "unique_numeric_values": 2,
+            "zero_count": 35,
+            "one_count": 13,
+            "positive_fraction": 0.2708333333333333,
+            "minority_count": 13
+          }
+        },
+        "test": {
+          "rows": 96,
+          "unique_raw_smiles": 96,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 14,
+          "raw_smiles_length_max": 149,
+          "dot_containing_rows": 6,
+          "at_sign_containing_rows": 0
+        }
+      },
+      "headers": {
+        "train": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "valid": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "test": [
+          "Drug_ID",
+          "Drug"
+        ]
+      },
+      "metric": [
+        "AUROC"
+      ],
+      "unexpected_test_fields": [],
+      "same_task_overlap": {
+        "train_valid": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "train_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "valid_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        }
+      },
+      "template_test_mapping": {
+        "template_rows": 96,
+        "test_rows": 96,
+        "exact_ordered_nonprediction_match": false,
+        "field_mismatch_counts": {
+          "sample_idx": 0,
+          "drug_id": 96,
+          "smiles": 0
+        }
+      },
+      "cross_task_overlap": {
+        "valid_rows_with_raw_smiles_in_another_tasks_train": 21,
+        "test_rows_with_raw_smiles_in_another_tasks_train": 65
+      }
+    },
+    "half_life_obach": {
+      "splits": {
+        "train": {
+          "rows": 465,
+          "unique_raw_smiles": 464,
+          "duplicate_raw_smiles_extra_rows": 1,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 1,
+          "raw_smiles_length_min": 12,
+          "raw_smiles_length_max": 342,
+          "dot_containing_rows": 6,
+          "at_sign_containing_rows": 218,
+          "duplicate_smiles_with_distinct_label_strings": 1,
+          "labels": {
+            "rows": 465,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.065,
+            "max": 1200.0,
+            "mean": 17.789021505376343,
+            "median": 4.0,
+            "unique_numeric_values": 164,
+            "zero_count": 0,
+            "one_count": 12
+          }
+        },
+        "valid": {
+          "rows": 67,
+          "unique_raw_smiles": 67,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 8,
+          "raw_smiles_length_max": 270,
+          "dot_containing_rows": 1,
+          "at_sign_containing_rows": 26,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 67,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.37,
+            "max": 820.0,
+            "mean": 37.31925373134328,
+            "median": 5.3,
+            "unique_numeric_values": 56,
+            "zero_count": 0,
+            "one_count": 1
+          }
+        },
+        "test": {
+          "rows": 135,
+          "unique_raw_smiles": 134,
+          "duplicate_raw_smiles_extra_rows": 1,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 1,
+          "raw_smiles_length_min": 22,
+          "raw_smiles_length_max": 304,
+          "dot_containing_rows": 3,
+          "at_sign_containing_rows": 76
+        }
+      },
+      "headers": {
+        "train": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "valid": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "test": [
+          "Drug_ID",
+          "Drug"
+        ]
+      },
+      "metric": [
+        "Spearman"
+      ],
+      "unexpected_test_fields": [],
+      "same_task_overlap": {
+        "train_valid": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "train_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "valid_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        }
+      },
+      "template_test_mapping": {
+        "template_rows": 135,
+        "test_rows": 135,
+        "exact_ordered_nonprediction_match": true,
+        "field_mismatch_counts": {
+          "sample_idx": 0,
+          "drug_id": 0,
+          "smiles": 0
+        }
+      },
+      "cross_task_overlap": {
+        "valid_rows_with_raw_smiles_in_another_tasks_train": 43,
+        "test_rows_with_raw_smiles_in_another_tasks_train": 86
+      }
+    },
+    "herg": {
+      "splits": {
+        "train": {
+          "rows": 457,
+          "unique_raw_smiles": 454,
+          "duplicate_raw_smiles_extra_rows": 3,
+          "blank_smiles": 0,
+          "blank_drug_id": 20,
+          "duplicate_nonblank_drug_ids_extra_rows": 12,
+          "raw_smiles_length_min": 10,
+          "raw_smiles_length_max": 188,
+          "dot_containing_rows": 10,
+          "at_sign_containing_rows": 231,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 457,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.6827133479212254,
+            "median": 1.0,
+            "unique_numeric_values": 2,
+            "zero_count": 145,
+            "one_count": 312,
+            "positive_fraction": 0.6827133479212254,
+            "minority_count": 145
+          }
+        },
+        "valid": {
+          "rows": 66,
+          "unique_raw_smiles": 66,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 1,
+          "duplicate_nonblank_drug_ids_extra_rows": 4,
+          "raw_smiles_length_min": 9,
+          "raw_smiles_length_max": 188,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 41,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 66,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.6363636363636364,
+            "median": 1.0,
+            "unique_numeric_values": 2,
+            "zero_count": 24,
+            "one_count": 42,
+            "positive_fraction": 0.6363636363636364,
+            "minority_count": 24
+          }
+        },
+        "test": {
+          "rows": 132,
+          "unique_raw_smiles": 128,
+          "duplicate_raw_smiles_extra_rows": 4,
+          "blank_smiles": 0,
+          "blank_drug_id": 1,
+          "duplicate_nonblank_drug_ids_extra_rows": 2,
+          "raw_smiles_length_min": 25,
+          "raw_smiles_length_max": 127,
+          "dot_containing_rows": 2,
+          "at_sign_containing_rows": 69
+        }
+      },
+      "headers": {
+        "train": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "valid": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "test": [
+          "Drug_ID",
+          "Drug"
+        ]
+      },
+      "metric": [
+        "AUROC"
+      ],
+      "unexpected_test_fields": [],
+      "same_task_overlap": {
+        "train_valid": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "train_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "valid_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        }
+      },
+      "template_test_mapping": {
+        "template_rows": 132,
+        "test_rows": 132,
+        "exact_ordered_nonprediction_match": true,
+        "field_mismatch_counts": {
+          "sample_idx": 0,
+          "drug_id": 0,
+          "smiles": 0
+        }
+      },
+      "cross_task_overlap": {
+        "valid_rows_with_raw_smiles_in_another_tasks_train": 16,
+        "test_rows_with_raw_smiles_in_another_tasks_train": 24
+      }
+    },
+    "hia_hou": {
+      "splits": {
+        "train": {
+          "rows": 403,
+          "unique_raw_smiles": 403,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 13,
+          "raw_smiles_length_max": 266,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 226,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 403,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.8982630272952854,
+            "median": 1.0,
+            "unique_numeric_values": 2,
+            "zero_count": 41,
+            "one_count": 362,
+            "positive_fraction": 0.8982630272952854,
+            "minority_count": 41
+          }
+        },
+        "valid": {
+          "rows": 58,
+          "unique_raw_smiles": 58,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 12,
+          "raw_smiles_length_max": 136,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 27,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 58,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.8275862068965517,
+            "median": 1.0,
+            "unique_numeric_values": 2,
+            "zero_count": 10,
+            "one_count": 48,
+            "positive_fraction": 0.8275862068965517,
+            "minority_count": 10
+          }
+        },
+        "test": {
+          "rows": 117,
+          "unique_raw_smiles": 117,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 3,
+          "raw_smiles_length_max": 203,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 63
+        }
+      },
+      "headers": {
+        "train": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "valid": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "test": [
+          "Drug_ID",
+          "Drug"
+        ]
+      },
+      "metric": [
+        "AUROC"
+      ],
+      "unexpected_test_fields": [],
+      "same_task_overlap": {
+        "train_valid": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "train_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "valid_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        }
+      },
+      "template_test_mapping": {
+        "template_rows": 117,
+        "test_rows": 117,
+        "exact_ordered_nonprediction_match": true,
+        "field_mismatch_counts": {
+          "sample_idx": 0,
+          "drug_id": 0,
+          "smiles": 0
+        }
+      },
+      "cross_task_overlap": {
+        "valid_rows_with_raw_smiles_in_another_tasks_train": 29,
+        "test_rows_with_raw_smiles_in_another_tasks_train": 54
+      }
+    },
+    "ld50_zhu": {
+      "splits": {
+        "train": {
+          "rows": 3970,
+          "unique_raw_smiles": 3946,
+          "duplicate_raw_smiles_extra_rows": 24,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 9,
+          "raw_smiles_length_min": 5,
+          "raw_smiles_length_max": 174,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 0,
+          "duplicate_smiles_with_distinct_label_strings": 14,
+          "labels": {
+            "rows": 3970,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.539,
+            "max": 7.1,
+            "mean": 2.56376120906801,
+            "median": 2.393,
+            "unique_numeric_values": 2154,
+            "zero_count": 0,
+            "one_count": 0
+          }
+        },
+        "valid": {
+          "rows": 1937,
+          "unique_raw_smiles": 1930,
+          "duplicate_raw_smiles_extra_rows": 7,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 2,
+          "raw_smiles_length_max": 81,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 0,
+          "duplicate_smiles_with_distinct_label_strings": 6,
+          "labels": {
+            "rows": 1937,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": -0.3429999999999999,
+            "max": 6.282,
+            "mean": 2.309988642230253,
+            "median": 2.129,
+            "unique_numeric_values": 1421,
+            "zero_count": 0,
+            "one_count": 0
+          }
+        },
+        "test": {
+          "rows": 1478,
+          "unique_raw_smiles": 1466,
+          "duplicate_raw_smiles_extra_rows": 12,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 3,
+          "raw_smiles_length_min": 5,
+          "raw_smiles_length_max": 121,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 0
+        }
+      },
+      "headers": {
+        "train": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "valid": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "test": [
+          "Drug_ID",
+          "Drug"
+        ]
+      },
+      "metric": [
+        "MAE"
+      ],
+      "unexpected_test_fields": [],
+      "same_task_overlap": {
+        "train_valid": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 1
+        },
+        "train_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 1
+        },
+        "valid_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 1
+        }
+      },
+      "template_test_mapping": {
+        "template_rows": 1478,
+        "test_rows": 1478,
+        "exact_ordered_nonprediction_match": true,
+        "field_mismatch_counts": {
+          "sample_idx": 0,
+          "drug_id": 0,
+          "smiles": 0
+        }
+      },
+      "cross_task_overlap": {
+        "valid_rows_with_raw_smiles_in_another_tasks_train": 458,
+        "test_rows_with_raw_smiles_in_another_tasks_train": 345
+      }
+    },
+    "lipophilicity_astrazeneca": {
+      "splits": {
+        "train": {
+          "rows": 2940,
+          "unique_raw_smiles": 2940,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 11,
+          "raw_smiles_length_max": 248,
+          "dot_containing_rows": 1,
+          "at_sign_containing_rows": 776,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 2940,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": -1.48,
+            "max": 4.5,
+            "mean": 2.1583877551020407,
+            "median": 2.34,
+            "unique_numeric_values": 530,
+            "zero_count": 3,
+            "one_count": 16
+          }
+        },
+        "valid": {
+          "rows": 420,
+          "unique_raw_smiles": 420,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 14,
+          "raw_smiles_length_max": 270,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 111,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 420,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": -1.5,
+            "max": 4.49,
+            "mean": 2.0608333333333335,
+            "median": 2.1950000000000003,
+            "unique_numeric_values": 238,
+            "zero_count": 0,
+            "one_count": 2
+          }
+        },
+        "test": {
+          "rows": 840,
+          "unique_raw_smiles": 840,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 14,
+          "raw_smiles_length_max": 136,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 240
+        }
+      },
+      "headers": {
+        "train": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "valid": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "test": [
+          "Drug_ID",
+          "Drug"
+        ]
+      },
+      "metric": [
+        "MAE"
+      ],
+      "unexpected_test_fields": [],
+      "same_task_overlap": {
+        "train_valid": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "train_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "valid_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        }
+      },
+      "template_test_mapping": {
+        "template_rows": 840,
+        "test_rows": 840,
+        "exact_ordered_nonprediction_match": true,
+        "field_mismatch_counts": {
+          "sample_idx": 0,
+          "drug_id": 0,
+          "smiles": 0
+        }
+      },
+      "cross_task_overlap": {
+        "valid_rows_with_raw_smiles_in_another_tasks_train": 187,
+        "test_rows_with_raw_smiles_in_another_tasks_train": 302
+      }
+    },
+    "pgp_broccatelli": {
+      "splits": {
+        "train": {
+          "rows": 851,
+          "unique_raw_smiles": 845,
+          "duplicate_raw_smiles_extra_rows": 6,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 15,
+          "raw_smiles_length_min": 11,
+          "raw_smiles_length_max": 159,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 428,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 851,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.5464159811985899,
+            "median": 1.0,
+            "unique_numeric_values": 2,
+            "zero_count": 386,
+            "one_count": 465,
+            "positive_fraction": 0.5464159811985899,
+            "minority_count": 386
+          }
+        },
+        "valid": {
+          "rows": 122,
+          "unique_raw_smiles": 122,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 18,
+          "raw_smiles_length_max": 111,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 62,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 122,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.5,
+            "median": 0.5,
+            "unique_numeric_values": 2,
+            "zero_count": 61,
+            "one_count": 61,
+            "positive_fraction": 0.5,
+            "minority_count": 61
+          }
+        },
+        "test": {
+          "rows": 245,
+          "unique_raw_smiles": 245,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 4,
+          "raw_smiles_length_min": 8,
+          "raw_smiles_length_max": 163,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 99
+        }
+      },
+      "headers": {
+        "train": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "valid": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "test": [
+          "Drug_ID",
+          "Drug"
+        ]
+      },
+      "metric": [
+        "AUROC"
+      ],
+      "unexpected_test_fields": [],
+      "same_task_overlap": {
+        "train_valid": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 1
+        },
+        "train_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 1
+        },
+        "valid_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        }
+      },
+      "template_test_mapping": {
+        "template_rows": 245,
+        "test_rows": 245,
+        "exact_ordered_nonprediction_match": true,
+        "field_mismatch_counts": {
+          "sample_idx": 0,
+          "drug_id": 0,
+          "smiles": 0
+        }
+      },
+      "cross_task_overlap": {
+        "valid_rows_with_raw_smiles_in_another_tasks_train": 40,
+        "test_rows_with_raw_smiles_in_another_tasks_train": 76
+      }
+    },
+    "ppbr_az": {
+      "splits": {
+        "train": {
+          "rows": 1952,
+          "unique_raw_smiles": 1282,
+          "duplicate_raw_smiles_extra_rows": 670,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 670,
+          "raw_smiles_length_min": 13,
+          "raw_smiles_length_max": 194,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 670,
+          "duplicate_smiles_with_distinct_label_strings": 481,
+          "labels": {
+            "rows": 1952,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 10.09,
+            "max": 99.95,
+            "mean": 86.85167008196721,
+            "median": 95.01,
+            "unique_numeric_values": 332,
+            "zero_count": 0,
+            "one_count": 0
+          }
+        },
+        "valid": {
+          "rows": 279,
+          "unique_raw_smiles": 172,
+          "duplicate_raw_smiles_extra_rows": 107,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 107,
+          "raw_smiles_length_min": 14,
+          "raw_smiles_length_max": 92,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 111,
+          "duplicate_smiles_with_distinct_label_strings": 70,
+          "labels": {
+            "rows": 279,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 12.63,
+            "max": 99.94,
+            "mean": 82.87906810035842,
+            "median": 91.99,
+            "unique_numeric_values": 177,
+            "zero_count": 0,
+            "one_count": 0
+          }
+        },
+        "test": {
+          "rows": 559,
+          "unique_raw_smiles": 343,
+          "duplicate_raw_smiles_extra_rows": 216,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 216,
+          "raw_smiles_length_min": 20,
+          "raw_smiles_length_max": 143,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 245
+        }
+      },
+      "headers": {
+        "train": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "valid": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "test": [
+          "Drug_ID",
+          "Drug"
+        ]
+      },
+      "metric": [
+        "MAE"
+      ],
+      "unexpected_test_fields": [],
+      "same_task_overlap": {
+        "train_valid": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "train_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "valid_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        }
+      },
+      "template_test_mapping": {
+        "template_rows": 559,
+        "test_rows": 559,
+        "exact_ordered_nonprediction_match": true,
+        "field_mismatch_counts": {
+          "sample_idx": 0,
+          "drug_id": 0,
+          "smiles": 0
+        }
+      },
+      "cross_task_overlap": {
+        "valid_rows_with_raw_smiles_in_another_tasks_train": 195,
+        "test_rows_with_raw_smiles_in_another_tasks_train": 351
+      }
+    },
+    "solubility_aqsoldb": {
+      "splits": {
+        "train": {
+          "rows": 5045,
+          "unique_raw_smiles": 5045,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 50,
+          "raw_smiles_length_min": 5,
+          "raw_smiles_length_max": 304,
+          "dot_containing_rows": 333,
+          "at_sign_containing_rows": 263,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 5045,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": -12.0605,
+            "max": 1.5823133383,
+            "mean": -3.239318998124559,
+            "median": -2.8799222949,
+            "unique_numeric_values": 4007,
+            "zero_count": 1,
+            "one_count": 0
+          }
+        },
+        "valid": {
+          "rows": 2940,
+          "unique_raw_smiles": 2940,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 10,
+          "raw_smiles_length_min": 1,
+          "raw_smiles_length_max": 303,
+          "dot_containing_rows": 592,
+          "at_sign_containing_rows": 91,
+          "duplicate_smiles_with_distinct_label_strings": 0,
+          "labels": {
+            "rows": 2940,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": -11.9989378619,
+            "max": 1.9675126996,
+            "mean": -1.9420857634302382,
+            "median": -1.41715354785,
+            "unique_numeric_values": 2793,
+            "zero_count": 1,
+            "one_count": 1
+          }
+        },
+        "test": {
+          "rows": 1997,
+          "unique_raw_smiles": 1997,
+          "duplicate_raw_smiles_extra_rows": 0,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 24,
+          "raw_smiles_length_min": 5,
+          "raw_smiles_length_max": 681,
+          "dot_containing_rows": 173,
+          "at_sign_containing_rows": 111
+        }
+      },
+      "headers": {
+        "train": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "valid": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "test": [
+          "Drug_ID",
+          "Drug"
+        ]
+      },
+      "metric": [
+        "MAE"
+      ],
+      "unexpected_test_fields": [],
+      "same_task_overlap": {
+        "train_valid": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 1
+        },
+        "train_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 3
+        },
+        "valid_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 1
+        }
+      },
+      "template_test_mapping": {
+        "template_rows": 1997,
+        "test_rows": 1997,
+        "exact_ordered_nonprediction_match": false,
+        "field_mismatch_counts": {
+          "sample_idx": 0,
+          "drug_id": 2,
+          "smiles": 0
+        }
+      },
+      "cross_task_overlap": {
+        "valid_rows_with_raw_smiles_in_another_tasks_train": 517,
+        "test_rows_with_raw_smiles_in_another_tasks_train": 390
+      }
+    },
+    "vdss_lombardo": {
+      "splits": {
+        "train": {
+          "rows": 791,
+          "unique_raw_smiles": 780,
+          "duplicate_raw_smiles_extra_rows": 11,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 13,
+          "raw_smiles_length_max": 389,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 39,
+          "duplicate_smiles_with_distinct_label_strings": 9,
+          "labels": {
+            "rows": 791,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.01,
+            "max": 700.0,
+            "mean": 4.753729456384324,
+            "median": 1.0,
+            "unique_numeric_values": 262,
+            "zero_count": 0,
+            "one_count": 9
+          }
+        },
+        "valid": {
+          "rows": 113,
+          "unique_raw_smiles": 110,
+          "duplicate_raw_smiles_extra_rows": 3,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 12,
+          "raw_smiles_length_max": 311,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 7,
+          "duplicate_smiles_with_distinct_label_strings": 3,
+          "labels": {
+            "rows": 113,
+            "missing_labels": 0,
+            "nonnumeric_or_nonfinite_labels": 0,
+            "min": 0.05,
+            "max": 48.0,
+            "mean": 2.9984955752212388,
+            "median": 0.95,
+            "unique_numeric_values": 80,
+            "zero_count": 0,
+            "one_count": 1
+          }
+        },
+        "test": {
+          "rows": 226,
+          "unique_raw_smiles": 221,
+          "duplicate_raw_smiles_extra_rows": 5,
+          "blank_smiles": 0,
+          "blank_drug_id": 0,
+          "duplicate_nonblank_drug_ids_extra_rows": 0,
+          "raw_smiles_length_min": 4,
+          "raw_smiles_length_max": 286,
+          "dot_containing_rows": 0,
+          "at_sign_containing_rows": 9
+        }
+      },
+      "headers": {
+        "train": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "valid": [
+          "Drug_ID",
+          "Drug",
+          "Y"
+        ],
+        "test": [
+          "Drug_ID",
+          "Drug"
+        ]
+      },
+      "metric": [
+        "Spearman"
+      ],
+      "unexpected_test_fields": [],
+      "same_task_overlap": {
+        "train_valid": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "train_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        },
+        "valid_test": {
+          "raw_smiles": 0,
+          "nonblank_drug_ids": 0
+        }
+      },
+      "template_test_mapping": {
+        "template_rows": 226,
+        "test_rows": 226,
+        "exact_ordered_nonprediction_match": false,
+        "field_mismatch_counts": {
+          "sample_idx": 0,
+          "drug_id": 1,
+          "smiles": 0
+        }
+      },
+      "cross_task_overlap": {
+        "valid_rows_with_raw_smiles_in_another_tasks_train": 24,
+        "test_rows_with_raw_smiles_in_another_tasks_train": 43
+      }
+    }
+  },
+  "totals": {
+    "tasks": 22,
+    "csv_files": 67,
+    "rows_by_split": {
+      "train": 53695,
+      "valid": 11735,
+      "test": 16379
+    },
+    "unique_raw_smiles_by_split": {
+      "train": 34610,
+      "valid": 10417,
+      "test": 13818
+    },
+    "unique_raw_smiles_all": 46202,
+    "metric_task_counts": {
+      "AUROC": 8,
+      "MAE": 5,
+      "Spearman": 4,
+      "AUPRC": 5
+    },
+    "train_valid_union_raw_smiles_intersection": 4798,
+    "train_test_union_raw_smiles_intersection": 7389,
+    "valid_test_union_raw_smiles_intersection": 1446,
+    "all_same_task_raw_smiles_split_intersections": 0,
+    "all_template_test_exact_matches": false,
+    "template_prediction_cells_all_blank": true,
+    "template_rows": 16379
+  },
+  "previous_template_comparison": {
+    "previous_path": "<PRIVATE_RUNTIME_PATH>",
+    "previous_sha256": "8ee41589d2c98e7b93081c058b3f928ac09bea4b3ffc899fa13677051e9baa20",
+    "current_sha256": "9604b78fd59cb2e7a803df4ed731e054f152af401c4ec6ec79d11af70cfd292b",
+    "parsed_rows_equal": false,
+    "previous_rows": 16379,
+    "current_rows": 16379,
+    "field_mismatch_counts": {
+      "drug_id": 7611
+    },
+    "examples": [
+      {
+        "row_index": 2772,
+        "task": "cyp2c9_veith",
+        "field": "drug_id",
+        "previous_value": "5348064.0",
+        "repository_value": "5348064"
+      },
+      {
+        "row_index": 2773,
+        "task": "cyp2c9_veith",
+        "field": "drug_id",
+        "previous_value": "5728807.0",
+        "repository_value": "5728807"
+      },
+      {
+        "row_index": 2774,
+        "task": "cyp2c9_veith",
+        "field": "drug_id",
+        "previous_value": "651959.0",
+        "repository_value": "651959"
+      },
+      {
+        "row_index": 2775,
+        "task": "cyp2c9_veith",
+        "field": "drug_id",
+        "previous_value": "135403641.0",
+        "repository_value": "135403641"
+      },
+      {
+        "row_index": 2776,
+        "task": "cyp2c9_veith",
+        "field": "drug_id",
+        "previous_value": "5334183.0",
+        "repository_value": "5334183"
+      }
+    ]
+  }
+}

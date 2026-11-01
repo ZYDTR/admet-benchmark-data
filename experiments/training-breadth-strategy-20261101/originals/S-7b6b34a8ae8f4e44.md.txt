@@ -1,0 +1,122 @@
+# HANDOFF — 任务 B：数据/预测核验、独立评分器与官方格式提交导出
+
+交接对象：主 Codex（负责资产、环境、训练、推理、真实验证评分与合并交付）。
+本文写于 2026-10-30，对应交付位于 `output/data-eval/`（本会话只写该目录，原件只读）。
+
+## 1. 任务边界遵守情况
+
+- 未运行任何训练、反向传播、optimizer.step、fit 或整批特征计算；未安装任何环境。
+- 未访问服务器/网络，未上传比赛，未读取 `output/model/`（A 路会话产物）或其他会话/冻结目录的产物。
+- 未派发 Agent、未创建其他会话或线程；全部工作在本会话亲自完成。
+- 真实验证集标签未接触：评分器只提供接口，标签路径由主 Codex 显式传入。
+
+## 2. 交付物
+
+| 文件 | 作用 |
+| --- | --- |
+| `admet_eval/`（纯标准库包） | 六个命令：verify-inputs / check-predictions / score / export / validate-submission / selftest |
+| `run_admet_eval.py` | CLI 包装，项目根目录可直接调用 |
+| `examples/run_synthetic_demo.py` | 合成数据端到端演示（check→score→export→validate） |
+| `README.md` | 运行说明、预测文件合同、标签格式、指标定义 |
+| `reports/*.json` | 本轮实际运行的报告（selftest / inputs / demo） |
+
+依赖：Python 标准库（开发与自测环境 Python 3.11.2；语法兼容 3.9+）。无 numpy/sklearn/scipy。
+
+## 3. 已执行的检查与结果（真实数据，只读）
+
+### 3.1 verify-inputs（报告 `reports/inputs_report.json`，28 项全过）
+
+- **模板身份**：`data/official/submission_template.csv` sha256 =
+  `8ee41589d2c98e7b93081c058b3f928ac09bea4b3ffc899fa13677051e9baa20`（与注册值一致）。
+- **模板结构**：UTF-8 BOM；纯 CRLF 行尾、含末行 CRLF，共 16380 行；表头恰好
+  `task,sample_idx,drug_id,smiles,y_pred,metric`；16379 数据行、22 任务；
+  (task,sample_idx) 无重复；y_pred 全为空；空 drug_id 恰 1 行（与注册一致）；
+  全部行 6 字段、sample_idx 均为非负整数；物理顺序为 22 个连续任务块、块内 sample_idx
+  从 0 递增；指标直方图 AUROC 8 / AUPRC 5 / MAE 5 / Spearman 4，逐任务指标与注册值一致。
+- **数据切分**：22×3 文件表头正确（train 含 Y，test/valid 无 Y）；逐任务行数与
+  research/data-profile.md 注册值一致；train 的 Y 全部数值有限；总计
+  train 53695 / valid 11735 / test 16379，与 contract.json 的 received_dataset 一致。
+- **模板↔test 映射（据实核对，非假设）**：每个任务，模板文件序 sample_idx ==
+  0..n−1 == test.csv 行号，且 drug_id、smiles 逐行 100% 一致（22/22 任务通过）。
+  这是 export 用 row_index 回填模板的依据；export 每次运行前会重新核验此映射。
+- **参考 schema 交叉核对**：`reference-harness/competition/task_schema.json` 的逐任务
+  metric、template_rows、source_sha256 均与实测一致。
+- 全部 67 个输入文件 sha256 已记录在报告中（证据快照）。
+
+### 3.2 selftest（报告 `reports/selftest_report.json`，66/66 通过）
+
+- 指标固定数值用例：AUROC（含并列 0.5、单类 undefined、非二进制 raise）、
+  AP（sklearn 口径手算常数、全正类=1、无正类 undefined）、MAE、Spearman
+  （完全/反向/并列平均秩、常数 undefined、n<2 undefined）。
+- 与结构独立的朴素实现（O(n²) 配对、逐阈值重算、计数法中位秩）在 250 个确定性
+  随机试验、487 组对比中一致（容差 1e-12）。
+- CSV 原始字段扫描器：合成行（含逗号、转义引号、字段中引号、空字段）+ 真实模板
+  全部 16379 行（2384 行含引号，含 `"\1,1,1-Trifluro-2-chloroethane\"""` 这类字段）
+  与 csv.reader 逐一吻合；对真实异形行的 y_pred 拼接往返一致。
+- 迷你项目端到端：合成 6 任务 → check/score/export/validate 全通过；score 数值与
+  手算期望一致（含 1 个 undefined 任务、退出码 0、无官方总分行）。
+- 负例检出（均确认对应命令退出非 0）：行序调换、缺行、smiles 被改、y_pred=nan、
+  y_pred 为空、drug_id 被加引号（原字符串变化）、缺预测导出（且不写文件）、
+  非有限预测、模板 y_pred 非空时拒绝导出、标签行序错位、缺任务标签、重复预测键。
+
+### 3.3 合成端到端 demo（报告 `reports/demo_report.json`）
+
+4 任务（覆盖 4 种指标、含带逗号/引号 drug_id 与空 drug_id 的模板）经真实 CLI 子进程
+跑通 check-predictions → score → export → validate-submission，全部退出码 0。
+
+## 4. 关键设计决定
+
+- **纯标准库**：容器外任何 Python 3.9+ 可跑，不依赖 numpy/sklearn/scipy（本机亦无）。
+- **指标语义**：AUROC 并列计 0.5；AUPRC 用 sklearn 式步进 AP（明确为本地口径）；
+  两者与官方实现的一致性未确认。分类标签强制 {0,1}，违规记 error 而非静默处理。
+- **评分**：只评分显式传入的标签；目录式标签须与项目内无标签副本逐行一致才评分
+  （防错位）。undefined（如单类 AUROC）与 error（合同违规）分开：前者退出码 0。
+- **导出**：逐行原字符串拼接（保留 BOM/CRLF/引号/空 ID/行序/16379 行），逐行重解析
+  自检 + 整体回验 + 原子写入；缺一行/重复一键/非有限值/映射未核实即拒绝，绝不补值。
+- **不产出官方总分**：宏平均仅在报告中标 `local_unofficial` 前缀。
+
+## 5. 未验证项（主 Codex 需知）
+
+1. **真实 valid 标签评分未执行**——标签在主 Codex 处；评分器接口已就绪但未接触真值。
+2. **官方 AUPRC 定义与总分聚合未确认**（contract.json U04）；本地 AP 仅为一种口径，
+   若后续拿到官方评分脚本需复核。
+3. **A 路预测文件的实际形态未核对**——B 按 TASK.md 合同实现（恰四列
+   task,split,row_index,y_pred 的 CSV）；若 A 产物格式不同（如分文件、列名差异），
+   需先转换或告知，本工具会明确报错而非猜格式。
+4. **官方平台接受性未测试**；R08 提交文件名（团队名-赛题-日期）由主 Codex 定，
+   导出工具不代命名。本地校验通过 ≠ 平台接受。
+5. 模板映射结论绑定当前注册模板；若官方换模板（sha 变化），export 默认拒绝，
+   需重新做映射核对（`--allow-unregistered-template` 仅供受控场景）。
+6. solubility test 两行 RDKit 解析失败（row 1159/1160）等模型侧覆盖问题属 A 路；
+   B 的 export 只要求 16379 行全覆盖与数值有限，不检查化学有效性。
+
+## 6. 主 Codex 的下一条命令（从项目根目录，Python 3.9+）
+
+```bash
+# 0) 可选：复跑本轮证据（只读，各约数秒）
+python3 output/data-eval/run_admet_eval.py selftest  --report output/data-eval/reports/selftest_report.json
+python3 output/data-eval/run_admet_eval.py verify-inputs --report output/data-eval/reports/inputs_report.json
+
+# 1) A 路推理产物就绪后（预测 CSV：task,split,row_index,y_pred，valid+test 全覆盖）
+python3 output/data-eval/run_admet_eval.py check-predictions --pred <pred.csv> \
+    --report output/data-eval/reports/check_predictions_report.json
+
+# 2) 真实验证评分（标签目录：每任务官方格式 <task>.csv；或长表 CSV task,row_index,y_true）
+python3 output/data-eval/run_admet_eval.py score --pred <pred.csv> --split valid \
+    --labels <labels_dir_or_csv> \
+    --report output/data-eval/reports/score_valid_report.json \
+    --report-csv output/data-eval/reports/score_valid_table.csv
+
+# 3) 导出官方格式提交（模板默认 data/official/submission_template.csv）
+python3 output/data-eval/run_admet_eval.py export --pred <pred.csv> \
+    --output <团队名-小分子药物预测技术创新赛-YYYYMMDD>.csv \
+    --report output/data-eval/reports/export_report.json
+
+# 4) 回验提交文件
+python3 output/data-eval/run_admet_eval.py validate-submission \
+    --submission <团队名-小分子药物预测技术创新赛-YYYYMMDD>.csv \
+    --report output/data-eval/reports/validate_submission_report.json
+```
+
+说明：`score --labels data/official/data_benchmark --split train` 可对 train 做管线自检
+（train 标签就在原件内）；test 若将来取得官方标签，同样用 `--split test --labels ...`。

@@ -1,0 +1,185 @@
+# Caco2 冻结 CheMeleon 实验评审
+
+request_id: `admet-public-repo-pro-20261031-001`  
+round_id: `public-repo-round001`；packet_version: `2`  
+固定 commit: `eaec280cf142839597fe75ce748cd2b9a8a897d4`  
+manifest_sha256: `dbdec244caa8ddb106721877cf93625c1957b9184985c07b1cf751eed5d70505`  
+结论状态：**needs_evidence，限定的两次正式训练评审已完成。** 缺口影响完整历史审计、流程关闭和泛化优胜判断，不表示两次预测未读到或评分尚未完成。本轮执行预算始终为零。
+
+## 1. 结论先行
+
+**保留两次正式训练的科学产物；不按这两次结果选择头宽、学习率、seed 或底座。下一步最有信息量的是固定原始特征缓存、分组划分和共同 seed，受控比较少数特征处理策略，同时准备 MiniMol/MoLFormer 的完整适配与验收。** 这是一项机制验证优先级判断，不是已经证明标准化造成了预测误差。
+
+三个需要分开的事实：
+
+1. 当前记录支持“真实训练了新头、登记的外部状态保持冻结、预测正确对应原行”。没有发现足以直接废弃两次正式产物的新证据。[IMPL_A、IMPL_B、FREEZE、CURVE、PRED]
+2. A 在这固定 91 行的已发布 MAE 较低，但 B 的 RMSE 略低。头宽、学习率、seed、内部划分同时改变，不能单因素归因，也没有同配置重复来估计波动。[SCORE、CURVE]
+3. 已保存的稀疏激活，经仅由 fit 子集计算的标准差缩放后，确实产生很大的留出集 z 值。多个审查者独立读取数值数组复算成立；没有对应逐行残差，不能把它说成已证实的质量瓶颈。[SCALE]
+
+优先保留现有冻结 CheMeleon 路线和统一实验模板。暂停未经对照的宽泛 HPO、凭单次分数淘汰底座、用盲输入分布选择阈值、由偏差均值手工修正预测。MiniMol/MoLFormer 的当前状态仍为 `idle_incomplete`；研究价值与执行准备度分开登记。[RESEARCH、RULE]
+
+## 2. 阅读回执与证据范围
+
+所有相对路径均以本次固定 commit 的 `experiments/public-repo-20261031/` 为根。A=`hainan-frozen-training-20261031`；B=`hainan-skill-follow-20261031`；`A/...`、`B/...` 展开为 `runs/<run_id>/...`。文本行号从 1 开始；CSV record/row_index 从 0 开始，表头不计记录。
+
+先读 START_HERE 与 ANALYSIS_BUNDLE，再按 manifest/source-map 对原文件核验。网页读取 raw 入口曾返回 DisabledError；同一 commit 的直接 HTTPS 下载成功，未用 main 或旧聊天替代。manifest 实际哈希与请求一致。392 个清单负载中，380 个文本/CSV 共 5,212,662 字节逐文件完成大小和 SHA 核验；之后另取回并数值读取六个现存特征 NPZ。**下载验哈希不等于逐字语义审完 380 个文件。** 核心科学材料、完整 epoch/预测、原始运行日志由实际审查路线阅读；依赖清单按风险深入，未执行归档代码或模型。
+
+|材料|实读覆盖/行数|限制|
+|---|---|---|
+|START_HERE / ANALYSIS_BUNDLE / manifest / source-map|19 / 2234 / 1980 / 3971 行；bundle定向阅读、清单及来源映射全记录解析|bundle 中事实回到对应原文件核查|
+|当前规则、策略、官方规则结构化快照|CURRENT_RULES 11；current-policy 56；official-contract 142 行，R01–R10/U01–U05|不是完整官方 API 原始响应；原文来源/哈希有记录，完整原件未公开|
+|实际数据|train 638/valid 92/test 183 行，分别 637/91/182 记录|后两文件只有 Drug_ID、Drug，无 Y|
+|科学源码与配置|两 train_remote_v3.py 134/136；encoder 各126；config 53/55；PLAN 87/86 行；配套 guard/supervisor/native 源码|只读；未运行模型、pickle 或训练脚本|
+|训练与冻结|training-evidence 355/420；curve 15/20；before/after 各101；optimizer 9；preprocessing-readable 各4812 行|完整14/19 epoch 和六个预处理数值数组/每run均解析|
+|预测与二进制衍生件|预测各274行；binary-structure 各162；六NPZ完整 float32/mask 读取|未下载/加载四个 .pt 和两个 preprocessing NPZ；读其公开结构及完整可读预处理衍生件|
+|流程/故障|A22、B31个 raw 文件；audit109/137、historical-acceptance50/57行|原始完整 strace、上层控制原件按 source-map 为未公开/引用件|
+|评分|fixed_mae13；strict scorer89；scores68；identity50；receipt17；独立主控核查28行|读固定公式与已发布核查；未读取私有真值、未重评分|
+|研究|guide163；candidate97；current12；report129；source-index89；相关资产/化学元数据深入，其余历史审计/脚本部分仅hash覆盖|历史研究不能当当前适配验收|
+|环境|packages392；pyvenv5；关键7包元数据/WHEEL/RECORD深入核对|取回后快照，不是训练时完整可执行依赖镜像|
+
+更细逐文件回执、版本绑定和计算方法在 review.json。source-map 共440条：published309、redacted55、referenced19、excluded57。外部权重本体、私有标签、私有带标签评分记录、完整原始 strace、全部训练时依赖代码未读，不宣称已经独立重放。
+
+实际使用了八个 subagent 视角：规则/数据；实现/冻结；统计；失败与预测；表示/候选；新头搜索；复现记录；独立反证。三路并发分批安排。最后一条路线亲自重读源码、预测、epoch、六个 NPZ，并发现了草稿中 PCA 对照和多底座控制成本的具体错误，已修订。主模型独立解析全部输入/预测/索引/epoch/冻结摘要，并复算关键特征数值。多人重读同一证据提高了查错机会，不构成多个独立实验。
+
+## 3. A类：结果可信到哪里
+
+### 3.1 输入、标签、行序与缺失
+
+每run有273条预测：valid91、test182。每一行按 `task=caco2_wang + split + row_index` 对齐，并额外核对原始 Drug_ID 与 Drug；全部匹配、键唯一、y_pred有限。不能按 Drug_ID 单独 join：train/valid/test 的唯一 ID 数分别为581/89/177。原始 SMILES 唯一数为634/91/181，三个官方分区之间的 raw SMILES 交集为零；这不是新做的 canonical/scaffold 相似性证明。[DATA、PRED]
+
+内部 fit/stop 各573/64，原行集合互斥并覆盖637行，但 A 的182/184、B 的605/606是同 raw SMILES 跨内部角色，且原Y不同。它损害“内部完全未见分子”的说法，不是官方 valid 标签泄漏。未来按分子组分配角色并保留全部原行原Y；不能删重复、平均冲突标签或人为清洗。[DATA、SCALE；AR001-03]
+
+当前源码只用 train.Y 学习；特征和目标均只在内部 fit 拟合可逆变换，预测逆变换一次。两run解析637/91/182行全部成功、特征全有限，失败零填充分支未触发。单位 U01 仍不明确，不妨碍按原数值Y评价，但禁止擅自再取log或按物理范围裁Y。[IMPL_A/B、CURVE、RULE]
+
+### 3.2 冻结、训练、早停及重载
+
+实际 optimizer 为 **AdamW**。A的新头2048→512→1，共1,049,601参数；B为2048→256→1，共524,801参数。仅新头四个张量进入optimizer，encoder交集为零；新头确有非零梯度和参数变化。A14epoch/70步、B19epoch/95步；每epoch5步，完整曲线、history和日志一致。best epoch分别6/11；其后8次无改进停止，与patience8一致。[IMPL_A/B、CURVE]
+
+编码器检查点身份为 SHA256 `c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651`。每run记录11项state（8参数、3persistent buffers）前后相等；requires_grad=false、eval、no_grad和15次CUDA前向事件一致支持冻结。**这是登记状态及调用路径证据，不是所有未登记nonpersistent buffer/所有时刻内存的完整独立证明。** 今后需要登记全部 named_buffers、persistent属性及优化器实际参数集合。[FREEZE]
+
+两run wrapper总SHA不同，逐张量定位只有未参与fingerprint的随机predictor四张量不同；有效message-passing四张量及三个登记buffer相同。Chemprop2.2.1官方 `fingerprint` 路径调用message passing、aggregation、bn，不调用predictor。不能据此差异指控底座被解冻。相反，两run原始特征缓存也不能称逐字节相同：独立解析最大差为train 3.5762786865e-7、valid/test 2.3841857910e-7。原因未确定；CUDA数值归约只是可能解释。后续配对头实验应固定一套经主控准入的原始缓存。[FREEZE、SCALE；AR001-08、16]
+
+best state先恢复再保存，随后新建编码器/头重载并按原行推理。公开重载最大绝对差不超过9.537e-7，满足原有1e-5检查。它证明本轮所声明的保存/重载一致性，不等于从零重训复现。训练loss为逐batch在线train模式，内部loss为epoch末eval模式，不能用二者比值直接断言过拟合程度。[CURVE、IMPL_A/B]
+
+### 3.3 实现与流程缺陷，不能混成科学解释
+
+A头宽硬编码512，B入口assert固定width/LR/seed；改JSON不能直接得到任意候选。历史实际配置与PLAN相符，所以不是本轮配置错误；下一批必须准备真正参数化工厂与resolved-config。摘要“Adam”也应改为实际AdamW。[IMPL_A/B；AR001-06]
+
+F1记录环境检查返回255后仍继续部署。后来环境确认及正式训练验收不抹去这个流程故障；现有仅本地故障注入，没有新真实Follow复测，F1保持open。但未发现其导致正式run错行、标签越界或解冻的直接证据，不能自动废弃正式预测。[F1]
+
+另一个可复查风险：supervisor末尾写出/打印业务rc，却没有 `sys.exit(rc)`；失败cuda01日志确有业务rc=1。只看外层Python退出码可能漏掉失败。完整上层gate代码未公开，不能断言历史每次都误放行。准备门禁应同时核进程码、业务receipt和run/attempt/input/config/asset/source/时间绑定；不以“文件存在”或外层0为完成证据。[EXIT；AR001-15]
+
+失败cuda01、环境预检和旧dev/shm路径是故障证据，不是第三个模型。正式作业的GPU采样峰值A1169MiB/B1167MiB；B验收中的1156MiB是进程指标，不能混作同口径矛盾。4GiB allocator限制并非整卡硬配额；RAM/时长/输出目录界限有监督轮询而非所有项硬隔离。未新增运行，也未检查当前远端队列；“无新增训练在途”来自本轮明确状态声明。[GAPS、两run raw监控及historical-acceptance]
+
+若新run出现encoder/buffer变化、optimizer含外部参数、身份/覆盖错误、标签越界或实际资源/文件边界失败，只登记故障，不参与胜负。当前没有直接新证据把这两份正式产物归入该类。
+
+## 4. B类：当前学到了什么
+
+### 4.1 描述性比较，不能做因果排名
+
+|项目|A|B|
+|---|---:|---:|
+|head hidden / LR / seed|512 / .001 /42|256 /.0005 /43|
+|完整epoch /优化步 /best epoch|14 /70 /6|19 /95 /11|
+|已发布固定valid MAE，越低越好|0.37862513598901104|0.3891885939780218|
+|已发布RMSE|0.523504782149424|0.5205062573960939|
+|已发布median absolute error|0.29335550700000024|0.31335976|
+|已发布p90 /p95 absolute error|0.6765756839999986 /0.9585247319999999|0.6993980689999999 /1.1308307859999998|
+|已发布误差分箱 <.25/.25–.5/.5–1/≥1|38 /29 /20 /4|36 /30 /20 /5|
+|直接CSV算术mean(valid prediction)|-5.3383347542967033|-5.3012504158461538|
+|valid prediction population std|0.5690496801991645|0.5931019009794778|
+
+MAE差 B−A = **+0.01056345798901076**，约A的2.790%；RMSE差 B−A = −0.0029985247533301，方向相反。数值来自固定评分发布件，未在本轮重评分。p90/p95按评分器nearest-rank定义理解。没有逐样本误差，就不能计算配对bootstrap、显著性、哪些分子改善或恶化。也不能把两个seed下不同pipeline的差当seed标准差。[SCORE]
+
+两内部stop集合仅8/64行相同；holdout Y均值A−5.2891822109375，B−4.9440078203125，目标缩放也随fit变化。因此内部loss不直接可比。相同任务、原始官方分区、固定评分器支持上述描述差值；无法形成同split/seed的单因素比较组。[SCALE、CURVE；AR001-02]
+
+官方valid允许调参，但这91行现在已构成选择反馈；既往评分史未全审。不能称其未参与调参终评，也没有本包允许使用的全新独立评价集。train内前瞻分组外层确认能增加稳健性信息，不能抹去637行此前已用于实验的事实。最小有意义增益和噪声阈值目前为null，不能临时指定一个MAE小数充当统计依据。[RULE、SCORE、GAPS；AR001-12]
+
+### 4.2 标准化：真实现象与明确反例
+
+从原始float32缓存及保存的fit mean/std直接计算 `z=(x−mean)/std`：
+
+|位置，均为允许读取的train行|raw feature|fit mean|fit std|内部stop z|
+|---|---:|---:|---:|---:|
+|A row327 /feature1279|.7583030462265015|.0000363728468073532|.0008699058089405298|871.665260292028|
+|B row129 /feature1507|.20594605803489685|.000006675874828943051|.00012577105371747166|1637.4147792598128|
+
+feature1279在fit573行中572个为零；B feature1507有570个为零。现有只把std<1e-8替换为1，未限制这种小而非零std产生的放大。median/IQR也不是自动修复：这里IQR同样为零，需要另行退化规则。[SCALE；AR001-04]
+
+**反证检查：**valid最大预测分歧在row18（0.76297903），其A-transform最大|z|约6.992；row73虽有|z|222.343，预测分歧约0.746828。test的最高z行也不是最大分歧行。这只说明高z不能解释全部预测分歧；预测分歧本身仍不是误差。没有内部stop预测，更不能说上述train极值点主导MSE。
+
+可证伪假设是：“在同cache/split/seed/头/优化设置下，某些train-fit处理策略改善留出MAE，并能在锁定后的分组确认中保留收益。”若仅z变小而质量不改善、换seed方向翻转、或收益只来自额外搜索，假设在该测试范围内不成立。截断也可能删有效稀有信号。raw/z改变梯度尺度，所以预留一个有限scale×LR敏感性设计，不能因单LR下raw差就否定其表示信息。
+
+### 4.3 预测分布和失败样本能说什么
+
+两run预测均非恒值；valid预测相关系数约0.91161，test约0.95690。valid平均绝对预测差约0.18613；test约0.14525。它们用于核完整性、漂移和未来互补性假设，**不能替代MAE或残差相关性，也不能推算集成分数**。[PRED]
+
+当前未验证的错误切片：高z、结构新颖性、分子大小、离子/多片段、重复测量、原Y尾部、适配失败，以及两模型错误互补。主控若以后授权，可返回预登记分组的n、MAE及配对差等聚合；不要求公开真值或逐行残差。当前任何“哪些化学样本最难”的结论都依赖尚未读到的误差证据。[AR001-09]
+
+## 5. C类：广泛探索后的优先批次
+
+search_space.json给出26个有依据方向；next_experiments.json逐一对应具体对照、边界及成本。它们是可抽取菜单，不是全笛卡尔积，不是已获训练授权。以下排序是**信息量/准备度/预期成本的排序，非预测最终分数排名**。
+
+|层级|准备与验证内容|配置/实际拟合数；全部待授权|为什么先后这样排|
+|---|---|---|---|
+|先补实验基础|W01门禁/登记；W02统一config与独立随机流/组划分；W03冻结cache/变换；W04loss、monitor与记录|当前0训练/推理/安装|否则新实验名字可能不等于实际配置，无法可靠比较|
+|首批P01/D01子集|legacy_z、raw、z_clip6、train-std-q05 floor；同C0头/优化器/monitor，G01，共同42/43/44|4配置×3=12head fits；小预算筛查4+2×2=8，偏差更大|直接检验新发现机制，缓存复用成本低；不因z减少就宣布成功|
+|随后解混杂|P02 monitor；P03 width×LR；P04 loss；P05容量；P06正则；P25有限scale×LR|分别2×3=6、4×3=12、5×3=15、6×3=18、6×3=18、4×3=12|逐项条件触发；每次保留完整配对控制，不全部执行|
+|必要基线/替代表示|P13经典/小MLP；P14 MiniMol；P15 MoLFormer；P16新随机D-MPNN|经典完整14配置22fits；小子集3配置5fits。每替代底座2头6fits，缺CHEM同头控制另加最多共享6。D-MPNN4×3=12全模型fits|区别预训练信息、头效果及目标任务从零学习；实际成本单位不同|
+|锁定后确认P24|一控制一挑战者，train内3组外层fold×3共同seed|2配置×3fold×3seed=18；可选scaffold另18|候选先锁定，外层只评价；仍非全新外部终评|
+|后续储备|P07/08/09优化、batch/schedule/clip、预算；P10 PCA；P11外置新模块；P12池化；P17融合；P18等权集成；P26目标affine|详见结构化计数，额外控制/编码分开|有明确机制但证据较间接，先避免更多同时变动|
+|依赖待补|UniMol2、TabPFN2.6、KPGT、SMI-TED、MolE|未闭合资产不生成可执行训练单；MolE当前0|资产、额外拟合状态、输入覆盖或协议成本未验收|
+
+P01的clip6有冻结分子表示接表格基础模型的方法先例，不能移植为当前MLP的已证最优阈值。MiniMol原研究确有冻结fingerprint接新头协议；但原论文包含搜索/集成预算，不能直接拿论文数字排名本数据。CheMeleon的微调结果不能当冻结效果。MoLFormer所选10pct版本、tokenizer/custom-code以及deterministic_eval设置必须锁定；配置默认false与示例true的差异需要明确处理。[MINI、MOL、TFM] genui{"citation":{"refs":["turn194view0","turn194view1","turn194view2"]}}
+
+资源计数明确分开：缓存头fit、从零GNN训练、冻结编码、PCA拟合、TabPFN上下文预测、集成输出各有不同成本。D10为4配置12头fits另3PCA fits；P17两融合6fits，缺单分支MLP64控制另最多9；UniMol2另构象/编码费用；TFM缺同clip6的MLP128控制另3梯度fits。历史秒级头计时不能推导未测底座GPU小时。只有完整data/cache/split/code/config/seed身份相同才能抵扣重复单元，旧A/B不抵扣新G01对照。
+
+超出当前范围：更新外部参数或buffer、教师伪标签、test拟合、增加样本或任务标签、删行/去重/改Y、未经单独决定的骨干内部LoRA/adapter，以及取消内部早停直接全637行最终refit。外置新模块也须先列计划，再由主控核验授权。[RULE]
+
+## 6. 反证与交叉核验表
+
+|关键主张|首次审查|独立复核证据|反例/不一致|最后结论与范围|
+|---|---|---|---|---|
+|两正式run实际更新新头且冻结|实现路线|主模型/反证路线逐tensor摘要、optimizer、完整history、源调用|未公开权重bytes/nonpersistent运行内存|接受登记范围内可信；不称全链路重演|
+|wrapper SHA差代表解冻|实现/表示|Chemprop2.2.1 fingerprint调用链+11张量比较|变化仅unused predictor|驳回此解冻解释；AR001-16局部解决|
+|完整行序正确|统计|主模型/反证独立解析两CSV与三输入|Drug_ID非唯一，不能单键join|273/91/182完整身份通过|
+|A MAE低证明大头好|统计|config、索引、评分器、完整epoch|多因素变化；RMSE反向；stop只重合8行|仅描述固定分差；无因果排名|
+|内部没有分子泄漏|数据|主模型/统计/反证实际行索引与SMILES|A182/184、B605/606跨角色|有局部组重叠；非官方valid泄漏|
+|高z导致质量差|头/失败分布|主模型/表示/反证六NPZ数值及保存变换|低z高分歧；无残差|保留机制假设，优先小消融；不宣称已证|
+|F1已解决/正式run应废弃|复现|历史验收、失败日志与源码|无真实Follow复测，也无故障造成正式错输入证据|F1开放，正式结果有限保留|
+|supervisor可靠传播失败|复现|主模型/反证读67–75行及rc1日志|上层gate原件不全|接口风险真实；历史影响未全证|
+|三seed/新fold是未调参终评|统计/反证|实际历史train使用及valid反馈范围|重复seed不新增化学覆盖|只能补充稳定性，终评优势未证|
+|MiniMol/MoLFormer已就绪|表示|current context及资产缺失项|历史研究优先级与现在idle不同|准备优先，但执行验收未过|
+|草稿实验控制/数量一致|反证|重读结构化P10/14/15/17/19–22及主模型修订|PCA曾用不同头，concat漏控制成本|已修正规格；未宣称性能已验证|
+
+## 7. needs_evidence 的精确范围
+
+|缺失|影响决策|最小补证据|
+|---|---|---|
+|完整历史实验、失败、issue、否定假设和既往评分ledger|全历史覆盖、旧ID对齐、避免重复已否定范围|主控提供脱敏登记表：已有ID、配置/资产/划分/seed、状态、结论适用范围；不含私有标签|
+|完整官方原始响应|逐字官方条款核验、某些资格细节|原版本规则相关字段原文及hash；当前用户确认冻结条件已经有效，不重复索取许可|
+|未公开raw strace/上层gate/训练时依赖实现/权重本体|全链路独立重验及F1因果细节|只补争议所需可公开证据或维持限定；不要求暴露基础设施秘密|
+|F1及返回码修复的真实复测|流程问题关闭、新执行可靠性|未来单独授权的阶段失败阻断receipt；本轮仅准备规格|
+|未记录batch/RNG/非best epoch状态、内部预测|历史优化机制和MAE checkpoint重选|历史不能补造；以后在新run按W04记录|
+|配对错误切片与全新终评|何处变好、集成是否互补、真正未调参泛化|以后仅授权聚合分组证据或受保护评价；不索取本包私有原标签|
+
+因此不宣称“已找到更优模型”，也不强行推断所有失败样本。可立即派发的结果是下一批准备合同、有限对照设计和明确的证据门槛。
+
+## 8. 引用定位字典
+
+- RULE：`rules/CURRENT_RULES.md:5–11`；`rules/current-policy.json:7–44`；`rules/official-contract-20261029.snapshot.json` 的R01–R10、U01–U05。公开来源：<http://www.aiinnovation.com.cn/web/#/trackDetail?id=159>；完整原始响应未在包内。
+- DATA：`data/train.csv:records0–636`、`data/valid.csv:records0–90`、`data/test.csv:records0–181`。
+- IMPL_A：`A/source/train_remote_v3.py:61–103,114–134`；IMPL_B：`B/source/train_remote_v3.py:17,62–105,116–136`。
+- FREEZE：`A/source/encoder.py:62–85,95–126`；两run `artifacts/encoder-before.json`、`encoder-after.json` 的全部tensors；`artifacts/optimizer-separation.json`；官方源码 <https://github.com/chemprop/chemprop/blob/v2.2.1/chemprop/models/model.py> 的fingerprint:125–133。
+- SCALE：两run `preprocessing-readable.json:arrays`；`artifacts/features-train.npz:features.npy`；所有六缓存。本文极值定位采用原CSV零起算row和feature index。
+- PRED：两run `artifacts/predictions.csv:records0–272`，valid为records0–90/物理行2–92，test为records91–272/行93–274。
+- CURVE：A `learning-curve.csv:epochs1–14`、B `epochs1–19`；两run `artifacts/training-evidence.json:history,optimizer_steps,best_epoch_1_based,reload_checks`。
+- SCORE：`scoring/scores.json:scores[0:2]`；`strict_caco2_scorer.py:41–89`；`independent-controller-check.json:3–27`；`scoring-identity.json:30–31`既往评分历史限制。
+- F1：`B/historical-acceptance.md:9–17`；EXIT：A `source/supervisor.py:67–75`、B `source/supervisor_attempt02.py:67–75`、B `raw/cuda01-supervisor.log:1`。
+- GAPS：`comparison.md:7–15`；`evidence/coverage.json:not_recorded`；`source-map.json:excluded/referenced`；`environment/ENVIRONMENT.md:3`。
+- RESEARCH：`research/admet-research-guide-v2.md:42–123`；`candidate-evidence.md:7–95`；`current-research-context.md:5–12`。ASSETS：`research/evidence/alternative-model-metadata.json`、`chemeleon-zenodo-metadata.json`、`weights/chemeleon-reference.json:2–8`。
+- MINI：`research/source-index.md:M01–M02`；原论文 <https://arxiv.org/html/2404.14986v1> §3.4/4.2/A.2–A.4。MOL：M07及固定配置 <https://huggingface.co/ibm-research/MoLFormer-XL-both-10pct/blob/361063d0ad524ef77cf39b08469f6be770dc550f/config.json>。
+- TFM：`research/source-index.md:M11`；原论文 <https://arxiv.org/html/2604.16123v2> §4.1–4.4/S1，train-only处理与clip6的方法来源，不是本包效果证据。
+- SEMANTIC：`evidence/json-semantic-verification.json:source_json_comparisons,unexpected_numeric_array_shape_or_scientific_changes`；两预处理可读件array payload hashes。AR001-11仅关闭本轮实检身份疑问，不代替未公开原件全量重建。
+
+本轮新计算仅为已有CSV/JSON/数值数组的标准库只读解析；公式、直接均值和身份检查见review.json。没有模型运行、安装、新训练/HPO/推理、重评分或赛事上传。

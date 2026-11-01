@@ -1,0 +1,184 @@
+# 工作记录
+
+## Changelog
+
+### 2026-10-30
+
+- 建立宿主训练入口、policy、旧Harness采用/排除映射；工作区AGENTS和WORKSPACE接入新路由，原Harness及海南Skill保持原件。
+- 再取官方公开接口：describe、grade_standard、submit_way、match_notice与原快照一致，first_submit_stop_time变化；保存原始响应与字段比较，不静默改写旧证据。
+- 单作业PLAN固定CheMeleon/Caco2，637/91/182行，GPU编码和新头训练，禁止有效标签进入执行端；冻结权重SHA与海南Skill版本。
+- check_plan通过；6个离线测试方法通过，覆盖10种策略变更反例、缺角色、摘要变化、链接及路径逃逸。没有启动本地模型训练。
+- 已创建用户指定的GPT-6.1 Sol/xhigh新Codex Thread；后续试验与验收结果见下方终态记录。
+
+- 海南执行会话已创建并持续运行；15:10心跳确认setup05导入曾在/dev/shm写临时信号量，本轮严格写入边界失败。修正后的首次执行又在CUDA初始化退出，尚未完成真实训练。原始失败留证，完整主控验收待会话终态；未更改Skill/policy/计划或追加作业。
+
+- 终态：海南首试主控验收FAIL，三次CUDA启动失败、0训练完成；GPU4末次健康状态Reset，setup05一次共享内存对象越界。403原件冻结，143远端文件SHA一致，20strace独立复核，29登记进程退出独立验证。Skill按工作区写作标准补充真实陷阱，旧版保留；7+7离线测试通过，历史PLAN摘要失效后准入拒绝符合预期，未追加训练。完整报告见run/acceptance/report.md；skill心跳删除回执同目录。
+
+### 2026-10-31
+
+- 用户明确要求主控继续修复跑通并写训练Skill。另建hainan-frozen-training-20261031，保持原Caco2配置与全部硬约束，无新增Thread/HPO/私有valid评分/上传。
+- 排除要求Reset的GPU4/7；健康空闲GPU3完成CUDA预检后真实训练，复用旧自有venv且首次导入前禁joblib多进程。保留写入限制与已审读局部线程命名兼容库。
+- 14 epoch/70步、最佳epoch6、273行预测；底座8参数+3buffer摘要不变，4个新头张量变化。51远端原件摘要核验，两个strace成功越界文件改动0，6登记进程全部退出。主控只读证据脚本通过，17项离线测试通过。
+- 新建admet-frozen-training Skill并路由到AGENTS/INDEX，提供实测参考和结果检查。海南Skill补成功事实，旧PLAN及当时Skill版本冻结保留；共享/并行未验证。新run完成无活动自动化，不重放旧任务。
+
+- 用户随后要求原执行Thread仅凭训练Skill和新训练任务续跑。已登记hainan-skill-follow-20261031，新头256/lr0.0005/seed43；只发送Skill路径、训练参数与run_id，原6.1-sol/xhigh会话已active。主控仅观察，admet-skill-follow心跳负责终态独立验收；保留历史，不能宣称冷启动。
+
+## Lessons Learned
+
+旧Harness的随机初始化限制属于旧执行器；用户确认冻结外部权重后应通过新明确分支执行，不能把规则/实现混淆。静态计划通过不证明已运行、不证明冻结执行或服务器无副作用。
+
+### 原会话 Follow 终态验收（2026-10-30T17:41:18.123058+00:00）
+
+- hainan-skill-follow-20261031训练交付通过：256头/lr0.0005/seed43，19epoch/95步，273行；11底座状态不变，3轨迹无成功目录外项目改动，9自有进程退出，65远端摘要一致。首次GPU竞争主动退让，健康空闲后继续。
+- 严格Follow部分通过：环境认证失败后裸多行shell继续部署/预检，违反失败停止要求。F1原件保留，后续环境核验正确不抵消过程问题。主控终态后补训练Skill失败依赖阻断要求并做本地故障注入，未再训练/派发。不是冷启动；共享/并行/真实评分未测。报告在run acceptance/report.md；admet-skill-follow心跳已删除，回执已保存。
+
+### 2026-10-31 用户纠正偶发连接恢复策略
+
+用户明确偶发SSH认证拒绝应自动重试，不因一次异常停止自主训练。已更新海南/训练Skill、连接参考及固定只读客户端：4次尝试、2/5/10秒退避；恢复后检查通过即接续；耗尽保留waiting_for_connection，由已有获授权持续执行机制冷却至少5分钟后续查。身份/密钥/真实文件权限错误仍阻断；写入/训练响应丢失先查原run，不盲目重放。14项连接与故障注入测试、9项准入测试通过；新只读CLI真实身份连接成功，无新训练/自动化/服务器变更。旧PLAN哈希和验收证据保留，新任务使用当前规范新计划。回执contexts/infrastructure/hainan_compute_20261031_retry_policy/receipt.json。
+
+
+## 2026-10-31 Qwen 训练前准备派发
+
+用户授权 mini OpenCode 的 Qwen 3.8 Flash 接手 MiniMol、MoLFormer 准备。两条新会话从 Context Infrastructure 根目录创建、零历史、独立输入输出；已观察真实模型调用和准备 Skill/TASK 读取，无嵌套，桌面列表可见。尚未验收、安装权重或训练。接续及会话 ID：`../../admet_qwen_preparation_20261031/CONTINUE.md`。已完成旧 CheMeleon run 不重放。
+
+## 2026-10-31 海南训练产物完整取回 Skill 首测
+
+用户授权新建 gpt-6.1-sol/xhigh 专用会话取回已完成训练材料并测速。新增 hainan-training-retrieval Skill，引用既有海南连接唯一入口。Thread private-role-45108974a7af 已完成，主控独立复算通过：302文件/110.81MB全新远端数据，归档44.11MB；传输66.97秒，连接至字节校验77.42秒，全部执行方核验338.94秒，整个会话575.058秒。源前后稳定，539个旧run文件未变，未训练/评分/取私有标签/远端写入；原训练未记录项如实保留。证据：retrievals/hainan-follow-full-20261031/acceptance/report.md。
+
+## 2026-10-31 Chat 双向网关与实验循环设计
+
+按用户要求完成体系分析、架构图、共享证据与批次策略、消息/去重/终态协议，以及 Chat 评审和网关启动 Prompt。入口 design/chat_gateway_20261031/README.md，当前仅设计完成；未创建新网关、发布云端、给 Chat 发消息、追加训练或定时。当前指定 Chat、训练/取回与 Terra 身份已核对，实际往返仍待首次验证。
+
+## 2026-10-31 用户明确评分/发布与Chat网关职责
+
+取回Thread负责本机valid固定评分、规则/数据/产物统一打包和共享发布；Chat网关负责发消息、完整收回issues.json及next_batch_guide.md等，主控保存问题账本并派发OpenCode。已更新取回Skill v0.2、宿主policy/AGENTS、架构及Prompt并保存旧版；静态合同和链接检查通过。旧评分包装硬编码22任务，单任务包装及新增角色评分/发布尚未实测；本轮未评分、上传、创建网关或新增训练。设计入口design/chat_gateway_20261031/README.md。
+
+
+## 2026-10-31 公开仓库链接实测启动
+
+用户改选ZYDTR公开仓库并要求Chat Pro、多subagent细审、自我核验、广泛方向和参数建议。本轮入口exchange/trials/public-repo-20261031，复用指定取回Thread并创建专用网关。现有两次Caco2，只fresh取回follow run，另一个复用已验收本机原件；本机固定valid评分。候选经主控审读后才公开，网关等固定链接/Prompt后发送一次。本轮无新训练/准备派发/定时。阶段计时与来源保留。
+
+## 2026-10-31 公开仓库发布通过，Pro分析进行中
+
+本轮入口exchange/trials/public-repo-20261031。follow run全新302文件/110.81MB取回，字节校验72.29秒；另一run复用已验收本地原件。两run各91行MAE固定评分且主控独立复算一致。公开393文件/32.93MB，commit eaec280cf142839597fe75ce748cd2b9a8a897d4；正常push4.54秒，匿名全量读回23.55秒，一次SSL EOF恢复，原数据未改。JSON科学字符串曾被通用Markdown替换损坏，失败衍生件保留，结构化修复与主控语义复核后才发布，教训进入取回Skill v0.4。
+
+新网关「🔄Chat收发与分析交接」private-role-d3ccfb533c01已向既有「解读药物预测赛」发送一次封口Prompt并使用Pro。Cloudflare界面错误经同请求普通刷新恢复，未重发用户Prompt。当前观察到多路子智能体与原件核对，完整六产物及科学验收仍待终稿。首轮没有新增训练/HPO/OpenCode准备派发或定时，不能把这次分析当作新训练授权。
+
+## 2026-10-31 公开仓库Pro分析首轮收口
+
+指定取回完成两run本机固定评分及393文件公开提交，Pro实读数值经主控独立比对；六原文件从audit.zip收齐并通过结构/科学核验（22问题、26方向/方案、10准备工作）。主控接收为候选，未派OpenCode或训练。原Chat长正文断流、终态/结束标记未验证；正常下载已成功但工具事件超时，主控定位系统文件后恢复。材料往返通过，严格无人值守协议未全通过。原件、计时、主控报告见exchange/trials/public-repo-20261031/acceptance/report.md；问题账本在exchange/issues。未来设计v4改短正文+六文件/manifest/ZIP，尚未再测；原Prompt不变。无新自动化，原请求未取消/重发。
+
+## 2026-10-31 一次触发闭环核对及研究深度纠正
+
+用户明确长篇本身不是缺点，应鼓励Pro多思考、深入研究、广泛搜集并交叉核验。已同步用户偏好与未来Prompt，短气泡只优化传输，不缩减完整文件。按用户的一次触发标准核对：现有结果→取回/评分/发布→Pro→六件回收已测；本轮指南→新准备→Terra通过→新训练→自动取回→再次Pro尚未完整走过。记录design/chat_gateway_20261031/one-trigger-audit.json。Terra14:08原件显示mini OrbStack停止、1.5GiB可用，准备未就绪。本轮未训练、重派或操作远端。
+
+## 2026-10-31 流程质量与完整Thread耗时复盘
+
+已按用户要求从原生Thread元数据复算：本轮取回/评分/打包/发布37分27秒；网关预备至收口108分30秒（含等包与中断），封口包开始至收口71分11秒。并行跨度不相加；本轮首次计时至主控验收108分06秒。历史256头任务31分30秒，不能用脚本3.56秒替代。缺口分为未汇总历史、可登记生成的误差聚合、从未保存的过程记录、尚未完成的准备与必须新增的受控实验；未把长研究当缺陷。详见design/chat_gateway_20261031/README.md及workflow-retrospective-20261031/计时证据。原件和当前试验Prompt不改，本次无远端操作、新评分/训练/派发/发布/自动化；OrbStack磁盘由用户处理。
+
+## 2026-10-31 新批次新Chat与工具分工设计
+
+按用户追问，未来设计v5改为共同上下文+历史快照+最新批次固定链接，每批新Pro分析Chat、长期网关复用；主控登记目标、同请求恢复不重开。已静态核查现有脚本硬编码，决定稳定脚本内核+任务配置/adapter+Agent研究与未知异常处理，通用工具尚未实现。发现已发布仓库Caco2 valid.csv本来含Y/91行；首轮不让分析Chat读真值是本地控制。建议分析角色受控读取，当前仅建议，宿主policy/Skills/首轮Prompt权限未变。无标签值输出、新评分/训练/发布/Chat或远端操作。设计入口design/chat_gateway_20261031/README.md，旧版保存于其revisions/coldstart-and-tool-boundaries-20261031。
+
+## 2026-10-31 实验知识索引Skill及真实实例
+
+完整阅读workspace bestpractice后新增admet-evidence-review v0.1，根仓库历史导航/最新批次、结论验证推翻事件、固定脚本与Agent职责、valid分析取舍和权限分开。附固定索引器：hash/引用/事件链/历史保留/独占快照及原字节源保存；14项反例与保留测试通过。exchange/catalog有3次真实海南run、22问题、3命题5事件的partial实例。主控发现v2搬Markdown使相对链接失去基址，保留旧版，v3原字节纯文本+原位置/基址，31文件摘要及导航通过；未收嵌套来源明确未快照。Skill索引与路由已更新；未新训练、评分、公开、派发、远端操作。valid建议是核验后允许专职分析，不因已有Y认定合理；当前运行权限未变。后续扩大HPO预算仍需具体范围，技术缺口由主控继续处理，不冒充用户漏回。
+
+## 2026-10-31T08:39:10.655313+00:00 单轮渐进索引闭环已登记并启动准备
+入口 cycles/progressive-index-e2e-20261031/CONTINUE.md。一个Qwen根目录会话，Terra监控；取回/网关/训练本地包装并行预备。训练未启动，Pro新请求未发。Skill v0.2.1强制分层实读；每批新Chat用首条正式Prompt建立、主控登记额度。仅一个冻结训练+一次固定评分+一轮Pro；用户未授权的12-fit HPO不执行。
+
+### 渐进索引闭环：本地准备验收（2026-10-31 17:28 CST）
+运行包装、网关v2及索引阶段1通过主控限定范围验收；实际候选与gateway通过固定适配器衔接（13项正反例）。索引67文件/19来源，保留3历史run、22问题及5结论事件，历史partial。当前唯一上游阻点为原Qwen零输出，Terra证据强支持OpenCode snapshot GC锁等待，模型服务探针成功但运行栈未证实。未启动本轮训练、评分、发布或新Pro，不修改原请求。接续入口cycles/progressive-index-e2e-20261031/CONTINUE.md。
+
+
+2026-10-31 项目归属修正：四个ADMET专用Skill迁至skills/，撤销全局注册，建立skills/INDEX.md与统一角色路由；旧原件/计划保留。独立Sol/xhigh算力观察Thread每10分钟记resources/hainan，训练仍由独立Sol/xhigh执行。主控亲审production-adapter-v1并独立20项检查通过，正式发送唯一run hainan-index-cycle-20261031；实际远端学习尚待证据，不能以已派发冒充已训练。
+
+## 2026-10-31 19:18 本轮唯一训练通过主控验收，接续取回
+本轮v1 CUDA预检成功但退出监控失败，未学习，原件完整保留；修复v2已完成26epoch/130次新头更新，主控复核底座11项状态不变、273行盲预测、3worker写入轨迹及9登记PID退出。完整v2执行Thread1299.643秒，预检23.736804秒、学习26.644201秒。报告cycles/progressive-index-e2e-20261031/acceptance/training-final/report.md。RUN_ACCEPTED已交网关继续既有取回Thread完整清点/取回、一次本地固定MAE和发布候选；主控精确候选验收前不push、不新Pro。执行方快照缺根encoder.py由完整取回补齐，不能称116文件快照全量。观察Thread保持每10分钟，只移除本完成run资源等待登记。Skill项目内更新真实运行恢复证据，旧版保留。
+
+## 2026-10-31 19:54 渐进索引闭环进入唯一新Pro发送
+119现存文件完整取回，91valid固定MAE经主控Decimal50复算一致；201公开候选及146来源映射/科学语义、11规范、47原文条目验收通过。精确发布commit 1c5592e98f3fff1c29369bd521f39e0cc044f3d3，主控独立核全部Git blobs/匿名回读原字节及三实时对象，旧数据保持。取回原生Thread1340.258秒，55秒仅传输校验口径。正式Prompt扩充来源/历史总表/评价使用账本为52项原文、3实读题，已下发原网关唯一新Pro发送；待实际发送/六原件/科学验收，不算完整闭环已通过。不新增训练。接续cycle CONTINUE。
+
+## 2026-10-31 20:24 Pro发送故障与有界恢复
+训练、完整取回、固定评分与201件发布已验收；发布完整Thread521.345秒，push与匿名回读另记。首次Pro发送出现cloudflare_challenge，仅local-chatgpt临时ID；正常刷新后无请求，支持的会话清单/网页两项搜索/最近聊天无匹配。不能证明服务端全局未收到。主控保留unknown并按用户完整闭环及偶发恢复意图决定仅一次正常UI重试，相同request/50355字节Prompt，最多累计2次发送，若再失败停止发送；没有服务端幂等保证。自定12:22:34墙钟接续至14:00UTC，仅恢复/收回范围，未加训练或评分。证据及决定位于cycle/control/pro-send-recovery-20261031。观察算力Thread独立继续。
+
+## 2026-10-31 新问题沉淀及下次派发约定
+用户重申：主控发现其他Thread的新问题，应完整重读Best Practice Skill Writing再判断并优化项目Skill；下次相应Thread运行时明确要求使用新版。主控已完整读取标准，将适用所有角色的共同合同写入项目AGENTS并在skills/INDEX索引；旧版保存在cycle/control/skill-feedback-contract-20261031/before。没有变更本轮已冻结Prompt/规则包，也未新增模型任务。Chat发送故障的已知路径是应用内浏览器tab5访问chatgpt.com并点击发送，首轮出现cloudflare_challenge；确切触发原因未知，不将网络、长Prompt或自动化判定猜测写成根因。
+
+## 2026-10-31 Chat通道按用户纠正回到应用原生工具
+原首轮native-send-receipt证明send_message_to_thread直接向已有Chat发送成功；本轮为创建新Pro改走浏览器，用户现明确禁用。主控已通知原网关立即停止，收到停用回执；不取消Chat、不重发已送达第二次请求。完整读取Best Practice后修订项目证据Skill v0.2.2与原生收发参考、AGENTS/项目索引/网关模板/合同。native read当前能读取真实ID和用户消息，但assistant为内容引用，无六附件；完整内容仍以禁用前已保存原件审查。普通新Pro创建/模型选择未在当前工具表暴露，和已有Chat直接发送分开记录，不以Work Cloud替代，不自行浏览器兜底。原版、修改摘要和范围见cycle/control/native-chat-transport-20261031。
+
+## 2026-10-31 Pro部分回复主控审查与原生补件接续
+主控完整审读7708字节原回复，规则/冻结反证/当前预测计算3答案与预留参考一致；尚未满足52原件覆盖、六文件与具体下一批指南，不能标完整闭环通过。模型的DNS和subagent限制仅自报。审查见cycle/acceptance/pro-partial-reply-20261031。现基于用户既有完整闭环授权，向原网关下发同Chat/request的一次交付补齐Prompt，只用Application原生工具、保持Pro及用户浏览器禁令，无新训练/评分/新Chat，不重发原50KB请求。控制记录control/native-reply-completion-001，恢复窗口接续到15:30UTC；是否已送达以网关独立outbox为准。
+
+## 2026-10-31 主控回报漏接复盘
+网关20:40已回报缺件，主控通道纠正后20:42结束，21:52用户催进度才恢复，21:55派发补件。原生时间证据确认主控无活动70分26秒，通知至接续75分20秒；不是网关没通知。已按Best Practice修订项目证据Skill v0.2.3及交接合同，具体决定/负责人/证据区别于通知回执，5分钟只提醒一次、10分钟明确阻点，无新增定时；固定检查器只读，不冒充App强制机制。当前活动分析冻结v0.2.2不改，新模型行为待下次派发验证。原件和复盘在cycle/control/handoff-stall-review-20261031。
+
+
+2026-10-31 用户收窄 Terra 专职监控边界：只接受「脑-兴智杯」实际派发后交接的 OpenCode 准备任务；有效队列为空暂停 opencode 心跳。标签调研撤销共享接管，已有底层任务和证据保留，由其来源负责。两条原生纠正消息已受理；执行回读见 cycles/progressive-index-e2e-20261031/control/monitor-owner-only-20261031/decision.json。Chat 返回仍须主控验收后才能下发下一批准备。
+
+2026-10-31 repair-001回报已由主控接续：原生2748字节正文复核一致，六文件仍未取得；Codex原生UI控制被工具拒绝，未绕过。已请求用户保存现有audit.zip后提供路径，当前无新准备或训练。证据Skill按Best Practice修为v0.2.4，补正式发起前的交付形态可取回依据；旧版、原运行输入及失败保留，新协议未实测。详见 cycles/progressive-index-e2e-20261031/control/native-artifact-gap-20261031/。
+
+2026-10-31 用户最新授权混合通道：原生发消息，内置Browser取文件。依Best Practice修订项目证据Skill v0.3.0并冻结交给原网关，原Chat仅取回已有audit.zip，新增消息0。派发与实测见 cycles/progressive-index-e2e-20261031/control/hybrid-file-recovery-20261031/。Terra保持本主控专用且PAUSED；新完整周期须原件科学验收与端到端准备检查后另登记，尚未启动。
+
+
+## 2026-11-01 Chat混合通道恢复完成
+原生续接的六件原文件/原ZIP经Browser实际取回，主控独立摘要及3实读检查、26点monitor日志复核通过；科学部分采纳，缺口保留。原稿和主控决定分离保存至exchange/reviews/pro-request-002-20261101。下一轮暂未启动：已请求新Pro目标链接，保持原生消息规则；Terra仍仅实际准备派发后激活。详见cycles/progressive-index-e2e-20261031/control/hybrid-file-recovery-20261031/report.md。
+
+已按完整Best Practice Skill Writing修订项目证据Skill v0.3.1，旧v0.3.0与本轮冻结输入保留。新增真实Library恢复案例，所有改动相对链接及混合通道合同检查通过；新版未冒充下一轮行为已验。下一轮单作业技术草案见control/hybrid-file-recovery-20261031/NEXT_CYCLE_DRAFT.md。
+
+
+## 2026-11-01 新Pro创建衔接
+用户批准Browser新建Pro及必要首条正式发送、原生续接。先报告进度：mini22头+海南3次=4批25头；无一次完整无人中断闭环。完整读Best Practice后更新证据Skill v0.4.0及统一入口/合同，旧版保存于cycles/monitor-mae-e2e-20261101/control/before-skill-v040。新cycle仅登记一个新Pro及单作业闭环，先准备空白页，不发占位消息。
+
+## 2026-11-01T01:59:12.742475+00:00 C1新周期已实际启动准备
+已核验OpenCode新会话在mini根项目UI可见，Terra监控实际恢复并首次无嵌套。网关空白Pro准备主控已审读UI原件接受，真实ID/发送/原生接管尚待新训练材料；精确接续记录见cycles/monitor-mae-e2e-20261101/control/creation-probe/controller-disposition.json。无新海南训练、评分或Chat消息。
+
+## 2026-11-01T02:04:01.017820+00:00 专用Terra手动官网提交
+用户本次新增明确官网提交授权；新建Thread private-role-914e9ff89ec2，gpt-6.1-terra。项目内competition-submission v0.1.0与submissions统一入口已登记，首批4个全量CSV均16379行、来源摘要及逐行映射通过。海南三版本仅替换Caco2，其他21任务保持基线。真实官网提交/成绩尚待该Thread执行；没有新定时或自动训练事件接入，不变更旧运行policy冻结版。
+
+## 2026-11-01T02:20:35.014901+00:00 用户更换手动提交专用会话
+按用户要求创建GPT-6.1 Sol Thread private-role-b51424219317，接手原Terra（idle）。主控审读4turn和原工具拒绝，确认本地选择器误判/原生Codex控制拒绝，非官网拒收；修订项目提交Skill v0.1.1并冻结交接，不扩大原4候选预算。实际上传能力仍待新Thread验证，原件与旧Thread不删除，无新定时。
+
+## 2026-11-01T02:24:51.029583+00:00 MAE准备失败已主控修复并接续
+真实save_head反例确认best-MSE元信息语义缺陷，主控保留原件并在host-science-v1修复，四项生产元信息反例通过。ml-preparation-only v1.2.1沉淀指标切换的旧字段兼容反例，未来派发使用，原冻结不改。新PLAN登记及11项计划测试通过；已交原Sol/xhigh做本地运行包装预检，等待其回报，不启动训练。
+
+2026-11-01：按用户要求由主控维护Chat Prompt，证据Skill v0.4.1 / 模板revision7；网关仅填批次小字段与使用主控科学原文。固定渲染/发送前核验7项测试通过，版本保存于design/chat_gateway_20261031/revisions/controller-owned-prompt-20261101；实际新模板Chat反馈未测。新模板交接见当前周期gateway/prompt-template-v7，未追加训练/分析。
+
+2026-11-01：主控已消费MAE-monitor本地包装交付，亲审核心源码及科学接口、42文件摘要和PLAN，独立20项流程检查通过；精确一项部署/预检/训练已派原Sol/xhigh，记录cycles/monitor-mae-e2e-20261101/acceptance/runtime-adapter-v1及control/formal-training-send-receipt-v1.json。完整本地准备Thread 1282.904秒，内部计时1030.728秒分别保留；目标机实际结果尚待验收。
+
+2026-11-01：MAE-monitor部署超时已由主控消费；精确旧接收者/目录对账与自有权重hash确认，准备减少98.96%网络字节的小包恢复、7项接收反例通过。项目训练Skill补部署对账/缓存复制记录，原冻结输入不变；原Sol/xhigh已接恢复v2，真实远端恢复尚待回执。
+
+## 2026-11-01 资源接续v3
+v2恢复时GPU0被他人占用，未发送小包/启动作业。主控03:09 UTC三次只读复核，当前六张健康卡均有进程、另两张要求Reset，未证明可安全共享。已登记waiting_for_resources，原automation-5观察Thread确认消费；任意合格卡释放后回主控再绑定派发，不固定GPU0、不重投已发操作。验收在cycle acceptance/resource-selection-v3/report.md；本地换卡派生包8项检查通过，新版训练Skill及引用已冻结在该目录skill-supplement，下一实际派发须明确指定使用。当前已准入runtime仍要求0 MiB，小残余候选应先主控审读证据，不能静默放行。未有新部署/训练/评分/Chat正式发送，无主控新心跳。
+
+2026-11-01 11:26北京：主控消费11:23 GPU0/2释放回报，核对原始摘要、XML/compute-apps/pmon与已准入运行检查。已向原Sol/xhigh执行Thread发送admet-monitor-mae-e2e-20261101:main:resume-resource:v3，活动turn private-role-c3f18d30633f。使用资源接续新版冻结Skill和已验重绑定工具，部署前允许选择当前合格卡；原科学/数据/PLAN/runtime与单次学习额度不变。注册从等待转为执行方复核阶段，尚未观测到实际学习。准入及回执见acceptance/resource-selection-v3/release-20261101T032301；后续必须由主控消费原执行方真实终态继续，不重派或另建心跳。
+
+2026-11-01资源v4与用户分工纠正：v3执行方正确拒绝原0 MiB门槛，未部署/学习；主控按任务预计需求与余量改资源判定，取消0/4MiB已用上限，21项函数检查+7项完整绑定/准入检查通过。科学/数据/PLAN不变，六件覆盖绑定中仅一个运行函数有变更。正式材料acceptance/residual-memory-v4；旧草稿和失败保留。原执行Thread活动turn private-role-22a8241d80f9，未观察到真实训练完成。新版训练/观察Skill已冻结派发，既有automation-5更新为普通资源信号直接给waiting原训练Thread；主控只做准入、实质故障和最终验收。协议control/resource-handoff-v4.json，实际状态run/operator/execution-04/status.json，唯一学习和原预算不变。不要继续使用v3主控中转或未派发4MiB上限草稿。
+
+
+## 2026-11-01 控制面逐条复核
+
+用户要求主控系统审读整套控制面，不再逐个补丁。已通读6项项目Skill及9份参考，交叉核对入口、来源、Prompt/机器合同、资源和提交路由、关键检查代码；旧版与条款审查在audits/control-plane-20261101。当前/历史拆开，纠正仓库发布例外、旧Harness跳转、角色写入职责、阅读/节奏冲突和当前索引；准备包Skill版本改为读取实际元数据，13项检查通过，Prompt7项通过，计划11项通过（先保留旧夹具hash失效原件，仅修内存测试夹具，实际旧PLAN不改）。新规范用于后续明确派发，旧运行冻结材料不回写。
+
+v4执行方终态已消费：主控独立核验96文件摘要及完成凭据身份、11项编码器记录相等和273行有限预测；worker0而监督125事实同时成立，根因未知，完整源码/轨迹/科学验收未完成。唯一学习已消耗，不重跑；资源观察继续但该run移出活动等待。审查发现共享/批量通用执行、监测异常处置和历史hash复核等实现缺口，未冒充已修复/全链通过。准备环境权限、评分反馈、valid最终用途、后续学习恢复策略已向用户列出偏好核对；未自行扩大权限。
+
+## 2026-11-01 四项用户决策落实
+
+记录时间UTC 2026-11-01T04:18:49.950066+00:00。主控完整读取Best Practice后，将用户Q1–Q4写入policy、AGENTS、准备/训练/取回/研究Skill、准备包真实生成入口及Chat模板revision9。准备v1.3.0、取回v0.4.2、证据v0.4.3；原任务快照和当前已完成学习的PLAN/源码保持。详见audits/control-plane-20261101/user-decisions-20261101/REPORT.md；实现测试与模型真实行为分开记录。主控接续当前训练的完整独立验收，不因监督125重训。
+
+## 2026-11-01 当前训练主控验收并接续
+
+UTC 2026-11-01T04:42:17.200048+00:00。主控复验96件执行回传、二进制张量/缓存、配置/行身份、train内部指标、两份原始strace与自有PID退出；科学产物接受用于评分，监督125及未知根因保留，不重训。报告cycles/monitor-mae-e2e-20261101/acceptance/training-final/report.md。修正run顶层status与CYCLE仍停在启动前的过期状态，原件已存prior-state。已向原指定取回Sol Thread发出本轮完整取回/一次评分/公开候选任务，使用取回Skill v0.4.2和19件冻结规则，候选返回后主控审读再发布。尚未评分、发布或发送新Pro。
+
+本次过期状态问题已按Best Practice纳入项目证据Skill v0.4.4的接续参考，要求主控在验收/派发后同步周期与run摘要，保留原失败退出。三处当前事实读回一致；取回已进入真实turn private-role-d501d65d8893，19件冻结规则未变，新版参考用于下次派发。
+
+2026-11-01 12:53北京时间海南观察报告根分区ai4s可用字节0，主控比对原始SHA与statvfs字段一致；/mnt/data仍21.2TB。本轮99文件约104.36MB已在异常前取回且12:47已完成本地评分，当前继续本地候选及验收，无远端修复/清理或新作业。处置见本周期control/root-disk-incident-20261101T0453/decision.json。
+
+UTC 2026-11-01T04:56:55.692489+00:00 主控逐文件复验99件/104364781字节全量取回，补齐encoder和大权重身份；以既有私有评分输入Decimal50独立复算MAE一致0.40302117308791197，未再次调用固定评分器。旧MSE选轮0.42147216141758237，同配置/数据/内部划分、差异run_id和monitor，下降约4.38%；不宣称泛化或因果。已给取回Thread反馈证据，原任务继续候选，未新派训练/评分。
+
+- 2026-11-01T05:17:37.909185+00:00 主控复核144件候选及332件封口交付、116 typed projections、11处仅基础设施字符串的Python变更、49导航、66阅读项通过。独立复算全部冻结特征差异最大2.384185791015625e-7；保留单对照不可归因及监督125。批准原清单精确追加发布，未训练/评分/赛事提交。
+
+- 2026-11-01T05:31:12.169371+00:00 主控接受精确追加发布commit dda94bf7f18b75683d814bd26f921fc715ce88c2，全部144对象独立网络回读通过；模板9+完整20字段+Skill0.4.4封口，正式派原Chat网关研究及六件回收。保留监督125、feature差异、历史部分覆盖。原始发布Thread时间和Pro实际发送分别待真实终态/回执，不把派发当Pro已发送。
+
+- 2026-11-01T05:57:16.529512+00:00 主控完成第三轮Pro全文件独立审读和ZIP/身份/引用/关键数值检查。结论运输通过、研究部分接受但阅读/方案准入失败。角色混淆、监督码不安全等实质缺陷留证；旧checker与新Prompt不一致由主控负责修正，不把裸数组/附加件错判为Pro故障。Skill0.4.5/Prompt10和inspect_review本地7+7反例通过，未来派发必须冻结新版；没有追加模型请求或训练。本次cycle收口，具体见acceptance/Pro-review。另根磁盘13:53样本UID可用2.27GiB恢复，只记录样本，不宣称修复。

@@ -1,0 +1,15 @@
+# B：数据核验、独立评分和提交准备
+
+这是一项独立的训练前准备任务。当前 OpenCode 会话入口必须保持 <PRIVATE_RUNTIME_PATH> rules/skills/ml-preparation-only/SKILL.md 执行。主控负责后续安装、权重下载、整批编码、实际训练、真实验证及提交。
+
+只读资源：本任务目录 input/data、input/research、input/reference-harness；必要公开的官方模型/库技术资料。只写本任务目录 output/，包括 tmp、日志及 Python 缓存。不要搜索或读取其他 adhoc_jobs 任务、别的会话、既有实验产物和会话库。没有给你任何验证/测试真标签，也不需要寻找它们。缺依赖按 Skill 标记未验证，不能安装环境或运行训练。
+
+数据合同：22任务；input/data/official/data_benchmark/<task>/train.csv 有 Drug_ID,Drug,Y，test.csv 无 Y；input/data/blind_validation/<task>/valid.csv 无 Y。输入不清洗不删行，重复测量保留。预测唯一键为 (task,split,row_index)，row_index 为该原始 CSV 数据行的0基位置，CSV列为 task,split,row_index,y_pred；另输出可追溯输入摘要。提交模板为 input/data/official/submission_template.csv，16379行；sample_idx 与原始行的关系必须核对，按完整身份恢复模板顺序，只替换 y_pred。首版固定简单配置，不搜索。
+
+公共验收：只进行无参数更新的轻量检查，合成测试显式标为 synthetic；只用合成标签测试评分。不联系其他会话。所有写入留在自己的 output/；执行记录和未验证项写进 output/HANDOFF.md 及 output/checks.json。不要把未跑的端到端流程宣称为已通过。
+
+交付输入与模板完整性核验、预测覆盖检查、容器外逐任务评分及提交导出的代码和简短命令。评分器只处理主控显式传入的标签文件；本会话只以固定合成标签测试。实际评分入口与导出入口都必须自行验证完整键集合，不能要求调用者先执行另一个可跳过的检查器。缺行、重复、额外/未知任务、错split、非有限值和非法二元标签应失败退出并保留原因。
+
+本地指标约定：分类为AUROC或Average Precision，回归为MAE或Spearman；AP按平均精度明确标注，本地AP不虚构为已确认官方AUPRC公式。AUROC/AP单类输入返回未定义及原因，Spearman常量输入返回未定义及原因；空样本、NaN/Inf、分类标签不严格为0或1均拒绝。官方总分聚合未确认，只输出逐任务结果。
+
+用固定合成数值覆盖并列分数和上述错误输入，验证实际CLI入口的退出状态；用模板及合成预测验证导出16379行、顺序、非预测列值及原格式保真。此类轻量文件/数值检查允许执行，不是模型训练。代码和全部合成测试产物仅放 output/。不读取 A 的代码。

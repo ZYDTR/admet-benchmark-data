@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "method": "six independent agents started without project-authoring conversation; task and AGENTS entry supplied, no expected routing answer supplied",
+  "cases": [
+    {
+      "id": "resume",
+      "agent": "cold_resume",
+      "request": "接着上次工作做，不重复训练；官方包暂缺，确认能推进的工作。",
+      "read_chain": [
+        "AGENTS.md",
+        "context/state.json",
+        "skills/INDEX.md",
+        "skills/context-maintenance/SKILL.md",
+        "context/tasks/*.json",
+        "docs/context.md",
+        "skills/harness-development/SKILL.md",
+        "docs/working.md",
+        "docs/host-integration.md",
+        "docs/test.md",
+        "docs/validation.md"
+      ],
+      "observed": "恢复三项blocked任务，未虚构完成训练；实际运行status/doctor/check-context及当时53项单测，区分工程通过与训练不可用。",
+      "status": "passed",
+      "scope_note": "测试发生于工程构建中途；当时尚未初始化Git，后续已完成版本化。"
+    },
+    {
+      "id": "external-inputs",
+      "agent": "cold_external_inputs",
+      "request": "断网后能否用缓存分子权重并从PubChem补标签写进代码？",
+      "read_chain": [
+        "AGENTS.md",
+        "context/state.json",
+        "skills/INDEX.md",
+        "skills/data-provenance/SKILL.md",
+        "config/data_manifest.json",
+        "docs/data-policy.md",
+        "docs/runtime-contract.md",
+        "competition/contract.json",
+        "skills/competition-contract/SKILL.md",
+        "competition/sources.json"
+      ],
+      "observed": "先核查来源；区分R01官方禁止外部数据、U02未决边界、T01团队默认。拒绝把标签藏进代码，未联网查标签或下载资产；实际check-data返回DATA_NOT_APPROVED。",
+      "status": "passed"
+    },
+    {
+      "id": "skill-authoring",
+      "agent": "cold_skill_change",
+      "request": "新增模型比较Skill，并按需加载规范。",
+      "read_chain": [
+        "AGENTS.md",
+        "context/state.json",
+        "skills/INDEX.md",
+        "skills/skill-authoring/SKILL.md",
+        "skills/experiment/SKILL.md",
+        "docs/test.md",
+        "docs/evaluation.md",
+        "src/admet_harness/context.py",
+        "src/admet_harness/cli.py"
+      ],
+      "observed": "优先扩展已有experiment；指出只读比较不应创建新run和无关请求入口歧义。按需加载函数实测只返回单个技能与引用路径。",
+      "status": "passed_with_refinement",
+      "refinement": "收紧AGENTS的相关性判断，并新增docs/run-comparison.md条件引用；复验见compare-existing及unrelated。"
+    },
+    {
+      "id": "submission",
+      "agent": "cold_submission",
+      "request": "准备最终提交，重复/空drug_id是否清理，超过1的分类分数是否截断？",
+      "read_chain": [
+        "AGENTS.md",
+        "context/state.json",
+        "skills/INDEX.md",
+        "skills/submission/SKILL.md",
+        "docs/submission.md",
+        "competition/contract.json",
+        "skills/experiment/SKILL.md",
+        "docs/runtime-contract.md"
+      ],
+      "observed": "检查真实文件后确认仅合成演示，保留ID原字符串；score校验成功，probability报PROBABILITY_OUT_OF_RANGE；verify-candidate因无正式run失败。没有导出、改值或上传。",
+      "status": "passed"
+    },
+    {
+      "id": "compare-existing",
+      "agent": "cold_compare",
+      "request": "只比较已有两次模型结果，不启动训练。",
+      "read_chain": [
+        "AGENTS.md",
+        "context/state.json",
+        "skills/INDEX.md",
+        "skills/experiment/SKILL.md",
+        "docs/run-comparison.md",
+        "docs/evaluation.md",
+        "context/tasks/*.json",
+        "local/synthetic-demo-*/report.json"
+      ],
+      "observed": "只加载experiment及比较/评价参考；没有读运行契约或模型接口。识别唯一结果是合成演示，返回insufficient_evidence，不伪造赢家或启动训练。",
+      "status": "passed",
+      "scope_note": "扫描遇到另一个测试的短暂目录消失后复扫；最终无正式runs。"
+    },
+    {
+      "id": "unrelated",
+      "agent": "cold_unrelated",
+      "request": "把“今天先把工程流程跑通”翻译成自然英文。",
+      "read_chain": [
+        "AGENTS.md"
+      ],
+      "observed": "仅cat AGENTS.md，直接完成翻译，没有读取state/INDEX或调用项目命令。",
+      "status": "passed"
+    }
+  ],
+  "limits": "This validates six observed scenarios, not every possible future task or model."
+}

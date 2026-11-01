@@ -1,0 +1,68 @@
+{
+  "Id": "dbf7757d904acb727d557b9bd32b2dad9c2d9af405a0973284adc983f9cdd0a2",
+  "Image": "sha256:db3ff2e1800a8581e2c48a27c3995339d47bdf046da21c7627accd3d51053a93",
+  "State": {
+    "Status": "running",
+    "Running": true,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 100928,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2026-10-30T11:11:40.443487566Z",
+    "FinishedAt": "0001-01-01T00:00:00Z"
+  },
+  "Mounts": [
+    {
+      "Type": "bind",
+      "Source": "<LOCAL_PRIVATE_PATH>",
+      "Destination": "/assets",
+      "Mode": "ro",
+      "RW": false,
+      "Propagation": "rprivate"
+    },
+    {
+      "Type": "bind",
+      "Source": "<LOCAL_PRIVATE_PATH>",
+      "Destination": "/deps",
+      "Mode": "ro",
+      "RW": false,
+      "Propagation": "rprivate"
+    },
+    {
+      "Type": "bind",
+      "Source": "<LOCAL_PRIVATE_PATH>",
+      "Destination": "/work",
+      "Mode": "ro",
+      "RW": false,
+      "Propagation": "rprivate"
+    },
+    {
+      "Type": "bind",
+      "Source": "<LOCAL_PRIVATE_PATH>",
+      "Destination": "/work/result",
+      "Mode": "rw",
+      "RW": true,
+      "Propagation": "rprivate"
+    }
+  ],
+  "limits": {
+    "Memory": 4294967296,
+    "NanoCpus": 2000000000,
+    "PidsLimit": 128,
+    "NetworkMode": "none",
+    "ReadonlyRootfs": true,
+    "CapDrop": [
+      "ALL"
+    ],
+    "SecurityOpt": [
+      "no-new-privileges"
+    ],
+    "Tmpfs": {
+      "/tmp": "rw,nosuid,nodev,size=512m"
+    }
+  },
+  "user": "1000:1000"
+}

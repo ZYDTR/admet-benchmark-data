@@ -1,0 +1,106 @@
+# catalog-events
+
+已验证/推翻事件链和旧快照。
+
+当前裁定：`evidence_retained`。本卡是导航，具体边界以原件和后续验收为准。
+
+## 登记锚点
+
+- [S-e5a566208d4762eb / 20261031-v1.json](../../originals/S-e5a566208d4762eb.json)；源 SHA256 `a1e8fa914e08e936907cd28f70347beb84bb20c3f87449942f8f171ade0398f5`；衍生 SHA256 `c83664b2aa0fcdfb969c1c3621380b467f1a49b1876d9a4dae307b1217a48314`。
+
+## 下钻原件
+
+以下保留原始科学配置、代码、指标、失败或研究文件。Markdown 原文以纯文本视图提供；正文内旧相对路径不是当前导航链接。完整版本绑定见来源总表。
+
+- [S-d45d74a0bf6e8d1a / README.md](../../originals/S-d45d74a0bf6e8d1a.md.txt)
+- [S-641e689226626791 / acceptance.json](../../originals/S-641e689226626791.json)
+- [S-87f92ba63d6d22c5 / valid-analysis-access-20261031.json](../../originals/S-87f92ba63d6d22c5.json)
+- [S-1d3cfcbba4760aa8 / README.md](../../originals/S-1d3cfcbba4760aa8.md.txt)
+- [S-9662673530eefe5a / README.md](../../originals/S-9662673530eefe5a.md.txt)
+- [S-13d1e70ffec3a14b / README.md](../../originals/S-13d1e70ffec3a14b.md.txt)
+- [S-e8ddd52da066f78a / README.md](../../originals/S-e8ddd52da066f78a.md.txt)
+- [S-c66dba74d3226756 / batches.json](../../originals/S-c66dba74d3226756.json)
+- [S-1824d5d4d761569c / C-DOWNLOAD.md](../../originals/S-1824d5d4d761569c.md.txt)
+- [S-591cb4590cc60cfa / C-FREEZE.md](../../originals/S-591cb4590cc60cfa.md.txt)
+- [S-19cd2d6fe0e392ac / C-SCALE.md](../../originals/S-19cd2d6fe0e392ac.md.txt)
+- [S-7563e49530def617 / README.md](../../originals/S-7563e49530def617.md.txt)
+- [S-6af14ca64c8f721e / current.json](../../originals/S-6af14ca64c8f721e.json)
+- [S-af8f3ba5cbc88198 / events.jsonl](../../originals/S-af8f3ba5cbc88198.jsonl)
+- [S-bfbc4f4665731566 / issues.json](../../originals/S-bfbc4f4665731566.json)
+- [S-c4f7ef3cf6ce4b41 / issues.md](../../originals/S-c4f7ef3cf6ce4b41.md.txt)
+- [S-00ba361e86e30efc / runs.json](../../originals/S-00ba361e86e30efc.json)
+- [S-89bfa1f79a5d37d4 / manifest.json](../../originals/S-89bfa1f79a5d37d4.json)
+- [S-5c68c5cda818c194 / reading-map.json](../../originals/S-5c68c5cda818c194.json)
+- [S-ec2bb5b67a5966f6 / source-manifest.json](../../originals/S-ec2bb5b67a5966f6.json)
+- [S-97e929d19429d389 / README.md](../../originals/S-97e929d19429d389.md.txt)
+- [S-1f84a6214778cfec / README.md](../../originals/S-1f84a6214778cfec.md.txt)
+- [S-9a9a571b0f14efff / README.md](../../originals/S-9a9a571b0f14efff.md.txt)
+- [S-a545652fa92f3264 / source-map.md](../../originals/S-a545652fa92f3264.md.txt)
+- [S-b1d690d3a02fcc27 / policy.json](../../originals/S-b1d690d3a02fcc27.json)
+- [S-ff093a06e8028285 / audit-download-failed.json](../../originals/S-ff093a06e8028285.json)
+- [S-006a46519e8a3047 / primary-source-crosschecks.json](../../originals/S-006a46519e8a3047.json)
+- [S-e80d81584b73b32d / issues.json](../../originals/S-e80d81584b73b32d.json)
+- [S-cf5a0a138d7426f7 / independent-registered-encoder-state.json](../../originals/S-cf5a0a138d7426f7.json)
+- [S-b01b05dd5c2553c7 / controller-disposition.json](../../originals/S-b01b05dd5c2553c7.json)
+- [S-b71568736458b2fa / independent-cache-diagnostics.json](../../originals/S-b71568736458b2fa.json)
+- [S-3b3a5f9340ec668c / report.md](../../originals/S-3b3a5f9340ec668c.md.txt)
+- [S-231a10405ab9760b / report.md](../../originals/S-231a10405ab9760b.md.txt)
+- [S-3b42375758477871 / report.md](../../originals/S-3b42375758477871.md.txt)
+- [S-559e5944d4b14cd8 / report.md](../../originals/S-559e5944d4b14cd8.md.txt)
+- [S-bd9d1a4c1d7d1c3b / audit-download-event-correction.json](../../originals/S-bd9d1a4c1d7d1c3b.json)
+- [S-d44bdc9ea12a14d5 / official-contract-20261029.json](../../originals/S-d44bdc9ea12a14d5.json)
+- [S-cda0c4e925b17a6a / coverage.json](../../originals/S-cda0c4e925b17a6a.json)
+- [S-a2142c63d70f2f76 / README.md](../../originals/S-a2142c63d70f2f76.md.txt)
+- [S-aaf73caa0e425f05 / batches.json](../../originals/S-aaf73caa0e425f05.json)
+- [S-e9c11cae387fb691 / C-DOWNLOAD.md](../../originals/S-e9c11cae387fb691.md.txt)
+- [S-45363cce1b4a196b / C-FREEZE.md](../../originals/S-45363cce1b4a196b.md.txt)
+- [S-23b8ae8707ab4a77 / C-SCALE.md](../../originals/S-23b8ae8707ab4a77.md.txt)
+- [S-24707eeec8f2af60 / README.md](../../originals/S-24707eeec8f2af60.md.txt)
+- [S-06d9821b50d053ad / current.json](../../originals/S-06d9821b50d053ad.json)
+- [S-4aa57e816a6cd380 / events.jsonl](../../originals/S-4aa57e816a6cd380.jsonl)
+- [S-2300e764a66d7da4 / issues.json](../../originals/S-2300e764a66d7da4.json)
+- [S-b4febf62b7c1aa52 / issues.md](../../originals/S-b4febf62b7c1aa52.md.txt)
+- [S-27b39709d674883d / runs.json](../../originals/S-27b39709d674883d.json)
+- [S-eb25bca84e59731c / manifest.json](../../originals/S-eb25bca84e59731c.json)
+- [S-1483556d8686f31e / reading-map.json](../../originals/S-1483556d8686f31e.json)
+- [S-20d9e9bb573ef096 / source-manifest.json](../../originals/S-20d9e9bb573ef096.json)
+- [S-5169058952bd4e47 / README.md](../../originals/S-5169058952bd4e47.md.txt)
+- [S-c2f746cb7ec74447 / README.md](../../originals/S-c2f746cb7ec74447.md.txt)
+- [S-7e4bb4e6ce94bb7e / README.md](../../originals/S-7e4bb4e6ce94bb7e.md.txt)
+- [S-999be6986ecc0b76 / source-map.md.txt](../../originals/S-999be6986ecc0b76.txt)
+- [S-015d650d30d58923 / policy.json](../../originals/S-015d650d30d58923.json)
+- [S-c5e5c63d524abc3e / audit-download-failed.json](../../originals/S-c5e5c63d524abc3e.json)
+- [S-09f63d5e85f3bc0f / primary-source-crosschecks.json](../../originals/S-09f63d5e85f3bc0f.json)
+- [S-4ecf75d1321c212a / issues.json](../../originals/S-4ecf75d1321c212a.json)
+- [S-880247f7efc4d969 / independent-registered-encoder-state.json](../../originals/S-880247f7efc4d969.json)
+- [S-5428f7c1955f5bba / controller-disposition.json](../../originals/S-5428f7c1955f5bba.json)
+- [S-4d3a78ab980e1a1a / independent-cache-diagnostics.json](../../originals/S-4d3a78ab980e1a1a.json)
+- [S-aa76eeec51bbf9a3 / report.md.txt](../../originals/S-aa76eeec51bbf9a3.txt)
+- [S-f722534d415f8be2 / report.md.txt](../../originals/S-f722534d415f8be2.txt)
+- [S-fac8b0f2560db88f / report.md.txt](../../originals/S-fac8b0f2560db88f.txt)
+- [S-c0f46a9c04fc0cc0 / report.md.txt](../../originals/S-c0f46a9c04fc0cc0.txt)
+- [S-100ae65d9b180ae0 / audit-download-event-correction.json](../../originals/S-100ae65d9b180ae0.json)
+- [S-72d7e668e91d4421 / official-contract-20261029.json](../../originals/S-72d7e668e91d4421.json)
+- [S-825c5f30ba4546cf / coverage.json](../../originals/S-825c5f30ba4546cf.json)
+- [S-fc504ae5fce89b45 / README.md](../../originals/S-fc504ae5fce89b45.md.txt)
+- [S-99e4b61816823041 / batches.json](../../originals/S-99e4b61816823041.json)
+- [S-e39b03ab1084911a / C-DOWNLOAD.md](../../originals/S-e39b03ab1084911a.md.txt)
+- [S-6c33c7438001cdb3 / C-FREEZE.md](../../originals/S-6c33c7438001cdb3.md.txt)
+- [S-3f9e6221c1e1d627 / C-SCALE.md](../../originals/S-3f9e6221c1e1d627.md.txt)
+- [S-3b0190b63be9bbbb / README.md](../../originals/S-3b0190b63be9bbbb.md.txt)
+- [S-2f40c1fc4a60fcb3 / current.json](../../originals/S-2f40c1fc4a60fcb3.json)
+- [S-74c6da0756d074b3 / events.jsonl](../../originals/S-74c6da0756d074b3.jsonl)
+- [S-d5494c11fbde890e / issues.json](../../originals/S-d5494c11fbde890e.json)
+- [S-fc6d075f3445eb20 / issues.md](../../originals/S-fc6d075f3445eb20.md.txt)
+- [S-db7d51616dd982bc / runs.json](../../originals/S-db7d51616dd982bc.json)
+- [S-41b1d52f9edd808b / manifest.json](../../originals/S-41b1d52f9edd808b.json)
+- [S-f81e0917e42e45e1 / reading-map.json](../../originals/S-f81e0917e42e45e1.json)
+- [S-c8e8808ea51ebf48 / source-manifest.json](../../originals/S-c8e8808ea51ebf48.json)
+- [S-bdd1dcfcf95a3c38 / README.md](../../originals/S-bdd1dcfcf95a3c38.md.txt)
+- [S-872fcfed6487b62f / inventory.json](../../originals/S-872fcfed6487b62f.json)
+
+## 策略包本次来源版本
+
+截止 `2026-11-01T11:28:28.074304+00:00`；登记状态原样为 `evidence_retained`。本次处置：`historical_or_strategy_evidence_collected`。
+
+- [S-e5a566208d4762eb / 20261031-v1.json](../../originals/S-e5a566208d4762eb.json)；源 `a1e8fa914e08e936907cd28f70347beb84bb20c3f87449942f8f171ade0398f5`，衍生 `c83664b2aa0fcdfb969c1c3621380b467f1a49b1876d9a4dae307b1217a48314`。

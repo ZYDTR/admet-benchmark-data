@@ -1,0 +1,33 @@
+# 新会话裁剪上下文
+
+用户要求先实际测试最新海南 Skill：新建一条 GPT-6.1 Sol、Extra High Codex Thread，在海南完成一次真实训练；原主聊天观察并独立验收，然后才考虑多任务并行。已有团队私有用途，不上传赛事。你是这次用户明确授权的宿主执行会话，是执行分工上的 leaf；不得嵌套派发、开其他 Thread、CLI Agent 或调用准备 Agent，不得对其他会话发消息。
+
+先完整读取项目 `AGENTS.md`、`policy.json`、`docs/source-map.md`、本目录 `PLAN.json`，以及工作区 `rules/skills/hainan-compute-access/SKILL.md` 和其中连接参考。必须明确使用该 Skill，先读再接触目标服务器。只读客户端提供身份/资源/目录三个动作；所需额外传输、执行必须编写在本 run 的审阅代码内并遵守同一固定 Windows 通道和严格主机密钥。不要修改现行 Skill 或绕过它。
+
+已有 mini 基线只在 CPU 跑过，不能冒充本次海南训练。可读实现：`adhoc_jobs/admet_frozen_baseline_20261030/execution/output/model/src/` 的 encoder.py、heads.py、train.py、common.py 等；输入和权重绝对路径、摘要见 PLAN。可复制到本次独占实现目录作针对 Linux/CUDA 的改动，保留原件，不继续旧 mini 容器。原输入包含22任务，但本次只取 PLAN 的三份 caco2_wang CSV和固定 CheMeleon 权重，不能上传整个项目、历史日志、任何原始 valid.Y 或私有评分目录。
+
+## 真实计算范围
+
+一个单 GPU 作业，对官方 Caco2 的 637 行 train、91 行无Y valid、182 行无Y test 生成冻结 CheMeleon 特征，用 train 内90/10划分训练一个新512隐层预测头，配置按 PLAN。编码和头训练都要实际在指定 CUDA GPU，禁止默默 CPU fallback。新头必须发生非零参数更新；不能只推理已有模型或跑合成梯度冒充训练。保持给定 Y 数值与原始行，标准化只拟合内部训练部分。预测保留 task/split/row_index/Drug_ID/Drug/y_pred，记录验证和测试覆盖，不评分、不输出22任务总提交候选。
+
+编码器 `requires_grad=False`、`eval()`、无梯度编码、优化器排除其参数，训练前后内存参数及 buffer SHA256一致。记录新头初始/最终参数SHA、训练步数、非零梯度/参数变化和checkpoint；重新加载本次模型预测，证明产物可使用。不可只拿原权重文件没变当冻结证明。
+
+## 授权与写入
+
+本机可写仅本目录及其后代；可读取项目规范、上述固定输入/资产、海南 Skill及其登记连接材料。禁止读取私有验证原件、精确评分、公开TDC标签匹配结果、微信原始ZIP、他人项目和无关配置。凭据只能依 Skill在进程内读取，不打印/复制/记录到提示词或远端。
+
+目标写入仅 `<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030` 及后代，允许必要的 project-owner/admet 父目录创建但先核对真实路径/链接/挂载。含代码、输入、依赖、venv、HOME、TMPDIR、XDG、pip、HF、torch、CUDA缓存、日志、模型。没有全局安装、sudo、系统/SSH/Docker/网络设置变更。Windows只用既有流式代理，不落文件或改设置。所有现有同事文件/服务绝对保护。
+
+允许本任务必需、固定版本的依赖安装，只写本次目录，先审读实际启动/安装命令的副作用和来源。可使用已装软件但不得修全局环境。优先空闲卡；如无空闲，可按 Skill完整核实共享条件，证据不足则停止/排队，不拿剩余显存一项作为许可。此次并发固定1只是测试规模，不改变Skill的并发规则。
+
+资源目标见 PLAN：1GPU、2CPU线程、0数据加载worker、GPU峰值目标4GiB、内存目标8GiB、训练15分钟、环境准备45分钟、依赖8GiB、结果1GiB。说明实际强制与仅目标的区别；需要超出先报告具体缺口，不能擅自换成多任务或占满GPU。
+
+## 证据和交付
+
+读取Skill/规则后先保存 `operator/read-receipt.json`（来源路径与SHA），执行本项目check_plan。接入前代码和命令在本目录可审阅，不等待额外用户许可。保留脱敏机器身份、资源多时点和进程元数据、GPU UUID/索引、启动前复核、自有PID/PGID及启动时间、启动/运行/结束观察、实际退出状态、文件摘要和下载核验。
+
+将任务安装及训练所有实际文件写入落点作为独立验收项，优先用现有strace或等效系统级证据（日志在任务根内），区分设备节点与持久文件、SSH系统审计与任务主动写入。不得为了验证全盘扫描同事目录。未取得足够证据就如实标not_verified，不凭环境变量或工作目录宣称全系统零变更。
+
+保存 `operator/status.json`、`operator/report.md`、`operator/receipt.json`，以及 source/、raw/、artifacts/ 的代码与原始证据。状态和日志以真实阶段为准；结束确认只属于本作业的进程/显存释放；不删除其他文件。失败保留原件，状态不明先查询，不重复启动同名训练；依赖/代码修复用独立attempt记录变化。最多完成这一项训练，不做HPO。
+
+不要修改 PLAN、上级规则、项目check_plan/tests、Skill或主控acceptance。也不要读取将来的主控结论来迎合。原主聊天会亲自检查工具轨迹和产物。完成只写本目录和最终回复即可，不发送跨会话消息。

@@ -1,0 +1,23 @@
+{
+  "run_id": "hainan-mae-monitor-20261101",
+  "passed": true,
+  "scope": "Exact demand/headroom resource eligibility source;21 local checks and three live read-only samples. No deployed v4 or new training yet.",
+  "at": "2026-11-01T03:37:55.214707+00:00",
+  "resource_source_sha256": "c5ad268c50bd371c10d23fa902e0dc7811e6ea26c52c47d1acd078c093d99e89",
+  "previous_resource_source_sha256": "05f967fafa4fbab5917bdadba48bc881e3f1dd3f82ff20cf1d921b3c1dd9dca9",
+  "tests_sha256": "8ac9e8524dcecb0180c4f576957104d77da800add24e81cadbb82c1ecb90ed33",
+  "live_samples_sha256": "adff273b787d74c9d0863cd9c48d65321a64d006d70f056da0f2ce6a9067883c",
+  "changes": "Only validate_idle_gpu plus re import. No fixed maximum existing allocation. Planned4096MiB+4096MiB headroom, no observed active workload, complete process views/health. Existing own-job enforcement unchanged.",
+  "residual_cause": "unknown; no owner attribution",
+  "requires_at_execution": "Repeated direct selected UUID checks, complete process views including pmon; immediate prelaunch check; exact environment/source/input admission; abort own job upon foreign compute process",
+  "science_plan_data_unchanged": true,
+  "user_correction": "User explicitly rejected zero or tiny-memory cap as general rule; use forecast workload, headroom and non-interference. Shared occupied cards allowed after impact qualification.",
+  "resource_estimate": {
+    "same_backbone_head_reference_mib": 1156,
+    "reference": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031/acceptance/report.md",
+    "planned_peak_mib": 4096,
+    "additional_headroom_mib": 4096,
+    "observed_free_mib": 81087,
+    "shared_use_this_branch": "not_exercised_no_observed_other_workload"
+  }
+}

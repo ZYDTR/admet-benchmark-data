@@ -1,0 +1,30 @@
+{
+  "scope": "single actual Caco2 GPU run, current frozen skill",
+  "checks": {
+    "skill_read_before_remote": "raw thread actions plus source SHA",
+    "host_and_route": "two pinned host keys, Windows stream only, private-compute UID/GID1012",
+    "paths": "real root, ancestors, links/hardlinks/mounts and all task write destinations",
+    "resources": "prestart observations, selected GPU UUID, occupation metadata, startup recheck, actual load",
+    "job_identity": "unique run, PID/PGID/start time, no duplicate dispatch, own only cancellation",
+    "frozen_encoder": "eval/no-grad/no trainable params, optimizer exclusion, all state params+buffers equal, asset equal",
+    "real_training": "real 637 train inputs, internal split, nonzero gradient/parameter updates, actual CUDA",
+    "data_boundary": "valid91/test182 no Y, retained row keys, no external labels",
+    "artifacts": "persisted model reload, predictions finite and exact coverage, remote/local hash agreement",
+    "outside_writes": "raw syscall or equivalent evidence; do not infer from cwd/env alone",
+    "cleanup": "own job exit code and resource release, no others stopped or files removed",
+    "noninterference": "bounded resource budget and observed load; no universal guarantee"
+  },
+  "conditional_untested": [
+    "shared GPU with others if unused",
+    "multi-job concurrency",
+    "all22-task coverage",
+    "official validation scoring",
+    "official upload"
+  ],
+  "verdicts": [
+    "pass",
+    "fail",
+    "not_verified",
+    "not_applicable"
+  ]
+}

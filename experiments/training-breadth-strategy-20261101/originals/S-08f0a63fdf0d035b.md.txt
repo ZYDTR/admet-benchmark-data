@@ -1,0 +1,18 @@
+# 素材索引
+
+这里列出本题输入及其来源。官方原文与数据原件只读；机器合同是提炼或校验信息，不替代原件。
+
+使用数据前核对 [清洗后数据索引](../data/derived/INDEX.md) 中的版本与相对目录。当前无登记清洗版本；训练和测试使用官方原件，验证使用下面登记的无Y副本。
+
+| 要核对什么 | 文件与定位 |
+| --- | --- |
+| 官方规则原文 | [2026-10-29原始响应](official/rules.json)：data.describe为任务/数据边界，data.submit_way为提交要求，data.grade_standard为评价/复现要求，data.match_notice为参赛须知，data.first_submit_stop_time为截止时间 |
+| 规则与模板来源 | [来源记录](../competition/sources.json)：官方URL、读取日期及原文/模板SHA-256；[规则合同](../competition/contract.json)区分官方要求、本地默认及其依据、待确认事项 |
+| 官方训练与测试数据 | [CSV目录](../data/official/data_benchmark/)：每任务train.csv与test.csv；逐文件位置、角色和SHA-256见 [数据清单](../config/data_manifest.json) |
+| 无答案验证输入 | [验证目录](../data/blind_validation/)：每任务valid.csv只含Drug_ID、Drug；[投影清单](validation-projection.json)登记行数及副本哈希。带Y原件仅容器外保管，不属于Agent分发包。 |
+| 清洗后数据 | [派生数据索引](../data/derived/INDEX.md)：登记用户授权依据、清洗版本、用途、相对数据目录、原始输入和清洗依据；当前仅占位 |
+| 官方提交模板 | [submission_template.csv](../data/official/submission_template.csv)，保持原始字节；字段身份和任务定义见 [任务合同](../competition/task_schema.json) |
+| 官方评分规则与脚本 | [官方原文](official/rules.json) 的data.grade_standard提供评分说明；已收到的官方ZIP只有66个CSV，没有评分脚本。官方模板另行收录，不能用它代替有测试标签的评分程序。 |
+| 已收到数据的来源确认 | [data-intake.json](data-intake.json)：用户确认来自官方报名/下载页、原ZIP哈希和已核验范围；这不等于重放官方登录下载 |
+
+原始收到版本为22个任务、66个数据CSV，另有1份模板。Agent分发包含44份原始train/test、22份无Y验证副本及1份原始模板。只有文件内Y的数值目标已确认，物理单位与生物学解释未补猜。当前检查结果以本次实际文件核验为准。

@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "updated_on": "2026-10-28",
+  "project": "admet-agent-harness",
+  "phase": "engineering_ready",
+  "competition_id": 159,
+  "entry": "AGENTS.md",
+  "current_tasks": [
+    "context/tasks/data-intake.json",
+    "context/tasks/model-adapter.json",
+    "context/tasks/host-runtime.json"
+  ],
+  "blockers": [
+    "官方训练/验证数据尚未接入。",
+    "标签单位、正类、变换和缺失编码尚未确认。",
+    "目标 Docker 镜像和实际模型适配器尚未接入。"
+  ],
+  "next_action": "先读status区分已完成工程与blocked参赛接入；A在目标机器验证Docker/外层Agent权限，B接入官方包并确认标签，C实现实际模型适配器。",
+  "verified_capabilities": [
+    "71个工程行为测试通过；详见docs/validation/unit-tests.json。",
+    "八项局部技能的静态链接和发现性检查通过。",
+    "六个独立无前情Agent场景已记录，含修改后的只读比较及无关翻译。",
+    "合成工程演示可运行，不是正式模型。"
+  ],
+  "not_verified": [
+    "真实比赛训练和成绩",
+    "Docker 运行时隔离",
+    "从头重训复现"
+  ],
+  "authority_note": "task 文件记录具体任务进度；本文件是汇总，启动前仍需执行检查。",
+  "completed_tasks": [
+    "context/tasks/harness-build.json"
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-01",
+  "scope": "原调研候选及实际准备/训练状态；不包含执行LLM，不代表全部已批准训练",
+  "assets": [
+    {
+      "id": "chemeleon",
+      "name": "CheMeleon",
+      "kind": "molecular_encoder",
+      "readiness": "trained_22_tasks_and_caco2_refinements",
+      "blockers": [],
+      "sources": [
+        "adhoc_jobs/admet_qwen_preparation_20261031/minimol/input/research/research-report.md",
+        "adhoc_jobs/admet_frozen_baseline_20261030/DELIVERY.md"
+      ]
+    },
+    {
+      "id": "minimol",
+      "name": "MiniMol",
+      "kind": "molecular_encoder",
+      "readiness": "preparation_incomplete_not_training_ready",
+      "blockers": [
+        "原准备idle_incomplete，上游setup.py 404；资产加载/生产接口未验收"
+      ],
+      "sources": [
+        "adhoc_jobs/admet_qwen_preparation_20261031/minimol/input/research/research-report.md",
+        "contexts/infrastructure/opencode_terra_monitor_20261031/status.json"
+      ]
+    },
+    {
+      "id": "molformer_10pct",
+      "name": "MoLFormer公开10pct资产",
+      "kind": "molecular_encoder",
+      "readiness": "preparation_incomplete_not_training_ready",
+      "blockers": [
+        "原准备idle_incomplete，目录外写入拒绝；资产/接口未验收；不得冒充full-XL"
+      ],
+      "sources": [
+        "adhoc_jobs/admet_qwen_preparation_20261031/minimol/input/research/research-report.md",
+        "contexts/infrastructure/opencode_terra_monitor_20261031/status.json"
+      ]
+    },
+    {
+      "id": "classical_features",
+      "name": "经典分子特征",
+      "kind": "feature_baseline",
+      "readiness": "researched_not_prepared",
+      "blockers": [
+        "尚无本项目已验收运行包"
+      ],
+      "sources": [
+        "adhoc_jobs/admet_qwen_preparation_20261031/minimol/input/research/research-report.md"
+      ]
+    },
+    {
+      "id": "small_dmpnn_scratch",
+      "name": "从零小D-MPNN",
+      "kind": "from_scratch_model",
+      "readiness": "researched_not_prepared",
+      "blockers": [
+        "需独立科学配置、预算和准入；不是预训练微调"
+      ],
+      "sources": [
+        "adhoc_jobs/admet_qwen_preparation_20261031/minimol/input/research/research-report.md"
+      ]
+    },
+    {
+      "id": "tabpfn26",
+      "name": "TabPFN 2.6",
+      "kind": "predictor",
+      "readiness": "researched_not_prepared",
+      "blockers": [
+        "许可/版本/资源/赛制适用性待核验；不是分子encoder"
+      ],
+      "sources": [
+        "adhoc_jobs/admet_qwen_preparation_20261031/minimol/input/research/research-report.md"
+      ]
+    },
+    {
+      "id": "kpgt",
+      "name": "KPGT",
+      "kind": "molecular_encoder",
+      "readiness": "researched_deferred",
+      "blockers": [
+        "额外信息与接入成本未闭合"
+      ],
+      "sources": [
+        "adhoc_jobs/admet_qwen_preparation_20261031/minimol/input/research/research-report.md"
+      ]
+    },
+    {
+      "id": "unimol",
+      "name": "Uni-Mol",
+      "kind": "molecular_encoder",
+      "readiness": "researched_deferred",
+      "blockers": [
+        "构象/裁剪及完整输入覆盖未核验"
+      ],
+      "sources": [
+        "adhoc_jobs/admet_qwen_preparation_20261031/minimol/input/research/research-report.md"
+      ]
+    },
+    {
+      "id": "smi_ted",
+      "name": "SMI-TED",
+      "kind": "molecular_encoder",
+      "readiness": "researched_deferred",
+      "blockers": [
+        "资产条件与接入尚未闭合"
+      ],
+      "sources": [
+        "adhoc_jobs/admet_qwen_preparation_20261031/minimol/input/research/research-report.md"
+      ]
+    },
+    {
+      "id": "mole",
+      "name": "MolE",
+      "kind": "molecular_encoder",
+      "readiness": "researched_deferred",
+      "blockers": [
+        "官方checkpoint发布链未闭合"
+      ],
+      "sources": [
+        "adhoc_jobs/admet_qwen_preparation_20261031/minimol/input/research/research-report.md"
+      ]
+    }
+  ]
+}

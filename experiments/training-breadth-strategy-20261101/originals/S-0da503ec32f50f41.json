@@ -1,0 +1,276 @@
+[
+  {
+    "trace": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/raw/setup.strace",
+    "line_count": 3482,
+    "counts": {
+      "parsed_syscalls": 3480,
+      "non_file_descriptor": 6
+    },
+    "successful_inside_path_count": 17,
+    "device_nodes": {},
+    "successful_outside_file_effects": [],
+    "failed_outside_or_unknown_attempts": [],
+    "unknown_write_effects": [],
+    "unfinished_at_eof": {},
+    "outside_task_home_reads": [],
+    "verdict": "pass_for_traced_file_effects",
+    "limitations": [
+      "Traces child process filesystem calls, not SSH daemon/kernel audit or unrelated processes.",
+      "Open-for-write and mutating syscalls are conservative evidence of file effects; device/sockets classified separately.",
+      "Does not establish OS sandboxing or prove zero system-wide changes."
+    ]
+  },
+  {
+    "trace": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/raw/setup02.strace",
+    "line_count": 15207,
+    "counts": {
+      "parsed_syscalls": 14847,
+      "non_file_descriptor": 37
+    },
+    "successful_inside_path_count": 569,
+    "device_nodes": {
+      "/dev/null": 4
+    },
+    "successful_outside_file_effects": [],
+    "failed_outside_or_unknown_attempts": [],
+    "unknown_write_effects": [],
+    "unfinished_at_eof": {},
+    "outside_task_home_reads": [],
+    "verdict": "pass_for_traced_file_effects",
+    "limitations": [
+      "Traces child process filesystem calls, not SSH daemon/kernel audit or unrelated processes.",
+      "Open-for-write and mutating syscalls are conservative evidence of file effects; device/sockets classified separately.",
+      "Does not establish OS sandboxing or prove zero system-wide changes."
+    ]
+  },
+  {
+    "trace": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/raw/setup03.strace",
+    "line_count": 2073,
+    "counts": {
+      "parsed_syscalls": 2073
+    },
+    "successful_inside_path_count": 1,
+    "device_nodes": {},
+    "successful_outside_file_effects": [],
+    "failed_outside_or_unknown_attempts": [],
+    "unknown_write_effects": [],
+    "unfinished_at_eof": {},
+    "outside_task_home_reads": [],
+    "verdict": "pass_for_traced_file_effects",
+    "limitations": [
+      "Traces child process filesystem calls, not SSH daemon/kernel audit or unrelated processes.",
+      "Open-for-write and mutating syscalls are conservative evidence of file effects; device/sockets classified separately.",
+      "Does not establish OS sandboxing or prove zero system-wide changes."
+    ]
+  },
+  {
+    "trace": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/raw/setup04.strace",
+    "line_count": 9239,
+    "counts": {
+      "parsed_syscalls": 9083,
+      "failed_inside_attempt": 1,
+      "non_file_descriptor": 19
+    },
+    "successful_inside_path_count": 6,
+    "device_nodes": {
+      "/dev/null": 2
+    },
+    "successful_outside_file_effects": [],
+    "failed_outside_or_unknown_attempts": [],
+    "unknown_write_effects": [],
+    "unfinished_at_eof": {},
+    "outside_task_home_reads": [],
+    "verdict": "pass_for_traced_file_effects",
+    "limitations": [
+      "Traces child process filesystem calls, not SSH daemon/kernel audit or unrelated processes.",
+      "Open-for-write and mutating syscalls are conservative evidence of file effects; device/sockets classified separately.",
+      "Does not establish OS sandboxing or prove zero system-wide changes."
+    ]
+  },
+  {
+    "trace": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/raw/setup05.strace",
+    "line_count": 252321,
+    "counts": {
+      "parsed_syscalls": 251932,
+      "non_file_descriptor": 248,
+      "failed_inside_attempt": 196
+    },
+    "successful_inside_path_count": 27396,
+    "device_nodes": {
+      "/dev/null": 6
+    },
+    "successful_outside_file_effects": [
+      {
+        "syscall": "openat",
+        "path": "/dev/shm/sem.kK3d5M",
+        "line": "2187947 openat(AT_FDCWD<<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030>, \"/dev/shm/sem.kK3d5M\", O_RDWR|O_CREAT|O_EXCL|O_NOFOLLOW|O_CLOEXEC, 0600) = 3</dev/shm/sem.kK3d5M>"
+      },
+      {
+        "syscall": "write",
+        "path": "/dev/shm/sem.kK3d5M",
+        "line": "2187947 write(3</dev/shm/sem.kK3d5M>, \"\\0\\0\\0\\0\\0\\0\\0\\0\\200\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\", 32) = 32"
+      },
+      {
+        "syscall": "mmap",
+        "path": "/dev/shm/sem.kK3d5M",
+        "line": "2187947 mmap(NULL, 32, PROT_READ|PROT_WRITE, MAP_SHARED, 3</dev/shm/sem.kK3d5M>, 0) = 0x79d24d054000"
+      },
+      {
+        "syscall": "link",
+        "path": "/dev/shm/sem.kK3d5M",
+        "line": "2187947 link(\"/dev/shm/sem.kK3d5M\", \"/dev/shm/sem.joblib-2187947-jg6d0uzx\") = 0"
+      },
+      {
+        "syscall": "link",
+        "path": "/dev/shm/sem.joblib-2187947-jg6d0uzx",
+        "line": "2187947 link(\"/dev/shm/sem.kK3d5M\", \"/dev/shm/sem.joblib-2187947-jg6d0uzx\") = 0"
+      },
+      {
+        "syscall": "unlink",
+        "path": "/dev/shm/sem.kK3d5M",
+        "line": "2187947 unlink(\"/dev/shm/sem.kK3d5M\")   = 0"
+      },
+      {
+        "syscall": "unlink",
+        "path": "/dev/shm/sem.joblib-2187947-jg6d0uzx",
+        "line": "2187947 unlink(\"/dev/shm/sem.joblib-2187947-jg6d0uzx\") = 0"
+      }
+    ],
+    "failed_outside_or_unknown_attempts": [],
+    "unknown_write_effects": [],
+    "unfinished_at_eof": {},
+    "outside_task_home_reads": [],
+    "verdict": "not_verified",
+    "limitations": [
+      "Traces child process filesystem calls, not SSH daemon/kernel audit or unrelated processes.",
+      "Open-for-write and mutating syscalls are conservative evidence of file effects; device/sockets classified separately.",
+      "Does not establish OS sandboxing or prove zero system-wide changes."
+    ]
+  },
+  {
+    "trace": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/raw/upload-initial.strace",
+    "line_count": 461,
+    "counts": {
+      "parsed_syscalls": 461,
+      "non_file_descriptor": 1
+    },
+    "successful_inside_path_count": 20,
+    "device_nodes": {},
+    "successful_outside_file_effects": [],
+    "failed_outside_or_unknown_attempts": [],
+    "unknown_write_effects": [],
+    "unfinished_at_eof": {},
+    "outside_task_home_reads": [],
+    "verdict": "pass_for_traced_file_effects",
+    "limitations": [
+      "Traces child process filesystem calls, not SSH daemon/kernel audit or unrelated processes.",
+      "Open-for-write and mutating syscalls are conservative evidence of file effects; device/sockets classified separately.",
+      "Does not establish OS sandboxing or prove zero system-wide changes."
+    ]
+  },
+  {
+    "trace": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/raw/upload-setup02.strace",
+    "line_count": 363,
+    "counts": {
+      "parsed_syscalls": 363,
+      "non_file_descriptor": 1
+    },
+    "successful_inside_path_count": 5,
+    "device_nodes": {},
+    "successful_outside_file_effects": [],
+    "failed_outside_or_unknown_attempts": [],
+    "unknown_write_effects": [],
+    "unfinished_at_eof": {},
+    "outside_task_home_reads": [],
+    "verdict": "pass_for_traced_file_effects",
+    "limitations": [
+      "Traces child process filesystem calls, not SSH daemon/kernel audit or unrelated processes.",
+      "Open-for-write and mutating syscalls are conservative evidence of file effects; device/sockets classified separately.",
+      "Does not establish OS sandboxing or prove zero system-wide changes."
+    ]
+  },
+  {
+    "trace": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/raw/upload-setup03.strace",
+    "line_count": 380,
+    "counts": {
+      "parsed_syscalls": 380,
+      "non_file_descriptor": 1
+    },
+    "successful_inside_path_count": 4,
+    "device_nodes": {},
+    "successful_outside_file_effects": [],
+    "failed_outside_or_unknown_attempts": [],
+    "unknown_write_effects": [],
+    "unfinished_at_eof": {},
+    "outside_task_home_reads": [],
+    "verdict": "pass_for_traced_file_effects",
+    "limitations": [
+      "Traces child process filesystem calls, not SSH daemon/kernel audit or unrelated processes.",
+      "Open-for-write and mutating syscalls are conservative evidence of file effects; device/sockets classified separately.",
+      "Does not establish OS sandboxing or prove zero system-wide changes."
+    ]
+  },
+  {
+    "trace": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/raw/upload-setup04.strace",
+    "line_count": 343,
+    "counts": {
+      "parsed_syscalls": 343,
+      "non_file_descriptor": 1
+    },
+    "successful_inside_path_count": 1,
+    "device_nodes": {},
+    "successful_outside_file_effects": [],
+    "failed_outside_or_unknown_attempts": [],
+    "unknown_write_effects": [],
+    "unfinished_at_eof": {},
+    "outside_task_home_reads": [],
+    "verdict": "pass_for_traced_file_effects",
+    "limitations": [
+      "Traces child process filesystem calls, not SSH daemon/kernel audit or unrelated processes.",
+      "Open-for-write and mutating syscalls are conservative evidence of file effects; device/sockets classified separately.",
+      "Does not establish OS sandboxing or prove zero system-wide changes."
+    ]
+  },
+  {
+    "trace": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/raw/upload-setup05.strace",
+    "line_count": 428,
+    "counts": {
+      "parsed_syscalls": 428,
+      "non_file_descriptor": 1
+    },
+    "successful_inside_path_count": 8,
+    "device_nodes": {},
+    "successful_outside_file_effects": [],
+    "failed_outside_or_unknown_attempts": [],
+    "unknown_write_effects": [],
+    "unfinished_at_eof": {},
+    "outside_task_home_reads": [],
+    "verdict": "pass_for_traced_file_effects",
+    "limitations": [
+      "Traces child process filesystem calls, not SSH daemon/kernel audit or unrelated processes.",
+      "Open-for-write and mutating syscalls are conservative evidence of file effects; device/sockets classified separately.",
+      "Does not establish OS sandboxing or prove zero system-wide changes."
+    ]
+  },
+  {
+    "trace": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/raw/upload-training.strace",
+    "line_count": 348,
+    "counts": {
+      "parsed_syscalls": 348,
+      "non_file_descriptor": 1
+    },
+    "successful_inside_path_count": 2,
+    "device_nodes": {},
+    "successful_outside_file_effects": [],
+    "failed_outside_or_unknown_attempts": [],
+    "unknown_write_effects": [],
+    "unfinished_at_eof": {},
+    "outside_task_home_reads": [],
+    "verdict": "pass_for_traced_file_effects",
+    "limitations": [
+      "Traces child process filesystem calls, not SSH daemon/kernel audit or unrelated processes.",
+      "Open-for-write and mutating syscalls are conservative evidence of file effects; device/sockets classified separately.",
+      "Does not establish OS sandboxing or prove zero system-wide changes."
+    ]
+  }
+]

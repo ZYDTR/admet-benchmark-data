@@ -1,0 +1,38 @@
+# 唯一学习已完成，待主控独立验收
+
+正式恢复消息 `admet-progressive-index-e2e-20261031:main:recover-unstarted:v2` 已执行。完成26个epoch、130次优化更新；best为epoch18/90步，last为epoch26/130步。输出273行盲valid/test预测和637行带fit/stop标记的训练预测。没有新增学习、HPO、私有valid真值、固定评分或发布。
+
+## 执行与退出
+
+使用GPU5，UUID `<REGISTERED_GPU>`。消费观察 `hainan-20261031T105112-762820Z`，部署和启动分别直接核验旧退出原件SHA、三个旧PID已退出、21项学习产物及学习锁不存在，再直接复核健康/占用；每阶段另保存3次启动前快照。
+
+v2真实预检23.74秒，训练阶段26.64秒，含前置检查、导入和系统调用记录。两个阶段的worker/strace返回码与supervisor返回码均0，独立等待进程取得pipeline实际OS退出码0。`state/learning-started.lock`绑定唯一训练token和本次run；旧v1外层125、旧源码/profile/dispatch及所有原件未改，原退出记录SHA仍为 `682b740972d1a939f910b1254855145a9f797af237e8560206bad750aa19b484`。
+
+原setup起点保持10:21:04 UTC，未重置2700秒预算；新预检/训练于10:55:38至10:56:29 UTC完成，单次训练900秒上限不变。观察/准备/主控审核的会话跨度不能用这50.6秒运行时间替代。
+
+## 科学与产物核对
+
+编码器8参数和3buffer共11项状态前后相同，完整摘要为 `3dcc8242cc8b63aa1813cf06cb686ae09056e725a415bf244e7aa32c26cc9c74`；固定checkpoint、eval/no_grad、无编码器梯度、优化器只含新头均有实际代码断言及原件。新头4项原始f32张量均有限且改变，最大绝对变化分别约0.02097、0.01166、0.01216、0.001662。
+
+内部原SMILES组划分为573 fit/64 stop，全部637位置恰好覆盖且组不跨两边。273行预测的task/split/row_index/Drug_ID/Drug逐行匹配盲输入，637训练预测保留原行身份及Y；预测均有限。三份2048维特征数组、解析mask、输入行序/CSV/编码器/依赖身份及原始字节SHA/CRC均核对。best和last的checkpoint元数据分别绑定18/90、26/130；训练状态绑定last文件SHA，含15项原始张量存储。运行中weights_only加载、完整optimizer及Python/numpy/torch CPU/CUDA/独立sampler RNG重载与回放检查通过。
+
+本机检查没有执行pickle或导入返回科学代码，仅用标准库核对已批准源码绑定、JSON、CSV、NPY及checkpoint ZIP原始字节和pickle操作码。实际GPU学习/冻结/重载证据仍需主控结合源码与原始轨迹独立审读。
+
+## 写入与释放
+
+取回116文件，共93,643,877原始字节，逐文件大小与SHA全部一致。三份轨迹包括保留的v1预检及v2预检/训练；成功目录外文件改动0、未解析写入0、未完成调用0。NVIDIA/null设备IO与被拒绝的设备链接操作单独保留，不为兼容放宽目录权限。宿主和监督器的已审读操作只写本run；这不是全机、读取、设备分区或IOCTL隔离证明。
+
+v2训练实际记录worker3931584变为Z且无VmRSS，事件第71行正常计作终态0 RSS，并完成退出。修复分支已有真实目标命中；活跃或未知进程缺内存仍会失败，不能泛化为所有竞态已穷尽。
+
+峰值观察RSS约1.46GiB、GPU1160MiB、结果约93.3MB，低于登记目标。CPU affinity固定0/1，CORE=0、单文件450MiB限制已应用；RAM/GPU/结果预算主要由监测和退出控制，未声称硬配额。v1的3个PID与v2的6个PID共9个登记身份全部gone，GPU5无自有进程残留且Recovery None。原环境解释器及78项raw METADATA、科学4文件、v1/v2部署材料、输入和checkpoint摘要未变。
+
+## 复查入口
+
+- `../../raw/execution-02/remote-snapshot-v2/`：完整本次取回的source/data/raw/artifacts/state及fetch-manifest；固定大权重不重复下载，其远端SHA已核对。
+- `artifact-verification.json`：退出、冻结、参数变化、行身份、checkpoint与特征字节检查。
+- `write-audit.json`：三份原始轨迹的保守解析及明确覆盖限制。
+- `../../operator/execution-02/postcheck.json`、`resource-summary.json`：源材料、环境、9个PID与GPU释放原件；终态无RSS的实际命中位置。
+- `../../raw/execution-02/remote-snapshot-v2/raw/host-wait-exit-v2.json`：实际OS等待退出码。
+- `../result.json`：本run统一交付入口，状态为training_completed_pending_main_independent_acceptance。
+
+主控RUN_ACCEPTED仍待独立验收。此执行方到此交付，不触发取回评分发布、不执行下一轮，不改项目规范或新增后台任务。

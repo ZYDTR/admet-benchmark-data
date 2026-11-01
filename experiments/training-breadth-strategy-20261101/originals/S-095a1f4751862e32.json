@@ -1,0 +1,129 @@
+{
+  "data": {
+    "train": {
+      "rows": 637,
+      "columns": [
+        "Drug_ID",
+        "Drug",
+        "Y"
+      ],
+      "unique_Drug_ID": 581,
+      "unique_Drug": 634
+    },
+    "valid": {
+      "rows": 91,
+      "columns": [
+        "Drug_ID",
+        "Drug"
+      ],
+      "unique_Drug_ID": 89,
+      "unique_Drug": 91
+    },
+    "test": {
+      "rows": 182,
+      "columns": [
+        "Drug_ID",
+        "Drug"
+      ],
+      "unique_Drug_ID": 177,
+      "unique_Drug": 181
+    }
+  },
+  "split_raw_smiles_overlap": {
+    "train_valid": 0,
+    "train_test": 0,
+    "valid_test": 0
+  },
+  "hainan-frozen-training-20261031": {
+    "all_prediction_rows": 273,
+    "valid_rows": 91,
+    "mean_valid_prediction": "-5.33833475429670329670329670329670329670329670329670329670330",
+    "alignment": [
+      {
+        "split": "valid",
+        "rows": 91,
+        "task": "caco2_wang",
+        "task_and_row_identity_aligned": true,
+        "row_count_matches": true,
+        "unique_task_split_row_keys": true,
+        "all_y_pred_finite": true
+      },
+      {
+        "split": "test",
+        "rows": 182,
+        "task": "caco2_wang",
+        "task_and_row_identity_aligned": true,
+        "row_count_matches": true,
+        "unique_task_split_row_keys": true,
+        "all_y_pred_finite": true
+      }
+    ],
+    "optimizer_steps": 70,
+    "best_epoch_1_based": 6,
+    "epoch_rows": 14,
+    "internal_indices": {
+      "fit_rows": 573,
+      "holdout_rows": 64,
+      "row_overlap": 0,
+      "covers_official_train_once": true,
+      "same_smiles_crossing": [
+        {
+          "fit_row": 182,
+          "holdout_row": 184
+        }
+      ]
+    },
+    "epoch_history_csv_agrees": true,
+    "minimum_internal_loss_epoch": "6",
+    "every_epoch_five_cumulative_steps": true,
+    "target_mean": -5.1942267417907715,
+    "target_std": 0.8041454553604126
+  },
+  "hainan-skill-follow-20261031": {
+    "all_prediction_rows": 273,
+    "valid_rows": 91,
+    "mean_valid_prediction": "-5.30125041584615384615384615384615384615384615384615384615385",
+    "alignment": [
+      {
+        "split": "valid",
+        "rows": 91,
+        "task": "caco2_wang",
+        "task_and_row_identity_aligned": true,
+        "row_count_matches": true,
+        "unique_task_split_row_keys": true,
+        "all_y_pred_finite": true
+      },
+      {
+        "split": "test",
+        "rows": 182,
+        "task": "caco2_wang",
+        "task_and_row_identity_aligned": true,
+        "row_count_matches": true,
+        "unique_task_split_row_keys": true,
+        "all_y_pred_finite": true
+      }
+    ],
+    "optimizer_steps": 95,
+    "best_epoch_1_based": 11,
+    "epoch_rows": 19,
+    "internal_indices": {
+      "fit_rows": 573,
+      "holdout_rows": 64,
+      "row_overlap": 0,
+      "covers_official_train_once": true,
+      "same_smiles_crossing": [
+        {
+          "fit_row": 605,
+          "holdout_row": 606
+        }
+      ]
+    },
+    "epoch_history_csv_agrees": true,
+    "minimum_internal_loss_epoch": "11",
+    "every_epoch_five_cumulative_steps": true,
+    "target_mean": -5.232780456542969,
+    "target_std": 0.7998837232589722
+  },
+  "historical_holdout_intersection": 8,
+  "method": "Python stdlib csv; exact decimal arithmetic mean from all prediction rows selected split=valid; expected task caco2_wang from current configs/source, zero-based row_index with exact Drug_ID+Drug equality; no truth/rescoring/inference."
+}

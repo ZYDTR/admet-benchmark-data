@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "request_id": "admet-contract-follow-preparation-20261101-001",
+  "role": "preparation",
+  "molecular_asset_id": "chemeleon",
+  "project_directory": "<PRIVATE_RUNTIME_PATH>",
+  "capabilities": [
+    "private_dependencies",
+    "approved_assets",
+    "no_update_interface_checks"
+  ],
+  "label_access": "train_y_and_aggregate_feedback",
+  "remote_access": false,
+  "may_train": false,
+  "may_delegate": false,
+  "allowed_writes": [
+    "output"
+  ],
+  "input_classes": [
+    "science_source",
+    "train_data",
+    "blind_data",
+    "synthetic_fixture",
+    "preparation_rules"
+  ],
+  "acceptance_cases": [
+    {
+      "id": "six-configs",
+      "production_entry": "input/reference/training_science.py validate_config",
+      "consumer_entry": "existing train_remote_v4.py load_json/validate_config, static no-training call chain",
+      "fixture": "input/batch_request.json and input/base_config.json",
+      "expected_result": "exactly six unique configs, seed pairing44/45/46, split43, only run_id/monitor/head_config.seed differ from base",
+      "failure_reason": "exact grid/config mismatch; assert producing code also validates actual written JSON"
+    },
+    {
+      "id": "best-metadata",
+      "production_entry": "actual production checkpoint writer",
+      "consumer_entry": "actual checkpoint reader",
+      "fixture": "three fixed epochs with distinct MSE-best, MAE-best and final; no optimizer steps",
+      "expected_result": "each metric/epoch/steps retains its original semantics after real save and reload",
+      "failure_reason": "specific field mismatch; unrelated import/split failure does not pass this case"
+    },
+    {
+      "id": "row-identity",
+      "production_entry": "actual input loader and split builder",
+      "consumer_entry": "actual prediction/export reader",
+      "fixture": "two legal equal Drug_ID/Drug at distinct row_index; enough distinct groups to split",
+      "expected_result": "preserve both rows; reject only duplicate (task,split,row_index)",
+      "failure_reason": "duplicate_complete_row_key, not insufficient_groups"
+    }
+  ]
+}

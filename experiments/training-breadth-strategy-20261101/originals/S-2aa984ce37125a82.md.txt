@@ -1,0 +1,15 @@
+# A：冻结 CheMeleon 模型接入准备
+
+这是一项独立的训练前准备任务。当前 OpenCode 会话入口必须保持 <PRIVATE_RUNTIME_PATH> rules/skills/ml-preparation-only/SKILL.md 执行。主控负责后续安装、权重下载、整批编码、实际训练、真实验证及提交。
+
+只读资源：本任务目录 input/data、input/research、input/reference-harness；必要公开的官方模型/库技术资料。只写本任务目录 output/，包括 tmp、日志及 Python 缓存。不要搜索或读取其他 adhoc_jobs 任务、别的会话、既有实验产物和会话库。没有给你任何验证/测试真标签，也不需要寻找它们。缺依赖按 Skill 标记未验证，不能安装环境或运行训练。
+
+数据合同：22任务；input/data/official/data_benchmark/<task>/train.csv 有 Drug_ID,Drug,Y，test.csv 无 Y；input/data/blind_validation/<task>/valid.csv 无 Y。输入不清洗不删行，重复测量保留。预测唯一键为 (task,split,row_index)，row_index 为该原始 CSV 数据行的0基位置，CSV列为 task,split,row_index,y_pred；另输出可追溯输入摘要。提交模板为 input/data/official/submission_template.csv，16379行；sample_idx 与原始行的关系必须核对，按完整身份恢复模板顺序，只替换 y_pred。首版固定简单配置，不搜索。
+
+公共验收：只进行无参数更新的轻量检查，合成测试显式标为 synthetic；只用合成标签测试评分。不联系其他会话。所有写入留在自己的 output/；执行记录和未验证项写进 output/HANDOFF.md 及 output/checks.json。不要把未跑的端到端流程宣称为已通过。
+
+交付冻结 CheMeleon 编码器、每任务独立小型 MLP 训练头、模型保存/加载、valid/test预测的可运行代码与命令。训练代码需要写全，但本会话不执行训练。依据 input/research 的候选资料核对作者发布方式、资产版本/下载地址和依赖版本。支持有界 CPU 和单 GPU 参数、特征缓存复用；仅 train 拟合变换、回归输出还原原 Y 尺度。记录无法编码的行并给出确定、完整覆盖的程序化方案。
+
+缓存实现需绑定输入内容/行身份/编码器/权重/依赖，校验数组与清单一致；用不训练的固定小数据反例检查缓存拒绝错误来源和损坏。允许根据现有依赖决定能执行哪些无更新检查；缺依赖时保留可执行测试与明确未验证记录。避免为了自检创建、训练替代模型。valid-only/test-only 入口分别可用，不强读另一个split输出。
+
+交接需给出代码/依赖/资产清单、固定配置、已执行命令与退出状态、无法验证内容、主控安装与验证的具体下一条命令。共享交付预测只用上述CSV接口，其他格式若增加须给出独立消费样例；不读取 B 的代码。

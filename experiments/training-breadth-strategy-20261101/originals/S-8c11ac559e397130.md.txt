@@ -1,0 +1,82 @@
+# 视角1：赛事、数据及角色边界复核
+
+固定材料 commit `eaec280cf142839597fe75ce748cd2b9a8a897d4`，manifest SHA256 `dbdec244caa8ddb106721877cf93625c1957b9184985c07b1cf751eed5d70505`。此路线只读当前公开包；未取包外数据、未读私有标签、未重评分、未加载模型或安装依赖。详见本目录 `rules-data-read-receipt.json` 与 `rules-data-checks.json`。
+
+## 判断与反证
+
+### 1. 本轮冻结许可已经成立，不需重新问用户；新执行尚未授权
+
+- 直接证据：`rules/CURRENT_RULES.md:5–11`；`rules/current-policy.json:7–19,21–44`；`research/evidence/rule-source-metadata.json:18–22`。公开条款 R01 只记外部数据禁令，冻结权重例外来自用户向赛方确认，二者不能混写成网页原话。
+- 旧 T03 随机初始化、Docker/SAP 环境、旧不评分约束不是现行普遍禁令；`rules/harness-source-map.md:7–19,23` 保留其历史范围。包中 candidate/not_pushed/待批准为封口历史状态，用户提供的当前固定 commit 确定发布事实。
+- 反证边界：不能由“权重允许冻结使用”推出外部拟合归一化、额外数据、教师标签或 test 拟合已获准。新增 head/投影/池化模块须在后续计划中明确可更新集合，原编码器参数及 buffer 不得更改。
+- 实施结论：本轮 `proposal_only`；准备指南不含精确 valid 分数或逐行误差，不部署/安装/训练/推理、不访问私有 valid 标签；分析报告有权引用已发布聚合反馈。
+
+### 2. 两 run 的最终训练产物在当前公开证据范围内可以作描述性比较；流程 F1 仍未真实关闭
+
+- 两份 `PLAN.json:21–55` 固定相同637/91/182行及同一checkpoint SHA；`historical-acceptance.md` 分别报告独立最终训练验收，保留了冻结、输入、文件和退出证据范围。
+- follow `historical-acceptance.md:9–17` 明确旧 `F1`：环境检查返回255后约0.1秒仍继续部署/预检，后补查不消除过程缺陷；仅离线修订门禁故障注入，尚无真实Follow复测。因此 F1 维持 open（或 investigating），不能改成 resolved。
+- 反证：follow `historical-acceptance.md:15,25–29,37–45` 同时记录正式训练前环境已核、冻结/行身份/文件边界/释放通过；未发现这次F1导致错误身份、越界写入、标签泄漏或参数解冻。因此不把“严格Skill失败”自动等同“科学产物失效”。
+- failed/preempted `cuda01` 是失败证据，不作模型质量胜负；早期 unhealthy GPU、joblib /dev/shm 事件属于更早失败路径，不能当本次成功训练的状态。驱动57次拒绝 unlink 是拒绝事件，不能说未尝试或成功越界。
+- 严格限制：`runs/hainan-skill-follow-20261031/audit-summary.json:3` 的 auditor 字段仍为旧执行方摘要、parent acceptance pending，后出的 `historical-acceptance.md:43,49–55` 才说明最终主控审查。这两项是版本/证据层级区别，本轮没有独立读取原始strace；`audit-summary.json:135` 和source-map明确它们excluded。不要把公开摘要冒充本轮逐syscall重验。
+
+### 3. 输入和预测身份实际对齐；不能用 Drug_ID 作唯一键
+
+独立标准库逐行读取结果：
+
+| 分区 | 行数 | 唯一原始Drug/SMILES | 唯一Drug_ID | Y |
+|---|---:|---:|---:|---|
+| train | 637 | 634 | 581 | 有，全部有限数字 |
+| valid | 91 | 91 | 89 | 无 |
+| test | 182 | 181 | 177 | 无 |
+
+- 全部原始字段无空值；三对官方分区间 raw SMILES 交集均0。test原件含UTF-8 BOM及引号，使用 `utf-8-sig` 正确读取，不修改字节。
+- 两份 `artifacts/predictions.csv` 各274物理行含header，273数据行；按 `task=caco2_wang`, `split`, 零基 `row_index`，同时检查 `Drug_ID`/`Drug`，valid91和test182逐行全部一致，预测有限、键唯一。证据可独立复核：三个data CSV的全部行及两预测CSV全部行；检查输出 `rules-data-checks.json`。
+- 反证：ID不唯一，即使当前ID/Drug完整也不能按ID字典覆盖；不能清洗掉train重复或test重复。未独立执行RDKit，因此只声称原始SMILES身份，没有额外声称canonical全部一致。
+
+### 4. 保存的内部索引行级完整，但各存在一个重复分子跨fit/early-stop
+
+- `preprocessing-readable.json` 两份的 `arrays.train_row_indices` 与 `arrays.internal_validation_row_indices`（均从4125/4710行开始）分别573/64行、无行索引重叠、覆盖0…636。
+- train共有三对同原始SMILES不同Y：零基182/184（Tiotidine）、460/477（Guanabenz）、605/606（Ketotifen）。对应CSV物理行184/186、462/479、607/608。
+- seed42：fit182、early-stop184；seed43：fit605、early-stop606。独立统计路线重新读取CSV及索引得出相同结果。
+- 直接推论：当前内部划分不能称“所有early-stop分子未见”；存在原始分子组重叠。不能由此断言官方valid标签泄漏、也不能量化它对score的影响。每份只有一个这种holdout分子，不能把全部差异归因于此。
+- 可准备的研究：保留全部637原行、原Y和官方分区，新增固定 train-only 分子组划分作对照；同时保留当前行级划分用于重现，分离split_seed与head_seed。不要对重复取均值或去重，group规则也不可根据valid结果逐次挑选。
+
+### 5. 官方valid评分是已完成且已核验的选择反馈，不是未触碰泛化证书
+
+- `scoring/scoring-identity.json:30–31` 明确每run本次一次调用，但之前host评分史未全审；`scoring/independent-controller-check.json:3–24` 记录Decimal50独立MAE复核及预测hash；`scoring/validation-report.md:8–10` 记录91/91身份与首次换行预检失败发生在metric之前。
+- 我们可以接受这两个包内固定MAE的已发布结果作为观察；本路线没有真值、没有重算MAE。不能说“官方valid禁调参”：公开快照R06及当前规则明确允许，隔离是本地角色控制。
+- 同任务、同原数据、同metric支持数值描述；宽度/LR/seed/internal split同时变化，不支持单因素归因。源码 `train_remote_v3.py:62–65,82–97` 显示同seed控制划分、初始化和shuffle；target/feature变换在各自内部fit573行拟合，MSE早停对象不同。
+- 交叉复核：统计路线独立读两份indices，holdout交集仅8/64；这一事实不是显著性估计。双方同意官方valid不是新的未调参数据，两个agent意见一致也不增加独立样本。
+
+### 6. 摘要中的 Adam 应更正为 AdamW
+
+- `comparison.md:3` 和bundle34行写Adam；两实际训练源码均调用 `torch.optim.AdamW(...)`（frozen75行、follow77行）。后续优化器搜索必须以AdamW为现有对照，不把默认Adam/AdamW混为同实现。
+- 这是摘要命名错误，有明确代码反证；未发现本身改变当前数值或使两run因优化器不同而不可比。新的配置生成必须验证其实际解析、参数组及记录，不仅改说明文档。
+
+## 必需证据覆盖与未覆盖
+
+manifest有392 payload条目；source-map440来源条目：published309、redacted55、referenced19、excluded57。source-inventory318条目只覆盖fresh follow及允许的环境元数据，不能叫两个run当前远端全盘inventory。数据和预测全行检查、规则/计划/验收全文已读；代码作为文本阅读，未执行。
+
+未公开/未读的证据按影响分类：
+
+1. **全局实验/失败总表、完整issue ledger、已否定假设和完整既往评分史**：manifest无独立同类文件，扫描公开JSON未发现issue_id/experiment_ledger/running_experiments结构；仅有两run材料、历史摘要F1和current-research-context。不能保证列尽全历史或继承其他未提供ID，不能宣称所有研究分支未试。请求主控提供脱敏全历史索引、既有issue_id映射、状态/假设/排除理由。当前用户声明无训练在途可以作为当前状态来源，不能假造已读全局队列。
+2. **官方完整API原文**：已读官方contract快照R01–R10和出处/API响应hash元数据；`materials/official/rules.json`/完整API响应不在公开payload。现行明确用户约束足以制定当前准备边界，若争议涉及条款逐字原文、最终深度模型资格或未知总分，需主控提供对应脱敏原文。不能拿旧聊天或新官网来冒充该历史原件。
+3. **原始strace/完整依赖代码镜像/外部权重bytes/排除的主控审计原件**：sources明示excluded或referenced；本轮只能基于公开完整科学源码、冻结状态JSON及历史验收摘要评价。它们限制独立全流程重验证，不自动推翻已记录两个run。
+4. **私有valid/test真值、逐行残差**：用户明确不允许，本轮不索取。需要错误切片时由主控在获准范围输出预先定义的聚合，而非交给准备agent标签/精确分数。
+
+## 问题清单衔接建议
+
+- 沿用 `F1`；真实复测不足，维持open/investigating。
+- 继承快照 `U01`（单位/生物解释未确认）、`U02`（冻结权重子项已获用户确认，其他外部拟合资产未清）、`U03`（test拟合官方细节未确认且本地排除）、`U04`（总分/AUPRC未明，不阻碍本次Caco2 MAE）、`U05`（官方复现容差未明）。不要简单整项U02已关闭。
+- 新增：训练摘要AdamW映射；内部重复分子组重叠/seed混杂；全历史ledger缺口；准备资产未验收（MiniMol/MoLFormer `idle_incomplete`）。由主控统一分配新ID，避免冒充旧ID。
+
+## 交叉核验表
+
+| 主张 | 首读证据 | 交叉证据 | 反例/不一致 | 收窄结论 |
+|---|---|---|---|---|
+| 冻结许可且无本轮执行权 | 当前规则/policy | 用户本轮prompt、来源元数据 | 旧T03/no-scoring文字仍存 | 区分历史范围、公开条款、用户确认、本地控制 |
+| 输入/预测身份正确 | CSV全行独立检查 | 两PLAN + 历史验收 | test BOM、ID不唯一 | 使用task/split/row_index及原字段；不去重 |
+| 内部group未隔离 | train CSV + 保存indices | 统计agent独立重算 | 行级indices确实disjoint | molecule-unseen不成立；不外推official leakage |
+| F1未关闭 | follow验收9–17行 | 后续训练验收、source-map原件处置 | audit-summary仍旧parent pending | 产物可描述，严格Follow失败，不能伪称重验rawtrace |
+| valid非独立终评 | scoring identity31行 | 统计路线独立审读 | 本次每run仅一次评分属实 | 本次一次不代表历史未见，不给显著性/终局泛化结论 |
+| 实际AdamW | 两源码优化器调用 | follow新增optimizer_config及源码diff | comparison称Adam | 更正文档对照名称，旧数值仍保留 |

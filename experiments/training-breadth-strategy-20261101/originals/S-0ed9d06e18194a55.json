@@ -1,0 +1,497 @@
+{
+  "schema_version": 1,
+  "status": "first_trial_artifact_roundtrip_accepted_transport_terminal_unverified",
+  "owner_thread_id": "private-role-298cc5edc25e",
+  "gateway_thread_id": "private-role-d3ccfb533c01",
+  "chat_target": {
+    "id": "private-role-162611f9ee94",
+    "title": "解读药物预测赛",
+    "kind": "chatgpt",
+    "project_id": null,
+    "file_roundtrip_verified": true,
+    "required_model": "Pro",
+    "Chat_terminal_verified": false
+  },
+  "training_thread_id": "private-role-78713649c4c9",
+  "retrieval_thread_id": "private-role-45108974a7af",
+  "opencode_monitor_thread_id": "private-role-718a07757988",
+  "local_exchange_proposed": "adhoc_jobs/admet_training/exchange",
+  "cloud_exchange_uri": "https://github.com/ZYDTR/admet-benchmark-data",
+  "message_envelope_required": [
+    "event_id",
+    "event_type",
+    "source_role",
+    "target_role",
+    "request_id",
+    "round_id",
+    "run_ids",
+    "attempt",
+    "sequence",
+    "source_turn_id",
+    "artifact_manifest_uri",
+    "artifact_manifest_sha256",
+    "observed_at",
+    "terminal_evidence",
+    "authorization_reference"
+  ],
+  "producer_events": {
+    "controller": [
+      "PREPARATION_REGISTERED",
+      "TRAINING_AUTHORIZED",
+      "RUN_ACCEPTED",
+      "REVIEW_CONSUMED"
+    ],
+    "training": [
+      "TRAINING_STARTED",
+      "TRAINING_TERMINAL",
+      "TRAINING_UNKNOWN"
+    ],
+    "retrieval": [
+      "ARTIFACTS_VERIFIED",
+      "ARTIFACTS_PARTIAL",
+      "SOURCE_CHANGED",
+      "SCORING_COMPLETED",
+      "SCORING_FAILED",
+      "PACKET_PUBLISHED"
+    ],
+    "gateway": [
+      "CHAT_SENT",
+      "CHAT_REPLY_RECEIVED",
+      "REVIEW_DELIVERED",
+      "GATEWAY_BLOCKED",
+      "CHAT_ARTIFACTS_RECOVERED",
+      "CHAT_TERMINAL_UNKNOWN"
+    ],
+    "opencode_monitor": [
+      "PREPARATION_ACCEPTED",
+      "PREPARATION_REJECTED",
+      "PREPARATION_UNKNOWN"
+    ]
+  },
+  "handoff_receipt_required": [
+    "event_id",
+    "consumer",
+    "accepted_at",
+    "resulting_state",
+    "delivery_message_id"
+  ],
+  "dispatch_policy": {
+    "delivery_semantics": "at_least_once_with_persisted_deduplication",
+    "single_active_chat_request_per_research_branch": true,
+    "unknown_send_reconcile_before_retry": true,
+    "idle_is_not_success": true,
+    "controller_is_only_training_dispatcher": true,
+    "terminal_unknown_keeps_request_branch_locked": false,
+    "unknown_send_requires_reconciliation": true,
+    "artifact_acceptance_can_release_distinct_new_evidence_batch_by_controller": true,
+    "accepted_artifact_request_terminal_unknown_is_not_unknown_send": true
+  },
+  "proposed_cadence": {
+    "normal_review_trigger": "registered_batch_complete_with_verified_evidence",
+    "early_review_trigger": "substantive_rule_data_pipeline_failure_or_decisive_counterevidence",
+    "illustrative_screen_task_configurations": [
+      20,
+      40
+    ],
+    "example_is_not_minimum_cap_or_authorization": true,
+    "confirmation": "shortlisted configurations with common seeds, registered by controller",
+    "new_evidence_required": true,
+    "existing_terra_interval_minutes": 10,
+    "chat_repair_attempts_max": 2,
+    "per_head_or_timer_alone_triggers_analysis": false
+  },
+  "campaign_budget_required_before_training_loop": [
+    "max_total_runs",
+    "max_gpu_hours",
+    "max_wall_seconds",
+    "gpu_peak_resource_budget",
+    "max_chat_rounds",
+    "evaluation_scope",
+    "max_private_validation_evaluations",
+    "stop_conditions"
+  ],
+  "review_contract": {
+    "status": [
+      "complete",
+      "needs_evidence",
+      "inconclusive"
+    ],
+    "required": [
+      "schema_version",
+      "request_id",
+      "round_id",
+      "manifest_sha256",
+      "status",
+      "read_receipt",
+      "findings",
+      "missing_evidence",
+      "not_assessed",
+      "comparison_groups",
+      "stop_reasons"
+    ],
+    "finding_required": [
+      "claim",
+      "run_ids",
+      "evidence_refs",
+      "counterevidence",
+      "uncertainty",
+      "decision_impact"
+    ],
+    "proposal_required": [
+      "proposal_id",
+      "priority",
+      "hypothesis",
+      "control_run_or_config",
+      "task",
+      "asset_versions",
+      "change_only",
+      "hold_fixed",
+      "split_id",
+      "seeds",
+      "metric",
+      "direction",
+      "minimum_effect_or_decision_rule",
+      "success_criterion",
+      "falsification_criterion",
+      "compute_budget",
+      "dependencies",
+      "within_current_scope",
+      "stage",
+      "exact_config",
+      "preparation_mode",
+      "reuse_assets",
+      "estimated_run_count",
+      "trigger",
+      "skip_or_stop_if",
+      "review_checkpoint"
+    ],
+    "code_execution_from_reply": false,
+    "raw_text_and_attachments_preserved": true,
+    "required_outputs": [
+      "analysis.md",
+      "issues.json",
+      "next_batch_guide.md",
+      "next_experiments.json",
+      "review.json",
+      "search_space.json"
+    ],
+    "issue_required": [
+      "issue_id",
+      "status",
+      "severity",
+      "category",
+      "statement",
+      "affected_run_ids",
+      "evidence_refs",
+      "hypothesis",
+      "counterevidence",
+      "impact",
+      "proposed_resolution",
+      "verification_criterion",
+      "related_proposal_ids"
+    ],
+    "guide_work_item_required": [
+      "work_item_id",
+      "issue_ids",
+      "goal",
+      "model_and_asset_versions",
+      "input_contract",
+      "output_contract",
+      "implementation_scope",
+      "frozen_components",
+      "preparation_steps",
+      "dependencies",
+      "acceptance_checks",
+      "priority",
+      "budget",
+      "blocked_fallback",
+      "preparation_mode"
+    ],
+    "broad_search_then_prioritize": true,
+    "recommendation_count_cap": null,
+    "cross_check_required": true,
+    "actual_subagents_requested": true,
+    "return_transport": {
+      "preferred": "six actual files plus delivery-manifest.json and audit.zip, compact final message",
+      "fallback": "full marked inline content only if actual files unavailable; no silent truncation",
+      "artifact_and_chat_terminal_states_separate": true,
+      "revision4_tested": false
+    },
+    "progressive_read_required": {
+      "layers": [
+        "root",
+        "context",
+        "history",
+        "current_batch",
+        "related_originals"
+      ],
+      "mandatory_read_mode": "original",
+      "checks": [
+        "applicable_rule_and_source",
+        "historical_refutation_chain",
+        "current_configuration_or_direct_numeric_check"
+      ],
+      "self_report_is_not_proof": true
+    }
+  },
+  "timing_required": [
+    "packet_build_seconds",
+    "publish_seconds",
+    "access_verification_seconds",
+    "chat_queue_and_generation_seconds",
+    "completion_detection_seconds",
+    "reply_download_seconds",
+    "response_validation_seconds",
+    "end_to_end_seconds",
+    "request_received_at",
+    "role_started_at",
+    "input_ready_at",
+    "artifact_ready_at",
+    "callback_sent_at",
+    "consumer_ack_at",
+    "thread_terminal_at",
+    "role_wall_seconds",
+    "active_turn_wall_seconds",
+    "dependency_wait_seconds",
+    "retry_and_rework_seconds",
+    "setup_vs_recurring_cost",
+    "attempt_identity"
+  ],
+  "authorization_notes": "2026-10-31 本轮现存两run取回/固定评分/公开发布/Pro实读/六原文件回收及主控科学验收完成；原Chat正文断流终态未验证。下一批仅保存建议，未训练/派发/新建定时。",
+  "known_unverified": [
+    "Original long reply final state and REVIEW_COMPLETE marker after stream disconnection",
+    "Revision4 compact-message+delivery-manifest return protocol has not been tested",
+    "Autonomous training-to-retrieval-to-Chat chaining",
+    "Duplicate-completion and automatic unknown-state recovery",
+    "Batch training/resource sharing"
+  ],
+  "revision": 14,
+  "role_assignments": {
+    "retrieval": [
+      "remote_read_only_retrieval",
+      "byte_and_identity_validation",
+      "local_valid_fixed_scoring",
+      "package_rules_data_results",
+      "publish_registered_user_authorized_destination"
+    ],
+    "gateway": [
+      "observe_registered_training",
+      "request_retrieval_scoring_publication",
+      "send_analysis_prompt_to_chat",
+      "verify_actual_chat_read",
+      "recover_full_issues_and_guidance",
+      "notify_controller"
+    ],
+    "controller": [
+      "independent_acceptance",
+      "persist_and_reconcile_issue_ledger",
+      "dispatch_preparation_guidance_to_opencode",
+      "register_terra_monitor",
+      "authorize_and_dispatch_training"
+    ]
+  },
+  "local_issue_ledger_proposed": "adhoc_jobs/admet_training/exchange/issues",
+  "cloud_publication_owner": "retrieval",
+  "publication_method_proposed": "Normal append-only immutable public commit, 393 files anonymously SHA-verified; scoped current packet accepted.",
+  "scoring": {
+    "executor_thread_id": "private-role-45108974a7af",
+    "local_only": true,
+    "fixed_scorer_required": true,
+    "exact_task_coverage_required": true,
+    "raw_labels_to_training_or_preparation": false,
+    "completed_for_current_hainan_runs": true,
+    "historical_full_suite_wrapper_not_directly_compatible_with_single_task": true
+  },
+  "gateway_title": "🔄Chat收发与分析交接",
+  "trial_entry": "../../exchange/trials/public-repo-20261031/AGENTS.md",
+  "measured_trial": {
+    "send_to_six_original_files_verified_seconds": 3887.165404333,
+    "actual_original_byte_transfer_seconds": null,
+    "ui_thinking_label_only": "36m31s",
+    "single_sample_no_latency_SLA": true,
+    "send_to_six_original_files_verified_seconds_scope": "send marker to gateway acceptance receipt, after content structure validation; includes handoff record preparation"
+  },
+  "research_quality_policy": {
+    "depth_and_breadth_encouraged": true,
+    "length_itself_is_not_a_defect": true,
+    "compact_transport_does_not_limit_full_files": true
+  },
+  "single_trigger_full_cycle_verified": false,
+  "one_trigger_audit": "one-trigger-audit.json",
+  "future_analysis_sessions": {
+    "status": "design_not_e2e_tested",
+    "new_analysis_chat_each_batch": true,
+    "long_lived_gateway_reused": true,
+    "analysis_chat_created_and_registered_by": "controller registers request and verifies supported native Pro creation/target identity separately; gateway sends only via native existing-target tool",
+    "same_request_recovery_keeps_original_chat": true,
+    "new_chat_does_not_bypass_unknown_request_lock": true,
+    "rely_on_implicit_prior_chat_history": false,
+    "fresh_chat_not_proof_of_product_memory_disabled": true,
+    "analysis_target_id_source": "per-round registered task; historical chat_target is first trial only"
+  },
+  "future_context_packet": {
+    "repository_count_required": 1,
+    "commit_pinned_entries": [
+      "base_context",
+      "history_snapshot",
+      "current_batch",
+      "delta_index"
+    ],
+    "history_contains": [
+      "all_experiments_and_failures_and_pending",
+      "input_asset_split_config_identities",
+      "hypotheses_and_counterevidence",
+      "issue_ledger_and_controller_dispositions",
+      "evaluation_feedback_usage",
+      "original_artifact_links"
+    ],
+    "immutable_originals": true,
+    "history_as_of_required": true,
+    "missing_vs_not_recorded_vs_not_computed_vs_new_experiment_required_distinguished": true,
+    "full_detail_access_preserved": true,
+    "published_layout_created": false
+  },
+  "validation_analysis_proposal": {
+    "status": "controller_selected_scoped_admission_pending_source_and_target_verification",
+    "recommended": "declared_valid_truth_and_aligned_predictions_available_to_dedicated_analysis_chat",
+    "current_active_mode": "per_cycle_declared_scope",
+    "raw_truth_permission_activated": false,
+    "analysis_access_is_not_publication_permission": true,
+    "fixed_host_primary_metric_authoritative": true,
+    "raw_labels_to_preparation_or_training": false,
+    "same_valid_reuse_is_model_selection_not_unseen_final_test": true,
+    "known_public_caco2_valid": {
+      "commit": "eaec280cf142839597fe75ce748cd2b9a8a897d4",
+      "path": "data_benchmark/caco2_wang/valid.csv",
+      "fields": [
+        "Drug_ID",
+        "Drug",
+        "Y"
+      ],
+      "rows": 91,
+      "sha256": "63328bf307b850a4a0986165d0800bae5aa737c41bd63f1026d16114d8560bb4",
+      "verification": "local already-published git object; metadata/hash only; no scoring or label-value output"
+    },
+    "controller_judgment": "Beneficial for dedicated analysis after source/row/split/scale checks; not justified merely by existing Y. Prefer internal validation for broad selection, registered batch-level official-valid diagnostics. No claim role separation prevents indirect overfitting."
+  },
+  "tooling_strategy": {
+    "status": "source_inventory_and_design_only",
+    "architecture": "versioned deterministic core + validated per-task configuration/adapters + agent judgment and unknown-error handling",
+    "fixed": [
+      "snapshot_inventory_and_transfer",
+      "identity_and_hash_checks",
+      "registered_metrics_and_diagnostics",
+      "history_and_packet_build",
+      "approved_publish_and_readback",
+      "artifact_structure_validation",
+      "durable_state_dedup_retry_timing"
+    ],
+    "agentic": [
+      "research_and_cross_check",
+      "experiment_and_diagnostic_design",
+      "new_adapter_development",
+      "scientific_acceptance",
+      "novel_failures",
+      "native_tool_capability_gaps_and_incomplete_reply_judgment"
+    ],
+    "trial_hardcoding_to_remove": [
+      "caco2_only",
+      "fixed_two_runs",
+      "393_files",
+      "trial_relative_paths",
+      "inline_only_reply_validation"
+    ],
+    "do_not_rerun_original_trial_scripts_as_generic": true,
+    "implementation_started": true,
+    "implemented_and_local_tested": [
+      "evidence_catalog_builder",
+      "claim_event_projection",
+      "history_preservation_and_hash_reference_checks"
+    ],
+    "remaining": "Generic retrieval/scoring/publish and automatic dispatch not extracted or end-to-end tested."
+  },
+  "catalog_skill": {
+    "path": "adhoc_jobs/admet_training/skills/admet-evidence-review/SKILL.md",
+    "version": "0.4.1",
+    "local_example": "exchange/catalog/README.md",
+    "history_link": "commit-pinned repository root README",
+    "current_link": "commit-pinned batch directory",
+    "claim_history": "append-only claim events with current projection and impact refs",
+    "history_coverage": "partial",
+    "local_tests": 14,
+    "fresh_chat_read_tested": false,
+    "published": false
+  },
+  "open_decisions": {
+    "needs_user_budget_when_expanding": [
+      "larger training/HPO total budget, elapsed budget and stop limits; 12-fit P01 remains a proposal"
+    ],
+    "controller_can_choose_without_reasking": [
+      "index layout",
+      "versioned scripts/adapters",
+      "new analysis chat per batch as requested",
+      "complete comparison group review cadence",
+      "history import and tool correctness fixes"
+    ],
+    "technical_unknowns_not_user_omissions": [
+      "exact full-suite official aggregate/units and unresolved asset admissibility",
+      "full fresh-chat and one-trigger loop behavior",
+      "complete historical validation-use ledger"
+    ],
+    "current_turn_scope": "User authorizes one bounded single-job full-cycle test; new task-specific contracts required."
+  },
+  "chat_transport": {
+    "required": "browser_create_and_conditional_first_formal_message_then_native_messages_browser_files",
+    "send_tool": "mcp__codex_app__send_message_to_thread",
+    "read_tool": "mcp__codex_app__read_thread",
+    "in_app_browser_allowed": true,
+    "ordinary_Pro_creation_native_tool_verified": false,
+    "model_override_for_ChatGPT_supported": false,
+    "current_create_thread_scope": [
+      "Codex project",
+      "Codex projectless",
+      "ChatGPT Work Cloud"
+    ],
+    "content_reference_is_not_full_reply": true,
+    "channel_change_does_not_authorize_resend": true,
+    "basis": "Latest human instruction 2026-10-31: native messages, internal Browser file download",
+    "browser_scope": [
+      "read existing registered Chat attachment links",
+      "normal file page download",
+      "bounded read-only recovery"
+    ],
+    "browser_message_send_allowed": "only_first_formal_message_if_no_addressable_server_id_before_send",
+    "browser_generation_retry_allowed": false,
+    "latest_actual_file_recovery": "existing request-002 ZIP/six originals recovered and independently checked; full new cycle not started",
+    "browser_creation_and_pro_selection_allowed": true
+  },
+  "handoff_consumption": {
+    "notification_receipt_is_not_consumption": true,
+    "concrete_disposition_required": true,
+    "notify_after_seconds": 300,
+    "attention_after_seconds": 600,
+    "maximum_controller_reminders_per_event": 1,
+    "new_automation_authorized": false,
+    "routine_repair_requires_registered_budget": true,
+    "checker": "adhoc_jobs/admet_training/scripts/check_handoff.py",
+    "multi_thread_behavior_retest": "pending"
+  },
+  "native_artifact_delivery": {
+    "pre_dispatch_transport_evidence_required": true,
+    "sandbox_link_is_not_recovered_file": true,
+    "fallback": "Authorized Browser normal download; otherwise complete inline files within registered message budget or report actual gap",
+    "manual_download_is_not_autonomous_cycle": true,
+    "new_format_behavior_verified": false
+  },
+  "prompt_contract": {
+    "owner_thread_id": "private-role-298cc5edc25e",
+    "template": "CHAT_PROMPT.md",
+    "template_revision": 7,
+    "contract": "prompt_contract.json",
+    "instructions": "PROMPT_CONTRACT.md",
+    "renderer": "../../skills/admet-evidence-review/scripts/render_chat_prompt.py",
+    "gateway_role": "fill sealed batch fields; use controller-authored scientific values verbatim; render and verify",
+    "binding_source": "controller dispatch: exact template/contract/values SHA256",
+    "template_delivery_is_analysis_dispatch": false
+  }
+}

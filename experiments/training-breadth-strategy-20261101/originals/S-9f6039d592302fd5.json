@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "request_id": "admet-progressive-index-pro-20261031-002",
+  "round_id": "progressive-index-e2e-20261031",
+  "manifest_sha256": "b8952a9375328c775e8fcae3b3adc5a35ca6025fcc9a48e5a055371e26f7250f",
+  "record_type": "factual summary of observed tool outcomes, not verbatim full tool transcript",
+  "events": [
+    {
+      "tool_channel": "container urllib",
+      "target": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/1c5592e98f3fff1c29369bd521f39e0cc044f3d3/experiments/progressive-index-e2e-20261031/manifest.json",
+      "result": "failure",
+      "observed_error": "URLError <urlopen error [Errno -3] Temporary failure in name resolution>",
+      "consequence": "raw-byte download unavailable through this route",
+      "alternate": "web.open successfully reads original text"
+    },
+    {
+      "tool_channel": "container.download",
+      "target": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/1c5592e98f3fff1c29369bd521f39e0cc044f3d3/experiments/progressive-index-e2e-20261031/manifest.json",
+      "result": "failure",
+      "observed_error": "ERROR: download failed",
+      "consequence": "no byte-level receipt fabricated"
+    },
+    {
+      "tool_channel": "curl explicit DNS resolution/direct connection",
+      "target_host": "raw.githubusercontent.com:443",
+      "result": "failure",
+      "observed_error": "curl: (7) Failed to connect to raw.githubusercontent.com port 443 after 1 ms: Could not connect to server",
+      "consequence": "do not generalize failure to web research channel"
+    },
+    {
+      "tool_channel": "web.open",
+      "target": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/1c5592e98f3fff1c29369bd521f39e0cc044f3d3/experiments/progressive-index-e2e-20261031/runs/hainan-index-cycle-20261031/artifacts/features-train.npz",
+      "result": "failure",
+      "observed_error": "(400) Unsupported content-type: application/octet-stream",
+      "consequence": "raw numerical array unread"
+    },
+    {
+      "tool_channel": "web.open",
+      "target": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/1c5592e98f3fff1c29369bd521f39e0cc044f3d3/experiments/progressive-index-e2e-20261031/runs/hainan-index-cycle-20261031/artifacts/preprocessing.npz",
+      "result": "failure",
+      "observed_error": "(400) Unsupported content-type: application/octet-stream",
+      "consequence": "raw preprocessing array unread"
+    },
+    {
+      "tool_channel": "web.open",
+      "target": "MoLFormer fixed revision raw config URL",
+      "result": "raw-route unsuccessful; fixed-revision blob original config readable",
+      "consequence": "config read, weights/model code not inferred"
+    },
+    {
+      "tool_channel": "independent subagent execution",
+      "result": "no spawning/delegation interface exposed among current callable tools",
+      "actual_subagent_count": 0,
+      "consequence": "no fabricated agent jobs or independent-reviewer claims"
+    },
+    {
+      "tool_channel": "container local Python standard library",
+      "result": "success",
+      "operations": [
+        "CSV parsing",
+        "SHA256 of reconstructed approved truth bytes",
+        "Decimal and fsum arithmetic",
+        "paired row sensitivity calculations",
+        "UTF-8 artifact generation",
+        "JSON/schema/reference checks",
+        "ZIP packaging"
+      ],
+      "prohibited_operations_performed": false
+    }
+  ],
+  "model_execution_count": 0,
+  "host_scoring_invocations": 0,
+  "disallowed_private_source_access_attempts": 0
+}

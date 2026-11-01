@@ -1,0 +1,70 @@
+# 依赖与资产清单（A：模型接入）
+
+精确到本会话实际安装并跑通 smoke 的版本。准备会话只做有界 CPU 自检；主 Codex 可在同一
+版本上跑 CPU 或单 GPU。
+
+## 1. Python 与核心依赖（已在独立 venv 验证）
+
+```
+python  3.11.2
+torch   2.6.0        # CPU wheel 已验证；GPU 机器装同版本 cu 轮子即可
+chemprop 2.1.2       # 冻结权重由 2.1.2 的 BondMessagePassing 读取，未按作者 README 的 >=2.2 放宽
+rdkit   2024.09.6    # pip 名 rdkit==2024.9.6
+numpy   1.26.4
+pandas  2.2.3        # 可选，本目录脚本只用标准库 csv，不用 pandas
+scikit-learn 1.6.1   # 可选，仅 A 目录外的评分会用到
+lightning 2.5.0.post0
+```
+
+安装示例（CPU）：
+
+```bash
+python3.11 -m venv .venv && . .venv/bin/activate
+pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cpu
+pip install chemprop==2.1.2 rdkit==2024.9.6 numpy==1.26.4 lightning==2.5.0.post0
+pip install pandas==2.2.3 scikit-learn==1.6.1    # 可选
+```
+
+GPU：把 torch 换成官方 cu 轮子（如 `torch==2.6.0 --index-url https://download.pytorch.org/whl/cu124`），
+其余不变。chemprop 2.1.2 会拉 lightning/torchmetrics 等传递依赖，版本以 pip 解析为准；上面列的是
+本会话实际装入的顶层版本。
+
+> 说明：作者 CheMeleon 仓库 README 写“chemprop>=2.2”，但 `chemeleon_fingerprint.py` 只用
+> `featurizers.SimpleMoleculeMolGraphFeaturizer` / `nn.BondMessagePassing` / `nn.MeanAggregation` /
+> `MPNN.fingerprint`，这些在 chemprop 2.1.2 中同名同义，本会话已在 2.1.2 实测加载权重并抽取 2048 维。
+> 若主 Codex 更信任 2.2.x，可升级；但需重跑一次 `selfcheck.py --with-torch` 与编码一致性自检。
+
+## 2. 冻结权重资产（已下载核对）
+
+| 项 | 值 |
+| --- | --- |
+| 名称 | `chemeleon_mp.pt`（CheMeleon Descriptor-based Foundation Model, message-passing 部分） |
+| 来源 | Zenodo record 15460715 → <https://zenodo.org/records/15460715/files/chemeleon_mp.pt> |
+| 直链 API | `https://zenodo.org/api/records/15460715/files/chemeleon_mp.pt/content` |
+| 字节数 | 34,859,448（本会话实测一致） |
+| MD5 | `6a80b54fdb7de37ef0374d302f01e8ce`（发布方 + 本会话实测一致） |
+| SHA256 | `c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651`（本会话首次计算） |
+| 许可 | MIT（Zenodo 元数据 `license.id=mit-license`；代码仓库 LICENSE 亦为 MIT） |
+| 来源代码 | `github.com/JacksonBurns/chemeleon` @ `b5e5bd88a7070c3f278e7e65e85b792617bf125c`，`chemeleon_fingerprint.py` |
+
+`encoder.py::verify_checkpoint` 每次加载都校验 size 与 MD5，不一致直接报错；已用篡改 1 字节
+与截断文件各测一次，均被拦截。
+
+下载建议（支持断点续传）：
+
+```bash
+mkdir -p output/model/assets
+curl -L -C - --retry 5 \
+  -o output/model/assets/chemeleon_mp.pt \
+  "https://zenodo.org/api/records/15460715/files/chemeleon_mp.pt/content"
+md5sum output/model/assets/chemeleon_mp.pt   # 期望 6a80b54fdb7de37ef0374d302f01e8ce
+```
+
+权重不进 git；`output/model/assets/` 已在 `.gitignore` 忽略（见目录说明）。
+
+## 3. 不需额外下载的东西
+
+- 编码器不使用 Mordred 描述符，也不调用 `CheMeleonFingerprint` 里的 `urlretrieve` 自动下载；
+  必须显式传 `--chemeleon`。
+- 不需要 TDC / Polaris / astartes / zarr / fastprop。作者 `models/features.py` 里的 Mordred/zarr
+  预训练管道与本方案无关。

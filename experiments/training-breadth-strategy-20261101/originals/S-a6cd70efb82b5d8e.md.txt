@@ -1,0 +1,9 @@
+# 当前阶段：试验与独立验收已完成，结果 FAIL
+
+本次指定 GPT-6.1 Sol/xhigh 执行会话 `private-role-78713649c4c9` 已终态。三次 CUDA 启动尝试全部 exit1，均未加载模型，0 次训练完成。准备阶段 joblib 曾在 /dev/shm 创建并删除32字节信号量，严格写入边界失败；GPU4 末次健康状态为 Recovery Action: Reset，不能据此推断故障时间或因果。
+
+主控已完成独立验收，见 acceptance/report.md 和 result.json。原件403文件冻结在 acceptance/originals，含完整143份远端取回文件及20份strace。消息API原有截断如实保留。主控另经原固定通道只读核验29个登记进程全部退出、无登记PID在GPU、输入和底座SHA不变，两枚已知信号量名字不存在。没有新增训练、GPU reset、赛事上传、私有标签评分或扫描他人项目。
+
+Skill在执行者终态及原件冻结后修订：增加GPU健康、首次依赖导入副作用和逐尝试独立证据要求；旧版见acceptance/originals/hainan-SKILL-before.md。两组离线测试各7项通过。PLAN和policy保持原件，历史PLAN因Skill摘要过期被准入器拒绝，不能重写它来伪造通过；下一项获准run需登记新计划。修订本身没有新的真实训练验收。共享/并行及运行时冻结检查未验证。
+
+监测心跳skill在报告与状态落盘后删除，回执见acceptance/automation-stop.json。不重启本次已关闭作业、不续写执行者、不自动新建训练会话。后续新请求从项目AGENTS.md和当前海南Skill进入。官方截止变更及规则来源仍见evidence与docs/source-map.md。

@@ -1,0 +1,47 @@
+# ADMET Pro 研究评审
+request_id: admet-monitor-mae-pro-20261101-003  
+round_id: monitor-mae-e2e-20261101  
+commit: dda94bf7f18b75683d814bd26f921fc715ce88c2  
+input manifest SHA256: b757b3ecd53d9451c7226907783fc6bc61971ee36a2dbbb8840712892ce51afe  
+status: **needs_evidence**（核心科学材料已审；66项reading-contract未全部逐项original-read）。本轮未训练、未HPO、未安装、未重新评分、未赛事提交。
+
+## 核心结论
+新run `hainan-mae-monitor-20261101`科学产物可信，主控已独立接受用于固定评分：冻结CheMeleon 8参数+3buffer前后摘要相等；optimizer仅含4个新头参数；新头改变；train内raw-SMILES group split 573/64；15 epochs/75 steps；raw-scale MAE选epoch7；blind valid/test共273行预测。主控Decimal50独立复算91行valid MAE。
+
+新MAE 0.40302117308791197，prior MSE-monitor 0.42147216141758237，差-0.018450988329670404，相对改善4.377747813191792%。这是观测差值，非monitor单因素因果效应：feature payload hash不同，train/valid/test分别474274/73957/139877个float32值不同；最大绝对差2.384185791015625e-7（valid最大2.086162567138672e-7），RMS约9.3e-9，均无差值>1e-6。证明数值极近，不证明逐位相同，也不证明非线性/优化/早停不会放大微差。单pair无seed方差。valid已参与模型选择反馈，不是未触碰终评。
+
+**首选下一步：**同一份逐位固定的CheMeleon特征缓存、同一split、共同seeds，成对比较raw-MAE vs standardized-MSE选轮；当前runner每次重算embedding，没有已验收外部cache读取接口，需先准备cache adapter。之后筛head宽度/LR。
+
+## 规则、数据边界
+`context/current/policy.json` L6-L18：冻结外部预训练权重的依据是用户向组织者确认并本地重申，不声称公开规则逐字；需requires_grad=false、eval、no_grad、optimizer排除encoder、参数+buffer前后hash相同、checkpoint不变、新头改变。L20-L47：只用train.Y学习；valid可调参；执行侧valid/test仅Drug_ID/Drug；固定评分由指定取回角色执行；Pro真值访问按scope。
+`context/current/docs/source-map.md.txt` L5-L18区分官方条款、用户确认和本地控制；L22-L25记录新决定。`context/four-decisions.json` L4-L17：Q1 mini可在任务私有目录准备依赖/已批准资产和轻量不更新参数检查；Q2仅任务/分组汇总与技术诊断；Q3 train.Y选模、valid评分、train+valid另决；Q4恢复由主控登记并先对账。
+`context/current/evaluation-scope.json` L12-L40：Caco2 official_valid 91行，SHA `63328bf307b850a4a0986165d0800bae5aa737c41bd63f1026d16114d8560bb4`，按row_index+Drug_ID+Drug对齐、不去重、不改Y尺度。`context/tasks-metric.md` L0-L2：原numeric Y MAE，物理单位未确认，test182行排除。官方规则原件`evidence/official-contract-20261029.json`本轮404，未独立读完整官方条款。
+
+## 实际代码和冻结
+`source/config.json` L1-L47：encoder SHA `c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651`；MLP hidden256/dropout0.1/AdamW/lr0.0005/wd0.0001/batch128/max50/patience8；raw_smiles_group_shuffle seed43/fraction0.1；raw-MAE monitor；train/valid/test 637/91/182。
+`source/train_remote_v4.py` L124-L139输入hash与split；L142-L177冻结断言、CUDA/no_grad/eval hook、特征identity；L180-L190特征/Y标准化仅fit rows拟合，非有限特征置0，sd<1e-8置1，不clip；L191-L218 optimizer只含head；L228-L230及L261训练loss仍为标准化Y的MSE；L241-L247及L274-L294每epoch算原尺度stop MAE/MSE；L280-L301 monitor驱动best/min_delta/patience；L303-L353 best/last/optimizer/RNG roundtrip；L354-L371 best head推理。
+`training_science.py` L301-L360 raw Drug分组、独立Random shuffle、无交叉全行覆盖；L418-L455原尺度MAE monitor；L457-L492验证history。
+`training-evidence.json` L490-L497：75非零梯度更新、15 epochs、raw-MAE、min_delta1e-7、best epoch7。epoch1/2/3 stop MAE约0.48034/0.43618/0.41548；epoch7 0.38656；epoch8 0.40638，之后未优于epoch7。epoch7=35 steps；patience8令训练至epoch15；每轮5 steps=75。由history+源码复核，不是从valid分数反推。
+`encoder-before.json`和`encoder-after.json` aggregate SHA相同`3dcc8242cc8b63aa1813cf06cb686ae09056e725a415bf244e7aa32c26cc9c74`；主控报告8参数+3buffer不变；optimizer4/head4/encoder8、optimizer仅head、交集0、encoder requires_grad0/eval/no gradients、checkpoint hash不变、4个head tensor改变。证明本run冻结路径强，不证明全机隔离或未来run。
+
+## Prior对照与反证
+`delta.json` L1-L31、`monitor-comparison.json` L1-L28：同task、输入hash、split和row indices、head config、initial head storage；prior standardized-MSE 26epoch/130step/best18；current raw-MAE 15epoch/75step/best7。`feature-comparison.json` L1-L50：train 637x2048有474274值不同、max2.384e-7、RMS9.325e-9；valid 91x2048有73957不同、max2.086e-7、RMS9.432e-9；test 182x2048有139877不同、max2.384e-7、RMS9.672e-9；无差值>1e-6/1e-5。数值极近成立，byte-identical不成立；backend/hardware/precision来源未确认。monitor-only是设计意图，不是因果隔离。
+历史`claims/events.jsonl`：CE-FREEZE-01提出wrapper总hash差异代表encoder更新；CE-FREEZE-02 supersedes并窄范围refute：跨run仅4个随机`predictor.ffn`张量不同；每run encoder内部稳定；Chemprop fingerprint调用message passing/aggregation/batch norm及可选descriptor transform，不调用predictor。prior `tensors.json` L2-L13、`call-path.json` L3-L14支持。旧`disposition.json` URL 404，未读原件；AR001-16只在窄范围resolved。C-SCALE仍为CE-SCALE-01 proposed；历史极端z约871.665/1637.415只是实验理由，不是根因。
+
+## 评分和worker故障
+`aggregate-scores.json` L1-L31：n91，MAE0.40302117308791197，RMSE0.557926790377507，signed mean error -0.0043224935274724695，median AE0.294588561，p90 0.842053394，p95 1.317531606；AE bins <0.25=43、0.25–<0.5=23、0.5–<1=16、>=1=9。official aggregate未知，final generalization false。`main-scoring-acceptance.json` L11-L31 Decimal50 MAE 0.403021173087911978...，差0.018450988329670391978...，相对4.377747813191792...%；controller未重跑评分器。只验证算术/身份，不验证因果；prior本周期未重评，无paired bootstrap/seed uncertainty。
+`adapter-complete.json` L5-L16 worker PID1297236、science returncode0、completed；`status.json` L1-L16 supervisor125、success false、child0。main acceptance report L8-L10：fault-time stat/status未保存，根因未知，不能称Z态竞态已证。现有产物不因此失效；未来可靠性受影响。未来runner需保存`/proc/<pid>/stat`、`status`、start ticks、wait status、异常/时间戳并核对worker/supervisor回执、传播业务退出码。当前run不得重启/清锁。
+
+## 交叉核验表
+| 主张 | 首审 | 独立复核 | 反例/混杂 | 结论 |
+|---|---|---|---|---|
+| science完成 | training evidence/worker | main acceptance | supervisor125 | science接受，supervisor未全通过 |
+| encoder冻结 | before/after | optimizer/hook/main | 不覆盖全机 | 本run证据强 |
+| raw MAE选epoch7 | source/history | min_delta+15x5复算 | 无多seed | 实现正确 |
+| valid改善 | 两次score | Decimal50 | prior未重评、feature不同 | 观测改善 |
+| monitor致因 | delta | feature diff | 非逐位相同 | 未证明 |
+| C-SCALE根因 | 极端z | scaler代码 | 无因果实验 | 假设 |
+| supervisor125使模型无效 | status125 | worker0/main | 根因未知 | 不影响已验产物，影响可靠性 |
+
+排序：①固定共享cache+monitor pair；②head width/LR；③scaling/clipping独立干预；④AdamW wd/dropout分别试；⑤multi-seed/split sensitivity；⑥pooling/representation；⑦其他底座；⑧ensemble。MiniMol/MoLFormer/GLM/DeepSeek/Qwen历史状态idle/incomplete或覆盖不全，不能假定已准备。其余22任务缺任务合同/标签/split/指标/资产状态，不外推Caco2。
+建议主控登记`CE-MONITOR-01`（occurred_at=null，status observed_noncausal）：原命题“MAE下降完全由monitor造成”；支持同split/head/输入hash；反证feature hash不同且非逐位相同；仅适用这两个Caco2 run；结论不支持单因素归因；关联`P-MONITOR-PAIR`。这是建议，不是已写账本。

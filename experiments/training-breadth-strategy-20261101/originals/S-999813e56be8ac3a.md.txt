@@ -1,0 +1,38 @@
+# 药物预测赛：调研包接收与阅读入口
+
+2026-10-30，从 ChatGPT 对话「解读药物预测赛」的最近五轮接续。已下载新版完整包，并核验解压后的 118 个文件与压缩包逐字节一致。
+
+## 文件入口
+
+- [原始压缩包](admet-agent-harness-research-20261030.tar.gz)：233,077 字节；SHA256 `225e90d028144ceb5d1775b4330404ae5bfd4bb2c0ffd9f5e57e64bcd69192d9`。
+- [V2 调研纲领与判断规范](original/admet-agent-harness/docs/research/2026-10-30/admet-research-guide-v2.md)：主交付，接手 Agent 首读。
+- [调研结论与实验建议](original/admet-agent-harness/docs/research/2026-10-30/research-report.md)：先试什么、为何、最低成本对照与停止条件。
+- [候选模型证据卡](original/admet-agent-harness/docs/research/2026-10-30/candidate-evidence.md)：确切资产、版本、许可证据、限制和优先级。
+- [数据画像](original/admet-agent-harness/docs/research/2026-10-30/data-profile.md)、[来源索引](original/admet-agent-harness/docs/research/2026-10-30/source-index.md)、[V1→V2 修订与验证](original/admet-agent-harness/docs/research/2026-10-30/revision-and-validation.md)。
+- [最近五轮会话原文](recent-context.md)、[原始结构化会话](source-turns.json)、[下载与文件核验回执](receipt.json)。
+
+## 最近几轮的意思
+
+用户先向赛方确认「外部预训练权重可以使用，但必须冻结」，随后把研究重点转向固定分子编码器和新训练的预测头。最终要求先形成 V1 研究纲领，按纲领进行实际调研与数据审计，再把研究和独立审查发现写入 V2，交给其他 Agent 接续。
+
+因此，包中有两类材料：V2 规定研究判断与证据标准；候选卡、数据画像和报告保存本轮具体发现。它不是已训练好的模型交付，也不是宣告某一底座胜出的成绩单。压缩包没有模型权重。
+
+| 位置 | 候选 | 当前意义 |
+| --- | --- | --- |
+| 首轮之一 | MiniMol + 新训练预测头 | 原方法直接采用固定表示后训练 MLP，适合检验冻结迁移；资产加载、权重许可范围和输入覆盖仍需实际接入核验 |
+| 首轮之二 | CheMeleon + 新训练预测头 | Chemprop D-MPNN 预训练路线，已有固定特征入口；公开微调主表不能当成全程冻结成绩 |
+| 第三个或替补 | MoLFormer-XL-both-10pct + 新预测头 | 提供序列表征对照；必须对应这个公开资产，不能继承 full-XL 微调成绩 |
+| 必要对照 | Morgan/RDKit 特征 + 监督模型；从零训练的小 D-MPNN | 判断预训练表示是否确有增量 |
+| 后续条件分支 | Uni-Mol/Uni-Mol2、CheMeleon + TabPFN 2.6、KPGT、SMI-TED、MolE | 有具体新增证据、预算或实际互补性时再开启 |
+
+V2 的重要判断是：验证划分的化学覆盖、重复测量、跨任务标签角色和有限调参预算，直接影响选模可信度。广泛搜集模型名单已经可以停止，下一步有价值的信息来自少量候选在同一数据与评价约定下的实际实验。
+
+冻结编码器大意是：SMILES → 固定分子向量 → 用本赛训练标签训练新的预测头。用户对冻结预训练的确认，不等于另行确认外部教师生成伪标签、查询外部性质或加入外部样本。
+
+## 来源与完成边界
+
+- 来源对话 ID：`private-role-162611f9ee94`；交付回复 Turn ID：`private-role-955278841659`。
+- [ChatGPT Library 原附件](<PRIVATE_ANALYSIS_REFERENCE>)。
+- 本次直接完成了下载、路径安全检查、文件一致性核验，以及 V2、候选卡、主要报告和修订记录的阅读。包内作者声称的历史审计/冷启动验证未由本轮重新执行。
+- 解压目录是接收原件，未覆盖正在使用的 `adhoc_jobs/admet_agent_harness/`。未执行包内脚本、安装依赖、下载模型权重或开展训练。
+- Downloads 中 10 月 29 日的同名旧包 SHA256 为 `d7afff3a2b6751a310a33a622aea4c7d18c97dc384025905791298b6436cadfa`，不要与本次新版混用。

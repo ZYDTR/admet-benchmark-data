@@ -1,0 +1,28 @@
+# GLM 5.3 提高预算后的原会话重跑
+
+## 已完成，禁止再次重跑或冻结
+
+2026-10-30 主控独立验收完成，报告见 `acceptance/report.md`。本轮原件在 `originals/`，195输入摘要一致。两路正常结束交付13/17份非pyc文件；数据入口和全量合成导出通过，模型checkpoint安全加载与缓存验证有已复现缺陷，两路有临时写入越界。本轮未训练、未读私有标签、未上传。`glm` 心跳已通过应用工具删除；另一个 `deepseek-skill` 实验仍独立跟进，不因本轮结束而删除。
+
+用户再次纠正根目录要求后，两条原会话已通过正式 move-session 迁至 `<PRIVATE_RUNTIME_PATH> 5.3 重跑 A：模型准备（不训练）”和“GLM 5.3 重跑 B：数据评分准备（不训练）”，桌面根列表已实见。此前将“重跑原会话”视为沿用错误子目录的例外是主控错误；下文保留历史事实，不代表当前目录。证据见 `contexts/infrastructure/mac_mini_ops_20261030_glm_root_visibility/`。
+
+## 启动时历史记录
+
+2026-10-30 19:57 北京时间已启动。用户明确要求 GLM 5.3 context=500000、output=100000、压缩点=400000，并重跑原来的两条 GLM 会话；新授权覆盖此前“不要续写”的旧阶段限制，仅适用于以下两条。正式基线训练和私有评分已经完成，不重复训练。
+
+- 模型准备：`<PRIVATE_SESSION_OBJECT>`，新 user 消息 `<PRIVATE_SESSION_OBJECT>`。
+- 数据评分准备：`<PRIVATE_SESSION_OBJECT>`，新 user 消息 `<PRIVATE_SESSION_OBJECT>`。
+- directory 均为 `<PRIVATE_RUNTIME_PATH>
+- 两份 `dispatch-*.json` 已有 HTTP 204 收据，不能重复派发。`launch-check.json` 已看到两条 GLM 5.3 实际生成、均 busy；数据路已有完成的工具调用。按新 user 消息切分本轮统计。
+
+沿用用户要求：两路自行跑完，中间不发提示、不修代码、不重试或重发；运行中状态无实质变化保持安静。通过既有 `dispatch.py` 的 API 函数只读检查，绝不执行其 main。不要操作 `<PRIVATE_RUNTIME_PATH> 中的其他工作。
+
+全部终态后，在本轮新目录 `originals/` 保存完整消息及 mini 本轮 `output/model`、`output/data-eval` 原始文件与 SHA256 清单。不能覆盖上轮 `comparison-originals/`。主 Codex 亲自检查代码、轻量合成验收和边界遵守，报告是否交付、缺陷和相对前轮改善；不启动准备代码的训练，不给准备会话任何私有标签或精确成绩，不上传赛事。完成后更新本目录状态及总 CONTINUE.md，通知用户并删除本轮跟进心跳，保留记录。
+
+本轮是相同原会话的继续执行：原历史保留，新增重跑说明并重申准备边界，预算增大，项目资产已包含主 Codex 后来取得的权重。不是与 DeepSeek 完全相同初始条件的新盲测。原 prompt、本轮 prompt、此前消息快照均已保存。对比时保留这些差异，不能推成普遍模型排名。
+
+配置依据见 `contexts/infrastructure/mac_mini_ops_20261030_glm_500k_100k/`。持久模型配置与当前根目录/任务目录实例均已核验。该版有 32000 内部默认输出上限，用模型 `options.max_tokens=100000` 作为兼容 SDK 的显式请求参数覆盖；`limit.context=500000`、`limit.input=500000`、`limit.output=100000`，`compaction.auto=true`、`compaction.reserved=100000`，同版公式实际阈值为 400000。未全局 dispose、未重启容器，另一项目原有 busy 会话仍在运行。
+
+限制：未实际用到 400000 token，未捕获外发原始 HTTP 请求体；阈值来自同版源码和当前有效配置核验。100000 是推理加正文的单次生成上限，不是每轮必用数量。不要再启动额外配置探针会话。
+
+本轮跟进心跳 ID 为 `glm`，每5分钟有界只读检查；原 `admet` 已删除。本轮完成验收后删除 `glm`。

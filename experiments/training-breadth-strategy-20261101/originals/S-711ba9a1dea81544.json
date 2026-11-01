@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-30",
+  "fork_turns": "none",
+  "scope": "These are task summaries, not fabricated verbatim tool logs. Prompts supplied task and entry without expected answer or intended route. Only named test outputs were authorized writes.",
+  "tasks": [
+    {
+      "id": "choice",
+      "agent": "cold_research_choice",
+      "entry": "admet-agent-harness/AGENTS.md",
+      "task": "队友说CheMeleon论文成绩很好，准备统一预测22项任务并集中全部预算；根据现有资料给选型决定、下一轮安排、改变决定的证据。",
+      "constraints": [
+        "只读",
+        "离线不联网",
+        "不运行模型或训练",
+        "不改项目",
+        "不读validation或修订测试报告"
+      ],
+      "output": "cold-choice.md"
+    },
+    {
+      "id": "data",
+      "agent": "cold_research_data",
+      "entry": "admet-agent-harness/AGENTS.md",
+      "task": "团队想合并22任务为分子表、平均重复、统一标准化、共享网络，用现有valid选优；审查计划并给研究设计与未满足条件。",
+      "constraints": [
+        "只读",
+        "离线不联网",
+        "不训练",
+        "不改项目",
+        "不读validation或修订测试报告"
+      ],
+      "output": "cold-data.md"
+    },
+    {
+      "id": "asset",
+      "agent": "cold_research_asset",
+      "entry": "admet-agent-harness/AGENTS.md",
+      "task": "CheMeleon权重页只显示License标题，队友担心不能用且要重新问一般预训练许可；用现有资料答复证据与完成程度。",
+      "constraints": [
+        "只读",
+        "离线不联网",
+        "不训练",
+        "不改项目",
+        "不读validation或修订测试报告"
+      ],
+      "output": "cold-asset.md"
+    },
+    {
+      "id": "asset-portable",
+      "agent": "cold_research_asset_portable",
+      "entry": "admet-agent-harness/AGENTS.md",
+      "task": "仅查CheMeleon权重能否用、确切许可证据、赛方冻结规则以及未做完事项。",
+      "constraints": [
+        "只读",
+        "离线不联网",
+        "不运行模型",
+        "不改项目",
+        "不读validation或修订测试报告",
+        "只能在项目目录内读文件"
+      ],
+      "output": "cold-asset-portable.md"
+    }
+  ]
+}
