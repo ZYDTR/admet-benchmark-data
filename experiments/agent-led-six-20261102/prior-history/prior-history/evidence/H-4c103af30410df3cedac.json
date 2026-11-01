@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "cycle_id": "contract-follow-e2e-20261101",
+  "state": "resource_resume_006_terminal_main_review",
+  "created_at": "2026-11-01T08:50:04.502622+00:00",
+  "authorization": "control/authorization.json",
+  "roles": {
+    "controller": {
+      "name": "脑-兴智杯",
+      "thread_id": "private-role-298cc5edc25e",
+      "execution_model": "current main",
+      "responsibility": "任务/上下文/验收/继续决策"
+    },
+    "preparation_monitor": {
+      "name": "👁️OpenCode的准备",
+      "thread_id": "private-role-718a07757988",
+      "execution_model": "gpt-6.1-terra",
+      "responsibility": "只监控主控已派发的准确准备请求，验收后回主控；队列空暂停"
+    },
+    "trainer": {
+      "name": "海南训练执行",
+      "thread_id": "private-role-78713649c4c9",
+      "execution_model": "gpt-6.1-sol/xhigh",
+      "responsibility": "获准任务的部署、真实学习和自有作业监督"
+    },
+    "resource_observer": {
+      "name": "👁️海南算力观察",
+      "thread_id": "private-role-30ee14458d35",
+      "execution_model": "gpt-6.1-sol/xhigh",
+      "responsibility": "每10分钟只读记录；资源变化通知已登记等待训练"
+    },
+    "retriever": {
+      "name": "海南训练产物取回与测速",
+      "thread_id": "private-role-45108974a7af",
+      "execution_model": "gpt-6.1-sol/xhigh",
+      "responsibility": "取回、宿主固定评分、候选打包及获准发布"
+    },
+    "gateway": {
+      "name": "🔄Chat收发与分析交接",
+      "thread_id": "private-role-d3ccfb533c01",
+      "execution_model": "existing assigned model",
+      "responsibility": "仅向登记Pro发送封口提示、取回、核验运输并回主控"
+    }
+  },
+  "run_ids": [
+    "hainan-paired-mse-s44-20261101",
+    "hainan-paired-mae-s44-20261101",
+    "hainan-paired-mse-s45-20261101",
+    "hainan-paired-mae-s45-20261101",
+    "hainan-paired-mse-s46-20261101",
+    "hainan-paired-mae-s46-20261101"
+  ],
+  "budget": {
+    "new_training_runs": 6,
+    "max_concurrent_training_jobs_for_this_trial": 1,
+    "training_seconds_per_run": 900,
+    "total_gpu_execution_seconds": 5400,
+    "epochs_per_run_max": 50,
+    "patience": 8,
+    "runtime_preparation_seconds_max": 3600,
+    "overall_deadline_utc": "2026-11-01T14:50:04.502622+00:00",
+    "new_pro_research_requests": 1,
+    "bounded_same_request_artifact_or_schema_repair_messages": 2,
+    "new_private_valid_batch_evaluations": 1,
+    "preparation_model_sessions": 1,
+    "preparation_runtime_seconds_max": 2400,
+    "dependency_download_gib_max": 2
+  },
+  "scientific_scope": "CheMeleon frozen; Caco2; MLP256/dropout0.1/lr0.0005/AdamW wd0.0001/batch128; fixed group split seed43; model seeds44/45/46; standardized-MSE vs raw-MAE selection, MSE learning loss unchanged",
+  "no_new_controller_heartbeat": true,
+  "source_callback_owner": "private-role-298cc5edc25e",
+  "publication_repository": "https://github.com/ZYDTR/admet-benchmark-data",
+  "publication_prefix": "experiments/contract-follow-e2e-20261101",
+  "training_gate": "preparation and local runtime acceptance before any remote write/start",
+  "stop_after": "all six completed or explicitly failed, fixed score/publish, fresh Pro output recovered and independently accepted, issues and next executable guide archived",
+  "recovery": "known recoverable causes only; controller records bounds within batch budget; unknown launch reconciled first; completed learning not rerun",
+  "updated_at": "2026-11-01T12:35:57.500502+00:00",
+  "current_status": "status.json",
+  "transport_budget_revision": "training/recovery-01/TRANSPORT_BUDGET_REVISION.json",
+  "next_owner": [
+    "main_independent_review",
+    "original_trainer_final_evidence_collection"
+  ],
+  "resource_budget_decision": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/training/recovery-01/setup-continuation-02/BUDGET_REVISION.json",
+  "recovery_task": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/training/recovery-01/setup-continuation-02/EXECUTE_TASK.json",
+  "training_request_id": "admet-contract-follow-resource-resume-20261101-006",
+  "core_recovery_task": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/training/recovery-02/LOCAL_TASK.json",
+  "new_training_started": null,
+  "resource_resume_task": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/training/recovery-03/EXECUTE_TASK.json",
+  "remaining_execution_seconds": 5348.207345024231,
+  "separate_strategy_consultation": {
+    "state": "send_unknown_bounded_recovery",
+    "snapshot": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/training-breadth-strategy-20261101/asof-seal-001/manifest.json",
+    "blocks_training": false
+  },
+  "training_native_turn_id": "private-role-6769da7e0b0f",
+  "resource_resume_dispatch": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/training/recovery-03/dispatch.json",
+  "learning_attempt_registrations": 1,
+  "optimizer_steps": null,
+  "completed_new_runs": 0,
+  "remaining_new_runs_not_started": 5,
+  "failure_intake": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/training/recovery-03/main-006-review/INTAKE.json"
+}

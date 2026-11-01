@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "admet-agent-harness"
+version = "0.1.0"
+description = "Progressive context and reproducible engineering for ADMET competition 159"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+admet-harness = "admet_harness.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+admet_harness = ["py.typed"]

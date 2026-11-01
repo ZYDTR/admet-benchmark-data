@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "command": "run_synthetic_demo",
+  "workdir": "/tmp/admet_eval_demo_3eSD",
+  "fixture": {
+    "tasks": [
+      "demo_auroc",
+      "demo_auprc",
+      "demo_mae",
+      "demo_spearman"
+    ],
+    "rows_per_task": {
+      "demo_auroc": 12,
+      "demo_auprc": 12,
+      "demo_mae": 9,
+      "demo_spearman": 9
+    }
+  },
+  "steps": [
+    {
+      "step": "check-predictions",
+      "command": "check-predictions --pred /tmp/admet_eval_demo_3eSD/preds.csv --data-root /tmp/admet_eval_demo_3eSD --report /tmp/admet_eval_demo_3eSD/check_report.json",
+      "exit_code": 0,
+      "stdout_tail": "coverage[test] tasks=4 rows_expected=42 rows_present=42 missing=0 extra=0 complete=True\ncoverage[valid] tasks=4 rows_expected=42 rows_present=42 missing=0 extra=0 complete=True\nRESULT: PASS\nreport written: /tmp/admet_eval_demo_3eSD/check_report.json",
+      "stderr_tail": ""
+    },
+    {
+      "step": "score",
+      "command": "score --pred /tmp/admet_eval_demo_3eSD/preds.csv --split valid --labels /tmp/admet_eval_demo_3eSD/labels --data-root /tmp/admet_eval_demo_3eSD --template /tmp/admet_eval_demo_3eSD/data/official/submission_template.csv --report /tmp/admet_eval_demo_3eSD/score_report.json",
+      "exit_code": 0,
+      "stdout_tail": "  local_unofficial_macro_mean[MAE] = 0.100000 (over 1 scored tasks)\n  local_unofficial_macro_mean[Spearman] = 1.000000 (over 1 scored tasks)\n  local_unofficial_macro_mean[all] = 0.775000 (over 4 scored tasks)\nNOTE: values use LOCAL metric definitions; the official AUPRC convention and total-score aggregation are unconfirmed, so no official total is reported.\nRESULT: PASS\nreport written: /tmp/admet_eval_demo_3eSD/score_report.json",
+      "stderr_tail": ""
+    },
+    {
+      "step": "export",
+      "command": "export --pred /tmp/admet_eval_demo_3eSD/preds.csv --template /tmp/admet_eval_demo_3eSD/data/official/submission_template.csv --output /tmp/admet_eval_demo_3eSD/submission.csv --data-root /tmp/admet_eval_demo_3eSD --allow-unregistered-template --report /tmp/admet_eval_demo_3eSD/export_report.json",
+      "exit_code": 0,
+      "stdout_tail": "rows with y_pred written: 42 (template data rows: 42)\noutput sha256: 5701cd5984edbdbe7eef54ea4d4a258756d10525fc4361cbf96aa47f41adc224\nmapping: verified: for every task, template sample_idx equals test.csv row_index (0..n-1) in file order and drug_id/smiles match row-by-row\ninternal validation: pass (13 items, warnings: 0)\nRESULT: PASS\nreport written: /tmp/admet_eval_demo_3eSD/export_report.json",
+      "stderr_tail": ""
+    },
+    {
+      "step": "validate-submission",
+      "command": "validate-submission --submission /tmp/admet_eval_demo_3eSD/submission.csv --template /tmp/admet_eval_demo_3eSD/data/official/submission_template.csv --allow-unregistered-template --report /tmp/admet_eval_demo_3eSD/validate_report.json",
+      "exit_code": 0,
+      "stdout_tail": "PASS submission.y_pred_finite_non_empty: problems: none\nPASS submission.no_duplicate_task_sample_idx: duplicates: none\nPASS submission.row_order_and_keys_match_template: row order and (task,sample_idx) sequence identical to template\nWARN: template sha256 6fb4c34249d55d4a81fcbaa97c2ff9e43e97fa41b0a4c03a9d790b99fb8efb6a is not the registered official template\nRESULT: PASS\nreport written: /tmp/admet_eval_demo_3eSD/validate_report.json",
+      "stderr_tail": ""
+    }
+  ],
+  "overall": "pass"
+}

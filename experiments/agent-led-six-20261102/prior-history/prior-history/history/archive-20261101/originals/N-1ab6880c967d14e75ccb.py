@@ -1,0 +1,148 @@
+"""Actual OS wait, bounded uncertain-state recovery and exact-identity cleanup."""
+import json
+import os
+import signal
+import subprocess
+import time
+import traceback
+from adapter_common import generic, process_identity, write
+from completion import verify_receipt
+from process_state import IdentityMismatch, ObservationUnknown, require_exited_identity, signal_exact
+
+
+def stop_own(child, identities):
+    signals = []
+    for identity in reversed(list(identities.values())):
+        if identity['pid'] == child.pid and child.poll() is not None:
+            continue
+        signals.append(signal_exact(identity, signal.SIGTERM, direct_child=child))
+    try:
+        child.wait(timeout=1)
+    except subprocess.TimeoutExpired:
+        for identity in reversed(list(identities.values())):
+            if identity['pid'] == child.pid and child.poll() is not None:
+                continue
+            signals.append(signal_exact(identity, signal.SIGKILL, direct_child=child))
+        child.wait(timeout=2)
+    return {'signals': signals, 'leader_reaped': True, 'group_signal_used': False}
+
+
+def run_phase(context, phase, token, command, precheck, monitor, timeout, cancelled):
+    root = context['root']
+    attempt = context['attempt_root']/phase
+    generic.safe(root, attempt).mkdir()
+    started = time.monotonic()
+    status = {'run_id': context['run_id'], 'phase': phase, 'token': token,
+              'offline_fixture': context['offline'], 'state': 'prechecking', 'success': False,
+              'child_returncode': None, 'supervisor_exit_code': None,
+              'child_identity': None, 'receipt_verified': False, 'at': generic.now()}
+    child, rc, state = None, 125, 'precheck_failed'
+    context['owned_processes'] = {}
+    def event(kind, **fields):
+        with generic.safe(root, attempt/'events.jsonl').open('a') as stream:
+            stream.write(json.dumps({'at': generic.now(), 'kind': kind, **fields})+'\n')
+            stream.flush()
+            os.fsync(stream.fileno())
+    context['process_audit'] = lambda value: event('raw_process_sample', sample=value)
+    def complete(code, recovered_unknown=None):
+        if code != 0:
+            return (128-code if code < 0 else code), 'child_failed'
+        receipt = verify_receipt(root, attempt, phase, context['run_id'], token, child.pid,
+                                 context['manifest_sha256'], context['gpu_uuid'], context['offline'])
+        if not context['offline'] and context['observed_workers'].get(phase) != receipt['worker_identity']:
+            raise ValueError('worker not independently observed with matching lifetime identity')
+        proofs = [require_exited_identity(identity, audit=context['process_audit'])
+                  for identity in context['owned_processes'].values()]
+        final = context['final_checks'](receipt, proofs)
+        event('final_checks_passed', proofs=proofs, final=final)
+        status.update(receipt_verified=True, worker_identity=receipt['worker_identity'],
+                      receipt_sha256=generic.sha(attempt/'adapter-complete.json'),
+                      actual_child_exit_verified=code, final_checks=final)
+        if recovered_unknown is not None:
+            status['bounded_terminal_reconciliation'] = recovered_unknown
+        return 0, 'succeeded'
+    try:
+        write(root, attempt/'status.json', status)
+        if timeout <= 0:
+            raise TimeoutError('shared batch budget expired before precheck')
+        precheck()
+        event('precheck_passed')
+        if time.monotonic()-started >= timeout:
+            raise TimeoutError('phase/shared budget expired before child launch')
+        if cancelled['signal'] is not None:
+            raise InterruptedError('cancelled before child launch')
+        with generic.safe(root, attempt/'child.log').open('xb') as log:
+            child = subprocess.Popen(command, cwd=root, env=context['environment'], stdin=subprocess.DEVNULL,
+                                     stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+            original = process_identity(child.pid)
+            context['owned_processes'][child.pid] = original
+            status.update(state='running', child_identity=original, command=command)
+            write(root, attempt/'status.json', status)
+            event('launched', **original)
+            while True:
+                if cancelled['signal'] is not None:
+                    rc, state = 128+cancelled['signal'], 'cancelled'
+                    break
+                if time.monotonic()-started >= timeout:
+                    rc, state = 124, 'timed_out'
+                    break
+                code = child.poll()
+                if code is not None:
+                    try:
+                        rc, state = complete(code)
+                    except (OSError, ValueError, KeyError, TypeError) as error:
+                        status['reason'] = type(error).__name__+': '+str(error)
+                        rc, state = 126, 'completion_unknown'
+                    break
+                try:
+                    event('observed', **monitor(child))
+                except IdentityMismatch:
+                    raise
+                except ObservationUnknown as error:
+                    event('observation_unknown', reason=str(error), raw=error.evidence,
+                          terminal_reconciliation_allowed=error.terminal_reconciliation_allowed)
+                    if not error.terminal_reconciliation_allowed:
+                        raise
+                    until = min(started+timeout, time.monotonic()+.08)
+                    while child.poll() is None and time.monotonic() < until and cancelled['signal'] is None:
+                        time.sleep(.005)
+                    code = child.poll()
+                    if time.monotonic()-started >= timeout:
+                        rc, state = 124, 'timed_out'
+                    elif cancelled['signal'] is not None:
+                        rc, state = 128+cancelled['signal'], 'cancelled'
+                    elif code is None:
+                        raise
+                    else:
+                        try:
+                            rc, state = complete(code, {'reason': str(error), 'raw': error.evidence,
+                                                       'actual_os_exit': code, 'maximum_wait_seconds': .08})
+                        except (OSError, ValueError, KeyError, TypeError) as completion_error:
+                            status['reason'] = str(completion_error)
+                            rc, state = 126, 'completion_unknown'
+                    break
+                time.sleep(.01)
+    except Exception as error:
+        rc, state = 125, ('precheck_failed' if child is None else 'monitor_or_launch_failed')
+        if isinstance(error, TimeoutError):
+            rc, state = 124, 'timed_out'
+        if cancelled['signal'] is not None:
+            rc, state = 128+cancelled['signal'], 'cancelled'
+        status.update(reason=type(error).__name__+': '+str(error), exception=traceback.format_exc())
+        if isinstance(error, ObservationUnknown):
+            status['raw_process_failure'] = error.evidence
+    finally:
+        try:
+            if child is not None:
+                status['cleanup'] = stop_own(child, context['owned_processes'])
+                status['child_returncode'] = child.wait(timeout=2)
+            status.update(state=state, supervisor_exit_code=rc, success=rc == 0,
+                          finished_at=generic.now(), elapsed_seconds=time.monotonic()-started)
+            event('terminal', exit_code=rc, child_returncode=status['child_returncode'], state=state)
+            write(root, attempt/'status.json', status)
+        except Exception as error:
+            rc = 70
+            status.update(state='evidence_or_cleanup_failed', supervisor_exit_code=rc, success=False,
+                          reason=type(error).__name__+': '+str(error))
+            write(root, attempt/'status.json', status)
+    return rc, status

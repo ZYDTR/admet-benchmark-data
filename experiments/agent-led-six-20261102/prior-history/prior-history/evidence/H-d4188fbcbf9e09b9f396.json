@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "request_id": "admet-breadth-strategy-pro-20261101-001",
+  "not_part_of_concrete_run_matrix": true,
+  "execution_authorized": false,
+  "selection_rule": {
+    "eligible": "completed valid paired S1/S1B task comparison; mean inferred task-score gain>=0.5 and both paired signs positive, no numerical/identity failure",
+    "max_tasks": 4,
+    "rank": "after numerical validity, paired mean task-score gain/22 divided by measured end-to-end task cost; report both seed values, not a fabricated success probability",
+    "tie_break": "lower measured cost, then lexicographic task name",
+    "fallback": "none qualify -> no S2 fits, investigate D-FEATURE/D-LOSS with new approval; do not choose arbitrary tasks"
+  },
+  "templates": [
+    {
+      "template_id": "T-S2",
+      "stage": "confirm",
+      "selected_tasks": null,
+      "selection_status": "unknown_until_S1_or_S1B_results",
+      "max_tasks": 4,
+      "configs_per_task": [
+        "locked H0",
+        "locked H1"
+      ],
+      "model_seeds": [
+        46,
+        47,
+        48
+      ],
+      "split": {
+        "source": "official train only",
+        "outer_method": "raw_smiles_group_shuffle",
+        "outer_seed": 44,
+        "outer_holdout_fraction": 0.2,
+        "inner_seed": 144,
+        "inner_stop_fraction_of_outer_fit": 0.1,
+        "outer_exclusion": "outer rows excluded from gradients, feature/target stats, epoch selection; used only for final paired comparison",
+        "algorithm": "same codepoint sorting and whole-group cumulative rule as screen, applied outer then inner"
+      },
+      "inheritance": "all scientific fields of selected task H0/H1 exactly retained except this explicit split/seed change; 50 epochs/patience8 unchanged",
+      "maximum_unique_fits": 24,
+      "decision_rule": "mean paired outer-score gain>=0.5, at least2/3 positive pairs, no pair below -0.5; thresholds proposed not empirical significance; evaluate uncertainty and validity exposure before further allocation",
+      "qualification": "fresh split improves sensitivity check but reuses same official train and prior information; not a new independent external test",
+      "dependencies": [
+        "G-RESOURCES",
+        "completed paired screen and host selection decision"
+      ]
+    },
+    {
+      "template_id": "T-S2-MULTISPLIT",
+      "stage": "reserve",
+      "selected_tasks": null,
+      "max_tasks": 2,
+      "configs_per_task": [
+        "same H0",
+        "same H1"
+      ],
+      "model_seeds": [
+        46,
+        47,
+        48
+      ],
+      "outer_seeds": [
+        44,
+        45,
+        46
+      ],
+      "inner_seed_rule": "outer_seed+100",
+      "outer_holdout_fraction": 0.2,
+      "inner_stop_fraction": 0.1,
+      "total_unique_fits_for_2_tasks": 36,
+      "already_counted_if_both_tasks_in_T_S2": 12,
+      "incremental_unique_fits_max": 24,
+      "dependencies": [
+        "T-S2",
+        "host approves split-sensitivity extension"
+      ],
+      "trigger": "candidate passes seed screen but plausible split instability/chemical-coverage concern remains; do not call seed count a substitute for structure coverage",
+      "decision_rule": "all three split means positive and overall mean>=0.5; if rank reverses, report conditional benefit, no universal win"
+    },
+    {
+      "template_id": "T-LONG-BUDGET",
+      "stage": "reserve",
+      "selected_tasks": null,
+      "max_tasks": 2,
+      "candidate": "one already locked candidate per task",
+      "epoch_patience_arms": [
+        [
+          50,
+          8
+        ],
+        [
+          200,
+          20
+        ]
+      ],
+      "model_seeds": [
+        46,
+        47,
+        48
+      ],
+      "count_rule": "2 tasks * 2 budget bundles * 3 seeds=12 total; subtract only exact 50/8 tuple matches already completed; at most12 new fits",
+      "trigger": "50-epoch cap reached with late improvements in >=2 seeds and no clear overfit; not triggered merely because candidate lost",
+      "contrast_type": "joint epoch-cap/patience bundle; not single-factor attribution",
+      "cost": "200 vs50 is 4x epoch ceiling; patience20 vs8 changes realized work nonlinearly. No walltime claim. Not included in small/medium/large default budgets."
+    }
+  ],
+  "deduplication": "unique canonical tuple (asset+version,task,full scientific config including preprocessing/loss/monitor/epoch budget,split,scalar seed); metadata/proposal ID not scientific difference. Retried failed job with zero fit is not a completed fit; resumed same trajectory not another independent seed. Shared H0 counted once only when all fields and split/seed match."
+}

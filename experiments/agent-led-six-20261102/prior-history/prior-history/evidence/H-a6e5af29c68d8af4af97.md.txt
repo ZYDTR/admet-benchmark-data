@@ -1,0 +1,118 @@
+# ADMET 22-task breadth strategy review
+
+Request `admet-breadth-strategy-pro-20261101-001` · round `training-breadth-strategy-20261101` · manifest SHA256 `2b37cecef4b6f45481ba1991766a2b15eaaffb672a695d193ae03b878c5e04e8` · snapshot `2026-11-01T11:28:28.074304Z` · fixed publication `31a9bb2729ff1464bf6d4be1e23fcba0bf391725`.
+
+**Scientific status: needs_evidence.** A useful decision and batch plan are delivered, but not all 54 exact-reading-contract entries, all primary artifacts, or the complete claim-event chain were independently opened in this session. This is not send-ready acceptance.
+
+## Decision
+
+Recommend **adaptive breadth allocation with a measurement/identity gate before HPO**. Reject serial deep optimization of one task as the default: the snapshot records five completed learning runs/26 heads (one Mini22 baseline plus four Caco2 runs); replacing baseline Caco2 with its historical best only moves the inferred 22-task valid aggregate 43.6032 → 43.7333 (+0.1301), and even perfect Caco2 with other tasks fixed gives only about 48.81. Reject equal shallow tuning as the final policy: tiny-N, near-ceiling tasks and anomalous regression scales have different information value and costs.
+
+Recommended loop: (1) audit scorer, labels/units, task/split/row identity and cache identity; (2) screen a modest common head across a portfolio; (3) estimate paired normalized-score gain, variance and end-to-end cost; (4) allocate follow-up only to reproducible positive-gain tasks; (5) reserve representation changes until evidence suggests the head is limiting. Falsify this recommendation if matched screens show uniform allocation has higher aggregate gain/GPU-hour without increased variance, or if score-normalization assumptions fail.
+
+Research only: no training, fitting, new scoring, private row-level truth access, installation, remote execution, dispatch or upload was performed or authorized.
+
+## Snapshot evidence and caveats
+
+History README: 31 records, 83 source anchors, 12 registered runs; these are not successful learning counts. Five runs/26 heads completed. Six paired Caco2 jobs had zero learning starts; latest 004 was a pre-launch resource refusal because a selected GPU was occupied, not model failure. Mini22 valid artifact: 11,735 records / 22 tasks, split `official-valid-20261029-v6`; label contract confirmed, official scorer equivalence unconfirmed. Five AUPRC tasks use local average precision with tied-score grouping and no trapezoidal interpolation; official equivalence unconfirmed. A fresh chat does not reset historical valid exposure.
+
+CheMeleon is the only currently training-ready scientific encoder. MiniMol and MoLFormer 10pct are not ready. Classical features and scratch D-MPNN researched but not prepared; KPGT/Uni-Mol/SMI-TED deferred; TabPFN 2.6 is a predictor, not an encoder. GLM/DeepSeek/Qwen are execution/preparation models, not scientific encoders. Runner files inspected describe a fixed Caco2/CheMeleon path; general 22-task production support is not demonstrated. New task runs therefore require `new_code` and independent acceptance, not assumed `config_only`.
+
+Official leaderboard snapshot 10:39:26 UTC: team display 46.418, 10th 53.688644, 1st 57.728365, declared max 65.719642. Formula is inferred, not official source-code proof: MAE `100*r/(m+r)`; AUROC/AUPRC `100*m/(m+r)`; Spearman `100*(1+m)/(2+m+r)`; total is mean of 22 tasks. Local valid aggregate is not hidden-test prediction. One-task gain Δ contributes Δ/22 to total if others fixed.
+
+## 22-task ledger
+
+Valid metrics and normalized scores are from approved aggregate-only artifacts. Class counts only where provided. Regression units/ranges/outlier fractions/group counts were not available and are not invented. Priority means diagnostic priority, not expected learnability.
+
+| Task | Metric | n / classes | Valid | Inferred normalized | Priority |
+|---|---|---:|---:|---:|---|
+| `ames` | AUROC | 1137 / 479+/658− | 0.796606 | 47.742 | mid |
+| `bbb_martins` | AUROC | 203 / 149+/54− | 0.893674 | 49.064 | low |
+| `bioavailability_ma` | AUROC | 64 / 43+/21− | 0.744186 | 50.748 | high |
+| `caco2_wang` | MAE | 91 / — | 0.426065 | 39.967 | high |
+| `clearance_hepatocyte_az` | Spearman | 122 / — | 0.357606 | 46.659 | mid |
+| `clearance_microsome_az` | Spearman | 111 / — | 0.48733 | 47.516 | mid |
+| `cyp2c9_substrate_carbonmangels` | AUPRC | 67 / 12+/55− | 0.420994 | 48.706 | high |
+| `cyp2c9_veith` | AUPRC | 1210 / 406+/804− | 0.75945 | 48.996 | low |
+| `cyp2d6_substrate_carbonmangels` | AUPRC | 67 / 14+/53− | 0.463777 | 38.287 | high |
+| `cyp2d6_veith` | AUPRC | 1313 / 250+/1063− | 0.690734 | 48.992 | low |
+| `cyp3a4_substrate_carbonmangels` | AUROC | 67 / 36+/31− | 0.729391 | 50.142 | high |
+| `cyp3a4_veith` | AUPRC | 1233 / 581+/652− | 0.877173 | 49.803 | low |
+| `dili` | AUROC | 48 / 13+/35− | 0.861538 | 48.670 | high |
+| `half_life_obach` | Spearman | 67 / — | 0.0737001 | 41.858 | high |
+| `herg` | AUROC | 66 / 42+/24− | 0.896825 | 50.951 | high |
+| `hia_hou` | AUROC | 58 / 48+/10− | 0.966667 | 49.296 | high |
+| `ld50_zhu` | MAE | 1937 / — | 1.04359 | 36.624 | mid |
+| `lipophilicity_astrazeneca` | MAE | 420 / — | 0.539647 | 46.704 | mid |
+| `pgp_broccatelli` | AUROC | 122 / 61+/61− | 0.905402 | 49.106 | mid |
+| `ppbr_az` | MAE | 279 / — | 20.8318 | 26.030 | high |
+| `solubility_aqsoldb` | MAE | 2940 / — | 11.1134 | 6.231 | high |
+| `vdss_lombardo` | Spearman | 113 / — | -0.0169274 | 37.180 | high |
+
+## Task interpretation
+
+- Diagnostic screen first: LD50 (n=1937, norm 36.62); solubility (n=2940, 6.23) and PPBR (n=279, 26.03) because raw MAE/reference gaps demand unit/range/identity audit; VDSS (n=113, negative Spearman), half-life (n=67, weak Spearman), CYP2D6 Carbonmangels (n=67, 14 positives).
+- Tiny classification tasks: DILI (48; 13 positive), hERG (66), HIA (58; only 10 negatives), bioavailability (64), CYP substrate Carbonmangels (67 each), CYP3A4 Carbonmangels (67). Use small heads and repeated group-aware/stratified splits; explicitly handle one-class splits.
+- Larger CYP Veith tasks (n=1210–1313) allow more stable screening, but AP semantics block official comparability.
+- High normalized baselines (hERG, HIA, P-gp, CYP3A4 Veith) do not prove a ceiling.
+- Regression checks first: units, transforms/inverse transforms, finite/missing policy, task/split/row identity and raw-scale outputs. No label edits, clipping, de-duplication or outlier removal.
+
+## Proposed batches (not authorization)
+
+### Gate 0 — general runner acceptance
+
+Before new task runs, implement and independently test a task-aware interface: task schema (target type, metric/direction, transform, class handling); immutable encoder/input/task-row/split cache identity; preprocessing fit only on inner-fit rows; original-scale regression predictions; continuous classification scores; stable row-order output; deterministic split/model RNG separation; checkpoint identity (task/config/split/model seed/monitor/best epoch/encoder hash); frozen encoder parameter+buffer proof. Metric fixtures cover AUROC/AP/Spearman/MAE, ties, one-class, NaN/Inf, empty input, row permutation and inverse transforms. Supervisor exit and worker business result remain distinct.
+
+### S1 screen — 10 tasks × 2 configs × 2 model seeds = 40 fits
+
+Tasks: `ld50_zhu`, `solubility_aqsoldb`, `ppbr_az`, `vdss_lombardo`, `half_life_obach`, `cyp2d6_substrate_carbonmangels`, `bioavailability_ma`, `dili`, `ames`, `caco2_wang`.
+
+- H0 control: hidden_dims `[256]`, dropout `0.1`, lr `0.0005`, weight_decay `0.0001`, batch_size `128`, AdamW, epochs `200`, patience `20`.
+- H1 regularization contrast: hidden_dims `[128]`, dropout `0.3`, lr `0.0003`, weight_decay `0.001`, batch_size `128`, AdamW, epochs `200`, patience `20`.
+- Model seeds `[44,45]`; split seed `43`; same split for both configs/seeds. Regression targets standardized on inner-fit rows only and inverse-transformed before metric/output. Classification uses logits/continuous scores, no threshold. Refit preprocessing per split.
+- Count: 10×2×2=40 head fits; up to 10 unique task encodings if identity-safe cache reuse is accepted. Runtime unknown; cross-task runner is not validated.
+
+### S2 confirm — maximum 24 fits
+
+Only if up to four S1 tasks show positive paired movement and manageable seed/split variance: 4 tasks × 2 configs × 3 model seeds `[46,47,48]` = 24 fits, new fixed split seed `44`, retain H0 as shared control. Internal stop metrics select; only one predeclared candidate per task receives one official-valid confirmation under the existing approved evaluation process. No repeated valid-driven candidate selection.
+
+### S3 reserve
+
+No automatic execution. Consider one architecture/pooling/encoder contrast only after S1/S2 show reproducible head limitation. MiniMol/MoLFormer are `blocked_assets`; classical features/scratch D-MPNN need new code and approval; deferred encoders remain deferred. Six Caco2 paired jobs remain independent; do not cancel, alter or count preflight outcomes as model results.
+
+## Search space
+
+| Direction | Values | Method | Readiness |
+|---|---|---|---|
+| Head width/depth | `[128]`, `[256]`, `[256,128]` | one-factor contrasts; no full factorial | new_code |
+| Dropout | `0.0,0.1,0.3,0.5` | after stable width; small-N regularization | new_code |
+| Learning rate | `1e-4,3e-4,5e-4,1e-3` | log-spaced one-dimensional sweep | new_code |
+| Weight decay | `1e-5,1e-4,1e-3,1e-2` | pair with fixed architecture/lr | new_code |
+| Loss/target scaling | standardized MSE; raw-MAE monitor; BCE logits | separate loss from monitor; fit transforms in train fold | new_code |
+| Early stop | patience `10,20,30`; epochs `100,200,300` | inner stop only; record best/last | new_code |
+| Seeds/splits | ≥3 model seeds in confirm; split seeds `43,44` | paired controls; group-aware splits | new_code |
+| Pooling/encoder | current CheMeleon first; alternatives later | cache identity + frozen buffer proof | new_code / blocked_assets |
+
+S1 contains 20 task-config cells × 2 seeds = 40 fits; S2 maximum 8 cells × 3 seeds = 24. No exhaustive factorial. Cost must separate shared preparation/encoding, per-head fit, scoring and review. Cross-task encoder/head times are unknown; do not invent GPU-hour estimates.
+
+## Cache, head choice, ensembles
+
+Reuse frozen CheMeleon embeddings only if encoder weights/buffers, preprocessing, input SMILES bytes, row IDs/order, split, shape/dtype and parse mask match exactly. The same matrix may support multiple heads only with verified identical rows; task-specific subsets require explicit row mapping. Cache reuse saves encoding cost, not statistical dependence. Per-task head choice is acceptable if each is trained only on its own train.Y. Ensembles combine independent predictors and require internal out-of-fold weight selection. Multi-task learning shares trainable parameters and may cause negative transfer; it is a distinct higher-risk experiment, not the first breadth step.
+
+## Selection, uncertainty and stop rules
+
+Use paired seeds and fixed split for H0/H1; report every seed delta, mean, SD, range and failures. Tiny-N tasks need a second split before winner declaration. Fit scalers only on inner-fit rows; valid is aggregate confirmation/diagnostic only, with prior access counted. Predeclare one candidate per task for valid confirmation. Report mean-of-22 aggregate, task deltas, uncertainty and selection bias. Stop a task if gain is not reproducible, is below measured seed/split noise, depends on invalid identity/scorer checks, or its normalized gain/GPU-hour is dominated. Estimate minimum effect from repeated-control noise and practical relevance; no unsupported significance threshold is asserted. Stop portfolio expansion if runner, cache identity, freeze proof or metric fixtures fail. A resource refusal is not a scientific loss.
+
+## Cross-check and falsification summary
+
+| Claim | Supporting evidence | Counterevidence / alternative | Current judgement |
+|---|---|---|---|
+| Expand beyond Caco2 | only 26 completed heads; Caco2 ceiling aggregate math | other tasks may be noisy/hard | yes, staged breadth |
+| Low normalized score means upside | solubility/PPBR/LD50 low normalized | scale/units/identity may explain | audit before optimization |
+| CheMeleon cache can scale | frozen encoder and Mini22 baseline | exact cross-task cache identity not verified | conditional only |
+| AP results comparable | local AP available | official AP interpolation/ties unconfirmed | not yet |
+| More tasks equal more score | mean-of-22 scoring | variance, cost, selection bias | allocate adaptively |
+
+## Evidence not established
+
+The approved aggregate artifacts do not expose raw row-level labels/residuals (and this task explicitly forbids new private row-level truth access), target ranges/units, exact task-specific split/group counts, full predictions, all task cache identities, or all primary historical artifacts. Exact row-level input/prediction alignment was not reverified here. Runner generalization beyond Caco2 is unproven. These gaps prevent a `complete` status and any claim of statistically significant improvement. See `review.json` and `issues.json`.

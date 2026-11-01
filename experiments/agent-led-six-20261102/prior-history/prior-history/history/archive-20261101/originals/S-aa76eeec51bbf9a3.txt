@@ -1,0 +1,71 @@
+# 公开仓库 → Pro → 本机分析文件：首轮验收
+
+结论：**材料往返和有证据的科学分析通过；原长回复的严格终态协议未全通过，不能称无人值守流程已经可靠。** 本轮现有两run的取回、本机固定评分、公开链接实读、六份原文件回收、主控审读和本地问题归档已完成。未新增训练、推理、OpenCode准备派发、赛事上传或定时。
+
+## 已完成的证据链
+
+1. follow run全新取回302文件，110,810,507原始字节，压缩流44,106,368字节；远端前后清单稳定、全部大小/SHA匹配。另一run复用本机已验收51文件/65,619,331字节，明确未重新传输。
+2. 每run完整91行Caco2 valid由指定取回Thread本机固定MAE评分。主控独立Decimal50计算、原行身份和评分器AST核对通过。512头/seed42/lr.001为0.378625135989；256头/seed43/lr.0005为0.389188593978。多因素同时变化，不能据此判断头宽或学习率谁更好。
+3. 主控批准的393文件/32,934,140字节正常追加到ZYDTR/admet-benchmark-data，commit `eaec280cf142839597fe75ce748cd2b9a8a897d4`。全部提交blob与批准清单一致，原数据树未变；393个匿名响应逐件大小/SHA通过。原始valid真值、带标签评分记录、凭据和完整基础设施轨迹未新增公开。
+4. 目标「解读药物预测赛」实际选中Pro；一次用户Prompt绑定request_id和输入manifest。公开链接没有被附件输入替代。部分工具活动、八种审查路线和反证过程可见；取回包也包含对应审查报告。没有声称拥有后台全部调用轨迹或独立agent UUID清单。
+5. Pro给出的两run预测均值（-5.3383347542967033、-5.3012504158461538）、273/91行、70/95优化步、best epoch6/11与未向它提供答案的主控独立核算匹配。支持确实读取本轮资料；不把下载回执等同于语义读完全部393文件。它明确披露222文件仅hash覆盖、6个二进制未取回。
+6. 原audit.zip共245,762字节、43成员；SHA `0a001c01bad77643eaf8759104ad0319d37b5807f10778eac8d3d7622c22d33a`。六原文件共158,256字节，安全路径/CRC、逐件SHA、JSON字段、ID关联及40项主控独立检查通过。归档代码只静态查看，未执行。
+
+完整交付在[六文件目录](../gateway/recovered/audit/deliverables/)：analysis.md、review.json、issues.json、next_batch_guide.md、next_experiments.json、search_space.json。22条问题记录（含继承问题）、26研究方向/方案、10项准备工作。原review.status=`needs_evidence`：完整历史、部分原件、错误切片和未调参泛化仍有缺口；这不表示六文件缺失。
+
+## 主控对分析质量的判断
+
+有实际价值，可用作下一批准备依据。我亲自审读六件并独立核验了以下关键点，未发现足以否定本轮核心建议的科学错误：
+
+- 两次内部fit/early-stop各有一组相同raw SMILES跨角色；保留原行、原Y，未来用预登记分组划分。不是官方valid真值泄漏；影响量尚未测定。
+- 现存特征标准化后，内部留出最大|z|分别约871.665和1637.415。独立只读数值计算一致；高z并未被证明导致误差，clip/raw/floor是待验证机制。
+- 两run登记的参数与buffer各自前后一致。跨run整体摘要差仅在未用于fingerprint的随机predictor四张量；主控逐张量核对，并查[Chemprop v2.2.1源码](https://raw.githubusercontent.com/chemprop/chemprop/v2.2.1/chemprop/models/model.py)确认调用路径。未独立加载外部权重或验证未登记的运行内存。
+- 真实optimizer是AdamW，旧脚本硬编码/固定assert使改配置不能直接扩成参数搜索；需统一构造器和实际配置回执。
+- 监督器记录业务rc后没有显式以rc退出，外层只看退出0可能漏失败。主控已读实际源码；上层历史影响未全证，不能据此宣称两份正式产物无效。
+- loss/选epoch使用MSE，而任务评分是MAE；可以分别检验monitor和loss，不等于当前实现违法或效果必然差。
+- MiniMol/MoLFormer当前准备未验收，其他资产分层列为条件候选；不拿论文数字当本地就绪/效果。主控另核[MiniMol方法](https://arxiv.org/html/2404.14986v1)、[固定MoLFormer配置](https://huggingface.co/ibm-research/MoLFormer-XL-both-10pct/blob/361063d0ad524ef77cf39b08469f6be770dc550f/config.json)及[train-fit/clip6方法出处](https://arxiv.org/html/2604.16123v2)，仅作为方法先例。
+
+建议优先准备W01–W04：失败阻断/身份登记、统一配置和随机流、单一冻结缓存、loss/monitor及必要记录；MiniMol/MoLFormer接入可单独准备。首批候选P01为legacy_z、raw、clip6、train-std-q05 floor四配置×共同3seed=12次新头拟合，先保证同cache/分组划分/其他参数。**这是建议，不是已下发的训练。** 26方向是条件菜单，不能相加后全笛卡尔积执行。
+
+[问题原件与采纳记录](../../../issues/public-repo-round001/)已本地保存。F1保持开放；两个resolved条目仅关闭当前公开衍生件身份和unused predictor摘要疑问，不抹去旧故障。指南不含精确valid评分/私有标签；实际派OpenCode前由主控只提供技术输入投影。新模块/资产/划分/代码hash及执行预算仍待准备验收。
+
+## 耗时：传输不是当前瓶颈
+
+|阶段|实测|说明|
+|---|---:|---|
+|全新取回传输|63.30秒|压缩/连接/接收口径|
+|连接至原件字节核验|72.29秒|含身份、清点、远端复核|
+|取回至结构核验|79.10秒|不是整会话耗时|
+|两run固定评分|0.00912秒|不含编写/测试|
+|首次打包、脱敏、审读|1070.97秒|有首次搭建与往返；不代表每轮|
+|结构化脱敏修复|343.01秒|保留失败；与上项可能重叠，不盲相加|
+|取回/评分/候选会话|27分03秒|原生完整turn|
+|Git push|4.54秒|已封口文件实际上传|
+|393文件匿名读回|23.55秒|8并发；一次SSL EOF退避恢复|
+|发布执行会话|9分54秒|含实现、规范检查和完整核验|
+|发送到网关六件交付记录|64分47秒|含分析、连接恢复、观察中断和取回等待；不是纯模型时间|
+|UI显示思考时长|36分31秒|产品标签，后台纯计算未独立测得|
+|返回ZIP纯传输|未测|下载事件没有被工具捕获；不得用mtime充当完成时刻|
+|ZIP本机复制/CRC/提取|0.008775秒|现存文件的本机检查|
+
+精确阶段和修正口径看[网关计时](../gateway/TIMING.json)与[取回计时](../retrieval/TIMING.json)。发送至六件回收的时长与首次搭建、主控验收分别保留；同阶段重叠不能简单相加。一次样本不足以估计P90或承诺固定周期。此前15–45分钟条件预算没有被本次墙钟支持。
+
+## 真正暴露的问题与已做的改进
+
+公开打包曾把Markdown链接替换用于JSON，破坏化学结构数组。原件和失败保留；修为类型化处理，结构/数值/科学字符串比对通过，已写入取回Skill v0.4。评分包装首次因LF/CRLF盲投影字节不同失败，指标未执行；修包装后输入和评分公式未变。
+
+Chat阶段先有Cloudflare，正常同请求恢复；随后应用观察中断、最终正文显示连接已中断。原生历史滞后仅有user消息，不能把它的completed时间当模型完成。部分终稿已暴露真实文件链接，网关仍等待正文造成额外延迟。主控发现系统Downloads已有audit.zip：**实际下载成功，15秒超时的是下载事件捕获。** 包内身份、点击时间、文件名和SHA共同核验后完成取回。
+
+未验证项：完整最终气泡、REVIEW_COMPLETE、真实后台终态及完整服务端调用轨迹。本轮没有停止或重发原Chat请求，也没有继续无限观察。材料可独立验收；严格原正文协议和无人值守连续交接不能标通过。
+
+未来模板revision4已保存：短结论+六完整文件+delivery-manifest+ZIP；真实链接出现即取回，下载事件超时先检查系统实际文件；材料完成、Chat终态和科学状态分列。原本轮Prompt完全不改。新模板尚未实测，终态未知仍锁同研究分支，不能直接自动再发下一轮或训练。按完整比较组分析一次比每个小头训练都调用Pro更合理；建议首批12个受控run属于后续预算候选。
+
+[按真实Thread名称绘制的架构及新Prompt](../../../../design/chat_gateway_20261031/README.md)保留当前已验证与未来未接通环节。已有Terra自动化不改，本次没有新自动化需要删除。
+
+## 主要证据
+
+- independent-chat-artifacts.json、scientific-acceptance.json、independent-cache-diagnostics.json、independent-registered-encoder-state.json、supervisor-exit-static-review.json。
+- independent-scoring.json、independent-public-semantics.json、independent-publication.json、../control/PUBLISH_APPROVAL.json、../retrieval/publication-receipt.json。
+- ../gateway/receipt.json、validation.json、recovered/artifact-manifest.json；原消息、界面活动、原ZIP和全部审查记录均保留。
+
+公开固定入口：[START_HERE](https://github.com/ZYDTR/admet-benchmark-data/blob/eaec280cf142839597fe75ce748cd2b9a8a897d4/experiments/public-repo-20261031/START_HERE.md)。

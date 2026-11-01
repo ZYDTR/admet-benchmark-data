@@ -1,0 +1,69 @@
+{
+  "passed": true,
+  "tests": [
+    {
+      "case": "exact_atomic_replace_original",
+      "result": "FileNotFoundError",
+      "passed": true
+    },
+    {
+      "case": "exact_atomic_replace_candidate",
+      "result": 39,
+      "passed": true
+    },
+    {
+      "case": "symlink",
+      "error_type": "ValueError",
+      "calls": 0,
+      "passed": true
+    },
+    {
+      "case": "hardlink",
+      "error_type": "ValueError",
+      "calls": 0,
+      "passed": true
+    },
+    {
+      "case": "permission",
+      "error_type": "PermissionError",
+      "calls": 1,
+      "passed": true
+    },
+    {
+      "case": "missing_root",
+      "error_type": "FileNotFoundError",
+      "calls": 0,
+      "passed": true
+    },
+    {
+      "case": "missing_output_root",
+      "error_type": "FileNotFoundError",
+      "calls": 0,
+      "passed": true
+    },
+    {
+      "case": "persistent_churn",
+      "error_type": "FileNotFoundError",
+      "calls": 3,
+      "passed": true
+    },
+    {
+      "case": "quota",
+      "error_type": "RuntimeError",
+      "calls": 0,
+      "passed": true
+    },
+    {
+      "case": "complete_nested_bytes",
+      "result": 444,
+      "audit": [
+        {
+          "kind": "result_scan_complete",
+          "scan": 1,
+          "result_bytes": 444
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

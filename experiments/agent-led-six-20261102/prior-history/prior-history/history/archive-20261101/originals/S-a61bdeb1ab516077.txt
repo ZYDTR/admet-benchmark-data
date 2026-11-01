@@ -1,0 +1,16 @@
+--- frozen/training_science.py
++++ host/training_science.py
+@@ -656,8 +656,13 @@
+     for prev in history[:index + 1]:
+         if prev[key] < best - MIN_DELTA:
+             best = prev[key]
++    # Legacy best-MSE metadata remains a prefix minimum irrespective of the
++    # configured selection metric. It is distinct from this head's own MSE.
++    best_mse = min(prev["internal_validation_standardized_mse"] for prev in history[:index + 1])
+     return {"epoch": row["epoch"], "steps": row["steps"],
+             "monitor": row["monitor"], "monitor_key": key,
+             "monitor_value": row["monitor_value"],
+             "internal_validation_standardized_mse": row["internal_validation_standardized_mse"],
++            "best_internal_validation_standardized_mse": best_mse,
++            "best": best_mse,
+             "best_monitor_value": best}

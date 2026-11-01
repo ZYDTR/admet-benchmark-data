@@ -1,0 +1,65 @@
+# 海南资源观察日志
+
+统一入口：[ADMET项目](../../AGENTS.md)，规范：[资源观察Skill](../../skills/hainan-resource-observation/SKILL.md)。
+
+最新观察：`hainan-20261101T110320-814330Z`，北京时间 **2026-11-01T19:03:24.151361+08:00**，状态 `observed`。
+空闲候选 0，占用 6，健康不可用 2，证据不足 0。
+
+有效期截止 UTC `2026-11-01T11:18:24.151361+00:00`。阅读时须自行计算年龄，超过15分钟、未来时间、缺失或失败时 `query_required`；训练启动前始终按UUID直接复核。此记录只提供候选和占用事实，资源未被预留，共享适用性未评估。
+
+| GPU | UUID | 显存已用/总量 MiB | 利用率 | 恢复动作 | 分类 | PID |
+|---|---|---:|---:|---|---|---|
+| 0 | `<REGISTERED_GPU>` | 39755/81559 | 100 | None | occupied | 4060142 |
+| 1 | `<REGISTERED_GPU>` | 72207/81559 | 0 | None | occupied | 2516225 |
+| 2 | `<REGISTERED_GPU>` | 76341/81559 | 100 | None | occupied | 673594, 687133 |
+| 3 | `<REGISTERED_GPU>` | 3361/81559 | 0 | None | occupied | 1166059 |
+| 4 | `<REGISTERED_GPU>` | 0/81559 | 0 | Reset | unavailable | 无进程报告 |
+| 5 | `<REGISTERED_GPU>` | 61965/81559 | 100 | None | occupied | 930070, 948850 |
+| 6 | `<REGISTERED_GPU>` | 30983/81559 | 100 | None | occupied | 1127816 |
+| 7 | `<REGISTERED_GPU>` | 0/81559 | 100 | Reset | unavailable | 无进程报告 |
+
+GPU7若同时出现零显存和非零利用率，其占用判断为unknown；明确Reset仍足以阻断新作业。
+
+## 最近变化
+
+- GPU5 `<REGISTERED_GPU>`: idle_candidate → occupied，恢复动作 None → None
+
+比较基线：`hainan-20261101T105316-850272Z`。最后完整成功样本：`hainan-20261101T110320-814330Z`，时间 `2026-11-01T11:03:24.151361+00:00`；失败后沿该历史路径读取，旧样本时间保持不变。
+
+## 证据与运行入口
+
+- [latest.json](latest.json)：最近一次查询的原子快照；[status.json](status.json)：连接状态、最后成功身份/时间及错误。
+- [本次追加快照](observations/hainan-20261101T110320-814330Z.json)；[原始输出](raw/hainan-20261101T110320-814330Z.json)。每个原件的SHA256在快照raw_evidence内。
+- [登记与通知授权](registry.json)；通知去重记录在notifications.jsonl，只有登记等待任务的相关变化才回传。
+- [只读命令审查](implementation/command-review.json)及[完整远端源码](implementation/reviewed-remote-source.py)。连接客户端保持原样，严格双层主机密钥、project-compute/UID1012及固定Windows路由。
+- 单次入口：`python3 -B adhoc_jobs/admet_training/resources/hainan/implementation/observe.py`。每次仅采一轮并退出；10分钟heartbeat由主控登记，本实现不建定时器。
+
+## 字段口径与边界
+
+observation_id/observed_at为唯一查询及真实采样UTC；observed_at_beijing仅作展示。query保存本机/远端起止、耗时及重试。identity核验hostname、UID/GID、规范project-compute路径；host_resources含CPU/内存/statvfs；gpus按UUID合并inventory、健康XML、compute进程和pmon。
+
+GPU数值缺失为null。health分别记录恢复动作、计算模式、volatile ECC和行重映射；processes含PID、UID/GID、PPID、start_ticks及必要cwd归属布尔值，不读cmdline/环境或同事项目正文。同UID不能证明自有作业；不可读cwd单独登记为unknown。
+
+idle_candidate表示本次所查健康字段通过且三个进程视图无占用证据；occupied表示驻留进程或显存，不能据此决定共享；unavailable表示明确恢复/错误条件；unknown表示缺失或矛盾。utilization和xml_utilization来自先后查询，正常采样波动分别保留。
+
+changes_since_previous只报告分类/恢复动作变化，首次基线不伪装释放。raw_evidence给出原件和摘要；limitations列实际限制。观察无训练、安装、预留、重置或停止任务权限。没有全机审计，outside_scope_changes始终not_verified。
+
+专职观察与训练Thread分别登记，均固定gpt-6.1-sol/xhigh。长期连续性及共享适用性尚未验证。
+
+[首次验收](implementation/first-observation-acceptance.json)和[初始解析修正](implementation/corrections.json)保留首版partial及后续完整样本的来源。首轮unknown到idle属于证据恢复，物理释放未被证明。
+
+## 本次限制
+
+- Point-in-time sequential queries are not a reservation; GPU values can change between commands.
+- Scheduler/reservation state and other jobs' peak/burst requirements were not queried; sharing is not approved by this snapshot.
+- GPU process UID/cwd membership does not establish ownership of a project-compute job; no colleague project bodies, cmdline or environment were read.
+- Only NVIDIA-reported recovery/ECC/remap/compute-mode evidence was inspected; CUDA initialization and full device diagnostics were not run.
+- No requested remote writes; SSH/driver internal behavior and whole-host side effects were not audited.
+- CPU is a 0.5-second sample; memory and statvfs are snapshots, not an IO or performance budget.
+- PID 4060142 cwd membership unreadable (PermissionError); ownership remains unproven.
+
+## 本轮通知判定
+
+`hainan-20261101T110320-814330Z`：只读身份、四项NVIDIA查询均通过，所查完整设备健康字段无新增变化；GPU4/7既有Reset持续。GPU5从上次候选重新被非自有进程占用；GPU3虽剩余77729 MiB、利用率0%，仍有非自有PID1166059，不视为无可见工作或安全共享。根挂载当前账号可用 20083507200 字节，已有恢复事件不重复回报。
+
+主控已登记版本化恢复请求 `admet-contract-follow-recovery-execution-20261101-003`，精确live_state为preflight_monitor_failed_needs_main（11:03:08 UTC）：报告batch/outer/watcher/launcher退出均125，learning_starts=0、recovery_starts=1、own_resources_released=true，实际GPU索引6。观察方未独立验收该任务退出/释放或读取任务日志正文；本轮资源采样晚于报告结束，不据此重构预检瞬间或归因GPU/他人任务。已向主控一次性回报此新请求实质故障，传输accepted、消费未验证：[回执](implementation/task-preflight-failure-hainan-20261101T110320-814330Z.json)、[状态原文/接续决策/原件摘要](implementation/task-preflight-failure-hainan-20261101T110320-814330Z-prepared.json)。失败状态不发资源唤醒，不重跑、不授额度。独立观察继续。

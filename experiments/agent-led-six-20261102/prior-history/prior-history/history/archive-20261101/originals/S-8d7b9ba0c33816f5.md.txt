@@ -1,0 +1,60 @@
+# 当前任务接续
+
+## 当前阶段：原基线与 GLM 重跑验收均已完成
+
+GLM提高预算后的两路均正常结束，原件已冻结并由主控独立验收，见 `glm-rerun-500k-100k-20261030/acceptance/report.md`。模型交付有checkpoint加载及缓存验真阻塞；数据交付更严格，但单类AP和写入边界未完全通过。不重复训练、续写或冻结，`glm` 心跳已删除。用户再次纠正后，两条原GLM会话已移动到mini `<PRIVATE_RUNTIME_PATH> 根目录并在桌面实见，ID、60/74条消息摘要和工作文件保留；下文子目录表属于历史。另有全新DeepSeek Skill冷启动实验，单独接续 `../admet_deepseek_skill_coldstart_20261030/CONTINUE.md`，不要与旧DeepSeek混淆。
+
+## 已完成的原基线
+
+2026-10-30最新：心跳admet已通过应用工具删除，定期唤醒已停止，全部记录保留。正式v3已退出0，22头训练/预测/模板检查完成；37个产物全部取回并与mini逐文件SHA一致，97个代码/输入和资产执行后摘要不变。宿主固定评分完成22任务11735行，模型、验证/测试预测、全量16379行提交候选及报告已交付，见 `DELIVERY.md`。私有评分报告与回执在 `status.json`；无标签/精确成绩回传准备会话，无赛事上传。回归存在极端输出，报告明确保留质量限制，未据此继续调参。不要重新训练或派发。
+
+下文运行过程属于历史证据；当前状态以本段、status.json和DELIVERY.md为准。
+
+2026-10-30 北京时间19:05起统一验收已完成，**四个准备会话均终态，原件已冻结，不要再次派发、续写或重复冻结**。先看 `acceptance/report.md`、`status.json`。原始文件与消息在 `comparison-originals/`，摘要在 `manifest.json`；独立验收、错误输入复现、计时及tokens在 `acceptance/`。
+
+实测结论：GLM两路输出为空，最后一轮 reasoning+普通输出均恰8192，finish=length。DeepSeek模型路交付11文件，但违反禁止训练，实际做了全量特征、22头训练，并在<PRIVATE_RUNTIME_PATH>
+
+主 Codex 已审读代码并在 `execution/` 修复缓存输入/编码器/依赖/数组摘要和行身份、有限值、训练标签及安全checkpoint加载。真实评分不使用准备会话的score.py，改用既有宿主固定 `adhoc_jobs/admet_agent_harness/src/admet_harness/evaluation.py`，先核验全部验证行、来源和私有真值行身份。不要把任何标签/精确评分回传准备会话。
+
+**当前唯一正式流水线**：mini Docker `admet-host-baseline-v3-20261030`，ID `5af165407c843031e94f3d4478e3333c9701be8d02768a9661a06207acd0e524`。宿主源码 `<LOCAL_PRIVATE_PATH> `.../host-v3/result`，不在 SMB 分享内。使用 `docker --context <PREPARATION_HOST_ALIAS> inspect/logs` 检查；事件改写 Docker stdout，不再写 events.jsonl。训练中不跨 SMB 打开追加文件、不启动第二份作业。完成后用 docker cp 取回 result。
+
+v2 已于11:28:13Z退出，退出码1、非OOM。81809行特征已完整完成，主控在阶段结束追加 events.jsonl 时 EAGAIN，异常处理也遇到同一错误；未开始正式训练。不能将文件锁的具体来源当作已证实。证据在 `acceptance/host-v2-failure/`，旧代码保留 `acceptance/host_run.v2.py`。v3日志使用stdout，输出改为mini独占runner目录，合成EAGAIN回归证明旧事件函数失败、新函数成功；原特征只读挂载 `/cache` 并逐分片核验契约、输入/编码器/依赖/数组摘要、形状及行身份，66份分片共81809行已全通过。启动前97文件源码摘要通过，编码器冻结预检再次通过，已进入train。v3首次容器创建因源内缺少空result挂载点失败，未执行代码；补空目录后启动同一created容器，未重复训练。
+
+正式流水线继续沿用断网、2 CPU、4GiB、128进程、UID1000、只读根及固定模型配置：train内部90/10早停、最大50epoch，训练22个MLP头→预测全部valid/test→覆盖检查→导出submission.csv。未用官方valid标签，v3为运行可靠性修复，不属于模型调参。v2特征保留原处，禁止覆盖。成功后使用本目录 `host_grade.py` 在宿主私有vault评分；它只导入冻结的宿主固定评分实现，不执行worker代码或checkpoint。
+
+后续：流水线失败先保存日志，修复仅在新独立版本；成功后取回模型、预测、日志、环境及覆盖报告并校验哈希，确认原输入/资产不变。宿主私有标签入口为 `adhoc_jobs/admet_sap_setup_20261029/minimal-revision/v6/private-vault-location.json`，指向私有vault下 `original-validation/` 及 `label-vault-manifest.json`。不要打印逐行Y。先冻结固定评分器与预测摘要，在私有目录做完整11735行逐任务评分（AUROC/AP/MAE/Spearman；官方总分未知）。反馈策略未启用，真实分数不发给准备会话；可向用户交付本地验证报告及全量16379行提交候选，不自动上传。建立本次真实运行索引和可追溯记录，更新本文件。全部授权工作完成后删除心跳并说明已停止（系统最新心跳规则要求delete）。
+
+以下是派发与资源背景；其中“最近busy”“尚未启动”属于早期记录，现状以本节及运行证据为准。
+
+用户已授权 mini OpenCode 两路准备，主 Codex 负责实际训练；随后明确要求 GLM 5.3 与 DeepSeek 1017 使用相同 prompt 做一次对比，全部派出，让它们自行完成，中间不干预，完成后统一验收。
+
+四个会话的 projectID 均为 `890c641656b89e802d31560be2c399e22eab00ab`，worktree `<PRIVATE_RUNTIME_PATH> directory 使用项目内任务子目录，**不符合用户“从 Context Infrastructure 进入”即从根目录启动的要求**。已向用户承认此前只核对项目 ID 的结论不完整。2026-10-30 实测：根目录 GET /session 返回17条，不含四个会话；加 scope=project 返回21条，含四个；桌面根目录列表和搜索确实找不到四个，当前界面没有找到跨子目录显示选项，PATCH session 也不支持 directory。当前未迁移、重发或干预四个会话；不声称可见性已修复。后续必须从项目根启动、精确核对 directory 并在桌面已有项目列表验证可见，任务子目录只放文件；规则已写入 `rules/skills/<PREPARATION_HOST_ALIAS>-orbstack-ops/SKILL.md`。
+
+| 模型 | 任务 | session ID | API directory |
+| --- | --- | --- | --- |
+| GLM 5.3 | 模型准备 | <PRIVATE_SESSION_OBJECT> | <PRIVATE_RUNTIME_PATH> |
+| GLM 5.3 | 数据评分 | <PRIVATE_SESSION_OBJECT> | 同上 |
+| DeepSeek 1017 | 模型准备 | <PRIVATE_SESSION_OBJECT> | <PRIVATE_RUNTIME_PATH> |
+| DeepSeek 1017 | 数据评分 | <PRIVATE_SESSION_OBJECT> | 同上 |
+
+`dispatch.py` 提供既有 mini API 的只读调用函数及凭据内存读取。不要执行它的主函数再次派发。**session/status 是按 directory 隔离的；在项目根查询得到空对象，不能证明两个任务目录里的会话已结束。** 逐目录查询，再检查每个会话最后 assistant 的 finish/error。先前一次收集脚本在 DeepSeek 模型仍 busy 时中止，`comparison-originals/glm/` 的两个空目录已建立，继续收集时须兼容它们已存在。
+
+已核对：195 份初始输入逐字节一致；两组实际 user prompt 的 SHA256 相同；角色、工具权限一致，配置 context=131072、output=8192。DeepSeek 模型配置含 enable_thinking=false，GLM 没有这个显式选项，必须在比较限制中保留。GLM 两路均 idle，最后 finish=length，output 目录尚无文件；DeepSeek 数据评分已 stop，模型接入最近仍 busy，正在自行准备依赖与固定资产。不要替 GLM 续写，不给 DeepSeek 中途提示，不修它们原始交付。
+
+全部结束后：冻结两组原始产物与消息；核对实际模型、运行时长、tokens、工具调用、是否遵守不训练/不嵌套/写入边界；主 Codex 亲读代码并执行与任务相关的确定性验收。重点比较完整交接（代码、依赖、资产、命令）、模型接口/冻结/保存加载、标签和行身份、评分 ties/缺行/非有限值、模板非预测字段保真及整链是否可运行。区分协议或输出限额导致未交付，与模型普遍能力；一次对比不推成普遍排名。验收前先保存原件，修复只能在主 Codex 的另一个运行副本。
+
+准备工作的进度不能当训练成绩。四个 Agent 均无训练授权，主 Codex 有实际训练授权。训练之前完整审查交付；本轮第一目标是一个 CheMeleon 冻结编码器加各任务新 MLP 的固定配置基线，不调参搜索。
+
+## 主 Codex 已准备的运行资源
+
+- `assets/chemeleon_mp.pt` 已从 Zenodo 15460715 取回，发布方 MD5 一致，SHA256 见 `assets/receipt.json`。权重是在 GLM 两路已经停止后才取回并复制到其项目 assets/，不能当作两组初始输入的一部分；检查它们的实际读取轨迹确认未影响比较。
+- mini 宿主 `<LOCAL_PRIVATE_PATH> 已安装 torch 2.7.1+cpu、chemprop 2.2.1、RDKit 2025.09.6、numpy 2.2.6、scipy 1.15.3、sklearn 1.6.1；无网络、只读、非 root 的限额容器 import 核验通过。仍需记录完整依赖冻结。
+- 基础镜像 `python@sha256:db3ff2e1800a8581e2c48a27c3995339d47bdf046da21c7627accd3d51053a93`（ARM64）。计划实际运行限2 CPU、4 GiB、128进程、只读根、无网络、cap-drop ALL、no-new-privileges、UID1000；只挂载审核后的代码/资产/无验证标签数据及本次输出，不挂凭据或Docker socket。主 Codex通过mini Docker调用，并非让准备Agent训练。
+- 海南此前仅做只读资源核对，未在海南训练或写入。用户后续明确修改算力规则：主 Codex 对已授权训练，可审阅代码后核查当前空闲 GPU 或不影响他人的可共享余量并直接执行，并发数按实际资源决定，不固定三路，不再因未部署训练网关/OS 沙箱一概阻止启动。涉及海南必须先读最新 hainan-compute-access，启动前核对占用、按实际资源控制并发、全部写入仅 project-owner，绝对不停止他人服务或删除他人文件。旧资源快照不能直接当本次选卡依据；四个准备会话仍须全部终态后统一验收，再由主 Codex 实际训练，准备 Agent 不训练。
+- 早期准备阶段尚未开始训练；当前已完成编码并进入主Codex训练，真实评分待训练完成。验证真标签保留MacBook宿主，依据现行容器外评分规范操作；不把标签或精确结果回传准备会话。尚未上传赛事。
+
+本机归档根为本文件目录。mini 两组源码分别可从 `<PRIVATE_LOCAL_MOUNT_OR_TEMP_PATH> 对应子目录读取，挂载状态需核实；也可经既有 ssh <PREPARATION_HOST_ALIAS> 按部署地图取回。
+
+## 后续唤醒
+
+已建立当前聊天心跳 `admet`，每5分钟只读检查并在全部结束后接续验收。未变化时保持安静；完成全部授权工作后删除该心跳。当前聊天 ID 为 `private-role-298cc5edc25e`。

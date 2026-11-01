@@ -1,0 +1,76 @@
+# HANDOFF — Caco2 / frozen-CheMeleon fixed-base training code (cycle 20261031)
+
+Prepared by a leaf preparation session under `input/rules/PREPARATION_SKILL.md` v1.1.
+**Nothing here has been trained or run end-to-end.** torch is absent in the preparation
+environment (`ModuleNotFoundError: No module named 'torch'`) and was not installed per TASK.md.
+Control/training thread owns: remote run, connections, resources, execution limits, actual training.
+
+## Deliverables (all under this output/)
+
+| File | What it is |
+|---|---|
+| `train_remote_v4.py` | Production script for the host `common_guarded` environment. Module body performs no work; entry is `main()`. Keeps v3's interface contract (`ROOT/GPU_UUID/environment/now/safe/sha/write_json`, cwd=`safe(ROOT,True)`, env reset, artifact layout/formats). |
+| `training_science.py` | Tested pure helpers (stdlib+numpy): config validation, raw-SMILES group split, row-identity checks, feature content identity, metrics, CPU-RNG/optimizer safe payloads. **v4 imports and calls these directly — no test-only twins.** |
+| `tests/test_training_science.py` + `tests/results.txt` | Offline acceptance suite; last run 48/48 pass, exit 0. |
+| `split-preview.json` | The exact deterministic split record v4 will write for the registered config: seed 43 → **573 fit / 64 stop rows**, `split_record_sha256 = a10dc9fd…126d`. Host should expect this hash before any GPU noise enters. |
+| `checks.md` | Commands actually executed, results, preserved environment errors, explicit unverified list. |
+| `manifest.json` | Input/output hashes + verification status. |
+
+## Registered single task (no HPO)
+
+config `source/config.json` (sha `ac024e8a…`) drives everything; v4 validates it and fails loudly on
+deviation. caco2_wang, frozen CheMeleon `c376624d…`, head `[256]` dropout 0.1, AdamW lr 5e-4 wd 1e-4,
+bs 128, epochs 50, patience 8, model seed 43, monitor internal-stop standardized MSE,
+preprocessing legacy z-fit on **fit rows only** (transform also reverts to original scale at predict).
+
+## Key behaviors vs v3 (the accepted projection)
+
+1. **Leakage-fixed split**: official train grouped by RAW `Drug` string (no canonicalization/dedup/row
+   edits/Y edits), groups codepoint-sorted, shuffled by dedicated `random.Random(43)` (algorithm
+   recorded; immune to global RNG poisoning; created strictly before model init), whole groups taken
+   until ≈10% (target 64). Invariants asserted inside the helper: non-empty/disjoint/exact-coverage/
+   no-cross-boundary-drug. Full record (all original row indices, group map, source hashes, dup-ID &
+   dup-SMILES audit) → `artifacts/internal-split.json`.
+2. **No hardcoded run identity**: hidden_dims/lr/seed/dropout/optimizer/epochs/patience/batch_size all
+   read from validated config.
+3. **Per-epoch eval/no_grad logging** on fit AND stop with the SAME mode as early stopping:
+   standardized MSE + original-scale MAE/MSE, plus batch train loss, lr list, epoch wall time, step
+   counts, gradient finite/L1 checks. Assertion ties the logged stop MSE to the early-stop metric.
+4. **Best and last heads saved separately** (`caco2_wang-head-best.pt` / `-last.pt`, format
+   `hainan_caco2_chemeleon_head_v2`) each carrying full config, split-record hash, epoch/step
+   identity; optimizer state + CPU RNG states in `training-state-last.pt` as plain JSON-safe
+   containers loadable with `weights_only=True` (probe recorded in evidence).
+5. **Exports**: new `artifacts/train-predictions.csv` = best-head predictions for every official train
+   row with `split_marker` fit/internal_stop + `used_for_fitting`; existing `artifacts/predictions.csv`
+   unchanged schema `task,split,row_index,Drug_ID,Drug,y_pred`, blind valid+test only (91+182=273 rows,
+   positional row identity — dataset has legitimately duplicate Drug_IDs incl. `-`).
+6. **Feature identity, not cache**: per-split `features-{split}-identity.json` binds content sha of
+   features+mask, shape/dtype/NaN counts, input file hash, per-row identity digest, encoder py/checkpoint
+   hashes. v4 never reads an external cache this cycle; npz writes are fresh evidence. Array transform
+   unchanged from v3 (fill NaN→0, z-scale).
+7. All v3 evidence retained: reload-consistency (fresh encoder + weights_only head reload, allclose
+   1e-5), encoder before/after full tensor digests, disk hashes re-checked, CUDA device asserts,
+   optimizer-excludes-encoder and head-changed proofs, forward-hook event log, parse counts.
+
+## Control thread — next steps
+
+1. Stage into the existing guarded root: `train_remote_v4.py` + `training_science.py` beside
+   `common_guarded.py`/`encoder.py`; `source/config.json`, `data/*.csv`, `assets/chemeleon_mp.pt`
+   as v3 expects. Do NOT modify `encoder.py`.
+2. Static gate first: `python3 -m py_compile train_remote_v4.py training_science.py` and run
+   `tests/test_training_science.py` (needs numpy only) — must reproduce 48/48 and the
+   `split-preview.json` record.
+3. Execute the single registered run through the host supervisor exactly as v3 runs were launched
+   (script entry → `main()`); monitor RSS/walltime as before.
+4. Acceptance: `raw/train-complete.json` status success; `predictions.csv` = 273 blind rows with
+   unchanged fields/order semantics; `internal-split.json` matches preview hash; evidence JSON shows
+   encoder digests equal before/after, optimizer_exactly_head true, reload_checks allclose,
+   per-epoch history contains fit/stop eval columns, both head files + training-state-last.pt load
+   with `weights_only=True`.
+
+## Unverified (do not claim otherwise)
+
+GPU/CUDA paths, common_guarded integration, real embedding extraction, torch save/load round-trips of
+new artifact formats, live training numerics, timing/RSS fields — all torch-dependent. Preparation ran:
+hash verification, py_compile, AST import/call scans, 48 unit checks, read-only real-data split
+invariants, and a no-torch simulated-host function path. See `checks.md`.

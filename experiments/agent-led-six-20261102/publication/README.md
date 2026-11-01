@@ -1,0 +1,7 @@
+# 公开选择与可读状态
+
+当前只是本机候选。私有交付根manifest.json给精确文件字节，source-map.json绑定原件、视图和既有固定URI；publication-decisions.json逐项说明，existing-public-objects.json与new-candidate-objects.json分表。尚未取得新commit/匿名读回或Chat实际阅读回执，不能把本机路径当可读公网URI。
+
+旧历史完全保留原字节和相对基址；旧固定URI注明实际commit。新JSON逐字段投影保留科学数值、数组、SMILES与行身份；CSV和本任务科学二进制保持原字节，代码是inert审读文本。预训练权重不重新分发。连接包装、原第三方身份、全系统原体和重复运输封套保持私有身份引用/明确排除，关键资源数值和争议仍可读。
+
+本轮aggregate_only，不读取或复制私有评分树、valid真值或逐行残差；旧公开材料存在相关链接不扩大本轮范围。最终上传集合及是否复用已有固定对象由主控按精确清单决定；所有新相对链接按完整候选已检查，若后续裁剪/改为外部URI须重新核对可达性。

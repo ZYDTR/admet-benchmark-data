@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "status": "design_only_not_deployed",
+  "owner_thread_id": "private-role-298cc5edc25e",
+  "gateway_thread_id": null,
+  "chat_target": {
+    "id": "private-role-162611f9ee94",
+    "title": "解读药物预测赛",
+    "kind": "chatgpt",
+    "project_id": null,
+    "file_roundtrip_verified": false
+  },
+  "training_thread_id": "private-role-78713649c4c9",
+  "retrieval_thread_id": "private-role-45108974a7af",
+  "opencode_monitor_thread_id": "private-role-718a07757988",
+  "local_exchange_proposed": "adhoc_jobs/admet_training/exchange",
+  "cloud_exchange_uri": null,
+  "message_envelope_required": [
+    "event_id",
+    "event_type",
+    "source_role",
+    "target_role",
+    "request_id",
+    "round_id",
+    "run_ids",
+    "attempt",
+    "sequence",
+    "source_turn_id",
+    "artifact_manifest_uri",
+    "artifact_manifest_sha256",
+    "observed_at",
+    "terminal_evidence",
+    "authorization_reference"
+  ],
+  "producer_events": {
+    "controller": [
+      "PREPARATION_REGISTERED",
+      "TRAINING_AUTHORIZED",
+      "RUN_ACCEPTED",
+      "REVIEW_CONSUMED"
+    ],
+    "training": [
+      "TRAINING_STARTED",
+      "TRAINING_TERMINAL",
+      "TRAINING_UNKNOWN"
+    ],
+    "retrieval": [
+      "ARTIFACTS_VERIFIED",
+      "ARTIFACTS_PARTIAL",
+      "SOURCE_CHANGED"
+    ],
+    "gateway": [
+      "PACKET_PUBLISHED",
+      "CHAT_SENT",
+      "CHAT_REPLY_RECEIVED",
+      "REVIEW_DELIVERED",
+      "GATEWAY_BLOCKED"
+    ],
+    "opencode_monitor": [
+      "PREPARATION_ACCEPTED",
+      "PREPARATION_REJECTED",
+      "PREPARATION_UNKNOWN"
+    ]
+  },
+  "handoff_receipt_required": [
+    "event_id",
+    "consumer",
+    "accepted_at",
+    "resulting_state",
+    "delivery_message_id"
+  ],
+  "dispatch_policy": {
+    "delivery_semantics": "at_least_once_with_persisted_deduplication",
+    "single_active_chat_request_per_research_branch": true,
+    "unknown_send_reconcile_before_retry": true,
+    "idle_is_not_success": true,
+    "controller_is_only_training_dispatcher": true
+  },
+  "proposed_cadence": {
+    "screen_configurations": [
+      4,
+      8
+    ],
+    "confirmation_configurations": [
+      2,
+      4
+    ],
+    "confirmation_common_seeds": 3,
+    "partial_review_check_minutes": 30,
+    "partial_review_max_wait_minutes": 60,
+    "new_evidence_required": true,
+    "existing_terra_interval_minutes": 10,
+    "chat_repair_attempts_max": 2
+  },
+  "campaign_budget_required_before_training_loop": [
+    "max_total_runs",
+    "max_gpu_hours",
+    "max_wall_seconds",
+    "gpu_peak_resource_budget",
+    "max_chat_rounds",
+    "evaluation_scope",
+    "max_private_validation_evaluations",
+    "stop_conditions"
+  ],
+  "review_contract": {
+    "status": [
+      "complete",
+      "needs_evidence",
+      "inconclusive"
+    ],
+    "required": [
+      "schema_version",
+      "request_id",
+      "round_id",
+      "manifest_sha256",
+      "status",
+      "read_receipt",
+      "findings",
+      "missing_evidence",
+      "not_assessed",
+      "comparison_groups",
+      "stop_reasons"
+    ],
+    "finding_required": [
+      "claim",
+      "run_ids",
+      "evidence_refs",
+      "counterevidence",
+      "uncertainty",
+      "decision_impact"
+    ],
+    "proposal_required": [
+      "proposal_id",
+      "priority",
+      "hypothesis",
+      "control_run_or_config",
+      "task",
+      "asset_versions",
+      "change_only",
+      "hold_fixed",
+      "split_id",
+      "seeds",
+      "metric",
+      "direction",
+      "minimum_effect_or_decision_rule",
+      "success_criterion",
+      "falsification_criterion",
+      "compute_budget",
+      "dependencies",
+      "within_current_scope"
+    ],
+    "code_execution_from_reply": false,
+    "raw_text_and_attachments_preserved": true
+  },
+  "timing_required": [
+    "packet_build_seconds",
+    "publish_seconds",
+    "access_verification_seconds",
+    "chat_queue_and_generation_seconds",
+    "completion_detection_seconds",
+    "reply_download_seconds",
+    "response_validation_seconds",
+    "end_to_end_seconds"
+  ],
+  "authorization_notes": "本文件是设计合同，不是训练或外发授权。实际网关任务绑定用户授权、收件对象、发布范围与预算；本轮仅完成设计。",
+  "known_unverified": [
+    "cloud artifact publication and actual target Chat read",
+    "full Chat answer and attachment roundtrip",
+    "gateway wakeup and completion callback",
+    "duplicate-message recovery",
+    "campaign scoring scope",
+    "batch training and resource sharing"
+  ]
+}

@@ -1,0 +1,167 @@
+"""One remaining calculation on the specifically reassessed idle-resident GPU1."""
+import os, socket, json, subprocess, time, datetime, signal, xml.etree.ElementTree as ET
+from pathlib import Path
+assert socket.gethostname().split('.')[0] == 'project-compute' and os.getuid() == os.getgid() == 1012
+BASE = Path('<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102')
+run = TARGET_RUN
+root = BASE / TARGET_RELATIVE
+assert BASE.resolve(strict=True) == BASE and root.resolve(strict=True) == root
+uuid = 'registered-gpu-5606cf9d8021'
+index = 1
+resident = 'process-fb67c9fdc7e9'
+resident_ticks = '345162673'
+python = '<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/venv/bin/python3'
+started = time.monotonic()
+cancel = {'requested': False}
+signal.signal(signal.SIGHUP, signal.SIG_IGN)
+signal.signal(signal.SIGTERM, lambda *_: cancel.update(requested=True))
+
+def stamp():
+    return datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+def ident(pid):
+    raw = (Path('/proc') / str(pid) / 'stat').read_text()
+    v = raw.rsplit(')', 1)[1].split()
+    return {'pid': pid, 'start_ticks': v[19], 'pgid': int(v[2]), 'state': v[0], 'cpu_ticks': int(v[11]) + int(v[12]), 'start_stat': raw}
+
+def dump(name, value):
+    with (root / 'raw' / name).open('x') as f:
+        json.dump(value, f, indent=2)
+        f.flush()
+        os.fsync(f.fileno())
+
+def query(argv):
+    at = stamp()
+    try:
+        p = subprocess.run(argv, capture_output=True, text=True, timeout=8)
+        v = {'argv': argv, 'at': at, 'actual_exit': p.returncode, 'stdout': p.stdout, 'stderr': p.stderr}
+    except Exception as e:
+        v = {'argv': argv, 'at': at, 'actual_exit': None, 'error': repr(e)}
+    with (root / 'raw/resource-observations.jsonl').open('a') as f:
+        f.write(json.dumps(v) + '\n')
+        f.flush()
+        os.fsync(f.fileno())
+    if v['actual_exit'] != 0:
+        raise RuntimeError('resource query unknown')
+    return v['stdout']
+
+def health():
+    g = ET.fromstring(query(['/usr/bin/nvidia-smi', '-i', uuid, '-q', '-x'])).find('gpu')
+    for key, value in {'uuid': uuid, 'gpu_recovery_action': 'None', 'compute_mode': 'Default', 'remapped_rows/remapped_row_pending': 'No', 'remapped_rows/remapped_row_failure': 'No', 'ecc_errors/volatile/sram_uncorrectable_parity': '0', 'ecc_errors/volatile/sram_uncorrectable_secded': '0', 'ecc_errors/volatile/dram_uncorrectable': '0'}.items():
+        assert g.findtext(key) == value, (key, g.findtext(key))
+    return g
+assert not (root / 'raw/job-start.json').exists() and (not (root / 'raw/train-complete.json').exists())
+baseline = []
+for i in range(3):
+    g = health()
+    old = ident(resident)
+    assert old['start_ticks'] == resident_ticks and old['state'] not in ('Z', 'X')
+    assert {int(x.findtext('pid')) for x in g.findall('processes/process_info')} == {resident}
+    assert int(g.findtext('fb_memory_usage/free').split()[0]) >= 8700
+    assert int(g.findtext('fb_memory_usage/used').split()[0]) == 72207
+    assert int(g.findtext('utilization/gpu_util').split()[0]) == 0
+    baseline.append({'at': stamp(), 'identity': old, 'device_memory_used_mib': 72207, 'device_memory_free_mib': int(g.findtext('fb_memory_usage/free').split()[0]), 'device_compute_percent': 0})
+    if i < 2:
+        time.sleep(1)
+assert max((x['identity']['cpu_ticks'] for x in baseline)) - min((x['identity']['cpu_ticks'] for x in baseline)) <= 2, 'resident CPU burst during qualification'
+resident_cpu = baseline[-1]['identity']['cpu_ticks']
+dump('prelaunch-qualification.json', {'gpu_uuid': uuid, 'gpu_index': index, 'samples': baseline, 'long_history': '187 files/186 complete values/186 unique timestamps; 31h stable allocation and sampled idle device; one initial numeric unknown', 'own_anticipated_framebuffer_mib': 1200, 'own_prior_observed_framebuffer_mib': 918, 'torch_allocator_cap_mib': 1024, 'total_own_framebuffer_exit_mib': 2048, 'free_memory_exit_floor_mib': 6144, 'serial_only': True, 'step_pause_seconds': 0.5, 'resident_activity_exit': 'CPU delta>3 ticks per observation (baseline 1tick/20s), numeric SM>0, memory growth>16MiB, new foreign process, or identity/query/health uncertainty', 'unknown_pmon_is_not_zero': True, 'no_other_service_probe': True, 'limits': 'Torch cap excludes context; sampled watchdog is not a hard device partition or throughput measurement'})
+env = {'PATH': str(Path(python).parent) + ':/usr/bin:/bin', 'ADMET_RUN_ROOT': str(root), 'CUDA_VISIBLE_DEVICES': uuid, 'HOME': str(root / 'home'), 'TMPDIR': str(root / 'tmp'), 'JOBLIB_MULTIPROCESSING': '0', 'PYTHONDONTWRITEBYTECODE': '1', 'LD_PRELOAD': str(BASE / 'support/thread-names-v2.so')}
+command = ['/usr/bin/strace', '-f', '-qq', '-yy', '-s', '200', '-e', 'trace=%file,write,writev,pwrite64,ftruncate,mmap,msync,close,dup,dup2,dup3,fchdir,fchmod,fchown,fsetxattr,fremovexattr,fallocate,copy_file_range,sendfile,landlock_create_ruleset,landlock_add_rule,landlock_restrict_self,prctl', '-o', str(root / 'raw/write.strace'), python, '-I', '-B', '-u', str(root / 'source/compute_gpu1.py')]
+with (root / 'raw/train.log').open('xb') as log:
+    child = subprocess.Popen(command, cwd=root, env=env, stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+    leader = ident(child.pid)
+    dump('job-start.json', {'at': stamp(), 'argv': command, 'identity': leader, 'parent': ident(os.getpid()), 'baseline_other_identity': baseline[-1]['identity'], 'gpu_uuid': uuid, 'gpu_index': index, 'timeout_seconds': TIME_LIMIT})
+    owned = {child.pid: leader}
+    reason = None
+    rounds = 0
+    try:
+        while child.poll() is None:
+            if cancel['requested'] or time.monotonic() - started > TIME_LIMIT:
+                reason = 'cancelled_or_budget'
+                break
+            worker = root / 'raw/compute-start.json'
+            if worker.exists():
+                recorded = json.loads(worker.read_text())
+                ticks = recorded['start_stat'].rsplit(')', 1)[1].split()[19]
+                try:
+                    current = ident(recorded['pid'])
+                except FileNotFoundError:
+                    current = None
+                if current is not None:
+                    assert current['start_ticks'] == ticks and current['pgid'] == child.pid
+                    owned[current['pid']] = current
+                    status = (Path('/proc') / str(current['pid']) / 'status').read_text()
+                    rss = [int(x.split()[1]) * 1024 for x in status.splitlines() if x.startswith('VmRSS:')]
+                    if rss and rss[0] > 8 * 1024 ** 3:
+                        reason = 'own_RSS_exceeded8GiB'
+                        break
+            old = ident(resident)
+            with (root / 'raw/resident-observations.jsonl').open('a') as f:
+                f.write(json.dumps({'at': stamp(), 'identity': old}) + '\n')
+            if old['start_ticks'] != resident_ticks or old['state'] in ('Z', 'X') or old['cpu_ticks'] - resident_cpu > 3:
+                reason = 'resident_identity_or_CPU_burst_changed'
+                break
+            resident_cpu = old['cpu_ticks']
+            apps = query(['/usr/bin/nvidia-smi', '--query-compute-apps=gpu_uuid,pid,used_gpu_memory', '--format=csv,noheader,nounits'])
+            selected = []
+            for line in apps.splitlines():
+                f = [x.strip() for x in line.split(',')]
+                if f[0] == uuid:
+                    selected.append((int(f[1]), int(f[2])))
+            foreign = [x for x in selected if x[0] not in owned]
+            if any((pid != resident or memory > 72198 + 16 for pid, memory in foreign)):
+                reason = 'other_process_or_memory_growth'
+                break
+            if sum((m for pid, m in selected if pid in owned)) > 2048:
+                reason = 'own_framebuffer_exceeded2GiB'
+                break
+            gpu = query(['/usr/bin/nvidia-smi', '-i', uuid, '--query-gpu=memory.free,utilization.gpu', '--format=csv,noheader,nounits'])
+            if int(gpu.split(',')[0]) < 6144:
+                reason = 'free_memory_below6GiB'
+                break
+            pmon = query(['/usr/bin/nvidia-smi', 'pmon', '-i', '1', '-s', 'um', '-c', '1'])
+            rows = [x.split() for x in pmon.splitlines() if x.strip() and (not x.lstrip().startswith('#'))]
+            values = [int(x[3]) if x[3].isdigit() else None for x in rows if len(x) > 3 and x[1] == str(resident)]
+            if any((x is not None and x > 0 for x in values)):
+                reason = 'resident_GPU_activity_observed'
+                break
+            rounds += 1
+            if rounds % 4 == 0:
+                health()
+            time.sleep(0.15)
+    except Exception as e:
+        reason = 'monitor_unknown:' + repr(e)
+    finally:
+        signals = []
+        if child.poll() is None:
+            for old in reversed(list(owned.values())):
+                try:
+                    current = ident(old['pid'])
+                    if current['start_ticks'] != old['start_ticks']:
+                        continue
+                    h = os.pidfd_open(old['pid'])
+                    signal.pidfd_send_signal(h, signal.SIGTERM)
+                    os.close(h)
+                    signals.append({'pid': old['pid'], 'signal': 15, 'handle': 'pidfd'})
+                except (ProcessLookupError, FileNotFoundError):
+                    pass
+            try:
+                child.wait(timeout=3)
+            except subprocess.TimeoutExpired:
+                for old in reversed(list(owned.values())):
+                    try:
+                        if ident(old['pid'])['start_ticks'] != old['start_ticks']:
+                            continue
+                        h = os.pidfd_open(old['pid'])
+                        signal.pidfd_send_signal(h, signal.SIGKILL)
+                        os.close(h)
+                        signals.append({'pid': old['pid'], 'signal': 9, 'handle': 'pidfd'})
+                    except (ProcessLookupError, FileNotFoundError):
+                        pass
+                child.wait(timeout=3)
+        code = child.wait()
+        elapsed = time.monotonic() - started
+        dump('job-exit.json', {'at': stamp(), 'actual_strace_wait_exit': code, 'reason': reason, 'elapsed_seconds': elapsed, 'own_identities': list(owned.values()), 'signals': signals, 'science_complete_file': (root / 'raw/train-complete.json').exists(), 'monitor_rounds': rounds})
+print(json.dumps({'run_id': run, 'actual_strace_wait_exit': code, 'reason': reason, 'elapsed_seconds': elapsed, 'complete': (root / 'raw/train-complete.json').exists()}))
+raise SystemExit(0 if code == 0 and reason is None else 70)

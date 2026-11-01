@@ -1,0 +1,73 @@
+{
+  "interface_id": "admet-frozen-breadth-v1-proposed",
+  "status": "specification_only_new_code",
+  "entrypoint": "prepare_task(config, host_input_registry) -> accepted_task_context; run_head(context, model_seed) -> artifacts (future authorized execution only)",
+  "inherited_sources": [
+    "training-science",
+    "runner-v4",
+    "paired-manifest"
+  ],
+  "current_runner_limits": {
+    "task": "caco2_wang",
+    "scientific_asset_id": "chemeleon",
+    "optimizer": "AdamW",
+    "loss": "standardized MSE",
+    "monitor_enums": [
+      "internal_validation_standardized_mse",
+      "internal_validation_raw_mae"
+    ],
+    "direction": "minimize",
+    "external_cache_import": false
+  },
+  "new_required_capabilities": [
+    "22-task type/metric dispatch; BCE and AUROC/AP/Spearman monitor",
+    "deterministic task-scoped data registry resolving only train labels, blind valid/test",
+    "full scientific config and seed expansion; no hidden defaults",
+    "raw frozen-feature cache import with exact identity verification",
+    "optional nested train-only confirmation split; excluded outer labels never early-stop",
+    "separate head/scientific success vs supervisor/transport status"
+  ],
+  "acceptance_tests": [
+    {
+      "id": "A1",
+      "test": "reject unknown task/type/metric/direction; all 22 table entries correct"
+    },
+    {
+      "id": "A2",
+      "test": "fit-only affine statistics; stop/outer/valid/test perturbation cannot change them"
+    },
+    {
+      "id": "A3",
+      "test": "MAE known toy output minimizes; tied AUROC/AP, rank ties, constant Spearman, one-class AUROC undefined; single-class AP may have a numerical convention but is rejected as uninformative by this preregistered acceptance policy, finite outputs checked"
+    },
+    {
+      "id": "A4",
+      "test": "group split exact same task/input/seed gives same rows; preserve duplicate/blank IDs; each train row assigned once"
+    },
+    {
+      "id": "A5",
+      "test": "cache changed row order/task/input bytes/checkpoint/encoder code/parse mask/shape/dtype rejected; approved raw cache reusable across model seeds and internal splits"
+    },
+    {
+      "id": "A6",
+      "test": "registered encoder parameters+buffers same before/after; eval/no_grad; optimizer contains only new head; deliberate buffer mutation rejected"
+    },
+    {
+      "id": "A7",
+      "test": "best epoch and checkpoint identity match selected metric; inverse regression transform once; classification sigmoid once; earliest ties retained"
+    },
+    {
+      "id": "A8",
+      "test": "submission unchanged metadata/row order; 16379 predictions with exact task/sample_idx mapping; blank/repeated Drug_ID preserved"
+    },
+    {
+      "id": "A9",
+      "test": "worker success with supervisor failure retained separately; business success not asserted from wrapper code"
+    },
+    {
+      "id": "A10",
+      "test": "seed expansion and dedup match experiment-matrix; no training during import/preparation; no Y in blind files"
+    }
+  ],
+  "implementation_hash_policy": "Existing inherited hashes bound in asset-bindings. New implementation is not created here and its hash is genuinely unknown; no execution until a real accepted artifact exists."
+}

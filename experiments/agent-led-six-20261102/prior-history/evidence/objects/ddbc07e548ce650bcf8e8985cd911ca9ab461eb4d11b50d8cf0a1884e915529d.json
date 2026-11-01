@@ -1,0 +1,55 @@
+{
+  "request_id": "admet-agent-led-six-resume-20261102-001",
+  "observed_at": "2026-11-01T17:02:00.001572+00:00",
+  "state": "waiting_for_resources",
+  "goal_complete": false,
+  "skill_version": "3.0.0",
+  "skill_sha256": "e16e460a14bd1701df8ab0774686afdbb237c7bf3496edf2781fc70eb44ee2a6",
+  "task_sha256": "4df9ccec68a0017fa2b9c9f48c641b39aecff13209a0312356b35eeded3596ad",
+  "completed_scientific_runs": 2,
+  "partial_checkpoint_runs": 1,
+  "not_started_runs": 3,
+  "active_learning_jobs": 0,
+  "scientific_usability": "Two completed models passed actual CPU reload and prediction reconstruction; final independent acceptance/scoring belongs to main/retrieval role.",
+  "shared_use_accepted": false,
+  "sharing_risk": "Temporal other SM reductions with own load; actual other throughput/latency unknown. Existing continuous-three-sample monitor was insufficient and its N/A-as0 aggregation was incorrect.",
+  "known_proxy_reduction_samples": {
+    "seed44-complete": 2,
+    "seed45-complete": 6,
+    "seed45-stopped": 7,
+    "seed46-stopped": 3
+  },
+  "compute_seconds_used": 193.1029941495508,
+  "compute_seconds_remaining": 5102.971911738175,
+  "all_attempts": "compute-ledger.json",
+  "own_registered_lifetimes_released": 21,
+  "own_release_evidence": "final-readonly-check-001.json",
+  "outside_scope_file_mutations": {
+    "narrow_trace_review": "No successful out-of-root file mutations, unresolved operations, or pending calls found in the reviewed 10 traces; denied attempts retained. Device IO separate; not a whole-host/ioctl proof.",
+    "full_system_changes": "not_verified"
+  },
+  "artifacts": "ARTIFACT_INDEX.json",
+  "snapshot_integrity": "snapshot-integrity-001.json",
+  "timing": "TIMING.json",
+  "resource_snapshot": "final-resource-summary-001.json",
+  "failures_retained": [
+    "seed44 attempt01 import path error before CUDA/learning",
+    "seed44 attempt02 CUDA304 caused by denied own thread-comm write, before main learning",
+    "seed45 attempt01 own-only shared-impact stop after at least105 logged steps, no resumable checkpoint",
+    "seed46 attempt01 own-only shared-impact stop, durable30-step checkpoint"
+  ],
+  "diagnostic_failures_retained": [
+    "First CPU inspection assumed wrong RNG nesting; inspection fixed, model unchanged",
+    "First seed44 failed-root artifact fetch recursively included child attempts and timed out; original partial stdout and actual SSH255 retained; subsequent scoped read succeeded"
+  ],
+  "unknowns": [
+    "Exact kernel-active time",
+    "Other-job latency/throughput and exact causal slowdown",
+    "Extra uncommitted seed46 optimizer steps after durable checkpoint",
+    "Historical old006 optimizer steps remain null",
+    "Remote OS exit of the timed-out read-only artifact reader was not captured; actual SSH255/timeout retained, no learning replay."
+  ],
+  "no_scoring_or_official_upload": true,
+  "no_new_agents_threads_timers": true,
+  "next_owner": "same executor via existing observer; main/retrieval may independently score the two stable completions"
+}

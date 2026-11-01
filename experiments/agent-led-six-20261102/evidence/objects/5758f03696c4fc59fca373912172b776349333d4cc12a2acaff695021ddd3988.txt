@@ -1,0 +1,67 @@
+import datetime,hashlib,json,os,socket,stat,sys,time
+from pathlib import Path
+assert socket.gethostname().split('.')[0]=='project-compute'
+assert os.getuid()==1012 and os.getgid()==1012
+project=Path('<AUTHORIZED_PROJECT_ROOT>')
+assert project.resolve(strict=True)==project and project.stat().st_uid==1012
+roots=['<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mse-s46-20261102', '<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mae-s44-20261102', '<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mae-s45-20261102', '<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mae-s46-20261102']
+def safe(p):
+ assert p.resolve(strict=True)==p and p.is_relative_to(project), 'path drift'
+ for a in [p,*p.parents]:
+  if a==project:break
+  assert not a.is_symlink(),'symlink ancestor'
+def hashed(p):
+ safe(p);a=p.lstat();assert stat.S_ISREG(a.st_mode)
+ fd=os.open(p,os.O_RDONLY|os.O_NOFOLLOW)
+ with os.fdopen(fd,'rb') as f:
+  q=os.fstat(f.fileno());assert (q.st_dev,q.st_ino)==(a.st_dev,a.st_ino)
+  h=hashlib.sha256()
+  while True:
+   b=f.read(1048576)
+   if not b:break
+   h.update(b)
+  z=os.fstat(f.fileno())
+ assert (a.st_size,a.st_mtime_ns,a.st_ino,a.st_dev)==(z.st_size,z.st_mtime_ns,z.st_ino,z.st_dev),'changed while hash'
+ return {'size':a.st_size,'sha256':h.hexdigest(),'mode':stat.S_IMODE(a.st_mode),'uid':a.st_uid,'gid':a.st_gid,'nlink':a.st_nlink,'mtime_ns':a.st_mtime_ns,'inode':a.st_ino,'device':a.st_dev}
+
+out={'observed_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'hostname':socket.gethostname(),'uid':os.getuid(),'gid':os.getgid(),'workspace':str(project),'mode':'read_only','roots':[],'python':sys.version,'changes':[]}
+total=0
+for raw in roots:
+ root=Path(raw);safe(root);rows=[];rejected=[]
+ for d,ds,fs in os.walk(root,followlinks=False):
+  ds.sort();fs.sort()
+  for n in list(ds):
+   p=Path(d)/n;a=p.lstat()
+   if stat.S_ISLNK(a.st_mode):rejected.append({'path':p.relative_to(root).as_posix(),'type':'symlink_directory'});ds.remove(n)
+   else:rows.append({'path':p.relative_to(root).as_posix(),'type':'directory','mode':stat.S_IMODE(a.st_mode),'device':a.st_dev})
+  for n in fs:
+   p=Path(d)/n;a=p.lstat();rel=p.relative_to(root).as_posix()
+   if not stat.S_ISREG(a.st_mode):rejected.append({'path':rel,'type':'symlink' if stat.S_ISLNK(a.st_mode) else 'special'});continue
+   total+=a.st_size;assert total<=1073741824,'budget'
+   rows.append({'path':rel,'type':'file',**hashed(p)})
+ out['roots'].append({'root':str(root),'rows':rows,'rejected':rejected,'device':root.stat().st_dev})
+# Only approved shared-environment metadata, no framework imports or package execution.
+v=Path('<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/venv');safe(v)
+out['shared_environment']={'root':str(v),'pyvenv_cfg':(v/'pyvenv.cfg').read_text(),'dist_info_names':sorted(p.name for p in v.glob('lib/python*/site-packages/*.dist-info'))}
+out['mounts_for_approved_roots']=[line for line in Path('/proc/self/mountinfo').read_text().splitlines() if len(line.split())>4 and any(Path(r).is_relative_to(Path(line.split()[4])) for r in roots)]
+
+expected_roots_sha='a44f01dccff686c7009ea4ea9ac7bed8f1d61cb64edcc8b546c7d4a095b29360'
+asset_sha='c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651'
+import tarfile
+assert hashlib.sha256(json.dumps(out['roots'],sort_keys=True,separators=(',',':')).encode()).hexdigest()==expected_roots_sha,'source set/identity changed before streaming'
+selected=[]
+for item in out['roots']:
+ for entry in item['rows']:
+  if entry['type']!='file':continue
+  if entry['path'].endswith('assets/chemeleon_mp.pt') and entry['size']==34859448 and entry['sha256']==asset_sha:continue
+  selected.append({'root':item['root'],**entry})
+with tarfile.open(fileobj=sys.stdout.buffer,mode='w|') as tar:
+ for e in selected:
+  p=Path(e['root'])/e['path'];current=hashed(p)
+  assert all(current[k]==e[k] for k in ['size','sha256','mtime_ns','inode','device']),'changed before stream'
+  fd=os.open(p,os.O_RDONLY|os.O_NOFOLLOW)
+  with os.fdopen(fd,'rb') as f:
+   st=os.fstat(f.fileno());assert (st.st_ino,st.st_dev)==(e['inode'],e['device'])
+   info=tarfile.TarInfo(Path(e['root']).name+'/'+e['path']);info.size=e['size'];info.mode=e['mode'];info.mtime=st.st_mtime
+   tar.addfile(info,f)
+   after=os.fstat(f.fileno());assert (after.st_size,after.st_mtime_ns)==(e['size'],e['mtime_ns']),'changed while stream'

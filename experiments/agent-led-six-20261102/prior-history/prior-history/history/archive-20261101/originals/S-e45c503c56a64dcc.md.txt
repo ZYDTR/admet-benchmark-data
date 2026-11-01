@@ -1,0 +1,80 @@
+# CheMeleon 具体权重许可：离线窄问题核查
+
+核查日期：2026-10-30。范围：现有项目资料和本工作区保存的来源快照；只读、离线。未训练、未改项目，未读取 validation 目录内容或修订测试报告。本文件是本次唯一写入的输出。
+
+## 答复
+
+**有证据。现有离线原始来源已经把具体 CheMeleon 权重记录标为 MIT。不能继续用“网页只显示 License 标题”推断该权重没有许可证据，也不需要重新询问赛方一般性的冻结预训练权重许可。**
+
+最直接的依据是保存的发布方 API 响应 [chemeleon-zenodo-metadata.json](sandbox:<PRIVATE_RUNTIME_PATH>)。它不是只写代码仓库许可的转述，而是类型为 `Model` 的 Zenodo 记录及其具体文件元数据：
+
+| 核对项 | 原始快照中的值 |
+| --- | --- |
+| 记录 | `15460715`；DOI `10.5281/zenodo.15460715` |
+| 名称与类型 | `CheMeleon Foundation Model`；`metadata.resource_type.type = "model"` |
+| 许可字段 | `metadata.license.id = "mit-license"` |
+| 具体文件 | `files[0].key = "chemeleon_mp.pt"` |
+| 文件大小 | `34,859,448` 字节 |
+| 发布方校验值 | `md5:6a80b54fdb7de37ef0374d302f01e8ce` |
+| 原始来源定位 | `links.self = https://zenodo.org/api/records/15460715` |
+
+项目 [candidate-evidence.md](sandbox:<PRIVATE_RUNTIME_PATH>) 的 CheMeleon 小节和 [source-index.md](sandbox:<PRIVATE_RUNTIME_PATH>) 的 M04 也一致记录上述资产与 API 的 MIT 字段。先前网页抽取不完整只说明当时没有显示出许可内容；本次找到的结构化快照已经提供具体内容。此处确认的是已有离线证据，没有声称本轮重新访问了线上页面。
+
+### 赛方许可与资产许可都已有记录，但证据层级不同
+
+[competition/contract.json](sandbox:<PRIVATE_RUNTIME_PATH>) 的 `UC01` 明确记录：用户已向赛方确认外部预训练权重可以使用，但必须冻结；记录日期为 2026-10-30，状态为 `user_confirmed`，来源是用户明确转述。[data-provenance 技能](sandbox:<PRIVATE_RUNTIME_PATH>) 因而明确要求不重复询问这项许可。
+
+因此，针对这次问题，正确的下一步是沿用已确认的冻结规则，完成这个具体资产的接入。该确认没有自动覆盖额外样本、目标标签、教师输出或外部拟合变换；本次也未对这些不同问题作扩大解释。
+
+## 相关的当前完成程度
+
+| 层面 | 当前可支持的结论 |
+| --- | --- |
+| 具体权重许可证据 | 已有：发布方 API 快照明确 MIT，记录和具体文件可对应。 |
+| 资产下载及本地完整性 | 未完成：候选证据卡明确写着“未下载计算 SHA256”。表中 MD5 是发布方元数据，不能当作本轮已下载验证的结果。 |
+| 真实模型和冻结资产接口 | 未完成：[model-adapter.json](sandbox:<PRIVATE_RUNTIME_PATH>) 状态是 `ready`，但摘要明确真实适配器及冻结资产接口均尚未实现；赛事契约 T03 也区分了政策许可与接口实现。 |
+| 候选实验、成绩与成本 | 未完成：[研究入口 README.md](sandbox:<PRIVATE_RUNTIME_PATH>) 明确候选模型尚未运行，未产生本赛分数或实测 GPU 成本；研究快照还未登记为正式训练输入。 |
+
+`status` 返回的总阶段仍为 `research_validation_in_progress`。本问能确认的是“具体权重有 MIT 许可证据，冻结预训练的一般参赛资格已有用户确认”；不能把它写成“权重已经接入、全程冻结已经验证或模型已经跑通”。
+
+## 实际读取路径与顺序
+
+以下按实际工具调用顺序记录。带相同批次号的并发读取无法确定彼此在操作系统层面的先后，保留批次并按提交顺序列出，不虚构串行顺序。`rg --files` 仅查看文件名，单独标注；未读取其列出的其他文件内容。没有加载整份文献综述。
+
+项目根目录 P：`<PRIVATE_RUNTIME_PATH>
+
+研究工作区 R：`<PRIVATE_RUNTIME_PATH>
+
+| 顺序/批次 | 实际路径（P、R 按上面的绝对路径展开） | 实际读取范围或动作 |
+| --- | --- | --- |
+| 1 | `P/AGENTS.md` | 全文，确认入口与只读边界。 |
+| 2 | `P/context/state.json` | 全文，读取汇总状态。只见其中引用的报告路径，未跟进读取报告。 |
+| 3 | `P/skills/INDEX.md` | 全文，选择 `data-provenance`。 |
+| 4 | `P/skills/data-provenance/SKILL.md` | 全文，按“只读查某个模型的权重/许可”分支处理。 |
+| 5 | `P/scripts/harness.py` | `rg` 搜索 status 实现，未命中。 |
+| 6 | `P/scripts/harness.py` | 第 1–120 行范围，实际文件为短入口脚本；定位 CLI 模块。 |
+| 7 | `P/docs/research/2026-10-30/candidate-evidence.md` | `rg` 仅定位标题和 CheMeleon 对应行。 |
+| 8 | `P/docs/research/2026-10-30/candidate-evidence.md` | 第 34–45 行，即 CheMeleon 小节。 |
+| 9 | `P/docs/research/2026-10-30/` | `rg --files` 按 zenodo/source/README/manifest/asset 文件名过滤，排除 validation；仅文件名。 |
+| 10 | `P/src/admet_harness/cli.py` | `rg` 搜索 status 实现模式，未命中。 |
+| 11a（并发） | `P/docs/research/2026-10-30/source-index.md` | `rg -C 3`，仅 M04、Zenodo 记录及邻接行。 |
+| 11b（并发） | `P/docs/research/2026-10-30/evidence/` | `rg --files`，排除 validation；仅文件名。 |
+| 11c（并发） | `P/src/admet_harness/cli.py` | 第 1–110 行，确认 status 路由和写文件条件。 |
+| 12a（并发） | `P/docs/research/2026-10-30/README.md` | 全文，为短研究入口；读取当前完成程度。未跟进修订与验证链接。 |
+| 12b（并发） | `P/src/admet_harness/context.py` | `rg -A 50 '^def status'`，确认 status 只读取状态和任务 JSON，不读取证据报告。 |
+| 12c（并发） | `P/competition/contract.json`；`P/context/tasks/model-adapter.json` | 同一 `rg -C 4` 命令，搜索预训练、冻结、许可、资产、状态等相关字段；命令内部两文件读取先后未记录。 |
+| 13a（并发） | `P/scripts/harness.py status` 的状态输入，见下方顺序 | 执行 `PYTHONDONTWRITEBYTECODE=1 python3 scripts/harness.py status`；退出码 0，仅恢复保存状态，不运行训练或审计。禁写字节码。 |
+| 13b（并发） | `R/` | `rg --files` 按 zenodo/chemeleon/license/metadata 文件名过滤，排除 `**/validation/**`；仅文件名。 |
+| 14 | `R/sources/chemeleon-zenodo-metadata.json` | 用 `python3 -B` 读取和打印既存 JSON，核实发布方许可、记录和文件元数据；未联网。 |
+
+第 13a 步 `status` 的状态数据读取顺序由已检查的实现确定：先读 `context/state.json`，再按路径排序读 `context/tasks/*.json`。本次实际返回的任务对应如下：
+
+1. `P/context/state.json`
+2. `P/context/tasks/data-intake.json`
+3. `P/context/tasks/harness-build.json`
+4. `P/context/tasks/host-runtime.json`
+5. `P/context/tasks/model-adapter.json`
+6. `P/context/tasks/research-governance.json`
+7. `P/context/tasks/training-guidance.json`
+
+上述日志记录主动查看的资料及 status 显式读取的状态输入；Python 执行时正常加载的解释器与导入模块不作为人工阅读资料列举。任务 JSON 中的证据引用未被 status 展开读取。本文件写入后未回读 validation 目录。

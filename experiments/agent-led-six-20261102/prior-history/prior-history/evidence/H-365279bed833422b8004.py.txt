@@ -1,0 +1,5 @@
+from pathlib import Path
+import sys,json
+P=Path(__file__).resolve().parent;sys.path.insert(0,str(P.parents[1]/'operator'));import transport
+transport.EVIDENCE=P/'raw';transport.RUN=P
+v=transport.read_only((P/'six-state-remote.py').read_text(),'six-state',timeout=55);(P/'six-state.json').write_bytes(v);a=json.loads(v);print(json.dumps([{'run_id':x['run_id'],'learning_lock':x['paths']['state/learning-started.lock']['exists'],'new_paths_exist':[k for k,v in x['paths'].items() if 'recovery-03' in k and v['exists']]} for x in a['runs']]))

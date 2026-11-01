@@ -1,0 +1,15 @@
+import os,socket,json,datetime,hashlib
+from pathlib import Path
+assert socket.gethostname().split('.')[0]=='project-compute' and os.getuid()==os.getgid()==1012
+BASE=Path('<AUTHORIZED_PROJECT_ROOT>/admet');out={'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'runs':[]}
+for seed in (44,45,46):
+ for monitor in ('mse','mae'):
+  name=f'hainan-paired-{monitor}-s{seed}-20261101';root=BASE/name;assert root.resolve(strict=True)==root
+  entry={'run_id':name,'paths':{}}
+  for rel in ('state/learning-started.lock','state/recovery-02/job-lifetime.lock','state/recovery-02/pipeline-lifetime.lock','raw/recovery-02/job-wait-exit.json','raw/recovery-02/attempt-02/pipeline-exit.json','raw/recovery-03','state/recovery-03','outputs/recovery-03','admission/recovery-03','operator/recovery-03'):
+   p=root/rel;assert p.resolve(strict=False)==p;item={'exists':p.exists()}
+   if p.is_file():
+    v=p.read_bytes();item.update(size=len(v),sha256=hashlib.sha256(v).hexdigest())
+   entry['paths'][rel]=item
+  out['runs'].append(entry)
+print(json.dumps(out))

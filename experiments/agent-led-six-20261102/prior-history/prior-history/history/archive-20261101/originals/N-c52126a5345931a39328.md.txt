@@ -1,0 +1,15 @@
+# 各角色派发模板
+
+所有模板由主控填值并封口；{{...}}未填完不发送。实际路径须是目标Thread可读路径；目标读回SHA和实际读取/行为分开验收。下列短提示对应完整TASK，不靠简短提示承载全部约束。
+
+| 角色 | 固定提示与附带合同 |
+|---|---|
+| 准备 | 由 `skills/ml-preparation-only/scripts/preparation_packet.py prepare` 生成；TASK.md描述具体科学变更，TASK_CONTRACT.json定义资产、生产/消费入口、独立fixture和预期语义，input-manifest绑定实际字节。用 `control/preparation-contract.example.json` 起草并按本任务修改。 |
+| 准备观察 | 使用本任务冻结的准备Skill及监控合同。只观察主控实际已发送的 {{request_id}} / {{session_id}}，目录为Context Infrastructure根；冻结原件，用TASK_CONTRACT的独立条件检查生产入口，真实依赖没测保留未验证。只把原件/验收回报来源主控，不续写、不修运行任务、不接其他角色追加任务；队列空暂停。 |
+| 训练 | 使用本任务冻结的admet-frozen-training Skill及命中引用，完成 {{run_id}} / {{PLAN_path}} 里的已准入训练；科学源码 {{source_manifest}}、输入 {{input_manifest}}、资源预算 {{budget}}。先读资源日志、启动前现场复核。按合同区分worker/监督/科学验收。回报 {{controller}}；不扩大训练组合。 |
+| 算力观察 | 使用hainan-resource-observation Skill，仅更新 {{resource_registry}} 所登记观察；保持10分钟既有节奏，相关资源变化只通知等待中的原训练；不派准备，不分配新实验。 |
+| 取回评分发布 | 使用冻结hainan-training-retrieval及admet-evidence-review Skill，按 {{retrieval_task}} 取回 {{run_ids}}，按 {{scoring_task}} 固定评分；历史来源用 {{history_inventory}}，不能只选本次run。先交候选及覆盖/缺口/脱敏语义核验，主控准入后按既有发布授权发布。把固定commit回执交 {{gateway}} 和主控；不训练、不替Chat研究。 |
+| Chat网关 | 使用冻结admet-evidence-review Skill及通道参考，按 {{gateway_task}} 取已封口材料。只填主控模板小字段，使用revision11渲染器与CONTEXT_CONTRACT核验；发给本批新Pro，收全原件后按同版返回合同检查并回主控。材料不足报具体缺口，不自由改研究目标、不派OpenCode。 |
+| 主控 | 从项目AGENTS→control/README进入；亲审回报、决定采纳/修复/补证据/下阶段。每个决定绑定原消息和证据；配置、历史范围或验收条件不清，先修上游合同。不得把运输成功或代理自报当科研通过。 |
+
+准备不包含海南连接信息；训练/观察/取回各自按能力路由通用海南Skill。单独项目Skill索引不能被整个复制到准备包后让准备Agent任意扩权。公共研究Prompt单一源为 design/chat_gateway_20261031/CHAT_PROMPT.md；GATEWAY_PROMPT只路由，不能再复制一套科研要求。

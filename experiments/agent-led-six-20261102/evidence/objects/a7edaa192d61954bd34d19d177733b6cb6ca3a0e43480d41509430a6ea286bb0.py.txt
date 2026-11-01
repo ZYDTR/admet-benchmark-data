@@ -1,0 +1,77 @@
+"""Descriptive comparison from six approved aggregate scores; no scoring or truth access."""
+import datetime, hashlib, json, statistics
+from pathlib import Path
+W = Path('<LOCAL_WORKSPACE>')
+CY = W / 'adhoc_jobs/admet_training/cycles/agent-led-resume-20261102'
+R = CY / 'retrieval/remaining-four-001'
+T = json.loads((R / 'RETRIEVAL_TASK.json').read_text())
+S = CY / 'retrieval/stable-two-001'
+
+def sha(b):
+    return hashlib.sha256(b).hexdigest()
+
+def load(p):
+    return json.loads(p.read_text())
+
+def dump(p, x):
+    p.write_text(json.dumps(x, ensure_ascii=False, indent=2, allow_nan=False) + '\n')
+old = Path(T['retained_first_two_scores']['path']).read_bytes()
+assert sha(old) == T['retained_first_two_scores']['sha256']
+previous = json.loads(old)['scores']
+new = load(R / 'scores.json')['scores']
+assert len(previous) == 2 and len(new) == 4
+all_scores = previous + new
+assert len({x['run_id'] for x in all_scores}) == 6
+configs = {}
+evidence = {}
+summaries = []
+for x in all_scores:
+    rid = x['run_id']
+    run = next((q for q in T['successful_attempts'] if q['run_id'] == rid), None)
+    if run:
+        read_root = next((Path(y) for y in T['remote_read_only_roots'] if Path(y).name == rid))
+        root = R / 'snapshot' / rid / Path(run['remote_success_root']).relative_to(read_root)
+        retained = False
+        resumed = run['resumed_steps']
+    else:
+        oldtask = load(S / 'RETRIEVAL_TASK.json')
+        run = next((q for q in oldtask['successful_attempts'] if q['run_id'] == rid))
+        root = S / 'snapshot' / rid / Path(run['remote_success_root']).name
+        retained = True
+        resumed = 0
+    cfg = load(root / 'source/config.json')
+    ev = load(root / 'artifacts/training-evidence.json')
+    configs[rid] = cfg
+    evidence[rid] = ev
+    assert cfg['run_id'] == rid and x['n'] == 91 and (x['task'] == 'caco2_wang') and (x['metric'] == 'MAE') and (x['direction'] == 'minimize')
+    summaries.append({'run_id': rid, 'model_seed': cfg['head_config']['seed'], 'monitor': cfg['monitor'], 'valid_MAE': x['value'], 'valid_rows': 91, 'metric': 'MAE', 'direction': 'minimize', 'epochs': ev['epochs_run'], 'total_optimizer_steps': ev['optimizer_steps'], 'resumed_optimizer_steps': resumed, 'new_optimizer_steps': ev['optimizer_steps'] - resumed, 'best_epoch_1_based': ev['best_epoch_1_based'], 'retained_previous_score_no_rescore': retained, 'feature_mode': 'cached_frozen_representations' if not ev['encoder_forward_events'] else 'fresh_frozen_encoding', 'resource_scope': 'GPU0 historical sharing not_passed' if retained else 'GPU1 conditional idle-resident small-head branch accepted by main'})
+
+def changes(a, b, path='$'):
+    if type(a) != type(b):
+        return [path]
+    if isinstance(a, dict):
+        return [q for k in sorted(set(a) | set(b)) for q in (changes(a[k], b[k], path + '/' + k) if k in a and k in b else [path + '/' + k])]
+    if isinstance(a, list):
+        return [path] if len(a) != len(b) else [q for i, (x, y) in enumerate(zip(a, b)) for q in changes(x, y, path + '/' + str(i))]
+    return [] if a == b else [path]
+pairs = []
+for seed in [44, 45, 46]:
+    mse = next((x for x in summaries if x['model_seed'] == seed and x['monitor'] == 'internal_validation_standardized_mse'))
+    mae = next((x for x in summaries if x['model_seed'] == seed and x['monitor'] == 'internal_validation_raw_mae'))
+    diffs = changes(configs[mse['run_id']], configs[mae['run_id']])
+    pairs.append({'seed': seed, 'mse_selected_run': mse['run_id'], 'mae_selected_run': mae['run_id'], 'mse_selected_MAE': mse['valid_MAE'], 'mae_selected_MAE': mae['valid_MAE'], 'delta_mae_selected_minus_mse_selected': mae['valid_MAE'] - mse['valid_MAE'], 'lower_observed_MAE': 'MAE_monitor' if mae['valid_MAE'] < mse['valid_MAE'] else 'MSE_monitor' if mse['valid_MAE'] < mae['valid_MAE'] else 'tie', 'config_difference_paths': diffs, 'config_only_monitor_and_identity_differ': set(diffs) <= {'$/run_id', '$/monitor'}, 'runtime_scope': 'Same seed/split/head/loss pairing; GPU/monitoring implementation, cached representation path and seed46 resume differ. Descriptive saved-model comparison, no causal significance claim.'})
+groups = {}
+for name, monitor in [('MSE_monitor', 'internal_validation_standardized_mse'), ('MAE_monitor', 'internal_validation_raw_mae')]:
+    values = [x['valid_MAE'] for x in summaries if x['monitor'] == monitor]
+    groups[name] = {'seeds': [44, 45, 46], 'n_models': len(values), 'mean_valid_MAE': statistics.fmean(values), 'sample_sd_across_models': statistics.stdev(values), 'min_valid_MAE': min(values), 'max_valid_MAE': max(values)}
+result = {'at': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'scores_reused': {'path': str(Path(T['retained_first_two_scores']['path'])), 'sha256': sha(old), 'formal_new_calls_for_retained_runs': 0}, 'new_scores_sha256': sha((R / 'scores.json').read_bytes()), 'six_runs': summaries, 'pairs': pairs, 'descriptive_groups': groups, 'mean_paired_delta_mae_minus_mse': statistics.fmean((x['delta_mae_selected_minus_mse_selected'] for x in pairs)), 'negative_delta_means': 'MAE-selected saved model has lower official_valid MAE', 'limitations': ['Three seeds, same91 validation samples, not independent final generalization or statistical significance.', 'Validation reused for comparison and selection; no official aggregate score or new hyperparameter decision inferred.', 'GPU0 failed sharing qualification remains, GPU1 later acceptance is conditional on observed idle residency; direct resident throughput/latency absent.', 'Seed46 MSE continued a30-step head/optimizer/RNG checkpoint; runtime history differs from three fresh MAE heads.', 'Only configurations are compared mechanically; full numerical equivalence of implementation paths is not replayed here.']}
+dump(R / 'six-run-comparison.json', result)
+lines = ['# 六项配对汇总', '', '每项为完整91行official_valid MAE，越小越好。前两项仅引用已验收原分数，新增四项各评分一次。', '', '| 选轮 | seed | valid MAE | epochs / best | total steps / resumed |', '|---|---:|---:|---|---|']
+for x in sorted(summaries, key=lambda x: (x['model_seed'], x['monitor'])):
+    lines.append('|' + ('MSE' if x['monitor'].endswith('standardized_mse') else 'MAE') + '|' + str(x['model_seed']) + '|' + repr(x['valid_MAE']) + '|' + str(x['epochs']) + ' / ' + str(x['best_epoch_1_based']) + '|' + str(x['total_optimizer_steps']) + ' / ' + str(x['resumed_optimizer_steps']) + '|')
+lines += ['', '| seed | MAE选轮减MSE选轮 | 观察到更低MAE |', '|---|---:|---|']
+for x in pairs:
+    lines.append('|' + str(x['seed']) + '|' + repr(x['delta_mae_selected_minus_mse_selected']) + '|' + x['lower_observed_MAE'] + '|')
+lines += ['', 'MSE组均值' + repr(groups['MSE_monitor']['mean_valid_MAE']) + '，MAE组均值' + repr(groups['MAE_monitor']['mean_valid_MAE']) + '；三seed平均配对差' + repr(result['mean_paired_delta_mae_minus_mse']) + '。这些是保存模型的描述性比较。', '', '配置对账逐seed记录所有变化字段；运行时GPU、负载控制、缓存路径和seed46恢复历史有差异。3个seed和复用valid不足以支持显著性或因果结论，也不自动准入新调参。GPU0共享失败保留，GPU1仅在当次空闲驻留小头条件下获主控有条件接受；没有直接对方吞吐/延迟无影响证明。', '', '精确来源、所有配对与固定聚合诊断见six-run-comparison.json和scores.json。此处没有读真值、重评或模型执行。']
+(R / 'six-run-comparison.md').write_text('\n'.join(lines) + '\n')
+print(json.dumps({'six_runs': len(summaries), 'pairs': pairs, 'descriptive_groups': groups}, ensure_ascii=False))

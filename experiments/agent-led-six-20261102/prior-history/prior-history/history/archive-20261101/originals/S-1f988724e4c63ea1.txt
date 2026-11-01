@@ -1,0 +1,151 @@
+<LOCAL_WORKSPACE>/adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/ds-coldstart-probe-9da4974d4a
+[cache miss] ames/train: cache miss: no manifest at /evidence/entry-cache/train/ames/c98dde56ac67ae40ad21d20a066844ec85ebdcf049a8c8e8eea1120867fd1af9/manifest.json
+[
+  {
+    "name": "real-encoder-two-molecules",
+    "pass_check": true,
+    "shape": [
+      2,
+      2048
+    ],
+    "frozen": true
+  },
+  {
+    "name": "actual-encode-table-to-cache",
+    "pass_check": false,
+    "actual": "rejected",
+    "error": "AttributeError: 'numpy.ndarray' object has no attribute 'all_finite'",
+    "traceback": "Traceback (most recent call last):\n  File \"/probe.py\", line 18, in check\n    detail=fn(); result=not reject\n           ^^^^\n  File \"/probe.py\", line 36, in <lambda>\n    check('actual-encode-table-to-cache',lambda:encode_table(enc,table,str(O/'entry-cache'),deps,2))\n                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/candidate/encode_features.py\", line 64, in encode_table\n    entry = save_cache(cache_dir, manifest, feats, kept, failures)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/candidate/feature_cache.py\", line 138, in save_cache\n    if not features.all_finite():\n           ^^^^^^^^^^^^^^^^^^^\nAttributeError: 'numpy.ndarray' object has no attribute 'all_finite'\n"
+  },
+  {
+    "name": "cache-wrapped-hit",
+    "pass_check": true,
+    "actual": "accepted",
+    "detail": [
+      2,
+      2048
+    ]
+  },
+  {
+    "name": "producer-to-consumer-manifest",
+    "pass_check": false,
+    "actual": "rejected",
+    "error": "CacheError: cache miss: no manifest at /evidence/wrapped-cache/train/ames/052afde1cc9578d9c62c1ca5b75ff32c3694d93baaf8a88010516619a135371c/manifest.json",
+    "traceback": "Traceback (most recent call last):\n  File \"/probe.py\", line 18, in check\n    detail=fn(); result=not reject\n           ^^^^\n  File \"/probe.py\", line 40, in <lambda>\n    check('producer-to-consumer-manifest',lambda:_load_features(str(O/'wrapped-cache'),table,enc.feature_dim,enc.weight_metadata,deps,2))\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/candidate/train_heads.py\", line 52, in _load_features\n    feats, cached = load_cache(cache_dir, manifest)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/candidate/feature_cache.py\", line 174, in load_cache\n    raise CacheError(f\"cache miss: no manifest at {mp}\")\nerrors.CacheError: cache miss: no manifest at /evidence/wrapped-cache/train/ames/052afde1cc9578d9c62c1ca5b75ff32c3694d93baaf8a88010516619a135371c/manifest.json\n"
+  },
+  {
+    "name": "blind-valid-feature-loader",
+    "pass_check": false,
+    "actual": "rejected",
+    "error": "KeyError: 'label'",
+    "traceback": "Traceback (most recent call last):\n  File \"/probe.py\", line 18, in check\n    detail=fn(); result=not reject\n           ^^^^\n  File \"/probe.py\", line 47, in <lambda>\n    check('blind-valid-feature-loader',lambda:_load_features(str(O/'valid-cache'),vtab,enc.feature_dim,enc.weight_metadata,deps,2))\n                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/candidate/train_heads.py\", line 54, in _load_features\n    labels_by_row = {r[\"row_index\"]: r[\"label\"] for r in table[\"rows\"]}\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/candidate/train_heads.py\", line 54, in <dictcomp>\n    labels_by_row = {r[\"row_index\"]: r[\"label\"] for r in table[\"rows\"]}\n                                     ~^^^^^^^^^\nKeyError: 'label'\n"
+  },
+  {
+    "name": "predict-cached-array",
+    "pass_check": false,
+    "actual": "rejected",
+    "error": "ValueError: setting an array element with a sequence.",
+    "traceback": "TypeError: float() argument must be a string or a real number, not 'Array'\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/probe.py\", line 18, in check\n    detail=fn(); result=not reject\n           ^^^^\n  File \"/probe.py\", line 49, in <lambda>\n    check('predict-cached-array',lambda:predict(head,load_cache(str(O/'wrapped-cache'),manifest)[0],'classification').tolist())\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/candidate/head_model.py\", line 157, in predict\n    tensor = torch.as_tensor(_np.asarray(features, dtype=_np.float32))\n                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: setting an array element with a sequence.\n"
+  },
+  {
+    "name": "training-array-astype-contract",
+    "pass_check": false,
+    "note": "Train entrance not invoked; source requires Xtr.astype(np.float32)."
+  },
+  {
+    "name": "untrained-head-save-load",
+    "pass_check": true
+  },
+  {
+    "name": "wrong-head-task",
+    "pass_check": true,
+    "actual": "rejected",
+    "error": "ValueError: /evidence/head.pt: task 'ames' != expected 'caco2_wang'",
+    "traceback": "Traceback (most recent call last):\n  File \"/probe.py\", line 18, in check\n    detail=fn(); result=not reject\n           ^^^^\n  File \"/probe.py\", line 54, in <lambda>\n    check('wrong-head-task',lambda:load_head(str(O/'head.pt'),expect_task='caco2_wang'),reject=True)\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/candidate/head_model.py\", line 132, in load_head\n    raise ValueError(f\"{path}: task {payload['task']!r} != expected {expect_task!r}\")\nValueError: /evidence/head.pt: task 'ames' != expected 'caco2_wang'\n"
+  },
+  {
+    "name": "regression-inverse-scale",
+    "pass_check": true
+  },
+  {
+    "name": "cache-change-rows",
+    "pass_check": true,
+    "actual": "rejected",
+    "error": "CacheError: cache miss: no manifest at /evidence/wrapped-cache/train/ames/048f4a2d0e955bbce9dd57e1fbf2342fbd7aa999eefb42fcae20e9591479a7da/manifest.json",
+    "traceback": "Traceback (most recent call last):\n  File \"/probe.py\", line 18, in check\n    detail=fn(); result=not reject\n           ^^^^\n  File \"/probe.py\", line 63, in <lambda>\n    check('cache-change-'+mode,lambda x=other:load_cache(str(O/'wrapped-cache'),x),reject=True)\n                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/candidate/feature_cache.py\", line 174, in load_cache\n    raise CacheError(f\"cache miss: no manifest at {mp}\")\nerrors.CacheError: cache miss: no manifest at /evidence/wrapped-cache/train/ames/048f4a2d0e955bbce9dd57e1fbf2342fbd7aa999eefb42fcae20e9591479a7da/manifest.json\n"
+  },
+  {
+    "name": "cache-change-input",
+    "pass_check": true,
+    "actual": "rejected",
+    "error": "CacheError: cache miss: no manifest at /evidence/wrapped-cache/train/ames/908f8a8d448e7c0cb99f4bf7ea493cebc5236e8a1023345d43566ed6fcdb337f/manifest.json",
+    "traceback": "Traceback (most recent call last):\n  File \"/probe.py\", line 18, in check\n    detail=fn(); result=not reject\n           ^^^^\n  File \"/probe.py\", line 63, in <lambda>\n    check('cache-change-'+mode,lambda x=other:load_cache(str(O/'wrapped-cache'),x),reject=True)\n                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/candidate/feature_cache.py\", line 174, in load_cache\n    raise CacheError(f\"cache miss: no manifest at {mp}\")\nerrors.CacheError: cache miss: no manifest at /evidence/wrapped-cache/train/ames/908f8a8d448e7c0cb99f4bf7ea493cebc5236e8a1023345d43566ed6fcdb337f/manifest.json\n"
+  },
+  {
+    "name": "cache-change-weights",
+    "pass_check": true,
+    "actual": "rejected",
+    "error": "CacheError: cache miss: no manifest at /evidence/wrapped-cache/train/ames/d4e9a8297ac73307b57015748da1595839973cca730b067f55326316141e90ba/manifest.json",
+    "traceback": "Traceback (most recent call last):\n  File \"/probe.py\", line 18, in check\n    detail=fn(); result=not reject\n           ^^^^\n  File \"/probe.py\", line 63, in <lambda>\n    check('cache-change-'+mode,lambda x=other:load_cache(str(O/'wrapped-cache'),x),reject=True)\n                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/candidate/feature_cache.py\", line 174, in load_cache\n    raise CacheError(f\"cache miss: no manifest at {mp}\")\nerrors.CacheError: cache miss: no manifest at /evidence/wrapped-cache/train/ames/d4e9a8297ac73307b57015748da1595839973cca730b067f55326316141e90ba/manifest.json\n"
+  },
+  {
+    "name": "cache-change-deps",
+    "pass_check": true,
+    "actual": "rejected",
+    "error": "CacheError: cache miss: no manifest at /evidence/wrapped-cache/train/ames/532ac29c7405c6d8bc2228f0f98491e464ef32ae8b55b718558754c0ecd6a8a4/manifest.json",
+    "traceback": "Traceback (most recent call last):\n  File \"/probe.py\", line 18, in check\n    detail=fn(); result=not reject\n           ^^^^\n  File \"/probe.py\", line 63, in <lambda>\n    check('cache-change-'+mode,lambda x=other:load_cache(str(O/'wrapped-cache'),x),reject=True)\n                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/candidate/feature_cache.py\", line 174, in load_cache\n    raise CacheError(f\"cache miss: no manifest at {mp}\")\nerrors.CacheError: cache miss: no manifest at /evidence/wrapped-cache/train/ames/532ac29c7405c6d8bc2228f0f98491e464ef32ae8b55b718558754c0ecd6a8a4/manifest.json\n"
+  },
+  {
+    "name": "cache-tamper-bytes",
+    "pass_check": true,
+    "actual": "rejected",
+    "error": "CacheError: features.npy digest mismatch in /evidence/tamper-bytes/train/ames/c98dde56ac67ae40ad21d20a066844ec85ebdcf049a8c8e8eea1120867fd1af9 (corrupted)",
+    "traceback": "Traceback (most recent call last):\n  File \"/probe.py\", line 18, in check\n    detail=fn(); result=not reject\n           ^^^^\n  File \"/probe.py\", line 76, in <lambda>\n    check('cache-tamper-'+mode,lambda r=root:load_cache(str(r),manifest),reject=True)\n                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/candidate/feature_cache.py\", line 190, in load_cache\n    raise CacheError(f\"{os.path.basename(path)} digest mismatch in {entry} (corrupted)\")\nerrors.CacheError: features.npy digest mismatch in /evidence/tamper-bytes/train/ames/c98dde56ac67ae40ad21d20a066844ec85ebdcf049a8c8e8eea1120867fd1af9 (corrupted)\n"
+  },
+  {
+    "name": "cache-tamper-shape",
+    "pass_check": true,
+    "actual": "rejected",
+    "error": "CacheError: cached array shape (1, 2048) != manifest shape",
+    "traceback": "Traceback (most recent call last):\n  File \"/probe.py\", line 18, in check\n    detail=fn(); result=not reject\n           ^^^^\n  File \"/probe.py\", line 76, in <lambda>\n    check('cache-tamper-'+mode,lambda r=root:load_cache(str(r),manifest),reject=True)\n                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/candidate/feature_cache.py\", line 195, in load_cache\n    raise CacheError(f\"cached array shape {feats.shape} != manifest shape\")\nerrors.CacheError: cached array shape (1, 2048) != manifest shape\n"
+  },
+  {
+    "name": "cache-tamper-dtype",
+    "pass_check": true,
+    "actual": "rejected",
+    "error": "CacheError: cached array dtype float64 != manifest float32",
+    "traceback": "Traceback (most recent call last):\n  File \"/probe.py\", line 18, in check\n    detail=fn(); result=not reject\n           ^^^^\n  File \"/probe.py\", line 76, in <lambda>\n    check('cache-tamper-'+mode,lambda r=root:load_cache(str(r),manifest),reject=True)\n                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/candidate/feature_cache.py\", line 193, in load_cache\n    raise CacheError(f\"cached array dtype {feats.dtype} != manifest {cached.get('feature_dtype')}\")\nerrors.CacheError: cached array dtype float64 != manifest float32\n"
+  },
+  {
+    "name": "cache-tamper-nan",
+    "pass_check": true,
+    "actual": "rejected",
+    "error": "CacheError: cached array contains non-finite values in /evidence/tamper-nan/train/ames/c98dde56ac67ae40ad21d20a066844ec85ebdcf049a8c8e8eea1120867fd1af9",
+    "traceback": "Traceback (most recent call last):\n  File \"/probe.py\", line 18, in check\n    detail=fn(); result=not reject\n           ^^^^\n  File \"/probe.py\", line 76, in <lambda>\n    check('cache-tamper-'+mode,lambda r=root:load_cache(str(r),manifest),reject=True)\n                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/candidate/feature_cache.py\", line 197, in load_cache\n    raise CacheError(f\"cached array contains non-finite values in {entry}\")\nerrors.CacheError: cached array contains non-finite values in /evidence/tamper-nan/train/ames/c98dde56ac67ae40ad21d20a066844ec85ebdcf049a8c8e8eea1120867fd1af9\n"
+  },
+  {
+    "name": "cache-tamper-inf",
+    "pass_check": true,
+    "actual": "rejected",
+    "error": "CacheError: cached array contains non-finite values in /evidence/tamper-inf/train/ames/c98dde56ac67ae40ad21d20a066844ec85ebdcf049a8c8e8eea1120867fd1af9",
+    "traceback": "Traceback (most recent call last):\n  File \"/probe.py\", line 18, in check\n    detail=fn(); result=not reject\n           ^^^^\n  File \"/probe.py\", line 76, in <lambda>\n    check('cache-tamper-'+mode,lambda r=root:load_cache(str(r),manifest),reject=True)\n                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/candidate/feature_cache.py\", line 197, in load_cache\n    raise CacheError(f\"cached array contains non-finite values in {entry}\")\nerrors.CacheError: cached array contains non-finite values in /evidence/tamper-inf/train/ames/c98dde56ac67ae40ad21d20a066844ec85ebdcf049a8c8e8eea1120867fd1af9\n"
+  },
+  {
+    "name": "duplicate-kept-row-indices",
+    "pass_check": false,
+    "actual": "accepted",
+    "detail": "/evidence/dups/train/ames/c98dde56ac67ae40ad21d20a066844ec85ebdcf049a8c8e8eea1120867fd1af9"
+  },
+  {
+    "name": "encoder-and-head-parameters-unchanged",
+    "pass_check": true
+  },
+  {
+    "name": "supplied-tests-with-deps",
+    "pass_check": false,
+    "exit_code": 1
+  }
+]
+
+STDERR
+

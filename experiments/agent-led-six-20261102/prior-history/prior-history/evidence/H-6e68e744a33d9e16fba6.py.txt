@@ -1,0 +1,56 @@
+"""Host package builder and exact append receiver. No connection API."""
+import hashlib,io,json,os,stat,zipfile,re
+from pathlib import Path
+BASE=Path('<AUTHORIZED_PROJECT_ROOT>/admet')
+def safe(root,path):
+    assert root.resolve(strict=True)==root and (path==root or root in path.parents) and path.resolve(strict=False)==path
+    for p in (path,*path.parents):
+        if p.exists() or p.is_symlink():
+            s=p.lstat();assert not stat.S_ISLNK(s.st_mode)
+            if stat.S_ISREG(s.st_mode):assert s.st_nlink==1
+    if Path('/proc/self/mountinfo').exists():
+        for line in Path('/proc/self/mountinfo').read_text().splitlines():
+            fields=line.split();mount=Path(re.sub(r'\\([0-7]{3})',lambda m:chr(int(m[1],8)),fields[4]))
+            assert not ((mount==root or root in mount.parents) and (mount==path or mount in path.parents))
+    return path
+def allowed(name,names):
+    p=Path(name)
+    if p.is_absolute() or '..' in p.parts or len(p.parts)<3 or p.parts[0] not in names:return False
+    rest='/'.join(p.parts[1:])
+    return any(rest.startswith(x) for x in ('source/production-adapter-v4/','admission/recovery-03/','inputs/recovery-03/','operator/recovery-03/'))
+def receive(base,blob,manifest,digest,contract):
+    assert contract.get('deployment_enabled') is True and contract.get('main_controller_thread')=='private-role-298cc5edc25e'
+    assert 0<len(blob)<=4*1024**2 and hashlib.sha256(blob).hexdigest()==digest
+    for name,item in contract['protected_files'].items():
+        path=safe(base,base/name);assert path.stat().st_size==item['size'] and hashlib.sha256(path.read_bytes()).hexdigest()==item['sha256']
+    for old in contract['old_identities']:
+        try:v=(Path('/proc')/str(old['pid'])/'stat').read_text().rsplit(')',1)[1].split()
+        except FileNotFoundError:continue
+        ticks=str(old.get('start_ticks') or old['start_stat'].rsplit(')',1)[1].split()[19]);assert v[19]!=ticks or v[0] in ('Z','X')
+    data={}
+    with zipfile.ZipFile(io.BytesIO(blob)) as archive:
+        assert len(archive.namelist())==len(manifest) and set(archive.namelist())==set(manifest)
+        for name,item in manifest.items():
+            assert allowed(name,contract['roots']) and 0<=item['size']<=1024**2
+            zi=archive.getinfo(name);assert stat.S_IFMT(zi.external_attr>>16) in (0,stat.S_IFREG) and not zi.is_dir() and not zi.flag_bits&1
+            value=archive.read(name);assert len(value)==item['size'] and hashlib.sha256(value).hexdigest()==item['sha256'];data[name]=value
+            path=safe(base,base/name);assert not path.exists() and not path.is_symlink()
+    for name,value in data.items():
+        path=safe(base,base/name);path.parent.mkdir(parents=True,exist_ok=True);safe(base,path.parent)
+        with path.open('xb') as f:f.write(value);f.flush();os.fsync(f.fileno())
+    return {'exact_append_complete':True,'files':manifest,'training_started':False}
+def make_receiver(manifest,size,digest,contract,contract_sha256):
+    canonical=json.dumps(contract,sort_keys=True,separators=(',',':')).encode();assert hashlib.sha256(canonical).hexdigest()==contract_sha256
+    source=Path(__file__).read_text().split('def make_receiver(')[0]
+    return source+"\nimport sys,socket\nassert socket.gethostname().split('.')[0]=='project-compute' and os.getuid()==os.getgid()==1012\ndata=sys.stdin.buffer.read("+str(size+1)+");assert len(data)=="+str(size)+"\nprint(json.dumps(receive(BASE,data,"+repr(manifest)+","+repr(digest)+","+repr(contract)+")))\n"
+def pack(files):
+    manifest={};stream=io.BytesIO()
+    with zipfile.ZipFile(stream,'w',zipfile.ZIP_DEFLATED) as archive:
+        for name,value in sorted(files.items()):
+            manifest[name]={'size':len(value),'sha256':hashlib.sha256(value).hexdigest()};archive.writestr(name,value)
+    return stream.getvalue(),manifest
+
+def framed_transfer(receiver,payload):
+    source=receiver.encode();digest=hashlib.sha256(source).hexdigest()
+    bootstrap="import sys,hashlib\ns=sys.stdin.buffer.read("+str(len(source))+");assert len(s)=="+str(len(source))+" and hashlib.sha256(s).hexdigest()=="+repr(digest)+"\nexec(compile(s,'<pinned-exact-receiver>','exec'))\n"
+    return bootstrap,source+payload

@@ -1,0 +1,118 @@
+{
+  "cycle_id": "contract-follow-e2e-20261101",
+  "request_id": "admet-contract-follow-preparation-20261101-001",
+  "task": "caco2_wang",
+  "scientific_asset_id": "chemeleon",
+  "base_config": {
+    "path": "input/base_config.json",
+    "sha256": "da5062761b9871a878fd87b19853062cfcc83848935c6eb7b1c90156481dfa77",
+    "role": "template; old run_id must not appear in new configs"
+  },
+  "batch_request": {
+    "path": "input/batch_request.json",
+    "sha256": "03ba9526ab3505c2f2dff8727ce6ddc8536c8763ad47cc1a8ebdab06d99c453f"
+  },
+  "source_files": [
+    {
+      "path": "training_science.py",
+      "origin": "input/reference/training_science.py",
+      "output_copy_sha256": "63bb22a2aa1634f7e3db3a3b972969ee84f3f861da6fe561608e5cb87acf046c",
+      "reference_sha256": "63bb22a2aa1634f7e3db3a3b972969ee84f3f861da6fe561608e5cb87acf046c"
+    },
+    {
+      "path": "train_remote_v4.py",
+      "origin": "input/reference/train_remote_v4.py",
+      "output_copy_sha256": "57386ae54cc1cbb379fbff8af7a90ac34160769a8a0122402b881a8aea893abe",
+      "reference_sha256": "57386ae54cc1cbb379fbff8af7a90ac34160769a8a0122402b881a8aea893abe"
+    },
+    {
+      "path": "encoder.py",
+      "origin": "input/reference/encoder.py",
+      "output_copy_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+      "reference_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712"
+    }
+  ],
+  "inputs_deployed_by_host": [
+    {
+      "role": "train",
+      "path": "data/train.csv",
+      "sha256": "3061c58d3601d081e5459a2de03dc1d189243c4b5683d1b7288577a29fed4d6f",
+      "rows": 637
+    },
+    {
+      "role": "validation",
+      "path": "data/valid.csv",
+      "sha256": "41370e87d89a96a7481425dae1bf7c45184bd116b353e96719b2afcd0a8a5ca3",
+      "rows": 91
+    },
+    {
+      "role": "test",
+      "path": "data/test.csv",
+      "sha256": "d87dac944bedcefb216bce57ba5a8de93d3781172c66653b937e5065b9c2579c",
+      "rows": 182
+    }
+  ],
+  "runs": [
+    {
+      "run_id": "hainan-paired-mse-s44-20261101",
+      "config_path": "configs/hainan-paired-mse-s44-20261101.json",
+      "config_sha256": "e439d64c60169b33c2f32ee9eccd3d73421f49f9e0d8f4fe0e28dce170dac775",
+      "monitor": "internal_validation_standardized_mse",
+      "head_seed": 44,
+      "split_seed": 43,
+      "declared_model_seed": 44,
+      "declared_split_seed": 43
+    },
+    {
+      "run_id": "hainan-paired-mae-s44-20261101",
+      "config_path": "configs/hainan-paired-mae-s44-20261101.json",
+      "config_sha256": "a0d8ced782bf4e9926ec919b6a5c0821a62f5c289712991e54f20cb644bca06c",
+      "monitor": "internal_validation_raw_mae",
+      "head_seed": 44,
+      "split_seed": 43,
+      "declared_model_seed": 44,
+      "declared_split_seed": 43
+    },
+    {
+      "run_id": "hainan-paired-mse-s45-20261101",
+      "config_path": "configs/hainan-paired-mse-s45-20261101.json",
+      "config_sha256": "979bf8a916338a5cf2c50b8edf1b8f6d1412c833e201fb6c8aacdd9961625cc6",
+      "monitor": "internal_validation_standardized_mse",
+      "head_seed": 45,
+      "split_seed": 43,
+      "declared_model_seed": 45,
+      "declared_split_seed": 43
+    },
+    {
+      "run_id": "hainan-paired-mae-s45-20261101",
+      "config_path": "configs/hainan-paired-mae-s45-20261101.json",
+      "config_sha256": "e0dc9d3a7b883b6ed870b0a09de51eb3952e73af8bd4bbe76420eb363a3eff80",
+      "monitor": "internal_validation_raw_mae",
+      "head_seed": 45,
+      "split_seed": 43,
+      "declared_model_seed": 45,
+      "declared_split_seed": 43
+    },
+    {
+      "run_id": "hainan-paired-mse-s46-20261101",
+      "config_path": "configs/hainan-paired-mse-s46-20261101.json",
+      "config_sha256": "124fd6b3b1e5c08dcc4613080e12efa0e16e32340fba0f7f0c05006f4d1ee929",
+      "monitor": "internal_validation_standardized_mse",
+      "head_seed": 46,
+      "split_seed": 43,
+      "declared_model_seed": 46,
+      "declared_split_seed": 43
+    },
+    {
+      "run_id": "hainan-paired-mae-s46-20261101",
+      "config_path": "configs/hainan-paired-mae-s46-20261101.json",
+      "config_sha256": "ff2b991e736d805513775cc93c2dc77d4cd1204efa4ce3ccf1366e3110c58e13",
+      "monitor": "internal_validation_raw_mae",
+      "head_seed": 46,
+      "split_seed": 43,
+      "declared_model_seed": 46,
+      "declared_split_seed": 43
+    }
+  ],
+  "notes": "six independent serial runs; host deploys data/ paths; split seed fixed 43"
+}

@@ -1,0 +1,1849 @@
+{
+  "schema_version": 1,
+  "request_id": "admet-progressive-index-pro-20261031-002",
+  "round_id": "progressive-index-e2e-20261031",
+  "manifest_sha256": "b8952a9375328c775e8fcae3b3adc5a35ca6025fcc9a48e5a055371e26f7250f",
+  "scientific_status": "needs_evidence",
+  "authorization": "proposal_only",
+  "counting_policy": "各direction含共享对照；不能将estimated_run_count相加当已批预算。seed/fold/派生预测分开计；首批唯一去重配置4、未来建议训练12、当前获准/执行0。",
+  "directions": [
+    {
+      "direction_id": "D00",
+      "title": "证据与边界准备",
+      "proposal_ids": [
+        "P00"
+      ],
+      "linked_issues": [
+        "AR002-01",
+        "F1",
+        "AR001-15",
+        "AR001-03",
+        "AR002-02",
+        "AR002-07"
+      ],
+      "rationale": "先让比较可核验，避免把故障候选计入胜负。",
+      "evidence_refs": [
+        "current-policy",
+        "evaluation-scope",
+        "v1-outer-exit",
+        "records/read_coverage.json"
+      ],
+      "counterevidence": "完整日志/回执本身不证明模型质量。",
+      "candidate_models_or_modules": [
+        "schema validator",
+        "identity checker",
+        "blind projection",
+        "failure fixtures"
+      ],
+      "parameters": {},
+      "explicit_configurations": [
+        {
+          "name": "evidence_contract_v1"
+        }
+      ],
+      "combination_constraints": [
+        "不下载私密排除项",
+        "不执行归档训练代码/模型",
+        "不访问执行方禁止的Y"
+      ],
+      "search_method": "不搜索模型；编制字节/行覆盖及正负fixture合同。",
+      "configuration_count_or_counting_rule": {
+        "configuration_count": 1,
+        "rule": "1个显式配置，不对parameters做未经列举的笛卡尔积"
+      },
+      "seeds": [],
+      "estimated_run_count": 0,
+      "cost_assumptions": "只需文档、静态代码和合成fixture；当前不跑模型。",
+      "readiness": "ready_for_preparation_only",
+      "priority": "P0",
+      "scope_status": "within_frozen_train_only_research",
+      "tier": "immediate_preparation",
+      "approved_training_runs_now": 0,
+      "uncertainty": "未从现有噪声推导业务最小效应；所有参数是待检验范围，不宣称已最优。"
+    },
+    {
+      "direction_id": "D01",
+      "title": "重建匹配控制C0",
+      "proposal_ids": [
+        "P01"
+      ],
+      "linked_issues": [
+        "AR001-02",
+        "AR001-06",
+        "AR001-08"
+      ],
+      "rationale": "新实现或日志逻辑改变后必须重建同版本控制。",
+      "evidence_refs": [
+        "actual-config",
+        "current-runtime-source",
+        "training-process"
+      ],
+      "counterevidence": "当前accepted单run不可自动代表新harness三个seed的对照。",
+      "candidate_models_or_modules": [
+        "CheMeleon frozen + current MLP"
+      ],
+      "parameters": {
+        "model_seed": {
+          "type": "integer",
+          "values": [
+            43,
+            47,
+            59
+          ],
+          "scale": "discrete"
+        }
+      },
+      "explicit_configurations": [
+        {
+          "config_id": "C0",
+          "width": 256,
+          "monitor": "internal_validation_standardized_mse",
+          "feature_mode": "legacy_z_train_fit"
+        }
+      ],
+      "combination_constraints": [
+        "保留batch128/AdamW .0005/wd.0001/dropout.1/MSE/50ep/patience8",
+        "与变体共享完全相同raw缓存",
+        "不因历史同seed存在就少计一次控制"
+      ],
+      "search_method": "固定split43，三个model seeds共同配对。",
+      "configuration_count_or_counting_rule": {
+        "configuration_count": 1,
+        "rule": "1个显式配置，不对parameters做未经列举的笛卡尔积"
+      },
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "estimated_run_count": 3,
+      "cost_assumptions": "至多3×50×ceil(573/128)=750个头更新；实际早停未知。",
+      "readiness": "conditional_after_evidence_and_authorization",
+      "priority": "P0",
+      "scope_status": "within_frozen_train_only_research",
+      "tier": "first_panel",
+      "approved_training_runs_now": 0,
+      "uncertainty": "未从现有噪声推导业务最小效应；所有参数是待检验范围，不宣称已最优。"
+    },
+    {
+      "direction_id": "D02",
+      "title": "只改选轮指标",
+      "proposal_ids": [
+        "P02"
+      ],
+      "linked_issues": [
+        "AR001-05",
+        "AR002-03",
+        "AR001-02"
+      ],
+      "rationale": "当前26点日志证实内部MSE/MAE选轮不同，优先直接检验。",
+      "evidence_refs": [
+        "training-process",
+        "current-runtime-source",
+        "records/numeric_checks.json"
+      ],
+      "counterevidence": "内部MAE64行有噪声，选早轮不保证外部表现；本轮无epoch7头。",
+      "candidate_models_or_modules": [
+        "unchanged MLP + selectable monitor"
+      ],
+      "parameters": {
+        "monitor": {
+          "type": "enum",
+          "values": [
+            "internal_validation_standardized_mse",
+            "internal_validation_raw_mae"
+          ],
+          "scale": "discrete"
+        },
+        "patience": {
+          "type": "integer",
+          "values": [
+            8
+          ],
+          "scale": "discrete"
+        }
+      },
+      "explicit_configurations": [
+        {
+          "config_id": "C0",
+          "monitor": "internal_validation_standardized_mse"
+        },
+        {
+          "config_id": "C1",
+          "monitor": "internal_validation_raw_mae"
+        }
+      ],
+      "combination_constraints": [
+        "不得同时改损失或缩放",
+        "min_delta规则显式；按严格下降/1e-7的控制语义复现，MAE增量单位单独登记",
+        "同一日志回放不算训练run"
+      ],
+      "search_method": "先只切monitor；loss保持MSE；两arm与共同seed配对。",
+      "configuration_count_or_counting_rule": {
+        "configuration_count": 2,
+        "rule": "2个显式配置，不对parameters做未经列举的笛卡尔积"
+      },
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "estimated_run_count": 6,
+      "cost_assumptions": "2配置×3seed；C0与首批共享，首批只新增3个变体run。",
+      "readiness": "ready_to_prepare_code_not_to_train",
+      "priority": "P0",
+      "scope_status": "within_frozen_train_only_research",
+      "tier": "first_panel",
+      "approved_training_runs_now": 0,
+      "uncertainty": "未从现有噪声推导业务最小效应；所有参数是待检验范围，不宣称已最优。"
+    },
+    {
+      "direction_id": "D03",
+      "title": "容量与单层宽度",
+      "proposal_ids": [
+        "P03"
+      ],
+      "linked_issues": [
+        "AR001-13",
+        "AR001-02",
+        "AR002-06"
+      ],
+      "rationale": "2048→256头有524801参数而fit573；低容量是可证伪的简单对照，不是过拟合定论。",
+      "evidence_refs": [
+        "actual-config",
+        "training-process",
+        "records/numeric_checks.json"
+      ],
+      "counterevidence": "较宽旧A描述得分更好但多处混杂，不能证明宽度单调关系。",
+      "candidate_models_or_modules": [
+        "single-hidden-layer ReLU MLP"
+      ],
+      "parameters": {
+        "hidden_width": {
+          "type": "integer",
+          "values": [
+            32,
+            64,
+            128,
+            256,
+            512
+          ],
+          "scale": "discrete"
+        },
+        "dropout": {
+          "type": "float",
+          "values": [
+            0.1
+          ],
+          "scale": "discrete"
+        }
+      },
+      "explicit_configurations": [
+        {
+          "width": 32,
+          "config_id": "width-32"
+        },
+        {
+          "width": 64,
+          "config_id": "width-64"
+        },
+        {
+          "width": 128,
+          "config_id": "C2"
+        },
+        {
+          "width": 256,
+          "config_id": "C0"
+        },
+        {
+          "width": 512,
+          "config_id": "width-512"
+        }
+      ],
+      "combination_constraints": [
+        "所有其余训练条件相同",
+        "参数数随宽度报告；不是等参数比较",
+        "冻结底座不变"
+      ],
+      "search_method": "首批只比较128与256；其余宽度按内部结果逐层扩展。",
+      "configuration_count_or_counting_rule": {
+        "configuration_count": 5,
+        "rule": "5个显式配置，不对parameters做未经列举的笛卡尔积"
+      },
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "estimated_run_count": 15,
+      "cost_assumptions": "5×3=15，首批共享C0并只抽128；其余9个后续run未申请。",
+      "readiness": "ready_to_prepare_config_schema",
+      "priority": "P1",
+      "scope_status": "within_frozen_train_only_research",
+      "tier": "first_panel_and_reserve",
+      "approved_training_runs_now": 0,
+      "uncertainty": "未从现有噪声推导业务最小效应；所有参数是待检验范围，不宣称已最优。"
+    },
+    {
+      "direction_id": "D04",
+      "title": "特征条件化消融",
+      "proposal_ids": [
+        "P04"
+      ],
+      "linked_issues": [
+        "AR001-04",
+        "AR001-08",
+        "AR002-01"
+      ],
+      "rationale": "历史极小sd/极大z支持检验数值条件化，当前原始数组仍需补验。",
+      "evidence_refs": [
+        "historical-primary-cache",
+        "current-runtime-source",
+        "current-feature-array",
+        "current-preprocess-array"
+      ],
+      "counterevidence": "相关样本大误差不证明因果；无缩放也可能破坏优化。",
+      "candidate_models_or_modules": [
+        "fit-only feature transform"
+      ],
+      "parameters": {
+        "mode": {
+          "type": "enum",
+          "values": [
+            "legacy_z_train_fit",
+            "none",
+            "center",
+            "sd_floor",
+            "z_clip"
+          ],
+          "scale": "discrete"
+        },
+        "sd_floor": {
+          "type": "float",
+          "values": [
+            0.0001,
+            0.001,
+            0.01
+          ],
+          "scale": "log_discrete"
+        },
+        "z_clip": {
+          "type": "float",
+          "values": [
+            6,
+            10,
+            20
+          ],
+          "scale": "discrete"
+        }
+      },
+      "explicit_configurations": [
+        {
+          "config_id": "C0",
+          "mode": "legacy_z_train_fit"
+        },
+        {
+          "mode": "none"
+        },
+        {
+          "mode": "center"
+        },
+        {
+          "config_id": "floor-0.0001",
+          "mode": "sd_floor",
+          "floor": 0.0001
+        },
+        {
+          "config_id": "C3",
+          "mode": "sd_floor",
+          "floor": 0.001
+        },
+        {
+          "config_id": "floor-0.01",
+          "mode": "sd_floor",
+          "floor": 0.01
+        },
+        {
+          "mode": "z_clip",
+          "clip": 6
+        },
+        {
+          "mode": "z_clip",
+          "clip": 10
+        },
+        {
+          "mode": "z_clip",
+          "clip": 20
+        }
+      ],
+      "combination_constraints": [
+        "floor定义max(fit_std,floor)",
+        "clip在fit-only legacy_z之后逐元素对称截断；不删行",
+        "floor与clip首轮不叠加",
+        "统计仅fit估计；不读valid/testY；target变换不改"
+      ],
+      "search_method": "首批只C0对floor1e-3；其他为分阶段消融。",
+      "configuration_count_or_counting_rule": {
+        "configuration_count": 9,
+        "rule": "9个显式配置，不对parameters做未经列举的笛卡尔积"
+      },
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "estimated_run_count": 27,
+      "cost_assumptions": "9×3=27潜在run；共享C0，先抽floor1e-3新增3；阈值非数据优化得出。",
+      "readiness": "blocked_on_safe_array_verification_and_transform_implementation",
+      "priority": "P1",
+      "scope_status": "within_frozen_train_only_research",
+      "tier": "first_panel_conditional",
+      "approved_training_runs_now": 0,
+      "uncertainty": "未从现有噪声推导业务最小效应；所有参数是待检验范围，不宣称已最优。"
+    },
+    {
+      "direction_id": "D05",
+      "title": "头深度与残差结构",
+      "proposal_ids": [
+        "P05"
+      ],
+      "linked_issues": [
+        "AR001-06",
+        "AR001-13"
+      ],
+      "rationale": "当前校验器限制单层；可准备更深新头检验非线性组合。",
+      "evidence_refs": [
+        "actual-science",
+        "current-runtime-source"
+      ],
+      "counterevidence": "小样本可能增加方差；残差结构改变容量不能纯归因深度。",
+      "candidate_models_or_modules": [
+        "single-layer MLP",
+        "two-layer MLP",
+        "post-encoder residual MLP"
+      ],
+      "parameters": {
+        "architecture": {
+          "type": "enum",
+          "values": [
+            "mlp256",
+            "mlp128x64",
+            "mlp256x128",
+            "project128_residual2"
+          ],
+          "scale": "discrete"
+        }
+      },
+      "explicit_configurations": [
+        {
+          "architecture": "mlp256"
+        },
+        {
+          "architecture": "mlp128x64"
+        },
+        {
+          "architecture": "mlp256x128"
+        },
+        {
+          "architecture": "project128_residual2"
+        }
+      ],
+      "combination_constraints": [
+        "不向encoder注入可训练层",
+        "ReLU/dropout固定基线值",
+        "所有新projection/residual参数必须列入新头名单",
+        "不得仅改JSON声称已支持"
+      ],
+      "search_method": "先内部paired比较；记录参数量，后续才考虑等参数对照。",
+      "configuration_count_or_counting_rule": {
+        "configuration_count": 4,
+        "rule": "4个显式配置，不对parameters做未经列举的笛卡尔积"
+      },
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "estimated_run_count": 12,
+      "cost_assumptions": "4×3=12；更深头算力/内存需要静态估算，不把现有单层19.66秒外推。",
+      "readiness": "blocked_on_versioned_head_factory_and_validator_extension",
+      "priority": "P2",
+      "scope_status": "within_frozen_train_only_research",
+      "tier": "exploratory_reserve",
+      "approved_training_runs_now": 0,
+      "uncertainty": "未从现有噪声推导业务最小效应；所有参数是待检验范围，不宣称已最优。"
+    },
+    {
+      "direction_id": "D06",
+      "title": "Dropout与权重衰减",
+      "proposal_ids": [
+        "P06"
+      ],
+      "linked_issues": [
+        "AR001-05",
+        "AR001-13"
+      ],
+      "rationale": "训练/内部stop差距支持容量控制研究，但不是已证最优正则强度。",
+      "evidence_refs": [
+        "training-process",
+        "actual-config"
+      ],
+      "counterevidence": "强正则可能使欠拟合更重，头宽和优化步数会混杂。",
+      "candidate_models_or_modules": [
+        "unchanged-width MLP"
+      ],
+      "parameters": {
+        "dropout": {
+          "type": "float",
+          "values": [
+            0,
+            0.1,
+            0.25
+          ],
+          "scale": "discrete"
+        },
+        "weight_decay": {
+          "type": "float",
+          "values": [
+            0,
+            0.0001,
+            0.001,
+            0.01
+          ],
+          "scale": "log_discrete_with_zero"
+        }
+      },
+      "explicit_configurations": [
+        {
+          "dropout": 0,
+          "weight_decay": 0
+        },
+        {
+          "dropout": 0,
+          "weight_decay": 0.0001
+        },
+        {
+          "dropout": 0,
+          "weight_decay": 0.001
+        },
+        {
+          "dropout": 0.1,
+          "weight_decay": 0
+        },
+        {
+          "dropout": 0.1,
+          "weight_decay": 0.0001
+        },
+        {
+          "dropout": 0.1,
+          "weight_decay": 0.001
+        },
+        {
+          "dropout": 0.1,
+          "weight_decay": 0.01
+        },
+        {
+          "dropout": 0.25,
+          "weight_decay": 0.0001
+        },
+        {
+          "dropout": 0.25,
+          "weight_decay": 0.001
+        }
+      ],
+      "combination_constraints": [
+        "AdamW保持不变",
+        "dropout=.1/wd=.0001是共享控制",
+        "强wd=.01仅配dropout=.1，不默认扩为12点"
+      ],
+      "search_method": "预定义9点非全笛卡尔网格；先沿基线两条轴，每次只解释一个改变，再研究交互。",
+      "configuration_count_or_counting_rule": {
+        "configuration_count": 9,
+        "rule": "9个显式配置，不对parameters做未经列举的笛卡尔积"
+      },
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "estimated_run_count": 27,
+      "cost_assumptions": "9×3=27（含共享控制）；没有多项同时变化的因果主张。",
+      "readiness": "ready_to_prepare_selective_grid",
+      "priority": "P2",
+      "scope_status": "within_frozen_train_only_research",
+      "tier": "exploratory_reserve",
+      "approved_training_runs_now": 0,
+      "uncertainty": "未从现有噪声推导业务最小效应；所有参数是待检验范围，不宣称已最优。"
+    },
+    {
+      "direction_id": "D07",
+      "title": "优化器与学习率",
+      "proposal_ids": [
+        "P07"
+      ],
+      "linked_issues": [
+        "AR001-06",
+        "AR001-05"
+      ],
+      "rationale": "实际为AdamW；先匹配优化器内学习率，后才比较算法。",
+      "evidence_refs": [
+        "actual-config",
+        "current-runtime-source"
+      ],
+      "counterevidence": "等epochs并不等于算法均充分收敛；Adam与AdamW的wd语义不同。",
+      "candidate_models_or_modules": [
+        "AdamW",
+        "Adam",
+        "SGD(momentum=.9)"
+      ],
+      "parameters": {
+        "optimizer": {
+          "type": "enum",
+          "values": [
+            "AdamW",
+            "Adam",
+            "SGD"
+          ],
+          "scale": "discrete"
+        },
+        "AdamW_lr": {
+          "type": "float",
+          "values": [
+            0.0001,
+            0.0003,
+            0.0005,
+            0.001
+          ],
+          "scale": "log_discrete"
+        },
+        "Adam_lr": {
+          "type": "float",
+          "values": [
+            0.0003,
+            0.0005
+          ],
+          "scale": "discrete"
+        },
+        "SGD_lr": {
+          "type": "float",
+          "values": [
+            0.001,
+            0.003,
+            0.01
+          ],
+          "scale": "log_discrete"
+        }
+      },
+      "explicit_configurations": [
+        {
+          "optimizer": "AdamW",
+          "lr": 0.0001
+        },
+        {
+          "optimizer": "AdamW",
+          "lr": 0.0003
+        },
+        {
+          "optimizer": "AdamW",
+          "lr": 0.0005
+        },
+        {
+          "optimizer": "AdamW",
+          "lr": 0.001
+        },
+        {
+          "optimizer": "Adam",
+          "lr": 0.0003
+        },
+        {
+          "optimizer": "Adam",
+          "lr": 0.0005
+        },
+        {
+          "optimizer": "SGD",
+          "lr": 0.001,
+          "momentum": 0.9
+        },
+        {
+          "optimizer": "SGD",
+          "lr": 0.003,
+          "momentum": 0.9
+        },
+        {
+          "optimizer": "SGD",
+          "lr": 0.01,
+          "momentum": 0.9
+        }
+      ],
+      "combination_constraints": [
+        "batch128固定",
+        "算法比较明确是optimizer+合理LR配方比较，不伪装单变量因果",
+        "先不另加scheduler",
+        "wd实现差异写进resolved config"
+      ],
+      "search_method": "第一阶段4个AdamW LR×3=12；储备5×3=15，非三算法全笛卡尔。",
+      "configuration_count_or_counting_rule": {
+        "configuration_count": 9,
+        "rule": "9个显式配置，不对parameters做未经列举的笛卡尔积"
+      },
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "estimated_run_count": 27,
+      "cost_assumptions": "9×3=27上限；不同算法实际早停时间未知。",
+      "readiness": "AdamW_grid_preparable_other_optimizers_need_dispatcher",
+      "priority": "P2",
+      "scope_status": "within_frozen_train_only_research",
+      "tier": "exploratory_reserve",
+      "approved_training_runs_now": 0,
+      "uncertainty": "未从现有噪声推导业务最小效应；所有参数是待检验范围，不宣称已最优。"
+    },
+    {
+      "direction_id": "D08",
+      "title": "损失对齐与稳健性",
+      "proposal_ids": [
+        "P08"
+      ],
+      "linked_issues": [
+        "AR001-05",
+        "AR002-06"
+      ],
+      "rationale": "任务MAE与MSE训练不同；稳健损失值得在monitor固定后检验。",
+      "evidence_refs": [
+        "metric",
+        "actual-config",
+        "training-process"
+      ],
+      "counterevidence": "L1优化更难，Huber/SmoothL1也未必改善尾部；标签尺度决定beta含义。",
+      "candidate_models_or_modules": [
+        "MSE",
+        "L1",
+        "SmoothL1"
+      ],
+      "parameters": {
+        "loss": {
+          "type": "enum",
+          "values": [
+            "MSE",
+            "L1",
+            "SmoothL1"
+          ],
+          "scale": "discrete"
+        },
+        "beta_in_fit_standardized_target_units": {
+          "type": "float",
+          "values": [
+            0.25,
+            0.5,
+            1
+          ],
+          "scale": "discrete"
+        }
+      },
+      "explicit_configurations": [
+        {
+          "loss": "MSE"
+        },
+        {
+          "loss": "L1"
+        },
+        {
+          "loss": "SmoothL1",
+          "beta": 0.25
+        },
+        {
+          "loss": "SmoothL1",
+          "beta": 0.5
+        },
+        {
+          "loss": "SmoothL1",
+          "beta": 1
+        }
+      ],
+      "combination_constraints": [
+        "beta是标准化目标单位，不冒称物理单位",
+        "逆变换后计算MAE",
+        "MSE控制必须使用相同MAE monitor"
+      ],
+      "search_method": "以C1（MAE monitor）为共同控制；只改训练loss，不同时改标签标准化或feature。",
+      "configuration_count_or_counting_rule": {
+        "configuration_count": 5,
+        "rule": "5个显式配置，不对parameters做未经列举的笛卡尔积"
+      },
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "estimated_run_count": 15,
+      "cost_assumptions": "5×3=15；C1可按完全同版本身份复用，不能与MSE monitor C0混作loss对照。",
+      "readiness": "blocked_until_mae_monitor_control_is_prepared",
+      "priority": "P1",
+      "scope_status": "within_frozen_train_only_research",
+      "tier": "followup_confirmation",
+      "approved_training_runs_now": 0,
+      "uncertainty": "未从现有噪声推导业务最小效应；所有参数是待检验范围，不宣称已最优。"
+    },
+    {
+      "direction_id": "D09",
+      "title": "目标尺度的数值条件化",
+      "proposal_ids": [
+        "P09"
+      ],
+      "linked_issues": [
+        "U01",
+        "AR001-05"
+      ],
+      "rationale": "单目标affine标准化改变梯度尺度；须区分目标函数等价与优化轨迹。",
+      "evidence_refs": [
+        "current-runtime-source",
+        "metric"
+      ],
+      "counterevidence": "固定正尺度下标准化MSE与原MSE排序等价，不能把MSE/MAE选轮分歧归因z化。",
+      "candidate_models_or_modules": [
+        "raw numeric Y",
+        "fit-centered Y",
+        "fit-z Y"
+      ],
+      "parameters": {
+        "target_transform": {
+          "type": "enum",
+          "values": [
+            "raw",
+            "fit_center",
+            "fit_z"
+          ],
+          "scale": "discrete"
+        }
+      },
+      "explicit_configurations": [
+        {
+          "target_transform": "raw"
+        },
+        {
+          "target_transform": "fit_center"
+        },
+        {
+          "target_transform": "fit_z"
+        }
+      ],
+      "combination_constraints": [
+        "不新增log/单位换算",
+        "fit-only统计",
+        "常量target std保护显式",
+        "原Y文件不重写"
+      ],
+      "search_method": "先合成数据验证inverse/metric等价；若未来训练，固定LR并说明数值条件化影响，再单独研究LR补偿。",
+      "configuration_count_or_counting_rule": {
+        "configuration_count": 3,
+        "rule": "3个显式配置，不对parameters做未经列举的笛卡尔积"
+      },
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "estimated_run_count": 9,
+      "cost_assumptions": "3×3=9潜在；代数/静态检查0训练。",
+      "readiness": "ready_for_synthetic_identity_checks_training_conditional",
+      "priority": "P2",
+      "scope_status": "within_frozen_train_only_research",
+      "tier": "exploratory_reserve",
+      "approved_training_runs_now": 0,
+      "uncertainty": "未从现有噪声推导业务最小效应；所有参数是待检验范围，不宣称已最优。"
+    },
+    {
+      "direction_id": "D10",
+      "title": "原始缓存精度与复用",
+      "proposal_ids": [
+        "P10"
+      ],
+      "linked_issues": [
+        "AR001-08",
+        "AR001-04",
+        "AR002-01"
+      ],
+      "rationale": "已有小数值差可能影响逐步训练；首先验证同一raw数组。",
+      "evidence_refs": [
+        "historical-primary-cache",
+        "training-process",
+        "current-runtime-source"
+      ],
+      "counterevidence": "NPZ压缩字节差不是array差，浮点微差不是已证明得分原因。",
+      "candidate_models_or_modules": [
+        "content-addressed raw cache",
+        "float64 stats→float32 tensor",
+        "float32 stats→float32 tensor"
+      ],
+      "parameters": {
+        "statistics_dtype": {
+          "type": "enum",
+          "values": [
+            "float64",
+            "float32"
+          ],
+          "scale": "discrete"
+        },
+        "tensor_dtype": {
+          "type": "enum",
+          "values": [
+            "float32"
+          ],
+          "scale": "discrete"
+        }
+      },
+      "explicit_configurations": [
+        {
+          "statistics_dtype": "float64",
+          "tensor_dtype": "float32"
+        },
+        {
+          "statistics_dtype": "float32",
+          "tensor_dtype": "float32"
+        }
+      ],
+      "combination_constraints": [
+        "两个arm必须同raw cache",
+        "同统计定义/行索引/舍入时点",
+        "不把CPU/GPU新推理加进缓存实验"
+      ],
+      "search_method": "先逐元素差、finite、zero/small sd计数，再考虑2×3训练；不重跑encoder。",
+      "configuration_count_or_counting_rule": {
+        "configuration_count": 2,
+        "rule": "2个显式配置，不对parameters做未经列举的笛卡尔积"
+      },
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "estimated_run_count": 6,
+      "cost_assumptions": "2×3=6潜在；只读缓存核验0训练；未获得raw数组则blocked。",
+      "readiness": "blocked_on_raw_array_bytes",
+      "priority": "P2",
+      "scope_status": "within_frozen_train_only_research",
+      "tier": "exploratory_reserve",
+      "approved_training_runs_now": 0,
+      "uncertainty": "未从现有噪声推导业务最小效应；所有参数是待检验范围，不宣称已最优。"
+    },
+    {
+      "direction_id": "D11",
+      "title": "线性与岭头基线",
+      "proposal_ids": [
+        "P11"
+      ],
+      "linked_issues": [
+        "AR001-13",
+        "AR001-02"
+      ],
+      "rationale": "简单头用于分解表示质量和MLP复杂度，信息量高。",
+      "evidence_refs": [
+        "encoder",
+        "actual-config",
+        "records/numeric_checks.json"
+      ],
+      "counterevidence": "线性可能欠拟合；不能因参数少预期必胜。",
+      "candidate_models_or_modules": [
+        "linear least-squares minimum-norm",
+        "ridge regression new head"
+      ],
+      "parameters": {
+        "lambda": {
+          "type": "float",
+          "values": [
+            0,
+            0.0001,
+            0.001,
+            0.01,
+            0.1,
+            1,
+            10
+          ],
+          "scale": "log_discrete_with_zero"
+        }
+      },
+      "explicit_configurations": [
+        {
+          "lambda": 0,
+          "objective": "mean_squared_error + lambda * squared_weight_norm",
+          "intercept_penalized": false
+        },
+        {
+          "lambda": 0.0001,
+          "objective": "mean_squared_error + lambda * squared_weight_norm",
+          "intercept_penalized": false
+        },
+        {
+          "lambda": 0.001,
+          "objective": "mean_squared_error + lambda * squared_weight_norm",
+          "intercept_penalized": false
+        },
+        {
+          "lambda": 0.01,
+          "objective": "mean_squared_error + lambda * squared_weight_norm",
+          "intercept_penalized": false
+        },
+        {
+          "lambda": 0.1,
+          "objective": "mean_squared_error + lambda * squared_weight_norm",
+          "intercept_penalized": false
+        },
+        {
+          "lambda": 1,
+          "objective": "mean_squared_error + lambda * squared_weight_norm",
+          "intercept_penalized": false
+        },
+        {
+          "lambda": 10,
+          "objective": "mean_squared_error + lambda * squared_weight_norm",
+          "intercept_penalized": false
+        }
+      ],
+      "combination_constraints": [
+        "不惩罚截距",
+        "lambda0用明确min-norm SVD；不盲求奇异矩阵逆",
+        "与MLP共享raw cache及fit-only变换",
+        "不把固定split中的重复求解当方差估计"
+      ],
+      "search_method": "7个确定性fit，不把相同model seed重复计为新run；lambda由train-only内部数据选择。",
+      "configuration_count_or_counting_rule": {
+        "configuration_count": 7,
+        "rule": "7个lambda；确定性算法无model-seed因子，7次fit而非21次"
+      },
+      "seeds": [],
+      "estimated_run_count": 7,
+      "cost_assumptions": "7配置×1确定性fit=7；不同外层split属于P12另计。",
+      "readiness": "blocked_on_deterministic_solver_contract_and_cache_identity",
+      "priority": "P1",
+      "scope_status": "within_frozen_train_only_research",
+      "tier": "followup_confirmation",
+      "approved_training_runs_now": 0,
+      "uncertainty": "未从现有噪声推导业务最小效应；所有参数是待检验范围，不宣称已最优。"
+    },
+    {
+      "direction_id": "D12",
+      "title": "共同seed与嵌套train-only确认",
+      "proposal_ids": [
+        "P12"
+      ],
+      "linked_issues": [
+        "AR001-02",
+        "AR001-03",
+        "AR001-12"
+      ],
+      "rationale": "同一内部stop既早停又选模型会乐观；把外层比较与内层选轮分开。",
+      "evidence_refs": [
+        "evaluation-use-history",
+        "actual-science",
+        "internal-split"
+      ],
+      "counterevidence": "嵌套train-only估计仍不是全新最终测试；只有少量fold/seed不能提供精确总体置信度。",
+      "candidate_models_or_modules": [
+        "two preselected candidate configurations"
+      ],
+      "parameters": {
+        "outer_group_folds": {
+          "type": "integer",
+          "values": [
+            3
+          ],
+          "scale": "discrete"
+        },
+        "outer_group_shuffle_seed": {
+          "type": "integer",
+          "values": [
+            101
+          ],
+          "scale": "discrete"
+        },
+        "inner_stop_fraction": {
+          "type": "float",
+          "values": [
+            0.1
+          ],
+          "scale": "discrete"
+        },
+        "inner_split_seed": {
+          "type": "integer",
+          "values": [
+            43
+          ],
+          "scale": "discrete"
+        },
+        "model_seeds": {
+          "type": "integer",
+          "values": [
+            43,
+            47,
+            59
+          ],
+          "scale": "discrete"
+        }
+      },
+      "explicit_configurations": [
+        {
+          "selected_config": "control_locked_before_outer_read"
+        },
+        {
+          "selected_config": "one_candidate_locked_before_outer_read"
+        }
+      ],
+      "combination_constraints": [
+        "外层holdout不用于选epoch/变换/候选筛选",
+        "每fold统计仅inner-fit；样本数按实际group分配记录",
+        "外层结果开放前锁定2个配置",
+        "不重复使用official valid选配方"
+      ],
+      "search_method": "官方train内部3个raw-group外层fold；每个outer-train再分inner stop；2configs×3fold×3seed。",
+      "configuration_count_or_counting_rule": {
+        "configuration_count": 2,
+        "rule": "2个模型配置；3外层fold属于数据分配因子；3个model seeds；共18训练"
+      },
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "estimated_run_count": 18,
+      "cost_assumptions": "2×3×3=18训练；不声称独立18个统计样本；共享fold与seed做paired汇总。",
+      "readiness": "blocked_until_two_configs_predeclared_and_new_run_authorization",
+      "priority": "P1",
+      "scope_status": "within_frozen_train_only_research",
+      "tier": "followup_confirmation",
+      "approved_training_runs_now": 0,
+      "uncertainty": "未从现有噪声推导业务最小效应；所有参数是待检验范围，不宣称已最优。"
+    },
+    {
+      "direction_id": "D13",
+      "title": "结构相关性与分组敏感性",
+      "proposal_ids": [
+        "P13"
+      ],
+      "linked_issues": [
+        "AR001-03",
+        "AR001-12"
+      ],
+      "rationale": "raw字符串隔离不等于化学身份/骨架隔离；应量化相关性。",
+      "evidence_refs": [
+        "actual-science",
+        "historical-primary-cache"
+      ],
+      "counterevidence": "更难的内部split不能直接与旧分数比较；不同分组定义会改变估计目标。",
+      "candidate_models_or_modules": [
+        "raw-SMILES groups",
+        "canonical-identity annotation groups",
+        "scaffold annotation groups"
+      ],
+      "parameters": {
+        "group_annotation": {
+          "type": "enum",
+          "values": [
+            "raw",
+            "canonical_annotation_only",
+            "scaffold_annotation_only"
+          ],
+          "scale": "discrete"
+        }
+      },
+      "explicit_configurations": [
+        {
+          "group_annotation": "raw"
+        },
+        {
+          "group_annotation": "canonical_annotation_only"
+        },
+        {
+          "group_annotation": "scaffold_annotation_only"
+        }
+      ],
+      "combination_constraints": [
+        "不修改Drug输入或原Y，不去重、不改官方分区",
+        "canonical/scaffold只作为内部train分配注释",
+        "RDKit版本锁定且失败不删行，需明示失败组策略"
+      ],
+      "search_method": "先旁路注释审计，合成fixture验证；训练敏感性另授权3×3，固定一个预选头。",
+      "configuration_count_or_counting_rule": {
+        "configuration_count": 3,
+        "rule": "3个显式配置，不对parameters做未经列举的笛卡尔积"
+      },
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "estimated_run_count": 9,
+      "cost_assumptions": "3定义×3seed=9；仅注释准备0训练；新encoder推理不需要。",
+      "readiness": "annotation_preparation_ready_training_split_changes_need_controller_review",
+      "priority": "P2",
+      "scope_status": "within_frozen_train_only_research",
+      "tier": "exploratory_reserve",
+      "approved_training_runs_now": 0,
+      "uncertainty": "未从现有噪声推导业务最小效应；所有参数是待检验范围，不宣称已最优。"
+    },
+    {
+      "direction_id": "D14",
+      "title": "冻结表示池化",
+      "proposal_ids": [
+        "P14"
+      ],
+      "linked_issues": [
+        "AR001-13",
+        "AR001-08",
+        "AR001-16"
+      ],
+      "rationale": "固定message passing后改变池化可能保留不同分子尺度信息。",
+      "evidence_refs": [
+        "encoder",
+        "chemprop-official-fingerprint"
+      ],
+      "counterevidence": "sum易受分子规模影响；concat改变维度/头参数量，不是纯信息优势证据。",
+      "candidate_models_or_modules": [
+        "mean",
+        "sum",
+        "max",
+        "mean_concat_max"
+      ],
+      "parameters": {
+        "pooling": {
+          "type": "enum",
+          "values": [
+            "mean",
+            "sum",
+            "max",
+            "mean_concat_max"
+          ],
+          "scale": "discrete"
+        }
+      },
+      "explicit_configurations": [
+        {
+          "pooling": "mean",
+          "feature_dim": 2048
+        },
+        {
+          "pooling": "sum",
+          "feature_dim": 2048
+        },
+        {
+          "pooling": "max",
+          "feature_dim": 2048
+        },
+        {
+          "pooling": "mean_concat_max",
+          "feature_dim": 4096
+        }
+      ],
+      "combination_constraints": [
+        "encoder参数buffer不变",
+        "新aggregation不含拟合state；有state须单列许可",
+        "头宽固定256并同时报告concat参数翻倍混杂；后续可加等参数对照但不计入本12"
+      ],
+      "search_method": "四池化共享冻结MP和输入；先prepare shape/mask合同，实际推理另授权。",
+      "configuration_count_or_counting_rule": {
+        "configuration_count": 4,
+        "rule": "4个显式配置，不对parameters做未经列举的笛卡尔积"
+      },
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "estimated_run_count": 12,
+      "cost_assumptions": "4×3=12头训练，另需最多4套池化cache（可一次冻结MP派生，需实现验收）；当前推理预算0。",
+      "readiness": "blocked_on_approved_adapter_change_and_new_feature_cache",
+      "priority": "P2",
+      "scope_status": "within_frozen_train_only_research",
+      "tier": "exploratory_reserve",
+      "approved_training_runs_now": 0,
+      "uncertainty": "未从现有噪声推导业务最小效应；所有参数是待检验范围，不宣称已最优。"
+    },
+    {
+      "direction_id": "D15",
+      "title": "学习率调度与batch敏感性",
+      "proposal_ids": [
+        "P15"
+      ],
+      "linked_issues": [
+        "AR001-05",
+        "AR001-06"
+      ],
+      "rationale": "当前常数LR；可能通过更平稳后段更新改善内部停止表现。",
+      "evidence_refs": [
+        "actual-config",
+        "training-process"
+      ],
+      "counterevidence": "训练26轮的改善不足以证明scheduler必要；更长训练/更多steps混杂。",
+      "candidate_models_or_modules": [
+        "constant",
+        "cosine",
+        "linear-decay"
+      ],
+      "parameters": {
+        "schedule": {
+          "type": "enum",
+          "values": [
+            "constant",
+            "cosine",
+            "linear"
+          ],
+          "scale": "discrete"
+        },
+        "warmup_epochs": {
+          "type": "integer",
+          "values": [
+            0,
+            5
+          ],
+          "scale": "discrete"
+        },
+        "batch_size": {
+          "type": "integer",
+          "values": [
+            128
+          ],
+          "scale": "discrete"
+        }
+      },
+      "explicit_configurations": [
+        {
+          "schedule": "constant",
+          "warmup_epochs": 0
+        },
+        {
+          "schedule": "cosine",
+          "warmup_epochs": 0
+        },
+        {
+          "schedule": "cosine",
+          "warmup_epochs": 5
+        },
+        {
+          "schedule": "linear",
+          "warmup_epochs": 0
+        },
+        {
+          "schedule": "linear",
+          "warmup_epochs": 5
+        }
+      ],
+      "combination_constraints": [
+        "maxepochs50、初始/峰值LR.0005、最低LR定义预注册",
+        "early stopping与scheduler状态同步保存",
+        "batch先固定128；batch32/64/256仅在独立后续单因素面板考虑，未计本15"
+      ],
+      "search_method": "5个合法schedule，先不叠加batch搜索；scheduler step时机写清。",
+      "configuration_count_or_counting_rule": {
+        "configuration_count": 5,
+        "rule": "5个显式配置，不对parameters做未经列举的笛卡尔积"
+      },
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "estimated_run_count": 15,
+      "cost_assumptions": "5×3=15；停止轮可能变化，报告真实steps；不承诺等墙钟。",
+      "readiness": "blocked_on_scheduler_state_and_resume_contract",
+      "priority": "P2",
+      "scope_status": "within_frozen_train_only_research",
+      "tier": "exploratory_reserve",
+      "approved_training_runs_now": 0,
+      "uncertainty": "未从现有噪声推导业务最小效应；所有参数是待检验范围，不宣称已最优。"
+    },
+    {
+      "direction_id": "D16",
+      "title": "MiniMol冻结底座",
+      "proposal_ids": [
+        "P16"
+      ],
+      "linked_issues": [
+        "AR001-10",
+        "U02",
+        "AR001-13"
+      ],
+      "rationale": "原论文支持冻结分子表示+小头的可行路径，可研究互补性。",
+      "evidence_refs": [
+        "minimol-paper",
+        "issues#L136-L143"
+      ],
+      "counterevidence": "论文结果不是当前任务已验证优势；exact权重和许可未知。",
+      "candidate_models_or_modules": [
+        "MiniMol frozen + linear/MLP"
+      ],
+      "parameters": {
+        "head": {
+          "type": "enum",
+          "values": [
+            "linear",
+            "mlp128",
+            "mlp256"
+          ],
+          "scale": "discrete"
+        }
+      },
+      "explicit_configurations": [
+        {
+          "head": "linear"
+        },
+        {
+          "head": "mlp128"
+        },
+        {
+          "head": "mlp256"
+        }
+      ],
+      "combination_constraints": [
+        "checkpoint revision及sha未补不得运行",
+        "不导入论文valid选模策略",
+        "若linear选择确定性solver则其3seed合并为1并重算本9预算；本9按SGD/AdamW训练线性头定义"
+      ],
+      "search_method": "仅备资产矩阵与适配合同；授权后与CheMeleon匹配split/seed比较。",
+      "configuration_count_or_counting_rule": {
+        "configuration_count": 3,
+        "rule": "3个显式配置，不对parameters做未经列举的笛卡尔积"
+      },
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "estimated_run_count": 9,
+      "cost_assumptions": "3个可训练头×3seed=9，另需新底座cache推理成本未知；当前不安装/下载权重。",
+      "readiness": "blocked_asset_and_license_and_adapter",
+      "priority": "P3",
+      "scope_status": "research_only_asset_not_admitted",
+      "tier": "exploratory_reserve",
+      "approved_training_runs_now": 0,
+      "uncertainty": "未从现有噪声推导业务最小效应；所有参数是待检验范围，不宣称已最优。"
+    },
+    {
+      "direction_id": "D17",
+      "title": "MoLFormer冻结底座",
+      "proposal_ids": [
+        "P17"
+      ],
+      "linked_issues": [
+        "AR001-10",
+        "U02",
+        "AR001-13"
+      ],
+      "rationale": "固定revision配置可读，文本分子表示提供不同归纳偏置的假设。",
+      "evidence_refs": [
+        "molformer-config"
+      ],
+      "counterevidence": "配置deterministic_eval=false及长度字段不能直接解释运行行为，需实际源码与重复性证据。",
+      "candidate_models_or_modules": [
+        "MoLFormer-XL-both-10pct frozen"
+      ],
+      "parameters": {
+        "pooling": {
+          "type": "enum",
+          "values": [
+            "documented_pooler",
+            "masked_mean"
+          ],
+          "scale": "discrete"
+        },
+        "head_width": {
+          "type": "integer",
+          "values": [
+            128,
+            256
+          ],
+          "scale": "discrete"
+        }
+      },
+      "explicit_configurations": [
+        {
+          "pooling": "documented_pooler",
+          "width": 128
+        },
+        {
+          "pooling": "documented_pooler",
+          "width": 256
+        },
+        {
+          "pooling": "masked_mean",
+          "width": 128
+        },
+        {
+          "pooling": "masked_mean",
+          "width": 256
+        }
+      ],
+      "combination_constraints": [
+        "config revision361063d0ad524ef77cf39b08469f6be770dc550f",
+        "任何长序列处理必须明确记录、获批；不静默截断或丢行",
+        "随机feature/其他buffer冻结；eval重复性先验收",
+        "固定SMILES原输入，不擅自生成多视图"
+      ],
+      "search_method": "2pooling×2width×3seed；先验证pooler实际定义，不假定CLS。",
+      "configuration_count_or_counting_rule": {
+        "configuration_count": 4,
+        "rule": "4个显式配置，不对parameters做未经列举的笛卡尔积"
+      },
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "estimated_run_count": 12,
+      "cost_assumptions": "4×3=12头训练，冻结表示推理成本未知；不以当前CheMeleon速度估算。",
+      "readiness": "blocked_weights_tokenizer_remote_code_license_and_length_contract",
+      "priority": "P3",
+      "scope_status": "research_only_asset_not_admitted",
+      "tier": "exploratory_reserve",
+      "approved_training_runs_now": 0,
+      "uncertainty": "未从现有噪声推导业务最小效应；所有参数是待检验范围，不宣称已最优。"
+    },
+    {
+      "direction_id": "D18",
+      "title": "编码器之后的新适配模块",
+      "proposal_ids": [
+        "P18"
+      ],
+      "linked_issues": [
+        "AR001-13",
+        "U02",
+        "AR001-06"
+      ],
+      "rationale": "冻结外部状态不排斥另列的新头模块，低秩post-pooling适配可限制新增容量。",
+      "evidence_refs": [
+        "current-policy",
+        "encoder",
+        "actual-science"
+      ],
+      "counterevidence": "新增模块可能只是增加过拟合；获准新头范围须主控确认，不能偷改底座。",
+      "candidate_models_or_modules": [
+        "post-pooling bottleneck adapter",
+        "gated bottleneck head"
+      ],
+      "parameters": {
+        "rank": {
+          "type": "integer",
+          "values": [
+            32,
+            64,
+            128
+          ],
+          "scale": "discrete"
+        },
+        "gate": {
+          "type": "boolean",
+          "values": [
+            false,
+            true
+          ],
+          "scale": "discrete"
+        }
+      },
+      "explicit_configurations": [
+        {
+          "rank": 32,
+          "gate": false
+        },
+        {
+          "rank": 32,
+          "gate": true
+        },
+        {
+          "rank": 64,
+          "gate": false
+        },
+        {
+          "rank": 64,
+          "gate": true
+        },
+        {
+          "rank": 128,
+          "gate": false
+        },
+        {
+          "rank": 128,
+          "gate": true
+        }
+      ],
+      "combination_constraints": [
+        "只有post-encoder新模块可训练",
+        "禁止in-backbone LoRA、更新embedding或BN统计",
+        "每个参数归属列入允许新模块集合"
+      ],
+      "search_method": "3rank×2gate，共6配置；与同参数量普通头作后续匹配，不虚称当前已匹配。",
+      "configuration_count_or_counting_rule": {
+        "configuration_count": 6,
+        "rule": "6个显式配置，不对parameters做未经列举的笛卡尔积"
+      },
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "estimated_run_count": 18,
+      "cost_assumptions": "6×3=18；实际新参数量由adapter定义静态验算；额外等参控制另申请。",
+      "readiness": "blocked_new_module_allowlist_and_versioned_implementation",
+      "priority": "P3",
+      "scope_status": "within_frozen_train_only_research",
+      "tier": "exploratory_reserve",
+      "approved_training_runs_now": 0,
+      "uncertainty": "未从现有噪声推导业务最小效应；所有参数是待检验范围，不宣称已最优。"
+    },
+    {
+      "direction_id": "D19",
+      "title": "无valid拟合的集成与误差切片",
+      "proposal_ids": [
+        "P19"
+      ],
+      "linked_issues": [
+        "AR001-09",
+        "AR001-12",
+        "AR002-02",
+        "AR002-04"
+      ],
+      "rationale": "共同seed成员可能降低初始化方差；误差相关性高则收益有限。",
+      "evidence_refs": [
+        "records/numeric_checks.json",
+        "evaluation-scope",
+        "evaluation-use-history"
+      ],
+      "counterevidence": "当前与历史预测高度相关且有配置混杂，不能先挑best valid成员/权重。",
+      "candidate_models_or_modules": [
+        "uniform mean of predeclared 3 seed members",
+        "coordinate-wise median of same members"
+      ],
+      "parameters": {
+        "combiner": {
+          "type": "enum",
+          "values": [
+            "uniform_mean",
+            "median"
+          ],
+          "scale": "discrete"
+        },
+        "member_model_seeds": {
+          "type": "integer",
+          "values": [
+            43,
+            47,
+            59
+          ],
+          "scale": "discrete"
+        }
+      },
+      "explicit_configurations": [
+        {
+          "combiner": "uniform_mean"
+        },
+        {
+          "combiner": "median"
+        }
+      ],
+      "combination_constraints": [
+        "不能用valid拟合权重或挑seed",
+        "members未产生则需另批3个训练，不能说集成免费且已有成员",
+        "对每行保持位置、不排除大误差样本",
+        "准备方只拿结构性切片定义，无真值/分数"
+      ],
+      "search_method": "成员同配置、共同split，权重预先固定；训练内外层评估；切片定义先锁定。",
+      "configuration_count_or_counting_rule": {
+        "configuration_count": 2,
+        "rule": "2个组合输出配置；共享3个成员；0额外训练（条件：成员已合法产生）"
+      },
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "estimated_run_count": 0,
+      "cost_assumptions": "已有3成员时2个派生预测、0额外训练；无成员时3训练不是6，且本proposal未授权评分。",
+      "readiness": "conditional_existing_authorized_member_predictions_only",
+      "priority": "P2",
+      "scope_status": "within_frozen_train_only_research",
+      "tier": "exploratory_reserve",
+      "approved_training_runs_now": 0,
+      "uncertainty": "未从现有噪声推导业务最小效应；所有参数是待检验范围，不宣称已最优。"
+    },
+    {
+      "direction_id": "D20",
+      "title": "续训复现与完整状态边界",
+      "proposal_ids": [
+        "P20"
+      ],
+      "linked_issues": [
+        "U05",
+        "AR001-07",
+        "AR002-05"
+      ],
+      "rationale": "状态抽样roundtrip不能代替优化轨迹恢复，需单独控制。",
+      "evidence_refs": [
+        "training-process",
+        "current-runtime-source"
+      ],
+      "counterevidence": "CUDA非确定性和sampler消耗可能导致差异；不能承诺bitwise。",
+      "candidate_models_or_modules": [
+        "continuous head training",
+        "stop-and-resume same head"
+      ],
+      "parameters": {
+        "execution_mode": {
+          "type": "enum",
+          "values": [
+            "continuous",
+            "resume_at_epoch5_boundary"
+          ],
+          "scale": "discrete"
+        },
+        "model_seed": {
+          "type": "integer",
+          "values": [
+            43
+          ],
+          "scale": "discrete"
+        }
+      },
+      "explicit_configurations": [
+        {
+          "execution_mode": "continuous"
+        },
+        {
+          "execution_mode": "resume_at_epoch5_boundary"
+        }
+      ],
+      "combination_constraints": [
+        "head/optimizer/scheduler/RNG/sampler/step来自同一边界",
+        "不把best18与last26状态混搭",
+        "精度容差在观察差异前预注册；暂无官方值"
+      ],
+      "search_method": "未来两条相同epoch预算轨迹；恢复点固定epoch5而非依据valid选取。",
+      "configuration_count_or_counting_rule": {
+        "configuration_count": 2,
+        "rule": "2个显式配置，不对parameters做未经列举的笛卡尔积"
+      },
+      "seeds": [
+        43
+      ],
+      "estimated_run_count": 2,
+      "cost_assumptions": "2条完整等长轨迹（恢复含分段启动，不虚数为额外独立seed）；当前实际0。",
+      "readiness": "prepare_test_plan_only_no_training",
+      "priority": "P2",
+      "scope_status": "within_frozen_train_only_research",
+      "tier": "exploratory_reserve",
+      "approved_training_runs_now": 0,
+      "uncertainty": "未从现有噪声推导业务最小效应；所有参数是待检验范围，不宣称已最优。"
+    },
+    {
+      "direction_id": "D21",
+      "title": "明确排除的范围外研究",
+      "proposal_ids": [
+        "P21"
+      ],
+      "linked_issues": [
+        "U02",
+        "U03",
+        "U01",
+        "AR001-12"
+      ],
+      "rationale": "避免把广泛方向误解为授权。",
+      "evidence_refs": [
+        "current-policy",
+        "evaluation-scope",
+        "current-rule-source-map"
+      ],
+      "counterevidence": "没有证据支持突破权限。",
+      "candidate_models_or_modules": [
+        "unfreeze encoder",
+        "in-backbone LoRA",
+        "test fitting",
+        "teacher pseudo-labels",
+        "extra samples",
+        "valid-tuned weights",
+        "unadmitted fitted model assets"
+      ],
+      "parameters": {},
+      "explicit_configurations": [],
+      "combination_constraints": [
+        "任何底座参数/buffer更新拒绝",
+        "valid/test标签不得流向训练准备",
+        "禁止去重/补标签/单位擅变/额外样本"
+      ],
+      "search_method": "仅登记排除项，不给执行配置。",
+      "configuration_count_or_counting_rule": {
+        "configuration_count": 0,
+        "rule": "0个显式配置，不对parameters做未经列举的笛卡尔积"
+      },
+      "seeds": [],
+      "estimated_run_count": 0,
+      "cost_assumptions": "0配置、0运行；外部拟合资产如TabPFN仅可单独询证，当前不准入。",
+      "readiness": "out_of_scope",
+      "priority": "P4",
+      "scope_status": "out_of_current_scope",
+      "tier": "exploratory_reserve",
+      "approved_training_runs_now": 0,
+      "uncertainty": "未从现有噪声推导业务最小效应；所有参数是待检验范围，不宣称已最优。"
+    }
+  ],
+  "first_panel": {
+    "configs": [
+      {
+        "config_id": "C0",
+        "proposal_id": "P01",
+        "change_from_C0": {},
+        "model_seeds": [
+          43,
+          47,
+          59
+        ]
+      },
+      {
+        "config_id": "C1",
+        "proposal_id": "P02",
+        "change_from_C0": {
+          "monitor": "internal_validation_raw_mae"
+        },
+        "model_seeds": [
+          43,
+          47,
+          59
+        ]
+      },
+      {
+        "config_id": "C2",
+        "proposal_id": "P03",
+        "change_from_C0": {
+          "hidden_dims": [
+            128
+          ]
+        },
+        "model_seeds": [
+          43,
+          47,
+          59
+        ]
+      },
+      {
+        "config_id": "C3",
+        "proposal_id": "P04",
+        "change_from_C0": {
+          "feature_mode": "sd_floor",
+          "feature_std_floor": 0.001
+        },
+        "model_seeds": [
+          43,
+          47,
+          59
+        ]
+      }
+    ],
+    "unique_configuration_count": 4,
+    "common_model_seeds": [
+      43,
+      47,
+      59
+    ],
+    "split_seed": 43,
+    "planned_runs_if_authorized": 12,
+    "approved_runs_now": 0
+  },
+  "external_reading_limits": "MiniMol仅论文部分方法原文；MoLFormer只固定配置全文；均未读权重、许可证完整链和实际部署代码，不宣称就绪。"
+}

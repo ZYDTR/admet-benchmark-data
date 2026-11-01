@@ -1,0 +1,11 @@
+# 审计包来源与完整性边界
+
+- 固定科学commit：31a9bb2729ff1464bf6d4be1e23fcba0bf391725；输入manifest：2b37cecef4b6f45481ba1991766a2b15eaaffb672a695d193ae03b878c5e04e8。
+- 54项合同材料+input manifest全文读取；full-prompt/reading-contract也完整读取。分段工具引用在evidence/reading-coverage.json；回执在review.json和evidence/read-receipts.json。
+- 浏览器显示行号是web解析后的定位，不冒称原始文件字节偏移。read_mode original表示对应文件正文已读，transport另记。
+- 未获得公共原件原始字节流，因此未独立验证55316字节full-prompt或任何合同源SHA。合同和source-index所列SHA为公布值，不是本轮计算值。
+- 容器DNS/443/下载失败具体尝试见evidence/tool-use.json；web文本成功，不能把这些公共来源称为整体不可达。
+- 本ZIP保存交付原件、算术/验证脚本、阅读记录、固定源指针、旧交付副本；**不是2446源文件的离线镜像**。reading-contract-transcription是人工结构化转录，非原合同字节副本。
+- 源源头sha不能从浏览器重排文本重造。相反，本地交付manifest每项文件bytes/SHA由真实本地bytes计算，ZIP成员与这些摘要逐项验证。
+- 未使用任何subagent。两套数值实现共享已转录聚合输入，只独立检查计算，不独立验证输入采样或重新评分。
+- 旧件previous/仅供历史审计，含已修正方案，不能当新版运行指令。所有新增实验均未执行。

@@ -1,0 +1,37 @@
+# Chat 通道合同：原生消息，内置Browser取文件
+
+2026-11-01，v0.4.0。用户已批准Browser创建并选择Pro，必要时发送首条正式任务；真实ID确认后原生接口续接。旧版冻结输入与失败原件保留。
+
+## 能力与边界
+
+- `send_message_to_thread({threadId,prompt})`只用于人类已授权的准确目标；ChatGPT不传仅对Codex有效的model/thinking。原生工具接受后还须核对目标用户消息和请求身份，未知先查，不重发。
+- `read_thread`读取正文、状态和可用附件。只有内容引用、空附件或截断时按真实覆盖记录，不能等同完整原文件。
+- 内置Browser可打开当批既有Chat、读取其可见文件链接并进入真实Library/附件页，点击正常下载控件。保留来源URL、Chat/request、可见控件、时间、本地文件路径和摘要。`sandbox:`是Chat远端路径，不能当宿主文件或猜测下载API。除下述首条正式任务例外，不用浏览器续问或点Retry生成；不抓cookie或凭据，不调用隐藏接口。
+- 当前`create_thread`只暴露Codex project/projectless和ChatGPT Work Cloud，没有明确普通Pro Chat创建/选模参数。新目标创建与已有目标收发分开核验；不以Prompt写Pro冒充实际模型。当批登记可用且获准的创建方式；用户已授权使用Browser正常新建并选择Pro，不再把原生缺创建参数当成必须用户手工建Chat的条件。
+- Browser、附件预览或下载遇到临时状态错误，可以在同一目标做有界只读恢复和状态对账；明确权限/安全拒绝、登录验证或主机身份问题不能绕过，报告具体依赖。
+
+## 新Chat到原生接管
+
+空白Pro草稿可先准备，正式材料封口前不发消息。若页面已有真实服务端ID，用原生只读能力核实其身份及空白历史；仅本地临时ID或空URL不能冒充服务端创建完成。如果ID必须在首发后生成，在当批首发额度内通过Browser提交完整正式Prompt一次，再核对真实ID、服务端用户消息和request/全文身份，之后原生续接。正式发送前检查composer是否被长文自动转成附件，最终内容需与冻结Prompt等价；发送结果未知先在原目标对账，不自动重发或换新Chat。
+
+一次创建、一次首发不等于已验证整条自动链。正常页面恢复有界；Cloudflare验证、登录要求和安全工具拒绝如实留证，不绕过。只准备空白页时可交付draft_ready_id_pending_first_message，这不是已创建可寻址会话、已发送分析或无期限占用监控的理由。
+
+## 文件取回的完成标准
+
+优先取完整审计ZIP；保留原压缩包并校验安全成员路径、无symlink/特殊文件/加密、CRC、六正式文件及清单的字节和摘要、request/输入manifest。附加科研原件照原样保留；不执行Chat返回的脚本处理私有标签。内容完整、Chat生成终态和科学可信度分别记录。
+
+下载事件超时但系统已保存文件是已发生案例。先按本次明确文件名和已知下载目录核对，绑定可见点击、内容身份和hash；mtime单独不证明完成时间。日志同时保留事件超时和实际文件成功，不为捕获事件重复下载。存在完整文件时不再等待长正文生成结束才取回。
+
+## 已发生的证据
+
+首轮通过原生工具发送，随后经内置Browser的Library文件页点击“下载文件”，原ZIP落到Downloads并安全解出六文件。下载事件等待15秒超时，实际文件245762字节成功。详见[原件回收记录](../../../exchange/trials/public-repo-20261031/gateway/roundtrip/audit-original-recovery.json)。这证明一次混合通道回收，不证明纯原生或自动整轮已通过。
+
+repair-001原生回复2748字节可完整读取，八个sandbox链接可见，但attachments为空，工具表无适用下载接口。主控复读正文SHA一致；当时Codex原生应用控制被Computer Use明确拒绝，同时用户尚未开放Browser下载，因此没有继续。见[当时缺口](../../../cycles/progressive-index-e2e-20261031/control/native-artifact-gap-20261031/report.md)。用户现明确开放独立的Browser文件下载通道；这不解除Codex原生应用控制的工具拒绝。
+
+当前恢复另见[授权](../../../cycles/progressive-index-e2e-20261031/control/hybrid-file-recovery-20261031/AUTHORIZATION.json)。新版本是否实际读到、实际下载通过和完整新周期自动通过分别验收，不能用Skill文字宣称已经成功。
+
+## 第二轮实际恢复（2026-11-01）
+
+Chat内构件“下载/另存为”提示“无法下载构件”，不代表Library原文件也不可取。沿页面实际文件入口进入Library后，正常“下载文件”保存130451字节ZIP；事件等待15秒超时，实际落盘与18成员、六正式文件479798字节及10件审计记录摘要通过。已知文件页的“复制文件内容”也取得1715字节清单，与ZIP内清单完全一致；这只验证该文本能力，不代表任意文件都可如此完整取回。
+
+可见原文/复制内容若用于恢复，保留取得的原字节并核对来源清单的长度和SHA；摘要不符只能标部分材料，不能改换行、补字或重构后当原件。成功ZIP已存在就停止备用运输。具体来源、失败与完整Thread时间见[网关报告](../../../cycles/progressive-index-e2e-20261031/gateway/pro-request-002/browser-file-recovery-001/REPORT.md)及[主控独立验收](../../../cycles/progressive-index-e2e-20261031/control/hybrid-file-recovery-20261031/report.md)。本版沉淀该实证；新一轮自动全链和普通Pro新建入口仍未通过，不能用恢复成功替代。

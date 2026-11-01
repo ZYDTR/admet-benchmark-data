@@ -1,0 +1,31 @@
+# 第一次补全变更记录
+
+旧版八个文件原样保存在previous/；本补全未修改原目录。此表区分事实更正、设计修订和保留的不确定性，不把旧错写从历史删除。
+
+| 项目 | 上一版问题/说法 | 补读与修订 | 证据 |
+|---|---|---|---|
+| 必需阅读 | 41项未读 | 54项合同+manifest全读；正文与字节hash分记 | reading-coverage/read-receipts |
+| Caco2总分上限 | 本地语境混用约48.81 | 本地46.3320127594；榜单48.8115148182 | numeric-recomputation |
+| 最佳Caco2贡献 | +.1301 | 精确+.1301309438保留；仅描述替换非因果 | required-012/049/050 |
+| 全局任务上限 | 容易误读为每项100 | 分类100/(1+r)、rank200/(3+r)、MAE100；总65.7196424 | 独立算术 |
+| valid权限 | 单次确认可能读成硬禁令 | 官方允许valid调参；次数控制为建议；执行方仅汇总 | official-rules/R06；用户补全 |
+| 单位 | 单位未知可能被当全面门槛 | 不阻止原Y基线；不许猜log/物理剪裁/标签反向 | data-intake/data-profile |
+| 小样本描述 | 部分把valid规模当任务规模 | 完整train/valid/test表；valid少不等于train只有数十行 | input-integrity/data-profile |
+| 结构覆盖 | 缺少针对性限制 | Ames单骨架、LD50/sol全空骨架、DILI集中；多seed不能修复 | data-profile |
+| runner | 容易读成从未有22任务实现 | Mini22 CPU22头已成功；固定GPU Caco2路由扩展需new_code | baseline-delivery/runner-v4 |
+| 资产hash | 绑定待办过多 | 原件已有权重/代码/ZIP/template/22valid/test摘要现已写入 | asset-bindings |
+| train单文件hash | 不清楚 | 非Caco2 21个未在已读公开完整性条目给出；不伪造，宿主验收 | input-integrity |
+| D-METRIC/P-GATE | 悬空/自依赖 | 新建D-METRIC；零fit gates独立无环 | validator |
+| S1 H0/H1 | 宽度/dropout/lr/wd一起变 | 只有dropout .1/.3变化；50/8，200/20单列条件bundle | next_experiments |
+| task矩阵 | 泛10任务一个项、空seed门槛 | S1 20项40fit；S1B22项44fit；scalar展开84 | experiment-matrix |
+| Caco2 | 又加入新首批 | 保留独立六项；新首批换入lipophilicity | 不更改既有授权 |
+| 未知S2 | 可能伪装已选task | conditional模板，获选task=null，count仅上限 | conditional-followups |
+| 评分方向 | 通用maximize错误 | MAE minimize；AUROC/AP/Spearman maximize，逐taskloss/scale | 42项完整配置 |
+| 首筛选择数据 | 不够清楚 | 明确inner_stop训练内代理，承认选epoch乐观性；S2outer隔离 | 新配置/guide |
+| freeze归因 | 缺充分推翻阅读 | CE-FREEZE-02保留；四unused predictor差异非解冻证明 | claims/attribution |
+| 特征放大 | 因果未分清 | 数值现象已见，根因未证；D-FEATURE可证伪实验 | C-SCALE |
+| 历史下载 | 旧超时误认失败 | 保留历史推翻；与本轮实际容器访问错误分开 | C-DOWNLOAD/tool-use |
+| 检查器打包 | 科学与工程混淆 | 主控打包错误、用户报告已独立修复；本研究未验收新版 | 用户补全第6点 |
+| subagents | 可能模糊 | 没有可用通用委派工具；使用0，不扮演代理 | tool-use |
+
+保留不确定性：官方公式/AP实现等价、标签物理语义与生成划分细节、未来增益/方差/端到端成本、替代底座就绪，以及原件字节级SHA独立复算。新报告没有引入快照后的现场训练。

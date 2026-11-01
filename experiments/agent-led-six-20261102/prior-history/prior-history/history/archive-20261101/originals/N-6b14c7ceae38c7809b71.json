@@ -1,0 +1,798 @@
+{
+  "observed_at": "2026-11-01T09:23:20.282301+00:00",
+  "registered_jobs": 16,
+  "pending_jobs": 0,
+  "sessions": {
+    "minimol": {
+      "status": "idle_incomplete",
+      "model": "bailian/qwen3.8-flash",
+      "tail_tool_error": "upstream setup.py HTTP 404; impact pending review",
+      "latest_message_id": "<PRIVATE_SESSION_OBJECT>",
+      "evidence": "latest assistant lacks completed time and finish; final write tool completed; output contains partial files"
+    },
+    "molformer": {
+      "status": "idle_incomplete",
+      "model": "bailian/qwen3.8-flash",
+      "tail_tool_error": "attempted write to /tmp/opencode failed PermissionError; boundary and impact pending review",
+      "latest_message_id": "<PRIVATE_SESSION_OBJECT>",
+      "evidence": "latest assistant lacks completed time and finish; final webfetch completed; output contains partial files"
+    }
+  },
+  "next": "wait for new preparation task handed off by owner",
+  "heartbeat_wakeup": "observed 2026-10-31T10:46:57+08:00",
+  "service": {
+    "observed_at": "2026-10-31T16:22:34.621662+08:00",
+    "orb_status": "Running",
+    "opencode_api": "reachable",
+    "data_volume_available": "122 GiB",
+    "filesystem_health": "not independently verified"
+  },
+  "last_check": "continuation terminal; independent acceptance failed, notification pending",
+  "jobs": {
+    "admet-qwen-preparation-20261031": {
+      "status": "interrupted_reported_waiting_for_storage_recovery",
+      "sessions": {
+        "minimol": {
+          "status": "idle_incomplete",
+          "model": "bailian/qwen3.8-flash",
+          "tail_tool_error": "upstream setup.py HTTP 404; impact pending review",
+          "latest_message_id": "<PRIVATE_SESSION_OBJECT>",
+          "evidence": "latest assistant lacks completed time and finish; final write tool completed; output contains partial files"
+        },
+        "molformer": {
+          "status": "idle_incomplete",
+          "model": "bailian/qwen3.8-flash",
+          "tail_tool_error": "attempted write to /tmp/opencode failed PermissionError; boundary and impact pending review",
+          "latest_message_id": "<PRIVATE_SESSION_OBJECT>",
+          "evidence": "latest assistant lacks completed time and finish; final webfetch completed; output contains partial files"
+        }
+      },
+      "monitoring_scope": "owner_historical_closed_no_current_authorization",
+      "monitoring_scope_updated_at": "2026-10-31T14:50:47.059823+00:00"
+    },
+    "admet-public-challenge-20261031": {
+      "status": "waiting_for_storage_recovery",
+      "observed_at": "2026-10-31T18:06:11.901154+08:00",
+      "parent_id": "<PRIVATE_SESSION_OBJECT>",
+      "parent_status": "idle_incomplete_tool_recorded_running",
+      "children_count": 20,
+      "children_busy": 0,
+      "expected_children": 20,
+      "actual_model": "bailian/qwen3.8-flash",
+      "completion": "not verified; source decision needed for interrupted children",
+      "return_authorization": "authorized directly by user; see authorization-public-challenge.json",
+      "actual_models_verified": 20,
+      "latest_evidence": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/public-batch-all-idle-20261031.json",
+      "launch_provenance": "registration states parent task created 01; other 19 dispatched as native parentID child sessions by originating controller; not 20 parent task calls",
+      "children_idle_error": 0,
+      "network": "20 post-resume assistant messages identify qwen3.8-flash; several tools completed, others pending; no end-to-end acceptance",
+      "evidence": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/public-challenge-oom-20261031-01.json",
+      "output": "existing raw responses and local match scripts observed across shards; coverage and evidence quality not yet verified",
+      "children_idle": 20,
+      "actual_models_verified_on_resume": 20,
+      "partial_terminal_shards": [
+        "01",
+        "03",
+        "04",
+        "05",
+        "06",
+        "08",
+        "09",
+        "10",
+        "16"
+      ],
+      "correction_status": "09/10/16 followup busy, model responses observed; 16 tool completed",
+      "correction_evidence": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/public-correction-partial-audit.json",
+      "specific_correction_status": "02/12/14 busy and post-request model responses observed; tools and outputs pending",
+      "specific_correction_evidence": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/public-correction-specific-check.json",
+      "resource_sample": "container 5.857 GiB / 13.7 GiB, VM available 6597828 KiB, process RSS 6115680 KiB, restart count 2",
+      "shard11": "unknown: service reset, OrbStack docker socket unavailable",
+      "shard11_compaction_evidence": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/public-shard11-compaction-check.json",
+      "bounded_tail_summary": {
+        "stop_and_completed": 10,
+        "incomplete_or_no_final": 9,
+        "assistant_error": 1
+      },
+      "monitoring_scope": "revoked_non_owner",
+      "monitoring_revoked_at": "2026-10-31T14:50:47.059823+00:00"
+    },
+    "admet-public-shard11-after-storage-20261031": {
+      "observed_at": "2026-10-31T17:57:58.972998+08:00",
+      "status": "terminal_failed_superseded_by_clean_recovery",
+      "session_id": "<PRIVATE_SESSION_OBJECT>",
+      "prompt_sha256": "33b3ae8e8196d3045f799299497570721240f6f8a43ce4768365836e103c16a3",
+      "model": "bailian/qwen3.8-flash",
+      "request_message": "<PRIVATE_SESSION_OBJECT>",
+      "assistant_message": "<PRIVATE_SESSION_OBJECT>",
+      "tool_execution": "not observed; same empty assistant over 30 minutes",
+      "completion": "APIError HTTP400; original request and terminal assistant preserved in raw_terminal_tail",
+      "evidence": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/public-shard11-after-storage-check.json",
+      "latest_tail": "same assistant ID, zero parts, no finish or error",
+      "stall_evidence": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/public-shard11-after-storage-stall.json",
+      "external_diagnostic": "<LOCAL_WORKSPACE>/contexts/survey_sessions/admet_label_research_audit_20261030/qwen_parallel_20261031/diagnosis-post-migration-stall-20261031.md",
+      "external_diagnostic_summary": "source reports same-container minimal model request succeeded; snapshot git maintenance coincides, causal relation unproven; target current assistant unchanged with no parts",
+      "raw_terminal_tail": {
+        "path": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/public-shard11-after-storage-terminal-tail-20261031.json",
+        "sha256": "dd1ee87981626ca3eb01cf47120fd3e1488f4f993d18f70b1817ab8d6b025bee",
+        "full_history_freeze": "pending; prior history file ~119MB, preserve active recovery and verify existing frozen history before duplicate large read"
+      },
+      "history_before_recovery": {
+        "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_public_candidate_challenge_20261031/shard11_history_before_recovery_20261031.json",
+        "sha256": "cd563081dab26f23c710705d72de6fc500830b57b46252783cfbc5578a16a518",
+        "bytes": 124718941,
+        "note": "174 pre-existing messages; did not include later resume request; current round separately frozen as terminal tail"
+      },
+      "monitoring_scope": "revoked_non_owner",
+      "monitoring_revoked_at": "2026-10-31T14:50:47.059823+00:00"
+    },
+    "admet-progressive-cycle-preparation-20261031": {
+      "observed_at": "2026-10-31T17:45:00.656033+08:00",
+      "status": "terminal_acceptance_failed",
+      "session_id": "<PRIVATE_SESSION_OBJECT>",
+      "model": "bailian/qwen3.8-flash",
+      "directory": "<PRIVATE_RUNTIME_PATH>",
+      "project_id": "890c641656b89e802d31560be2c399e22eab00ab",
+      "children_count": 0,
+      "last_assistant_parts": 0,
+      "tool_execution": "not observed; same empty assistant message",
+      "completion": "not verified",
+      "authorization": "human source verified in origin thread private-role-298cc5edc25e; continuing prior Terra callback authorization",
+      "acceptance_root": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031/preparation/acceptance",
+      "latest_tail": "same assistant ID, zero parts, no finish or error",
+      "stall_diagnostic": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031/preparation/acceptance/stall-diagnostic.json",
+      "suspected_cause": "snapshot GC lock wait per source diagnostic, not stack-proven",
+      "gc_observation": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/progressive-prep-gc-latest.json",
+      "acceptance_report": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031/preparation/acceptance/report.md",
+      "acceptance_result": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031/preparation/acceptance/result.json",
+      "monitoring_scope": "owner_historical_closed_no_current_authorization",
+      "monitoring_scope_updated_at": "2026-10-31T14:50:47.059823+00:00"
+    },
+    "admet-public-shard11-clean-recovery-20261031": {
+      "observed_at": "2026-10-31T17:57:58.972998+08:00",
+      "status": "terminal_acceptance_failed_return_authorization_pending",
+      "session_id": "<PRIVATE_SESSION_OBJECT>",
+      "model": "bailian/qwen3.8-flash",
+      "origin_thread_id": "private-role-0e9da739b16b",
+      "return_authorization": "needs explicit direct human authorization for this distinct destination; older authorization is source-specific",
+      "acceptance": "failed",
+      "prompt_hash_verified": true,
+      "heartbeat": "opencode ACTIVE",
+      "acceptance_report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/shard11-clean-recovery-20261031/report.md",
+      "result": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/shard11-clean-recovery-20261031/result.json",
+      "raw_messages": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/shard11-clean-recovery-20261031/messages.json",
+      "completion": "assistant stop, model qwen3.8-flash",
+      "monitoring_scope": "revoked_non_owner",
+      "monitoring_revoked_at": "2026-10-31T14:50:47.059823+00:00"
+    },
+    "admet-public-missing-15171820-after-storage-20261031": {
+      "status": "all_terminal_acceptance_failed",
+      "sessions": {
+        "15": {
+          "session_id": "<PRIVATE_SESSION_OBJECT>",
+          "prompt_sha256": "044227951fcd67e98f46130c45a5d8eb612105ad2ee065aea2768c46b6eb8761",
+          "state": "terminal_acceptance_failed",
+          "registered_prompt_hash_matches": true,
+          "request_id": "<PRIVATE_SESSION_OBJECT>",
+          "assistant_id": "<PRIVATE_SESSION_OBJECT>",
+          "assistant_parts": 0,
+          "tool_execution_after_request": "not_observed",
+          "model": "bailian/qwen3.8-flash",
+          "completion": "assistant stop, actual registered round",
+          "observed_at": "2026-10-31T18:35:43.818783+08:00",
+          "last_tail": [
+            {
+              "id": "<PRIVATE_SESSION_OBJECT>",
+              "role": "assistant",
+              "completed": 1793442367539,
+              "finish": "tool-calls",
+              "error": null,
+              "error_status": null,
+              "model": "qwen3.8-flash",
+              "tools": [
+                {
+                  "name": "bash",
+                  "state": "completed"
+                }
+              ]
+            },
+            {
+              "id": "<PRIVATE_SESSION_OBJECT>",
+              "role": "assistant",
+              "completed": 1793442375675,
+              "finish": "stop",
+              "error": null,
+              "error_status": null,
+              "model": "qwen3.8-flash",
+              "tools": []
+            }
+          ],
+          "messages_error": null,
+          "acceptance_report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/public-shard15-after-storage-20261031/acceptance-report.md",
+          "result": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/public-shard15-after-storage-20261031/acceptance-result.json",
+          "frozen": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/public-shard15-after-storage-20261031/freeze-manifest.json"
+        },
+        "17": {
+          "session_id": "<PRIVATE_SESSION_OBJECT>",
+          "prompt_sha256": "eda24f6df61f7c621c5aedacaa83d3d542874c1b6a70857bf48307d024fdeb2a",
+          "state": "terminal_acceptance_failed",
+          "registered_prompt_hash_matches": true,
+          "request_id": "<PRIVATE_SESSION_OBJECT>",
+          "assistant_id": "<PRIVATE_SESSION_OBJECT>",
+          "assistant_parts": 0,
+          "tool_execution_after_request": "not_observed",
+          "model": "bailian/qwen3.8-flash",
+          "completion": "assistant stop, actual registered round",
+          "observed_at": "2026-10-31T18:45:48.023413+08:00",
+          "last_tail": [
+            {
+              "id": "<PRIVATE_SESSION_OBJECT>",
+              "role": "assistant",
+              "created": 1793443102093,
+              "completed": 1793443103979,
+              "finish": "tool-calls",
+              "error": null,
+              "error_status": null,
+              "model": "qwen3.8-flash",
+              "tools": [
+                {
+                  "name": "bash",
+                  "state": "completed"
+                }
+              ]
+            },
+            {
+              "id": "<PRIVATE_SESSION_OBJECT>",
+              "role": "assistant",
+              "created": 1793443104115,
+              "completed": 1793443110880,
+              "finish": "stop",
+              "error": null,
+              "error_status": null,
+              "model": "qwen3.8-flash",
+              "tools": []
+            }
+          ],
+          "messages_error": null,
+          "acceptance_report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/public-shard17-after-storage-20261031/acceptance-report.md",
+          "result": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/public-shard17-after-storage-20261031/acceptance-result.json",
+          "frozen": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/public-shard17-after-storage-20261031/freeze-manifest.json"
+        },
+        "18": {
+          "session_id": "<PRIVATE_SESSION_OBJECT>",
+          "prompt_sha256": "f070dafb73a20d94bea94e74602a0ce23ce9f8db2d5403e1ca5d7ae9f9fb691f",
+          "state": "terminal_acceptance_failed",
+          "registered_prompt_hash_matches": true,
+          "request_id": "<PRIVATE_SESSION_OBJECT>",
+          "assistant_id": "<PRIVATE_SESSION_OBJECT>",
+          "assistant_parts": 0,
+          "tool_execution_after_request": "not_observed",
+          "model": "bailian/qwen3.8-flash",
+          "completion": "assistant stop, actual registered round",
+          "observed_at": "2026-10-31T18:55:48.680237+08:00",
+          "last_tail": [
+            {
+              "id": "<PRIVATE_SESSION_OBJECT>",
+              "role": "assistant",
+              "created": 1793443548121,
+              "completed": 1793443554205,
+              "finish": "tool-calls",
+              "error": null,
+              "error_status": null,
+              "model": "qwen3.8-flash",
+              "tools": [
+                {
+                  "name": "bash",
+                  "state": "completed"
+                }
+              ]
+            },
+            {
+              "id": "<PRIVATE_SESSION_OBJECT>",
+              "role": "assistant",
+              "created": 1793443554375,
+              "completed": 1793443559577,
+              "finish": "stop",
+              "error": null,
+              "error_status": null,
+              "model": "qwen3.8-flash",
+              "tools": []
+            }
+          ],
+          "messages_error": null,
+          "acceptance_report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/public-shard18-after-storage-20261031/acceptance-report.md",
+          "result": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/public-shard18-after-storage-20261031/acceptance-result.json",
+          "frozen": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/public-shard18-after-storage-20261031/freeze-manifest.json"
+        },
+        "20": {
+          "session_id": "<PRIVATE_SESSION_OBJECT>",
+          "prompt_sha256": "47572513897c74c1152f6c046ddd8d7f8616d9c35b4655de6e5f271c3cef0e20",
+          "state": "terminal_acceptance_failed",
+          "registered_prompt_hash_matches": true,
+          "request_id": "<PRIVATE_SESSION_OBJECT>",
+          "assistant_id": "<PRIVATE_SESSION_OBJECT>",
+          "assistant_parts": 0,
+          "tool_execution_after_request": "not_observed",
+          "model": "bailian/qwen3.8-flash",
+          "completion": "assistant stop, actual registered round",
+          "observed_at": "2026-10-31T18:15:54.093686+08:00",
+          "last_tail": [
+            {
+              "id": "<PRIVATE_SESSION_OBJECT>",
+              "role": "assistant",
+              "completed": 1793441578789,
+              "finish": "tool-calls",
+              "error": null,
+              "error_status": null,
+              "model": "qwen3.8-flash",
+              "tools": [
+                {
+                  "name": "bash",
+                  "state": "completed"
+                }
+              ]
+            },
+            {
+              "id": "<PRIVATE_SESSION_OBJECT>",
+              "role": "assistant",
+              "completed": 1793441583640,
+              "finish": "stop",
+              "error": null,
+              "error_status": null,
+              "model": "qwen3.8-flash",
+              "tools": []
+            }
+          ],
+          "messages_error": null,
+          "acceptance_report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/public-shard20-after-storage-20261031/acceptance-report.md",
+          "result": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/public-shard20-after-storage-20261031/acceptance-result.json",
+          "frozen": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/public-shard20-after-storage-20261031/freeze-manifest.json"
+        }
+      },
+      "evidence": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/public-missing-15171820-latest-check-20261031.json",
+      "monitoring_scope": "revoked_non_owner",
+      "monitoring_revoked_at": "2026-10-31T14:50:47.059823+00:00"
+    },
+    "admet-fifteen-source-research-20261031-1830": {
+      "status": "monitoring",
+      "parent_session_id": "<PRIVATE_SESSION_OBJECT>",
+      "parent_state": {
+        "type": "busy"
+      },
+      "prompt_hash_matches": true,
+      "children_count": 15,
+      "evidence": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/public-combined-latest-check-20261031.json",
+      "observed_at": "2026-10-31T14:38:04.202879+00:00",
+      "children_status_counts": {
+        "busy": 4,
+        "idle": 11
+      },
+      "completion": "13 and 19 terminal, independently reviewed; parent and registered 06 continuation remain active; do not resend",
+      "partial_acceptance": {
+        "02": {
+          "state": "terminal_acceptance_failed",
+          "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaves-02-05-09-20261031/review-report.md"
+        },
+        "05": {
+          "state": "terminal_acceptance_failed",
+          "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaves-02-05-09-20261031/review-report.md"
+        },
+        "09": {
+          "state": "terminal_acceptance_failed",
+          "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaves-02-05-09-20261031/review-report.md"
+        },
+        "03": {
+          "state": "terminal_acceptance_failed",
+          "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf03-20261031/review-report.md"
+        },
+        "08": {
+          "state": "terminal_acceptance_failed",
+          "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf08-20261031/review-report.md"
+        },
+        "06": {
+          "state": "terminal_acceptance_failed",
+          "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf06-20261031/review-report.md"
+        },
+        "10": {
+          "state": "terminal_acceptance_failed",
+          "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf10-20261031/review-report.md"
+        },
+        "01": {
+          "state": "terminal_acceptance_failed",
+          "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf01-20261031/review-report.md"
+        },
+        "07": {
+          "state": "terminal_acceptance_failed",
+          "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf07-20261031/review-report.md"
+        },
+        "04": {
+          "state": "terminal_acceptance_failed",
+          "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf04-20261031/review-report.md"
+        },
+        "14": {
+          "state": "terminal_acceptance_failed",
+          "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf14-20261031/review-report.md"
+        },
+        "12": {
+          "state": "terminal_acceptance_failed",
+          "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf12-20261031/review-report.md"
+        },
+        "13": {
+          "state": "terminal_acceptance_failed",
+          "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf13-20261031/review-report.md"
+        },
+        "19": {
+          "state": "terminal_acceptance_failed",
+          "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf19-20261031/review-report.md"
+        }
+      },
+      "leaf06_question": {
+        "question_id": "que_1918fedc1001T35ADAOo0g9T8V",
+        "source_receipt": "<LOCAL_WORKSPACE>/contexts/survey_sessions/admet_label_research_audit_20261030/qwen_parallel_20261031/fifteen-leaf06-question-reply-20261031.json",
+        "reply_http": 200,
+        "reply_body": true,
+        "observed_at": "2026-10-31T19:37:52.909310+08:00",
+        "observed_state": "busy",
+        "post_reply_tools": "two bash completed; latest bash pending",
+        "constraint": "no positional candidate selection, no hidden labels/training/scoring; do not resend"
+      },
+      "children_count_observed": 16,
+      "extra_child_14": {
+        "session_id": "<PRIVATE_SESSION_OBJECT>",
+        "state": "busy",
+        "model": "qwen3.8-flash",
+        "children_count": 0,
+        "evidence": "new activity writes work and raw_responses under agent_14; 11 originally frozen files still match remote hashes; no nested children observed; later locally revised files not compared, no global no-overwrite claim",
+        "restriction": "read-only observation; no abort or new task",
+        "observed_at": "2026-10-31T14:48:04.320282+00:00"
+      },
+      "monitoring_scope": "revoked_non_owner",
+      "monitoring_revoked_at": "2026-10-31T14:50:47.059823+00:00"
+    },
+    "admet-fifteen-leaf06-recovery-20261031": {
+      "status": "terminal_acceptance_failed",
+      "session_id": "<PRIVATE_SESSION_OBJECT>",
+      "request_id": "<PRIVATE_SESSION_OBJECT>",
+      "prompt_sha256": "909324c6cda9916973b9d5f38e91f304a2a336452ec49f20899d639f52ab7139",
+      "registered_prompt_hash_matches": true,
+      "parent_id": "<PRIVATE_SESSION_OBJECT>",
+      "state": {
+        "type": "idle"
+      },
+      "actual_model": "bailian/qwen3.8-flash",
+      "tools_after_request": "new bash completed, next bash pending",
+      "observed_at": "2026-10-31T20:29:12.187940+08:00",
+      "prior_round": "terminal_acceptance_failed; frozen separately",
+      "completion": "UnknownError ENOTFOUND token-plan.cn-beijing.maas.aliyuncs.com",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf06-recovery-20261031/review-report.md",
+      "monitoring_scope": "revoked_non_owner",
+      "monitoring_revoked_at": "2026-10-31T14:50:47.059823+00:00"
+    },
+    "admet-fifteen-leaf01-correction-dns-20261031": {
+      "status": "terminal_acceptance_failed",
+      "session_id": "<PRIVATE_SESSION_OBJECT>",
+      "request_id": "<PRIVATE_SESSION_OBJECT>",
+      "prompt_sha256": "5f8eacec10f9d23a79b0a6543b59a9a51b7d96d26f0ec7ec6125fb5ce727ec7d",
+      "registered_prompt_hash_matches": true,
+      "state": {
+        "type": "idle"
+      },
+      "actual_model": "bailian/qwen3.8-flash",
+      "tools_after_request": "at least 5 bash completed; latest bash pending",
+      "observed_at": "2026-10-31T20:48:05.800392+08:00",
+      "prior_round": "terminal_acceptance_failed; frozen separately",
+      "completion": "assistant stop actual new request",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf01-correction-dns-20261031/review-report.md",
+      "monitoring_scope": "revoked_non_owner",
+      "monitoring_revoked_at": "2026-10-31T14:50:47.059823+00:00"
+    },
+    "admet-fifteen-leaf07-correction-dns-20261031": {
+      "status": "terminal_acceptance_failed",
+      "session_id": "<PRIVATE_SESSION_OBJECT>",
+      "request_id": "<PRIVATE_SESSION_OBJECT>",
+      "prompt_sha256": "db1296a419bfac871930d5f184076f282a9e6b8f7e46d9e01dcf322625ac2b0e",
+      "registered_prompt_hash_matches": true,
+      "state": {
+        "type": "idle"
+      },
+      "actual_model": "bailian/qwen3.8-flash",
+      "tools_after_request": "at least 4 bash completed; latest bash pending",
+      "observed_at": "2026-10-31T20:38:22.756648+08:00",
+      "prior_round": "terminal_acceptance_failed; frozen separately",
+      "completion": "assistant stop actual new request",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf07-correction-dns-20261031/review-report.md",
+      "monitoring_scope": "revoked_non_owner",
+      "monitoring_revoked_at": "2026-10-31T14:50:47.059823+00:00"
+    },
+    "admet-fifteen-leaf06-correction-dns-20261031": {
+      "status": "monitoring",
+      "session_id": "<PRIVATE_SESSION_OBJECT>",
+      "request_id": "<PRIVATE_SESSION_OBJECT>",
+      "prompt_sha256": "0b8ca1eb6544b74b0ebb1f3048262fa8865d7bf5bc0eeba60f47606f291d9dd0",
+      "registered_prompt_hash_matches": true,
+      "state": {
+        "type": "busy"
+      },
+      "actual_model": "bailian/qwen3.8-flash",
+      "tools_after_request": "latest bash running",
+      "observed_at": "2026-10-31T14:48:04.320282+00:00",
+      "prior_round": "terminal_acceptance_failed; frozen separately",
+      "progress": "active after tool error; no resend or abort",
+      "monitoring_scope": "revoked_non_owner",
+      "monitoring_revoked_at": "2026-10-31T14:50:47.059823+00:00"
+    },
+    "admet-fifteen-leaf04-correction-20261031": {
+      "status": "terminal_acceptance_failed",
+      "session_id": "<PRIVATE_SESSION_OBJECT>",
+      "request_id": "<PRIVATE_SESSION_OBJECT>",
+      "prompt_sha256": "3c94db96151f59e569d15be1d11c05b5a4bc754fee6df2253f3008517c39e080",
+      "registered_prompt_hash_matches": true,
+      "state": {
+        "type": "idle"
+      },
+      "actual_model": "bailian/qwen3.8-flash",
+      "tools_after_request": "bash completed; next bash pending",
+      "observed_at": "2026-10-31T21:18:58.837098+08:00",
+      "prior_round": "terminal_acceptance_failed; frozen separately",
+      "completion": "APIError HTTP 400 repetitive tool calls, non-retryable",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf04-correction-20261031/review-report.md",
+      "monitoring_scope": "revoked_non_owner",
+      "monitoring_revoked_at": "2026-10-31T14:50:47.059823+00:00"
+    },
+    "admet-fifteen-leaf14-post-compaction-20261031": {
+      "status": "terminal_acceptance_failed",
+      "session_id": "<PRIVATE_SESSION_OBJECT>",
+      "request_id": "<PRIVATE_SESSION_OBJECT>",
+      "prompt_sha256": "a647ce69b79e998b153780759e7043da103cf62def26c8a02c652603bfffea33",
+      "registered_prompt_hash_matches": true,
+      "state": {
+        "type": "idle"
+      },
+      "actual_model": "bailian/qwen3.8-flash",
+      "tools_after_request": "two bash completed; next bash pending",
+      "observed_at": "2026-10-31T21:40:12.487625+08:00",
+      "prior_round": "terminal APIError HTTP400; frozen separately",
+      "completion": "assistant stop actual new request",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf14-post-compaction-20261031/review-report.md",
+      "monitoring_scope": "revoked_non_owner",
+      "monitoring_revoked_at": "2026-10-31T14:50:47.059823+00:00"
+    },
+    "admet-fifteen-leaf12-correction-20261031": {
+      "status": "terminal_acceptance_failed",
+      "session_id": "<PRIVATE_SESSION_OBJECT>",
+      "request_id": "<PRIVATE_SESSION_OBJECT>",
+      "prompt_sha256": "be0df5fa21e2fa167f6e67d1b982c88170cde83f2a23c3811f81b1f8d613f452",
+      "registered_prompt_hash_matches": true,
+      "state": {
+        "type": "idle"
+      },
+      "actual_model": "bailian/qwen3.8-flash",
+      "tools_after_request": "three bash completed; next bash pending",
+      "observed_at": "2026-10-31T21:40:12.487625+08:00",
+      "prior_round": "terminal_acceptance_failed; frozen separately",
+      "completion": "assistant stop actual new request",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf12-correction-20261031/review-report.md",
+      "monitoring_scope": "revoked_non_owner",
+      "monitoring_revoked_at": "2026-10-31T14:50:47.059823+00:00"
+    },
+    "admet-fifteen-leaf13-correction-20261031": {
+      "status": "terminal_acceptance_failed",
+      "session_id": "<PRIVATE_SESSION_OBJECT>",
+      "observed_at": "2026-10-31T14:47:36.710338+00:00",
+      "state": "terminal_stop",
+      "registered_prompt_sha256": "eea7a13f831e8c6d2bddf28229d13ebc494a54814a8dc9a961cb2c0a55b4f4c0",
+      "registered_prompt_matches": true,
+      "model_observed": "qwen3.8-flash",
+      "latest_tool": "bash pending",
+      "output": "not present at observation",
+      "constraint": "no resend, auto-abort, training, hidden labels, scoring or uploads",
+      "completion": "qwen3.8-flash assistant stop observed after registered request; API read for full round timed out",
+      "output_freeze": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf13-correction-20261031/output-freeze-manifest.json",
+      "acceptance": "pending original message freeze and independent acceptance; output six files sha verified",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf13-correction-20261031/review-report.md",
+      "result": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf13-correction-20261031/acceptance-result.json",
+      "messages": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf13-correction-20261031/messages-round.json",
+      "messages_sha256": "ed7a01c8e933eff0e43bc986c89148c814c32ff56c91305c4ffa601bcb7546dc",
+      "monitoring_scope": "revoked_non_owner",
+      "monitoring_revoked_at": "2026-10-31T14:50:47.059823+00:00"
+    },
+    "admet-fifteen-leaf19-correction-20261031": {
+      "status": "monitoring",
+      "session_id": "<PRIVATE_SESSION_OBJECT>",
+      "observed_at": "2026-10-31T14:48:04.320282+00:00",
+      "state": "busy",
+      "registered_prompt_sha256": "241ea45d21b2805622c6d8448e1ef315aa7113a4653dcac3d6ea203c3ccabaf2",
+      "registered_prompt_matches": true,
+      "model_observed": "qwen3.8-flash",
+      "latest_tool": "bash running",
+      "output": "not present at observation",
+      "constraint": "no resend, auto-abort, training, hidden labels, scoring or uploads",
+      "monitoring_scope": "revoked_non_owner",
+      "monitoring_revoked_at": "2026-10-31T14:50:47.059823+00:00"
+    },
+    "admet-mae-monitor-prepare-20261101-001": {
+      "status": "terminal_acceptance_failed_reported",
+      "observed_at": "2026-11-01T02:17:40.201603+00:00",
+      "session_id": "<PRIVATE_SESSION_OBJECT>",
+      "request_sha256_matches": true,
+      "state": {
+        "type": "idle"
+      },
+      "actual_model": "bailian/qwen3.8-flash",
+      "child_count": 0,
+      "latest_observation": "matching request observed; completed read tools and bash running; not terminal",
+      "origin_thread_id": "private-role-298cc5edc25e",
+      "heartbeat": "ACTIVE",
+      "completion": "assistant stop; no children",
+      "acceptance_report": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/monitor/acceptance/review-report.md",
+      "frozen_manifest": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/monitor/acceptance/freeze-manifest.json",
+      "notification_id": "admet-mae-monitor-prepare-20261101-001-acceptance-01",
+      "notification_receipt": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/monitor/notification-acceptance-01.json",
+      "owner_continuation": "confirmed: main repair started, no training started",
+      "owner_continuation_evidence": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/control/preparation-repair-20261101/controller-start.json"
+    },
+    "admet-contract-follow-preparation-20261101-001": {
+      "status": "fault_reported_owner_has_taken_over",
+      "session_id": "<PRIVATE_SESSION_OBJECT>",
+      "origin_thread_id": "private-role-298cc5edc25e",
+      "observed_at": "2026-11-01T09:03:09.621120+00:00",
+      "state": {
+        "type": "idle"
+      },
+      "prompt_hash_matches": true,
+      "actual_model": "bailian/qwen3.8-flash",
+      "child_count": 0,
+      "latest_observation": "accepted and busy, recent completed bash tools",
+      "heartbeat": "ACTIVE",
+      "last_task_finish": "tool-calls; later stop belongs to unrelated user prompt",
+      "fault_record": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/monitor/fault-20261101-01/fault-record.json",
+      "fault_notification": "sent",
+      "completion": "not verified",
+      "fault_notification_receipt": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/monitor/fault-20261101-01/notification.json",
+      "owner_continuation": "confirmed by direct owner message; investigating",
+      "owner_continuation_at": "2026-11-01T09:04:06.362909+00:00"
+    },
+    "admet-contract-follow-preparation-20261101-002": {
+      "status": "terminal_acceptance_failed_reported",
+      "session_id": "<PRIVATE_SESSION_OBJECT>",
+      "origin_thread_id": "private-role-298cc5edc25e",
+      "observed_at": "2026-11-01T09:21:54.828381+00:00",
+      "state": {
+        "type": "idle"
+      },
+      "request_message_id": "<PRIVATE_SESSION_OBJECT>",
+      "request_hash_matches": true,
+      "actual_model": "bailian/qwen3.8-flash",
+      "child_count": 0,
+      "deadline_utc": "2026-11-01T09:21:35.649695+00:00",
+      "continuation_of": "admet-contract-follow-preparation-20261101-001",
+      "heartbeat": "ACTIVE",
+      "completion": "assistant stop for registered continuation; original 001 interrupted",
+      "acceptance_report": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/monitor/acceptance-continuation-01/review-report.md",
+      "freeze_manifest": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/monitor/acceptance-continuation-01/freeze-manifest.json",
+      "notification_id": "admet-contract-follow-preparation-20261101-002-acceptance-01",
+      "notification_receipt": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/monitor/acceptance-continuation-01/notification.json",
+      "owner_continuation": "confirmed: owner personally reviewing artifacts and production consumer; no Qwen redispatch"
+    }
+  },
+  "reviews": {
+    "shard11-semantic-correction-20261031-01": {
+      "status": "independently_reviewed_pass_with_limitations",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/shard11-semantic-correction-independent-20261031/review-report.md",
+      "source_thread_id": "private-role-35323200ee8b",
+      "notification_id": "shard11-semantic-correction-independent-review-20261031-01"
+    },
+    "shard11-structure-fields-v2-20261031-01": {
+      "status": "independently_reviewed_pass_with_limitations",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/shard11-structure-fields-v2-independent-20261031/review-report.md",
+      "source_thread_id": "private-role-35323200ee8b",
+      "notification_id": "shard11-structure-fields-v2-independent-review-20261031-01"
+    },
+    "shard20-semantic-correction-20261031-01": {
+      "status": "independently_reviewed_pass_with_limitations",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/public-shard20-semantic-correction-independent-20261031/review-report.md",
+      "source_thread_id": "private-role-35323200ee8b",
+      "notification_id": "shard20-semantic-correction-independent-review-20261031-01"
+    },
+    "shard15-semantic-correction-20261031-01": {
+      "status": "independently_reviewed_pass_with_limitations",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/public-shard15-semantic-correction-independent-20261031/review-report.md",
+      "source_thread_id": "private-role-35323200ee8b",
+      "notification_id": "shard15-semantic-correction-independent-review-20261031-01"
+    },
+    "shard17-semantic-correction-20261031-01": {
+      "status": "independently_reviewed_pass_with_limitations",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/public-shard17-semantic-correction-independent-20261031/review-report.md",
+      "source_thread_id": "private-role-35323200ee8b",
+      "notification_id": "shard17-semantic-correction-independent-review-20261031-01"
+    },
+    "shard18-semantic-correction-20261031-01": {
+      "status": "independently_reviewed_pass_with_limitations",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/public-shard18-semantic-correction-independent-20261031/review-report.md",
+      "source_thread_id": "private-role-35323200ee8b",
+      "notification_id": "shard18-semantic-correction-independent-review-20261031-01"
+    },
+    "admet-15leaf-partial-1907-20261031-01": {
+      "status": "independently_reviewed_failed",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaves-02-05-09-20261031/review-report.md",
+      "notification_id": "admet-15leaf-02-05-09-independent-acceptance-20261031-01",
+      "source_thread_id": "private-role-35323200ee8b"
+    },
+    "fifteen-02-05-09-corrections-20261031-01": {
+      "status": "independently_reviewed_pass_with_limitations",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaves-02-05-09-corrections-independent-20261031/review-report.md",
+      "source_thread_id": "private-role-35323200ee8b",
+      "notification_id": "fifteen-02-05-09-corrections-independent-review-20261031-01"
+    },
+    "fifteen-leaf03-semantic-correction-v3-20261031-01": {
+      "status": "independently_reviewed_failed",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf03-semantic-correction-v3-independent-20261031/review-report.md",
+      "source_thread_id": "private-role-35323200ee8b",
+      "notification_id": "fifteen-leaf03-v3-independent-review-failed-20261031-01"
+    },
+    "fifteen-leaf03-semantic-correction-v4-20261031-01": {
+      "status": "independently_reviewed_pass_with_limitations",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf03-semantic-correction-v4-independent-20261031/review-report.md",
+      "source_thread_id": "private-role-35323200ee8b",
+      "notification_id": "fifteen-leaf03-v4-independent-review-20261031-01"
+    },
+    "fifteen-leaf08-semantic-correction-20261031-01": {
+      "status": "independently_reviewed_pass_with_limitations",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf08-semantic-correction-independent-20261031/review-report.md",
+      "source_thread_id": "private-role-35323200ee8b",
+      "notification_id": "fifteen-leaf08-semantic-correction-independent-20261031-01"
+    },
+    "fifteen-leaf10-semantic-correction-20261031-01": {
+      "status": "independently_reviewed_pass_with_limitations",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf10-semantic-correction-independent-20261031/review-report.md",
+      "source_thread_id": "private-role-35323200ee8b",
+      "notification_id": "fifteen-leaf10-semantic-correction-independent-20261031-01"
+    },
+    "admet-fifteen-leaf07-conservative-v2-20261031-01": {
+      "status": "independently_reviewed_pass_with_limitations",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf07-conservative-correction-v2-independent-20261031/review-report.md",
+      "source_thread_id": "private-role-35323200ee8b",
+      "notification_id": "fifteen-leaf07-conservative-v2-independent-20261031-01"
+    },
+    "admet-fifteen-leaf01-pubchem-links-v2-20261031-01": {
+      "status": "independently_reviewed_pass_with_limitations",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf01-pubchem-links-v2-independent-20261031/review-report.md",
+      "source_thread_id": "private-role-35323200ee8b",
+      "notification_id": "fifteen-leaf01-pubchem-links-v2-independent-20261031-01"
+    },
+    "admet-fifteen-leaf04-provenance-correction-v1-20261031-01": {
+      "status": "independently_reviewed_pass_with_limitations",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf04-provenance-correction-v1-independent-20261031/review-report.md",
+      "source_thread_id": "private-role-35323200ee8b",
+      "notification_id": "fifteen-leaf04-provenance-v1-independent-20261031-01"
+    },
+    "admet-fifteen-leaf12-group-v2-20261031-01": {
+      "status": "independently_reviewed_failed",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf12-group-v2-independent-20261031/review-report.md",
+      "source_thread_id": "private-role-35323200ee8b",
+      "notification_id": "fifteen-leaf12-group-v2-independent-review-20261031-01"
+    },
+    "admet-fifteen-leaf14-conservative-v1-20261031-01": {
+      "status": "independently_reviewed_pass_with_limitations",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf14-conservative-v1-independent-20261031/review-report.md",
+      "source_thread_id": "private-role-35323200ee8b",
+      "notification_id": "fifteen-leaf14-conservative-v1-independent-review-20261031-01"
+    },
+    "admet-fifteen-leaf12-group-relation-v3-20261031-01": {
+      "status": "independently_reviewed_pass_with_limitations",
+      "report": "<LOCAL_WORKSPACE>/contexts/infrastructure/opencode_terra_monitor_20261031/acceptance/fifteen-leaf12-group-relation-correction-v3-independent-20261031/review-report.md",
+      "source_thread_id": "private-role-35323200ee8b",
+      "notification_id": "fifteen-leaf12-group-v3-independent-review-20261031-01"
+    }
+  },
+  "admet_current_normative_routing": {
+    "updated_at": "2026-10-31T18:22:38.557745+08:00",
+    "project_entry": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/AGENTS.md",
+    "skill_index": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/skills/INDEX.md",
+    "preparation_skill": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/skills/ml-preparation-only/SKILL.md",
+    "historical_frozen_task_skills": "retain unchanged; each future dispatch carries its own task-frozen skill",
+    "scope": "future ADMET preparation acceptance only; public candidate audit retains its own frozen skill"
+  },
+  "effective_owner_pending_jobs": 0,
+  "heartbeat_state": "PAUSED",
+  "active_scope": "owner dispatched and handed-off OpenCode preparation jobs only"
+}

@@ -1,0 +1,102 @@
+"""Attempt03 authority: immutable previous attempts, explicit restart, no resume."""
+import os
+from pathlib import Path
+from adapter_common import generic,process_identity,strict_json
+from layout import STATE
+MAIN='private-role-298cc5edc25e'
+FIRST='hainan-paired-mse-s44-20261101'
+
+def old_processes_exited(identities,reader=process_identity):
+    proof=[]
+    for old in identities:
+        ticks=str(old.get('start_ticks') or old['start_stat'].rsplit(')',1)[1].split()[19])
+        try:current=reader(old['pid'])
+        except (FileNotFoundError,ProcessLookupError):proof.append({'pid':old['pid'],'state':'absent_now'});continue
+        if str(current['start_ticks'])==ticks and current['state'] not in ('Z','X'):
+            raise ValueError('old identity live; query original')
+        proof.append({'pid':old['pid'],'state':'old_lifetime_exited','current':current})
+    return proof
+
+def validate_contract(root,contract,allow_current_learning=False,token=None,reader=process_identity):
+    root=Path(root)
+    if (contract.get('attempt')!='03' or contract.get('run_id')!=root.name
+            or contract.get('runtime_admitted') is not True or contract.get('checkpoint_resume') is not False):
+        raise ValueError('explicit attempt03 runtime admission absent')
+    # Production caller validates this root against unchanged PLAN/run/profile.
+    base=root.parent
+    for name,item in contract['protected_files'].items():
+        path=generic.safe(base,base/name,True)
+        if path.stat().st_size!=item['size'] or generic.sha(path)!=item['sha256']:
+            raise ValueError('immutable old evidence changed: '+name)
+    proof=old_processes_exited(contract['old_identities'],reader)
+    for rel in ('raw/train-complete.json','outputs/recovery-02/raw/train-complete.json'):
+        if generic.safe(root,root/rel).exists():raise ValueError('completed original; never restart')
+    folder=generic.safe(root,root/'outputs/recovery-02')
+    actual={}
+    if folder.exists():
+        paths=list(folder.rglob('*'))
+        if len(paths)>2000:raise ValueError('old output inventory exceeded')
+        for p in paths:
+            generic.safe(root,p,True)
+            if p.is_file():actual[str(p.relative_to(root))]={'size':p.stat().st_size,'sha256':generic.sha(p)}
+    if actual!=contract['old_output_files']:raise ValueError('old outputs changed or unaccounted progress')
+    global_lock=generic.safe(root,root/'state/learning-started.lock')
+    current_lock=generic.safe(root,root/STATE/'learning-started.lock')
+    action=contract['action']
+    if root.name==FIRST:
+        if action!='restart_failed_once_unknown_steps' or contract.get('prior_optimizer_steps','missing') is not None:
+            raise ValueError('unknown old optimization count must be explicit')
+        if not global_lock.exists() or generic.sha(global_lock)!=contract['prior_learning_lock_sha256']:
+            raise ValueError('prior global learning lock missing/changed')
+        path=generic.safe(root,root/'raw/recovery-02/attempt-02/pipeline-exit.json',True)
+        previous=strict_json(path)
+        if (generic.sha(path)!=contract['prior_pipeline_sha256'] or previous.get('training_completed') is not False
+                or previous.get('supervisor_exit_code')!=125 or previous.get('training_process_launched') is not True
+                or previous.get('learning_attempt_registered') is not True):
+            raise ValueError('prior failed-once proof absent/unknown/completed')
+    elif action!='initial_start' or (global_lock.exists() and not allow_current_learning):
+        raise ValueError('unexpected prior learning for initial-start run')
+    if current_lock.exists():
+        lock=strict_json(current_lock)
+        if (not allow_current_learning or not token or lock.get('attempt')!='03'
+                or lock.get('token')!=token or lock.get('run_id')!=root.name):
+            raise ValueError('attempt03 already registered; reconcile original')
+        owner=lock['supervisor_identity'];live=reader(owner['pid'])
+        if str(live['start_ticks'])!=str(owner['start_ticks']) or live['pgid']!=owner['pgid']:
+            raise ValueError('current owner lifetime mismatch')
+        if root.name!=FIRST:
+            if not global_lock.exists() or strict_json(global_lock)!=lock:raise ValueError('first-learning global lock differs')
+    elif allow_current_learning:
+        raise ValueError('worker needs pre-existing exact attempt03 owner')
+    return proof
+
+def register_learning(root,contract,record,reader=process_identity):
+    validate_contract(root,contract,reader=reader)
+    if record.get('attempt')!='03' or record.get('run_id')!=root.name or not record.get('token'):
+        raise ValueError('learning registration identity')
+    paths=[root/STATE/'learning-started.lock']
+    if root.name!=FIRST:paths.append(root/'state/learning-started.lock')
+    for path in paths:
+        path=generic.safe(root,path);path.parent.mkdir(parents=True,exist_ok=True)
+        # A partial pair remains conservative evidence; never reclaim either lock.
+        with path.open('x') as stream:
+            import json
+            json.dump(record,stream);stream.flush();os.fsync(stream.fileno())
+
+def require_recovery(profile,root,allow_current_learning=False,token=None,dispatch=None):
+    spec=profile['recovery_contract'];path=generic.safe(root,root/spec['path'],True)
+    if generic.sha(path)!=spec['sha256'] or dispatch is None or dispatch.get('recovery_contract_sha256')!=spec['sha256']:
+        raise ValueError('formal dispatch does not pin attempt03 contract')
+    contract=strict_json(path);authority=contract['main_runtime_acceptance'];receipt=generic.safe(root,root/authority['path'],True)
+    if generic.sha(receipt)!=authority['sha256']:raise ValueError('main runtime receipt drift')
+    accepted=strict_json(receipt)
+    if (accepted.get('passed') is not True or accepted.get('attempt')!='03'
+            or accepted.get('main_controller_thread')!=MAIN or accepted.get('bounded_recovery') is not True
+            or accepted.get('runtime_source_manifest_sha256')!=profile['runtime_source_manifest']['sha256']
+            or root.name not in accepted.get('run_ids',[]) or accepted.get('new_starts_per_run_max')!=1):
+        raise ValueError('separate main execution/recovery admission absent')
+    if root.name==FIRST and (accepted.get('allow_first_failed_once_restart') is not True
+            or accepted.get('prior_first_learning_lock_sha256')!=contract['prior_learning_lock_sha256']
+            or accepted.get('prior_first_optimizer_steps','missing') is not None):
+        raise ValueError('main must explicitly acknowledge consumed unknown-step attempt')
+    return validate_contract(root,contract,allow_current_learning,token)

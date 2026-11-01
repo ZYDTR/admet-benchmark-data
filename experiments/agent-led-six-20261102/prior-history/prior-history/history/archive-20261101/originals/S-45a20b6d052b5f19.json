@@ -1,0 +1,1048 @@
+{
+  "schema_version": 1,
+  "request_id": "admet-progressive-index-pro-20261031-002",
+  "round_id": "progressive-index-e2e-20261031",
+  "manifest_sha256": "b8952a9375328c775e8fcae3b3adc5a35ca6025fcc9a48e5a055371e26f7250f",
+  "scientific_status": "needs_evidence",
+  "issues": [
+    {
+      "issue_id": "F1",
+      "status": "open",
+      "severity": "high",
+      "category": "runtime_gate",
+      "statement": "旧环境检查失败仍继续执行的问题，当前成功路径不能覆盖旧失败门控。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "issues#L1-L8",
+        "runtime-recovery",
+        "v1-outer-exit",
+        "v2-unique-learning"
+      ],
+      "hypothesis": "统一进程退出、业务状态和门控可阻止失败后继续。",
+      "counterevidence": "当前v2成功，不能复测历史255故障分支。",
+      "impact": "未修复可浪费预算或误收无效候选。",
+      "proposed_resolution": "W02准备环境检查失败、子进程失败、监控异常的离线fixture与停止图。",
+      "verification_criterion": "实际环境失败时部署/训练均未开始；外层退出和业务JSON一致；主控另行授权后才能实环境复测。",
+      "related_proposal_ids": [
+        "P00"
+      ],
+      "prior_status": "open",
+      "change_this_review": "retained",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "U01",
+      "status": "deferred",
+      "severity": "medium",
+      "category": "label_semantics",
+      "statement": "物理单位和上游历史变换没有原证闭合；当前只能审原numeric Y。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "issues#L10-L17",
+        "metric",
+        "caco2-valid-original"
+      ],
+      "hypothesis": "补足数据来源文档后可解释物理误差。",
+      "counterevidence": "91行身份及数值尺度已确定，并不确定物理单位。",
+      "impact": "禁止额外log、反log或宣称特定渗透率单位。",
+      "proposed_resolution": "只准备标签语义元数据接口；主控寻找已授权来源，未补足前保留原Y。",
+      "verification_criterion": "来源明确单位/变换与当前CSV一一对应，主控确认不改变当前原标签合同。",
+      "related_proposal_ids": [
+        "P09"
+      ],
+      "prior_status": "deferred",
+      "change_this_review": "retained",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "U02",
+      "status": "open",
+      "severity": "high",
+      "category": "asset_permission",
+      "statement": "已确认冻结预训练编码器不等于所有外部拟合状态自动准入。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "issues#L19-L26",
+        "current-policy",
+        "current-rule-source-map"
+      ],
+      "hypothesis": "其他模型/统计资产需要独立许可与版本核验。",
+      "counterevidence": "MiniMol论文、MoLFormer配置可读不等于权重、remote code和许可证已验证。",
+      "impact": "新底座和TabPFN等不能直接开跑。",
+      "proposed_resolution": "W08准备资产清单与许可矩阵；默认fail-closed。",
+      "verification_criterion": "每个checkpoint/tokenizer/代码revision/许可证及冻结策略获主控明确批准。",
+      "related_proposal_ids": [
+        "P16",
+        "P17",
+        "P18",
+        "P21"
+      ],
+      "prior_status": "open",
+      "change_this_review": "retained",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "U03",
+      "status": "deferred",
+      "severity": "high",
+      "category": "data_boundary",
+      "statement": "test拟合、额外未标注样本学习、教师伪标签仍在当前边界之外。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "issues#L28-L35",
+        "current-policy",
+        "evaluation-scope"
+      ],
+      "hypothesis": "无当前范围内执行假设。",
+      "counterevidence": "冻结许可并不改变数据许可。",
+      "impact": "不得把研究储备转为准备方的数据下载或训练动作。",
+      "proposed_resolution": "只在out_of_scope列表记录，不编可执行配置。",
+      "verification_criterion": "权限未变时配置验证器拒绝这些动作。",
+      "related_proposal_ids": [
+        "P21"
+      ],
+      "prior_status": "deferred",
+      "change_this_review": "retained",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "U04",
+      "status": "deferred",
+      "severity": "medium",
+      "category": "metric_scope",
+      "statement": "未知官方多任务总分/AUPRC细节，不能从Caco2结论推整体赛事名次。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "issues#L37-L44",
+        "metric",
+        "fixed-metric-original"
+      ],
+      "hypothesis": "补足公开官方聚合定义后可跨任务解释。",
+      "counterevidence": "本轮有合法单任务MAE，不能填补多任务规则。",
+      "impact": "只报告caco2_wang，避免总分推算。",
+      "proposed_resolution": "保留task级schema及未支持metric拒绝逻辑。",
+      "verification_criterion": "获得适用原件再增设聚合器；本轮不执行。",
+      "related_proposal_ids": [
+        "P00"
+      ],
+      "prior_status": "deferred",
+      "change_this_review": "retained",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "U05",
+      "status": "deferred",
+      "severity": "high",
+      "category": "reproducibility",
+      "statement": "重载allclose与完整重训/续训复现不是同一命题。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "issues#L46-L53",
+        "training-process",
+        "current-runtime-source"
+      ],
+      "hypothesis": "固定状态与环境可使续训轨迹受控。",
+      "counterevidence": "已有重载容差与RNG抽样一致，但没有继续优化后的独立对照轨迹。",
+      "impact": "不能承诺官方重训容差或位级重现。",
+      "proposed_resolution": "W09准备连续/恢复轨迹比较计划，不实际执行训练。",
+      "verification_criterion": "以后授权后同一checkpoint边界恢复并比较后续batch顺序、loss、参数、optimizer和预测；容差预注册。",
+      "related_proposal_ids": [
+        "P20"
+      ],
+      "prior_status": "deferred",
+      "change_this_review": "retained",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "AR001-01",
+      "status": "open",
+      "severity": "high",
+      "category": "history_coverage",
+      "statement": "未导入的旧准备比较、失败和否定假设仍缺；52项清单不是全历史。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "issues#L55-L62",
+        "history-runs-table",
+        "history-coverage-gaps",
+        "historical-primary-coverage"
+      ],
+      "hypothesis": "完整历史可降低重复尝试和选择偏差。",
+      "counterevidence": "当前119文件已验收只是本run覆盖，不是所有旧尝试。",
+      "impact": "历史最优或方向未试不能作强断言。",
+      "proposed_resolution": "W01补登记已发布合法来源的run/候选/失败/评分次数；未知时间null。",
+      "verification_criterion": "形成版本化总表，缺项显式标记，不索取公开范围排除的私密原件。",
+      "related_proposal_ids": [
+        "P00"
+      ],
+      "prior_status": "open",
+      "change_this_review": "retained",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "AR001-02",
+      "status": "open",
+      "severity": "high",
+      "category": "causal_comparison",
+      "statement": "两历史run与当前不能充当单变量性能对照；seed/划分/宽度或实现多项变化。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "issues#L64-L71",
+        "actual-config",
+        "historic-db713046c987",
+        "historic-c74d8e200884",
+        "records/numeric_checks.json"
+      ],
+      "hypothesis": "在同一raw-group split和共同model seeds下，单因素效果才能识别。",
+      "counterevidence": "同一valid91支持描述差值，不消除训练条件混杂。",
+      "impact": "不能把当前更差归因为分组、尺度或头宽。",
+      "proposed_resolution": "保留C0匹配对照，C1/C2/C3各改一项；固定split seed与model seed分离。",
+      "verification_criterion": "配置diff仅允许字段变化；共同seed配对；全失败run列出，不挑seed；训练授权另批。",
+      "related_proposal_ids": [
+        "P01",
+        "P02",
+        "P03",
+        "P04",
+        "P12"
+      ],
+      "prior_status": "open",
+      "change_this_review": "retained",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "AR001-03",
+      "status": "investigating",
+      "severity": "high",
+      "category": "internal_split",
+      "statement": "旧划分各有raw-SMILES组跨fit/stop；本run改为组划分且所读重复对同在fit，但全637行独立重算未完成。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "issues#L73-L80",
+        "historical-primary-cache",
+        "actual-science",
+        "internal-split",
+        "train-internal-predictions"
+      ],
+      "hypothesis": "当前组划分减少内部泄漏；泛化收益尚未证。",
+      "counterevidence": "代码构造保证group不拆，但本轮未全量读索引与训练CSV；raw字符串不同仍可能为同化学结构。",
+      "impact": "旧内部成绩不宜与当前直接相比；不得据此清洗官方数据。",
+      "proposed_resolution": "W03全量核对原行覆盖、fit/stop交集和raw-group交集；canonical/scaffold只做旁路注释。",
+      "verification_criterion": "637行各恰一次，573/64（基线）、原索引互斥、raw组交集0；所有重复行原Y保留。",
+      "related_proposal_ids": [
+        "P00",
+        "P12",
+        "P13"
+      ],
+      "prior_status": "open",
+      "change_this_review": "current_scope_partially_addressed_not_globally_closed",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "AR001-04",
+      "status": "investigating",
+      "severity": "high",
+      "category": "feature_conditioning",
+      "statement": "旧缓存原证有极端z值；本run原始NPZ未读，因此特征缩放仍非已证明误差原因。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "historical-primary-cache",
+        "actual-config",
+        "current-runtime-source",
+        "current-feature-array",
+        "current-preprocess-array"
+      ],
+      "hypothesis": "极小fit std可能放大稀疏维度，使头对未见范围敏感。",
+      "counterevidence": "大误差可来自结构差异、标签测量差异、选轮或容量；历史row73关联不等于当前同机制。",
+      "impact": "不能宣布sd-floor/clip必然改善，也不能直接拟合valid缩放器。",
+      "proposed_resolution": "W04准备fit-only无缩放/中心化/sd-floor/zclip消融，先复算数组与统计。",
+      "verification_criterion": "全量数组身份、shape/dtype/mask一致；仅fit估计统计；单因素配对内部分组MAE改善且尾误差不过度转移，阈值待定。",
+      "related_proposal_ids": [
+        "P04",
+        "P10"
+      ],
+      "prior_status": "investigating",
+      "change_this_review": "retained",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "AR001-05",
+      "status": "investigating",
+      "severity": "high",
+      "category": "selection_objective",
+      "statement": "当前MSE选epoch18而日志原Y MAE最小在epoch7，已证明选择不一致，未证明改选能改善official valid。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "actual-config",
+        "training-process",
+        "current-runtime-source",
+        "records/numeric_checks.json"
+      ],
+      "hypothesis": "只切换内部MAE monitor可能更贴近任务目标。",
+      "counterevidence": "MAE在64行上也有噪声；没有epoch7外部预测；当前fit/stop差距不能单独证明过拟合因果。",
+      "impact": "优先做monitor单变量对照，不同时改loss、宽度与缩放。",
+      "proposed_resolution": "W05准备monitor可选且loss保持MSE，保存选择事件、计数与best身份。",
+      "verification_criterion": "给定原26点序列，MSE选18、MAE选7；patience8的MAE模拟在15停；真正收益需未来共同seed实验。",
+      "related_proposal_ids": [
+        "P02",
+        "P08",
+        "P12"
+      ],
+      "prior_status": "investigating",
+      "change_this_review": "new_direct_selection_mismatch_verified",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "AR001-06",
+      "status": "investigating",
+      "severity": "medium",
+      "category": "implementation_truth",
+      "statement": "旧A/B入口硬编码/断言不同；当前来源配置化且实际AdamW，但当前校验器仍只支持单隐藏层。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "historic-db713046c987",
+        "historic-c74d8e200884",
+        "actual-science",
+        "current-runtime-source"
+      ],
+      "hypothesis": "显式schema和配置解析可避免研究空间与实际执行脱节。",
+      "counterevidence": "不能仅改JSON数组声称多层、其他优化器已实现。",
+      "impact": "P05/P07等需新实现/版本，不是现有入口现成能力。",
+      "proposed_resolution": "W06准备新头工厂、optimizer分派及严格allowlist，记录resolved_config。",
+      "verification_criterion": "静态配置矩阵可解析；非法组合拒绝；参数计数及optimizer集合预期一致；不导入执行归档训练代码。",
+      "related_proposal_ids": [
+        "P05",
+        "P06",
+        "P07",
+        "P08",
+        "P11"
+      ],
+      "prior_status": "open",
+      "change_this_review": "current_configuration_path_read_historical_issues_retained",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "AR001-07",
+      "status": "investigating",
+      "severity": "high",
+      "category": "training_evidence",
+      "statement": "本run补齐训练过程、fit/stop预测、initial/best/last头及last optimizer/RNG记录；旧运行缺失及所有epoch头仍缺。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "training-process",
+        "train-internal-predictions",
+        "current-runtime-source",
+        "history-coverage-gaps"
+      ],
+      "hypothesis": "充足记录能区分未学习、错误选轮和重载错误。",
+      "counterevidence": "没有epoch7头和完整训练CSV独立复算；保存RNG不等于续训验证。",
+      "impact": "不能回溯制造epoch7预测或修复旧因果证据。",
+      "proposed_resolution": "W09按epoch明确保存策略；至少best/last与各自对应状态，预算允许再存每epoch头。",
+      "verification_criterion": "checkpoint epoch/global_step一致；文件hash、张量digest、optimizer所有者和RNG源齐全；旧缺失仍标not_recorded。",
+      "related_proposal_ids": [
+        "P00",
+        "P02",
+        "P20"
+      ],
+      "prior_status": "open",
+      "change_this_review": "current_recording_subproblems_verified_improved",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "AR001-08",
+      "status": "open",
+      "severity": "medium",
+      "category": "cache_identity",
+      "statement": "历史同编码器缓存有小数值差异及不同payload hash；当前记录了内容身份但数组未独立核验。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "historical-primary-cache",
+        "training-process",
+        "current-feature-array"
+      ],
+      "hypothesis": "固定同一内容缓存可减少计算混杂。",
+      "counterevidence": "NPZ压缩字节差可能不等于数组不同；小浮点差不等于同byte cache。",
+      "impact": "配对消融要绑定同一array content而非只比较容器SHA。",
+      "proposed_resolution": "W04区分文件hash与dtype/shape/row-order/arraybytes hash；只用已有获准缓存。",
+      "verification_criterion": "相同缓存键必须逐字节内容一致；允许数值容差时另立claim，不标exact cache identity。",
+      "related_proposal_ids": [
+        "P00",
+        "P10",
+        "P14"
+      ],
+      "prior_status": "open",
+      "change_this_review": "retained",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "AR001-09",
+      "status": "investigating",
+      "severity": "medium",
+      "category": "error_diagnostics",
+      "statement": "当前valid91合法逐行诊断已完成；历史分数向量实读但旧身份尚未机器重建，不能全局关闭旧问题。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "caco2-valid-original",
+        "predictions",
+        "historic-32aaae3b9790",
+        "historic-ff00b26b8cc2",
+        "records/numeric_checks.json"
+      ],
+      "hypothesis": "配对尾部及盲结构切片可生成可证伪假设。",
+      "counterevidence": "切片是事后探索，化学相关性及多次valid反馈限制外推。",
+      "impact": "仅分析端保留；准备方不得接收样本答案、残差或精确valid分数。",
+      "proposed_resolution": "W01由分析隔离侧补旧完整CSV身份；W10只准备预注册切片定义，不传数值。",
+      "verification_criterion": "当前91行四字段+位置一一对齐已通过；旧两run也须完整原字节/机器join后升级比较。",
+      "related_proposal_ids": [
+        "P00",
+        "P19"
+      ],
+      "prior_status": "open",
+      "change_this_review": "current_valid_diagnostic_gap_resolved_with_historical_alignment_limit",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "AR001-10",
+      "status": "open",
+      "severity": "medium",
+      "category": "candidate_readiness",
+      "statement": "MiniMol/MoLFormer未完成本地资产、适配与冻结验收，只有原论文/固定配置的有限下钻。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "issues#L136-L143",
+        "minimol-paper",
+        "molformer-config"
+      ],
+      "hypothesis": "不同冻结表示可能提供互补信息。",
+      "counterevidence": "没有当前任务匹配实测，也未证明权重/运行依赖可用。",
+      "impact": "排名只按研究潜力与准备成本，不按不存在的得分。",
+      "proposed_resolution": "W08准备checksum/许可/模型卡/adapter合同及shape/determinism测试清单。",
+      "verification_criterion": "确切权重、tokenizer、代码revision与授权齐全；未齐全保持blocked，不安装或推理。",
+      "related_proposal_ids": [
+        "P16",
+        "P17"
+      ],
+      "prior_status": "open",
+      "change_this_review": "retained",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "AR001-11",
+      "status": "resolved",
+      "severity": "low",
+      "category": "historical_refutation",
+      "statement": "沿用历史JSON破坏质疑已解决的范围，不把旧质疑泛化否定当前数值。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "issues#L145-L152",
+        "caco2-valid-original",
+        "records/arithmetic_crosscheck.json"
+      ],
+      "hypothesis": "无新因果假设；只维持已被排除的错误解释。",
+      "counterevidence": "本轮manifest整体SHA尚未复算是新的独立缺口，不推翻旧范围结论。",
+      "impact": "避免以过期异常否定已合法读取对象。",
+      "proposed_resolution": "保留旧状态，新增AR002-01管理当前覆盖/字节缺口。",
+      "verification_criterion": "当前valid精确字节SHA匹配与独立算术一致；未知对象不外推。",
+      "related_proposal_ids": [
+        "P00"
+      ],
+      "prior_status": "resolved",
+      "change_this_review": "retained_resolved_scoped",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "AR001-12",
+      "status": "open",
+      "severity": "high",
+      "category": "adaptive_validation",
+      "statement": "official valid已参与多轮模型选择，完整反馈次数未知，本轮分析继续增加反馈。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "evaluation-use-history",
+        "history-coverage-gaps",
+        "evaluation-scope",
+        "records/numeric_checks.json"
+      ],
+      "hypothesis": "train-only预注册内部确认可降低进一步反馈污染。",
+      "counterevidence": "多seed不能使同一valid重新变成未触碰测试。",
+      "impact": "不能宣称未调参数据泛化已获证；不能用valid优化集成权重/阈值。",
+      "proposed_resolution": "W10记录本轮哪些诊断改变候选排序，未来valid每次开放由主控单独授权。",
+      "verification_criterion": "usage事件含request、输入版本、用途、影响方案；heldout最终评价使用权另行确认，当前不取testY。",
+      "related_proposal_ids": [
+        "P12",
+        "P19",
+        "P21"
+      ],
+      "prior_status": "open",
+      "change_this_review": "retained",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "AR001-13",
+      "status": "open",
+      "severity": "medium",
+      "category": "baseline_coverage",
+      "statement": "尚无当前同split匹配的线性/岭或其他冻结表示实测。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "issues#L163-L170",
+        "actual-config",
+        "records/numeric_checks.json"
+      ],
+      "hypothesis": "低容量线性/岭头可作信息量高的对照。",
+      "counterevidence": "参数更多不必然更差；现有旧A与当前不匹配，不能支持512容量定论。",
+      "impact": "优先安排简单对照而非盲目放大架构搜索。",
+      "proposed_resolution": "W06准备2048→1线性与目标定义明确的岭头；保持同缓存和fit-only变换。",
+      "verification_criterion": "目标mean MSE+lambda||w||²定义固定；deterministic解不虚列model seeds为重复run。",
+      "related_proposal_ids": [
+        "P03",
+        "P11",
+        "P14",
+        "P16",
+        "P17"
+      ],
+      "prior_status": "open",
+      "change_this_review": "retained",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "AR001-14",
+      "status": "open",
+      "severity": "medium",
+      "category": "public_evidence_limits",
+      "statement": "公开范围不含完整私密原件、权重本体及全syscall轨迹；本轮不能验证这些。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "history-coverage-gaps",
+        "historical-primary-coverage",
+        "encoder",
+        "chemprop-official-fingerprint"
+      ],
+      "hypothesis": "可公开的最小脱敏证明可支撑有限核验。",
+      "counterevidence": "官方Chemprop函数已直接核对，不能替代全部实际部署实现和运行轨迹。",
+      "impact": "冻结与边界结论限定登记对象；不可索取被明确排除的凭据/聊天/无关进程。",
+      "proposed_resolution": "W01仅追索已发布合法对象；其余由主控给范围声明而非索私密原件。",
+      "verification_criterion": "每项结论标直接原证/登记/未评估层级，未见材料不写通过。",
+      "related_proposal_ids": [
+        "P00"
+      ],
+      "prior_status": "open",
+      "change_this_review": "retained",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "AR001-15",
+      "status": "open",
+      "severity": "high",
+      "category": "exit_semantics",
+      "statement": "旧supervisor业务rc与外层进程码可能不一致；当前成功路径不能证明失败码正确传播。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "issues#L181-L188",
+        "v1-failure",
+        "v1-outer-exit",
+        "v2-unique-learning"
+      ],
+      "hypothesis": "统一rc传播与中止可避免故障run进入排名。",
+      "counterevidence": "v1失败已被记录但不等于所有入口修好；v2仅成功。",
+      "impact": "任一冻结/资源/身份故障候选仅作故障证据。",
+      "proposed_resolution": "W02准备每类业务失败→退出码→状态JSON断言及下游禁止启动检查。",
+      "verification_criterion": "负例不计入候选分数，所有外层与内层状态一致；后续主控验收。",
+      "related_proposal_ids": [
+        "P00"
+      ],
+      "prior_status": "open",
+      "change_this_review": "retained",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "AR001-16",
+      "status": "resolved",
+      "severity": "medium",
+      "category": "freeze_refutation",
+      "statement": "维持CE-FREEZE-02：跨run wrapper差异仅4个未用于fingerprint的predictor参数。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "refutations",
+        "historical-primary-tensors",
+        "historical-primary-call-path",
+        "chemprop-official-fingerprint",
+        "freeze-before",
+        "freeze-after"
+      ],
+      "hypothesis": "被反驳的是wrapper差异足以证明冻结失效的推断，不是任意实现都冻结。",
+      "counterevidence": "当前/历史state范围外的内存无证明；仍须完整参数buffer与optimizer审计。",
+      "impact": "停止以unused predictor差异取消当前候选，但保留真正冻结门控。",
+      "proposed_resolution": "继续登记逐tensor before/after和调用路径，不再把wrapper总hash跨run相等作必要条件。",
+      "verification_criterion": "4差异名明确，fingerprint不调用predictor，同run全部登记state前后一致。",
+      "related_proposal_ids": [
+        "P00",
+        "P14",
+        "P16",
+        "P17"
+      ],
+      "prior_status": "resolved",
+      "change_this_review": "independently_reconfirmed_with_official_code",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "I-CYCLE002-PREFLIGHT-MONITOR",
+      "status": "investigating",
+      "severity": "high",
+      "category": "monitor_recovery",
+      "statement": "v1前检监控异常导致外层125；v2 L70实际观察Z终态无RSS并成功完成。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031"
+      ],
+      "evidence_refs": [
+        "current-failure-ledger",
+        "v1-failure",
+        "v1-outer-exit",
+        "v2-train-events#L70",
+        "v2-unique-learning"
+      ],
+      "hypothesis": "按进程状态区分终态缺RSS与非终态异常可防止误杀。",
+      "counterevidence": "v1故障时状态未知；不能把v2成功反推v1必是同根因；其他负分支未独立读全。",
+      "impact": "当前学习run有效性不应被v1误替代；修复范围仍需声明。",
+      "proposed_resolution": "W02为Z/已消失/仍存活缺RSS/权限拒绝/真实超限写fixture矩阵。",
+      "verification_criterion": "Z缺RSS路径已有直接观测；活进程缺RSS不得盲目记0并通过；未测分支必须fail-closed或needs_evidence。",
+      "related_proposal_ids": [
+        "P00"
+      ],
+      "prior_status": "investigating",
+      "change_this_review": "v2_terminal_missing_rss_directly_observed",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "AR002-01",
+      "status": "open",
+      "severity": "high",
+      "category": "read_and_byte_coverage",
+      "statement": "52项均访问原件，但45全文、7部分；manifest与除valid外原始整文件字节SHA未独立复算。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "records/read_coverage.json",
+        "input-manifest",
+        "current-feature-array",
+        "current-preprocess-array"
+      ],
+      "hypothesis": "补齐原字节与剩余行可提高身份证据并复算所有过程统计。",
+      "counterevidence": "web成功不等于本地下载成功；本轮不能把一个通道DNS失败当所有原件不可读。",
+      "impact": "scientific_status保持needs_evidence；不阻止形成条件研究方案和准备清单。",
+      "proposed_resolution": "W01依据receipt缺读区间补齐公开原件，用字节级sha验身份；二进制只做安全数组检查，不加载pickle。",
+      "verification_criterion": "52项coverage_complete全真且每项SHA/bytes独立核验；否则保留各项具体缺口。",
+      "related_proposal_ids": [
+        "P00",
+        "P04",
+        "P10",
+        "P20"
+      ],
+      "prior_status": null,
+      "change_this_review": "new",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "AR002-02",
+      "status": "open",
+      "severity": "high",
+      "category": "information_custody",
+      "statement": "本报告含获准valid诊断，不能随指南一并转发训练/准备方；实际Chat ID仍须主控登记。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "evaluation-scope",
+        "evaluation-use-history"
+      ],
+      "hypothesis": "技术投影与分析封闭包分开可防标签泄漏。",
+      "counterevidence": "本轮已生成无答案指南，但自动扫描不能替代主控人工权限审查。",
+      "impact": "泄漏会改变后续泛化解释及违反接收者边界。",
+      "proposed_resolution": "W10将next_batch_guide.md作为唯一默认执行方输入，review/analysis/ZIP仅主控分析侧。",
+      "verification_criterion": "指南无Y、精确valid分数、逐行残差、样本答案查表；传递登记和接收者scope核对通过。",
+      "related_proposal_ids": [
+        "P00",
+        "P19"
+      ],
+      "prior_status": null,
+      "change_this_review": "new",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "AR002-03",
+      "status": "open",
+      "severity": "medium",
+      "category": "checkpoint_counterfactual",
+      "statement": "现有记录只证明MSE best18和last26；未证明保存epoch7头，无法直接得到其valid表现。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "training-process",
+        "current-runtime-source",
+        "records/numeric_checks.json"
+      ],
+      "hypothesis": "MAE monitor对照可能改变选轮与最终表现。",
+      "counterevidence": "从同一日志找到MAE最小并不提供该轮可重载权重，也不是未见数据评价。",
+      "impact": "不允许补造epoch7预测或声称提升。",
+      "proposed_resolution": "W05准备训练内双指标日志；未来预注册monitor，保存被选头及其身份。",
+      "verification_criterion": "回放原指标可再现选择规则；实际新效果必须新授权匹配运行提供。",
+      "related_proposal_ids": [
+        "P02",
+        "P08"
+      ],
+      "prior_status": null,
+      "change_this_review": "new",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "AR002-04",
+      "status": "open",
+      "severity": "low",
+      "category": "diagnostic_definition",
+      "statement": "p95绝对误差的线性插值与nearest-rank结果不同；登记值恰与后者吻合。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "new-fixed-score",
+        "records/arithmetic_crosscheck.json"
+      ],
+      "hypothesis": "该差异来自分位数约定而非MAE计算错误。",
+      "counterevidence": "仅数值吻合尚不证明原聚合程序采用nearest-rank。",
+      "impact": "不能以此否定权威MAE，也不能混报分位数。",
+      "proposed_resolution": "W10指标schema登记quantile method、p、n、排序与插值。",
+      "verification_criterion": "同一原误差数组按预注册算法给出同p95；MAE保持独立复核一致。",
+      "related_proposal_ids": [
+        "P00",
+        "P19"
+      ],
+      "prior_status": null,
+      "change_this_review": "new",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "AR002-05",
+      "status": "open",
+      "severity": "medium",
+      "category": "resume_evidence",
+      "statement": "RNG抽样roundtrip与optimizer状态保存都有记录，但没有完整恢复后优化轨迹对照。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "training-process",
+        "current-runtime-source"
+      ],
+      "hypothesis": "matched optimizer+head+RNG+sampler边界可恢复训练。",
+      "counterevidence": "best18头搭配last26 optimizer不是一致恢复点；抽样一致不覆盖GPU kernel非确定性。",
+      "impact": "可复现性声明应限于已测reload/状态抽样。",
+      "proposed_resolution": "W09准备同epoch/global_step完整快照和未来连续/恢复成对测试。",
+      "verification_criterion": "未来授权试验的后续batch、参数、optimizer状态和数值误差满足预注册容差；不以预测allclose替代。",
+      "related_proposal_ids": [
+        "P20"
+      ],
+      "prior_status": null,
+      "change_this_review": "new",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "AR002-06",
+      "status": "investigating",
+      "severity": "high",
+      "category": "quality_signal",
+      "statement": "当前valid MAE描述上高于两历史向量；近半行改善但尾部误差拉高均值，不是已证泛化收益。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "records/numeric_checks.json",
+        "predictions",
+        "historic-32aaae3b9790",
+        "historic-ff00b26b8cc2"
+      ],
+      "hypothesis": "选择目标、容量或feature conditioning可能影响尾部稳定性。",
+      "counterevidence": "历史配置/划分混杂；旧身份未机器核对；91行重复反馈不能作为未触碰终评。",
+      "impact": "暂停质量提升宣传；保持基线和单变量试验，而非删除大误差行。",
+      "proposed_resolution": "首批只准备C0/C1/C2/C3与公共seed；尾部统计定义事前固定。",
+      "verification_criterion": "主控补旧身份后描述差值可复算；未来内部配对试验判别候选；最终泛化需独立未用于调参评价。",
+      "related_proposal_ids": [
+        "P01",
+        "P02",
+        "P03",
+        "P04",
+        "P12",
+        "P19"
+      ],
+      "prior_status": null,
+      "change_this_review": "new",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    },
+    {
+      "issue_id": "AR002-07",
+      "status": "open",
+      "severity": "medium",
+      "category": "review_independence",
+      "statement": "当前工具没有独立subagent启动接口；实际独立代理数为0，交叉核验由同一主模型加不同证据/算术实现完成。",
+      "affected_run_ids": [
+        "hainan-index-cycle-20261031",
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "records/cross_review.json",
+        "records/tool_limitations.json"
+      ],
+      "hypothesis": "独立评审可发现共享解读错误。",
+      "counterevidence": "两个算术实现共享同一原文转录，不等于独立采集证据；多数意见不是事实。",
+      "impact": "不满足用户期望的真实多代理程序要求，已显式保留限制。",
+      "proposed_resolution": "主控后续独立读原件和运行记录校验器；不虚构代理会话/任务ID。",
+      "verification_criterion": "真正独立复核者报告原件范围、反证及异议；无接口时状态保持未完成。",
+      "related_proposal_ids": [
+        "P00"
+      ],
+      "prior_status": null,
+      "change_this_review": "new",
+      "observed_vs_hypothesized": "statement为所读记录/计算事实；hypothesis单列，不把假设标为因果结论"
+    }
+  ],
+  "change_log": {
+    "new_issue_ids": [
+      "AR002-01",
+      "AR002-02",
+      "AR002-03",
+      "AR002-04",
+      "AR002-05",
+      "AR002-06",
+      "AR002-07"
+    ],
+    "retained_resolved": [
+      "AR001-11",
+      "AR001-16"
+    ],
+    "current_scope_improvements": [
+      "AR001-03：组划分代码与重复对记录改善，仍缺全量独立核验",
+      "AR001-07：本run过程/状态记录补齐，不补造旧记录或epoch7头",
+      "AR001-09：当前valid91逐行诊断缺口已补，旧身份机器核对仍缺",
+      "I-CYCLE002-PREFLIGHT-MONITOR：v2终态缺RSS分支实测记录已读"
+    ],
+    "no_global_closure_from_new_run_success": true
+  },
+  "claim_events_append": [
+    {
+      "event_id": "CE-FREEZE-03-REVIEW002",
+      "claim_id": "C-FREEZE",
+      "previous_event_id": "CE-FREEZE-02",
+      "supersedes_event_id": null,
+      "original_proposition": "跨run wrapper总摘要不同足以证明冻结编码器被更新",
+      "occurred_at": null,
+      "time_precision": "current_review_order_only",
+      "status": "refuted",
+      "event_type": "independent_source_recheck_same_reviewer",
+      "supporting_evidence": [
+        "historical-primary-tensors",
+        "historical-primary-call-path",
+        "chemprop-official-fingerprint"
+      ],
+      "counterevidence": "不同仅4个未被fingerprint调用的predictor参数；同run登记参数buffer前后相同",
+      "scope": "公开登记状态与调用路径；非未登记内存全证明",
+      "affected_proposals": [
+        "P00",
+        "P14",
+        "P16",
+        "P17"
+      ],
+      "controller_adoption": "pending"
+    },
+    {
+      "event_id": "CE-SCALE-02-REVIEW002",
+      "claim_id": "C-SCALE",
+      "previous_event_id": "CE-SCALE-01",
+      "supersedes_event_id": null,
+      "original_proposition": "极端标准化特征是当前预测误差偏大的原因",
+      "occurred_at": null,
+      "time_precision": "current_review_order_only",
+      "status": "proposed",
+      "event_type": "evidence_added_without_causal_resolution",
+      "supporting_evidence": [
+        "historical-primary-cache",
+        "records/numeric_checks.json"
+      ],
+      "counterevidence": "当前原数组未独立核对、多个替代机制、无matched缩放消融",
+      "scope": "历史feature异常与当前合法误差诊断；不提升为因果",
+      "affected_proposals": [
+        "P04",
+        "P10"
+      ],
+      "controller_adoption": "pending"
+    },
+    {
+      "event_id": "CE-MONITOR-01-REVIEW002",
+      "claim_id": "C-MONITOR",
+      "previous_event_id": null,
+      "supersedes_event_id": null,
+      "original_proposition": "内部MSE选择与原Y MAE最优选择相同",
+      "occurred_at": null,
+      "time_precision": "current_review_order_only",
+      "status": "refuted_for_logged_trajectory",
+      "event_type": "new_direct_numeric_check",
+      "supporting_evidence": [
+        "training-process",
+        "records/numeric_checks.json"
+      ],
+      "counterevidence": "26点日志MSE argmin18、MAE argmin7",
+      "scope": "单一已记录训练轨迹；不表示MAE选轮外部表现更好",
+      "affected_proposals": [
+        "P02",
+        "P08"
+      ],
+      "controller_adoption": "pending"
+    },
+    {
+      "event_id": "CE-QUALITY-01-REVIEW002",
+      "claim_id": "C-QUALITY",
+      "previous_event_id": null,
+      "supersedes_event_id": null,
+      "original_proposition": "训练和发布验收通过即可证明泛化质量提升",
+      "occurred_at": null,
+      "time_precision": "current_review_order_only",
+      "status": "unsupported",
+      "event_type": "scope_restriction",
+      "supporting_evidence": [
+        "records/numeric_checks.json",
+        "history-coverage-gaps",
+        "evaluation-use-history"
+      ],
+      "counterevidence": "当前描述MAE更高且历史条件混杂，缺独立终评",
+      "scope": "本run与两历史记录；不声称任一配置在总体上必败",
+      "affected_proposals": [
+        "P01",
+        "P02",
+        "P03",
+        "P04",
+        "P12"
+      ],
+      "controller_adoption": "pending"
+    }
+  ],
+  "evaluation_usage_append": {
+    "event_id": "EU-REVIEW002-DIAGNOSTIC",
+    "occurred_at": null,
+    "event_time_note": "本会话评审发生；不以归档时间冒充精确原历史时间",
+    "request_id": "admet-progressive-index-pro-20261031-002",
+    "scope_id": "caco2-analysis-20261031-cycle002",
+    "source_commit": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+    "approved_truth_source_version": "eaec280cf142839597fe75ce748cd2b9a8a897d4",
+    "truth_rows_read": 91,
+    "host_score_calls": 0,
+    "reviewer_arithmetic_only": true,
+    "model_selection_feedback": true,
+    "selection_changes": [
+      "提高matched control和单变量实验优先级",
+      "基于训练内选轮分歧优先monitor比较",
+      "将缩放机制保持待证而非直接修复",
+      "关注尾部稳定性且禁止删行",
+      "其他底座降为资产未齐的条件储备"
+    ],
+    "forwarding": "only sanitized next_batch_guide to preparation; no truth/residual/exact valid score"
+  }
+}

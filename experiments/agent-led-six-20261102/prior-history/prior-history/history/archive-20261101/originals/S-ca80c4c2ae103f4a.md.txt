@@ -1,0 +1,143 @@
+# 真实数据画像与决策影响
+
+核查日期：2026-10-30（Asia/Shanghai）。本页为本轮已采用的数据事实入口；更早的纯字节审计只在其方法范围内成立，后续化学/分布审计补充它，没有替换原始数据。所有数值来自固定快照计算，不是模型分数。
+
+## 1. 数据、规则与版本
+
+数据：[ZYDTR/admet-benchmark-data 固定提交](https://github.com/ZYDTR/admet-benchmark-data/tree/0275588ac7a5d3df032ec7dc0794cab21dfcfeeb)。67个CSV、共6,891,400字节；逐文件SHA256与Git blob均已核对。仓库无README，没有完整标签/切分说明。它是用户提供的研究输入；没有因为未找到官网到GitHub的链接而停止研究，也没有将该链接伪造为官方证据。
+
+[赛事159](http://www.aiinnovation.com.cn/web/#/trackDetail?id=159)的公开接口本轮读取成功，内容更新时间为2026-10-26 11:23:49+08。当前截止2026-11-05 23:59:59+08。公开概述写有约10万分子、10–15维标签、预计算2D/3D特征；实际快照提供22张任务表、SMILES与Y，未见这些预计算特征文件。采用实际文件设计输入，保留文字差异，不从宣传概述补造不存在的数据。
+
+用户已明确确认冻结外部预训练权重获准。公开规则与用户转述分列；不再把该问题写为完全未知。其他外部训练数据、补标签、教师输出等未因该确认自动获准。
+
+## 2. 实际规模与22任务表
+
+| 项目 | Train | Valid | Test |
+| --- | ---: | ---: | ---: |
+| CSV样本行 | 53,695 | 11,735 | 16,379 |
+| 不同原始SMILES | 34,610 | 10,417 | 13,818 |
+| 列名 | Drug_ID, Drug, Y | Drug_ID, Drug, Y | Drug_ID, Drug |
+
+三个角色合计46,202个不同原始SMILES。总训练行是跨端点标签记录，不是每个任务都拥有这么多独立分子。13分类、9回归；8 AUROC、5 AUPRC、5 MAE、4 Spearman。train/valid的Y均为有限数值、没有缺失；这不证明合并后的多任务矩阵完整。
+
+下表“正类”仅表示数值Y=1，不补写尚未完整确认的生物语义。指标来自提交模板。
+
+| 任务 | 类型/指标 | Train | Valid | Test | Valid正类/总数 |
+| --- | --- | ---: | ---: | ---: | --- |
+| ames | 分类 / AUROC | 4,684 | 1,137 | 1,457 | 479/1137 |
+| bbb_martins | 分类 / AUROC | 1,421 | 203 | 406 | 149/203 |
+| bioavailability_ma | 分类 / AUROC | 448 | 64 | 128 | 43/64 |
+| caco2_wang | 回归 / MAE | 637 | 91 | 182 | — |
+| clearance_hepatocyte_az | 回归 / Spearman | 848 | 122 | 243 | — |
+| clearance_microsome_az | 回归 / Spearman | 770 | 111 | 221 | — |
+| cyp2c9_substrate_carbonmangels | 分类 / AUPRC | 467 | 67 | 135 | 12/67 |
+| cyp2c9_veith | 分类 / AUPRC | 8,463 | 1,210 | 2,419 | 406/1210 |
+| cyp2d6_substrate_carbonmangels | 分类 / AUPRC | 465 | 67 | 135 | 14/67 |
+| cyp2d6_veith | 分类 / AUPRC | 9,191 | 1,313 | 2,626 | 250/1313 |
+| cyp3a4_substrate_carbonmangels | 分类 / AUROC | 468 | 67 | 135 | 36/67 |
+| cyp3a4_veith | 分类 / AUPRC | 8,628 | 1,233 | 2,467 | 581/1233 |
+| dili | 分类 / AUROC | 331 | 48 | 96 | 13/48 |
+| half_life_obach | 回归 / Spearman | 465 | 67 | 135 | — |
+| herg | 分类 / AUROC | 457 | 66 | 132 | 42/66 |
+| hia_hou | 分类 / AUROC | 403 | 58 | 117 | 48/58 |
+| ld50_zhu | 回归 / MAE | 3,970 | 1,937 | 1,478 | — |
+| lipophilicity_astrazeneca | 回归 / MAE | 2,940 | 420 | 840 | — |
+| pgp_broccatelli | 分类 / AUROC | 851 | 122 | 245 | 61/122 |
+| ppbr_az | 回归 / MAE | 1,952 | 279 | 559 | — |
+| solubility_aqsoldb | 回归 / MAE | 5,045 | 2,940 | 1,997 | — |
+| vdss_lombardo | 回归 / Spearman | 791 | 113 | 226 | — |
+
+任务名称提供背景线索：BBB/HIA涉及屏障穿透与肠道吸收，CYP涉及代谢酶，DILI/hERG/AMES涉及不同毒性端点，clearance/half-life/VDSS/PPBR描述体内处置性质。这些名称可借助[TDC背景](https://tdcommons.ai/single_pred_tasks/adme/)理解，不能替代本包确切的单位、阈值、assay条件或Y变换。抑制酶与作为酶的底物也不是同一标签。
+
+## 3. 身份、重复与测量
+
+本轮区分原始串、canonical isomeric分子和测量行，没有去盐、中和、互变异构归一化或修改立体信息。
+
+- PPBR train：1,952行，1,282个原始SMILES；481个SMILES有不同数值标签。hepatocyte clearance train：848行、712个原串，136个原串有不同数值标签。不同测量条件或重复测量是可能解释，尚未确认，不能直接平均或删掉。
+- BBB train：7个原串同时有0和1；valid中有1个。对只读同一SMILES的确定性预测器，完全拟合这些冲突标签不可能同时成立，tiny-fit不能普遍要求零损失。
+- hERG的Drug_ID空值：train20、valid1、test1。以`(task,split,row_index)`保留行身份；ID保持字符串，不强制唯一、非空或数值化。
+- 数据已给train/valid/test；LD50和solubility并非简单7:1:2比例。不能调用TDC重新下载、清洗、重切后称为同一个比赛包。
+
+## 4. 划分的隔离性与代表性
+
+RDKit版本2025.09.6；默认sanitized MolFromSmiles。canonical isomeric保留已指定立体信息；无立体canonical只作敏感性诊断；Murcko使用无立体的Bemis–Murcko，空结果另列并从非空交集排除。
+
+**同任务层面**：原始SMILES、有效canonical isomeric在train/valid/test间交集为0；非空Murcko跨划分交集也为0。这是本定义下的观察，不能恢复官方历史生成算法，也不能推出划分充分代表所有未来化学结构。
+
+**独立审查后新增的分布事实**：
+
+| 任务/角色 | 行数 | 空Murcko行 | 非空Murcko种类 | 解释限制 |
+| --- | ---: | ---: | ---: | --- |
+| Ames train | 4,684 | 1,268 | 1,126 | 训练覆盖多个骨架 |
+| Ames valid | 1,137 | 0 | **1** | 全部骨架为c1ccccc1；不等于这些是同一个分子 |
+| Ames test | 1,457 | 0 | 449 | 无标签，只观察结构分布 |
+| LD50 valid | 1,937 | **1,937** | 0 | 空骨架不是一个共同化学家族 |
+| LD50 train/test | 3,970 / 1,478 | 0 / 0 | 1,206 / 470 | 环结构组成与valid不同 |
+| Solubility valid | 2,940 | **2,940** | 0 | 不应因行多就忽略分布差异 |
+| Solubility train/test | 5,045 / 1,997 | 0 / 0 | 1,325 / 621 | test另外2行解析失败 |
+| DILI valid | 48 | **35** | 11 | 样本小且组成集中；train/test空骨架为0 |
+
+两份独立编写的聚合脚本在相同化学定义下结果一致，主线程另从原始CSV复算上述重点。没有据此认定模型名次必反转或官方split错误。
+
+**决策后果**：现有valid仍用于固定协议评价；它单独不足以证明普遍跨骨架优胜。若结论依赖小幅优势，可在原train内增加预先固定的分组诊断，同时保留原valid；预算不足就收窄结论。增加seed、行bootstrap、对唯一骨架做cluster bootstrap都不能产生未观察到的化学覆盖。
+
+## 5. 多任务暴露与可估计性
+
+合并各任务的原始串集合：train∩valid=4,798，train∩test=7,389，valid∩test=1,446。这里是跨任务集合，不能与“每任务交集为0”混淆。
+
+一个分子在A.train、B.valid，并不自动证明B标签泄漏；但共享训练不再是全局未见分子条件。监督来源需保留到每个标签，不能拼宽表时把valid标签补进train。所有原表Y都有值，也不意味着没有跨端点缺失。
+
+| 任务 | Valid行 | 在其他任务train中出现 | 未出现行 | 未出现正类/负类 |
+| --- | ---: | ---: | ---: | ---: |
+| CYP2C9 substrate | 67 | 64 | 3 | **0 / 3** |
+| CYP2D6 substrate | 67 | 62 | 5 | 1 / 4 |
+| CYP3A4 substrate | 67 | 61 | 6 | 4 / 2 |
+| Bioavailability | 64 | 55 | 9 | 5 / 4 |
+
+因此，“按是否见过分子分层报分”本身不保证能检验迁移。CYP2C9未暴露子集没有正类，AP实现返回的约定数字不能作为未见分子预测失败证据；其他子群也太小，必须保留弱证据范围。完整MTL方案仍可与独立头比较，但不能直接分解出所有增益原因。
+
+三个CYP inhibitor任务共26,282个train标签，约占总数49%。直接平均所有标签loss会隐含明显的任务权重；分类/回归尺度问题与任务量问题应分别处理。共享冻结encoder+独立head仅是表示复用；研究MTL须明确新增共享可训练部分。
+
+## 6. 全量输入覆盖
+
+46,202个唯一原串中，默认RDKit解析失败2个；其余46,200个有效canonical isomeric身份唯一。1,905个不同原串含多个片段，7,996个含指定原子立体信息；元素范围包括多种金属。没有据此做清洗或自动去盐。
+
+| 文件与零起始行索引 | 实际观察 | 对候选的要求 |
+| --- | --- | --- |
+| solubility_aqsoldb/test.csv，1159、1160 | RDKit2025.09.6默认解析返回None | 定位该解析器行为；评估可解释的程序处理，保留全部提交行 |
+| 同文件，171 | 388个重原子；全体唯一输入中>200的只有这一条 | 检查具体模型原子/token/裁剪策略；不能默默截断 |
+
+最长原始串681字符；字符数、token数和原子数不同。本轮未取得每个模型token覆盖、构象成功率或特征稳定性。失败是指定工具/设置下的结果，不能称普遍无效分子。异常行可有经验证的程序化回退或模型处理，但不得手改预测、丢行、用外部标签补值；回退本身也要作为方案的一部分记录和验证。
+
+## 7. 评价与未知
+
+AUROC/AUPRC评价分类排序，Spearman评价回归排序，MAE评价给定Y尺度的绝对误差。未知官方总分公式时，不把不同量纲直接相加。[TDC evaluator](https://tdc.readthedocs.io/en/main/_modules/tdc/evaluator.html)的pr-auc采用AP，但这未证明赛事同样实现；本地可明确采用[AP](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.average_precision_score.html)，保留逐行预测。当细小AUPRC差别决定淘汰时，预先指定一次实现敏感性检查；不要挑有利指标。
+
+DILI valid仅48行且13个正类，HIA58行且10个负类，CYP2C9/2D6 substrate valid各67行且12/14个正类。多seed主要衡量训练随机性，不能解决有限验证覆盖或反复选冠军的偏差。
+
+尚未完整确认：本包标签单位、既有变换、全部生物正类语义、历史split生成过程、官方聚合和AUPRC细节。单位未知不阻止原数值Y的基线设计；它阻止未经依据的log、物理阈值裁剪、标签反向与assay合并。没有从标签范围擅自恢复单位。
+
+## 8. 当前官方模板与仓库模板
+
+当前从赛事接口提供的[官方模板链接](http://www.aiinnovation.com.cn/file/down/小分子药物预测技术创新赛-结果提交模板.csv)重新取得文件并核验。其SHA256为：
+
+`8ee41589d2c98e7b93081c058b3f928ac09bea4b3ffc899fa13677051e9baa20`
+
+仓库upload_template.csv的SHA256为：
+
+`9604b78fd59cb2e7a803df4ed731e054f152af401c4ec6ec79d11af70cfd292b`
+
+两者共有7,611处drug_id字符串差异，涉及`.0`及前导零等；其余字段、SMILES和顺序一致。仓库各test中的Drug_ID与当前官方模板相符。最终导出以已固定的当前官方模板为准，严格仅写y_pred；用task/sample_idx并校对SMILES保持映射，不数值化ID。这个差异已定向解决，不需让模型调研因模板分歧暂停。
+
+## 9. 可复算材料与边界
+
+`evidence/`保留聚合JSON和源哈希；`scripts/`保留只读审计。基础脚本使用Python标准库，化学与骨架脚本需RDKit2025.09.6；输入指向固定commit的快照根目录。脚本不训练、不修改原CSV、不统计test标签。原始数据不重复装入此研究文档。
+
+```bash
+python scripts/audit_dataset.py --snapshot /path/to/pinned-snapshot --output /path/to/audit-output --official-template /path/to/current-official-template.csv
+python scripts/audit_chemistry.py --snapshot /path/to/pinned-snapshot --output /path/to/chemistry-audit.json
+python scripts/scaffold_distribution_review.py --snapshot /path/to/pinned-snapshot --output /path/to/scaffold-distribution-review.json
+python scripts/mtl_exposure_review.py --snapshot /path/to/pinned-snapshot --output /path/to/mtl-exposure-review.json
+```
+
+相对命令从本研究目录执行，输出放独立目录以免覆盖留存证据。文件哈希固定已分析对象，不能单靠哈希证明训练历史没有外部数据。本次只建立研究画像，尚未把这些文件登记成Harness正式训练输入，也未运行实际模型。

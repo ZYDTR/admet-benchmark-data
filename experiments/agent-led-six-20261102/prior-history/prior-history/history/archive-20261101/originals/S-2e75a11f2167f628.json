@@ -1,0 +1,342 @@
+{
+  "schema_version": 1,
+  "tool": "admet_eval 1.0.0",
+  "command": "selftest",
+  "generated_at_utc": "2026-10-30T12:31:54Z",
+  "n_checks": 66,
+  "n_passed": 66,
+  "n_failed": 0,
+  "overall": "pass",
+  "checks": [
+    {
+      "name": "auroc.mixed_case",
+      "status": "pass",
+      "detail": "auroc.mixed_case got=0.75 want=0.75 "
+    },
+    {
+      "name": "auroc.tied_pair",
+      "status": "pass",
+      "detail": "auroc.tied_pair got=0.5 want=0.5 "
+    },
+    {
+      "name": "auroc.perfect",
+      "status": "pass",
+      "detail": "auroc.perfect got=1.0 want=1.0 "
+    },
+    {
+      "name": "auroc.partial",
+      "status": "pass",
+      "detail": "auroc.partial got=0.5 want=0.5 "
+    },
+    {
+      "name": "auroc.undefined_single_class",
+      "status": "pass",
+      "detail": "undefined: AUROC requires both classes (n_pos=0, n_neg=2)"
+    },
+    {
+      "name": "auroc.undefined_all_positive",
+      "status": "pass",
+      "detail": "undefined: AUROC requires both classes (n_pos=2, n_neg=0)"
+    },
+    {
+      "name": "auroc.non_binary_raises",
+      "status": "pass",
+      "detail": "raised ValueError as expected"
+    },
+    {
+      "name": "auroc.length_mismatch_raises",
+      "status": "pass",
+      "detail": "raised ValueError as expected"
+    },
+    {
+      "name": "auroc.non_finite_raises",
+      "status": "pass",
+      "detail": "raised ValueError as expected"
+    },
+    {
+      "name": "ap.mixed_case",
+      "status": "pass",
+      "detail": "ap.mixed_case got=0.8333333333333333 want=0.8333333333333333 "
+    },
+    {
+      "name": "ap.tie_case",
+      "status": "pass",
+      "detail": "ap.tie_case got=0.5833333333333333 want=0.5833333333333333 "
+    },
+    {
+      "name": "ap.all_positive",
+      "status": "pass",
+      "detail": "ap.all_positive got=1.0 want=1.0 "
+    },
+    {
+      "name": "ap.tied_single_group",
+      "status": "pass",
+      "detail": "ap.tied_single_group got=0.5 want=0.5 "
+    },
+    {
+      "name": "ap.undefined_no_positive",
+      "status": "pass",
+      "detail": "undefined: AUPRC (local AP) requires at least one positive label"
+    },
+    {
+      "name": "ap.non_binary_raises",
+      "status": "pass",
+      "detail": "raised ValueError as expected"
+    },
+    {
+      "name": "mae.basic",
+      "status": "pass",
+      "detail": "mae.basic got=0.5 want=0.5 "
+    },
+    {
+      "name": "mae.undefined_empty",
+      "status": "pass",
+      "detail": "undefined: no samples"
+    },
+    {
+      "name": "mae.length_mismatch_raises",
+      "status": "pass",
+      "detail": "raised ValueError as expected"
+    },
+    {
+      "name": "spearman.perfect",
+      "status": "pass",
+      "detail": "spearman.perfect got=1.0 want=1.0 "
+    },
+    {
+      "name": "spearman.reversed",
+      "status": "pass",
+      "detail": "spearman.reversed got=-1.0 want=-1.0 "
+    },
+    {
+      "name": "spearman.ties",
+      "status": "pass",
+      "detail": "spearman.ties got=0.8660254037844387 want=0.8660254037844386 "
+    },
+    {
+      "name": "spearman.monotone_nonlinear",
+      "status": "pass",
+      "detail": "spearman.monotone_nonlinear got=1.0 want=1.0 "
+    },
+    {
+      "name": "spearman.undefined_constant",
+      "status": "pass",
+      "detail": "undefined: zero rank variance (constant input)"
+    },
+    {
+      "name": "spearman.undefined_n_lt_2",
+      "status": "pass",
+      "detail": "undefined: n<2"
+    },
+    {
+      "name": "metrics.agreement_with_naive_implementations",
+      "status": "pass",
+      "detail": "487 comparisons over 250 trials, mismatches=0"
+    },
+    {
+      "name": "csv_field_spans.matches_csv_reader",
+      "status": "pass",
+      "detail": "9 synthetic lines incl. quotes/commas/escapes"
+    },
+    {
+      "name": "csv_field_spans.splice_roundtrip",
+      "status": "pass",
+      "detail": "ames,54,\"Apigenin (5,7,4'-THF)\",O=c1cc,0.75,MAE"
+    },
+    {
+      "name": "format_prediction.roundtrip",
+      "status": "pass",
+      "detail": "repr round-trips for sampled floats"
+    },
+    {
+      "name": "format_prediction.rejects_nonfinite",
+      "status": "pass",
+      "detail": "ContractError on nan"
+    },
+    {
+      "name": "csv_field_spans.real_template_agreement",
+      "status": "pass",
+      "detail": "16379 template data lines (2384 with quoted fields), mismatches=0"
+    },
+    {
+      "name": "splice_y_pred.real_exotic_line",
+      "status": "pass",
+      "detail": "bbb_martins,54,\"\\1,1,1-Trifluro-2-chloroethane\\\\\\\"\"\"\"\",FC(F)(F)CCl,0.123456789,AUROC"
+    },
+    {
+      "name": "e2e.check_predictions",
+      "status": "pass",
+      "detail": "exit=0; output tail: RESULT: PASS"
+    },
+    {
+      "name": "e2e.score_valid",
+      "status": "pass",
+      "detail": "exit=0; output tail: report written: <LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/tmp/admet_eval_selftest_388petga/score_report.json"
+    },
+    {
+      "name": "e2e.score[mini_auroc].status",
+      "status": "pass",
+      "detail": "status='scored' expected='scored'"
+    },
+    {
+      "name": "e2e.score[mini_auroc].value",
+      "status": "pass",
+      "detail": "e2e.score[mini_auroc].value got=1.0 want=1.0 "
+    },
+    {
+      "name": "e2e.score[mini_auprc].status",
+      "status": "pass",
+      "detail": "status='scored' expected='scored'"
+    },
+    {
+      "name": "e2e.score[mini_auprc].value",
+      "status": "pass",
+      "detail": "e2e.score[mini_auprc].value got=1.0 want=1.0 "
+    },
+    {
+      "name": "e2e.score[mini_auprc_mix].status",
+      "status": "pass",
+      "detail": "status='scored' expected='scored'"
+    },
+    {
+      "name": "e2e.score[mini_auprc_mix].value",
+      "status": "pass",
+      "detail": "e2e.score[mini_auprc_mix].value got=0.5 want=0.5 "
+    },
+    {
+      "name": "e2e.score[mini_mae].status",
+      "status": "pass",
+      "detail": "status='scored' expected='scored'"
+    },
+    {
+      "name": "e2e.score[mini_mae].value",
+      "status": "pass",
+      "detail": "e2e.score[mini_mae].value got=0.5 want=0.5 "
+    },
+    {
+      "name": "e2e.score[mini_spearman].status",
+      "status": "pass",
+      "detail": "status='scored' expected='scored'"
+    },
+    {
+      "name": "e2e.score[mini_spearman].value",
+      "status": "pass",
+      "detail": "e2e.score[mini_spearman].value got=0.8660254037844387 want=0.8660254037844386 "
+    },
+    {
+      "name": "e2e.score[mini_undef].status",
+      "status": "pass",
+      "detail": "status='undefined' expected='undefined'"
+    },
+    {
+      "name": "e2e.score[mini_undef].value_none",
+      "status": "pass",
+      "detail": "None"
+    },
+    {
+      "name": "e2e.score.no_official_total",
+      "status": "pass",
+      "detail": "not_computed: official aggregation unconfirmed"
+    },
+    {
+      "name": "e2e.export",
+      "status": "pass",
+      "detail": "exit=0; output tail: RESULT: PASS"
+    },
+    {
+      "name": "e2e.validate_submission",
+      "status": "pass",
+      "detail": "exit=0; output tail: RESULT: PASS"
+    },
+    {
+      "name": "e2e.export.only_y_pred_changed",
+      "status": "pass",
+      "detail": "0 of 43 lines byte-identical (expect 0; all differ only in y_pred)"
+    },
+    {
+      "name": "e2e.export.non_y_pred_fields_preserved",
+      "status": "pass",
+      "detail": "parsed non-y_pred fields identical"
+    },
+    {
+      "name": "e2e.export.y_pred_roundtrip",
+      "status": "pass",
+      "detail": "all y_pred values equal the prediction file values"
+    },
+    {
+      "name": "e2e.export.quoted_lines_preserved",
+      "status": "pass",
+      "detail": "2 quoted lines in mini template preserved"
+    },
+    {
+      "name": "e2e.validate_detects.reordered_rows",
+      "status": "pass",
+      "detail": "exit=1; output tail: RESULT: FAIL"
+    },
+    {
+      "name": "e2e.validate_detects.missing_row",
+      "status": "pass",
+      "detail": "exit=1; output tail: RESULT: FAIL"
+    },
+    {
+      "name": "e2e.validate_detects.modified_smiles",
+      "status": "pass",
+      "detail": "exit=1; output tail: RESULT: FAIL"
+    },
+    {
+      "name": "e2e.validate_detects.nonfinite_y_pred",
+      "status": "pass",
+      "detail": "exit=1; output tail: RESULT: FAIL"
+    },
+    {
+      "name": "e2e.validate_detects.empty_y_pred",
+      "status": "pass",
+      "detail": "exit=1; output tail: RESULT: FAIL"
+    },
+    {
+      "name": "e2e.validate_detects.requoted_drug_id",
+      "status": "pass",
+      "detail": "exit=1; output tail: RESULT: FAIL"
+    },
+    {
+      "name": "e2e.export_refuses_missing_prediction",
+      "status": "pass",
+      "detail": "exit=1; output tail:   no predictions are filled or substituted automatically; fix the prediction file"
+    },
+    {
+      "name": "e2e.export_refuses_missing.no_file_written",
+      "status": "pass",
+      "detail": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/tmp/admet_eval_selftest_388petga/submission_missing.csv"
+    },
+    {
+      "name": "e2e.export_refuses_nonfinite",
+      "status": "pass",
+      "detail": "exit=1; output tail: ERROR: prediction file contract violations: line 2: y_pred 'nan' is not a finite number"
+    },
+    {
+      "name": "e2e.export_refuses_nonempty_template_ypred",
+      "status": "pass",
+      "detail": "exit=1; output tail: ERROR: template line 2: y_pred field is not empty ('0.5'); refusing to overwrite"
+    },
+    {
+      "name": "e2e.score_refuses_misaligned_labels",
+      "status": "pass",
+      "detail": "exit=1; output tail: RESULT: FAIL"
+    },
+    {
+      "name": "e2e.score_refuses_missing_label_task",
+      "status": "pass",
+      "detail": "exit=1; output tail: RESULT: FAIL"
+    },
+    {
+      "name": "e2e.check_predictions_detects_duplicate",
+      "status": "pass",
+      "detail": "exit=1; output tail: RESULT: FAIL"
+    },
+    {
+      "name": "e2e.score_long_label_csv",
+      "status": "pass",
+      "detail": "exit=0; output tail: RESULT: PASS"
+    }
+  ]
+}

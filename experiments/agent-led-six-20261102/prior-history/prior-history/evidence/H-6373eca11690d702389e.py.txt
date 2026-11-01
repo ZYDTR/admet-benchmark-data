@@ -1,0 +1,44 @@
+from pathlib import Path
+import sys,json,importlib.util,time
+P=Path(__file__).resolve().parent;OP=P.parent;Q=OP/'resource-resume-main-v1'
+sys.path.insert(0,str(OP));import transport
+transport.EVIDENCE=P/'raw';transport.RUN=P
+prefix=(Q/'source/package.py').read_text().split('def make_receiver(')[0]
+source=prefix+'''
+import sys,socket,subprocess,datetime
+assert socket.gethostname().split('.')[0]=='project-compute' and os.getuid()==os.getgid()==1012
+BASE=Path('<AUTHORIZED_PROJECT_ROOT>/admet')
+cfg=json.load(sys.stdin);verify_prior(BASE,cfg)
+out={'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'protected_unchanged':len(cfg['protected_files']),'old_released':len(cfg['old_identities']),'host':socket.gethostname(),'uid':os.getuid(),'gid':os.getgid(),'existing_resume':[],'registered':[],'queries':[]}
+root=BASE/'contract-follow-e2e-20261101'
+for directory in ('operator/resource-resume-01','raw/resource-resume-01','state/resource-resume-01'):
+ p=canonical(BASE,root/directory)
+ if p.exists():
+  out['existing_resume'] += [str(x.relative_to(BASE)) for x in p.rglob('*')]
+for command in [['/usr/bin/nvidia-smi','-q','-x'],['/usr/bin/nvidia-smi','--query-compute-apps=gpu_uuid,pid,used_gpu_memory','--format=csv,noheader,nounits'],['/usr/bin/nvidia-smi','pmon','-s','um','-c','1']]:
+ p=subprocess.run(command,capture_output=True,text=True,timeout=15)
+ out['queries'].append({'argv':command,'actual_OS_exit':p.returncode,'stdout':p.stdout,'stderr':p.stderr})
+print(json.dumps(out))
+'''
+(P/'precheck-remote.py').write_text(source)
+for attempt in range(2,5):
+ try:
+  raw=transport.remote_once(source,'precheck-r'+str(attempt),payload=(Q/'contract.enabled.json').read_bytes(),timeout=55,readonly=True);break
+ except transport.fixed.QueryError as error:
+  retryable=transport.fixed.retryable_connection_error(error)
+  transport.log({'tag':'precheck','attempt':attempt,'retryable':retryable,'backoff_seconds':(5,10)[attempt-2] if retryable and attempt<4 else None})
+  if not retryable or attempt==4:raise
+  time.sleep((5,10)[attempt-2])
+(P/'precheck.json').write_bytes(raw)
+out=json.loads(raw);assert not out['existing_resume'],out['existing_resume'];assert all(x['actual_OS_exit']==0 for x in out['queries'])
+spec=importlib.util.spec_from_file_location('admitted_resume',Q/'source/resume.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+import xml.etree.ElementTree as ET
+xml=ET.fromstring(out['queries'][0]['stdout']);qualified=[];checks=[]
+for gpu in xml.findall('gpu'):
+ c={'gpu_index':int(gpu.findtext('minor_number')),'gpu_uuid':gpu.findtext('uuid')};one=ET.Element('nvidia_smi_log');one.append(gpu)
+ try: result=m.classify(ET.tostring(one,encoding='unicode'),out['queries'][1]['stdout'],out['queries'][2]['stdout'],c);qualified.append(c);checks.append(dict(c,state='qualified',result=result))
+ except Exception as e:checks.append(dict(c,state=type(e).__name__,reason=str(e)))
+(P/'candidate-checks.json').write_text(json.dumps(checks,indent=2)+'\n')
+if qualified:
+ chosen=next((x for x in qualified if x['gpu_index']==5),qualified[0]);(P/'candidate.json').write_text(json.dumps(chosen,indent=2)+'\n')
+print(json.dumps({'protected':out['protected_unchanged'],'released':out['old_released'],'qualified':qualified,'chosen':chosen if qualified else None,'setup_spent_seconds':time.time()-1793535733}))

@@ -1,0 +1,105 @@
+# ADMET 数据清洗与整理
+
+原始数据目录为本目录的上一级。所有脚本只读原始的 22 个任务、66 个 CSV；处理结果写入本目录下的新路径。当前成果位于 `processed/`。
+
+## 目录
+
+```text
+cleaned_data_20261029/
+  scripts/                    全部清洗、下载、校验和测试脚本
+  config/tasks.json           22 个任务的类型和官方指标
+  reference/                 官方提交模板原文件及下载来源、校验和
+  requirements.txt           主要依赖
+  requirements.lock.txt      本次实际使用的精确依赖版本
+  run_cleaning.sh             清洗入口
+  processed/
+    tasks/<task>/            train.csv、valid.csv、test.csv、train_deduplicated.csv
+    multitask/               按 split 汇总的长表，以及训练去重长表
+    molecules.csv            分子登记表；未修改分子化学意义
+    submission/              官方测试行与内部 row_id 的映射
+    reports/                 清洗报告、问题明细和统计
+    source_manifest_*.json   原始文件处理前后的 SHA-256
+    manifest.json            输入、实现、依赖及输出文件的校验和
+    verification.json        独立校验结果
+    run.log                  完整处理日志
+```
+
+## 使用哪些数据
+
+- 普通单任务训练：`processed/tasks/<task>/train.csv`，验证和测试使用同目录下的对应文件。
+- 多任务训练：`processed/multitask/train.csv`。每行是一条任务观测，`task` 指定输出头；未观测任务不参与损失。没有生成会丢弃冲突测量的单值宽表。
+- 压缩重复观测：`train_deduplicated.csv`。仅合并同一任务、同一规范化分子、同一数值标签。不同标签保留为不同观测；`source_row_ids` 记录全部来源。
+- 在去重版本上，按 `sample_weight` 加权损失可保留原观测的经验权重。每任务应使用 `sum(weight * loss) / sum(weight)`；单纯除以去重后行数会改变尺度。若希望每种观测等权，明确另行选择权重策略。
+- 默认完整版本中每行 `sample_weight=1`。验证、测试永不去重，仍按官方原始行评价与提交。
+
+## 主要字段
+
+| 字段 | 含义 |
+| --- | --- |
+| task、split | 原任务与原划分；未重新划分 |
+| sample_idx | 原始 CSV 的数据行号，从 0 开始；不是 Drug_ID |
+| row_id | `task/split/六位行号`，逐条观测唯一 |
+| drug_id | 原始字符串 ID，空值与类似数字的字符串均保留 |
+| smiles_original | 原始 SMILES 文本，逐字保留 |
+| smiles | 有效分子使用规范化 SMILES；解析失败时保留去除外层空白后的原文，不代表已修复 |
+| canonical_smiles | RDKit 默认解析成功后的 isomeric canonical SMILES；失败则留空 |
+| molecule_id | 规范化 SMILES 的 SHA-256 标识；失败分子以 `invalid_` 开头，仅表示相同原始文本 |
+| y_original、y | 原标签文本、等值规范化数值文本；测试均为空，不补造标签 |
+| parse_status、label_status | 结构与标签检查状态 |
+| graph_eligible | 默认 RDKit 分子图是否可用 |
+| supervised_eligible | 结构和标签都可用于监督训练；测试为 0 |
+| needs_structure_fallback | 结构解析失败标记，测试推理不能因此少输出一行 |
+| scaffold_smiles、scaffold_id | 不含手性的 Bemis–Murcko 骨架和其哈希；无环分子留空 |
+| scaffold_type | ring_scaffold、acyclic 或 unavailable |
+| fragment_count、atom_count、formal_charge | 结构质量检查辅助信息，并非训练特征全集 |
+| molecule_observation_count | 同任务同 split 中该分子的观测条数 |
+| identical_observation_count | 同任务同 split 中该分子、同一标签的条数；测试中为重复结构条数 |
+| label_conflict | 同任务同 split 中同一分子具有不同标签；只标记，不判定为错误 |
+| issue_codes | 质量标记；详细解释在 reports/issues.csv |
+| source_row_ids | 仅去重表拥有；该行代表的全部原观测 ID 的 JSON 数组 |
+
+## 处理边界
+
+1. CSV 使用 `utf-8-sig` 读取，输出 UTF-8。统一字段命名。ID 不转为数值，原始 ID 和标签文本不会被填补。
+2. 默认 RDKit sanitization 后生成保留立体信息的规范化 SMILES。没有去盐、中和、挑主片段、统一互变异构体，也没有从外部查询结构或标签。
+3. 仅对模型输入去除 SMILES 外层空白，原始文本单独保留。原始实验标签不截断、不取对数、不标准化、不聚合不同值。
+4. 解析失败保留原行并标记。本次两个失败记录位于水溶性测试集；任何修复方案需要额外、可审计的化学依据，当前未猜测修正。
+5. 所有 split 保持原样。没有拟合标准化器、填补器，也没有生成新的训练/验证划分。
+6. 空 Murcko 骨架表示无环结构，不等同缺失分子。骨架分组时需要另行处理这些分子，不能直接把空字符串作为一个巨大组。
+7. `cross_split_molecules.csv` 记录跨 split 分子重叠，包括不同任务的正常交叉。它不自动等同于目标标签泄漏；未见分子的评测需跨任务统一分组。
+8. 原始验证集的骨架分布较集中，不能只按其单次分数选择模型。`scaffold_distribution.csv` 中无环聚合桶只用于审计，不能直接用于划分。
+9. 官方提交以 `reference/submission_template.csv` 为准，只填写 `y_pred`。保持其 ID、SMILES、任务、行号、指标和顺序不变；预测按 `task + sample_idx` 映射。不能按 drug_id 去重或直接导出清洗后的 test.csv 作为提交文件。
+
+## 复现
+
+建议 Python 3.12。本次版本和系统信息记录在 `processed/manifest.json`。以下命令在本目录执行：
+
+```bash
+# 首次在新机器安装；已有 .venv 时可跳过。使用固定版本锁文件。
+bash scripts/bootstrap.sh python3
+
+# 本目录已保留官方模板，复现不必联网下载。只有缺失模板时运行：
+.venv/bin/python scripts/fetch_official_template.py
+
+# 清洗默认写 processed/。已有目录会拒绝覆盖；复现请选择另一个新目录。
+bash run_cleaning.sh --output-dir ./processed_reproduced
+
+# 全量检查原始哈希、标签、顺序、权重、模板，并独立重新解析所有分子。
+.venv/bin/python scripts/verify_outputs.py --output-dir ./processed_reproduced --deep
+
+# 数据处理边界测试
+.venv/bin/python scripts/test_cleaning.py
+```
+
+原始数据位于其他位置时，添加 `--source-dir /path/to/raw_data`。官方模板和任务配置默认使用本目录的快照，不重新下载其他训练数据。
+
+读取模型表时，建议显式保持 ID 和文本字段为字符串，避免 pandas 将空 ID 或文字 `NA` 解释成缺失值：
+
+```python
+import pandas as pd
+df = pd.read_csv("processed/tasks/ames/train.csv", dtype=str, keep_default_na=False)
+y = pd.to_numeric(df["y"], errors="raise")
+weights = pd.to_numeric(df["sample_weight"], errors="raise")
+```
+
+不要将 `row_id`、`sample_idx`、`drug_id`、问题标记或分组统计直接作为预测特征。它们是来源与质量信息。当前交付未包含模型训练、预测、GPU 作业或官方提交。

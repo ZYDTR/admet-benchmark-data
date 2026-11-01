@@ -1,0 +1,107 @@
+{
+  "run_id": "hainan-mae-monitor-20261101",
+  "request_id": "admet-monitor-mae-e2e-20261101:main:resume-deployment:v2",
+  "state": "prelaunch_registered_gpu_not_idle",
+  "observed_at": "2026-11-01T03:03:50.668514+00:00",
+  "hard_gate_failed": "registered GPU0 idle requirement",
+  "gpu_evidence": {
+    "observed_at": "2026-11-01T03:02:25.062267+00:00",
+    "run_exists": false,
+    "gpu_uuid": "<REGISTERED_GPU>",
+    "index": "0",
+    "memory_used": "56893 MiB",
+    "gpu_utilization": "100 %",
+    "recovery_action": "None",
+    "compute_mode": "Default",
+    "processes": [
+      {
+        "pid": "72290",
+        "used_memory": "30974 MiB",
+        "type": "C"
+      },
+      {
+        "pid": "72301",
+        "used_memory": "25890 MiB",
+        "type": "C"
+      }
+    ],
+    "compute_apps_for_uuid": [
+      "<REGISTERED_GPU>, 72290, 30974",
+      "<REGISTERED_GPU>, 72301, 25890"
+    ],
+    "gate_passed": false,
+    "reason": "GPU field failed or unknown: fb_memory_usage/used",
+    "mutation_sent": false
+  },
+  "environment_gate": {
+    "passed": true,
+    "at": "2026-11-01T03:02:48.715468+00:00",
+    "interpreter_match": true,
+    "packages_exact_raw_metadata_match": 78,
+    "private_environment_used_readonly": true
+  },
+  "reconciliation": {
+    "two_samples_passed": true,
+    "original_receiver_absent": true,
+    "unreadable_candidates": [],
+    "run_exists": false,
+    "cached_checkpoint_exact": true,
+    "historical_remote_exit_code": null,
+    "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101/operator/execution-02/original-receiver-asset-reconciliation.json"
+  },
+  "source_and_science_unchanged": true,
+  "new_receiver_and_small_payload_unchanged": true,
+  "small_deployment_mutation_sent": false,
+  "mutation_attempts_used": 0,
+  "launch_sent": false,
+  "preflight_started": false,
+  "training_started": false,
+  "training_completed": false,
+  "parameter_updates": 0,
+  "freeze_verified": null,
+  "write_scope_verified": null,
+  "own_resources_released": "not_applicable_no_remote_job_launched",
+  "scoring_performed": false,
+  "official_upload_performed": false,
+  "outside_scope_changes": "not_verified_no_whole_host_audit",
+  "new_install": false,
+  "profile_or_source_changed": false,
+  "timing": {
+    "finished_at": "2026-11-01T03:03:50.668514+00:00",
+    "thread_created_at": "2026-10-30T14:36:08+00:00",
+    "whole_thread_wall_seconds": 131262.669,
+    "current_turn_wall_seconds": 134.669,
+    "local_read_gate_to_report_seconds": 107.262,
+    "phases": [
+      {
+        "tag": "identity-resources-r1",
+        "readonly": true,
+        "started_at": "2026-11-01T03:02:21.902259+00:00",
+        "finished_at": "2026-11-01T03:02:26.915784+00:00",
+        "elapsed_seconds": 5.013525,
+        "exit_code": 0
+      },
+      {
+        "tag": "environment-rawbytes-r1",
+        "readonly": true,
+        "started_at": "2026-11-01T03:02:45.487109+00:00",
+        "finished_at": "2026-11-01T03:02:48.837525+00:00",
+        "elapsed_seconds": 3.350416,
+        "exit_code": 0
+      },
+      {
+        "tag": "original-receiver-asset-reconcile-r1",
+        "readonly": true,
+        "started_at": "2026-11-01T03:03:17.769179+00:00",
+        "finished_at": "2026-11-01T03:03:21.632859+00:00",
+        "elapsed_seconds": 3.86368,
+        "exit_code": 0
+      }
+    ],
+    "whole_thread_span_includes_prior_tasks_waits_and_idle": true,
+    "small_deployment_duration_seconds": 0,
+    "preflight_duration_seconds": 0,
+    "training_duration_seconds": 0
+  },
+  "next": "Return evidence to main under GPU0 failure condition; no profile edits, alternate GPU, deployment or learning."
+}

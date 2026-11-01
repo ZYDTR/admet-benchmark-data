@@ -1,0 +1,195 @@
+{
+  "at": "2026-11-01T17:36:32.841511+00:00",
+  "scores_reused": {
+    "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/retrieval/stable-two-001/scores.json",
+    "sha256": "7e0d8a9ff81657e4de4dd6effe3b5ab5f10302ecc1fdfd71c56b004e929708a3",
+    "formal_new_calls_for_retained_runs": 0
+  },
+  "new_scores_sha256": "f37f584c8ced3b83a796fac05b9becee14d653a6e0a9bbac35e5597b794fb2e8",
+  "six_runs": [
+    {
+      "run_id": "hainan-agentled-mse-s44-20261102",
+      "model_seed": 44,
+      "monitor": "internal_validation_standardized_mse",
+      "valid_MAE": 0.41727108770329663,
+      "valid_rows": 91,
+      "metric": "MAE",
+      "direction": "minimize",
+      "epochs": 20,
+      "total_optimizer_steps": 100,
+      "resumed_optimizer_steps": 0,
+      "new_optimizer_steps": 100,
+      "best_epoch_1_based": 12,
+      "retained_previous_score_no_rescore": true,
+      "feature_mode": "fresh_frozen_encoding",
+      "resource_scope": "GPU0 historical sharing not_passed"
+    },
+    {
+      "run_id": "hainan-agentled-mse-s45-20261102",
+      "model_seed": 45,
+      "monitor": "internal_validation_standardized_mse",
+      "valid_MAE": 0.4477993207692307,
+      "valid_rows": 91,
+      "metric": "MAE",
+      "direction": "minimize",
+      "epochs": 39,
+      "total_optimizer_steps": 195,
+      "resumed_optimizer_steps": 0,
+      "new_optimizer_steps": 195,
+      "best_epoch_1_based": 31,
+      "retained_previous_score_no_rescore": true,
+      "feature_mode": "cached_frozen_representations",
+      "resource_scope": "GPU0 historical sharing not_passed"
+    },
+    {
+      "run_id": "hainan-agentled-mse-s46-20261102",
+      "model_seed": 46,
+      "monitor": "internal_validation_standardized_mse",
+      "valid_MAE": 0.4290186062747252,
+      "valid_rows": 91,
+      "metric": "MAE",
+      "direction": "minimize",
+      "epochs": 37,
+      "total_optimizer_steps": 185,
+      "resumed_optimizer_steps": 30,
+      "new_optimizer_steps": 155,
+      "best_epoch_1_based": 29,
+      "retained_previous_score_no_rescore": false,
+      "feature_mode": "cached_frozen_representations",
+      "resource_scope": "GPU1 conditional idle-resident small-head branch accepted by main"
+    },
+    {
+      "run_id": "hainan-agentled-mae-s44-20261102",
+      "model_seed": 44,
+      "monitor": "internal_validation_raw_mae",
+      "valid_MAE": 0.4068564265494504,
+      "valid_rows": 91,
+      "metric": "MAE",
+      "direction": "minimize",
+      "epochs": 17,
+      "total_optimizer_steps": 85,
+      "resumed_optimizer_steps": 0,
+      "new_optimizer_steps": 85,
+      "best_epoch_1_based": 9,
+      "retained_previous_score_no_rescore": false,
+      "feature_mode": "cached_frozen_representations",
+      "resource_scope": "GPU1 conditional idle-resident small-head branch accepted by main"
+    },
+    {
+      "run_id": "hainan-agentled-mae-s45-20261102",
+      "model_seed": 45,
+      "monitor": "internal_validation_raw_mae",
+      "valid_MAE": 0.43222243850549447,
+      "valid_rows": 91,
+      "metric": "MAE",
+      "direction": "minimize",
+      "epochs": 14,
+      "total_optimizer_steps": 70,
+      "resumed_optimizer_steps": 0,
+      "new_optimizer_steps": 70,
+      "best_epoch_1_based": 6,
+      "retained_previous_score_no_rescore": false,
+      "feature_mode": "cached_frozen_representations",
+      "resource_scope": "GPU1 conditional idle-resident small-head branch accepted by main"
+    },
+    {
+      "run_id": "hainan-agentled-mae-s46-20261102",
+      "model_seed": 46,
+      "monitor": "internal_validation_raw_mae",
+      "valid_MAE": 0.4296442182637361,
+      "valid_rows": 91,
+      "metric": "MAE",
+      "direction": "minimize",
+      "epochs": 23,
+      "total_optimizer_steps": 115,
+      "resumed_optimizer_steps": 0,
+      "new_optimizer_steps": 115,
+      "best_epoch_1_based": 15,
+      "retained_previous_score_no_rescore": false,
+      "feature_mode": "cached_frozen_representations",
+      "resource_scope": "GPU1 conditional idle-resident small-head branch accepted by main"
+    }
+  ],
+  "pairs": [
+    {
+      "seed": 44,
+      "mse_selected_run": "hainan-agentled-mse-s44-20261102",
+      "mae_selected_run": "hainan-agentled-mae-s44-20261102",
+      "mse_selected_MAE": 0.41727108770329663,
+      "mae_selected_MAE": 0.4068564265494504,
+      "delta_mae_selected_minus_mse_selected": -0.010414661153846205,
+      "lower_observed_MAE": "MAE_monitor",
+      "config_difference_paths": [
+        "$/monitor",
+        "$/run_id"
+      ],
+      "config_only_monitor_and_identity_differ": true,
+      "runtime_scope": "Same seed/split/head/loss pairing; GPU/monitoring implementation, cached representation path and seed46 resume differ. Descriptive saved-model comparison, no causal significance claim."
+    },
+    {
+      "seed": 45,
+      "mse_selected_run": "hainan-agentled-mse-s45-20261102",
+      "mae_selected_run": "hainan-agentled-mae-s45-20261102",
+      "mse_selected_MAE": 0.4477993207692307,
+      "mae_selected_MAE": 0.43222243850549447,
+      "delta_mae_selected_minus_mse_selected": -0.015576882263736214,
+      "lower_observed_MAE": "MAE_monitor",
+      "config_difference_paths": [
+        "$/monitor",
+        "$/run_id"
+      ],
+      "config_only_monitor_and_identity_differ": true,
+      "runtime_scope": "Same seed/split/head/loss pairing; GPU/monitoring implementation, cached representation path and seed46 resume differ. Descriptive saved-model comparison, no causal significance claim."
+    },
+    {
+      "seed": 46,
+      "mse_selected_run": "hainan-agentled-mse-s46-20261102",
+      "mae_selected_run": "hainan-agentled-mae-s46-20261102",
+      "mse_selected_MAE": 0.4290186062747252,
+      "mae_selected_MAE": 0.4296442182637361,
+      "delta_mae_selected_minus_mse_selected": 0.0006256119890108991,
+      "lower_observed_MAE": "MSE_monitor",
+      "config_difference_paths": [
+        "$/monitor",
+        "$/run_id"
+      ],
+      "config_only_monitor_and_identity_differ": true,
+      "runtime_scope": "Same seed/split/head/loss pairing; GPU/monitoring implementation, cached representation path and seed46 resume differ. Descriptive saved-model comparison, no causal significance claim."
+    }
+  ],
+  "descriptive_groups": {
+    "MSE_monitor": {
+      "seeds": [
+        44,
+        45,
+        46
+      ],
+      "n_models": 3,
+      "mean_valid_MAE": 0.43136300491575086,
+      "sample_sd_across_models": 0.01539855211612538,
+      "min_valid_MAE": 0.41727108770329663,
+      "max_valid_MAE": 0.4477993207692307
+    },
+    "MAE_monitor": {
+      "seeds": [
+        44,
+        45,
+        46
+      ],
+      "n_models": 3,
+      "mean_valid_MAE": 0.4229076944395603,
+      "sample_sd_across_models": 0.013960451481374384,
+      "min_valid_MAE": 0.4068564265494504,
+      "max_valid_MAE": 0.43222243850549447
+    }
+  },
+  "mean_paired_delta_mae_minus_mse": -0.008455310476190506,
+  "negative_delta_means": "MAE-selected saved model has lower official_valid MAE",
+  "limitations": [
+    "Three seeds, same91 validation samples, not independent final generalization or statistical significance.",
+    "Validation reused for comparison and selection; no official aggregate score or new hyperparameter decision inferred.",
+    "GPU0 failed sharing qualification remains, GPU1 later acceptance is conditional on observed idle residency; direct resident throughput/latency absent.",
+    "Seed46 MSE continued a30-step head/optimizer/RNG checkpoint; runtime history differs from three fresh MAE heads.",
+    "Only configurations are compared mechanically; full numerical equivalence of implementation paths is not replayed here."
+  ]
+}

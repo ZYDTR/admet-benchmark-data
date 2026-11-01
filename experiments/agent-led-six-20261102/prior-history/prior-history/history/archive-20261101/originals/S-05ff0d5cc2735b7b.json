@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "scientific_asset_id": "chemeleon",
+  "scope": "已验收Caco2/CheMeleon实现的配置接口；其他候选不是永久禁止，需准备并单独准入",
+  "source": "cycles/monitor-mae-e2e-20261101/preparation/input/config.json",
+  "source_sha256": "da5062761b9871a878fd87b19853062cfcc83848935c6eb7b1c90156481dfa77",
+  "configuration_fields": [
+    "head_config",
+    "split_config",
+    "preprocessing",
+    "monitor",
+    "training_only_new_head"
+  ],
+  "nested_fields": {
+    "head_config": [
+      "hidden_dims",
+      "dropout",
+      "lr",
+      "weight_decay",
+      "batch_size",
+      "epochs",
+      "patience",
+      "val_fraction_from_train",
+      "seed",
+      "optimizer"
+    ],
+    "split_config": [
+      "method",
+      "seed",
+      "validation_fraction"
+    ]
+  },
+  "enums": {
+    "head_config.optimizer": [
+      "AdamW"
+    ],
+    "split_config.method": [
+      "raw_smiles_group_shuffle"
+    ],
+    "preprocessing": [
+      "legacy_z_train_fit"
+    ],
+    "monitor": [
+      "internal_validation_standardized_mse",
+      "internal_validation_raw_mae"
+    ],
+    "training_only_new_head": [
+      true
+    ]
+  },
+  "example_exact_config": {
+    "head_config": {
+      "hidden_dims": [
+        256
+      ],
+      "dropout": 0.1,
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "epochs": 50,
+      "patience": 8,
+      "val_fraction_from_train": 0.1,
+      "seed": 43,
+      "optimizer": "AdamW"
+    },
+    "split_config": {
+      "method": "raw_smiles_group_shuffle",
+      "seed": 43,
+      "validation_fraction": 0.1
+    },
+    "preprocessing": "legacy_z_train_fit",
+    "monitor": "internal_validation_raw_mae",
+    "training_only_new_head": true
+  },
+  "not_yet_admitted": [
+    "other encoder interfaces",
+    "other monitor enum unless admitted separately",
+    "persistent feature cache consumer",
+    "general checkpoint resume",
+    "multi-task and multi-GPU launcher"
+  ],
+  "source_code": "cycles/monitor-mae-e2e-20261101/preparation/host-science-v1/training_science.py",
+  "source_code_sha256": "63bb22a2aa1634f7e3db3a3b972969ee84f3f861da6fe561608e5cb87acf046c"
+}

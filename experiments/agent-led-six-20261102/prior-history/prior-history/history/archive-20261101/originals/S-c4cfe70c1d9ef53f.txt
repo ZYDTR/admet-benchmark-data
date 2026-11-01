@@ -1,0 +1,7 @@
+接续唯一Caco2冻结CheMeleon任务，request_id=admet-monitor-mae-e2e-20261101:main:resume-residual:v4。使用本次新版训练Skill：<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/acceptance/residual-memory-v4/skill-packet/skills/admet-frozen-training/SKILL.md；完整packet manifest SHA256=08c540a35ddf173333cb411178b6f18a24f8344c855baed42f79ebd172d68592，相对项目引用按manifest的canonical_project解析，海南连接规则照常先读。
+
+正式恢复及实现准入：<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/acceptance/residual-memory-v4/dispatch.json，SHA256=c8eca916f90b02f1488f0f248411e46eea789a645b845ed1816439cc6b555c75。主控亲自修正了错误的0 MiB门槛；按任务需求4096MiB峰值+4096MiB余量判断，无固定已用显存上限。新版实际函数21项检查、完整47件绑定与生产准入7项检查通过；三个现场GPU2样本无活动进程且余量足够，但你启动前必须再复核。用dispatch绑定的v4 gate及build_package.py，只有6件批准替换，科学/输入/PLAN不变；当前run原远端目录未创建，仍仅恢复原一次训练。
+
+你可在本地execution-04/raw/execution-04按合同做现场复核、部署、CUDA预检、唯一学习和收集。独占生成新package再发送，不能拿离线fixture当部署。总预算和原状态对账按dispatch。尽量复用已审核实现与证据，只做所需新现场核验，避免重复全量调研。
+
+用户刚明确常规算力更新由你与观察Thread直接衔接。请按<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/control/resource-handoff-v4.json维护execution-04/status.json：等待则写waiting_for_resources，观察者会在资源变化时直接通知你；你检查新记录并现场复核后继续这个已准入任务，无需每次回主控重新派发。观察通知不是新训练授权；正在执行不能被重复启动，未知启动状态先对账。完成、实质故障、预算到期或需要改实现/规则才回主控private-role-298cc5edc25e。不得自行派任务或新增定时。

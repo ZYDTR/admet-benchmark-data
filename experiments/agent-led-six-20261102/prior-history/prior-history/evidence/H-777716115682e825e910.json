@@ -1,0 +1,102 @@
+[
+  {
+    "gate_id": "G-SCOPE",
+    "dependencies": [],
+    "fit_count": 0,
+    "requirement": "主控对具体批次另行授权；本研究无训练/新评分/派发权",
+    "issue_ids": [
+      "ISSUE-008"
+    ]
+  },
+  {
+    "gate_id": "G-IDENTITY",
+    "dependencies": [
+      "G-SCOPE"
+    ],
+    "fit_count": 0,
+    "requirement": "既有权重/代码/官方ZIP/盲valid/test摘要匹配；宿主核对任务train文件及行身份，不能把pending空manifest当证明",
+    "issue_ids": [
+      "ISSUE-004",
+      "ISSUE-017"
+    ]
+  },
+  {
+    "gate_id": "G-RUNNER",
+    "dependencies": [
+      "G-IDENTITY"
+    ],
+    "fit_count": 0,
+    "requirement": "新接口A1–A10独立验收；旧检查器打包遗漏按主控独立修复处理",
+    "issue_ids": [
+      "ISSUE-002",
+      "ISSUE-019"
+    ]
+  },
+  {
+    "gate_id": "G-METRIC",
+    "dependencies": [
+      "G-RUNNER"
+    ],
+    "fit_count": 0,
+    "requirement": "锁定本地AUROC/AP/Spearman/MAE实现与方向；AP官方等价未知需保留，不阻塞有定义的本地研究",
+    "issue_ids": [
+      "ISSUE-003"
+    ]
+  },
+  {
+    "gate_id": "G-DIAGNOSTIC",
+    "dependencies": [
+      "G-METRIC"
+    ],
+    "fit_count": 0,
+    "requirement": "任务尺度/逆变换/预测身份/非有限值/标准化审计；单位未知不要求改原Y，不因未证明因果就禁止基线",
+    "issue_ids": [
+      "ISSUE-005",
+      "ISSUE-012",
+      "ISSUE-014",
+      "ISSUE-015"
+    ]
+  },
+  {
+    "gate_id": "G-RESOURCES",
+    "dependencies": [
+      "G-DIAGNOSTIC"
+    ],
+    "fit_count": 0,
+    "requirement": "主控确认不影响他人及有界资源、日志与取回；未就绪不启动，不取消既有配对",
+    "issue_ids": [
+      "ISSUE-011"
+    ]
+  },
+  {
+    "gate_id": "G-EXTEND",
+    "dependencies": [
+      "G-RESOURCES",
+      "P-S1-solubility_aqsoldb-H0",
+      "P-S1-solubility_aqsoldb-H1",
+      "P-S1-ppbr_az-H0",
+      "P-S1-ppbr_az-H1",
+      "P-S1-ld50_zhu-H0",
+      "P-S1-ld50_zhu-H1",
+      "P-S1-lipophilicity_astrazeneca-H0",
+      "P-S1-lipophilicity_astrazeneca-H1",
+      "P-S1-vdss_lombardo-H0",
+      "P-S1-vdss_lombardo-H1",
+      "P-S1-half_life_obach-H0",
+      "P-S1-half_life_obach-H1",
+      "P-S1-cyp2d6_substrate_carbonmangels-H0",
+      "P-S1-cyp2d6_substrate_carbonmangels-H1",
+      "P-S1-ames-H0",
+      "P-S1-ames-H1",
+      "P-S1-bioavailability_ma-H0",
+      "P-S1-bioavailability_ma-H1",
+      "P-S1-dili-H0",
+      "P-S1-dili-H1"
+    ],
+    "fit_count": 0,
+    "requirement": "S1按整批复核后决定是否授权已明确11任务S1B；有重大边界错误不扩",
+    "issue_ids": [
+      "ISSUE-006"
+    ]
+  }
+]

@@ -1,0 +1,386 @@
+{
+  "method": "Read existing NPZ ZIP/NPY numeric payloads using only Python stdlib zipfile/ast.literal_eval/struct/math; no archive code/native model/pickle/torch.load/inference/training; float64 arithmetic audit, not scoring. Scaling comparisons apply each existing transform to both existing feature arrays to isolate encoder numeric drift; no fit change. Recomputed fit stats are double arithmetic diagnostic, not expected byte-identical to NumPy float32.",
+  "downloads": [
+    {
+      "path": "runs/hainan-frozen-training-20261031/artifacts/features-train.npz",
+      "bytes": 5219463,
+      "sha256": "a31fe5a951221d2633e2c0fa94f38e86a80139a2aa21b74e0c977353e6ea6aad"
+    },
+    {
+      "path": "runs/hainan-frozen-training-20261031/artifacts/features-valid.npz",
+      "bytes": 746085,
+      "sha256": "500466c0cce64dd84d58f0e6b6ade174c8b7c905f6b7f532bef46b4c7a670a39"
+    },
+    {
+      "path": "runs/hainan-frozen-training-20261031/artifacts/features-test.npz",
+      "bytes": 1491648,
+      "sha256": "caad4ea14d97ff6ad8a4506b7b5c14c639fed02e4f3db53cceed302e49b4cc9f"
+    },
+    {
+      "path": "runs/hainan-skill-follow-20261031/artifacts/features-train.npz",
+      "bytes": 5219463,
+      "sha256": "3dfd0fe8d71733ce2e1ff1198ae821333729ba774edf8357a69d0c48fa7cd53c"
+    },
+    {
+      "path": "runs/hainan-skill-follow-20261031/artifacts/features-valid.npz",
+      "bytes": 746085,
+      "sha256": "691e5d75ffa116e0004ddb405867faee670b025a5a681d3f77518b35dff58829"
+    },
+    {
+      "path": "runs/hainan-skill-follow-20261031/artifacts/features-test.npz",
+      "bytes": 1491648,
+      "sha256": "90e715421ea934010596386d2d8127bfaf27422140c22bac2719e847c6dfc3ab"
+    }
+  ],
+  "results": [
+    {
+      "split": "train",
+      "shape": [
+        637,
+        2048
+      ],
+      "values": 1304576,
+      "different_values": 470121,
+      "max_abs_difference": 3.5762786865234375e-07,
+      "mean_abs_difference": 3.906023220848597e-09,
+      "rms_difference": 9.262529164173316e-09,
+      "all_differences_le_1e_5": true,
+      "same_finite_masks": true,
+      "same_parse_masks": true,
+      "scaled_by_each_recorded_training_transform": {
+        "hainan-frozen-training-20261031": {
+          "max_delta_using_same_run_scale": 0.0001253418884975098,
+          "mean_delta_using_same_run_scale": 1.0621080005123099e-07,
+          "max_abs_scaled_feature": 871.665260292028,
+          "count_abs_scaled_gt_10": 934,
+          "count_abs_scaled_gt_100": 7,
+          "top_abs_scaled_locations": [
+            {
+              "row_index": 327,
+              "feature_index": 1279,
+              "abs_scaled": 871.665260292028,
+              "feature": 0.7583030462265015,
+              "mean": 3.63728468073532e-05,
+              "sd": 0.0008699058089405298
+            },
+            {
+              "row_index": 327,
+              "feature_index": 1448,
+              "abs_scaled": 244.44772495405033,
+              "feature": 0.721358060836792,
+              "mean": 0.0002549456257838756,
+              "sd": 0.0029499277006834745
+            },
+            {
+              "row_index": 327,
+              "feature_index": 1112,
+              "abs_scaled": 219.14952580087848,
+              "feature": 1.266897201538086,
+              "mean": 0.00042556095286272466,
+              "sd": 0.005779029801487923
+            },
+            {
+              "row_index": 327,
+              "feature_index": 253,
+              "abs_scaled": 160.2293590925748,
+              "feature": 0.6795942187309265,
+              "mean": 0.0007780976011417806,
+              "sd": 0.004236527718603611
+            },
+            {
+              "row_index": 327,
+              "feature_index": 1696,
+              "abs_scaled": 144.23677936818711,
+              "feature": 0.49553102254867554,
+              "mean": 0.0003705491544678807,
+              "sd": 0.0034329695627093315
+            }
+          ],
+          "fitted_feature_mean_max_difference_float64_recompute": 2.1795223725806778e-07,
+          "fitted_feature_std_max_difference_float64_recompute": 3.5003696799429385e-07
+        },
+        "hainan-skill-follow-20261031": {
+          "max_delta_using_same_run_scale": 0.0002369569269463414,
+          "mean_delta_using_same_run_scale": 1.0766002743054921e-07,
+          "max_abs_scaled_feature": 1637.4147792598128,
+          "count_abs_scaled_gt_10": 991,
+          "count_abs_scaled_gt_100": 8,
+          "top_abs_scaled_locations": [
+            {
+              "row_index": 129,
+              "feature_index": 1507,
+              "abs_scaled": 1637.4147792598128,
+              "feature": 0.20594605803489685,
+              "mean": 6.675874828943051e-06,
+              "sd": 0.00012577105371747166
+            },
+            {
+              "row_index": 327,
+              "feature_index": 1279,
+              "abs_scaled": 871.660419311512,
+              "feature": 0.7583030462265015,
+              "mean": 3.63728468073532e-05,
+              "sd": 0.0008699106401763856
+            },
+            {
+              "row_index": 327,
+              "feature_index": 1448,
+              "abs_scaled": 244.4472812005273,
+              "feature": 0.721358060836792,
+              "mean": 0.0002549456257838756,
+              "sd": 0.0029499330557882786
+            },
+            {
+              "row_index": 327,
+              "feature_index": 1112,
+              "abs_scaled": 219.15003789580996,
+              "feature": 1.266897201538086,
+              "mean": 0.0004255609819665551,
+              "sd": 0.005779016297310591
+            },
+            {
+              "row_index": 327,
+              "feature_index": 253,
+              "abs_scaled": 161.0729997303988,
+              "feature": 0.6795942187309265,
+              "mean": 0.0007644248544238508,
+              "sd": 0.0042144232429564
+            }
+          ],
+          "fitted_feature_mean_max_difference_float64_recompute": 2.477431822467402e-07,
+          "fitted_feature_std_max_difference_float64_recompute": 4.082947221151212e-07
+        }
+      }
+    },
+    {
+      "split": "valid",
+      "shape": [
+        91,
+        2048
+      ],
+      "values": 186368,
+      "different_values": 73893,
+      "max_abs_difference": 2.384185791015625e-07,
+      "mean_abs_difference": 4.228863752078912e-09,
+      "rms_difference": 9.420398890371349e-09,
+      "all_differences_le_1e_5": true,
+      "same_finite_masks": true,
+      "same_parse_masks": true,
+      "scaled_by_each_recorded_training_transform": {
+        "hainan-frozen-training-20261031": {
+          "max_delta_using_same_run_scale": 0.00013517401786409129,
+          "mean_delta_using_same_run_scale": 1.1925732852107852e-07,
+          "max_abs_scaled_feature": 222.34255060983466,
+          "count_abs_scaled_gt_10": 147,
+          "count_abs_scaled_gt_100": 2,
+          "top_abs_scaled_locations": [
+            {
+              "row_index": 73,
+              "feature_index": 1331,
+              "abs_scaled": 222.34255060983466,
+              "feature": 0.039839621633291245,
+              "mean": 1.0306512194802053e-05,
+              "sd": 0.0001791349204722792
+            },
+            {
+              "row_index": 72,
+              "feature_index": 1331,
+              "abs_scaled": 123.78818279125899,
+              "feature": 0.02218509279191494,
+              "mean": 1.0306512194802053e-05,
+              "sd": 0.0001791349204722792
+            },
+            {
+              "row_index": 40,
+              "feature_index": 337,
+              "abs_scaled": 92.52320416304053,
+              "feature": 0.38682958483695984,
+              "mean": 0.00047748858924023807,
+              "sd": 0.004175731912255287
+            },
+            {
+              "row_index": 33,
+              "feature_index": 1089,
+              "abs_scaled": 86.81668632303152,
+              "feature": 0.029662534594535828,
+              "mean": 2.09369227377465e-05,
+              "sd": 0.00034142742515541613
+            },
+            {
+              "row_index": 41,
+              "feature_index": 1089,
+              "abs_scaled": 86.78380623933786,
+              "feature": 0.029651308432221413,
+              "mean": 2.09369227377465e-05,
+              "sd": 0.00034142742515541613
+            }
+          ]
+        },
+        "hainan-skill-follow-20261031": {
+          "max_delta_using_same_run_scale": 0.0001351748853511448,
+          "mean_delta_using_same_run_scale": 1.2055217873223387e-07,
+          "max_abs_scaled_feature": 222.34397745520118,
+          "count_abs_scaled_gt_10": 161,
+          "count_abs_scaled_gt_100": 5,
+          "top_abs_scaled_locations": [
+            {
+              "row_index": 73,
+              "feature_index": 1331,
+              "abs_scaled": 222.34397745520118,
+              "feature": 0.039839621633291245,
+              "mean": 1.0306521289749071e-05,
+              "sd": 0.00017913377087097615
+            },
+            {
+              "row_index": 72,
+              "feature_index": 1331,
+              "abs_scaled": 123.78908113896864,
+              "feature": 0.022185111418366432,
+              "mean": 1.0306521289749071e-05,
+              "sd": 0.00017913377087097615
+            },
+            {
+              "row_index": 33,
+              "feature_index": 1089,
+              "abs_scaled": 108.47016438037808,
+              "feature": 0.02966253086924553,
+              "mean": 1.2361334484012332e-05,
+              "sd": 0.00027334861806593835
+            },
+            {
+              "row_index": 41,
+              "feature_index": 1089,
+              "abs_scaled": 108.42910897975626,
+              "feature": 0.029651308432221413,
+              "mean": 1.2361334484012332e-05,
+              "sd": 0.00027334861806593835
+            },
+            {
+              "row_index": 40,
+              "feature_index": 337,
+              "abs_scaled": 107.3702931237868,
+              "feature": 0.3868296146392822,
+              "mean": 0.00036781345261260867,
+              "sd": 0.0035993363708257675
+            }
+          ]
+        }
+      }
+    },
+    {
+      "split": "test",
+      "shape": [
+        182,
+        2048
+      ],
+      "values": 372736,
+      "different_values": 138725,
+      "max_abs_difference": 2.384185791015625e-07,
+      "mean_abs_difference": 4.04315922896759e-09,
+      "rms_difference": 9.551414765767966e-09,
+      "all_differences_le_1e_5": true,
+      "same_finite_masks": true,
+      "same_parse_masks": true,
+      "scaled_by_each_recorded_training_transform": {
+        "hainan-frozen-training-20261031": {
+          "max_delta_using_same_run_scale": 0.0003223380425989869,
+          "mean_delta_using_same_run_scale": 1.1952364356010552e-07,
+          "max_abs_scaled_feature": 105.36473360848503,
+          "count_abs_scaled_gt_10": 857,
+          "count_abs_scaled_gt_100": 2,
+          "top_abs_scaled_locations": [
+            {
+              "row_index": 170,
+              "feature_index": 1331,
+              "abs_scaled": 105.36473360848503,
+              "feature": 0.01888480968773365,
+              "mean": 1.0306512194802053e-05,
+              "sd": 0.0001791349204722792
+            },
+            {
+              "row_index": 172,
+              "feature_index": 1331,
+              "abs_scaled": 105.0686921113613,
+              "feature": 0.018831778317689896,
+              "mean": 1.0306512194802053e-05,
+              "sd": 0.0001791349204722792
+            },
+            {
+              "row_index": 169,
+              "feature_index": 1331,
+              "abs_scaled": 71.25952305626829,
+              "feature": 0.012775375507771969,
+              "mean": 1.0306512194802053e-05,
+              "sd": 0.0001791349204722792
+            },
+            {
+              "row_index": 107,
+              "feature_index": 409,
+              "abs_scaled": 51.07141279910123,
+              "feature": 0.05531302094459534,
+              "mean": 5.006150240660645e-05,
+              "sd": 0.0010820722673088312
+            },
+            {
+              "row_index": 16,
+              "feature_index": 1844,
+              "abs_scaled": 49.38565010693236,
+              "feature": 0.13896575570106506,
+              "mean": 0.0006976342992857099,
+              "sd": 0.002799763111397624
+            }
+          ]
+        },
+        "hainan-skill-follow-20261031": {
+          "max_delta_using_same_run_scale": 0.00032234011122196063,
+          "mean_delta_using_same_run_scale": 1.2090365266346427e-07,
+          "max_abs_scaled_feature": 105.36508740185504,
+          "count_abs_scaled_gt_10": 924,
+          "count_abs_scaled_gt_100": 2,
+          "top_abs_scaled_locations": [
+            {
+              "row_index": 170,
+              "feature_index": 1331,
+              "abs_scaled": 105.36508740185504,
+              "feature": 0.018884751945734024,
+              "mean": 1.0306521289749071e-05,
+              "sd": 0.00017913377087097615
+            },
+            {
+              "row_index": 172,
+              "feature_index": 1331,
+              "abs_scaled": 105.06940793725155,
+              "feature": 0.018831785768270493,
+              "mean": 1.0306521289749071e-05,
+              "sd": 0.00017913377087097615
+            },
+            {
+              "row_index": 169,
+              "feature_index": 1331,
+              "abs_scaled": 71.25998031759437,
+              "feature": 0.012775375507771969,
+              "mean": 1.0306521289749071e-05,
+              "sd": 0.00017913377087097615
+            },
+            {
+              "row_index": 16,
+              "feature_index": 1844,
+              "abs_scaled": 60.35434759353237,
+              "feature": 0.13896574079990387,
+              "mean": 0.0006427669432014227,
+              "sd": 0.0022918477188795805
+            },
+            {
+              "row_index": 107,
+              "feature_index": 409,
+              "abs_scaled": 51.071514580446895,
+              "feature": 0.05531303584575653,
+              "mean": 5.0061396905221045e-05,
+              "sd": 0.001082070404663682
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+# 海南资源观察接续
+
+以本目录 registry.json 的真实任务登记为准，latest.json/status.json是采样事实。用户要求的独立观察使用原automation-5每10分钟执行一轮，直到用户停止；无变化只落盘，不另建定时。
+
+入口为项目AGENTS与资源观察Skill；海南操作先读通用连接Skill及connection参考。只查机器/GPU/必要进程元数据，不读取同事项目、不训练、不安装、不更改远端服务和文件。运行 implementation/observe.py 前遵守已有命令身份核验；旧原件及解析版本保留。
+
+登记中的原训练任务仅在真实状态waiting_for_resources、请求身份一致且出现有意义候选/余量变化时，直接通知该原训练Thread，由它现场复核并继续原授权。响应不明先核回执；部署/学习/收集中、终态或状态未知不重复唤醒。普通资源变化不经主控中转；实质故障或登记截止问题回主控一次。没有等待任务也照常记录资源，但不产生训练派发。
+
+候选按需求和余量判断，不设零显存/任意小已用上限。现有normalize分类仍是旧保守口径，occupied包含非零显存，不能把这个词当禁止共享；资源变化比较需结合实际数值和原始进程证据。共享还需满足通用Skill的负载/影响条件，观察本身不授予资格。
+
+monitor-mae v4已真实终态，原worker完成但外层监控125；主控在做独立验收，已移入completed_runs并关闭资源唤醒。不要再沿用v3仅回主控、4MiB草稿或旧活动状态。v4冻结协议及实际消费证据仍留在implementation/handoff-v4-consumption.json及对应cycle；旧接续全文已保存到本次控制审查before快照，只有历史用途。
+
+每次保留唯一观测ID、真实时间、原件/hash、成功/partial/失败和前后变化。15分钟以上或未知记录须补查，启动前直接核验始终归训练方。连接偶发异常按通用Skill有界退避；已用尽本轮重试时下个既有周期再接续。无权改变训练预算或其他Thread任务。
+
+2026-11-01 04:03 UTC：主控已将v4移至completed_runs（resource_wake_enabled=false，independent_acceptance=pending），waiting_runs/active_runs均为空。既有failed已通知，不唤醒终态任务，不以旧截止另造等待；按未来实际登记继续观察，不能将主控收录终态误写成独立验收通过。

@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "scope": "scientific_source_admission_only_not_training_or_remote_acceptance",
+  "run_id": "hainan-index-cycle-20261031",
+  "at": "2026-10-31T09:58:57.879520+00:00",
+  "reviewer": "main_controller",
+  "accepted_source_manifest": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031/preparation/host-science-v1/manifest.json",
+  "accepted_source_manifest_sha256": "1f944daecd5a629a488dfba180ee2611091a2482d2e2f489005c2836c0260dd5",
+  "source_manifest": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031/preparation/host-science-v1/manifest.json",
+  "source_manifest_sha256": "1f944daecd5a629a488dfba180ee2611091a2482d2e2f489005c2836c0260dd5",
+  "original_qwen_outcome": "failed independent acceptance; original retained",
+  "revision": "host-science-v1",
+  "input_policy": "official train plus blind valid/test only; source and encoder unchanged",
+  "changes": [
+    "preserve empty/repeated IDs through actual CSV boundary for all splits",
+    "full optimizer tensor state and CPU/CUDA/sampler RNG, fail on required reload error",
+    "checkpoint-specific epoch/steps and monitor value",
+    "explicit AdamW config, same hyperparameters and algorithm",
+    "split hash excludes its own digest, feature identity includes source CSV and dependency versions",
+    "environment setup before heavy imports; pinned root encoder path explicit"
+  ],
+  "checks": {
+    "main_original_failures_reproduced": true,
+    "production_csv_actual_rows": [
+      637,
+      91,
+      182
+    ],
+    "synthetic_and_real_helper_tests": 8,
+    "torch_actual_type_roundtrip": true,
+    "optimizer_parameter_updates_during_tests": 0,
+    "torch_version_local": "2.7.1",
+    "plan_check_passed": true,
+    "full_config_matches_plan_except_explicit_optimizer_name": true,
+    "python_ast_passed": true
+  },
+  "required_before_training": [
+    "review production adapter and completion receipt run/token/PID contract",
+    "all environment and write boundaries before any scientific import",
+    "target skill/resource/identity checks and bounded real CUDA preflight",
+    "main formal execution message for this one run"
+  ],
+  "not_verified": [
+    "CUDA RNG on target",
+    "full target dependency stack",
+    "real encoding/learning/freeze/write scope/resource release",
+    "actual deterministic resumed training trajectory"
+  ],
+  "training_started": false,
+  "private_valid_read": false,
+  "scoring_performed": false
+}

@@ -1,0 +1,45 @@
+"""Minimal context for the supplied scientific function, private to this batch."""
+import datetime, hashlib, json, os, stat, uuid
+from pathlib import Path
+ROOT = Path(os.environ['ADMET_RUN_ROOT'])
+GPU_UUID = os.environ['CUDA_VISIBLE_DEVICES']
+
+def now():
+    return datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+def safe(path, existing=False):
+    path = Path(path)
+    if ROOT.resolve(strict=True) != ROOT or not (path == ROOT or ROOT in path.parents) or path.resolve(strict=existing) != path:
+        raise ValueError('noncanonical task path')
+    for parent in (path, *path.parents):
+        if parent.exists() or parent.is_symlink():
+            s = parent.lstat()
+            if stat.S_ISLNK(s.st_mode) or (stat.S_ISREG(s.st_mode) and s.st_nlink != 1):
+                raise ValueError('linked task path')
+    return path
+
+def sha(path):
+    h = hashlib.sha256()
+    with safe(path, True).open('rb') as stream:
+        for v in iter(lambda: stream.read(1024 * 1024), b''):
+            h.update(v)
+    return h.hexdigest()
+
+def write_json(path, value):
+    path = safe(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(path.name + '.' + uuid.uuid4().hex + '.tmp')
+    with safe(tmp).open('x') as stream:
+        json.dump(value, stream, indent=2, allow_nan=False)
+        stream.write('\n')
+        stream.flush()
+        os.fsync(stream.fileno())
+    tmp.replace(path)
+
+def environment():
+    python = '<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/venv/bin'
+    env = {'PATH': python + ':/usr/bin:/bin', 'LANG': 'C.UTF-8', 'HOME': str(ROOT / 'home'), 'TMPDIR': str(ROOT / 'tmp'), 'TMP': str(ROOT / 'tmp'), 'TEMP': str(ROOT / 'tmp'), 'ADMET_RUN_ROOT': str(ROOT), 'CUDA_VISIBLE_DEVICES': GPU_UUID, 'CUDA_DEVICE_ORDER': 'PCI_BUS_ID', 'PYTHONDONTWRITEBYTECODE': '1', 'JOBLIB_MULTIPROCESSING': '0', 'OMP_NUM_THREADS': '2', 'MKL_NUM_THREADS': '2', 'OPENBLAS_NUM_THREADS': '2', 'NUMEXPR_NUM_THREADS': '2', 'TOKENIZERS_PARALLELISM': 'false', 'HF_HUB_OFFLINE': '1', 'TRANSFORMERS_OFFLINE': '1', 'NCCL_SHM_DISABLE': '1', 'XDG_CACHE_HOME': str(ROOT / 'cache'), 'XDG_CONFIG_HOME': str(ROOT / 'config'), 'XDG_DATA_HOME': str(ROOT / 'local-data'), 'MPLCONFIGDIR': str(ROOT / 'cache/matplotlib'), 'TORCH_HOME': str(ROOT / 'cache/torch'), 'TORCHINDUCTOR_CACHE_DIR': str(ROOT / 'cache/inductor'), 'TRITON_CACHE_DIR': str(ROOT / 'cache/triton'), 'NUMBA_CACHE_DIR': str(ROOT / 'cache/numba'), 'HF_HOME': str(ROOT / 'cache/hf'), 'UV_CACHE_DIR': str(ROOT / 'cache/uv'), 'PIP_CACHE_DIR': str(ROOT / 'cache/pip'), 'PYTHONPYCACHEPREFIX': str(ROOT / 'cache/pycache')}
+    shim = Path('<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/support/thread-names-v2.so')
+    if shim.exists():
+        env['LD_PRELOAD'] = str(shim)
+    return env

@@ -1,0 +1,103 @@
+# Harness 与四天交付：工程、协作及风险独立评审
+
+评审对象：原包 `admet-agent-harness`，截至 2026-10-29 的已有验证记录与拟议启动设计。本报告只评审，不修改原项目、不执行比赛训练、不联系他人。代码路径均相对原包根目录；规则引用指本 workspace 的原文件。赛事事实以原包 2026-10-28 的记录为依据，**不是本报告对当前官网的独立核验**。
+
+## 结论与决策
+
+四天方案可以作为**条件目标**，不能作为工期承诺。D1 上午取得数据和训练环境可用只是前提，标签语义、单文件划分、镜像/设备、训练速度、预测输出与完整候选链均尚未实测。D2 就覆盖 22 个任务并产出完整候选属于乐观目标：一个任务的真实闭环尚不能外推 22 个任务训练与推理的总 wall time，尤其当任务数据量、缺失标签、类别稀缺、任务结构、GPU 排队和 I/O 未知时。应把 D1 首个真实任务和计时结果设为首个排期决策点，D2 完整候选作为第二个；每个决策点同时列可提交的退路与仍未满足的条件。
+
+优先投入是 **可追溯划分、最小真实训练/保存/加载/预测链、逐样本评价、完整提交验证**。A/B/C 可以并行：C 先实现适配器并用合成数据跑接口；B 分批确认任务及划分；A 接上执行器、固定接口和环境。每个真实任务只等待该任务的合法输入、标签与划分。最终提交仍须覆盖真实模板全部行和任务，且所有进入该候选的任务均有足够的数据和语义证据。当前代码并非硬编码强制 22 个任务一起确认：它检查所给 schema 的所有条目；可另给一个仅含已确认任务的 schema，但项目尚无明确的子集选择及全量提交区分合同（[runtime.py:179](../original/admet-agent-harness/src/admet_harness/runtime.py#L179)、[runtime.py:278](../original/admet-agent-harness/src/admet_harness/runtime.py#L278)）。
+
+预计 Harness 12–20 人小时只能视为未验证的规划假设，包含范围、环境集成、复现和返工与否会显著改变结果。三人每天各 8 小时提供理论 96 人小时，并不等于 96 小时模型算力或可全部用于实现。训练、容器构建、队列和文件拷贝的 wall time 与人员工作可部分重叠；共享 GPU、等待 B 的任务事实、整合验收和失败重跑则会使其串行。不要将合成运行速度用于承诺真实训练耗时。
+
+## 关键工程问题与验收
+
+### 1. 官方单文件与验证划分的表示缺口
+
+**证据与性质。** 这是代码可证明的当前限制，不是已知官方包一定如此。执行器要求训练阶段 `train` 和 `validation` 两种输入角色（[runtime.py:270](../original/admet-agent-harness/src/admet_harness/runtime.py#L270)）；清单要求官方原始文件、唯一规范路径及哈希（[runtime.py:98](../original/admet-agent-harness/src/admet_harness/runtime.py#L98)）。项目已明确写明官方包结构未确认，单一标注文件需增加有父输入和划分证据的接口（[data-policy.md:15](../original/admet-agent-harness/docs/data-policy.md#L15)）。两份不同文件各有角色也不自动证明样本互斥或没有重复分子泄漏。
+
+**触发与影响。** 若只提供一份标注表，或提供多任务长表、缺少官方验证文件，现有 `plan` 就无法直接训练；通过复制文件冒充两份官方输入只会隐藏泄漏。若先建模后补划分，B/C 可能各自重切导致不可比较。基于同一分子的跨任务共享表示也可能使验证目标信息间接泄漏；是否属于泄漏取决于真实任务和团队验证目标，需要 B 明确，而不能只凭文件名判定。
+
+**最小修正/验收。** B 定义样本键、划分方式及随机种子、父原始数据哈希、版本和任务适用范围；A 将划分清单和原始输入一起冻结，按键形成训练/验证视图，派生物标明父文件，不登记为新的官方原件；C 的特征/标准化器只在允许的训练部分拟合。检查样本键交集为零、重复/相同分子按所选验证策略可解释，明确每任务的样本与标签缺失情况。记录无法判断的跨任务关系；不要把某一种分子去重或 scaffold 划分硬说成官方要求。官方有明确划分时优先遵循并保留其来源。**负责人 B 主责，A 接口，C 核对拟合范围；D1 必须针对首个真实任务完成，D2 扩展全任务。**
+
+### 2. 标签语义、任务子集及预测兼容性
+
+**证据与性质。** 任务定义现为 unconfirmed，示例任务的单位、变换、缺失值及正类为空（[task_schema.json:1](../original/admet-agent-harness/competition/task_schema.json#L1)）。运行检查要求所有传入任务的状态、单位、变换、缺失及分类正类有明确值和证据（[runtime.py:179](../original/admet-agent-harness/src/admet_harness/runtime.py#L179)、[runtime.py:197](../original/admet-agent-harness/src/admet_harness/runtime.py#L197)）。`_checkpoint` 固定已完成训练产物及哈希（[runtime.py:224](../original/admet-agent-harness/src/admet_harness/runtime.py#L224)），但 `plan_run` 并未检查训练和预测两份 schema、适配器或变换语义一致（[runtime.py:278](../original/admet-agent-harness/src/admet_harness/runtime.py#L278)、[runtime.py:294](../original/admet-agent-harness/src/admet_harness/runtime.py#L294)）。具体调用链是：`plan_run` 独立验证本次 schema 和 adapter，再由 `_checkpoint` 检查父训练记录状态、产物路径和哈希；`verify_candidate` 再核对预测、权重、训练记录和模板（[candidate.py:104](../original/admet-agent-harness/src/admet_harness/candidate.py#L104)），均没有读取并比较训练与预测的 schema/预处理语义。这是缺少一致性校验的代码限制，尚未观察到实际错误预测，也未做对应反例运行。
+
+**触发与影响。** B 只确认一部分任务，或 C 在模型保存后修改类别顺序、标准化、特征管线或任务顺序时，哈希正确的 checkpoint 仍可能被不兼容的预测代码消费；真实训练不能以临时猜测的单位/标签方向启动。全 22 项人为捆成一个确认开关也会把本可并行的开发变为串行。
+
+**最小修正/验收。** 显式区分合成开发、已确认任务子集的真实训练/评价及全任务最终候选；子集 schema 固定任务集合、标签/变换版本和证据哈希，在 checkpoint 内保存模型实际使用的任务顺序及预处理状态，预测时检查其与训练元数据兼容。B 与 C 用已知标签核查缺失编码、分类正类、回归尺度及反变换；A 验证子集不会绕过最终模板覆盖检查。每个任务未确认时仅阻塞依赖它的真实动作，不能把它填为已确认。**负责人 B 定义，C 实现，A 合同检查；D1 首任务必须，D2 全覆盖。**
+
+### 3. 参考适配器及运行接口尚未穿透
+
+**证据与性质。** 文档固定 `train.py`/`predict.py`、输入和结果字段，要求 checkpoint 连同必要变换（[model-adapter.md:7](../original/admet-agent-harness/docs/model-adapter.md#L7)）；实际目录只有说明（[adapters/README.md:1](../original/admet-agent-harness/adapters/README.md#L1)）。现有 demo 直接构造预测数字，明确没有训练（[scripts/demo.py:27](../original/admet-agent-harness/scripts/demo.py#L27)）；runtime 单元测试还 mock 了进程和所有权操作（[test_runtime.py:19](../original/admet-agent-harness/tests/test_runtime.py#L19)）。因此格式演示不是 save/load/predict 通路证据，也不是 Docker 实机训练证据。
+
+**触发与影响。** A 和 C 按文档各自实现，第一次组合才发现读取路径、输出权限、checkpoint 或预测键不一致，会把 D1 下午首个真实闭环推迟。假如参考适配器把常数预测或序列化文件称为比赛模型，会产生错误验收。
+
+**最小修正/验收。** 合成数据、隔离标识的参考适配器真正执行 train、序列化 checkpoint、在独立预测进程加载并按模板键生成预测；包含至少分类/回归、缺失标签及保存/恢复变换的有限样例。保留可单独运行的接口检查，让 C 在 Docker 准备期间开发。目标宿主可用后再运行容器边界和小样本完整链，并清楚区分接口验证与比赛模型的深度学习训练。**负责人 C 适配器，A 执行器和独立检查，B 样本语义；D1 必须。**
+
+### 4. 验证记录和指标无法自动证明可比
+
+**证据与性质。** `_collect_outputs` 仅要求 metrics 是 JSON object（[runtime.py:384](../original/admet-agent-harness/src/admet_harness/runtime.py#L384)），未要求逐样本记录或由统一评价器重算。评价器要求 `(task, sample_id, y_true, y_pred)` 和 `split_id`，但明确不证明数据来源或无泄漏（[evaluation.md:3](../original/admet-agent-harness/docs/evaluation.md#L3)、[evaluation.md:66](../original/admet-agent-harness/docs/evaluation.md#L66)）。现无自动 compare CLI，相同 split_id、样本数均不足以证明样本身份相同（[run-comparison.md:7](../original/admet-agent-harness/docs/run-comparison.md#L7)）。
+
+**触发与影响。** 两个模型各自汇报不透明 metrics、改变样本缺失模式或以不同评估代码计算时，可以产生漂亮但不可比较的差异；无法在 D3 有根据地选主备。无逐样本数据也无法复算和审计标签/预测对齐。
+
+**最小修正/验收。** 统一保存每任务逐样本验证预测与真实标签、缺失标记、数据及划分版本、标签/变换版本和评价器版本；评价器独立从冻结记录重算每项指标并记录输入哈希。比较时核对不含 y_pred 的 `(task, sample_id, y_true)` 和缺失模式、评价版本及变换；不同或证据不足明确输出 incomparable/insufficient evidence。保留 undefined 原因，不填零。项目把 AUPRC 定义为本地 average precision，官方等价未确认，不能伪造官方总分（[evaluation.md:70](../original/admet-agent-harness/docs/evaluation.md#L70)）。**负责人 B 主责，C 输出记录，A 归档和检查；D1 单任务贯通，D2 全任务。**
+
+### 5. 并行交接的粒度及共享写入
+
+**证据与性质。** 上下文工具对单 task 采用独占锁、expected revision、历史文件和原子替换（[context.py:107](../original/admet-agent-harness/src/admet_harness/context.py#L107)、[common.py:52](../original/admet-agent-harness/src/admet_harness/common.py#L52)）；冲突需读取后合并，残留锁需要人工核实（[context.md:25](../original/admet-agent-harness/docs/context.md#L25)）。代码依次写 history 和当前 task，二者并非一个跨文件事务；中断后出现 `HISTORY_CONFLICT` 的恢复路径应预留。锁只覆盖同一 task 文件，不自动解决多人改 schema、配置或 adapter 的 Git 冲突。
+
+**触发与影响。** 三人同时编辑同一任务、任务总表或共用 run_id，会导致冲突、版本漂移或覆盖风险；单一 B 完成所有事实后才交接 C 也形成串行瓶颈。这里是基于代码的故障可能性，并非已有真实协作事故。
+
+**最小修正/验收。** B 对数据/schema 拥有单一写入责任，C 拥有模型目录，A 拥有运行/集成；共享合同以版本和内容哈希交接，按任务批次发布确认结果。run_id 和候选路径唯一，读取固定版本后执行。handoff 留负责人、状态、下一动作、阻塞、证据与版本；测试 revision 冲突及中断恢复，保留人工核验锁的边界。关键变更由依赖方核对，常规超参数实验无需全员审批（[context.md:33](../original/admet-agent-harness/docs/context.md#L33)）。**负责人 A 协调，B/C 分别负责；D1 建立，恢复增强可 D2。**
+
+### 6. 环境、缓存、资源上限与重现
+
+**证据与性质。** 当前执行器的只读挂载、`--network none`、独立 `/tmp`、CPU/内存/PID/超时限制是代码构造的容器计划（[runtime.py:303](../original/admet-agent-harness/src/admet_harness/runtime.py#L303)、[runtime.py:314](../original/admet-agent-harness/src/admet_harness/runtime.py#L314)）。默认 tmpfs 512 MB、CPU 2、内存 4096 MB、超时 3600 秒均是项目默认，不能视为合适的比赛资源。已有限流和超时清理，但 GPU、目标镜像、网络隔离与真实训练未实测（[runtime-contract.md:31](../original/admet-agent-harness/docs/runtime-contract.md#L31)、[runtime-contract.md:55](../original/admet-agent-harness/docs/runtime-contract.md#L55)）。镜像 ID 不能单独重建环境（[reproduction.md:7](../original/admet-agent-harness/docs/reproduction.md#L7)）。
+
+**触发与影响。** 镜像缺依赖、目标机器无法挂载或 GPU 不可用、临时缓存耗尽、数据复制慢、默认超时过短或 GPU 竞争时，训练会失败或耗时不可预测。当前不支持独立派生缓存跨 run 复用（[data-policy.md:15](../original/admet-agent-harness/docs/data-policy.md#L15)），22 任务重复特征处理的 wall time 需要实测；不能为省时把外部缓存或拟合数据偷偷当官方输入。
+
+**最小修正/验收。** A 在目标机先检查 Docker daemon、本地审查镜像、非 root 权限、CPU/GPU/磁盘、网络与只读边界；C/B 对首个真实任务记录预处理、训练、预测、保存与整体验证 wall time、峰值内存/显存和数据规模，并依据资源实测设置 limits。保存依赖锁/构建文件、硬件、种子和实际初始化。若缓存确有必要，再按训练数据和代码、变换版本构建可追溯、不得跨越拟合边界的缓存合同；并行化以真实资源为准。重现应区分固定 checkpoint 的推理重跑和从允许数据开始的训练重跑。**负责人 A 环境，C 计时/依赖，B 检查拟合来源；D1 环境和计时必须，缓存优化可后移。**
+
+### 7. 提交闭环与版本链
+
+**证据与性质。** 导出和验证逐行按原模板 `(task, sample_idx)` 对齐、保留其他字段、检查有限数和覆盖；预测 score 与 probability 范围不同（[submission.md:5](../original/admet-agent-harness/docs/submission.md#L5)、[submission.md:32](../original/admet-agent-harness/docs/submission.md#L32)）。`verify-candidate` 交叉核对 completed train/predict、权重、冻结模板与预测记录（[candidate.py:90](../original/admet-agent-harness/src/admet_harness/candidate.py#L90)）。但这是本地一致性，不证明深度模型真实性、没有外部数据、结果已被平台接受，或完整训练重现（[candidate.py:145](../original/admet-agent-harness/src/admet_harness/candidate.py#L145)）。
+
+**触发与影响。** 若 D4 才第一次汇集 22 任务预测，少行、错键、未反变换、模型文件不匹配等问题会挤占提交窗口；格式通过不代表模型质量和赛事平台成功接收。
+
+**最小修正/验收。** D2 尽早尝试由实际模型自动生成全模板候选；检查完整行数、任务集合、预测值、其他列字符串、文件名、hash 和已冻结训练/推理链，抽查回归单位及分类方向；跑 export、validate、verify-candidate，另做固定 checkpoint 的预测复现，并报告是否完成训练重现。保留主备候选及记录，重复提交政策和平台接受以最新官方信息及实际回执为准。禁止人工补预测。**负责人 A 导出和链路，B/C 检查语义；D2 首个完整候选，D4 最终核验。**
+
+### 8. 跨平台路径与测试解释
+
+**证据与性质。** 现有复跑记录：Mac Python 3.14.7 默认 71 tests 出现 6 failures、11 errors；仅改 TMPDIR 到实际路径后全部通过，源码未改（[summary.json:41](../review-validation/summary.json#L41)）。这是已复现的环境相关失败及临时规避，不是源码修复。根路径在 `_path` 被 resolve 后，传入绝对路径却直接 `relative_to(root)`（[runtime.py:66](../original/admet-agent-harness/src/admet_harness/runtime.py#L66)）；测试根使用 `TemporaryDirectory` 原始路径（[test_runtime.py:19](../original/admet-agent-harness/tests/test_runtime.py#L19)、[test_candidate.py:15](../original/admet-agent-harness/tests/test_candidate.py#L15)）。`/var` 与 `/private/var` 别名混用在该环境触发了上述失败。
+
+**触发与影响。** macOS 临时目录或不同路径别名会使测试与实际 API 路径检查不一致，影响团队接手；具体其他平台效果尚未实测。
+
+**最小修正/验收。** 统一测试和受信任 API 调用的根/绝对路径规范化，仍保留 JSON 内路径的符号链接及逃逸拒绝（[common.py:71](../original/admet-agent-harness/src/admet_harness/common.py#L71)），不要为通过测试消除安全边界。分别使用默认 TMPDIR 与规范路径复跑，并在目标 Linux/Docker 环境验证。**负责人 A；D1 若影响开发环境则修，若目标环境不受影响可 D2，但保留为未修复问题。**
+
+### 9. Skill 入口、规范和检查器的边界
+
+**证据与性质。** 项目根入口已经是薄路由，按需读索引和所选技能（[AGENTS.md:5](../original/admet-agent-harness/AGENTS.md#L5)、[skills/INDEX.md:3](../original/admet-agent-harness/skills/INDEX.md#L3)）；现有 `check-context` 要求固定四个中文标题、固定单行 frontmatter 和字节预算（[context.py:57](../original/admet-agent-harness/src/admet_harness/context.py#L57)）。本 workspace 指定的 [Skill 写作唯一标准](../../../rules/skills/bestpractice_skill_writing.md#L18) 要求结果导向与可判断验收，明确不规定章节顺序且不鼓励无必要 SOP；[project_scaffold.md](../../../rules/skills/project_scaffold.md#L19) 的 public/private intake 和公开仓库保护属于适用条件下的脚手架约束。原包本地作者技能自身要求四章以满足现有 checker（[skill-authoring/SKILL.md:11](../original/admet-agent-harness/skills/skill-authoring/SKILL.md#L11)）。
+
+**触发与影响。** 未来修改 Skill 时，一份符合 workspace 标准但采用不同标题的文件可能被当前静态检查拒绝；通过四标题/预算也不证明冷启动路由或 Agent 行为有效（[context.py:99](../original/admet-agent-harness/src/admet_harness/context.py#L99)）。这是机械校验比通用写作规范更窄的兼容限制，不代表当前八个 Skill 已失败。若把接口所有过程编成同步检查清单，会增加交接成本并削弱并行。
+
+**最小修正/验收。** 保留薄入口、任务意图路由、关键硬边界与可执行验收；Skill 的建议和已证明经验与硬约束分开，避免以 SOP 替代判断。若实际要改变标题结构，连同 checker 和测试一起调整，保留可发现性、链接完整、必要结果标准，另用无前情真实任务验证加载行为；静态通过只声称结构通过。是否公开需在未来进行相应脚手架/发布工作前明确；原包当前团队默认不公开（[contract.json:90](../original/admet-agent-harness/competition/contract.json#L90)），本次评审与启动讨论无须发布。**负责人 A，所有人反馈；D1 保留现有入口，结构重写和增强可后移。**
+
+## 四天安排与止损点
+
+| 时间 | 并行工作与可验证出口 | 决策及降级 |
+|---|---|---|
+| D1 上午 | A 固定接口、目标机环境和容器检查；B 接收官方文件、记录哈希并先确认一个任务的数据语义与分区；C 以合成数据完成 train/save/load/predict 和验证记录。三方尽早对齐版本与样例。 | 若数据或设备未到，继续合成接口与无依赖工程，真实训练标 blocked；不靠伪造批准状态绕过。若只得单文件，A/B 先完成有父输入的划分合同。 |
+| D1 下午 | 将首个已确认真实任务从数据读取、划分、训练、保存/加载、预测、逐样本评价贯通。记录各阶段 wall time、资源峰值及失败。B 分批确认后续任务，C/A 持续接入。 | 当天结束用真实测量重排：估计实际任务处理量、可并发资源和剩余 wall time，包含构建、排队、重跑、整合与候选验证；如果全量无法在 D2 收敛，立即缩减模型复杂度、调参数量及非关键框架工作，保留合法深度训练与完整预测目标。不要用合成时长外推。 |
+| D2 | 优先全 22 任务数据/标签确认和基础模型运行，产出首个全模板自动生成候选及本地验证；保留逐任务失败清单。 | 若首个候选不完整，暂停增益实验并聚焦缺任务、运行错误与语义；无法合法确认的任务明确阻塞完整有效提交，不手工填补、不伪造结果。若耗时超预算，压缩实验而非压缩提交校验。 |
+| D3 | 仅在完整候选已存在且可追溯可比较时，对少量高价值方案作有时间上限实验，按逐任务效果和风险选主备。 | 若还没有全量候选，D3 改为收敛基础模型及修复；无足够一致的验证证据时，不以不可比较的数字决定模型。保留已有可验证候选，防止实验覆盖。 |
+| D4 | 固定候选和依赖，检查逐行、文件名、训练/预测链与本地复现，形成审核记录；目标在截止前 4–6 小时完成准备，给平台流程留余量。 | 如果复现或提交检查失败，回退到最近通过的完整候选；若没有满足条件的候选，报告具体缺口和剩余风险。平台最终接受与官方复现结论以实际回执为准。 |
+
+D1、D2 决策点是建议的项目管理策略，不是官方规则；提前 4–6 小时是缓冲目标，并非对平台处理时间的保证。模型是否可以并行训练取决于设备和内存、任务间依赖与数据布局，测量后决定。
+
+## 当前证据能证明什么
+
+- 已有复跑的 context-graph 和 synthetic demo 返回成功，默认测试失败、规范 TMPDIR 重跑成功，`doctor` 返回成功（[summary.json:2](../review-validation/summary.json#L2)）。这些结果说明对应命令在记录的环境下的结果；`doctor` 中 Docker 仅检查可执行文件是否存在（[context.py:157](../original/admet-agent-harness/src/admet_harness/context.py#L157)）。
+- 原包实现了输入/代码快照与哈希、不可覆盖 run、适配器与镜像审查记录、严格提交键对齐、候选链核验、按任务交接等值得保留的能力。它们是可审查证据和防误用措施，不能证明历史行为、来源真实性或宿主权限隔离。
+- 目前没有目标容器实际边界验证、正式训练、真实标签契约、真实训练速度、全 22 任务预测、比赛平台接受或从头重训复现的证据。另有官方口径需要更新核验：原包将外部数据禁用、深度模型、自动预测、模板格式和入围复现列为官方规则；外部权重限制、随机初始化及固定断网镜像是当前团队默认（[contract.json:9](../original/admet-agent-harness/competition/contract.json#L9)、[contract.json:76](../original/admet-agent-harness/competition/contract.json#L76)）。数据来源、预训练、官方总分、AUPRC 定义和复现细节均列为未决（[contract.json:94](../original/admet-agent-harness/competition/contract.json#L94)）。

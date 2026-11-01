@@ -1,0 +1,57 @@
+{
+  "unit-tests": {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "exit_code": 1,
+    "output_file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_harness_startup_review_20261029/review-validation/unit-tests.txt"
+  },
+  "context-graph": {
+    "command": [
+      "python3",
+      "scripts/harness.py",
+      "check-context"
+    ],
+    "exit_code": 0,
+    "output_file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_harness_startup_review_20261029/review-validation/context-graph.txt"
+  },
+  "synthetic-demo": {
+    "command": [
+      "python3",
+      "scripts/demo.py"
+    ],
+    "exit_code": 0,
+    "output_file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_harness_startup_review_20261029/review-validation/synthetic-demo.txt"
+  },
+  "doctor": {
+    "command": [
+      "python3",
+      "scripts/harness.py",
+      "doctor"
+    ],
+    "exit_code": 0,
+    "output_file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_harness_startup_review_20261029/review-validation/doctor.txt"
+  },
+  "unit-tests-canonical-tmp": {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "exit_code": 0,
+    "output_file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_harness_startup_review_20261029/review-validation/unit-tests-canonical-tmp.txt",
+    "TMPDIR": "<PRIVATE_LOCAL_MOUNT_OR_TEMP_PATH>",
+    "source_modified": false,
+    "initial_failure": "6 failures and 11 errors; /var vs /private/var canonicalization differs between root and absolute input/output paths on macOS. This environment-only rerun does not fix source."
+  }
+}

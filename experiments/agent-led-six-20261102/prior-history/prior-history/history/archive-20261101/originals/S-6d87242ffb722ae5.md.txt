@@ -1,0 +1,106 @@
+# Next batch preparation guide
+
+无历史上下文OpenCode准备会话。先读任务内冻结的 `ml-preparation-only` v1.3.0 和本指南。**仅准备**：可在mini任务私有目录准备依赖/已批准资产、做静态和无参数更新轻量接口检查；不训练、不HPO、不运行backward/optimizer.step/fit、不操作Hainan、不改共享环境、不访问逐行valid真值、不提交赛事。
+
+## 全局输入/冻结合同
+Task `caco2_wang`；train/valid/test 637/91/182；行身份 `(task,split,original row_index)`，Drug_ID/Drug原样保留，不去重、不清洗、不改Y。训练只用train.Y，valid/test盲输入。encoder CheMeleon checkpoint SHA `c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651`，feature dim2048、float32。所有encoder参数/buffer冻结。不得伪标签、外部标签、额外样本、test拟合或train+valid refit。当前runner每次重算embedding，没有经验证的外部cache读取接口。
+
+## WI-CACHE — immutable feature cache
+- work_item_id: WI-CACHE; issue_ids: AR001-08, AR001-18, AR001-02, AR001-17
+- goal: 多个head/monitor使用完全相同的feature payload，避免重算并隔离表示差异。
+- model_and_asset_versions: CheMeleon checkpoint SHA如上；encoder实现/依赖版本从run artifacts精确读取，不自行假定。
+- input_contract: train/valid/test arrays、parse mask、原行身份、CSV SHA、encoder/checkpoint/实现SHA、依赖版本、shape/dtype/finite统计。
+- output_contract: cache manifest、数组SHA256、row identity digest、consumer read receipt；valid/test cache不含标签。
+- implementation_scope: 新增cache load与identity validator到任务私有分支；不得改冻结权重或共享runner。
+- frozen_components: encoder、原数据、split、Y变换。
+- preparation_steps: 审核现有features-*.npz和identity；设计schema；实现静态loader/validator；合成负例测试。
+- dependencies: 当前run已批准features artifacts。
+- acceptance_checks: 同SHA逐位读取；bitflip/错序/错hash/错dtype/错行数全部拒绝；valid/test不索取label；无backward/optimizer。
+- priority/budget: P0；一次mini私有准备任务；CPU/static。
+- blocked_fallback: cache身份不明则不声明复用，后续由主控决定是否fresh encode。
+- preparation_mode: `new_code`.
+
+## WI-SUPERVISOR — 监控可靠性
+- work_item_id: WI-SUPERVISOR; issue_ids: AR001-15, I-CYCLE003-SUPERVISOR125
+- goal: 准备故障状态捕获和退出码传播测试设计，不修复/重启当前run。
+- model_and_asset_versions: 当前supervisor源码版本需主控交付。
+- input_contract: 可控synthetic child、PID/start ticks、注入退出状态。
+- output_contract: raw stat/status、wait status、UTC+monotonic timestamps、worker/supervisor receipts、OS exit code。
+- implementation_scope: 私有harness设计、静态/unit测试；不接触当前作业。
+- frozen_components: 已完成run、锁、checkpoint。
+- preparation_steps: 设计capture-before-classify；注入可控状态；明确业务rc传播。
+- dependencies: supervisor源码/版本由主控提供。
+- acceptance_checks: worker rc与OS rc一致；缺证据保留unknown；原始快照保留；不误报Z-state。
+- priority/budget: P1，一次mini任务，无Hainan。
+- blocked_fallback: 保持I-CYCLE003-SUPERVISOR125 investigating。
+- preparation_mode: `new_code`.
+
+## WI-HEAD — head配置准备
+- work_item_id: WI-HEAD; issue_ids: AR001-05, AR001-13, AR001-02
+- goal: P-CACHE通过后生成精确配置文件，不自行训练。
+- model_and_asset_versions: 同CheMeleon cache；当前MLP实现。
+- input_contract: 固定573/64 split；只用train.Y。
+- output_contract: 显式配置、固定seed和checkpoint identity schema。
+- implementation_scope: config-only；不改runner（除已验收cache adapter）。
+- frozen_components: encoder/cache/split/Y scale/MSE loss/批大小。
+- preparation_steps: width {128,256,512}; lr {0.0002,0.0005,0.001}; monitor raw MAE；每个配置只改一个因素。
+- dependencies: WI-CACHE accepted。
+- acceptance_checks: 配置校验通过、split/seed语义显式、无隐式默认值。
+- priority/budget: P1；建议15头，待主控批准。
+- blocked_fallback: cache adapter未验收则只准备不训练。
+- preparation_mode: `config_only`.
+
+## WI-SCALE — scaler备选准备
+- work_item_id: WI-SCALE; issue_ids: AR001-04
+- goal: 设计独立scaling干预，不宣称C-SCALE根因。
+- model_and_asset_versions: 同一冻结cache；legacy fit-only standardizer为control。
+- input_contract: scaler只fit internal fit rows。
+- output_contract: scaler metadata与静态transform tests。
+- implementation_scope: 任务私有代码；待主控批准后才纳入训练。
+- frozen_components: 原features/Y/split/encoder/head/loss/optimizer/monitor。
+- preparation_steps: legacy z、clip z ±6、median/IQR+zero-IQR guard；±6仅探索候选，非最优已证。
+- dependencies: WI-CACHE、主控批准。
+- acceptance_checks: fit-only、有限输出、无valid/test label访问。
+- priority/budget: P2，一次prep，无训练。
+- blocked_fallback: 保持legacy scaler。
+- preparation_mode: `new_code`.
+
+## WI-BACKBONE — 其他冻结底座资产核验
+- work_item_id: WI-BACKBONE; issue_ids: AR001-10
+- goal: 只核验来源、license、weight SHA、接口和冻结状态。
+- model_and_asset_versions: MiniMol/MoLFormer/GLM/DeepSeek/Qwen当前均不视为已就绪；需主控指定精确revision和weight SHA。
+- input_contract: Drug strings only，不传labels。
+- output_contract: 来源/license/commit/weight SHA/冻结inventory/输出shape/dtype/device/pooling/row identity。
+- implementation_scope: mini任务私有目录下载已批准资产；轻量无参数更新接口检查。
+- frozen_components: 所有预训练参数与buffers。
+- preparation_steps: 先要主控明确资产来源/预算，再下载到private output/assets并记录hash。
+- dependencies: 明确批准来源、磁盘/下载预算、兼容依赖。
+- acceptance_checks: frozen、no_grad、eval、输出行序一致、cache identity。
+- priority/budget: P3 reserve；每底座独立准备任务；无训练。
+- blocked_fallback: 未齐全则不进可运行批次。
+- preparation_mode: `blocked_assets`.
+
+## WI-ERROR — 安全误差汇总
+- work_item_id: WI-ERROR; issue_ids: AR001-09, AR001-12
+- goal: 准备非重构的任务/分组汇总规范。
+- model_and_asset_versions: 只用主控交付的评分来源/curated projection。
+- input_contract: exact task/split/source identity；不得向训练方复制row truth/residual。
+- output_contract: group definition、n、MAE/RMSE/quantiles、run/task/split/source。
+- implementation_scope: 分析端汇总；准备方只接收curated projection。
+- frozen_components: 标签与数据不变。
+- preparation_steps: 主控批准分组类别和最小组规模，禁止tiny group/difference泄露单行。
+- dependencies: 主控批准。
+- acceptance_checks: 无逐行真值/残差/答案表/可重构差分。
+- priority/budget: P2，无训练。
+- blocked_fallback: 仅任务级aggregate。
+- preparation_mode: `config_only`.
+
+## 批次执行建议（均待主控登记，不是执行授权）
+A粗筛：5配置×3 model seeds={17,43,71}=15头；split seed固定43。配置：control width256/lr0.0005/raw-MAE；width128/lr0.0005；width512/lr0.0005；width256/lr0.0002；width256/lr0.001。dropout0.1、AdamW wd0.0001、batch128、MSE固定。
+B monitor确认：width256/lr0.0005，monitor={raw-MAE, standardized-MSE}×seeds{17,43,71}=6头；这是monitor因果辨别力最高的批次。
+C split稳健性：选定配置，model seed43，split seeds{11,43,97}=3头。
+D scaling：legacy/clip±6/robust三transform×3 seeds=9头，需WI-SCALE和主控批准。
+配置数和训练次数分开：A=5 configs/15 runs；B=2 configs/6 runs；C=1 config/3 runs；D=3 configs/9 runs。不可自动串行执行全部阶段。cache identity/freeze/标签故障立即停止回主控；正常批次收齐后统一深评审。
+
+## 成本假设
+实测本run training-evidence elapsed 21.743s；started/completed跨度17.132s（范围不同）。取回评分打包Thread 1945.287s≈32.42min；candidate ready 1677.389s；连接至取回校验93.549s，实际传输84.157s/48,157,852压缩字节。训练头可暂估20–60s/头（由单run tens-of-seconds外推，非批量实测）；runner现有每run重算encoder，cache共享成本需WI-CACHE完成后才能估算。取回评分和Chat周转按角色级完整时间预算，不能只按单命令传输时间估算；不要每个head调用Chat。

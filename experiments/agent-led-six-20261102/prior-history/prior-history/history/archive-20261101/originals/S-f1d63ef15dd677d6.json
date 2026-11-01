@@ -1,0 +1,413 @@
+[
+  {
+    "id": "F01",
+    "title": "历史试验、当前规范和实现限制混在同一入口",
+    "status": "文档已修正",
+    "impact": "旧的单作业/不评分/原生限定被后续Thread当成长期规则。",
+    "action": "当前架构重写为职责和路由，249行原稿在原目录按历史留存；PRD/RFC/test/source-map明确范围。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/design/chat_gateway_20261031/README.md",
+        "line": 3,
+        "quote": "**当前通道约定（2026-10-31用户最新纠正）**：消息与续问使用Application原生工具；允许内置Browser在当批已登记Chat读取附件链接并正常下载，不能借下载授权在浏览器发送或重发消息。新普通Pro Chat创建/选模仍须独立核验。当前请求恢复与新周期状态见[统一接续入口](../../cycles/progressive-index-e2e-20261031/CONTINUE.md)。"
+      },
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/docs/prd.md",
+        "line": 5,
+        "quote": "本轮不做新候选调研、超参搜索、真实 valid 评分或赛事上传。成功要求真实 GPU 编码和预测头更新、编码器状态不变、无越界副作用证据及完整产物；未知项不得写为通过。"
+      }
+    ]
+  },
+  {
+    "id": "F02",
+    "title": "当前入口指向旧周期，接续全文堆叠互斥状态",
+    "status": "已修正当前路由和状态",
+    "impact": "新Thread可能认为仍等准备、未派训练，或继续v3只回主控。",
+    "action": "项目索引指向11/1；cycle和观察CONTINUE只保留现行路由；终态转主控，观察的该run不再资源唤醒；旧全文保存。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/skills/INDEX.md",
+        "line": 16,
+        "quote": "当前闭环：[progressive-index-e2e-20261031](../cycles/progressive-index-e2e-20261031/CONTINUE.md)。角色与消息协议：[设计入口](../design/chat_gateway_20261031/README.md)。算力日志：[资源入口](../resources/hainan/README.md)。"
+      },
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/CONTINUE.md",
+        "line": 1,
+        "quote": "# C1单作业闭环：当前等待准备终态"
+      },
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/resources/hainan/CONTINUE.md",
+        "line": 37,
+        "quote": "任意UUID出现健康idle_candidate，或健康、三种进程视图均空、利用率0且仅少量残余显存时，携本次observation_id、前后证据及原件摘要，按请求/UUID/条件/证据变化去重后仅回主控private-role-298cc5edc25e。残余显存只供主控审核，不能自行视为准入。该等待不向训练方派发，不把通知当启动许可；仍占用且无实质变化仅落盘。"
+      }
+    ]
+  },
+  {
+    "id": "F03",
+    "title": "机器合同也包含过时权限，不只是README",
+    "status": "已修正",
+    "impact": "future_analysis_sessions写仅原生发送，chat_transport却允许Browser首发；历史已评分字段貌似所有当前run都已评分。",
+    "action": "contracts rev15与当前混合通道一致，历史目标/状态显式定界；新目标从当批登记取，不从首轮ID回退。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/design/chat_gateway_20261031/contracts.json",
+        "line": 325,
+        "quote": "    \"analysis_chat_created_and_registered_by\": \"controller registers request and verifies supported native Pro creation/target identity separately; gateway sends only via native existing-target tool\","
+      },
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/design/chat_gateway_20261031/contracts.json",
+        "line": 302,
+        "quote": "    \"completed_for_current_hainan_runs\": true,"
+      }
+    ]
+  },
+  {
+    "id": "F04",
+    "title": "共享授权与运行代码能力不一致",
+    "status": "规则已澄清；实现缺口未关闭",
+    "impact": "当前v4允许非零已用显存，但仍要求无其他活跃进程，运行中见外部PID会退出自有作业；不能称共享已支持。",
+    "action": "保留用户共享意愿和Michael/他人保护约束；下一实现需按需求、负载影响和自有退出条件支持共享，不是继续加0/4MiB门槛。本次未部署新分支。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/skills/admet-frozen-training/SKILL.md",
+        "line": 45,
+        "quote": "选卡依据是任务预计需求与不会影响他人的资源余量，不能以已用显存必须0或某个任意小阈值代替判断。保存同类实测峰值或估算依据、当前任务峰值预算及安全余量，覆盖显存、计算/带宽、CPU、内存和IO。有人使用的卡也可按通用连接Skill的共享条件核验后使用；只看到空余显存不足以排除对方突发需求和计算干扰。运行中出现冲突，只缩减或停止有身份的自有作业。"
+      },
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/src/plan_checks.py",
+        "line": 43,
+        "quote": "        'max_concurrent_jobs': 1, 'task': 'caco2_wang',"
+      }
+    ]
+  },
+  {
+    "id": "F05",
+    "title": "观察分类仍把任何非零显存归为occupied",
+    "status": "实现差异已披露；未改运行采样器",
+    "impact": "occupied不是不可用，但旧名称和仅分类变化的事件容易漏掉可用余量变化。",
+    "action": "当前通知合同已要求看原始数值和实际等待状态，不能拿分类当资格；应改为占用事实与任务适配判断分列，并验证余量变化通知。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/resources/hainan/implementation/normalize.py",
+        "line": 162,
+        "quote": "        elif processes or (memory_used is not None and memory_used > 0) or (xml_used is not None and xml_used > 0):"
+      },
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/resources/hainan/implementation/normalize.py",
+        "line": 203,
+        "quote": "        if old[\"classification\"] != gpu[\"classification\"] or old[\"health\"].get(\"recovery_action\") != gpu[\"health\"].get(\"recovery_action\"):"
+      }
+    ]
+  },
+  {
+    "id": "F06",
+    "title": "计划检查器硬编码五个run、单任务、单GPU和单底座",
+    "status": "范围已明示；通用实现未完成",
+    "impact": "扩一个任务/组合就要改代码，和未来批量试验目标不符；并非用户禁止并行。",
+    "action": "明确它只是历史试跑检查器；后续用批准任务清单驱动数据/资产/并发范围。当前一次学习不因审查扩大。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/src/plan_checks.py",
+        "line": 32,
+        "quote": "    admitted_runs = {'hainan-skill-pilot-20261030', 'hainan-frozen-training-20261031',"
+      },
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/src/plan_checks.py",
+        "line": 43,
+        "quote": "        'max_concurrent_jobs': 1, 'task': 'caco2_wang',"
+      },
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/src/plan_checks.py",
+        "line": 62,
+        "quote": "    expected_rows = {'train': 637, 'validation': 91, 'test': 182}"
+      }
+    ]
+  },
+  {
+    "id": "F07",
+    "title": "监督异常阻断对已完成科学产物的处理",
+    "status": "Skill已修正；运行代码未修复",
+    "impact": "本轮worker0/75步/273预测，但监控VmRSS异常使外层125且未验证完成凭据。失败现场stat/status未完整保存，不能认定根因已证实。",
+    "action": "主控独立核对96件摘要与完成身份；保留125和学习锁，分开审查科学结果、监督故障、完整性。后续修复监测取证及终态对账，不用未知=0或自动重训。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/skills/admet-frozen-training/references/runtime-recovery.md",
+        "line": 7,
+        "quote": "- 资源监控区分已确认终态与未知。修复仅在确认Z/X退出状态时将已释放地址空间记零；活跃/未知进程缺内存字段、负值或解析异常仍失败。采样需保存PID身份、状态和字段存在性，不能普遍用`get(...,0)`把未知当低资源。"
+      }
+    ]
+  },
+  {
+    "id": "F08",
+    "title": "把新头每项/每步非零当普遍成功要求",
+    "status": "通用Skill已修正；历史检查器保持原范围",
+    "impact": "有限的零梯度或未变参数不必然意味着未训练；旧参考脚本还要求四项都变、每步非零。",
+    "action": "通用条件改为有效优化步、有限梯度、整体非零和实际参数变化；旧参考验收不冒充任意架构标准。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/skills/admet-frozen-training/SKILL.md",
+        "line": 20,
+        "quote": "- 外部底座 `requires_grad=False`、`eval()`，编码无梯度；优化器参数集合只含获准新模块。训练前后内存中所有参数和 buffer 的摘要相同，磁盘权重摘要也相同；新头须有有限非零梯度和实际参数变化。仅检查 checkpoint 文件没变不够。"
+      },
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/skills/admet-frozen-training/scripts/check_evidence.py",
+        "line": 67,
+        "quote": "    require(all(x>0 for x in differences),'unchanged head tensor')"
+      }
+    ]
+  },
+  {
+    "id": "F09",
+    "title": "准备包生成器把Skill版本写死为v1.2",
+    "status": "代码已修复，13项检查通过",
+    "impact": "实际正文v1.2.1也会交付v1.2元信息，妨碍判断是否收到新版；hash仍绑定原字节，不能夸大为一定读错正文。",
+    "action": "版本从实际frontmatter读取，目标核验同时检查版本与冻结原文一致；缺失/错版本拒绝，旧任务包不改。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/skills/ml-preparation-only/scripts/preparation_packet.py",
+        "line": 79,
+        "quote": "    version = \"v1.2\""
+      }
+    ]
+  },
+  {
+    "id": "F10",
+    "title": "准备阶段一概禁止安装和权重下载",
+    "status": "待用户Q1",
+    "impact": "准备会话只能交未验证代码，主控反复补环境；此额外收窄不等于用户的“不训练”。",
+    "action": "建议准许mini任务私有目录内准备获准依赖/资产及无更新接口检查。尚未改变权限；海南操作与训练仍不交准备方。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/skills/ml-preparation-only/SKILL.md",
+        "line": 21,
+        "quote": "- 只读取任务指定输入和必要公开技术资料；只写自己的输出目录，包括临时文件、缓存、日志、`__pycache__`。临时路径、shell 重定向、库缓存都须显式落在自己的输出目录；命令失败也不能改用目录外 `/tmp`。环境安装、权重下载和服务器执行由主控负责；缺依赖就记录原始错误和未验证项，继续完成能做的准备，不自行扩权。"
+      }
+    ]
+  },
+  {
+    "id": "F11",
+    "title": "精确分数隔离与train-only被写得像长期硬条件",
+    "status": "待用户Q2/Q3；来源已澄清",
+    "impact": "官方valid可调参与本地角色隔离不同；只给模糊指南可能削弱下一步判断。换新Chat也不消除valid选择偏差。",
+    "action": "建议准备/训练可看任务及分组汇总诊断，仍不给逐行答案；选模阶段保留valid，最终合训另决。未改当前数据/反馈权限。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/AGENTS.md",
+        "line": 9,
+        "quote": "- 本入口当前仅使用官方 train.Y 学习，内部划分做早停；训练执行方的 valid/test 只输入 Drug_ID、Drug。预测、标签评分和赛事上传分别处理。官方允许 valid 调参；2026-10-31 用户明确由指定取回 Thread 在本机用 valid 真值及固定评分器评分，主控独立验收，评分与训练隔离是本地控制。评分报告和问题诊断进入逐批登记的专职分析 Chat；经主控核验来源、行映射与evaluation_scope后，可提供本批明确准入的valid真值用于诊断，分析访问不等于新公开发布授权。历史aggregate_only任务不变。准备/训练会话只接收技术指南与盲输入，不接收私有验证标签、精确分数或逐行误差。外部补标签、教师伪标签和测试拟合仍不纳入。"
+      },
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/policy.json",
+        "line": 21,
+        "quote": "  \"training_labels\": ["
+      }
+    ]
+  },
+  {
+    "id": "F12",
+    "title": "首次学习锁容易被推广成永久禁止故障恢复",
+    "status": "待用户Q4；单轮与通用已分开",
+    "impact": "一次试跑的防重复学习要求，如果永久套用会阻断自主恢复。",
+    "action": "这次完成的作业不重跑；今后是否在原配置/总预算内有界恢复由用户核对。未知启动始终先对账，不能盲目重投。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/skills/admet-frozen-training/SKILL.md",
+        "line": 63,
+        "quote": "真实运行中已发现环境摘要误报和进程退出时的监控竞态，见[运行恢复教训](references/runtime-recovery.md)。预检worker成功、外层监督成功、开始学习和完成学习须分别记录；恢复须先证明旧作业已退出且学习未启动，保留旧失败，新版本独立证据及全run首次学习锁。没有这项证据就查询原作业，不因“只是重试”再启动学习。"
+      }
+    ]
+  },
+  {
+    "id": "F13",
+    "title": "禁止读取其他会话产物没有合法复用例外",
+    "status": "已修正",
+    "impact": "与使用主控明确交付的已验收旧资产/runner冲突。",
+    "action": "允许只读本次明确列入输入的旧资产；仍禁止自行翻其他会话目录。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/skills/ml-preparation-only/SKILL.md",
+        "line": 22,
+        "quote": "- 不寻找验证/测试真标签，不修改原始输入，不读其他会话产物。保留执行证据；已经越界时如实报告位置与动作，不用删除产物或改称“仅测试”掩盖。"
+      }
+    ]
+  },
+  {
+    "id": "F14",
+    "title": "训练执行方被要求更新主控专属索引/工作记录",
+    "status": "已修正",
+    "impact": "训练Skill尾段与AGENTS写入边界矛盾；结束训练也可能误停独立资源观察。",
+    "action": "执行方只写run回执；Skill、项目索引、工作记录由主控维护；资源观察直到用户停止。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/skills/admet-frozen-training/SKILL.md",
+        "line": 80,
+        "quote": "报告区分训练完成、预测完成、本地评分和赛事提交。只有本次授权范围全部完成才标完成；既有观察自动化按用户要求停止，保留记录。更新项目工作记录和 Skill 索引，交给用户一个明确入口。"
+      },
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/AGENTS.md",
+        "line": 34,
+        "quote": "每个可用阶段更新 `docs/working.md`（仅主控修改）；获准提交时分阶段提交，无推送授权时保留本地记录。本项目 Python 检查仅用标准库、`-B`，不在只读检查中隐式训练。"
+      }
+    ]
+  },
+  {
+    "id": "F15",
+    "title": "取回本机只写单目录与评分发布职责冲突",
+    "status": "已修正",
+    "impact": "私有评分输出和Git发布副本可能有独立登记路径，无法同时满足字面禁令。",
+    "action": "允许当次清单明列的取回/评分/发布工作副本，不扩大到其他目录或任何远端写入。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/skills/hainan-training-retrieval/SKILL.md",
+        "line": 39,
+        "quote": "- 本机只写本次独占取回目录，保留原件、失败尝试和日志。历史run、Skill、验收标准由主控维护，执行方不得修改。不执行原始模型/pickle、不加载模型、不训练或推理；张量/归档结构检查使用不执行代码的读取方式。已获准的固定预测评分仅按评分与发布参考执行。"
+      }
+    ]
+  },
+  {
+    "id": "F16",
+    "title": "30/60分钟发Chat、两批无收益停止等自定阈值",
+    "status": "已从当前规范移除",
+    "impact": "会促成只训少量头就调用昂贵研究，或把助手建议当用户硬限制。",
+    "action": "正常按约定比较批次评审；异常提前处理。4–8、20–40和三路均非永久上限或自动执行授权。旧建议保留在历史稿。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/design/chat_gateway_20261031/README.md",
+        "line": 115,
+        "quote": "| 防止久等 | 自首个新可用结果起 30 分钟检查一次是否已有可独立判断的比较组；最多等到 60 分钟发送一次明确标记的 partial 批次。核心对照未到时只分析缺口/故障，不抢判优劣。没有新证据不重复发送。 |"
+      },
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/design/chat_gateway_20261031/README.md",
+        "line": 140,
+        "quote": "每项预算包含最大训练 run 数、GPU 小时/峰值、总墙钟、连接/补件重试、Chat 评审轮数、评分使用次数和停止条件。Chat 可建议预算，主控只能在用户已批准范围里接续。原来的单作业训练授权并不自动变成无限 HPO。连续两批无可靠收益、结论受缺证据限制或预算到期时，提交证据和取舍给用户，不为了循环存在而强行再跑。"
+      }
+    ]
+  },
+  {
+    "id": "F17",
+    "title": "渐进阅读与“必读全部实验原件”互相抵触",
+    "status": "已修正模板rev8/Skill",
+    "impact": "历史越多，按字面执行越可能无限读或虚假报全读；无推翻历史却强求一条链也不合理。",
+    "action": "各层索引必读、相关原件按问题下钻、全部可达；没有适用推翻链明确不适用。完整研究深度和六文件内容不缩减。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/design/chat_gateway_20261031/CHAT_PROMPT.md",
+        "line": 28,
+        "quote": "必读材料：START_HERE、manifest、官方赛事规则原文快照/出处、用户确认的冻结条件、本地约束及来源映射、实际数据与划分、取回的全部实验原件、固定评分器的valid评分/诊断、全部实验/失败总表、对应源码/配置/结果、本地历史问题账本、已否定假设和正在运行的实验。规则和数据不可仅凭旧聊天记忆替代。"
+      },
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/skills/admet-evidence-review/SKILL.md",
+        "line": 74,
+        "quote": "`review.json` 的 `read_receipt` 逐项包含 `entry_id`、`layer`、`uri`、`source_version`、`read_mode`（original/summary/hash_only/unread）、`evidence_locator`、`observed_fact`、`limitation`；必读原件不能用summary/hash_only充当original。`read_checks` 至少覆盖一条适用规则及其来源、一条历史结论推翻链、本批实际配置或数值计算；说明输入定位和方法。主控对照原件独立核验，不把模型写“已读”、回显hash或背出摘要当成功。"
+      }
+    ]
+  },
+  {
+    "id": "F18",
+    "title": "总入口一律禁止推送，和已授权公开发布冲突",
+    "status": "已修正",
+    "impact": "取回方可能在用户已选定ZYDTR方案上重复索要许可或停住。",
+    "action": "按角色区分：登记科学包可发布；其他数据不扩大；官网仍仅用户手动提交。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/AGENTS.md",
+        "line": 14,
+        "quote": "- 每次 run 独占目录；失败留证，不覆盖旧尝试。运行状态不明先查询原作业，不能重复提交。模型、输入、代码、环境、日志及产物均保留摘要。不自动上传赛事或推送仓库。"
+      }
+    ]
+  },
+  {
+    "id": "F19",
+    "title": "通用海南Skill仍强制跳回旧SAP规范",
+    "status": "已修正路由",
+    "impact": "旧规范还含禁Chat真值、镜像/网关等旧约束，和项目选择性继承冲突。",
+    "action": "改到ADMET唯一入口；旧SAP只作来源映射中的选择性历史参考。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/rules/skills/hainan-compute-access/SKILL.md",
+        "line": 75,
+        "quote": "需要这些动作以外的操作时，仍由本 Skill 约束：先明确本次目标与已有授权，再审计实际命令及其路径/资源/网络副作用。脚本不提供通用 `exec` 或“允许写入”开关。新增任务专用实现不能替代这里的边界，也不能直接交给持有共享凭据的实验 Agent；ADMET 作业还须遵守其 [远端作业规范](../../../adhoc_jobs/admet_sap_setup_20261029/remote-execution/SKILL.md)。"
+      }
+    ]
+  },
+  {
+    "id": "F20",
+    "title": "全局mini运维Skill留了具体准备Skill版本",
+    "status": "已移回项目索引语义",
+    "impact": "v1.2准备实测状态与通用运维能力无关，且已过期。",
+    "action": "全局仅保留项目入口、根目录及监控协议；项目版本/行为验收看项目索引。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/rules/skills/<PREPARATION_HOST_ALIAS>-orbstack-ops/SKILL.md",
+        "line": 33,
+        "quote": "冷启动验收使用全新、无 parent/history 的会话，仍从上述项目根进入，分别指定输入和输出目录；不能以另开项目代替上下文隔离。主控审读原工具轨迹和生产入口反例，不能把 `skill-use.json` 自报或测试数量当成功。v1.2修订的准备效果尚待真实新任务验证；无需为更新Skill自行追加或续写会话。"
+      }
+    ]
+  },
+  {
+    "id": "F21",
+    "title": "任何通用Skill文字修改都会令历史PLAN失效",
+    "status": "实现局限保留；历史证据未动",
+    "impact": "本次只修海南路由，原实跑PLAN再对当前Skill校验就会hash不符。最初一项测试也确实失败。",
+    "action": "新任务绑定当前版；历史验收必须读取当时冻结版。只修内存测试夹具，旧PLAN保持；后续检查器应区分历史复核与新准入，不能篡改旧hash凑通过。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/src/plan_checks.py",
+        "line": 53,
+        "quote": "    if plan['hainan_skill_sha256'] != digest(skill_path):"
+      }
+    ]
+  },
+  {
+    "id": "F22",
+    "title": "部分“固定工具”仍是首轮特例",
+    "status": "能力缺口已明示；未虚报实现",
+    "impact": "通用取回/评分/发布尚未抽取，旧check_evidence限定参考布局/0MiB，不能仅换run直接循环。",
+    "action": "优先复用已验证内核、用清单和配置驱动；结构、科学、在线行为分别验收。此审查没有上线通用批量执行器。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/design/chat_gateway_20261031/contracts.json",
+        "line": 411,
+        "quote": "    \"remaining\": \"Generic retrieval/scoring/publish and automatic dispatch not extracted or end-to-end tested.\""
+      },
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/skills/admet-frozen-training/scripts/check_evidence.py",
+        "line": 43,
+        "quote": "            require(g.findtext('uuid')==plan['gpu_uuid'] and g.findtext('gpu_recovery_action')=='None' and g.findtext('fb_memory_usage/used')=='0 MiB' and g.findtext('utilization/gpu_util')=='0 %','prelaunch GPU unavailable')"
+      }
+    ]
+  },
+  {
+    "id": "F23",
+    "title": "接续检查器不识别主控亲自处理",
+    "status": "文档已修正；工具仍缺processing状态",
+    "impact": "只有派别的Thread/外部等待/问用户/收口四类，主控亲自验收反而无法表达，容易为过门槛伪造派发。",
+    "action": "真实当前turn和工作证据可证明主控在处理；没有自报就算完成。后续工具补processing与完成区分，不能无限留review_pending。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/scripts/check_handoff.py",
+        "line": 38,
+        "quote": "        raise ValueError(\"unsupported disposition\")"
+      },
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/skills/admet-evidence-review/references/handoff-completion.md",
+        "line": 7,
+        "quote": "通知送达、主控收到、主控实际接续是三个状态。主控收到结果后，在当前已授权任务内作出并留存一种具体决定：已派发下一动作（真实目标/turn/回执）、等待明确外部依赖（依赖身份/负责人/已有唤醒方式）、需要用户处理（实际问题消息与原因），或本范围完成/失败收口（验收与明确结论）。仅写received、review_pending或口头“下一步会做”不算接续。不能为满足形式填不存在的动作。"
+      }
+    ]
+  },
+  {
+    "id": "F24",
+    "title": "提交CURRENT仍标专用Terra，实际已换Sol",
+    "status": "已修正",
+    "impact": "目录入口与专用Thread身份冲突。",
+    "action": "以submissions/thread.json身份为准，保留手动触发、不自动提交；未操作独立提交Thread。",
+    "evidence": [
+      {
+        "file": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/audits/control-plane-20261101/before/adhoc_jobs/admet_training/submissions/CURRENT.json",
+        "line": 6,
+        "quote": "  \"activation\": \"Only human-triggered dedicated Terra; updating this pointer does not authorize or trigger upload.\""
+      }
+    ]
+  }
+]

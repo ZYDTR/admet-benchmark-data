@@ -1,0 +1,87 @@
+"""Exact append-only receiver, including fresh per-slot candidates. No network."""
+import hashlib,io,json,os,re,stat,zipfile
+from pathlib import Path
+PREFIX='contract-follow-e2e-20261101/operator/resource-resume-01/'
+ALLOWED={'resume.py','contract.json','source-manifest.json','MAIN_ACCEPTANCE.json'}|{'slot-%02d/candidate.json'%x for x in range(1,4)}
+def canonical(root,path,mountinfo=None):
+    assert root.resolve(strict=True)==root and (path==root or root in path.parents)
+    assert path.resolve(strict=False)==path
+    for parent in (path,*path.parents):
+        if parent.exists() or parent.is_symlink():
+            info=parent.lstat();assert not stat.S_ISLNK(info.st_mode)
+            if stat.S_ISREG(info.st_mode):assert info.st_nlink==1
+    if mountinfo is None:
+        file=Path('/proc/self/mountinfo');mountinfo=file.read_text() if file.exists() else ''
+    for line in mountinfo.splitlines():
+        fields=line.split();assert len(fields)>=6
+        mount=Path(re.sub(r'\\([0-7]{3})',lambda m:chr(int(m[1],8)),fields[4]))
+        assert not ((mount==root or root in mount.parents) and (mount==path or mount in path.parents))
+    return path
+
+def collect(blob,manifest,digest):
+    assert 0<len(manifest)<=7 and len(blob)<=4*1024**2 and hashlib.sha256(blob).hexdigest()==digest
+    for name,item in manifest.items():
+        assert name.startswith(PREFIX) and name[len(PREFIX):] in ALLOWED and 0<=item['size']<=1024**2
+    with zipfile.ZipFile(io.BytesIO(blob)) as archive:
+        assert len(archive.namelist())==len(manifest) and set(archive.namelist())==set(manifest)
+        result={}
+        for item in archive.infolist():
+            mode=stat.S_IFMT(item.external_attr>>16)
+            assert not item.is_dir() and mode in (0,stat.S_IFREG) and not item.flag_bits&1
+            assert item.file_size==manifest[item.filename]['size']
+            value=archive.read(item.filename);assert len(value)==manifest[item.filename]['size'] and hashlib.sha256(value).hexdigest()==manifest[item.filename]['sha256'];result[item.filename]=value
+    return result
+
+def read_frame(stream,size):
+    assert 0<size<=4*1024**2
+    value=stream.read(size+1);assert len(value)==size,'truncated or extra transport bytes'
+    return value
+
+def append(base,data):
+    for name in data:
+        assert name.startswith(PREFIX) and name[len(PREFIX):] in ALLOWED
+        path=canonical(base,base/name);assert not path.exists() and not path.is_symlink()
+    for name,value in data.items():
+        path=canonical(base,base/name);path.parent.mkdir(parents=True,exist_ok=True);canonical(base,path.parent)
+        with path.open('xb') as stream:stream.write(value);stream.flush();os.fsync(stream.fileno())
+
+def verify_prior(base,cfg):
+    assert cfg['execution_enabled'] is True and len(cfg['protected_files'])==689
+    assert cfg['main_thread']=='private-role-298cc5edc25e'
+    for name,item in cfg['protected_files'].items():
+        p=canonical(base,base/name);assert p.stat().st_size==item['size'] and hashlib.sha256(p.read_bytes()).hexdigest()==item['sha256']
+    for old in cfg['old_identities']:
+        p=Path('/proc')/str(old['pid'])/'stat'
+        try:v=p.read_text().rsplit(')',1)[1].split()
+        except FileNotFoundError:continue
+        ticks=str(old.get('start_ticks') or old['start_stat'].rsplit(')',1)[1].split()[19]);assert v[19]!=ticks or v[0] in ('Z','X')
+    for root in cfg['run_roots']:
+        p=canonical(base,Path(root)/'state/learning-started.lock');assert not p.exists()
+    for name in ('batch-lifetime.lock','batch-state.json','host-batch-start.lock'):
+        assert not canonical(base,base/'contract-follow-e2e-20261101/state/recovery-02'/name).exists()
+    assert not canonical(base,base/'contract-follow-e2e-20261101/state/resource-resume-01/batch-intent.json').exists()
+
+
+import sys,socket,subprocess,datetime
+assert socket.gethostname().split('.')[0]=='project-compute' and os.getuid()==os.getgid()==1012
+BASE=Path('<AUTHORIZED_PROJECT_ROOT>/admet');ROOT=BASE/'contract-follow-e2e-20261101';request=json.load(sys.stdin)
+out={'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'protected':[],'append':[],'prior':[],'processes':[],'gpu_queries':[]}
+for field,target in [('protected_files','protected'),('append_files','append')]:
+ for name,item in request[field].items():
+  path=canonical(BASE,BASE/name);data=path.read_bytes();digest=hashlib.sha256(data).hexdigest();out[target].append({'path':name,'size':len(data),'sha256':digest,'unchanged':len(data)==item['size'] and digest==item['sha256']})
+for name,item in request['prior_files'].items():
+ path=canonical(BASE,ROOT/name);digest=hashlib.sha256(path.read_bytes()).hexdigest();out['prior'].append({'path':name,'sha256':digest,'unchanged':digest==item['sha256']})
+seen=set()
+for old in request['identities']:
+ ticks=str(old.get('start_ticks') or old['start_stat'].rsplit(')',1)[1].split()[19]);key=(old['pid'],ticks)
+ if key in seen:continue
+ seen.add(key);item={'pid':old['pid'],'start_ticks':ticks}
+ try:raw=(Path('/proc')/str(old['pid'])/'stat').read_text()
+ except FileNotFoundError:item['state']='absent_now'
+ except OSError as error:item.update(state='unknown',error=repr(error))
+ else:
+  fields=raw.rsplit(')',1)[1].split();item.update(raw_stat=raw,state='pid_reused' if ticks!=fields[19] else 'terminal' if fields[0] in ('Z','X') else 'matching_live')
+ out['processes'].append(item)
+for command in [['/usr/bin/nvidia-smi','-i',request['candidate']['gpu_uuid'],'-q','-x'],['/usr/bin/nvidia-smi','--query-compute-apps=gpu_uuid,pid,used_gpu_memory','--format=csv,noheader,nounits'],['/usr/bin/nvidia-smi','pmon','-s','um','-c','1']]:
+ p=subprocess.run(command,capture_output=True,text=True,timeout=15);out['gpu_queries'].append({'argv':command,'actual_OS_exit':p.returncode,'stdout':p.stdout,'stderr':p.stderr})
+print(json.dumps(out))

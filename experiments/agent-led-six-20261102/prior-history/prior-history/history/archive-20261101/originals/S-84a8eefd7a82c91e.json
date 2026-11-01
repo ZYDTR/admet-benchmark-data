@@ -1,0 +1,200 @@
+{
+  "at": "2026-11-01T07:39:33.440551+00:00",
+  "training_updates": 0,
+  "remote_operations": 0,
+  "checkpoint": {
+    "original": {
+      "returncode": 1,
+      "expected_returncode": 1,
+      "production_cases": {
+        "checks": [
+          {
+            "monitor": "internal_validation_standardized_mse",
+            "checkpoint": "best",
+            "legacy_value": 1.0,
+            "expected_best_mse": 1.0,
+            "passed": true
+          },
+          {
+            "monitor": "internal_validation_standardized_mse",
+            "checkpoint": "last",
+            "legacy_value": 4.0,
+            "expected_best_mse": 1.0,
+            "passed": false
+          },
+          {
+            "monitor": "internal_validation_raw_mae",
+            "checkpoint": "best",
+            "legacy_value": 3.0,
+            "expected_best_mse": 1.0,
+            "passed": false
+          },
+          {
+            "monitor": "internal_validation_raw_mae",
+            "checkpoint": "last",
+            "legacy_value": 4.0,
+            "expected_best_mse": 1.0,
+            "passed": false
+          }
+        ],
+        "training_updates": 0,
+        "tensor_serialization_tested": false
+      }
+    },
+    "main_fixed": {
+      "returncode": 0,
+      "expected_returncode": 0,
+      "production_cases": {
+        "checks": [
+          {
+            "monitor": "internal_validation_standardized_mse",
+            "checkpoint": "best",
+            "legacy_value": 1.0,
+            "expected_best_mse": 1.0,
+            "passed": true
+          },
+          {
+            "monitor": "internal_validation_standardized_mse",
+            "checkpoint": "last",
+            "legacy_value": 1.0,
+            "expected_best_mse": 1.0,
+            "passed": true
+          },
+          {
+            "monitor": "internal_validation_raw_mae",
+            "checkpoint": "best",
+            "legacy_value": 1.0,
+            "expected_best_mse": 1.0,
+            "passed": true
+          },
+          {
+            "monitor": "internal_validation_raw_mae",
+            "checkpoint": "last",
+            "legacy_value": 1.0,
+            "expected_best_mse": 1.0,
+            "passed": true
+          }
+        ],
+        "training_updates": 0,
+        "tensor_serialization_tested": false
+      }
+    }
+  },
+  "row_test_counterexample": {
+    "same_attributes_different_positions_two_groups": {
+      "state": "accepted",
+      "rows": 3,
+      "split": {
+        "schema_version": "admet-monitor-mae-20261101-v5",
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "validation_fraction": 0.1,
+        "shuffle_algorithm": "CPython random.Random(seed).shuffle(seq) (Fisher-Yates via _randbelow) over codepoint-sorted group keys",
+        "python_random_engine": "random.Random (Mersenne Twister MT19937)",
+        "total_rows": 3,
+        "distinct_raw_drugs": 2,
+        "duplicate_raw_drug_groups": [
+          "CC"
+        ],
+        "drug_id_audit": {
+          "allow_duplicate_drug_id": true,
+          "duplicate_drug_ids": [
+            "dup"
+          ],
+          "note": "row position is the authoritative line identity; Drug_ID repeats legitimately in this dataset"
+        },
+        "target_stop_rows": 1,
+        "stop_group_count": 1,
+        "fit_rows": 2,
+        "stop_rows": 1,
+        "stop_drug_keys": [
+          "CCC"
+        ],
+        "fit_row_indices": [
+          0,
+          1
+        ],
+        "stop_row_indices": [
+          2
+        ],
+        "groups": {
+          "CC": [
+            0,
+            1
+          ],
+          "CCC": [
+            2
+          ]
+        },
+        "split_record_sha256": "5b850c6ad58cde7b9e36c302d245c6699a8fd004aeb069efa1e5759cb18aee31"
+      }
+    },
+    "unique_ids_single_group": {
+      "state": "rejected",
+      "error": "could not select a non-empty, non-exhaustive stop set"
+    }
+  },
+  "row_test_conclusion": "原测试证明单组不可划分，不证明重复(task,split,row_index)被拒；相同属性不同原始行必须保留。",
+  "frozen_output_manifest": [
+    {
+      "path": "HANDOFF.md",
+      "match": true
+    },
+    {
+      "path": "config.json",
+      "match": true
+    },
+    {
+      "path": "encoder.py",
+      "match": true
+    },
+    {
+      "path": "raw/checks/checks.json",
+      "match": true
+    },
+    {
+      "path": "raw/checks/input-reverify.json",
+      "match": true
+    },
+    {
+      "path": "raw/checks/packet_verify.txt",
+      "match": true
+    },
+    {
+      "path": "raw/checks/unittest_stdout.txt",
+      "match": true
+    },
+    {
+      "path": "raw/tmp/.keep",
+      "match": true
+    },
+    {
+      "path": "raw/train_remote_v4.diff",
+      "match": true
+    },
+    {
+      "path": "raw/training_science.diff",
+      "match": true
+    },
+    {
+      "path": "skill-use.json",
+      "match": true
+    },
+    {
+      "path": "tests/test_preparation_monitor.py",
+      "match": true
+    },
+    {
+      "path": "train_remote_v4.py",
+      "match": true
+    },
+    {
+      "path": "training_science.py",
+      "match": true
+    }
+  ],
+  "limits": [
+    "metadata检查为生产函数加无写入serializer，不证明Tensor实际存取",
+    "当前只复核已冻结本机证据，无新训练/评分/网站或海南访问"
+  ]
+}

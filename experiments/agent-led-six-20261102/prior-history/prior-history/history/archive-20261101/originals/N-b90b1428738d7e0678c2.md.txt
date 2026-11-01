@@ -1,0 +1,68 @@
+# 海南资源观察日志
+
+统一入口：[ADMET项目](../../AGENTS.md)，规范：[资源观察Skill](../../skills/hainan-resource-observation/SKILL.md)。
+
+最新观察：`hainan-20261101T094313-562014Z`，北京时间 **2026-11-01T17:43:16.972814+08:00**，状态 `observed`。
+空闲候选 1，占用 5，健康不可用 2，证据不足 0。
+
+有效期截止 UTC `2026-11-01T09:58:16.972814+00:00`。阅读时须自行计算年龄，超过15分钟、未来时间、缺失或失败时 `query_required`；训练启动前始终按UUID直接复核。此记录只提供候选和占用事实，资源未被预留，共享适用性未评估。
+
+| GPU | UUID | 显存已用/总量 MiB | 利用率 | 恢复动作 | 分类 | PID |
+|---|---|---:|---:|---|---|---|
+| 0 | `<REGISTERED_GPU>` | 39755/81559 | 100 | None | occupied | 4060142 |
+| 1 | `<REGISTERED_GPU>` | 72207/81559 | 0 | None | occupied | 2516225 |
+| 2 | `<REGISTERED_GPU>` | 31441/81559 | 100 | None | occupied | 3057610, 3061859 |
+| 3 | `<REGISTERED_GPU>` | 59149/81559 | 100 | None | occupied | 2311277 |
+| 4 | `<REGISTERED_GPU>` | 0/81559 | 0 | Reset | unavailable | 无进程报告 |
+| 5 | `<REGISTERED_GPU>` | 42201/81559 | 100 | None | occupied | 3154044, 3232707 |
+| 6 | `<REGISTERED_GPU>` | 0/81559 | 0 | None | idle_candidate | 无进程报告 |
+| 7 | `<REGISTERED_GPU>` | 0/81559 | 100 | Reset | unavailable | 无进程报告 |
+
+GPU7若同时出现零显存和非零利用率，其占用判断为unknown；明确Reset仍足以阻断新作业。
+
+## 最近变化
+
+- GPU6 `<REGISTERED_GPU>`: occupied → idle_candidate，恢复动作 None → None
+
+比较基线：`hainan-20261101T093317-761703Z`。最后完整成功样本：`hainan-20261101T094313-562014Z`，时间 `2026-11-01T09:43:16.972814+00:00`；失败后沿该历史路径读取，旧样本时间保持不变。
+
+## 证据与运行入口
+
+- [latest.json](latest.json)：最近一次查询的原子快照；[status.json](status.json)：连接状态、最后成功身份/时间及错误。
+- [本次追加快照](observations/hainan-20261101T094313-562014Z.json)；[原始输出](raw/hainan-20261101T094313-562014Z.json)。每个原件的SHA256在快照raw_evidence内。
+- [登记与通知授权](registry.json)；通知去重记录在notifications.jsonl，只有登记等待任务的相关变化才回传。
+- [只读命令审查](implementation/command-review.json)及[完整远端源码](implementation/reviewed-remote-source.py)。连接客户端保持原样，严格双层主机密钥、private-compute/UID1012及固定Windows路由。
+- 单次入口：`python3 -B adhoc_jobs/admet_training/resources/hainan/implementation/observe.py`。每次仅采一轮并退出；10分钟heartbeat由主控登记，本实现不建定时器。
+
+## 字段口径与边界
+
+observation_id/observed_at为唯一查询及真实采样UTC；observed_at_beijing仅作展示。query保存本机/远端起止、耗时及重试。identity核验hostname、UID/GID、规范Michael路径；host_resources含CPU/内存/statvfs；gpus按UUID合并inventory、健康XML、compute进程和pmon。
+
+GPU数值缺失为null。health分别记录恢复动作、计算模式、volatile ECC和行重映射；processes含PID、UID/GID、PPID、start_ticks及必要cwd归属布尔值，不读cmdline/环境或同事项目正文。同UID不能证明自有作业；不可读cwd单独登记为unknown。
+
+idle_candidate表示本次所查健康字段通过且三个进程视图无占用证据；occupied表示驻留进程或显存，不能据此决定共享；unavailable表示明确恢复/错误条件；unknown表示缺失或矛盾。utilization和xml_utilization来自先后查询，正常采样波动分别保留。
+
+changes_since_previous只报告分类/恢复动作变化，首次基线不伪装释放。raw_evidence给出原件和摘要；limitations列实际限制。观察无训练、安装、预留、重置或停止任务权限。没有全机审计，outside_scope_changes始终not_verified。
+
+专职观察与训练Thread分别登记，均固定gpt-6.1-sol/xhigh。长期连续性及共享适用性尚未验证。
+
+[首次验收](implementation/first-observation-acceptance.json)和[初始解析修正](implementation/corrections.json)保留首版partial及后续完整样本的来源。首轮unknown到idle属于证据恢复，物理释放未被证明。
+
+## 本次限制
+
+- Point-in-time sequential queries are not a reservation; GPU values can change between commands.
+- Scheduler/reservation state and other jobs' peak/burst requirements were not queried; sharing is not approved by this snapshot.
+- GPU process UID/cwd membership does not establish ownership of a project-owner job; no colleague project bodies, cmdline or environment were read.
+- Only NVIDIA-reported recovery/ECC/remap/compute-mode evidence was inspected; CUDA initialization and full device diagnostics were not run.
+- No requested remote writes; SSH/driver internal behavior and whole-host side effects were not audited.
+- CPU is a 0.5-second sample; memory and statvfs are snapshots, not an IO or performance budget.
+- PID 4060142 cwd membership unreadable (PermissionError); ownership remains unproven.
+
+## 本轮通知决定（hainan-20261101T094313-562014Z）
+
+- `DONT_NOTIFY`：等待/执行资源登记均为空；v4已闭合、关闭唤醒，精确状态仍`failed`、预算已消耗、自有资源已释放。项目准备阶段说明不等于等待登记，不推定新任务；科学验收以主控登记为准，不重复终态/截止通知。观察Skill v1.0.0及共同引用摘要未变。
+- `hainan-20261101T093317-761703Z` → `hainan-20261101T094313-562014Z`：GPU6本次无显存/利用率占用、三项视图无进程，查询健康字段正常；变化和UUID已留证。无登记等待任务，不发送释放通知。GPU0/1/2/3/5有非自有进程；GPU4/7继续`Reset`，健康字段无新增变化，GPU7占用unknown保留。
+- GPU5顺序查询显存为42201 MiB（inventory）、44361 MiB（XML）；各视图值及真实命令时间均保留，精确同一时点余量为unknown，已有进程证明占用。单次快照不能授予共享资格，不设0显存通用门槛，也不据此推断设备新故障。
+- GPU0 PID4060142的cwd继续`PermissionError`，相关未知字段保留，不提权、不重试真实权限拒绝；同UID不证明自有，未读他人项目正文。
+- `/`当前账号可用字节20187332608，原件一致且仍为正数；既有空间事件及回升均已通知，只更新[事件记录](host-alert-status.json)，不重复回报，根因与稳定修复未验证。
+- 身份通过，四项GPU查询成功且未截断，连接首次成功，总耗时5.993808秒。原件SHA256、追加快照、latest及status已核对，决定追加至`heartbeat-decisions.jsonl`；未请求远端变更，独立观察继续。

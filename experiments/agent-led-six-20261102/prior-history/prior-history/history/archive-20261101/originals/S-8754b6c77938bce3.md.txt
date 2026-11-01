@@ -1,0 +1,101 @@
+# data-eval（任务 B）：数据核验、逐任务评分与官方格式提交导出
+
+冻结底座首版基线的 B 路交付。全部代码为 Python 标准库实现（无第三方依赖），
+开发与自测环境为 Python 3.11.2；主 Codex 可在任何 Python 3.9+ 的容器外环境直接运行。
+
+## 目录
+
+```
+output/data-eval/
+├── README.md                  本文件：运行说明
+├── HANDOFF.md                 交接说明：已做检查、未验证项、下一条命令
+├── run_admet_eval.py          CLI 包装脚本（可在任意目录调用）
+├── admet_eval/                工具包
+│   ├── common.py              共享工具与注册快照期望值（哈希、行数、指标表）
+│   ├── metrics.py             AUROC/AUPRC/MAE/Spearman 本地实现（纯标准库）
+│   ├── verify_inputs.py       输入/模板完整性核验（只读）
+│   ├── check_predictions.py   预测文件合同与覆盖检查（只读）
+│   ├── score.py               逐任务评分（标签路径由调用方显式提供）
+│   ├── export_submission.py   官方格式提交导出（仅填 y_pred，逐字节保真）
+│   ├── validate_submission.py 提交文件回验（对模板逐行比对）
+│   └── selftest.py            合成固定数值自测（不训练）
+├── examples/run_synthetic_demo.py  合成数据端到端演示（check→score→export→validate）
+└── reports/                   本轮已生成的核验报告（JSON）
+```
+
+## 命令（从项目根目录）
+
+```bash
+# 1) 自测（合成固定数值，验证指标实现/CSV拼接/校验负例，不训练）
+python3 output/data-eval/run_admet_eval.py selftest --report output/data-eval/reports/selftest_report.json
+
+# 2) 输入与模板完整性核验（只读）
+python3 output/data-eval/run_admet_eval.py verify-inputs --report output/data-eval/reports/inputs_report.json
+
+# 3) 预测文件合同/覆盖检查
+python3 output/data-eval/run_admet_eval.py check-predictions --pred <pred.csv> --report <report.json>
+
+# 4) 逐任务评分（--labels 由主 Codex 显式提供；容器外执行）
+python3 output/data-eval/run_admet_eval.py score --pred <pred.csv> --split valid \
+    --labels <labels_dir_or_csv> --report <report.json> [--report-csv <table.csv>]
+
+# 5) 官方格式提交导出（模板默认 data/official/submission_template.csv，校验注册 sha256）
+python3 output/data-eval/run_admet_eval.py export --pred <pred.csv> --output <提交文件.csv> \
+    --report <report.json> [--check-range] [--overwrite]
+
+# 6) 提交文件回验
+python3 output/data-eval/run_admet_eval.py validate-submission --submission <提交文件.csv> \
+    --report <report.json>
+```
+
+`--data-root` 可显式指定项目根（含 `data/`）；默认按包位置自动探测，也支持环境变量
+`ADMET_EVAL_DATA_ROOT`。命令均以退出码 0/1 表示通过/失败（2 为用法或文件缺失）。
+
+## 预测文件合同（与 A 路共享，按 TASK.md）
+
+CSV 文件，表头必须恰好为 `task,split,row_index,y_pred` 四列（顺序不限、不得多列）：
+
+- `task`：任务名，须与 data 中 22 个任务一致；
+- `split`：`train` / `valid` / `test` 之一；
+- `row_index`：该任务该 split 的 CSV 数据行位置（0 起，TASK.md 约定）；
+- `y_pred`：有限数值（拒绝空、非数值、nan/inf）。
+
+`export` 只使用 `split=test` 的行（valid 行被忽略并在报告中计数）；`score` 只使用
+`--split` 指定 split 的行。两者都要求该 split 全覆盖：缺行、重复键、越界 row_index、
+非有限值一律报错退出，不补值、不替换。
+
+## 标签格式（score 的 --labels，两种任选）
+
+1. 目录：每个任务一个官方格式 CSV（表头 `Drug_ID,Drug,Y`），文件名 `<task>.csv`
+   或 `<task>/<split>.csv`。行必须与项目内对应副本（valid 对 `data/blind_validation/`
+   副本，train/test 对 `data/official/data_benchmark/`）逐行 Drug_ID/Drug 一致，否则拒绝评分。
+   （因此 `--labels data/official/data_benchmark --split train` 可直接做 train 侧自检。）
+2. 单文件长表：表头含 `task,row_index,y_true`（允许多余列）。
+
+真实标签只由主 Codex 显式提供；本工具从不猜测或恢复标签。
+
+## 指标定义（本地，非官方确认）
+
+- AUROC：并列取 0.5 的排序概率（trapezoid 口径）。
+- AUPRC：average precision 步进定义 `Σ (R_k − R_{k−1})·P_k`（sklearn
+  `average_precision_score` 口径，非 trapezoid）。官方 AUPRC 实现未确认。
+- MAE：原 Y 尺度平均绝对误差。
+- Spearman：并列取平均秩的 Pearson 相关。
+- 单一类别（AUROC/AUPRC）、常数输入（Spearman）等不可定义情形返回 `undefined` 并给出
+  原因，不算工具失败；非 0/1 分类标签、非有限值等合同违规记为 `error`（退出码 1）。
+- 输出逐任务结果；宏平均仅以 `local_unofficial` 前缀给出，不产出官方总分。
+
+## 导出格式保证
+
+模板逐行原样保留，仅把空的 `y_pred` 字段替换为预测值：UTF-8 BOM、CRLF 行尾、
+字段顺序、引号/转义、空 drug_id、全部 16379 行与行序均不变。写入前逐行自检
+（重新解析比对）+ 整体回验；原子写入（临时文件 + rename）。y_pred 以 Python 最短
+round-trip 浮点表示写出。导出前会重新核验模板↔test.csv 的 `sample_idx`↔`row_index`
+映射（据实核对而非假设），不通过则拒绝导出。
+
+## 模板映射（当前核对结论）
+
+对全部 22 个任务已验证：模板按任务分 22 个连续块、`sample_idx` 在块内从 0 递增，
+与 `test.csv` 行号一一对应，且 drug_id、smiles 逐行 100% 一致（详见
+`reports/inputs_report.json` 的 `template_test_alignment` 节）。若官方模板更换
+（sha256 不再是注册值），`export` 默认拒绝执行。

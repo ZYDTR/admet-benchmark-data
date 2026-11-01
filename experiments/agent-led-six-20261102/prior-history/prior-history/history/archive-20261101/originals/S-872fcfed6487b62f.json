@@ -1,0 +1,614 @@
+{
+  "schema_version": 1,
+  "registry_sha256": "fe89cb2c23f582e580efdbf2f2faf5872124f96d2294cd24482ad56fa92d8217",
+  "records": [
+    {
+      "id": "baseline-22",
+      "kind": "training_run",
+      "root": "adhoc_jobs/admet_frozen_baseline_20261030/runs/chemeleon-host-v3-20261030",
+      "state": "accepted_with_quality_limits",
+      "summary": "Mini CPU冻结CheMeleon，22个任务各1头；v1/v2失败和v3复用缓存；22任务本地评分已完成，非海南。",
+      "sources": [
+        "adhoc_jobs/admet_frozen_baseline_20261030/DELIVERY.md",
+        "adhoc_jobs/admet_frozen_baseline_20261030/runs/chemeleon-host-v3-20261030/result/model/metrics.json",
+        "adhoc_jobs/admet_frozen_baseline_20261030/runs/chemeleon-host-v3-20261030/prediction-range-review.json",
+        "adhoc_jobs/admet_frozen_baseline_20261030/runs/chemeleon-host-v3-20261030/host-artifact-verification.json"
+      ]
+    },
+    {
+      "id": "hainan-skill-pilot-20261030",
+      "kind": "training_run",
+      "root": "adhoc_jobs/admet_training/runs/hainan-skill-pilot-20261030",
+      "state": "failed_before_learning",
+      "summary": "3次启动均失败，无完成训练；环境写入边界有失败。",
+      "sources": [
+        "adhoc_jobs/admet_training/runs/hainan-skill-pilot-20261030/status.json",
+        "adhoc_jobs/admet_training/runs/hainan-skill-pilot-20261030/PLAN.json",
+        "adhoc_jobs/admet_training/runs/hainan-skill-pilot-20261030/acceptance/report.md"
+      ]
+    },
+    {
+      "id": "hainan-frozen-training-20261031",
+      "kind": "training_run",
+      "root": "adhoc_jobs/admet_training/runs/hainan-frozen-training-20261031",
+      "state": "accepted_with_scope_limits",
+      "summary": "首个主控修复后海南Caco2冻结训练；14epoch/70更新。",
+      "sources": [
+        "adhoc_jobs/admet_training/runs/hainan-frozen-training-20261031/status.json",
+        "adhoc_jobs/admet_training/runs/hainan-frozen-training-20261031/PLAN.json",
+        "adhoc_jobs/admet_training/runs/hainan-frozen-training-20261031/acceptance/report.md"
+      ]
+    },
+    {
+      "id": "hainan-skill-follow-20261031",
+      "kind": "training_run",
+      "root": "adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031",
+      "state": "science_pass_skill_follow_partial",
+      "summary": "原Thread续聊，256头/lr0.0005/seed43；19epoch/95更新；前置失败后继续执行不合格。",
+      "sources": [
+        "adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031/status.json",
+        "adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031/PLAN.json",
+        "adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031/acceptance/report.md"
+      ]
+    },
+    {
+      "id": "hainan-index-cycle-20261031",
+      "kind": "training_run",
+      "root": "adhoc_jobs/admet_training/runs/hainan-index-cycle-20261031",
+      "state": "accepted_cycle_completed",
+      "summary": "分组train内573/64；26epoch/130更新；旧run状态落后于周期验收。",
+      "sources": [
+        "adhoc_jobs/admet_training/runs/hainan-index-cycle-20261031/status.json",
+        "adhoc_jobs/admet_training/runs/hainan-index-cycle-20261031/PLAN.json",
+        "adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031/acceptance/training-final/report.md"
+      ]
+    },
+    {
+      "id": "hainan-mae-monitor-20261101",
+      "kind": "training_run",
+      "root": "adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101",
+      "state": "science_accepted_supervisor_failed",
+      "summary": "15epoch/75更新；科学worker0/监督125；已评分及Pro回包，研究指南未全部可执行。",
+      "sources": [
+        "adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101/status.json",
+        "adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101/PLAN.json",
+        "adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/acceptance/training-final/RUN_ACCEPTED.json"
+      ]
+    },
+    {
+      "id": "prep-glm-deepseek-original",
+      "kind": "preparation",
+      "root": "adhoc_jobs/admet_frozen_baseline_20261030",
+      "state": "both_with_defects",
+      "summary": "四会话同prompt；GLM输出预算8192耗尽未交付；DeepSeek交付但模型路越权本机训练，数据评分合同不严。",
+      "sources": [
+        "adhoc_jobs/admet_frozen_baseline_20261030/acceptance/report.md",
+        "adhoc_jobs/admet_frozen_baseline_20261030/acceptance/session-summary.json",
+        "adhoc_jobs/admet_frozen_baseline_20261030/comparison-setup.json"
+      ]
+    },
+    {
+      "id": "prep-glm-expanded-budget",
+      "kind": "preparation",
+      "root": "adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030",
+      "state": "completed_not_fully_accepted",
+      "summary": "保留旧历史，500k/100k预算重跑；与冷启动或旧预算不可作普遍模型排名。",
+      "sources": [
+        "adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/report.md",
+        "adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/session-summary.json"
+      ]
+    },
+    {
+      "id": "prep-deepseek-coldstart",
+      "kind": "preparation",
+      "root": "adhoc_jobs/admet_deepseek_skill_coldstart_20261030",
+      "state": "both_failed_overall",
+      "summary": "两个全新上下文；真实接口/缓存/严格评分缺陷；无训练。",
+      "sources": [
+        "adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/report.md",
+        "adhoc_jobs/admet_deepseek_skill_coldstart_20261030/status.json"
+      ]
+    },
+    {
+      "id": "prep-qwen-two-assets",
+      "kind": "preparation",
+      "root": "adhoc_jobs/admet_qwen_preparation_20261031",
+      "state": "idle_incomplete_not_training_ready",
+      "summary": "MiniMol、MoLFormer各一路；旧状态preparation_running已过时，采用监控终态观察；未验收。",
+      "sources": [
+        "adhoc_jobs/admet_qwen_preparation_20261031/CONTINUE.md",
+        "contexts/infrastructure/opencode_terra_monitor_20261031/status.json"
+      ]
+    },
+    {
+      "id": "prep-contract-regression",
+      "kind": "preparation",
+      "root": "adhoc_jobs/admet_preparation_skill_v12_20261031",
+      "state": "offline_verified_model_behaviour_unverified",
+      "summary": "Qwen旧交付真实缺陷转生产反例，离线通过不等于新版模型通过。",
+      "sources": [
+        "adhoc_jobs/admet_preparation_skill_v12_20261031/receipt.json"
+      ]
+    },
+    {
+      "id": "pro-first",
+      "kind": "review_cycle",
+      "root": "adhoc_jobs/admet_training/exchange/trials/public-repo-20261031",
+      "state": "closed_see_independent_acceptance",
+      "summary": "首轮双向传输和研究；历史问题保持原件。",
+      "sources": [
+        "adhoc_jobs/admet_training/exchange/trials/public-repo-20261031/TRIAL.json",
+        "adhoc_jobs/admet_training/exchange/trials/public-repo-20261031/CONTINUE.md"
+      ]
+    },
+    {
+      "id": "pro-index",
+      "kind": "review_cycle",
+      "root": "adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031",
+      "state": "closed_see_independent_acceptance",
+      "summary": "渐进索引完整周期及下载恢复；存在交接延迟。",
+      "sources": [
+        "adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031/status.json",
+        "adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031/CONTINUE.md"
+      ]
+    },
+    {
+      "id": "pro-mae",
+      "kind": "review_cycle",
+      "root": "adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101",
+      "state": "closed_see_independent_acceptance",
+      "summary": "最后Pro研究包；运输通过，角色/历史/执行方案合同有缺陷。",
+      "sources": [
+        "adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/status.json",
+        "adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/CONTINUE.md",
+        "adhoc_jobs/admet_training/audits/end-to-end-20261101/REPORT.md",
+        "adhoc_jobs/admet_training/audits/end-to-end-20261101/clarifications-20261101.json"
+      ]
+    },
+    {
+      "id": "research-origin",
+      "kind": "research_or_audit",
+      "root": "adhoc_jobs/admet_research_intake_20261030",
+      "state": "evidence_retained",
+      "summary": "原调研包与模型候选依据；研究建议不是已准备或授权训练。",
+      "sources": [
+        "adhoc_jobs/admet_research_intake_20261030/README.md",
+        "adhoc_jobs/admet_research_intake_20261030/receipt.json"
+      ]
+    },
+    {
+      "id": "cleaning-audit",
+      "kind": "research_or_audit",
+      "root": "adhoc_jobs/admet_cleaned_archive_audit_20261030",
+      "state": "evidence_retained",
+      "summary": "清洗zip审计；未采用为正式训练版本。",
+      "sources": [
+        "adhoc_jobs/admet_cleaned_archive_audit_20261030/README.md",
+        "adhoc_jobs/admet_cleaned_archive_audit_20261030/audit.json"
+      ]
+    },
+    {
+      "id": "rules-data-origin",
+      "kind": "research_or_audit",
+      "root": "adhoc_jobs/admet_harness_startup_review_20261029",
+      "state": "evidence_retained",
+      "summary": "旧Harness、规则和数据原始审计；实现约束不能冒充赛事条款。",
+      "sources": [
+        "adhoc_jobs/admet_harness_startup_review_20261029/review-receipt.json",
+        "adhoc_jobs/admet_harness_startup_review_20261029/data-audit/数据完整性与计划调整.md"
+      ]
+    },
+    {
+      "id": "control-audit",
+      "kind": "research_or_audit",
+      "root": "adhoc_jobs/admet_training/audits/control-plane-20261101",
+      "state": "evidence_retained",
+      "summary": "用户意图、授权与控制面逐条复核。",
+      "sources": [
+        "adhoc_jobs/admet_training/audits/control-plane-20261101/REPORT.md"
+      ]
+    },
+    {
+      "id": "pipeline-audit",
+      "kind": "research_or_audit",
+      "root": "adhoc_jobs/admet_training/audits/end-to-end-20261101",
+      "state": "evidence_retained",
+      "summary": "原始工具/产物独立复核与证据措辞更正。",
+      "sources": [
+        "adhoc_jobs/admet_training/audits/end-to-end-20261101/REPORT.md",
+        "adhoc_jobs/admet_training/audits/end-to-end-20261101/findings.json",
+        "adhoc_jobs/admet_training/audits/end-to-end-20261101/clarifications-20261101.json"
+      ]
+    },
+    {
+      "id": "issue-decisions",
+      "kind": "research_or_audit",
+      "root": "adhoc_jobs/admet_training/exchange/issues",
+      "state": "evidence_retained",
+      "summary": "历史问题采纳与否决，不能用新回包覆盖旧账。",
+      "sources": [
+        "adhoc_jobs/admet_training/exchange/issues/INDEX.json"
+      ]
+    },
+    {
+      "id": "catalog-events",
+      "kind": "research_or_audit",
+      "root": "adhoc_jobs/admet_training/exchange/catalog",
+      "state": "evidence_retained",
+      "summary": "已验证/推翻事件链和旧快照。",
+      "sources": [
+        "adhoc_jobs/admet_training/exchange/catalog/inputs/20261031-v1.json"
+      ]
+    },
+    {
+      "id": "evaluation-use",
+      "kind": "research_or_audit",
+      "root": "adhoc_jobs/admet_training/control",
+      "state": "formal_deliveries_reconciled_lifetime_reads_unknown",
+      "summary": "五个已完成学习run的26个任务评分交付；旧失败访问和探索复算总次数未全部记录，不能冒充无valid适应。",
+      "sources": [
+        "adhoc_jobs/admet_training/control/evaluation-use-ledger.json",
+        "adhoc_jobs/admet_frozen_baseline_20261030/runs/chemeleon-host-v3-20261030/host-grading-receipt.json",
+        "adhoc_jobs/admet_training/exchange/trials/public-repo-20261031/retrieval/private_scoring/scoring-receipt.json",
+        "adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031/retrieval/phase2/private_scoring/scoring-receipt.json",
+        "adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/retrieval/private_scoring/scoring-receipt.json"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "record_id": "baseline-22",
+      "path": "adhoc_jobs/admet_frozen_baseline_20261030/DELIVERY.md",
+      "sha256": "416e87820c21ce4e04de8dc605ac4de734dfd9f3386f5795fd8d90f38a5acd97",
+      "bytes": 4927
+    },
+    {
+      "record_id": "baseline-22",
+      "path": "adhoc_jobs/admet_frozen_baseline_20261030/runs/chemeleon-host-v3-20261030/result/model/metrics.json",
+      "sha256": "74f43e5438f781e99b4019a4471c2fd16d7ff00132aabde9c4ad1d69ab63b04c",
+      "bytes": 10423
+    },
+    {
+      "record_id": "baseline-22",
+      "path": "adhoc_jobs/admet_frozen_baseline_20261030/runs/chemeleon-host-v3-20261030/prediction-range-review.json",
+      "sha256": "7c992298b561daf9fedd40f502d2633650fc262e19a0f0305eb0129fdfa23b8f",
+      "bytes": 3420
+    },
+    {
+      "record_id": "baseline-22",
+      "path": "adhoc_jobs/admet_frozen_baseline_20261030/runs/chemeleon-host-v3-20261030/host-artifact-verification.json",
+      "sha256": "3b52f6fd4b394a50502d98d3b25dd07d4f43211119c521b4270a904498776ccf",
+      "bytes": 484
+    },
+    {
+      "record_id": "hainan-skill-pilot-20261030",
+      "path": "adhoc_jobs/admet_training/runs/hainan-skill-pilot-20261030/status.json",
+      "sha256": "9613937167dd54bca8633c089d0b9e228c297b00d9bdb91e6fb3b98e7341e37f",
+      "bytes": 1220
+    },
+    {
+      "record_id": "hainan-skill-pilot-20261030",
+      "path": "adhoc_jobs/admet_training/runs/hainan-skill-pilot-20261030/PLAN.json",
+      "sha256": "8767494513fdd3c0dffb58de67b83dc952579deb8c4f0a6004bcbd3cea01035b",
+      "bytes": 3575
+    },
+    {
+      "record_id": "hainan-skill-pilot-20261030",
+      "path": "adhoc_jobs/admet_training/runs/hainan-skill-pilot-20261030/acceptance/report.md",
+      "sha256": "86818a2c5875acdfce965dd6612f2aabc511db4ce78cbc4a86a759de92b2dd7b",
+      "bytes": 8701
+    },
+    {
+      "record_id": "hainan-frozen-training-20261031",
+      "path": "adhoc_jobs/admet_training/runs/hainan-frozen-training-20261031/status.json",
+      "sha256": "276b3927edb1d1b3d188896e36221750d884c5028b48e3e868ed3b25ba9aa6a6",
+      "bytes": 255
+    },
+    {
+      "record_id": "hainan-frozen-training-20261031",
+      "path": "adhoc_jobs/admet_training/runs/hainan-frozen-training-20261031/PLAN.json",
+      "sha256": "9cdb3dfe2822a3b8c4b05b7a461c026a513114dc4a9d2562f117ecd69d5a970f",
+      "bytes": 3782
+    },
+    {
+      "record_id": "hainan-frozen-training-20261031",
+      "path": "adhoc_jobs/admet_training/runs/hainan-frozen-training-20261031/acceptance/report.md",
+      "sha256": "cf1df80de736a48065d7cdc4517702c446f6ba19cd9b319e65f1bc2879426637",
+      "bytes": 6704
+    },
+    {
+      "record_id": "hainan-skill-follow-20261031",
+      "path": "adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031/status.json",
+      "sha256": "722318872f3c089cc32fdd26ce4b795febc6f828675c42b1091cd87af5e956dc",
+      "bytes": 1909
+    },
+    {
+      "record_id": "hainan-skill-follow-20261031",
+      "path": "adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031/PLAN.json",
+      "sha256": "ba04167c7b47110210ebd1e0fa7aa1a665386bdbd35c009331271c0e372f1323",
+      "bytes": 3849
+    },
+    {
+      "record_id": "hainan-skill-follow-20261031",
+      "path": "adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031/acceptance/report.md",
+      "sha256": "d051f41bfe3e90426d32188f34393502431fa5d632eac7c58a2dc206e68b6a32",
+      "bytes": 8863
+    },
+    {
+      "record_id": "hainan-index-cycle-20261031",
+      "path": "adhoc_jobs/admet_training/runs/hainan-index-cycle-20261031/status.json",
+      "sha256": "50e8bf082aea7e56eaacb83a7b877788d9e5fd80965117154bb0ad80ac90b1b8",
+      "bytes": 2021
+    },
+    {
+      "record_id": "hainan-index-cycle-20261031",
+      "path": "adhoc_jobs/admet_training/runs/hainan-index-cycle-20261031/PLAN.json",
+      "sha256": "73095ab8b98434f21e1cdb7e3e46d8bb9bea41dde8dff3eac26ccbf7961c0f50",
+      "bytes": 4444
+    },
+    {
+      "record_id": "hainan-index-cycle-20261031",
+      "path": "adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031/acceptance/training-final/report.md",
+      "sha256": "f98c4ffff7a98c3c78aa2092c38c53713a80d23ede40220fba704a532eedecdf",
+      "bytes": 1442
+    },
+    {
+      "record_id": "hainan-mae-monitor-20261101",
+      "path": "adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101/status.json",
+      "sha256": "b253be8020653ffa59aebc958e9813fad0042a775ad40309c99144def49bd7e3",
+      "bytes": 1508
+    },
+    {
+      "record_id": "hainan-mae-monitor-20261101",
+      "path": "adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101/PLAN.json",
+      "sha256": "a6cc7b722a54ee0d9894f8710baca09b05ed0b9f9405f78161a7aa334e3e20f2",
+      "bytes": 4455
+    },
+    {
+      "record_id": "hainan-mae-monitor-20261101",
+      "path": "adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/acceptance/training-final/RUN_ACCEPTED.json",
+      "sha256": "21d8fd748f595bed0ab68d4d4cd4ebf69b73ee5d079c63b3421acf6ca9d80e2c",
+      "bytes": 1295
+    },
+    {
+      "record_id": "prep-glm-deepseek-original",
+      "path": "adhoc_jobs/admet_frozen_baseline_20261030/acceptance/report.md",
+      "sha256": "cd3412f44cf3144be11f328bcd58d133718feb56df3e9ab8c4a34c329e89a9ec",
+      "bytes": 7568
+    },
+    {
+      "record_id": "prep-glm-deepseek-original",
+      "path": "adhoc_jobs/admet_frozen_baseline_20261030/acceptance/session-summary.json",
+      "sha256": "8cff58dc95b49b1b8e963c919ad49f30e8a7c1cb2b25d845aec114c8732772b6",
+      "bytes": 5971
+    },
+    {
+      "record_id": "prep-glm-deepseek-original",
+      "path": "adhoc_jobs/admet_frozen_baseline_20261030/comparison-setup.json",
+      "sha256": "f9d36c9ef9d41f13ef6cdce458782afdc13c06759d2119dd4d63e022cd194835",
+      "bytes": 490
+    },
+    {
+      "record_id": "prep-glm-expanded-budget",
+      "path": "adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/report.md",
+      "sha256": "283109f1130c750e2101eede11712978dc234a9f5c826b75582b473180b73547",
+      "bytes": 7694
+    },
+    {
+      "record_id": "prep-glm-expanded-budget",
+      "path": "adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/session-summary.json",
+      "sha256": "0888b14f6af81e3bc614a17a3994c83207f043896418620f6e0f79b6d3179b68",
+      "bytes": 918
+    },
+    {
+      "record_id": "prep-deepseek-coldstart",
+      "path": "adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/report.md",
+      "sha256": "55bd2fc56185f58fce2d0bf2ef66274c320aa01dcdfec7556cd83f0202ec20d3",
+      "bytes": 9689
+    },
+    {
+      "record_id": "prep-deepseek-coldstart",
+      "path": "adhoc_jobs/admet_deepseek_skill_coldstart_20261030/status.json",
+      "sha256": "10239ca71841e0c372582fc6b6fb84bb4112640d9971f15c093186767538a670",
+      "bytes": 957
+    },
+    {
+      "record_id": "prep-qwen-two-assets",
+      "path": "adhoc_jobs/admet_qwen_preparation_20261031/CONTINUE.md",
+      "sha256": "6a7fd5d02e5fcbc68a8a4b79bc514637fd7c0fcb7263a8be8ef6da6fd169228f",
+      "bytes": 4058
+    },
+    {
+      "record_id": "prep-qwen-two-assets",
+      "path": "contexts/infrastructure/opencode_terra_monitor_20261031/status.json",
+      "sha256": "24f649df97ac074fbfb0e504432dd28b86dd3d50bf1a5f3b22234c22683fbca6",
+      "bytes": 46011
+    },
+    {
+      "record_id": "prep-contract-regression",
+      "path": "adhoc_jobs/admet_preparation_skill_v12_20261031/receipt.json",
+      "sha256": "f973b724bd0ebdd52141c2023c5031d8f4996d4b362d0395f1cc4d00c637408d",
+      "bytes": 584
+    },
+    {
+      "record_id": "pro-first",
+      "path": "adhoc_jobs/admet_training/exchange/trials/public-repo-20261031/TRIAL.json",
+      "sha256": "673ff3e0e92397fc6cd85e0032a396ce509612f00f58060db8c4a8daf0ab5de1",
+      "bytes": 2860
+    },
+    {
+      "record_id": "pro-first",
+      "path": "adhoc_jobs/admet_training/exchange/trials/public-repo-20261031/CONTINUE.md",
+      "sha256": "b86ad883e0b77f19d62da6f1d33dd886a506f3155117f9b236cc0b76d6568e9a",
+      "bytes": 2950
+    },
+    {
+      "record_id": "pro-index",
+      "path": "adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031/status.json",
+      "sha256": "acf75c5788b91531b196151b7b6de44ce59175701f01fa8764bcb55b320f3c96",
+      "bytes": 5838
+    },
+    {
+      "record_id": "pro-index",
+      "path": "adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031/CONTINUE.md",
+      "sha256": "a03621ab843bab4c7c5396851f34afd5478261441e9a5efd0ff4f317965bf319",
+      "bytes": 13643
+    },
+    {
+      "record_id": "pro-mae",
+      "path": "adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/status.json",
+      "sha256": "5dd5044befd4528ebcd73b36a1c9ae884383375b7ab1f990c3d8f97578d8718f",
+      "bytes": 5987
+    },
+    {
+      "record_id": "pro-mae",
+      "path": "adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/CONTINUE.md",
+      "sha256": "3165891b832d5652b4077339a3765f436d02bac5ac894a7c6934c57b2813bcb3",
+      "bytes": 4908
+    },
+    {
+      "record_id": "pro-mae",
+      "path": "adhoc_jobs/admet_training/audits/end-to-end-20261101/REPORT.md",
+      "sha256": "31fb3b4bda3885a8037e8fea2d56abee1d8f58afd2eb354dc33881887c55a27a",
+      "bytes": 15031
+    },
+    {
+      "record_id": "pro-mae",
+      "path": "adhoc_jobs/admet_training/audits/end-to-end-20261101/clarifications-20261101.json",
+      "sha256": "5a92dcadb19d9acd5980ea03a7097efc84f60c3c15d12d8bf68fb4259e1ac793",
+      "bytes": 3794
+    },
+    {
+      "record_id": "research-origin",
+      "path": "adhoc_jobs/admet_research_intake_20261030/README.md",
+      "sha256": "35edb41fba0ffd02e527a8d88ef640fef858d3729685436d15739541dec8ad76",
+      "bytes": 4128
+    },
+    {
+      "record_id": "research-origin",
+      "path": "adhoc_jobs/admet_research_intake_20261030/receipt.json",
+      "sha256": "6761cd16431fc90d4b1b10a55fda053189708e632d5d437962784d6c56593354",
+      "bytes": 874
+    },
+    {
+      "record_id": "cleaning-audit",
+      "path": "adhoc_jobs/admet_cleaned_archive_audit_20261030/README.md",
+      "sha256": "2df7d241423b5bdd9f702629b72fab8f3eecc80390f5a5270598e2574577de67",
+      "bytes": 4820
+    },
+    {
+      "record_id": "cleaning-audit",
+      "path": "adhoc_jobs/admet_cleaned_archive_audit_20261030/audit.json",
+      "sha256": "d6eeee5c894333e52e84f992643fd708b6a159dbb7c4848c9f453285178229aa",
+      "bytes": 5314
+    },
+    {
+      "record_id": "rules-data-origin",
+      "path": "adhoc_jobs/admet_harness_startup_review_20261029/review-receipt.json",
+      "sha256": "7bac3c5208bc39b8366a8ad69e32bc58adc45186bbf1e6b339d0767bd06a830d",
+      "bytes": 13477
+    },
+    {
+      "record_id": "rules-data-origin",
+      "path": "adhoc_jobs/admet_harness_startup_review_20261029/data-audit/数据完整性与计划调整.md",
+      "sha256": "046b8e6d03d063eace44869bb2ea06cda1dbd7493c05bcf37600e781b73f333c",
+      "bytes": 11944
+    },
+    {
+      "record_id": "control-audit",
+      "path": "adhoc_jobs/admet_training/audits/control-plane-20261101/REPORT.md",
+      "sha256": "08e71ab2834882d94eb0025a3c9d2df4d878ccd918b22eae0d3d0e0403f1a09d",
+      "bytes": 8571
+    },
+    {
+      "record_id": "pipeline-audit",
+      "path": "adhoc_jobs/admet_training/audits/end-to-end-20261101/REPORT.md",
+      "sha256": "31fb3b4bda3885a8037e8fea2d56abee1d8f58afd2eb354dc33881887c55a27a",
+      "bytes": 15031
+    },
+    {
+      "record_id": "pipeline-audit",
+      "path": "adhoc_jobs/admet_training/audits/end-to-end-20261101/findings.json",
+      "sha256": "8d535baf59067967b6eb50144bd2b530ebcf87c79d449ab72e1441ea13c1f8de",
+      "bytes": 4336
+    },
+    {
+      "record_id": "pipeline-audit",
+      "path": "adhoc_jobs/admet_training/audits/end-to-end-20261101/clarifications-20261101.json",
+      "sha256": "5a92dcadb19d9acd5980ea03a7097efc84f60c3c15d12d8bf68fb4259e1ac793",
+      "bytes": 3794
+    },
+    {
+      "record_id": "issue-decisions",
+      "path": "adhoc_jobs/admet_training/exchange/issues/INDEX.json",
+      "sha256": "6751ce0a3c2ff259e5327e52deff858ddaa576736d524e32021be761b3236181",
+      "bytes": 443
+    },
+    {
+      "record_id": "catalog-events",
+      "path": "adhoc_jobs/admet_training/exchange/catalog/inputs/20261031-v1.json",
+      "sha256": "a1e8fa914e08e936907cd28f70347beb84bb20c3f87449942f8f171ade0398f5",
+      "bytes": 15578
+    },
+    {
+      "record_id": "evaluation-use",
+      "path": "adhoc_jobs/admet_training/control/evaluation-use-ledger.json",
+      "sha256": "b9650efd8612d11f0a18c5af725e900406fd91c49d7259d694a76e6199f18b18",
+      "bytes": 2840
+    },
+    {
+      "record_id": "evaluation-use",
+      "path": "adhoc_jobs/admet_frozen_baseline_20261030/runs/chemeleon-host-v3-20261030/host-grading-receipt.json",
+      "sha256": "2c8673fb31bec0ebaac4c6a74534f17e93fcad0b503f67a5b9e5bef10f57f895",
+      "bytes": 987
+    },
+    {
+      "record_id": "evaluation-use",
+      "path": "adhoc_jobs/admet_training/exchange/trials/public-repo-20261031/retrieval/private_scoring/scoring-receipt.json",
+      "sha256": "a4f62af5d56f313084fb4405e9edc5f234e5e339c916dda59fcd8b391d879ced",
+      "bytes": 2631
+    },
+    {
+      "record_id": "evaluation-use",
+      "path": "adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031/retrieval/phase2/private_scoring/scoring-receipt.json",
+      "sha256": "e26a6a97fa26da2c71f64f54f3892f627fb2a2551af2b28d7cea1375f309f1e4",
+      "bytes": 1619
+    },
+    {
+      "record_id": "evaluation-use",
+      "path": "adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/retrieval/private_scoring/scoring-receipt.json",
+      "sha256": "c41d46dc70ad2318045620313ba5ce60f95f97c3950b075d69bf9e508e13d2f7",
+      "bytes": 1660
+    }
+  ],
+  "discovered_run_roots": [
+    "adhoc_jobs/admet_frozen_baseline_20261030/runs/chemeleon-host-v3-20261030",
+    "adhoc_jobs/admet_training/runs/hainan-frozen-training-20261031",
+    "adhoc_jobs/admet_training/runs/hainan-index-cycle-20261031",
+    "adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101",
+    "adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031",
+    "adhoc_jobs/admet_training/runs/hainan-skill-pilot-20261030"
+  ],
+  "discovered_source_roots": [
+    "adhoc_jobs/admet-agent-harness",
+    "adhoc_jobs/admet_agent_harness",
+    "adhoc_jobs/admet_benchmark_public",
+    "adhoc_jobs/admet_cleaned_archive_audit_20261030",
+    "adhoc_jobs/admet_deepseek_skill_coldstart_20261030",
+    "adhoc_jobs/admet_frozen_baseline_20261030",
+    "adhoc_jobs/admet_harness_startup_review_20261029",
+    "adhoc_jobs/admet_preparation_skill_v12_20261031",
+    "adhoc_jobs/admet_public_candidate_challenge_20261031",
+    "adhoc_jobs/admet_qwen_preparation_20261031",
+    "adhoc_jobs/admet_research_intake_20261030",
+    "adhoc_jobs/admet_sap_setup_20261029",
+    "adhoc_jobs/admet_training"
+  ],
+  "discovered_cycles": [
+    "adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101",
+    "adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031",
+    "adhoc_jobs/admet_training/exchange/trials/public-repo-20261031"
+  ],
+  "coverage": "all_registered_entities_reconciled",
+  "limitations": "Local identity inventory, not all original artifacts collected, published, read or scientifically accepted."
+}

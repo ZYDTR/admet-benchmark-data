@@ -1,0 +1,1000 @@
+[
+  {
+    "direction_id": "D-METRIC",
+    "linked_issues": [
+      "ISSUE-003",
+      "ISSUE-009",
+      "ISSUE-010"
+    ],
+    "rationale": "为每任务固定loss/monitor/方向/尺度及本地评分定义；修复真实引用。",
+    "evidence_refs": [
+      "required-011",
+      "required-047",
+      "required-049",
+      "required-050",
+      "runner-v4"
+    ],
+    "counterevidence": "官方等价未证实不意味着本地AP无效；不能以一个约定分数代替缺乏正类信息。",
+    "candidate_models_or_modules": [
+      "task-aware local metrics and normalization audit"
+    ],
+    "parameters": {
+      "MAE": "original Y scale, minimize",
+      "AUROC": "pairwise ranking/tie=.5, maximize",
+      "AP": "tied-score grouped average precision, no trapezoidal interpolation, maximize",
+      "Spearman": "Pearson of average tied ranks, maximize",
+      "validation_use": "aggregate-only authorized feedback; one-confirmation rule is recommendation, not prohibition"
+    },
+    "combination_constraints": [
+      "synthetic fixtures only before training",
+      "same local implementation for all arms",
+      "no official-equivalence claim from tuple fit alone"
+    ],
+    "search_method": "zero-fit acceptance / sensitivity protocol",
+    "configuration_count_or_counting_rule": "0 training configurations; G-METRIC is not an experiment",
+    "seeds": [],
+    "estimated_run_count": 0,
+    "cost_assumptions": "Fit counts are budget units, not GPU-hour predictions. Raw encoder caches may be reused only after identity/implementation acceptance. All estimates subtract exact existing shared-control tuples; no Cartesian product across directions.",
+    "readiness": {
+      "mode": "new_code",
+      "gate": "G-METRIC"
+    },
+    "priority": 1,
+    "scope_status": "conditional research; no execution authorization"
+  },
+  {
+    "direction_id": "D-DROPOUT",
+    "linked_issues": [
+      "ISSUE-006",
+      "ISSUE-010"
+    ],
+    "rationale": "最小首轮因果对照：只比较dropout，减少旧版四因素混杂。",
+    "evidence_refs": [
+      "required-048",
+      "runner-v4",
+      "required-011"
+    ],
+    "counterevidence": "更强dropout可能欠拟合；相同seed并不消除所有GPU非确定性。",
+    "candidate_models_or_modules": [
+      "frozen CheMeleon + 2048→256→1 ReLU MLP"
+    ],
+    "parameters": {
+      "dropout": [
+        0.1,
+        0.3
+      ],
+      "fixed_hidden": [
+        256
+      ],
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "epochs": 50,
+      "patience": 8
+    },
+    "combination_constraints": [
+      "only dropout differs within task/seed",
+      "do not claim interaction or optimality across lr/width",
+      "H0 is new matched control, not Mini22 original"
+    ],
+    "search_method": "paired one-factor screen",
+    "configuration_count_or_counting_rule": "21 non-Caco2 tasks × 2 dropout configs × 2 seeds =84; S1 10 tasks=40, conditional S1B11=44",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 84,
+    "cost_assumptions": "Fit counts are budget units, not GPU-hour predictions. Raw encoder caches may be reused only after identity/implementation acceptance. All estimates subtract exact existing shared-control tuples; no Cartesian product across directions.",
+    "readiness": {
+      "mode": "new_code",
+      "asset": "ready CheMeleon",
+      "existing_Caco2_config_only_route": "not used in this new matrix"
+    },
+    "priority": 1,
+    "scope_status": "proposed within frozen/train-only science scope; separate execution approval required"
+  },
+  {
+    "direction_id": "D-SEED",
+    "linked_issues": [
+      "ISSUE-006",
+      "ISSUE-014"
+    ],
+    "rationale": "区分model seed与split敏感性；不以多seed冒充结构代表性。",
+    "evidence_refs": [
+      "required-051",
+      "data-profile",
+      "required-012"
+    ],
+    "counterevidence": "所有重复仍来自同一训练包，不能称外部独立验证。",
+    "candidate_models_or_modules": [
+      "locked H0/H1"
+    ],
+    "parameters": {
+      "model_seeds": [
+        46,
+        47,
+        48
+      ],
+      "outer_split_seeds": [
+        44,
+        45,
+        46
+      ],
+      "inner_seed_rule": "outer+100",
+      "outer_holdout": 0.2,
+      "inner_stop": 0.1
+    },
+    "combination_constraints": [
+      "only selected unknown tasks resolved after S1",
+      "keep outer excluded from all fitting/epoch selection",
+      "do not stack counts for exact reused pairs"
+    ],
+    "search_method": "conditional confirmation then optional multi-split",
+    "configuration_count_or_counting_rule": "T-S2≤4×2×3=24; multi-split≤2×2×3×3=36 total, at most24 new after overlap",
+    "seeds": [
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": {
+      "confirm_max": 24,
+      "extra_multisplit_max": 24
+    },
+    "cost_assumptions": "Fit counts are budget units, not GPU-hour predictions. Raw encoder caches may be reused only after identity/implementation acceptance. All estimates subtract exact existing shared-control tuples; no Cartesian product across directions.",
+    "readiness": {
+      "mode": "new_code",
+      "template": "conditional-followups.json"
+    },
+    "priority": 1,
+    "scope_status": "conditional research; no execution authorization"
+  },
+  {
+    "direction_id": "D-HEAD",
+    "linked_issues": [
+      "ISSUE-002",
+      "ISSUE-006"
+    ],
+    "rationale": "对重复稳定但欠拟合/过拟合候选调整容量；小样本不要默认扩头。",
+    "evidence_refs": [
+      "required-014",
+      "required-051",
+      "runner-v4"
+    ],
+    "counterevidence": "旧512与256结果受seed/split/lr混杂，不能推出256普遍最优。",
+    "candidate_models_or_modules": [
+      "linear head",
+      "one-hidden MLP",
+      "two-hidden MLP"
+    ],
+    "parameters": {
+      "hidden_dims": [
+        [],
+        [
+          64
+        ],
+        [
+          128
+        ],
+        [
+          256
+        ],
+        [
+          256,
+          128
+        ]
+      ],
+      "activation": "ReLU",
+      "dropout": "lock selected value"
+    },
+    "combination_constraints": [
+      "select at most2 candidate capacities plus exact common control per task",
+      "all other fields fixed",
+      "linear is head over deep frozen representation, not replacement of encoder"
+    ],
+    "search_method": "bounded one-factor contrast",
+    "configuration_count_or_counting_rule": "≤3 configs ×3 seeds=9 per selected task; subtract exact shared control",
+    "seeds": [
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": {
+      "max_per_selected_task": 9
+    },
+    "cost_assumptions": "Fit counts are budget units, not GPU-hour predictions. Raw encoder caches may be reused only after identity/implementation acceptance. All estimates subtract exact existing shared-control tuples; no Cartesian product across directions.",
+    "readiness": {
+      "mode": "new_code",
+      "note": "Caco2 hidden_dims config route exists; generalized task implementation still needs acceptance"
+    },
+    "priority": 2,
+    "scope_status": "conditional research; no execution authorization"
+  },
+  {
+    "direction_id": "D-LR",
+    "linked_issues": [
+      "ISSUE-006"
+    ],
+    "rationale": "训练loss/早停轨迹提示欠收敛后才细调步长。",
+    "evidence_refs": [
+      "runner-v4",
+      "required-051",
+      "required-052"
+    ],
+    "counterevidence": "更低lr可能只是需要更多epoch，不能把预算差误认为更好泛化。",
+    "candidate_models_or_modules": [
+      "AdamW head"
+    ],
+    "parameters": {
+      "learning_rate": [
+        0.0001,
+        0.0003,
+        0.0005,
+        0.001
+      ]
+    },
+    "combination_constraints": [
+      "same width/dropout/weight decay/loss/split",
+      "one axis only, retain .0005 control",
+      "report max-epoch hits"
+    ],
+    "search_method": "log-spaced bounded sweep",
+    "configuration_count_or_counting_rule": "4 configs×3 seeds=12 total per task;3 control fits may be reused only exact match",
+    "seeds": [
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": {
+      "max_total_per_task": 12
+    },
+    "cost_assumptions": "Fit counts are budget units, not GPU-hour predictions. Raw encoder caches may be reused only after identity/implementation acceptance. All estimates subtract exact existing shared-control tuples; no Cartesian product across directions.",
+    "readiness": {
+      "mode": "config_only for accepted Caco2 runner; new_code for proposed 22-task interface"
+    },
+    "priority": 3,
+    "scope_status": "conditional research; no execution authorization"
+  },
+  {
+    "direction_id": "D-WD",
+    "linked_issues": [
+      "ISSUE-006"
+    ],
+    "rationale": "从稳定容量与步长条件下调正则，避免一次改多项。",
+    "evidence_refs": [
+      "runner-v4",
+      "required-048"
+    ],
+    "counterevidence": "较强衰减可能压低有用信号；不同optimizer下同数值不等价。",
+    "candidate_models_or_modules": [
+      "AdamW head"
+    ],
+    "parameters": {
+      "weight_decay": [
+        0.0,
+        0.0001,
+        0.001,
+        0.01
+      ]
+    },
+    "combination_constraints": [
+      "lock optimizer/lr/capacity/dropout and all partitions",
+      "no independent claim from old H0/H1 bundles"
+    ],
+    "search_method": "one-axis sweep",
+    "configuration_count_or_counting_rule": "4×3=12 per selected task total minus exact shared control",
+    "seeds": [
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": {
+      "max_total_per_task": 12
+    },
+    "cost_assumptions": "Fit counts are budget units, not GPU-hour predictions. Raw encoder caches may be reused only after identity/implementation acceptance. All estimates subtract exact existing shared-control tuples; no Cartesian product across directions.",
+    "readiness": {
+      "mode": "config_only for accepted Caco2; new_code for generalized interface"
+    },
+    "priority": 3,
+    "scope_status": "conditional research; no execution authorization"
+  },
+  {
+    "direction_id": "D-LOSS",
+    "linked_issues": [
+      "ISSUE-003",
+      "ISSUE-005",
+      "ISSUE-012"
+    ],
+    "rationale": "训练目标与MAE/rank/AP不完全一致，允许受控目标研究。",
+    "evidence_refs": [
+      "required-052",
+      "required-053",
+      "required-011"
+    ],
+    "counterevidence": "MAE-monitor历史未改变MSE训练loss；换loss不保证提高任务指标。",
+    "candidate_models_or_modules": [
+      "new train-only head losses"
+    ],
+    "parameters": {
+      "MAE_tasks": [
+        "standardized MSE",
+        "standardized L1",
+        "Huber(delta=1 standardized unit)"
+      ],
+      "Spearman_tasks": [
+        "standardized MSE",
+        "Huber(delta=1)",
+        "MSE+0.1*pairwise_logistic_rank_loss"
+      ],
+      "classification": [
+        "BCE pos_weight=1",
+        "BCE pos_weight=nneg_fit/npos_fit capped at10"
+      ]
+    },
+    "combination_constraints": [
+      "at most3 predeclared loss configs per selected task",
+      "weights/target statistics from fit only",
+      "native metric early-stop unchanged",
+      "rank pairs from fit only; no valid-derived pairs"
+    ],
+    "search_method": "matched one-factor loss comparison",
+    "configuration_count_or_counting_rule": "≤3×3=9 per task; class2×3=6; subtract exact existing MSE/BCE control",
+    "seeds": [
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": {
+      "max_total_per_task": 9
+    },
+    "cost_assumptions": "Fit counts are budget units, not GPU-hour predictions. Raw encoder caches may be reused only after identity/implementation acceptance. All estimates subtract exact existing shared-control tuples; no Cartesian product across directions.",
+    "readiness": {
+      "mode": "new_code",
+      "acceptance": "gradient/scale/one-class fixture before fit"
+    },
+    "priority": 2,
+    "scope_status": "conditional research; no execution authorization"
+  },
+  {
+    "direction_id": "D-FEATURE",
+    "linked_issues": [
+      "ISSUE-012",
+      "ISSUE-005"
+    ],
+    "rationale": "检验极小std放大是否可被稳定处理且真正改善预测。",
+    "evidence_refs": [
+      "scale-attribution",
+      "required-051",
+      "required-052",
+      "runner-v4"
+    ],
+    "counterevidence": "消除极端z不一定改善误差；clip可能删除罕见有用信号。",
+    "candidate_models_or_modules": [
+      "train-fit-only frozen-feature transformations"
+    ],
+    "parameters": {
+      "arms": [
+        "legacy mean/std; std<1e-8→1",
+        "mean/std with std floor1e-3",
+        "legacy transform plus clip z to[-10,10]"
+      ],
+      "fit_partition": "inner fit only"
+    },
+    "combination_constraints": [
+      "do not combine floor and clip in initial comparison",
+      "no label changes",
+      "keep frozen raw cache unchanged",
+      "each arm own preprocessing fingerprint"
+    ],
+    "search_method": "three-arm conditioning test",
+    "configuration_count_or_counting_rule": "3 arms×3 seeds=9/task; reused exact legacy control subtract once",
+    "seeds": [
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": {
+      "max_total_per_task": 9
+    },
+    "cost_assumptions": "Fit counts are budget units, not GPU-hour predictions. Raw encoder caches may be reused only after identity/implementation acceptance. All estimates subtract exact existing shared-control tuples; no Cartesian product across directions.",
+    "readiness": {
+      "mode": "new_code"
+    },
+    "priority": 2,
+    "scope_status": "conditional research; no execution authorization"
+  },
+  {
+    "direction_id": "D-TARGET",
+    "linked_issues": [
+      "ISSUE-005",
+      "ISSUE-015"
+    ],
+    "rationale": "区分目标标准化与物理变换，避免从名称猜单位。",
+    "evidence_refs": [
+      "data-intake",
+      "data-profile",
+      "runner-v4"
+    ],
+    "counterevidence": "正仿射不改变Spearman排序；缩放可能改变优化条件但不是秩指标的直接修复。",
+    "candidate_models_or_modules": [
+      "fit-only target transforms"
+    ],
+    "parameters": {
+      "arms": [
+        "mean/std affine",
+        "median/IQR affine with positive fallback1"
+      ],
+      "inverse": "exactly once to original Y",
+      "forbidden_without_evidence": [
+        "log assumption",
+        "label reversal",
+        "physical clipping",
+        "assay averaging"
+      ]
+    },
+    "combination_constraints": [
+      "retain every original Y",
+      "two affine arms only until unit/assay provenance exists",
+      "same loss family adjusted in transformed units; acknowledge optimization conditioning change"
+    ],
+    "search_method": "conditional affine comparison",
+    "configuration_count_or_counting_rule": "2×3=6/task including common control",
+    "seeds": [
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": {
+      "max_total_per_task": 6
+    },
+    "cost_assumptions": "Fit counts are budget units, not GPU-hour predictions. Raw encoder caches may be reused only after identity/implementation acceptance. All estimates subtract exact existing shared-control tuples; no Cartesian product across directions.",
+    "readiness": {
+      "mode": "new_code"
+    },
+    "priority": 3,
+    "scope_status": "conditional research; no execution authorization"
+  },
+  {
+    "direction_id": "D-OPTIMIZER",
+    "linked_issues": [
+      "ISSUE-006"
+    ],
+    "rationale": "只在轨迹显示优化瓶颈时更换优化器。",
+    "evidence_refs": [
+      "runner-v4",
+      "required-052"
+    ],
+    "counterevidence": "同lr不同optimizer不是等效更新；可能增加调参面而无收益。",
+    "candidate_models_or_modules": [
+      "AdamW",
+      "SGD momentum"
+    ],
+    "parameters": {
+      "arms": [
+        {
+          "name": "AdamW",
+          "lr": 0.0005,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "wd": 0.0001
+        },
+        {
+          "name": "SGD",
+          "lr": 0.01,
+          "momentum": 0.9,
+          "nesterov": false,
+          "wd": 0.0001
+        }
+      ]
+    },
+    "combination_constraints": [
+      "explicitly optimizer+lr bundle, not isolated optimizer causality",
+      "same model/split/loss/epoch budget",
+      "follow-up lr attribution only if bundle wins"
+    ],
+    "search_method": "conditional bundle comparison",
+    "configuration_count_or_counting_rule": "2×3=6/task, no all-axis factorial",
+    "seeds": [
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": {
+      "max_total_per_task": 6
+    },
+    "cost_assumptions": "Fit counts are budget units, not GPU-hour predictions. Raw encoder caches may be reused only after identity/implementation acceptance. All estimates subtract exact existing shared-control tuples; no Cartesian product across directions.",
+    "readiness": {
+      "mode": "new_code"
+    },
+    "priority": 4,
+    "scope_status": "conditional research; no execution authorization"
+  },
+  {
+    "direction_id": "D-SCHEDULE",
+    "linked_issues": [
+      "ISSUE-006"
+    ],
+    "rationale": "固定步长多次触及上限时检查退火是否改善收敛。",
+    "evidence_refs": [
+      "runner-v4",
+      "required-052"
+    ],
+    "counterevidence": "更复杂schedule可能只改变best epoch；不应在tiny任务上大量搜索。",
+    "candidate_models_or_modules": [
+      "constant lr",
+      "cosine annealing"
+    ],
+    "parameters": {
+      "arms": [
+        "constant lr=.0005",
+        "cosine lr .0005→.00001 over50 epochs; warmup0"
+      ]
+    },
+    "combination_constraints": [
+      "50/8 fixed",
+      "no simultaneous optimizer/dropout change",
+      "same initial lr"
+    ],
+    "search_method": "paired schedule test",
+    "configuration_count_or_counting_rule": "2×3=6/task incl exact constant control",
+    "seeds": [
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": {
+      "max_total_per_task": 6
+    },
+    "cost_assumptions": "Fit counts are budget units, not GPU-hour predictions. Raw encoder caches may be reused only after identity/implementation acceptance. All estimates subtract exact existing shared-control tuples; no Cartesian product across directions.",
+    "readiness": {
+      "mode": "new_code"
+    },
+    "priority": 4,
+    "scope_status": "conditional research; no execution authorization"
+  },
+  {
+    "direction_id": "D-BATCH",
+    "linked_issues": [
+      "ISSUE-006"
+    ],
+    "rationale": "大任务可比较梯度噪声与吞吐，不能只比较epoch速度。",
+    "evidence_refs": [
+      "runner-v4",
+      "baseline-delivery"
+    ],
+    "counterevidence": "batch变化也改变每epoch步数；GPU-hour优势未知。",
+    "candidate_models_or_modules": [
+      "fixed frozen head"
+    ],
+    "parameters": {
+      "batch_size": [
+        64,
+        128,
+        256
+      ],
+      "epoch_cap": 50,
+      "patience": 8
+    },
+    "combination_constraints": [
+      "hold lr fixed initially",
+      "report optimizer updates and walltime, not just epochs",
+      "drop_last=false"
+    ],
+    "search_method": "throughput+quality paired test",
+    "configuration_count_or_counting_rule": "3×3=9/task including128 control",
+    "seeds": [
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": {
+      "max_total_per_task": 9
+    },
+    "cost_assumptions": "Fit counts are budget units, not GPU-hour predictions. Raw encoder caches may be reused only after identity/implementation acceptance. All estimates subtract exact existing shared-control tuples; no Cartesian product across directions.",
+    "readiness": {
+      "mode": "config_only for accepted Caco2; new_code for generalized interface"
+    },
+    "priority": 4,
+    "scope_status": "conditional research; no execution authorization"
+  },
+  {
+    "direction_id": "D-BUDGET",
+    "linked_issues": [
+      "ISSUE-006",
+      "ISSUE-010"
+    ],
+    "rationale": "解释200/20与历史50/8的成本差，而非冒充历史相同配置。",
+    "evidence_refs": [
+      "required-048",
+      "required-052",
+      "required-053"
+    ],
+    "counterevidence": "早停常在50前已结束，增加上限未必增加有效学习；patience也改变选择过程。",
+    "candidate_models_or_modules": [
+      "locked winning head"
+    ],
+    "parameters": {
+      "epoch_patience_arms": [
+        [
+          50,
+          8
+        ],
+        [
+          200,
+          20
+        ]
+      ],
+      "trigger": "cap reached with continuing improvement in at least2 seeds"
+    },
+    "combination_constraints": [
+      "joint budget bundle, not single-factor",
+      "not included in default40/108/132 budgets",
+      "max2 selected tasks"
+    ],
+    "search_method": "conditional long-budget template",
+    "configuration_count_or_counting_rule": "≤2tasks×2arms×3seeds=12 total, subtract exact50/8 matches",
+    "seeds": [
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": {
+      "max_additional": 12
+    },
+    "cost_assumptions": "Fit counts are budget units, not GPU-hour predictions. Raw encoder caches may be reused only after identity/implementation acceptance. All estimates subtract exact existing shared-control tuples; no Cartesian product across directions.",
+    "readiness": {
+      "mode": "config_only for accepted Caco2; new_code for generalized interface"
+    },
+    "priority": 4,
+    "scope_status": "conditional research; no execution authorization"
+  },
+  {
+    "direction_id": "D-POOL",
+    "linked_issues": [
+      "ISSUE-002",
+      "ISSUE-007"
+    ],
+    "rationale": "只有冻结encoder可暴露合规中间表示时，探索新读出而非改外部参数。",
+    "evidence_refs": [
+      "required-003",
+      "weight-reference",
+      "runner-v4"
+    ],
+    "counterevidence": "2048指纹接口不自动提供节点级张量；sum/mean对分子大小敏感，需新覆盖/缓存。",
+    "candidate_models_or_modules": [
+      "frozen node mean",
+      "frozen node sum",
+      "new trainable readout over frozen nodes"
+    ],
+    "parameters": {
+      "initial_arms": [
+        "current approved fingerprint",
+        "mean of accepted frozen node outputs"
+      ],
+      "optional_trainable_readout": "new module, train.Y only"
+    },
+    "combination_constraints": [
+      "no change to external encoder parameters or buffers",
+      "node output availability must be proven",
+      "cache key includes pooling and encoder path",
+      "max one candidate vs current initially"
+    ],
+    "search_method": "representation/readout contrast",
+    "configuration_count_or_counting_rule": "2×3=6 per selected task after interface acceptance",
+    "seeds": [
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": {
+      "max_total_per_task": 6
+    },
+    "cost_assumptions": "Fit counts are budget units, not GPU-hour predictions. Raw encoder caches may be reused only after identity/implementation acceptance. All estimates subtract exact existing shared-control tuples; no Cartesian product across directions.",
+    "readiness": {
+      "mode": "new_code",
+      "additional_gate": "node-output contract not yet verified"
+    },
+    "priority": 4,
+    "scope_status": "conditional research; no execution authorization"
+  },
+  {
+    "direction_id": "D-ENC",
+    "linked_issues": [
+      "ISSUE-007",
+      "ISSUE-014"
+    ],
+    "rationale": "头部改进耗尽后才付出新资产准备与编码成本。",
+    "evidence_refs": [
+      "required-003",
+      "required-038",
+      "alt-prep-status",
+      "data-profile"
+    ],
+    "counterevidence": "token/原子/构象失败可能改变覆盖；不同维度的头容量不公平；没有ready替代底座的已测收益。",
+    "candidate_models_or_modules": [
+      "MiniMol",
+      "MoLFormer-10pct",
+      "later KPGT/Uni-Mol/SMI-TED"
+    ],
+    "parameters": {
+      "accepted_initial_assets": [
+        "CheMeleon"
+      ],
+      "conditional_one_asset": "one asset only after full readiness",
+      "candidate_revision": "MoLFormer 361063d0ad524ef77cf39b08469f6be770dc550f"
+    },
+    "combination_constraints": [
+      "no unspecified future asset SHA passed to execution",
+      "freeze all external weights/buffers",
+      "all row coverage and deterministic fallback",
+      "matched head parameter budget or explicitly label architecture bundle"
+    ],
+    "search_method": "one newly accepted encoder vs CheMeleon",
+    "configuration_count_or_counting_rule": "≤2selectedtasks×2encoders×3seeds=12 total; encoder preparation and feature costs separate",
+    "seeds": [
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": {
+      "max_total_after_asset_acceptance": 12
+    },
+    "cost_assumptions": "Fit counts are budget units, not GPU-hour predictions. Raw encoder caches may be reused only after identity/implementation acceptance. All estimates subtract exact existing shared-control tuples; no Cartesian product across directions.",
+    "readiness": {
+      "mode": "blocked_assets"
+    },
+    "priority": 5,
+    "scope_status": "conditional research; no execution authorization"
+  },
+  {
+    "direction_id": "D-CONCAT",
+    "linked_issues": [
+      "ISSUE-007",
+      "ISSUE-002"
+    ],
+    "rationale": "只有互补性证据时比较表示拼接，避免维度增加冒充表示收益。",
+    "evidence_refs": [
+      "required-003",
+      "runner-v4"
+    ],
+    "counterevidence": "不同底座可能高度相关；拼接升维会增加参数和过拟合。",
+    "candidate_models_or_modules": [
+      "CheMeleon + one accepted encoder",
+      "CheMeleon + train-fit descriptors"
+    ],
+    "parameters": {
+      "fusion": "concatenate frozen representations; new projection128",
+      "arms": [
+        "single representation with matched projection parameter budget",
+        "concat projection"
+      ]
+    },
+    "combination_constraints": [
+      "trainable projection fit-only",
+      "no valid fitted dimensionality reduction",
+      "fixed same row map/coverage",
+      "new asset hashes required before concrete experiment"
+    ],
+    "search_method": "conditional matched fusion contrast",
+    "configuration_count_or_counting_rule": "2arms×3seeds=6/task plus component encoding",
+    "seeds": [
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": {
+      "max_total_per_task": 6
+    },
+    "cost_assumptions": "Fit counts are budget units, not GPU-hour predictions. Raw encoder caches may be reused only after identity/implementation acceptance. All estimates subtract exact existing shared-control tuples; no Cartesian product across directions.",
+    "readiness": {
+      "mode": "blocked_assets when second encoder; new_code for descriptor fusion"
+    },
+    "priority": 5,
+    "scope_status": "conditional research; no execution authorization"
+  },
+  {
+    "direction_id": "D-ENSEMBLE",
+    "linked_issues": [
+      "ISSUE-006",
+      "ISSUE-008"
+    ],
+    "rationale": "不同已确认头若误差互补，优先零额外fit的固定平均。",
+    "evidence_refs": [
+      "required-012",
+      "required-008",
+      "data-profile"
+    ],
+    "counterevidence": "选best seed再平均可能累积valid偏差；多头同底座不保证低相关。",
+    "candidate_models_or_modules": [
+      "uniform mean of locked seeds",
+      "OOF-constrained nonnegative blend"
+    ],
+    "parameters": {
+      "first": "equal-weight mean of predeclared confirmed seeds",
+      "optional_weights": "nonnegative sum1, fit on train-only out-of-fold predictions"
+    },
+    "combination_constraints": [
+      "no rowwise manual edits",
+      "regression on original Y scale; classification fixed probability scale",
+      "weight fitting needs train-only OOF and counts extra fits",
+      "do not choose dozens of blends using valid"
+    ],
+    "search_method": "fixed mean first; conditional train-OOF weighting",
+    "configuration_count_or_counting_rule": "fixed mean0 additional fits if component tuples exist; OOF extension≤2components×3folds×3seeds=18 fits/task plus blend fits explicitly registered",
+    "seeds": [
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": {
+      "fixed_mean_incremental_fits": 0,
+      "conditional_OOF_max_per_task": 18
+    },
+    "cost_assumptions": "Fit counts are budget units, not GPU-hour predictions. Raw encoder caches may be reused only after identity/implementation acceptance. All estimates subtract exact existing shared-control tuples; no Cartesian product across directions.",
+    "readiness": {
+      "mode": "new_code",
+      "note": "no zero-fit fake training proposal"
+    },
+    "priority": 3,
+    "scope_status": "conditional research; no execution authorization"
+  },
+  {
+    "direction_id": "D-MTL",
+    "linked_issues": [
+      "ISSUE-015",
+      "ISSUE-014",
+      "ISSUE-008"
+    ],
+    "rationale": "有共享可训练adapter的MTL与共享冻结表示+独立头不同，应受控比较。",
+    "evidence_refs": [
+      "data-profile",
+      "required-003",
+      "required-045"
+    ],
+    "counterevidence": "跨任务已见分子和49%CYP标签可解释收益；不是所有端点都可合并，可能负迁移。",
+    "candidate_models_or_modules": [
+      "shared new adapter + task heads",
+      "independent new heads"
+    ],
+    "parameters": {
+      "adapter_width": 256,
+      "label_mask": "only each task train rows",
+      "loss_per_task": "BCE or standardized MSE",
+      "task_weight_arms": [
+        "equal task mean",
+        "label-count mean diagnostic only"
+      ],
+      "initial_task_group": "three Veith tasks only, not all22 by default"
+    },
+    "combination_constraints": [
+      "no valid labels in wide table",
+      "task-aware duplicate identity",
+      "compare same frozen representation and comparable new parameter budget",
+      "report each task and aggregate, not only pooled loss"
+    ],
+    "search_method": "conditional joint-vs-independent study",
+    "configuration_count_or_counting_rule": "3seeds×(1joint+3independent)=12 fits total firstgroup; distinguish joint model fit from three task heads",
+    "seeds": [
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": {
+      "initial_total_model_fits": 12,
+      "joint_task_heads": 9,
+      "independent_heads": 9
+    },
+    "cost_assumptions": "Fit counts are budget units, not GPU-hour predictions. Raw encoder caches may be reused only after identity/implementation acceptance. All estimates subtract exact existing shared-control tuples; no Cartesian product across directions.",
+    "readiness": {
+      "mode": "new_code",
+      "scope_gate": "separate architecture/provenance approval"
+    },
+    "priority": 5,
+    "scope_status": "conditional research; no execution authorization"
+  },
+  {
+    "direction_id": "D-SCRATCH",
+    "linked_issues": [
+      "ISSUE-007",
+      "ISSUE-014"
+    ],
+    "rationale": "冻结表征不足时，训练新小型D-MPNN提供不同归纳偏置，不解冻外部编码器。",
+    "evidence_refs": [
+      "required-003",
+      "data-profile",
+      "required-045"
+    ],
+    "counterevidence": "小训练集易过拟合，encoder训练成本远高于头；不能把fit数当等价GPU预算。",
+    "candidate_models_or_modules": [
+      "scratch D-MPNN"
+    ],
+    "parameters": {
+      "hidden_dim": 256,
+      "depth": 3,
+      "dropout": 0.1,
+      "readout": "mean",
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "epoch_cap": 50,
+      "patience": 8,
+      "seed_source": "random initialization only"
+    },
+    "combination_constraints": [
+      "no external labels/weights learned",
+      "max2 predeclared tasks after readiness",
+      "compare matched frozen-head control and measured cost",
+      "molecular input/parse coverage acceptance needed"
+    ],
+    "search_method": "conditional architecture bundle comparison",
+    "configuration_count_or_counting_rule": "≤2tasks×2architectures×3seeds=12fits total; not parameter-isolated causal test",
+    "seeds": [
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": {
+      "max_total": 12
+    },
+    "cost_assumptions": "Fit counts are budget units, not GPU-hour predictions. Raw encoder caches may be reused only after identity/implementation acceptance. All estimates subtract exact existing shared-control tuples; no Cartesian product across directions.",
+    "readiness": {
+      "mode": "new_code"
+    },
+    "priority": 5,
+    "scope_status": "conditional research; no execution authorization"
+  },
+  {
+    "direction_id": "D-CLASSICAL",
+    "linked_issues": [
+      "ISSUE-005",
+      "ISSUE-007"
+    ],
+    "rationale": "低成本诊断表示/标签可学性，不能自动替代赛事要求的深度模型。",
+    "evidence_refs": [
+      "required-003",
+      "official-rules",
+      "data-profile"
+    ],
+    "counterevidence": "经典模型可能同样受split偏移与重复标签影响；高分不是额外数据准入证明。",
+    "candidate_models_or_modules": [
+      "RDKit descriptors + ridge/logistic",
+      "ECFP diagnostic head",
+      "descriptor fusion into deep model"
+    ],
+    "parameters": {
+      "fingerprint": "Morgan radius2 nBits2048, toolkit version pinned at implementation",
+      "regression_ridge_alpha": [
+        1,
+        10
+      ],
+      "classification_logistic_C": [
+        0.1,
+        1
+      ],
+      "preprocessing": "fit-only scaler"
+    },
+    "combination_constraints": [
+      "raw molecules unchanged",
+      "no external descriptor-fit parameters",
+      "diagnostic stand-alone scope separately approved",
+      "per-task metric direction and row identity same"
+    ],
+    "search_method": "small bounded diagnostic",
+    "configuration_count_or_counting_rule": "2class/reg configs×3seeds=6/task; toolkit implementation/coverage gate first",
+    "seeds": [
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": {
+      "max_per_task": 6
+    },
+    "cost_assumptions": "Fit counts are budget units, not GPU-hour predictions. Raw encoder caches may be reused only after identity/implementation acceptance. All estimates subtract exact existing shared-control tuples; no Cartesian product across directions.",
+    "readiness": {
+      "mode": "new_code",
+      "not_standalone_submission_approval": true
+    },
+    "priority": 5,
+    "scope_status": "conditional research; no execution authorization"
+  }
+]

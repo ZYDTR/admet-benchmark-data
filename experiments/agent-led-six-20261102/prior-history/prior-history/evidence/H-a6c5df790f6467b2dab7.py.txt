@@ -1,0 +1,28 @@
+"""Create manifest and ZIP from real local bytes; verify every member. No network/ML."""
+from pathlib import Path
+from datetime import datetime,timezone
+import hashlib,json,zipfile,subprocess,sys,shutil
+R=Path(__file__).resolve().parent
+for p in R.rglob('__pycache__'):
+ if p.is_dir():shutil.rmtree(p)
+# Content validation updates its report and review before any file is hashed.
+subprocess.run([sys.executable,str(R/'evidence/validate_delivery.py')],check=True)
+review=json.loads((R/'review.json').read_text())
+exclude={'delivery-manifest.json','audit.zip'}
+files=[]
+for p in sorted(R.rglob('*')):
+ if not p.is_file() or p.relative_to(R).as_posix() in exclude:continue
+ b=p.read_bytes();files.append({'path':p.relative_to(R).as_posix(),'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest()})
+manifest={'schema_version':1,'request_id':review['request_id'],'round_id':review['round_id'],'input_manifest_sha256':review['manifest_sha256'],'scientific_status':'needs_evidence','supplement_number':1,'authority_commit':review['authority_commit'],'scientific_snapshot':review['scientific_snapshot'],'created_at_utc':datetime.now(timezone.utc).isoformat(),'files':files,'required_deliverables':['analysis.md','review.json','issues.json','next_batch_guide.md','next_experiments.json','search_space.json'],'file_count_excluding_manifest_and_container':len(files),'total_listed_bytes':sum(x['bytes'] for x in files),'hash_method':'SHA256 of actual local bytes; not a claim to have rehashed external source originals','self_reference_policy':'This manifest and its enclosing audit.zip are excluded from files to avoid circular self-hashing. audit.zip includes this manifest plus exactly every listed file. All other extras, evidence and prior-delivery files are listed.','validation':{'local_plan_checks':'evidence/validation-report.json','zip_checks':'CRC test plus byte length and SHA of every manifest member; package_delivery.py fails if any mismatch','source_originals':'not raw-byte verified; fixed URI/hash provenance and full text read receipts retained'},'execution_authorized':False,'source_archive_note':'Contains audit records/pointers and local delivery, not all2446 public source files.'}
+mp=R/'delivery-manifest.json';mp.write_text(json.dumps(manifest,ensure_ascii=False,indent=2,allow_nan=False)+'\n')
+zp=R/'audit.zip'
+with zipfile.ZipFile(zp,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=9) as z:
+ for x in files:z.write(R/x['path'],x['path'])
+ z.write(mp,'delivery-manifest.json')
+with zipfile.ZipFile(zp) as z:
+ assert z.testzip() is None,'ZIP CRC failure'
+ assert set(z.namelist())==set(x['path'] for x in files)|{'delivery-manifest.json'}
+ assert z.read('delivery-manifest.json')==mp.read_bytes()
+ for x in files:
+  b=z.read(x['path']);assert len(b)==x['bytes'];assert hashlib.sha256(b).hexdigest()==x['sha256'],x['path']
+print(json.dumps({'status':'verified','manifest_members':len(files),'zip_members':len(files)+1,'zip_bytes':zp.stat().st_size,'manifest_sha256':hashlib.sha256(mp.read_bytes()).hexdigest(),'audit_zip_sha256':hashlib.sha256(zp.read_bytes()).hexdigest(),'audit_zip_path':str(zp)},ensure_ascii=False,indent=2))

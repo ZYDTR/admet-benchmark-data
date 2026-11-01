@@ -1,0 +1,127 @@
+"""Main-controller read-only audit; never imports or executes returned Pro code."""
+import copy
+import hashlib
+import json
+import zipfile
+from collections import Counter
+from datetime import datetime, timezone
+from decimal import Decimal, getcontext
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+ROUND = HERE.parents[2]
+SOURCE = HERE.parent / 'execution/source/extracted'
+BASE = ROUND / 'publication-v3/repository/experiments/training-breadth-strategy-20261101'
+getcontext().prec = 50
+
+def read(path):
+    return json.loads(path.read_text())
+
+def sha(raw):
+    return hashlib.sha256(raw).hexdigest()
+
+def score(metric, m, r):
+    m, r = Decimal(str(m)), Decimal(str(r))
+    if metric == 'MAE':
+        return 100*r/(m+r)
+    if metric in ('AP', 'AUPRC', 'AUROC'):
+        return 100*m/(m+r)
+    assert metric == 'Spearman'
+    return 100*(1+m)/(2+m+r)
+
+manifest = read(SOURCE/'delivery-manifest.json')
+entries = {x['path']: x for x in manifest['files']}
+assert len(entries) == len(manifest['files']) == 46
+for name, item in entries.items():
+    path = SOURCE/name
+    assert not path.is_symlink() and SOURCE in path.resolve().parents
+    raw = path.read_bytes()
+    assert len(raw) == item['bytes'] and sha(raw) == item['sha256'], name
+archive = SOURCE.parent/'audit.zip'
+with zipfile.ZipFile(archive) as z:
+    assert z.testzip() is None
+    assert len(z.namelist()) == len(set(z.namelist())) == 47
+    assert set(z.namelist()) == set(entries)|{'delivery-manifest.json'}
+    for name in z.namelist():
+        assert z.read(name) == (SOURCE/name).read_bytes(), name
+
+official = read(BASE/'originals/N-c68dbae0295309d2f4f2.json')
+valid = read(BASE/'originals/N-32099e3fce4b5fa09189.json')
+reported = read(SOURCE/'evidence/numeric-recomputation.json')
+vrows = valid['rows']
+orows = official['formula_checks']
+assert len(vrows) == len(orows) == 22
+by_task = {x['task']: x for x in vrows}
+vscore = {x['task']: score(x['metric'], x['valid_metric'], x['reference_score']) for x in vrows}
+vtotal = sum(vscore.values())/22
+ototal = sum(Decimal(str(x['score'])) for x in orows)/22
+vmax = sum(score(x['metric'], 0 if x['metric']=='MAE' else 1, x['reference_score']) for x in vrows)/22
+oscore = next(Decimal(str(x['score'])) for x in orows if x['task']=='caco2_wang')
+calc = {'valid_aggregate_decimal':vtotal, 'official_display_mean':ototal,
+        'theoretical_22_task_max':vmax,
+        'perfect_caco2_only_local_valid_total':vtotal+(100-vscore['caco2_wang'])/22,
+        'perfect_caco2_only_official_display_mean_total':ototal+(100-oscore)/22}
+for key, value in calc.items():
+    assert abs(value-Decimal(str(reported[key]))) < Decimal('1e-11'), key
+for item in reported['caco2_variants']:
+    task_score = score('MAE', item['valid_mae'], by_task['caco2_wang']['reference_score'])
+    assert abs(task_score-Decimal(str(item['inferred_valid_task_score']))) < Decimal('1e-11')
+    replacement = vtotal+(task_score-vscore['caco2_wang'])/22
+    assert abs(replacement-Decimal(str(item['inferred_valid_total_if_only_caco2_replaced']))) < Decimal('1e-11')
+max_display_error = max(abs(score(x['metric'],x['raw_metric'],x['reference_score'])-Decimal(str(x['score']))) for x in orows)
+assert max_display_error < Decimal('0.0000005')
+
+proposals = read(SOURCE/'next_experiments.json')
+matrix = read(SOURCE/'experiment-matrix.json')['runs']
+pmap = {p['proposal_id']:p for p in proposals}
+assert len(pmap) == len(proposals) == 42
+assert len(matrix) == 84
+seen = set()
+for row in matrix:
+    p = pmap[row['proposal_id']]
+    config = copy.deepcopy(p['exact_config'])
+    assert config['training'].pop('model_seed_values') == p['seeds']
+    assert row['model_seed'] in p['seeds'] == [44,45]
+    config['training']['model_seed'] = row['model_seed']
+    assert row['full_config'] == config
+    assert row['task'] == p['task'] and row['split_id'] == p['split_id']
+    assert row['is_executed'] is False and p['preparation_mode'] == 'new_code'
+    identity = json.dumps([p['asset_versions'],p['task'],config,p['split_id'],row['model_seed']],sort_keys=True)
+    assert identity not in seen
+    seen.add(identity)
+    expected = by_task[p['task']]
+    assert p['metric'] == expected['metric'] or (p['metric']=='AP' and expected['metric']=='AUPRC')
+    assert p['direction'] == ('minimize' if expected['metric']=='MAE' else 'maximize')
+    assert config['early_stopping']['direction'] == p['direction']
+    assert config['encoder']['freeze_parameters'] is True and config['encoder']['freeze_buffers'] is True
+    assert config['optimizer']['encoder_parameters_in_optimizer'] is False
+    assert config['training']['official_valid_used_for_gradients_or_early_stopping'] is False
+    assert config['feature_preprocessing']['fit_partition']=='inner_fit_only'
+    assert config['training']['max_epochs']==50 and config['early_stopping']['patience']==8
+
+tasks = {p['task'] for p in proposals}
+assert tasks == set(by_task)-{'caco2_wang'}
+for task in sorted(tasks):
+    pair = {p['config_tag']:p for p in proposals if p['task']==task}
+    assert set(pair)=={'H0','H1'}
+    h0,h1 = copy.deepcopy(pair['H0']['exact_config']),copy.deepcopy(pair['H1']['exact_config'])
+    assert h0['head'].pop('dropout')==0.1 and h1['head'].pop('dropout')==0.3
+    assert h0==h1, task
+
+receipt=read(SOURCE/'review.json')['read_receipt']
+result = {
+    'at':datetime.now(timezone.utc).isoformat(), 'controller_check':'passed',
+    'archive_sha256':sha(archive.read_bytes()), 'manifest_sha256':sha((SOURCE/'delivery-manifest.json').read_bytes()),
+    'manifest_files_rehashed':46,'zip_members_matched':47,
+    'arithmetic':{k:str(v) for k,v in calc.items()},
+    'max_official_display_abs_difference':str(max_display_error),
+    'concrete_proposals':42,'unique_fits':len(seen),'matrix_batches':dict(Counter(x['batch_id'] for x in matrix)),
+    'paired_tasks_differ_only_dropout':len(tasks),'reading_declarations':len(receipt),
+    'return_code_executed':False,'private_labels_read':False,'new_training_authorized':False,
+    'limitations':['Recomputes published aggregates, not labels or new scoring.',
+        'Reading declarations are not independently reconstructed Chat tool traces.',
+        'Explicit proposal semantics checked; no model execution, new runner or effect validation.',
+        'Official formula inferred and AP equivalence remains unconfirmed.']}
+with (HERE/'independent-check.json').open('x') as f:
+    json.dump(result,f,ensure_ascii=False,indent=2);f.write('\n')
+print(json.dumps(result,ensure_ascii=False,indent=2))

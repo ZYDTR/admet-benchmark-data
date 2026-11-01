@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-30T15:45:38.379452+00:00",
+  "historical_plan_reexecution_rejected": true,
+  "exit_code": 1,
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/scripts/check_plan.py\", line 16, in <module>\n    result = check(plan, WORKSPACE / 'adhoc_jobs/admet_frozen_baseline_20261030',\n                   PROJECT / 'policy.json', WORKSPACE / 'rules/skills/hainan-compute-access/SKILL.md')\n  File \"<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/src/plan_checks.py\", line 48, in check\n    raise ValueError('skill changed; review and version the plan')\nValueError: skill changed; review and version the plan\n",
+  "reason": "Skill revision invalidates the old runtime admission hash. Historical PLAN stays immutable; future authorized run must register current version.",
+  "previous_skill_sha256": "0b5846a3810be333f5c0c233b01344acefccef139043e38566bb436f6c18b64f",
+  "new_skill_sha256": "9d204ef80a80fdc45838c2497d681c761687616c31f61922dd801a5c549ba97b",
+  "validation_scope": "Documentation/manual review,7 scaffold tests and7 fixed-client tests; no new real training."
+}

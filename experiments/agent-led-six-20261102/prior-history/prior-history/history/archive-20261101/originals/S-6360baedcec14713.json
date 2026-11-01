@@ -1,0 +1,181 @@
+{
+  "blocked_by_missing_deps": [
+    "chemprop",
+    "numpy",
+    "pandas",
+    "pytest",
+    "rdkit",
+    "sklearn",
+    "torch"
+  ],
+  "checks": [
+    {
+      "check": "unit_tests_stdlib_synthetic",
+      "command": "/usr/bin/python3 -m unittest discover -s tests",
+      "exit_code": 0,
+      "note": "data contract, products, metrics, cache, submission on synthetic packs",
+      "output_tail": [
+        "Ran 42 tests in 0.199s",
+        "",
+        "OK (skipped=3)"
+      ],
+      "status": "PASS"
+    },
+    {
+      "check": "compileall",
+      "command": "/usr/bin/python3 -m compileall -q .",
+      "exit_code": 0,
+      "note": null,
+      "output_tail": [],
+      "status": "PASS"
+    },
+    {
+      "check": "cli_help_encode_features.py",
+      "command": "/usr/bin/python3 encode_features.py --help",
+      "exit_code": 0,
+      "note": null,
+      "output_tail": [
+        "  --tasks [TASKS ...]   default: all tasks under the pack",
+        "  --splits [SPLITS ...]",
+        "  --force               rebuild even on cache hit"
+      ],
+      "status": "PASS"
+    },
+    {
+      "check": "cli_help_train_heads.py",
+      "command": "/usr/bin/python3 train_heads.py --help",
+      "exit_code": 0,
+      "note": null,
+      "output_tail": [
+        "  --seed SEED",
+        "  --train-table TRAIN_TABLE",
+        "                        JSON {task: 'classification'|'regression'} override"
+      ],
+      "status": "PASS"
+    },
+    {
+      "check": "cli_help_predict_valid.py",
+      "command": "/usr/bin/python3 predict_valid.py --help",
+      "exit_code": 0,
+      "note": null,
+      "output_tail": [
+        "  --batch-size BATCH_SIZE",
+        "  --output OUTPUT",
+        "  --fallback {error,train_mean}"
+      ],
+      "status": "PASS"
+    },
+    {
+      "check": "cli_help_predict_test.py",
+      "command": "/usr/bin/python3 predict_test.py --help",
+      "exit_code": 0,
+      "note": null,
+      "output_tail": [
+        "  --submission SUBMISSION",
+        "                        optional submission CSV path",
+        "  --fallback {error,train_mean}"
+      ],
+      "status": "PASS"
+    },
+    {
+      "check": "cli_help_score.py",
+      "command": "/usr/bin/python3 score.py --help",
+      "exit_code": 0,
+      "note": null,
+      "output_tail": [
+        "  --tasks [TASKS ...]",
+        "  --splits [SPLITS ...]",
+        "  --output OUTPUT"
+      ],
+      "status": "PASS"
+    },
+    {
+      "check": "cli_help_make_asset_lock.py",
+      "command": "/usr/bin/python3 make_asset_lock.py --help",
+      "exit_code": 0,
+      "note": null,
+      "output_tail": [
+        "  --code-commit CODE_COMMIT",
+        "  --feature-dim FEATURE_DIM",
+        "                        observed encoder output width; record it once measured"
+      ],
+      "status": "PASS"
+    },
+    {
+      "check": "read_only_real_pack_listing",
+      "command": "/usr/bin/python3 -c import dataio;t=dataio.list_tasks('<PRIVATE_RUNTIME_PATH>');print(len(t),t[:3])",
+      "exit_code": 0,
+      "note": "22 tasks enumerated from input/data",
+      "output_tail": [
+        "22 ['ames', 'bbb_martins', 'bioavailability_ma']"
+      ],
+      "status": "PASS"
+    },
+    {
+      "check": "template_pin",
+      "command": "sha256+rowcount of submission_template.csv",
+      "exit_code": 0,
+      "note": "sha256=8ee41589d2c98e7b93081c058b3f928ac09bea4b3ffc899fa13677051e9baa20 rows=16379",
+      "status": "PASS"
+    },
+    {
+      "check": "encoder_weight_loading",
+      "command": "python3 -c 'import chemeleon_encoder'",
+      "exit_code": null,
+      "note": "needs torch+chemprop+rdkit and chemeleon_mp.pt",
+      "status": "SKIP"
+    },
+    {
+      "check": "feature_extraction_real_batch",
+      "command": "python3 encode_features.py --data-root ...",
+      "exit_code": null,
+      "note": "whole-batch encoding is training-stage work; not run here",
+      "status": "SKIP"
+    },
+    {
+      "check": "head_training_real",
+      "command": "python3 train_heads.py ...",
+      "exit_code": null,
+      "note": "training is main-control work; no torch in this session",
+      "status": "SKIP"
+    },
+    {
+      "check": "head_save_load_real",
+      "command": "tests/test_head_and_submission_synthetic.py",
+      "exit_code": null,
+      "note": "3 head artifact tests skipped: torch not installed",
+      "status": "SKIP"
+    },
+    {
+      "check": "real_valid_test_prediction",
+      "command": "python3 predict_valid.py / predict_test.py ...",
+      "exit_code": null,
+      "note": "no checkpoint, no heads, no features",
+      "status": "SKIP"
+    }
+  ],
+  "cwd": "<PRIVATE_RUNTIME_PATH>",
+  "dependency_probe": {
+    "chemprop": null,
+    "error": "ModuleNotFoundError(\"No module named 'pytest'\")",
+    "numpy": null,
+    "pandas": null,
+    "pytest": null,
+    "rdkit": null,
+    "sklearn": null,
+    "torch": null
+  },
+  "python": "3.11.2",
+  "session": "admet_deepseek_skill_coldstart_20261030 (preparation-only leaf)",
+  "summary": {
+    "fail": 0,
+    "pass": 10,
+    "skip": 5
+  },
+  "unverified_items": [
+    "FrozenCheMeleonEncoder against real weights (feature_dim unconfirmed)",
+    "head save/load + scaler round trip through torch (3 unittest skips)",
+    "end-to-end encode -> train -> predict coverage on the 22 real tasks",
+    "RDKit parse-failure policy on real SMILES (failures.json path)"
+  ]
+}

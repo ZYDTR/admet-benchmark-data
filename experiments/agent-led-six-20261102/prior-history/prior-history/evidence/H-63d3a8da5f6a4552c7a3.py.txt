@@ -1,0 +1,785 @@
+"""Build research-only artifacts. Does not import ML frameworks or execute training/scoring."""
+from pathlib import Path
+import json, hashlib, math, copy, csv
+R=Path(__file__).resolve().parent
+E=R/'evidence'; E.mkdir(exist_ok=True)
+REQUEST='admet-breadth-strategy-pro-20261101-001'
+ROUND='training-breadth-strategy-20261101'
+SHA='2b37cecef4b6f45481ba1991766a2b15eaaffb672a695d193ae03b878c5e04e8'
+COMMIT='31a9bb2729ff1464bf6d4be1e23fcba0bf391725'
+SNAPSHOT='2026-11-01T11:28:28.074304Z'
+B=f'https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/{COMMIT}/experiments/{ROUND}/'
+D='https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/29476a735f9bb0e28de24a4b63d8b8ee0ff76204/experiments/training-breadth-strategy-20261101-delivery-v2/'
+def dump(path,obj):
+ p=R/path;p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(obj,ensure_ascii=False,indent=2,allow_nan=False)+'\n')
+def canonical(x):return json.dumps(x,ensure_ascii=False,sort_keys=True,separators=(',',':'),allow_nan=False).encode()
+def sha(x):return hashlib.sha256(x).hexdigest()
+def text(path,s):(R/path).write_text(s,encoding='utf-8')
+req=json.loads((E/'reading-contract-transcription.json').read_text())['requirements']
+coverage=json.loads((E/'reading-coverage.json').read_text())
+def gap(k):
+ v=coverage[k]; seen=set()
+ for x in v['segments']:seen.update(range(x['start'],x['end']+1))
+ return sorted(set(range(v['total_web_lines']))-seen)
+assert all(not gap(x['entry_id']) for x in req)
+inputs=json.loads((E/'numeric-inputs.json').read_text())['tasks']
+nums=json.loads((E/'numeric-recomputation.json').read_text())
+num_by={x['task']:x for x in nums['tasks']}
+observed={
+1:'权威渐进入口；本研究与六项配对作业独立，v3追加004资源拒绝证据。',
+2:'主控提出三种预算策略待评审；仅研究，不增加训练授权。',
+3:'CheMeleon有22任务基线和Caco2优化；MiniMol/MoLFormer未验收，准备LLM不是底座。',
+4:'GLM、DeepSeek、Qwen登记为执行模型；没有由此获得分子编码器资格。',
+5:'返回六件原件、清单和ZIP；执行/准备/评价权限分离。',
+6:'历史覆盖31记录、83锚点、12注册run；并非12个完成学习run。',
+7:'按实体登记原件及原始/衍生SHA；本次读完整inventory，不声称读遍全部链接对象。',
+8:'评价暴露账本需继承；已有valid访问与本次允许的汇总评价范围分开。',
+9:'问题导航含已推翻及未证因果假设；不能从早期问题标题恢复已失效结论。',
+10:'评分来源、允许反馈范围及本地/官方等价性限制分列。',
+11:'22个valid任务指标，11735记录，五个AUPRC本地采用AP；不是新评分。',
+12:'四个Caco2已评分run；最佳MAE为0.37862513598901104，不是最新一次。',
+13:'本批为广度策略研究；六项待评实验不构成本批训练结果。',
+14:'Mini22 CPU训练22头，v1/v2工程失败与v3成功要分开；独立核对了交付和预测范围原件。',
+15:'目录事件保留登记/状态更新；目录变化和工作量不等于学习次数。',
+16:'清洗与化学审计不授权删除/合并原行；画像包含结构分布与解析限制。',
+17:'六项配对科学配置与工程准入链；004为启动前资源拒绝，学习均未开始。',
+18:'主控审计与接收工具缺陷独立于科学效果；不能将基础设施失败计为模型负结果。',
+19:'历史evaluation-use记录仍有效，新会话不重置valid暴露。',
+20:'hainan-frozen-training已完成Caco2学习；最佳valid记录但与后续配置/划分混杂。',
+21:'index-cycle完成Caco2学习；MSE监视下最佳18轮，不能与另一seed无混杂比较。',
+22:'MAE监视run仍用标准化MSE训练；worker成功与supervisor 125分别记录。',
+23:'MAE seed44配对注册记录；快照中无完成学习结果。',
+24:'MAE seed45配对注册记录；快照中无完成学习结果。',
+25:'MAE seed46配对注册记录；快照中无完成学习结果。',
+26:'MSE seed44配对注册记录；快照中无完成学习结果。',
+27:'MSE seed45配对注册记录；快照中无完成学习结果。',
+28:'MSE seed46配对注册记录；快照中无完成学习结果。',
+29:'skill-follow完成Caco2学习；原串分组、宽度、lr和seed等改变，不能归因单因素。',
+30:'pilot未完成学习，不应并入五个成功run或比较分数。',
+31:'历史裁定/推翻入口；C-FREEZE与C-DOWNLOAD已缩小或推翻，C-SCALE未证因果。',
+32:'排行榜22组数值支持反推归一化；不是官方公式源码。',
+33:'流水线故障、输出来往及审计边界独立于科学训练质量。',
+34:'准备合同回归暴露工具/边界问题；不能把准备验收等同学习成功。',
+35:'DeepSeek冷启动属于准备工作历史，不是分子底座对比实验。',
+36:'GLM/DeepSeek准备原件及缺口保留；不是已获准科学编码器。',
+37:'扩大准备预算记录不能转换成广度HPO授权或资产训练就绪证明。',
+38:'Qwen准备两个资产仍有未完成验收状态；文件存在不等于可训练。',
+39:'早期Pro科学方案主要限定Caco2，保留错误和主控拒绝，不能当22任务计划。',
+40:'索引轮Pro结论需对照冻结归因、尺度与原件；不能继承已推翻判断。',
+41:'MAE轮Pro监视指标研究与六项配对背景；不是训练loss已改为MAE。',
+42:'早期调研候选广于已准备资产；论文/代码/下载/验收/训练是不同阶段。',
+43:'规则与数据来源区分赛事文字、用户确认及本地约束；原标签单位未完整确认。',
+44:'广度策略本身是待评建议，不是待执行训练清单的授权。',
+45:'冻结外部参数和buffer、train.Y学习、盲valid/test、原行身份等边界有来源映射。',
+46:'公开赛事允许valid调参；标签隔离及本轮只读是项目控制；旧harness限制不能替代当前合同。',
+47:'admet-review-output-v1根对象/数组、必需字段、枚举及唯一组合计数合同。',
+48:'六项配对固定CheMeleon、256/.1/.0005/.0001/128、split43，44/45/46比较两种监视指标。',
+49:'22组榜单raw/reference/score和反推公式，最大显示残差<5e-7。',
+50:'22项valid归一化估算与Caco2替换；公式和AP等价性仍有明确限制。',
+51:'两run的宽度/lr/seed/划分等混杂，两个stop集交集8；跨run未用predictor差异不是解冻。',
+52:'MSE监视run完成26轮130步、最佳18；缩小std会放大特征但尚无因果实验证明。未向执行指南转发逐行valid内容。',
+53:'MAE监视run完成15轮75步、最佳7；特征allclose但不字节相同，worker0与监督125分列。',
+54:'历史回复中传输/科学完整性、引用和角色混淆的缺陷应独立登记，不由格式通过代替科学通过。'
+}
+receipts=[]
+for x in req:
+ k=x['entry_id'];v=coverage[k]
+ is_manifest=k=='input-manifest'
+ fact='v3清单完整读至末尾；2446文件、128225676字节、revision3、send_ready=false保持历史含义。读清单不等于读全部2446对象。' if is_manifest else observed[int(k[-3:])]
+ z=copy.deepcopy(x);z.update(read_mode='original',evidence_locator={'web_line_range':[0,v['total_web_lines']-1],'total_web_lines':v['total_web_lines'],'segments':v['segments']},observed_fact=fact,limitation='全文浏览器文本已读；未获得原始字节，未独立复算源SHA。导航卡的original指这张卡自身，不声称其全部下钻链接均已读。',transport='web.run.open / fixed-commit raw GitHub text',full_text_read=True,byte_hash_recomputed=False,source_hash_status='published_hash_transcribed_not_independently_rehashed')
+ receipts.append(z)
+source_index={x['entry_id']:{'uri':x['uri'],'source_version':x['source_version'],'locator':f"web L0–L{coverage[x['entry_id']]['total_web_lines']-1}",'kind':'fixed_publication_required'} for x in req}
+extras=[
+('data-profile','originals/S-209f4f2c5f3d6c5b.md.txt','L11–43 counts; L49–52 duplicates; L59–87 structure/MTL; L90–114 parse/template',None),
+('official-rules','originals/S-0e85c749e1446e4e.json','rules R01–R09; complete web L0–141',None),
+('claims-current','history/claims/current.json','L1–59, CE-FREEZE-02 / CE-DOWNLOAD-02 / CE-SCALE-01',None),
+('claims-events','history/claims/events.jsonl','all five historical events L0–4',None),
+('freeze-attribution','originals/S-cf5a0a138d7426f7.json','L0–14; within_run_encoder_unchanged and four unused predictor tensors','71eb2ee4e34b1b2671a071ed9679c6e10f60b95bd6dc2c087fe8a3322d2ab034'),
+('scale-attribution','originals/S-b71568736458b2fa.json','L0–77; double recomputation from float32 features; no causal trial','7d73f0edd7f557b68dda1a5327c8070a4c02c6a21a765e895854033b0968f860'),
+('terminal-004','originals/V-0d9b28872dd0fd10737f.json','L0–14; resource refusal; 2026-11-01 11:40:15.496437–11:40:16.430761Z','5b5b9464fb919b96a72b548968d4d3455cac23127e46fc03bf6b5f59018ec418'),
+('terminal-004-review','originals/V-68436b23be68c0fbb68e.md.txt','L0–30; no batch/learning; resources released; old originals unchanged','a0b4c7f4b713f6d5d7b1d147e99023898eee86e2f18dbca379777fb6e99654ee'),
+('weight-reference','context/chemeleon-weight-reference.json','complete L0–8','abf95aabfd1269c24fcf064576d7a271b88b3f7b386ac7ff4e78497dfaa2a25a'),
+('paired-manifest','originals/N-f174b858aa153759f6c1.json','L5–52 source/data hashes; L54–117 six exact run configurations','8e6228d779ade3e779919c752156f0f8564038d6d8839fd28ed014e99bb1ea6a'),
+('training-science','originals/N-7feaa8941cee7dd304be.py','L148–182 config contract; L186–360 identity/split; L430–455 monitors; L568–613 RNG/checkpoints','63bb22a2aa1634f7e3db3a3b972969ee84f3f861da6fe561608e5cb87acf046c'),
+('runner-v4','originals/N-90473e2f5259eb3f4c38.py','L124–190 data/encoding/preprocess; L191–301 head/optimization; L387–454 export/freeze','57386ae54cc1cbb379fbff8af7a90ac34160769a8a0122402b881a8aea893abe'),
+('baseline-delivery','originals/S-74987a34c418c461.md.txt','complete L0–28; CPU v1/v2/v3 and encoding/training timing','3c369c32cc99a000541d0af685ad05ef0854f2557edf67ed559c29c2ab48b53e'),
+('prediction-ranges','originals/S-616fd441ee2c48b2.json','complete L0–155; per_task min/median/max, split not assumed','c9b48565dcbabef6ab245492e0237c22fc4f6f6c97e7dd50dc8d78c59a9a7196'),
+('alt-prep-status','originals/N-6b14c7ceae38c7809b71.json','read L0–223 only; MiniMol/MoLFormer target status L0–50','a1d2cb1527af8d654d952875312fdcdcfa48f4be5ca6bdfac2fe88b90170a25b'),
+('data-intake','originals/S-05011f1e255bc0e4.json','complete L0–11; ZIP SHA, user source attestation, units absent, blind projection',None),
+('blind-valid-projection','originals/S-15f285489dcfdc2c.json','complete L0–142; 22 per-task blind valid SHA; only Y removed',None),
+('input-integrity','originals/S-16a49ae1aa367cf7.json','complete L0–184; 22 counts and blind-valid/test SHA; fails/warns empty in historical report',None),
+('old-data-manifest','originals/S-0b6756b2ddbe443a.json','complete L0–10; pending with files=[], not a validated 66-file manifest','0434d4448521766e26bc6c04f9a1d8fc35099c74283e303df0a345ef06e6268d'),
+]
+for k,path,loc,h in extras:source_index[k]={'uri':B+path,'source_version':{'commit':COMMIT,'sha256':h},'hash_note':'published; not rehashed' if h else 'not transcribed; source located by fixed commit and exact registry URI; do not substitute another hash','locator':loc,'kind':'additional_original_read','read_mode':'summary' if k=='alt-prep-status' else 'original'}
+source_index['full-prompt']={'uri':D+'full-prompt.txt','source_version':{'commit':'29476a735f9bb0e28de24a4b63d8b8ee0ff76204','sha256':'2a96147430e375f5f794215ef8062fb9e67d75a92b8353af06482554206214c6'},'locator':'L0–594 complete; exact 55316 bytes declared, not independently rehashed','kind':'user_selected_task'}
+source_index['reading-contract']={'uri':D+'reading-contract.json','locator':'L0–498 complete','kind':'user_selected_contract'}
+source_index['user-supplement-1']={'uri':'conversation:user:first-supplement','locator':'numbered corrections 1–6','kind':'user_instruction','note':'controller says freeze checker packaging fixed separately; not a new historical training result'}
+source_index['independent-arithmetic']={'uri':'evidence/numeric-recomputation.json','locator':'all 22 tasks and caco2_variants; float and Decimal implementations','kind':'local_aggregate_arithmetic'}
+dump('evidence/source-index.json',source_index)
+
+# Existing weights and code: literal values read from preserved originals, not promises to bind later.
+assets={'schema_version':1,'request_id':REQUEST,'scientific_snapshot':SNAPSHOT,'authority_commit':COMMIT,
+ 'hash_verification':'source-published SHA values; no original raw bytes rehashed in this session',
+ 'chemeleon':{'scientific_asset_id':'chemeleon','pretrained_sha256':'c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651','pretrained_bytes':34859448,'feature_dim':2048,'weight_source':'https://zenodo.org/api/records/15460715/files/chemeleon_mp.pt/content','encoder_py_sha256':'3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712','training_science_sha256':'63bb22a2aa1634f7e3db3a3b972969ee84f3f861da6fe561608e5cb87acf046c','train_remote_v4_sha256':'57386ae54cc1cbb379fbff8af7a90ac34160769a8a0122402b881a8aea893abe','paired_base_config_sha256':'da5062761b9871a878fd87b19853062cfcc83848935c6eb7b1c90156481dfa77','source_refs':['weight-reference','paired-manifest'],'readiness':'encoder_ready; generalized task runner/cache import are new_code'},
+ 'dataset':{'official_archive_sha256':'4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4','official_archive_name':'小分子药物预测技术创新赛数据集.zip','row_count_train':53695,'row_count_valid':11735,'row_count_test':16379,'official_template_sha256':'8ee41589d2c98e7b93081c058b3f928ac09bea4b3ffc899fa13677051e9baa20','repository_template_sha256_not_for_export':'9604b78fd59cb2e7a803df4ed731e054f152af401c4ec6ec79d11af70cfd292b','source_refs':['data-intake','blind-valid-projection','input-integrity','data-profile']},
+ 'new_implementation':{'interface_id':'admet-frozen-breadth-v1-proposed','implementation_status':'not_written_not_executed','source_sha256':None,'reason':'No source artifact for the proposed new runner exists in this review; cannot invent its hash. Existing inherited assets above are already pinned. Execution requires independently accepted implementation, not merely this spec.'},
+ 'alternative_assets':[{'id':'minimol','readiness':'blocked_assets','source_refs':['required-003','alt-prep-status'],'reason':'preparation idle_incomplete; no accepted encoder checkpoint/interface/full coverage proof'},{'id':'molformer-10pct','revision':'361063d0ad524ef77cf39b08469f6be770dc550f','readiness':'blocked_assets','representation_dim':768,'max_position_embeddings':202,'deterministic_eval_in_published_config':False,'source_refs':['required-003','alt-prep-status'],'reason':'no accepted complete weights/adapter/coverage run; config/revision alone not readiness'},{'id':'classical-features','readiness':'new_code','reason':'researched not prepared; diagnostic comparator not replacement for required DL model'},{'id':'scratch-small-dmpnn','readiness':'new_code','reason':'new train-only module plan; separately scoped acceptance/budget'},{'id':'kpgt-unimol-smited','readiness':'blocked_assets','reason':'deferred; not immediate batch candidates'},{'id':'tabpfn-2.6','readiness':'blocked_assets','role':'predictor_not_molecular_encoder','reason':'separate fit/predict and license/dependency review, not ready encoder'}]}
+# Each hash below was read from blind-validation projection / input integrity (no data rows accessed).
+valid_hashes='''479a2ccacb375eb533c777a91b5188ad34d4a677236a3ba67ce123ec3b5159b5
+d1c0d3a7bf02e124c67dd3baba4cae8f9b7cacd2039cb215fcdbee99fa79c1bb
+c969242ba7444347a0a8ff1e0aa71b7a3178891b896162960bc99e75c744c2b8
+41370e87d89a96a7481425dae1bf7c45184bd116b353e96719b2afcd0a8a5ca3
+c5d813115fa6ca174dcc55fefbac8924bc6ee865e254cd167929eda493a7aea8
+f804cf64e80a6aa3ee4866e7bd151904187ab8a5fc657694dc645f0dea209c48
+1f1dc2ce811bfe8fe2ed269301093efead9820d966059dd80c22bf83584bf3a0
+7df841fda6ad457893a5230000b61d4b6362b739fc56091992d0554c83910ea3
+458beebe61d05245130f66ba51520c04b7e9adf8f8f54f955c70fe6a6d3138f0
+8a8f539ba9648d5cbeafa133853f4dffa4526b08a277133b86014bde00949e6d
+4750ee5340fad7cc0eff7f9e071fb349ca26e273023333bdd341fc5da3c3390b
+0a7ba50f1364e9938f4695f970968793fa00c7a6ba3e577f1924edd0bea1f7a8
+79d305852254af6b826ead882c0b8050a1656828af827e0c12e4bb0555fb6e4b
+6c61afd0585906bf7bd2c5d6656c347f9af05009c369c001040d8b9ff4dd8217
+64230795da38c56e568be453c700f992fd8d901703784a16c61765cc52d87207
+acdf1fef143a0ccd25c15bb84ac3510c62e064c3e123a15597e5207ff266ffa4
+814330b9411c74632916423faeaf5534cc2507a0c569240b971f883eb9043800
+ca5a5375aefc37693f3b3aa56171ddba8b0cd6fb7fe6899ecfd2e61a422b5190
+7694cb88b3cad391b70971dcc66055a36eef28bd6ad566293bf3793ef8c1b9b5
+a8cf1e38aa8dcd3c2fa87c2fb69b605b7587a82c1014054af0d93cb3a3eae137
+3ced20ec95adf2e8250f0be25a945d611f828f599569799bfabd0718c258fcf6
+191eb667661b25f2310d34d7c3cfb916bc43a2c8f22aef840eb25a02524540b4'''.splitlines()
+test_hashes='''490271384316e8f4bd414346ef74105057383682389006f2e24a77a87891ae1a
+19deb430b339574eec9f0b9e04acca64adc2c3979bf200634bb03cbbeda99ef5
+4f8eb0694b2f72d83e9131667980bd0ba54ba2ecdb5a8ef2fce0f36a5f73e786
+d87dac944bedcefb216bce57ba5a8de93d3781172c66653b937e5065b9c2579c
+104ed6e16c206737f97c2e814ae36aa8acce459d94d39df78bbc07eb0ac2ef90
+fbd5934690e000e1fba8ea5aa0fdf5cd8977fdff91a0abbd06f78c62085fb39a
+a14381ca18fb91af76b336917a42bdec7dd71ffc745230684bfe674c96488a44
+10a2feb061bf63c48da7ad74b94991693e382d7fa0d56acb37fc4a306ae727d2
+e0ccecf7b99a3b0629cfe8a0423b65e48e1f4a6049c4d4b8e69926b8de0783ca
+45e6e276b45169003f4e73c795fa4ea059780cfce04c1d06fdb1852b8849dccc
+909ac1d0820299fe87037bf2b375f7316f37ba13b3b110c7a0d83a45a67ece6f
+340a65aa43306ab010fb20607938ea37d5c45a03be7152081b9949520ab03228
+9b4c5f90f78005a305e425076ef2adf59404152134786991db3e13acdaa7f847
+c6fbbab02b52618c35661a350d3c3aec700b835ad0bdc9f820fc6b3145ff985d
+df63e59212e9667145c4c9b371cd32207e7339b360ce0469b23287766b973cc8
+acd125be19a4b7b361152e331c80dc3124f1eda36fe7a112cbbc6e921fbdf137
+ddf437d076faebad8fb5e74a85379643f3e05824fa5a8aeaf37f725edf8cad5d
+d768c259d5e8222b5a9dd29bcfccb5cc46560b190a4ec66b1ca4bf1a4ff59568
+4c831f1af48c75b931954ef2c1462e48000c53dcba9e501edf58856a50bd67fe
+d1512eb4a58d434663cd3edfc7b0d5c80a376445e1d00cb0c6e65100b4a81be4
+ad5814c7b77ff79de9c99b97d667ab8762e78933a4f0147030c6615d3111ce90
+e59e7ba03645b2086bb67a8a8e063c1959f5ef93e592dc5efcdc0e39a65479e8'''.splitlines()
+train_counts=[4684,1421,448,637,848,770,467,8463,465,9191,468,8628,331,465,457,403,3970,2940,851,1952,5045,791]
+test_counts=[1457,406,128,182,243,221,135,2419,135,2626,135,2467,96,135,132,117,1478,840,245,559,1997,226]
+assert len(valid_hashes)==len(test_hashes)==len(inputs)==22
+assert sum(train_counts)==53695 and sum(test_counts)==16379
+for h in valid_hashes+test_hashes:assert len(h)==64
+s1=['solubility_aqsoldb','ppbr_az','ld50_zhu','lipophilicity_astrazeneca','vdss_lombardo','half_life_obach','cyp2d6_substrate_carbonmangels','ames','bioavailability_ma','dili']
+notes={
+'ames':('先核valid单骨架代表性；dropout与后续容量/骨架诊断','valid全部1个非空Murcko；n大不等于化学覆盖广','medium'),
+'bbb_martins':('原串分组保留冲突Y；低容量/正则','train7个原串双类别；原串相同不等于可合并标签','small'),
+'bioavailability_ma':('小训练集/小valid，低容量正则与划分敏感性','valid64、正43；跨任务暴露55行不代表标签泄漏','small'),
+'caco2_wang':('独立六项固定配对优先回答监视选择，不追加本轮H0/H1','四历史run混杂；六项0 learning，不能等结果才完成广度研究','existing_only'),
+'clearance_hepatocyte_az':('rank早停、冲突重复测量诊断、受控loss','train848/712原串、136原串不同Y；单位未知不阻止原Y基线','small'),
+'clearance_microsome_az':('rank早停与种子；与hepatocyte不能视为同一标签','n770/111，Spearman须检查tie与常量预测','small'),
+'cyp2c9_substrate_carbonmangels':('AP版本、少正类、低容量','valid12正；跨任务未暴露子群0正，不能作可比较AP','small'),
+'cyp2c9_veith':('AP版本固定；普通正则对照，后续train-only权重','train8463；绝对预算较大，原分近参考非无余量','large'),
+'cyp2d6_substrate_carbonmangels':('低AP先校定义，再dropout/小头/划分稳定性','valid14正；低分不是高概率可改善','small'),
+'cyp2d6_veith':('AP版本与不平衡；train-only pos_weight条件方向','train9191；验证正250/1313','large'),
+'cyp3a4_substrate_carbonmangels':('AUROC非AP；小头与划分','valid36正31负；不能借Veith标签语义','small'),
+'cyp3a4_veith':('大任务稳定对照；AP实现和早停','valid581正652负；高原指标不是满归一化分','large'),
+'dili':('低容量、train内分组诊断；不从48行valid挤出结论','valid35空Murcko/48；13正35负','small'),
+'half_life_obach':('rank/常量/tie/极端预测检查；稳健loss条件方向','弱相关；正仿射只改尺度不改Spearman','small'),
+'herg':('原行身份允许空ID；小头/正则','train20个空Drug_ID、valid/test各1；不能ID字典去重','small'),
+'hia_hou':('少数负类敏感性；避免高容量穷举','valid只有10负；0.9667 AUROC不证明普遍近天花板','small'),
+'ld50_zhu':('MAE原尺度/极端预测/特征标准化诊断','valid全部空Murcko，train/test有环，均匀seed不能补化学覆盖','medium'),
+'lipophilicity_astrazeneca':('MAE原尺度对照；稳健loss/容量','train2940 valid420，可作相对平稳回归锚点但未证低噪声','medium'),
+'pgp_broccatelli':('平衡分类正则对照；后续容量','valid61/61，但n122仍有限','small'),
+'ppbr_az':('先身份/逆变换/预测尾部，再dropout与特征条件化','481原串不同Y；高MAE不是错误标签或百分比范围已证实','medium'),
+'solubility_aqsoldb':('优先诊断高MAE/极端预测，保留解析失败回退','valid全空Murcko；test2解析失败；最长原串681字符，重原子最大388','medium'),
+'vdss_lombardo':('负rank先查身份与tie，受控loss和稳定性','正仿射缩放不会改变Spearman；不得无证据反转标签','small')}
+ledger=[]
+for i,x in enumerate(inputs):
+ task=x['task']; n=num_by[task];diagnostic,uncertainty,cost=notes[task]
+ item={**copy.deepcopy(x),'train_n':train_counts[i],'test_n':test_counts[i],'metric_direction':'minimize' if x['metric']=='MAE' else 'maximize','normalized_score_recomputed':n['score_float'],'theoretical_normalized_max':n['theoretical_task_max'],'theoretical_aggregate_headroom':n['aggregate_contribution_if_theoretically_perfect'],'priority':'S1' if task in s1 else ('existing_independent_pair' if task=='caco2_wang' else 'S1B'),'first_diagnostics':diagnostic,'uncertainty':uncertainty,'cost_class':cost,'ready_representation':'frozen CheMeleon 2048','alternative_representation_status':'MiniMol/MoLFormer blocked; others conditional research, not immediate batch','stopping_rule':'身份/冻结/非有限值故障立即停止该任务；两seed无一致正向且确认不足则不深挖；不是永久淘汰任务','blind_valid_sha256':valid_hashes[i],'test_sha256':test_hashes[i],'train_sha256':'3061c58d3601d081e5459a2de03dc1d189243c4b5683d1b7288577a29fed4d6f' if task=='caco2_wang' else None,'train_identity':'official archive SHA + exact task/role; private per-file SHA not transcribed in reviewed public input-integrity record','source_refs':['required-011','required-049','required-050','data-profile','input-integrity'],'no_raw_labels_in_this_file':True}
+ ledger.append(item)
+dump('task-ledger.json',{'request_id':REQUEST,'snapshot':SNAPSHOT,'tasks':ledger,'notes':'Counts/diagnostics transcribed from fixed aggregate audits; arithmetic independently recomputed. Train-label class totals/ranges not invented.'})
+assets['dataset']['per_task']=[{k:x[k] for k in ['task','train_n','valid_n','test_n','train_sha256','blind_valid_sha256','test_sha256','train_identity']} for x in ledger]
+dump('asset-bindings.json',assets)
+# Explicit intended API: new code, not fields claimed to be accepted by old runner.
+api={'interface_id':'admet-frozen-breadth-v1-proposed','status':'specification_only_new_code','entrypoint':'prepare_task(config, host_input_registry) -> accepted_task_context; run_head(context, model_seed) -> artifacts (future authorized execution only)','inherited_sources':['training-science','runner-v4','paired-manifest'],'current_runner_limits':{'task':'caco2_wang','scientific_asset_id':'chemeleon','optimizer':'AdamW','loss':'standardized MSE','monitor_enums':['internal_validation_standardized_mse','internal_validation_raw_mae'],'direction':'minimize','external_cache_import':False},'new_required_capabilities':['22-task type/metric dispatch; BCE and AUROC/AP/Spearman monitor','deterministic task-scoped data registry resolving only train labels, blind valid/test','full scientific config and seed expansion; no hidden defaults','raw frozen-feature cache import with exact identity verification','optional nested train-only confirmation split; excluded outer labels never early-stop','separate head/scientific success vs supervisor/transport status'],'acceptance_tests':[{'id':'A1','test':'reject unknown task/type/metric/direction; all 22 table entries correct'}, {'id':'A2','test':'fit-only affine statistics; stop/outer/valid/test perturbation cannot change them'}, {'id':'A3','test':'MAE known toy output minimizes; tied AUROC/AP, rank ties, constant Spearman, one-class AUROC undefined; single-class AP may have a numerical convention but is rejected as uninformative by this preregistered acceptance policy, finite outputs checked'}, {'id':'A4','test':'group split exact same task/input/seed gives same rows; preserve duplicate/blank IDs; each train row assigned once'}, {'id':'A5','test':'cache changed row order/task/input bytes/checkpoint/encoder code/parse mask/shape/dtype rejected; approved raw cache reusable across model seeds and internal splits'}, {'id':'A6','test':'registered encoder parameters+buffers same before/after; eval/no_grad; optimizer contains only new head; deliberate buffer mutation rejected'}, {'id':'A7','test':'best epoch and checkpoint identity match selected metric; inverse regression transform once; classification sigmoid once; earliest ties retained'}, {'id':'A8','test':'submission unchanged metadata/row order; 16379 predictions with exact task/sample_idx mapping; blank/repeated Drug_ID preserved'}, {'id':'A9','test':'worker success with supervisor failure retained separately; business success not asserted from wrapper code'}, {'id':'A10','test':'seed expansion and dedup match experiment-matrix; no training during import/preparation; no Y in blind files'}], 'implementation_hash_policy':'Existing inherited hashes bound in asset-bindings. New implementation is not created here and its hash is genuinely unknown; no execution until a real accepted artifact exists.'}
+dump('new-code-interface.json',api)
+
+# Zero-fit readiness gates live outside next_experiments.
+gates=[
+{'gate_id':'G-SCOPE','dependencies':[],'fit_count':0,'requirement':'主控对具体批次另行授权；本研究无训练/新评分/派发权','issue_ids':['ISSUE-008']},
+{'gate_id':'G-IDENTITY','dependencies':['G-SCOPE'],'fit_count':0,'requirement':'既有权重/代码/官方ZIP/盲valid/test摘要匹配；宿主核对任务train文件及行身份，不能把pending空manifest当证明','issue_ids':['ISSUE-004','ISSUE-017']},
+{'gate_id':'G-RUNNER','dependencies':['G-IDENTITY'],'fit_count':0,'requirement':'新接口A1–A10独立验收；旧检查器打包遗漏按主控独立修复处理','issue_ids':['ISSUE-002','ISSUE-019']},
+{'gate_id':'G-METRIC','dependencies':['G-RUNNER'],'fit_count':0,'requirement':'锁定本地AUROC/AP/Spearman/MAE实现与方向；AP官方等价未知需保留，不阻塞有定义的本地研究','issue_ids':['ISSUE-003']},
+{'gate_id':'G-DIAGNOSTIC','dependencies':['G-METRIC'],'fit_count':0,'requirement':'任务尺度/逆变换/预测身份/非有限值/标准化审计；单位未知不要求改原Y，不因未证明因果就禁止基线','issue_ids':['ISSUE-005','ISSUE-012','ISSUE-014','ISSUE-015']},
+{'gate_id':'G-RESOURCES','dependencies':['G-DIAGNOSTIC'],'fit_count':0,'requirement':'主控确认不影响他人及有界资源、日志与取回；未就绪不启动，不取消既有配对','issue_ids':['ISSUE-011']},
+{'gate_id':'G-EXTEND','dependencies':['G-RESOURCES']+[f'P-S1-{task}-{tag}' for task in s1 for tag in ['H0','H1']],'fit_count':0,'requirement':'S1按整批复核后决定是否授权已明确11任务S1B；有重大边界错误不扩','issue_ids':['ISSUE-006']}
+]
+dump('preparation-gates.json',gates)
+
+# Complete scientific config for each concrete task. All S1/S1B contrasts change dropout alone.
+bytask={x['task']:x for x in ledger}
+assetvers={'pretrained_sha256':assets['chemeleon']['pretrained_sha256'],'encoder_py_sha256':assets['chemeleon']['encoder_py_sha256'],'inherited_training_science_sha256':assets['chemeleon']['training_science_sha256'],'inherited_runner_v4_sha256':assets['chemeleon']['train_remote_v4_sha256'],'official_archive_sha256':assets['dataset']['official_archive_sha256'],'official_template_sha256':assets['dataset']['official_template_sha256'],'scientific_publication_commit':COMMIT,'interface_id':api['interface_id'],'new_implementation_status':'not_implemented; acceptance required'}
+def config(task,dropout):
+ t=bytask[task];reg=t['metric'] in ['MAE','Spearman'];metric='AP' if t['metric']=='AUPRC' else t['metric']
+ return {'interface_id':api['interface_id'],'task':task,'scientific_asset_id':'chemeleon','encoder':{'checkpoint_sha256':assetvers['pretrained_sha256'],'encoder_code_sha256':assetvers['encoder_py_sha256'],'feature_dim':2048,'encoding_batch_size':64,'mode':'eval','autograd':False,'freeze_parameters':True,'freeze_buffers':True,'dtype':'float32','pooling':'unchanged approved CheMeleonEmbedder fingerprint path','parse_failure_policy':'preserve row; existing deterministic zero raw embedding and parse_mask=false; never delete or hand-edit prediction'},
+ 'inputs':{'train':{'source_archive_sha256':assetvers['official_archive_sha256'],'task_selector':task,'role_selector':'train','rows':t['train_n'],'per_file_sha256':t['train_sha256'],'per_file_sha_status':'published exact' if t['train_sha256'] else 'not present in reviewed public per-task integrity record; host-only identity check required','columns':['Drug_ID','Drug','Y']},'validation':{'role':'blind_validation','rows':t['valid_n'],'sha256':t['blind_valid_sha256'],'columns':['Drug_ID','Drug']},'test':{'role':'test','rows':t['test_n'],'sha256':t['test_sha256'],'columns':['Drug_ID','Drug']},'row_identity':['task','split','row_index'],'preserve_raw_smiles_and_labels':True,'drug_id_is_not_key':True},
+ 'split':{'method':'raw_smiles_group_shuffle','seed':43,'validation_fraction':0.1,'group_key':'exact raw Drug string','algorithm':'codepoint-sort unique keys; CPython random.Random(43).shuffle; take whole groups until >= max(1,round(0.1*n)) rows, never consume all groups; preserve row order','reference':'training-science L254–360','class_stratification':False,'one_class_or_constant_metric_policy':'fail task preparation; no seed search or metric substitution; redesign requires explicit review','split_id':f'{task}__official-train__raw-smiles-group__s43__stop010__v1'},
+ 'feature_preprocessing':{'fit_partition':'inner_fit_only','statistics_dtype':'float32','method':'legacy_mean_std','std_ddof':0,'replace_std_below':1e-8,'replacement_std':1.0,'clip':None,'nonfinite_raw_features':'abort; parse failure zeros are explicit, not arbitrary NaN imputation','refit_for_each_split':True,'reuse_raw_not_scaled_features':True},
+ 'target':{'kind':'regression' if reg else 'binary_classification','positive_label':None if reg else 1,'transform':'fit-only mean/std ddof0, std0->1' if reg else 'none','fit_partition':'inner_fit_only','physical_units':'not inferred; supplied numeric Y scale','inverse_transform_at_prediction':reg,'prediction_scale':'original supplied Y, inverse affine exactly once' if reg else 'sigmoid(logit) continuous P(Y=1), no threshold, no target scaling','prediction_clipping':None},
+ 'head':{'hidden_dims':[256],'activation':'ReLU','dropout':dropout,'output_dim':1,'output_activation_during_loss':'identity','bias':True,'batch_norm':False,'layer_norm':False,'residual':False,'initializer':'torch.nn.Linear reset_parameters defaults; common seed makes H0/H1 initial tensors identical','trainable_parameter_count':524801},
+ 'optimizer':{'name':'AdamW','lr':0.0005,'weight_decay':0.0001,'betas':[0.9,0.999],'eps':1e-8,'amsgrad':False,'scheduler':'none','weight_decay_applies_to':'all head parameters','encoder_parameters_in_optimizer':False},
+ 'loss':{'name':'MSELoss' if reg else 'BCEWithLogitsLoss','target_scale':'standardized_by_inner_fit' if reg else 'binary_0_1','reduction':'mean','pos_weight':None if reg else 1.0,'sample_weight':'uniform'},
+ 'training':{'batch_size':128,'max_epochs':50,'gradient_accumulation_steps':1,'gradient_clip_norm':None,'precision':'float32','mixed_precision':False,'shuffle_each_epoch':True,'sampler':'CPU torch.Generator seeded by fixed model_seed','drop_last':False,'num_workers':0,'model_seed_values':[44,45],'python_numpy_torch_seed':'same scalar model_seed for each expanded run','official_valid_used_for_gradients_or_early_stopping':False,'head_train_mode_during_updates':True,'encoder_stays_eval_during_head_training':True,'torch_cuda_manual_seed_all':'scalar model_seed','deterministic_algorithms':True,'cudnn_benchmark':False,'cudnn_deterministic':True,'unsupported_nondeterministic_op':'fail acceptance; do not silently downgrade'},
+ 'early_stopping':{'partition':'inner_stop_from_official_train','head_mode':'eval no dropout','metric_input':'inverse transformed original-Y outputs' if reg else 'sigmoid of finite logits cast to float64; same probabilities as export, no threshold or clipping','metric':metric,'definition':{'MAE':'mean absolute error on original Y','AUROC':'continuous-score ROC AUC with averaged tied ranks','AP':'average precision over grouped identical scores, no trapezoidal PR interpolation','Spearman':'Pearson correlation of average tied ranks'}[metric],'direction':t['metric_direction'],'patience':8,'min_delta':1e-7,'ties':'retain earlier epoch','restore_best':True,'evaluate_every_epochs':1,'undefined_or_nonfinite':'stop and flag; do not substitute zero'},
+ 'artifacts':{'save_best_and_last':True,'save_optimizer_and_all_rng':True,'save_train_fit_stop_predictions':True,'save_blind_predictions':True,'save_full_encoder_parameter_buffer_digests':True,'record_worker_and_supervisor_exit_separately':True,'prediction_export_precision':'float64 serialization of finite outputs; unchanged template metadata'},
+ 'evaluation':{'primary_selection_dataset':'inner_stop_train_only; optimistic screening proxy, not official-valid score','task_score_reference_metric':float(t['reference_metric']),'official_valid_scope':'aggregate feedback only through authorized host evaluator; no new scoring in this research','selection_claim':'screening signal only, not independent generalization estimate','normalization':'inferred formula from required-049; AP parity unconfirmed'},
+ 'execution_authorized':False}
+experiments=[]
+for task in s1+[x['task'] for x in ledger if x['task'] not in s1+['caco2_wang']]:
+ batch='S1' if task in s1 else 'S1B';stage='screen' if batch=='S1' else 'reserve';t=bytask[task]
+ for tag,drop in [('H0',0.1),('H1',0.3)]:
+  pid=f'P-{batch}-{task}-{tag}';h0=f'P-{batch}-{task}-H0';cfg=config(task,drop)
+  p={'proposal_id':pid,'priority':1 if batch=='S1' else 2,'hypothesis':'在该任务、相同原串分组与相同seed下，dropout 0.3相对0.1改善泛化/数值稳定性；H0为必需共同对照，不是已有Mini22的复现。','control_run_or_config':{'type':'new_matched_control','proposal_id':h0 if tag=='H1' else None,'config_name':f'{batch}/{task}/H0','note':'H0自己是对照，无自依赖；仅H1引用它。Mini22512/lr.001/seed42不作为相同对照。'},'task':task,'scientific_asset_id':'chemeleon','asset_versions':copy.deepcopy(assetvers),'change_only':['head.dropout:0.1->0.3'] if tag=='H1' else [],'hold_fixed':['all exact_config fields except head.dropout and per-run fixed model_seed','same task, rows, group split43, preprocessing algorithm, loss, native earlystop, 50/8 budget','common paired model seeds44,45'], 'split_id':cfg['split']['split_id'],'seeds':[44,45],'metric':t['metric'],'direction':t['metric_direction'],'minimum_effect_or_decision_rule':{'proposed_not_empirical_threshold':True,'decision_dataset':'inner_stop_train_only; same split/seed within task; one best epoch per arm selected on this same stop set','paired_seed_rule':'H1-H0 inferred task-score gain >0 in both seeds and mean >=0.5; otherwise do not auto-promote','aggregate_equivalent_per_task':0.5/22,'secondary':'any numerical pathology or direction mismatch invalidates comparison; two seeds not significance','H0_role':'establish matched baseline, no promotion claim on standalone H0'},'success_criterion':'两seed成对达到预设筛选门槛且冻结/身份/finite检查全通过；只触发条件确认，不称显著。','falsification_criterion':'H1不优于H0、seed符号相反、差值低于门槛、或结果仅由无效身份/度量产生。','compute_budget':{'head_fits':2,'max_head_epochs':100,'shared_raw_task_encoding':'at most one accepted train+blind-valid+test raw feature set per task/encoder, shared by all four H0/H1 seed fits; new cache route must pass G-RUNNER','GPU_hours':None,'wall_seconds':None,'cost_status':'unmeasured on target generalized runner; no invented runtime'},'dependencies':['G-RESOURCES']+(['G-EXTEND'] if batch=='S1B' else [])+([h0] if tag=='H1' else []),'within_current_scope':True,'stage':stage,'exact_config':cfg,'preparation_mode':'new_code','reuse_assets':['pinned CheMeleon weights','verified identity-matched raw frozen features only; no automatic historical NPZ acceptance'],'estimated_run_count':2,'trigger':'separate host authorization and all gates passed' if batch=='S1' else 'S1 batch review passed; host explicitly releases remaining 11 known tasks; no automatic dispatch','skip_or_stop_if':['no training authorization','identity/freeze/supervisor boundary failure','undefined one-class/constant metric; do not search for a favorable split','nonfinite loss/gradient/prediction','new runner or raw-cache validation not accepted'],'review_checkpoint':f'{batch}-all-task-pairs-complete-or-major-boundary-failure','direction_ids':['D-DROPOUT','D-SEED','D-METRIC'],'batch_id':batch,'config_tag':tag,'authorization_status':'proposal_only_not_dispatch','evidence_refs':['required-011','required-048','runner-v4','training-science','data-profile']}
+  experiments.append(p)
+dump('next_experiments.json',experiments)
+expanded=[];seen={}
+for p in experiments:
+ for seed in p['seeds']:
+  c=copy.deepcopy(p['exact_config']);c['training'].pop('model_seed_values');c['training']['model_seed']=seed
+  key={'asset':p['scientific_asset_id'],'asset_versions':p['asset_versions'],'task':p['task'],'full_scientific_config':c,'split_id':p['split_id'],'seed':seed}
+  k=sha(canonical(key));assert k not in seen;seen[k]=p['proposal_id']
+  expanded.append({'run_key_sha256':k,'proposal_id':p['proposal_id'],'batch_id':p['batch_id'],'task':p['task'],'config_tag':p['config_tag'],'model_seed':seed,'split_seed':43,'split_id':p['split_id'],'full_config':c,'scientific_config_sha256':sha(canonical(c)),'is_executed':False})
+assert len(expanded)==84 and sum(x['batch_id']=='S1' for x in expanded)==40
+assert sum(x['batch_id']=='S1B' for x in expanded)==44
+# A machine-checkable, scalar-seed expansion; no dispatch command is included.
+dump('experiment-matrix.json',{'request_id':REQUEST,'round_id':ROUND,'input_manifest_sha256':SHA,'status':'unexecuted_research_proposals','unique_count':84,'S1_count':40,'conditional_S1B_count':44,'runs':expanded})
+with (R/'experiment-matrix.csv').open('w',newline='',encoding='utf-8') as f:
+ fields=['proposal_id','batch_id','task','config_tag','model_seed','split_seed','split_id','run_key_sha256','scientific_config_sha256','is_executed'];w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows({k:r[k] for k in fields} for r in expanded)
+
+def propids(tasks=None):return [p['proposal_id'] for p in experiments if tasks is None or p['task'] in tasks]
+# Conditional templates do not pretend that future selected tasks are known.
+conditional={'schema_version':1,'request_id':REQUEST,'not_part_of_concrete_run_matrix':True,'execution_authorized':False,'selection_rule':{'eligible':'completed valid paired S1/S1B task comparison; mean inferred task-score gain>=0.5 and both paired signs positive, no numerical/identity failure','max_tasks':4,'rank':'after numerical validity, paired mean task-score gain/22 divided by measured end-to-end task cost; report both seed values, not a fabricated success probability','tie_break':'lower measured cost, then lexicographic task name','fallback':'none qualify -> no S2 fits, investigate D-FEATURE/D-LOSS with new approval; do not choose arbitrary tasks'},'templates':[{'template_id':'T-S2','stage':'confirm','selected_tasks':None,'selection_status':'unknown_until_S1_or_S1B_results','max_tasks':4,'configs_per_task':['locked H0','locked H1'],'model_seeds':[46,47,48],'split':{'source':'official train only','outer_method':'raw_smiles_group_shuffle','outer_seed':44,'outer_holdout_fraction':0.2,'inner_seed':144,'inner_stop_fraction_of_outer_fit':0.1,'outer_exclusion':'outer rows excluded from gradients, feature/target stats, epoch selection; used only for final paired comparison','algorithm':'same codepoint sorting and whole-group cumulative rule as screen, applied outer then inner'},'inheritance':'all scientific fields of selected task H0/H1 exactly retained except this explicit split/seed change; 50 epochs/patience8 unchanged','maximum_unique_fits':24,'decision_rule':'mean paired outer-score gain>=0.5, at least2/3 positive pairs, no pair below -0.5; thresholds proposed not empirical significance; evaluate uncertainty and validity exposure before further allocation','qualification':'fresh split improves sensitivity check but reuses same official train and prior information; not a new independent external test','dependencies':['G-RESOURCES','completed paired screen and host selection decision']},{'template_id':'T-S2-MULTISPLIT','stage':'reserve','selected_tasks':None,'max_tasks':2,'configs_per_task':['same H0','same H1'],'model_seeds':[46,47,48],'outer_seeds':[44,45,46],'inner_seed_rule':'outer_seed+100','outer_holdout_fraction':0.2,'inner_stop_fraction':0.1,'total_unique_fits_for_2_tasks':36,'already_counted_if_both_tasks_in_T_S2':12,'incremental_unique_fits_max':24,'dependencies':['T-S2','host approves split-sensitivity extension'],'trigger':'candidate passes seed screen but plausible split instability/chemical-coverage concern remains; do not call seed count a substitute for structure coverage','decision_rule':'all three split means positive and overall mean>=0.5; if rank reverses, report conditional benefit, no universal win'},{'template_id':'T-LONG-BUDGET','stage':'reserve','selected_tasks':None,'max_tasks':2,'candidate':'one already locked candidate per task','epoch_patience_arms':[[50,8],[200,20]],'model_seeds':[46,47,48],'count_rule':'2 tasks * 2 budget bundles * 3 seeds=12 total; subtract only exact 50/8 tuple matches already completed; at most12 new fits','trigger':'50-epoch cap reached with late improvements in >=2 seeds and no clear overfit; not triggered merely because candidate lost','contrast_type':'joint epoch-cap/patience bundle; not single-factor attribution','cost':'200 vs50 is 4x epoch ceiling; patience20 vs8 changes realized work nonlinearly. No walltime claim. Not included in small/medium/large default budgets.'}], 'deduplication':'unique canonical tuple (asset+version,task,full scientific config including preprocessing/loss/monitor/epoch budget,split,scalar seed); metadata/proposal ID not scientific difference. Retried failed job with zero fit is not a completed fit; resumed same trajectory not another independent seed. Shared H0 counted once only when all fields and split/seed match.'}
+dump('conditional-followups.json',conditional)
+print('Built sources, 55 receipts in memory, assets, ledger, 42 proposals and 84 expanded unique tuples.')
+
+# Specific issue reasoning. Preserve prior IDs rather than silently rewriting history.
+issues=[]
+def issue(i,status,severity,category,statement,refs,hypothesis,counter,impact,resolution,criterion,tasks=None,runs=None):
+ issues.append({'issue_id':f'ISSUE-{i:03d}','status':status,'severity':severity,'category':category,'statement':statement,'affected_run_ids':runs or [],'affected_history_records':['required-014'] if runs is None else [],'evidence_refs':refs,'evidence_locations':[{'source_id':k,'uri':source_index[k]['uri'],'locator':source_index[k]['locator']} for k in refs], 'hypothesis':hypothesis,'counterevidence':counter,'impact':impact,'proposed_resolution':resolution,'verification_criterion':criterion,'related_proposal_ids':propids(tasks),'history_policy':'previous/issues.json retains the prior text unchanged; current entry is a supplement, not deletion'})
+issue(1,'resolved_text_reading','critical','reading_contract','上一版未读的41项已补齐：54项合同材料及input manifest均已全文分段阅读；源字节复算另列ISSUE-018。',['reading-contract','full-prompt','input-manifest','required-047'],'未读规则和推翻链会把本地保守默认写成赛事规则，或沿用已推翻的冻结归因。','补读后并未推翻广度优先方向；读清单也不等于读遍其2446个对象。','原“41个必需项未读”不再是本轮stop reason；全量源文件原始字节未取回仍不能声称原SHA独立认证。','保留55条original回执、各次可见行覆盖和源版本；另登记额外材料的部分阅读。','55条要求的可见行区间无缺口，URI和合同entry_id对应，真实web工具引用可追溯；不由自报read_mode单独证明读取。',tasks=[])
+issue(2,'open_acceptance','high','runner','Mini22已有22任务CPU历史实现；现行Caco2 GPU runner尚不等于已验收的22任务GPU/缓存复用接口。',['required-014','baseline-delivery','training-science','runner-v4'],'把Caco2-only的loss、minimize监视与固定列契约直接套分类/秩任务，会产生静默错指标或方向错误。','22任务Mini22确实训练成功，因此“从未有任何22任务runner”是过度表述；新代码本身并未被禁止。','本批42项均标new_code，不能把JSON直接交旧runner当config_only；不阻止设计新方案。','实现new-code-interface.json A1–A10，用合成fixture独立验收，再冻结真实新实现摘要；继承资产摘要已给。','22 task/type/metric/direction正确；fit-only统计、缓存拒绝、best checkpoint、预测尺度、freeze和退出状态测试均通过；实际新源hash可追溯。')
+issue(3,'open_official_parity','high','metric','五项AUPRC采用本地AP，官方插值/并列及总分源码等价性尚未确认；方向应最大化。',['required-011','required-049','required-050','official-rules'],'若官方采用不同PR积分，细小AP差别与任务间预算顺序可能改变；显示分数一致不能证明实现相同。','22个榜单显示tuple对反推公式残差小于5e-7；本地AP有明确可复算定义，不应停止有定义的本地比较。','结论限本地AP及反推总分；不自创永久禁令，也不把分数精度误当官方确认。','固定AP实现、tie处理与方向；少数类不足只报告信息限制。获得官方定义时统一重算既有预测而非挑有利算法。','本地合成tie/单类/空值fixture通过；官方等价需官方源码/说明或获准成对输出验证，并记录不能确定的部分。',tasks=[x['task'] for x in ledger if x['metric']=='AUPRC'])
+issue(4,'open_execution_identity','high','data_identity','历史缓存存在和source hash不等于新run可直接复用；row/task/role/parse/encoder身份必须一致。',['required-016','paired-manifest','runner-v4','input-integrity','data-profile'],'缓存行错位或混用已标准化特征会制造高MAE、负相关或看似改进。','原数据画像的同任务划分交集为0，既有完整性报告未报fails；没有证据认定已有全部预测错位。','需每任务验收，不把未验收当已发现泄漏；不能用Drug_ID作唯一键。','固定(task,split,row_index)及原Drug字节映射；缓存原2048维特征，task/row/代码/权重/环境/parse mask匹配；每fit重算preprocess。','改变一行顺序、task、权重摘要、dtype或parse mask的负fixture均拒绝；同源原特征跨model seed复用通过；数据原行数量不变。')
+issue(5,'open_diagnostic','high','target_scale','Solubility与PPBR低归一化分及大MAE是诊断优先项，不是单位错误或容易提升已获证明。',['required-011','required-050','prediction-ranges','data-intake','data-profile'],'逆变换错误、极端特征放大、分布偏移或标签噪声都可能解释差值；不能仅凭任务名选log或裁剪。','原数值Y有限；原收件记录明确单位未提供但允许原Y建模。PPBR有大量不同测量值的重复原串，可能是真实变异。','先验收数值流程再比较模型；单位未知不全面停训，只限制物理解释和无依据标签处理。','检查一次逆变换、训练fit统计、预测尾部与finite；用synthetic affine roundtrip及盲身份检查；不删除/平均原标签。','toy原Y→标准化→逆变换误差在dtype容差内；MAE原尺度；未用valid/test拟合统计；若流程通过仍高误差，登记为真实难题而非强判标签错。',tasks=['solubility_aqsoldb','ppbr_az','ld50_zhu','lipophilicity_astrazeneca'])
+issue(6,'open_empirical','high','variance','每任务一个Mini22头不能估计训练seed或划分方差；Caco2四run也非无混杂重复。',['required-011','required-012','required-051','required-052','required-053'],'best-of-many效应可能使偶然提升主导预算；两seed同向仍不足以声明统计显著。','可描述的Caco2替换贡献确为正；控制同seed/split后可用更低成本筛选，并不需要先证明所有任务无方差。','采用40-fit首批和未知任务确认模板；没有经验方差时不造置信区间或获胜概率。','S1成对44/45、split43；确认另用46/47/48和train内outer split44，必要时增加split45/46。','报告所有成对差值、成本、失效run、早停次数；预设门槛与成败皆保留；若跨split符号翻转则收窄结论。')
+issue(7,'open_assets','medium','asset_readiness','MiniMol/MoLFormer未验收；其他底座/经典特征/scratch路线不能列作立即就绪的同等对照。',['required-003','required-034','required-035','required-036','required-037','required-038','alt-prep-status'],'只有下载配置或准备模型名称会掩盖缺失权重/覆盖/适配；因此夸大可用科学资产。','CheMeleon权重和代码已有固定SHA；MoLFormer固定revision及架构字段存在，但不是完整就绪证明。','即刻扩展用CheMeleon；其他方向保留广泛条件研究，不将准备LLM误当encoder。','逐资产完成许可证/权重SHA/接口/解析与长度覆盖/参数buffer冻结/确定性验收，再另行授权比较。','一个资产只有完整版本清单、所有输入行覆盖、可重复特征和冻结证据通过后才能从blocked_assets升级。',tasks=[])
+issue(8,'open_protocol_control','medium','evaluation_exposure','valid调参是公开规则允许事项；逐行真值隔离和本轮不训练是项目边界，单次确认是建议而非永久硬规则。',['official-rules','required-008','required-019','required-045','required-046','user-supplement-1'],'若持续用同一valid挑赢家，增益估计会偏乐观；但把防过拟合建议写成赛事禁令会错误缩减方案。','规则R06明确包含train/valid调参；用户允许valid保留选模；旧评价暴露需继承。','新执行方仅接收获准汇总，不获得逐行valid.Y；可由主控审议追加确认而非永久禁止。','记录每次valid汇总用途/候选/选择；默认先train内筛选，再少量预注册valid确认。','没有valid.Y进入拟合/统计/新缓存标签；每次反馈有评价暴露记录；研究本身无新评分。')
+issue(9,'resolved_arithmetic','high','score_basis','上一版将榜单基准48.81的Caco2满分上限混入本地valid基准；应分别为48.8115148和46.3320128。',['required-049','required-050','independent-arithmetic'],'混用基准会高估本地单任务潜力并弱化全任务预算论证。','最佳Caco2替换带来+0.13013094的描述性结论复算不变；方向性建议仍成立。','纠正具体数值和适用分母；反推公式尚不是官方确认。','保留旧稿，提供float与Decimal两套独立算术、输入字符串与源位置，列出两种基准。','22任务和四Caco2替换可由evidence/recompute.py重现；显示公式残差及本地/榜单分别计算。',tasks=[])
+issue(10,'resolved_structure','high','proposal_integrity','上一版D-METRIC悬空、P-GATE自依赖、泛任务空seed及H0/H1多因素描述已修正。',['required-047','required-048','user-supplement-1'],'不可解析的依赖和非唯一组合计数会让执行预算重复或漏掉控制，整组变化不能单因素归因。','旧版自适应预算方向仍可保留；此问题不表明已有模型效果失真。','新矩阵42项/84seed组合，首批20项40fit；S2不伪选task；只变dropout。','定义D-METRIC；零fit gates另文件；实际引用/DAG/seed/完整配置/只变一个字段自动校验。','所有ID可解析、图无环、H0无自依赖、42项每项具体task和两seeds；H0/H1递归配置差仅head.dropout。')
+paired_runs=[f'hainan-paired-{m}-s{s}-20261101' for m in ['mae','mse'] for s in [44,45,46]]
+issue(11,'resolved_classification_open_resources','high','resource_vs_learning','六项配对及004均为零learning；资源拒绝不能计作模型负结果或六个训练完成run。',['required-017','required-023','required-024','required-025','required-026','required-027','required-028','terminal-004','terminal-004-review'],'资源先到先用竞争、预检查或包装错误可造成任务终止而科学学习根本未发生。','004返回78并确认释放资源；没有开始CUDA/worker学习。不能由此推断训练效果或假定下一次资源必可用。','现有五成功run/26头不变；既有六项独立，不能因本轮研究延后或接管它们。','保留时间层次；11:40:15–16终态是v3明确追加例外，不引入更晚现场结果；执行前由主控重新检查许可资源。','启动/learning计数由原业务产物证明；资源拒绝无模型分数；不杀其他PID、不自动重试抢资源。',tasks=[],runs=paired_runs)
+issue(12,'open_causal_hypothesis','medium','feature_conditioning','C-SCALE的极端标准化特征已被复算，但它导致Caco2误差的因果命题尚未证实。',['required-051','required-052','scale-attribution','claims-current','claims-events'],'很小的训练特征std会把分布外激活放大，可能使头部外推不稳。','已有对照同时变化seed/split/结构；float32到double复算支持数值现象而非因果；无clip/稳健标准化配对实验。','不能宣称根因已找到，也不能以此禁止现有基线；应设计单因素预处理对照。','固定fit分组/seed/头，比较legacy std与固定std floor或train-fit剪裁；所有参数只从fit推得。','在配对seed下记录特征极值、finite、原指标和归一化变化；极值下降而原指标不改善则否定“数值改善必然科学改善”。',tasks=['caco2_wang','solubility_aqsoldb','ppbr_az','ld50_zhu'])
+issue(13,'historical_claim_refuted_scoped','high','freeze_attribution','C-FREEZE-02已推翻“跨run完整wrapper摘要不同即可证明冻结失败”的归因，不能恢复CE-FREEZE-01为当前结论。',['required-051','freeze-attribution','claims-current','claims-events'],'未参与输出的随机predictor层可改变跨run wrapper摘要而冻结消息传递参数并未变化。','两已注册run的前后encoder参数及buffer不变；四个变化predictor张量未用于encode。该证据不自动证明所有未来run或未登记内存都冻结。','冻结检查应按每run前后和真实调用路径，不能仅比较两run全模型hash。','保留CE-FREEZE-01→02链；未来run记录参数buffer/optimizer集合/调用路径；增加故意buffer变更负测试。','原两run归因只在其范围成立；新run自己通过before/after检查才可称冻结合规。',tasks=[],runs=['hainan-frozen-training-20261031','hainan-skill-follow-20261031'])
+issue(14,'open_generalization_limit','high','chemical_coverage','Ames valid单非空骨架、LD50与solubility valid均空骨架，行数不能代表跨结构覆盖。',['data-profile','required-016'],'valid上的小幅提升可能不在test组成上保持；增加训练seed无法创造未观察结构。','历史聚合化学审计与主控复算一致，但这不证明赛事split错误或模型名次必反转；官方valid仍是有效协议对象。','重排优先级需同时考虑结构代表性；不把大valid n当窄CI充分条件。','保留原split；train内增加预设raw/canonical/scaffold诊断，仅诊断不删改；空Murcko不合为一个化学家族。','报告固定定义下覆盖和分组敏感性；单骨架bootstrap不外推全部结构；结论表述限观察覆盖。',tasks=['ames','ld50_zhu','solubility_aqsoldb','dili'])
+issue(15,'open_measurement_semantics','medium','duplicates_and_multitask','原串冲突标签/重复测量不能自动平均；跨任务分子重合不自动等于同一端点标签泄漏。',['data-profile','required-016','official-rules'],'重复原串跨fit/stop可能泄漏测量身份；共享MTL可能被大CYP任务与跨任务已见分子驱动。','同任务原始角色交集为0；A.train出现B.valid分子不等于B.Y进入训练；未知assay条件不允许假定测量错误。','内部raw分组并保留每行Y；MTL是条件新方案，不能把所有非空Y拼作完整标签矩阵。','逐标签来源/缺失mask/任务权重；固定任务标签只用其train；独立头作为共同控制；不强求冲突标签tinyfit零损失。','所有训练标签可追到(task,train,row_index)，无valid.Y；组不跨内部fit/stop；label-count weighting与task weighting明确。',tasks=['ppbr_az','clearance_hepatocyte_az','bbb_martins'])
+issue(16,'resolved_template_choice_open_export_test','high','submission_identity','官方模板与仓库模板7611个Drug_ID字符串不同；已选定官方SHA，不能数值化ID或按ID唯一聚合。',['data-profile','official-rules','data-intake'],'前导零/.0与空ID被转换，会使行映射或非y_pred字段不合规则。','SMILES和顺序等其余字段一致；当前test Drug_ID与官方模板相符，不必暂停模型研究。','最终只填固定官方模板y_pred；22任务共16379行完整保留。','按task/sample_idx并校验SMILES；metadata字节语义保持UTF-8 BOM/CRLF和字符串；禁止手改预测或drop行。','固定模板SHA匹配；导出后除y_pred外全部字段逐字符串相同；行数、task计数、finite全部通过。')
+issue(17,'open_host_binding','medium','private_train_identity','22盲valid/test SHA和官方ZIP SHA已绑定；除Caco2外21个train单文件SHA未在已读公开完整性记录给出，不能伪造。',['paired-manifest','data-intake','blind-valid-projection','input-integrity','old-data-manifest'],'把旧pending/files=[] manifest或archive hash当每文件行身份验收，会遗漏错误任务或版本。','官方ZIP已固定且22任务/role清晰；现有资产摘要不是“将来绑定”占位。单文件hash可由获准宿主在实际来源上完成。','研究配置是完整科学方案但尚非dispatch-ready；此缺口影响执行验收，不阻止提出new_code。','执行前宿主从已固定原ZIP解析正确task/role并核对私有逐文件registry；只回传摘要和计数，不回传valid真值。','每个实际run登记实测train文件SHA、原行身份摘要及输入绑定；未知值保持null而非另一个文件的SHA。')
+issue(18,'open_byte_audit','medium','source_hash_verification','本次web正文可达且必需文本读完；容器原始字节传输失败，所以没有独立复算公共原件SHA。',['reading-contract','full-prompt','input-manifest'],'浏览器重排的文本不能冒充原始UTF-8字节；把它sha256会伪造原件完整性认证。','固定commit与合同公布SHA可定位内容；本地交付文件SHA可实际计算；这不抹掉已发生的全文阅读。','保留needs_evidence的完整性限制，明确没有41项未尝试；审计包含阅读记录/源指针，不冒称全原件离线镜像。','保存具体URI与NameResolutionError、download failed、curl7；不将旧C-DOWNLOAD被推翻套到本次失败；有字节通道后另补复算。','对真实原字节得到与合同一致的字节数/SHA才可标byte_hash_recomputed=true；本轮一律false。',tasks=[])
+issue(19,'user_reported_fixed_not_reaudited','medium','controller_packaging','旧冻结检查器缺runner配置依赖是主控打包错误；用户报告独立版本已修复，不能归为科学解冻或作为禁新代码理由。',['user-supplement-1','required-018','required-034'],'缺依赖会让检查器无法运行而非证明模型违规；把工具失败当科学结论会过度限制搜索。','用户明确给出修复状态；本研究未取得并执行该独立新版本，因此不声称自行验收了修复。','单独保留工程状态；新代码方案仍按独立科学接口测试验收。','记录用户报告并保持历史快照；不使用后续版本产生的训练结果改变本次历史。','主控版本自身完成依赖打包/入口回归即可关闭工程项；不要求本轮训练或绕过检测。',tasks=[],runs=[])
+dump('issues.json',issues)
+
+search=[]
+def direction(id,linked,rationale,refs,counter,models,parameters,constraints,method,count,seeds,run_count,readiness,priority=3,scope='conditional research; no execution authorization'):
+ search.append({'direction_id':id,'linked_issues':linked,'rationale':rationale,'evidence_refs':refs,'counterevidence':counter,'candidate_models_or_modules':models,'parameters':parameters,'combination_constraints':constraints,'search_method':method,'configuration_count_or_counting_rule':count,'seeds':seeds,'estimated_run_count':run_count,'cost_assumptions':'Fit counts are budget units, not GPU-hour predictions. Raw encoder caches may be reused only after identity/implementation acceptance. All estimates subtract exact existing shared-control tuples; no Cartesian product across directions.','readiness':readiness,'priority':priority,'scope_status':scope})
+direction('D-METRIC',['ISSUE-003','ISSUE-009','ISSUE-010'],'为每任务固定loss/monitor/方向/尺度及本地评分定义；修复真实引用。',['required-011','required-047','required-049','required-050','runner-v4'],'官方等价未证实不意味着本地AP无效；不能以一个约定分数代替缺乏正类信息。',['task-aware local metrics and normalization audit'],{'MAE':'original Y scale, minimize','AUROC':'pairwise ranking/tie=.5, maximize','AP':'tied-score grouped average precision, no trapezoidal interpolation, maximize','Spearman':'Pearson of average tied ranks, maximize','validation_use':'aggregate-only authorized feedback; one-confirmation rule is recommendation, not prohibition'},['synthetic fixtures only before training','same local implementation for all arms','no official-equivalence claim from tuple fit alone'],'zero-fit acceptance / sensitivity protocol','0 training configurations; G-METRIC is not an experiment',[],0,{'mode':'new_code','gate':'G-METRIC'},1)
+direction('D-DROPOUT',['ISSUE-006','ISSUE-010'],'最小首轮因果对照：只比较dropout，减少旧版四因素混杂。',['required-048','runner-v4','required-011'],'更强dropout可能欠拟合；相同seed并不消除所有GPU非确定性。',['frozen CheMeleon + 2048→256→1 ReLU MLP'],{'dropout':[0.1,0.3],'fixed_hidden':[256],'lr':0.0005,'weight_decay':0.0001,'epochs':50,'patience':8},['only dropout differs within task/seed','do not claim interaction or optimality across lr/width','H0 is new matched control, not Mini22 original'],'paired one-factor screen','21 non-Caco2 tasks × 2 dropout configs × 2 seeds =84; S1 10 tasks=40, conditional S1B11=44',[44,45],84,{'mode':'new_code','asset':'ready CheMeleon','existing_Caco2_config_only_route':'not used in this new matrix'},1,'proposed within frozen/train-only science scope; separate execution approval required')
+direction('D-SEED',['ISSUE-006','ISSUE-014'],'区分model seed与split敏感性；不以多seed冒充结构代表性。',['required-051','data-profile','required-012'],'所有重复仍来自同一训练包，不能称外部独立验证。',['locked H0/H1'],{'model_seeds':[46,47,48],'outer_split_seeds':[44,45,46],'inner_seed_rule':'outer+100','outer_holdout':0.2,'inner_stop':0.1},['only selected unknown tasks resolved after S1','keep outer excluded from all fitting/epoch selection','do not stack counts for exact reused pairs'],'conditional confirmation then optional multi-split','T-S2≤4×2×3=24; multi-split≤2×2×3×3=36 total, at most24 new after overlap',[46,47,48],{'confirm_max':24,'extra_multisplit_max':24}, {'mode':'new_code','template':'conditional-followups.json'},1)
+direction('D-HEAD',['ISSUE-002','ISSUE-006'],'对重复稳定但欠拟合/过拟合候选调整容量；小样本不要默认扩头。',['required-014','required-051','runner-v4'],'旧512与256结果受seed/split/lr混杂，不能推出256普遍最优。',['linear head','one-hidden MLP','two-hidden MLP'],{'hidden_dims':[[],[64],[128],[256],[256,128]],'activation':'ReLU','dropout':'lock selected value'},['select at most2 candidate capacities plus exact common control per task','all other fields fixed','linear is head over deep frozen representation, not replacement of encoder'],'bounded one-factor contrast','≤3 configs ×3 seeds=9 per selected task; subtract exact shared control',[46,47,48],{'max_per_selected_task':9}, {'mode':'new_code','note':'Caco2 hidden_dims config route exists; generalized task implementation still needs acceptance'},2)
+direction('D-LR',['ISSUE-006'],'训练loss/早停轨迹提示欠收敛后才细调步长。',['runner-v4','required-051','required-052'],'更低lr可能只是需要更多epoch，不能把预算差误认为更好泛化。',['AdamW head'],{'learning_rate':[0.0001,0.0003,0.0005,0.001]},['same width/dropout/weight decay/loss/split','one axis only, retain .0005 control','report max-epoch hits'],'log-spaced bounded sweep','4 configs×3 seeds=12 total per task;3 control fits may be reused only exact match',[46,47,48],{'max_total_per_task':12},{'mode':'config_only for accepted Caco2 runner; new_code for proposed 22-task interface'},3)
+direction('D-WD',['ISSUE-006'],'从稳定容量与步长条件下调正则，避免一次改多项。',['runner-v4','required-048'],'较强衰减可能压低有用信号；不同optimizer下同数值不等价。',['AdamW head'],{'weight_decay':[0.0,0.0001,0.001,0.01]},['lock optimizer/lr/capacity/dropout and all partitions','no independent claim from old H0/H1 bundles'],'one-axis sweep','4×3=12 per selected task total minus exact shared control',[46,47,48],{'max_total_per_task':12},{'mode':'config_only for accepted Caco2; new_code for generalized interface'},3)
+direction('D-LOSS',['ISSUE-003','ISSUE-005','ISSUE-012'],'训练目标与MAE/rank/AP不完全一致，允许受控目标研究。',['required-052','required-053','required-011'],'MAE-monitor历史未改变MSE训练loss；换loss不保证提高任务指标。',['new train-only head losses'],{'MAE_tasks':['standardized MSE','standardized L1','Huber(delta=1 standardized unit)'],'Spearman_tasks':['standardized MSE','Huber(delta=1)','MSE+0.1*pairwise_logistic_rank_loss'],'classification':['BCE pos_weight=1','BCE pos_weight=nneg_fit/npos_fit capped at10']},['at most3 predeclared loss configs per selected task','weights/target statistics from fit only','native metric early-stop unchanged','rank pairs from fit only; no valid-derived pairs'],'matched one-factor loss comparison','≤3×3=9 per task; class2×3=6; subtract exact existing MSE/BCE control',[46,47,48],{'max_total_per_task':9},{'mode':'new_code','acceptance':'gradient/scale/one-class fixture before fit'},2)
+direction('D-FEATURE',['ISSUE-012','ISSUE-005'],'检验极小std放大是否可被稳定处理且真正改善预测。',['scale-attribution','required-051','required-052','runner-v4'],'消除极端z不一定改善误差；clip可能删除罕见有用信号。',['train-fit-only frozen-feature transformations'],{'arms':['legacy mean/std; std<1e-8→1','mean/std with std floor1e-3','legacy transform plus clip z to[-10,10]'],'fit_partition':'inner fit only'},['do not combine floor and clip in initial comparison','no label changes','keep frozen raw cache unchanged','each arm own preprocessing fingerprint'],'three-arm conditioning test','3 arms×3 seeds=9/task; reused exact legacy control subtract once',[46,47,48],{'max_total_per_task':9},{'mode':'new_code'},2)
+direction('D-TARGET',['ISSUE-005','ISSUE-015'],'区分目标标准化与物理变换，避免从名称猜单位。',['data-intake','data-profile','runner-v4'],'正仿射不改变Spearman排序；缩放可能改变优化条件但不是秩指标的直接修复。',['fit-only target transforms'],{'arms':['mean/std affine','median/IQR affine with positive fallback1'],'inverse':'exactly once to original Y','forbidden_without_evidence':['log assumption','label reversal','physical clipping','assay averaging']},['retain every original Y','two affine arms only until unit/assay provenance exists','same loss family adjusted in transformed units; acknowledge optimization conditioning change'],'conditional affine comparison','2×3=6/task including common control',[46,47,48],{'max_total_per_task':6},{'mode':'new_code'},3)
+direction('D-OPTIMIZER',['ISSUE-006'],'只在轨迹显示优化瓶颈时更换优化器。',['runner-v4','required-052'],'同lr不同optimizer不是等效更新；可能增加调参面而无收益。',['AdamW','SGD momentum'],{'arms':[{'name':'AdamW','lr':0.0005,'betas':[0.9,0.999],'eps':1e-8,'wd':0.0001},{'name':'SGD','lr':0.01,'momentum':0.9,'nesterov':False,'wd':0.0001}]},['explicitly optimizer+lr bundle, not isolated optimizer causality','same model/split/loss/epoch budget','follow-up lr attribution only if bundle wins'],'conditional bundle comparison','2×3=6/task, no all-axis factorial',[46,47,48],{'max_total_per_task':6},{'mode':'new_code'},4)
+direction('D-SCHEDULE',['ISSUE-006'],'固定步长多次触及上限时检查退火是否改善收敛。',['runner-v4','required-052'],'更复杂schedule可能只改变best epoch；不应在tiny任务上大量搜索。',['constant lr','cosine annealing'],{'arms':['constant lr=.0005','cosine lr .0005→.00001 over50 epochs; warmup0']},['50/8 fixed','no simultaneous optimizer/dropout change','same initial lr'],'paired schedule test','2×3=6/task incl exact constant control',[46,47,48],{'max_total_per_task':6},{'mode':'new_code'},4)
+direction('D-BATCH',['ISSUE-006'],'大任务可比较梯度噪声与吞吐，不能只比较epoch速度。',['runner-v4','baseline-delivery'],'batch变化也改变每epoch步数；GPU-hour优势未知。',['fixed frozen head'],{'batch_size':[64,128,256],'epoch_cap':50,'patience':8},['hold lr fixed initially','report optimizer updates and walltime, not just epochs','drop_last=false'],'throughput+quality paired test','3×3=9/task including128 control',[46,47,48],{'max_total_per_task':9},{'mode':'config_only for accepted Caco2; new_code for generalized interface'},4)
+direction('D-BUDGET',['ISSUE-006','ISSUE-010'],'解释200/20与历史50/8的成本差，而非冒充历史相同配置。',['required-048','required-052','required-053'],'早停常在50前已结束，增加上限未必增加有效学习；patience也改变选择过程。',['locked winning head'],{'epoch_patience_arms':[[50,8],[200,20]],'trigger':'cap reached with continuing improvement in at least2 seeds'},['joint budget bundle, not single-factor','not included in default40/108/132 budgets','max2 selected tasks'],'conditional long-budget template','≤2tasks×2arms×3seeds=12 total, subtract exact50/8 matches',[46,47,48],{'max_additional':12},{'mode':'config_only for accepted Caco2; new_code for generalized interface'},4)
+direction('D-POOL',['ISSUE-002','ISSUE-007'],'只有冻结encoder可暴露合规中间表示时，探索新读出而非改外部参数。',['required-003','weight-reference','runner-v4'],'2048指纹接口不自动提供节点级张量；sum/mean对分子大小敏感，需新覆盖/缓存。',['frozen node mean','frozen node sum','new trainable readout over frozen nodes'],{'initial_arms':['current approved fingerprint','mean of accepted frozen node outputs'],'optional_trainable_readout':'new module, train.Y only'},['no change to external encoder parameters or buffers','node output availability must be proven','cache key includes pooling and encoder path','max one candidate vs current initially'],'representation/readout contrast','2×3=6 per selected task after interface acceptance',[46,47,48],{'max_total_per_task':6},{'mode':'new_code','additional_gate':'node-output contract not yet verified'},4)
+direction('D-ENC',['ISSUE-007','ISSUE-014'],'头部改进耗尽后才付出新资产准备与编码成本。',['required-003','required-038','alt-prep-status','data-profile'],'token/原子/构象失败可能改变覆盖；不同维度的头容量不公平；没有ready替代底座的已测收益。',['MiniMol','MoLFormer-10pct','later KPGT/Uni-Mol/SMI-TED'],{'accepted_initial_assets':['CheMeleon'],'conditional_one_asset':'one asset only after full readiness','candidate_revision':'MoLFormer 361063d0ad524ef77cf39b08469f6be770dc550f'},['no unspecified future asset SHA passed to execution','freeze all external weights/buffers','all row coverage and deterministic fallback','matched head parameter budget or explicitly label architecture bundle'],'one newly accepted encoder vs CheMeleon','≤2selectedtasks×2encoders×3seeds=12 total; encoder preparation and feature costs separate',[46,47,48],{'max_total_after_asset_acceptance':12},{'mode':'blocked_assets'},5)
+direction('D-CONCAT',['ISSUE-007','ISSUE-002'],'只有互补性证据时比较表示拼接，避免维度增加冒充表示收益。',['required-003','runner-v4'],'不同底座可能高度相关；拼接升维会增加参数和过拟合。',['CheMeleon + one accepted encoder','CheMeleon + train-fit descriptors'],{'fusion':'concatenate frozen representations; new projection128','arms':['single representation with matched projection parameter budget','concat projection']},['trainable projection fit-only','no valid fitted dimensionality reduction','fixed same row map/coverage','new asset hashes required before concrete experiment'],'conditional matched fusion contrast','2arms×3seeds=6/task plus component encoding',[46,47,48],{'max_total_per_task':6},{'mode':'blocked_assets when second encoder; new_code for descriptor fusion'},5)
+direction('D-ENSEMBLE',['ISSUE-006','ISSUE-008'],'不同已确认头若误差互补，优先零额外fit的固定平均。',['required-012','required-008','data-profile'],'选best seed再平均可能累积valid偏差；多头同底座不保证低相关。',['uniform mean of locked seeds','OOF-constrained nonnegative blend'],{'first':'equal-weight mean of predeclared confirmed seeds','optional_weights':'nonnegative sum1, fit on train-only out-of-fold predictions'},['no rowwise manual edits','regression on original Y scale; classification fixed probability scale','weight fitting needs train-only OOF and counts extra fits','do not choose dozens of blends using valid'],'fixed mean first; conditional train-OOF weighting','fixed mean0 additional fits if component tuples exist; OOF extension≤2components×3folds×3seeds=18 fits/task plus blend fits explicitly registered',[46,47,48],{'fixed_mean_incremental_fits':0,'conditional_OOF_max_per_task':18},{'mode':'new_code','note':'no zero-fit fake training proposal'},3)
+direction('D-MTL',['ISSUE-015','ISSUE-014','ISSUE-008'],'有共享可训练adapter的MTL与共享冻结表示+独立头不同，应受控比较。',['data-profile','required-003','required-045'],'跨任务已见分子和49%CYP标签可解释收益；不是所有端点都可合并，可能负迁移。',['shared new adapter + task heads','independent new heads'],{'adapter_width':256,'label_mask':'only each task train rows','loss_per_task':'BCE or standardized MSE','task_weight_arms':['equal task mean','label-count mean diagnostic only'],'initial_task_group':'three Veith tasks only, not all22 by default'},['no valid labels in wide table','task-aware duplicate identity','compare same frozen representation and comparable new parameter budget','report each task and aggregate, not only pooled loss'],'conditional joint-vs-independent study','3seeds×(1joint+3independent)=12 fits total firstgroup; distinguish joint model fit from three task heads',[46,47,48],{'initial_total_model_fits':12,'joint_task_heads':9,'independent_heads':9},{'mode':'new_code','scope_gate':'separate architecture/provenance approval'},5)
+direction('D-SCRATCH',['ISSUE-007','ISSUE-014'],'冻结表征不足时，训练新小型D-MPNN提供不同归纳偏置，不解冻外部编码器。',['required-003','data-profile','required-045'],'小训练集易过拟合，encoder训练成本远高于头；不能把fit数当等价GPU预算。',['scratch D-MPNN'],{'hidden_dim':256,'depth':3,'dropout':0.1,'readout':'mean','optimizer':'AdamW','lr':0.0005,'epoch_cap':50,'patience':8,'seed_source':'random initialization only'},['no external labels/weights learned','max2 predeclared tasks after readiness','compare matched frozen-head control and measured cost','molecular input/parse coverage acceptance needed'],'conditional architecture bundle comparison','≤2tasks×2architectures×3seeds=12fits total; not parameter-isolated causal test',[46,47,48],{'max_total':12},{'mode':'new_code'},5)
+direction('D-CLASSICAL',['ISSUE-005','ISSUE-007'],'低成本诊断表示/标签可学性，不能自动替代赛事要求的深度模型。',['required-003','official-rules','data-profile'],'经典模型可能同样受split偏移与重复标签影响；高分不是额外数据准入证明。',['RDKit descriptors + ridge/logistic','ECFP diagnostic head','descriptor fusion into deep model'],{'fingerprint':'Morgan radius2 nBits2048, toolkit version pinned at implementation','regression_ridge_alpha':[1,10],'classification_logistic_C':[0.1,1],'preprocessing':'fit-only scaler'},['raw molecules unchanged','no external descriptor-fit parameters','diagnostic stand-alone scope separately approved','per-task metric direction and row identity same'],'small bounded diagnostic','2class/reg configs×3seeds=6/task; toolkit implementation/coverage gate first',[46,47,48],{'max_per_task':6},{'mode':'new_code','not_standalone_submission_approval':True},5)
+dump('search_space.json',search)
+
+# Add precise additional full-read logs (not all source files were downloaded as bytes).
+additional_coverage={
+ 'training-science':{'total_web_lines':614,'segments':[[0,150],[172,282],[311,426],[456,564],[567,613],[126,246],[253,393],[409,520],[515,613]],'closing_web_refs':['turn825797view0','turn825797view1','turn825797view2','turn825797view3']},
+ 'runner-v4':{'total_web_lines':469,'segments':[[0,72],[82,225],[208,350],[343,468],[14,147]],'closing_web_refs':['turn804213view0','turn804213view1','turn804213view2','turn557933view2']},
+ 'data-intake':{'total_web_lines':12,'segments':[[0,11]],'closing_web_refs':['turn359375view0']},
+ 'blind-valid-projection':{'total_web_lines':143,'segments':[[0,142]],'closing_web_refs':['turn359375view1']},
+ 'input-integrity':{'total_web_lines':185,'segments':[[0,184]],'closing_web_refs':['turn359375view2']},
+ 'paired-manifest':{'total_web_lines':118,'segments':[[0,117]],'closing_web_refs':['turn191953view1']},
+ 'old-data-manifest':{'total_web_lines':11,'segments':[[0,10]],'closing_web_refs':['turn191953view2']}}
+for v in additional_coverage.values():
+ covered=set()
+ for a,b in v['segments']:covered.update(range(a,b+1))
+ assert covered==set(range(v['total_web_lines']))
+dump('evidence/additional-reading-coverage.json',additional_coverage)
+dump('evidence/read-receipts.json',receipts)
+
+# Claims/history: append explicit review events without inventing timestamps.
+claim_events=[
+ {'event_id':'SUP1-READ-01','claim_id':'REVIEW-READ-COMPLETE','occurred_at':None,'time_precision':'not recorded separately','supersedes':'previous/review.json:missing_evidence mandatory reading subset','status':'required_text_read_complete','evidence_refs':['reading-contract','input-manifest'],'scope':'54 required entries + input manifest, not all2446 linked objects'},
+ {'event_id':'SUP1-SCORE-01','claim_id':'REVIEW-CACO2-CEILING','occurred_at':None,'supersedes':'previous/analysis.md:Caco2-only ceiling near48.81 in local-valid discussion','status':'corrected','value':{'local_valid':nums['perfect_caco2_only_local_valid_total'],'official_snapshot':nums['perfect_caco2_only_official_display_mean_total']},'evidence_refs':['independent-arithmetic','required-049','required-050']},
+ {'event_id':'SUP1-FREEZE-01','claim_id':'C-FREEZE','occurred_at':None,'historical_chain':['CE-FREEZE-01','CE-FREEZE-02'],'supersedes':None,'status':'historical_refutation_retained','statement':'Cross-run wrapper mismatch does not prove unfreezing; within-run registered encoder parameters/buffers unchanged in the two inspected runs. No general claim about all future runs.','evidence_refs':['claims-current','claims-events','freeze-attribution']},
+ {'event_id':'SUP1-DOWNLOAD-01','claim_id':'C-DOWNLOAD','occurred_at':None,'historical_chain':['CE-DOWNLOAD-01','CE-DOWNLOAD-02'],'supersedes':None,'status':'historical_refutation_retained','statement':'Old tool capture timeout did not prove old archive download failed: old ZIP hash/CRC passed. Completion timestamp remains unknown. This does not negate actual current container download failures.','evidence_refs':['claims-current','claims-events','required-054']},
+ {'event_id':'SUP1-SCALE-01','claim_id':'C-SCALE','occurred_at':None,'historical_chain':['CE-SCALE-01'],'supersedes':None,'status':'proposed_not_causally_verified','statement':'Extreme standardized features observed/recomputed; causal explanation of prediction errors unproven. D-FEATURE is a future falsification design, not an executed result.','evidence_refs':['claims-current','scale-attribution','required-052']},
+ {'event_id':'SUP1-RULES-01','claim_id':'REVIEW-VALID-POLICY','occurred_at':None,'supersedes':'previous/analysis.md and guide: potentially hard reading of one-valid confirmation','status':'clarified','statement':'Valid tuning permitted by public rules; training executor receives aggregate feedback only. Limited confirmation is a methodological recommendation, not a permanent ban.','evidence_refs':['official-rules','required-045','user-supplement-1']},
+ {'event_id':'SUP1-PLAN-01','claim_id':'REVIEW-EXPERIMENT-DESIGN','occurred_at':None,'supersedes':'previous/next_experiments.json P-GATE/P-S1/P-S2; previous/search_space.json missing D-METRIC','status':'replaced_with_concrete_nonselfdependent_matrix','statement':'S1=10 tasks×2dropout arms×2seeds40; S1B remaining11×2×2=44 conditional; Caco2 existing six independent. 50/8 not200/20; future unknown selected tasks remain templates.','evidence_refs':['required-047','required-048','user-supplement-1']}
+]
+dump('claim-events.json',claim_events)
+
+missing=[
+ {'id':'ME-SOURCE-BYTES','status':'needs_evidence','kind':'source_integrity','what':'Original raw byte streams for public source hash recomputation','attempted':True,'uri':D+'full-prompt.txt','actual_errors':['requests NameResolutionError [Errno -3] Temporary failure in name resolution','container.download: download failed','curl (7) Failed to connect to port443'],'alternative_access':'web.run full text succeeded; required54+manifest complete','affected_conclusions':'independent byte-integrity certification only; does not revoke observed text reading','next_evidence':'actual source bytes matching published bytes/SHA; no reconstruction from rendered text'},
+ {'id':'ME-OFFICIAL-PARITY','status':'unconfirmed','kind':'scientific_inference_limit','what':'Official formula source and exact AP/tie/undefined conventions','attempted':True,'evidence_refs':['official-rules','required-049','required-050'],'affected_conclusions':'absolute official score equivalence / very small AP-based ranking; local same-implementation comparisons remain meaningful','next_evidence':'official specification or approved paired scorer evidence; no new scoring authorized here'},
+ {'id':'ME-TRAIN-FILE-BINDING','status':'host_verification_required','kind':'execution_readiness','what':'21 non-Caco2 train per-file SHA not exposed in reviewed public per-task integrity record','attempted':True,'evidence_refs':['data-intake','input-integrity','blind-valid-projection','old-data-manifest'],'affected_conclusions':'cannot label new42 proposals dispatch-ready; existing archive/weight/valid/test pins remain concrete','next_evidence':'host verifies actual train files from pinned official archive and returns hashes/counts only'},
+ {'id':'ME-GENERAL-RUNNER','status':'new_code_not_accepted','kind':'future_execution_readiness_not_missing_historical_read','what':'Generalized GPU task/metric/cache/outer-split runner acceptance','evidence_refs':['runner-v4','training-science'],'affected_conclusions':'scientific design may be assessed now; actual execution requires real implementation and tests, not imagined support','next_evidence':'new-code-interface A1–A10, source hash and tests; no training needed in this research'},
+ {'id':'ME-GAIN-VARIANCE-COST','status':'unmeasured','kind':'future_empirical_result_not_required_to_invent','what':'21-task optimized gains, paired variance and generalized GPU timing','evidence_refs':['required-011','required-012','baseline-delivery'],'affected_conclusions':'adaptive allocation is reasoned recommendation, not proven superior or a promised leaderboard gain','next_evidence':'future separately authorized matched runs; no later live results imported'},
+ {'id':'ME-ALT-DEEP-READ','status':'partially_read_optional','kind':'optional_extra','what':'alt-prep-status original 798 lines read only0–223','evidence_refs':['alt-prep-status','required-003','required-038'],'affected_conclusions':'no claim of complete alternate-asset implementation audit; mandatory asset/history cards fully read','next_evidence':'full optional adapter/weights acceptance evidence only when considering that asset'}
+]
+read_checks=[
+ {'check_id':'RC-01','status':'passed_text_coverage','description':'54 contract entries plus input manifest have full web line coverage','count':55,'unread_required':0,'evidence_file':'evidence/reading-coverage.json','qualification':'self-reported receipt supports traceability, not independent proof of source-byte integrity'},
+ {'check_id':'RC-02','status':'passed_arithmetic','description':'22 task scores and 4 Caco2 substitutions recomputed with float and Decimal','result_file':'evidence/numeric-recomputation.json','max_float_decimal_error':nums['max_float_decimal_abs_difference'],'max_published_valid_error':nums['max_published_valid_score_abs_difference']},
+ {'check_id':'RC-03','status':'inferred_not_official_confirmation','description':'22 displayed leaderboard tuples fit inferred normalization','max_display_error':nums['max_official_display_abs_difference']},
+ {'check_id':'RC-04','status':'passed_read_crosscheck','description':'5 completed learning runs/26 heads; 6 paired zero starts; 004resource refusal separate','evidence_refs':['required-006','required-014','required-017','terminal-004']},
+ {'check_id':'RC-05','status':'published_pins_bound_not_rehashed','description':'concrete weight/code/archive/template and 22blind-valid/test hashes bound','evidence_file':'asset-bindings.json'},
+ {'check_id':'RC-06','status':'not_used','description':'No subagent/delegation capability available; no agents used or simulated','evidence_file':'evidence/tool-use.json'},
+ {'check_id':'RC-07','status':'script_check_required_before_packaging','description':'schema roots/fields, refs, DAG, metric directions, paired config differences, exact counts, manifest and ZIP','evidence_file':'evidence/validation-report.json'},
+ {'check_id':'RC-08','status':'scope_preserved','description':'No training, no new prediction scoring, no private truth read, no upload/dispatch; arithmetic of published aggregates only'},
+ {'check_id':'RC-09','status':'history_preserved','description':'Previous8 files copied unchanged, claim chains retained; supplement changes separate','evidence_file':'change-log.md'}]
+findings=[
+ {'finding_id':'F-01','status':'recommendation_not_empirical_victory','statement':'Adaptive breadth after task-specific diagnosis preferred; equal-budget policy comparison remains falsifiable','evidence_refs':['required-011','required-012','independent-arithmetic']},
+ {'finding_id':'F-02','status':'corrected','statement':'Caco2-only local-valid maximum46.3320128 vs official-snapshot48.8115148; best historical substitution gain+.13013094','evidence_refs':['independent-arithmetic']},
+ {'finding_id':'F-03','status':'source_fact_with_scope','statement':'5 completed runs26heads, 21tasks no postbaseline optimized completed run; paired six zero learning','evidence_refs':['required-006','required-014','required-017','terminal-004']},
+ {'finding_id':'F-04','status':'important_new_diagnostic','statement':'Valid chemical coverage sharply limits transfer/generalization claims despite row counts','evidence_refs':['data-profile']},
+ {'finding_id':'F-05','status':'corrected_boundary','statement':'Valid tuning allowed, aggregate executor feedback only; unknown units do not block original-Y baseline','evidence_refs':['official-rules','data-intake','user-supplement-1']},
+ {'finding_id':'F-06','status':'proposal_not_execution','statement':'S1 concrete40, S1B conditional44; unknown-task confirmation template24max; all generalized routes new_code','evidence_refs':['required-047','runner-v4','training-science']},
+ {'finding_id':'F-07','status':'historical_refutation_retained','statement':'Cross-run wrapper hash difference is not unfreezing proof; scale amplification remains unproven causal hypothesis','evidence_refs':['claims-current','claims-events','freeze-attribution','scale-attribution']}
+]
+groups=[{'group_id':f'CG-{p["batch_id"]}-{p["task"]}','task':p['task'],'proposal_ids':[p['proposal_id'],p['proposal_id'].replace('-H0','-H1')],'fixed_split_id':p['split_id'],'paired_seeds':[44,45],'change_only':['head.dropout'],'comparison_metric':p['metric'],'direction':p['direction'],'causal_scope':'same task/seed/split/config except dropout; finite two seeds, not universal effect'} for p in experiments if p['config_tag']=='H0']
+review={'schema_version':1,'request_id':REQUEST,'round_id':ROUND,'manifest_sha256':SHA,'status':'needs_evidence','read_receipt':receipts,'read_checks':read_checks,'findings':findings,'missing_evidence':missing,'not_assessed':['No new model fitting or scoring of raw predictions','No private row-level valid truth or test labels','No subagents used; separate arithmetic implementations are not independent agents','No source-byte hashes independently recomputed','No live training after sealed snapshot, apart from expressly included v3supplemental004 terminal','No full offline copy/read of all2446 manifest objects or all83 anchor targets','No independent rerun of historical RDKit chemistry profiles','No verification of controller new checker implementation beyond user report','No complete optional alt-prep original read pastL223'],'comparison_groups':groups,'stop_reasons':['Research deliverable completed to first-supplement scope; required text-reading gap closed. Status remains needs_evidence for source-byte/official-parity certification and explicitly scoped execution readiness, not because41required items are still unread.','No training authorization; all proposed runs unexecuted.','Do not import later live outcomes or wait on existing six jobs.'],'scientific_snapshot':SNAPSHOT,'authority_commit':COMMIT,'supplement_number':1,'previous_version_path':'previous/','decision':'adaptive breadth with measurement/identity gates; first one-factor dropout screen and conditional confirmation','execution_authorized':False,'raw_valid_truth_in_delivery':False,'schema_contract':'admet-review-output-v1','completion_layers':{'mandatory_text_reading':'complete','arithmetic_review':'complete_on_published_aggregates','proposal_schema_and_counts':'to_be_verified_by_bundled_validator','source_byte_hash_audit':'not_complete','official_metric_equivalence':'unconfirmed','training_execution':'not_authorized_not_performed'}}
+dump('review.json',review)
+
+# Reports: source IDs resolve to exact immutable URLs and locators in evidence/source-index.json.
+analysis=f'''# 22项ADMET广度策略：第一次补全研究
+
+**request_id** `{REQUEST}`  
+**round_id** `{ROUND}`  
+**input manifest SHA256** `{SHA}`  
+**历史科学范围** `{SNAPSHOT}`，仅另含固定v3明确追加的 supplemental004 资源拒绝终态；权威发布 `{COMMIT}`。  
+**状态：needs_evidence。** 必需文本阅读和本轮算术/计划补全已完成；原件字节级复算、官方评分等价性及具体执行准入仍分别留有边界。未执行训练、对原始预测的新评分、私有valid真值读取、远程作业或提交。
+
+本报告的 `[required-xxx]`、`[data-profile]` 等是证据键；完整固定URI、原件版本和位置见 `evidence/source-index.json`。本地复算引用脚本和结果文件，不把自述回执当第三方阅读证明。旧版八件文件在 `previous/` 原样保留；更改事件见 `claim-events.json` 与 `change-log.md`。
+
+## 1. 结论及相对上一版的实质变化
+
+**推荐：先完成可检验的数据/指标/身份门槛，再做覆盖四类指标的受控广度筛选；把后续预算给出稳定、可解释且单位成本有效的任务。** 不推荐立即把全部预算投入Caco2，也不推荐无条件给22任务相同深度。这个推荐是基于现有证据的决策，不是已通过三策略等预算实验证明的最优政策。
+
+保留上一版“自适应扩大覆盖、先诊断异常”的方向，作以下实质修正：
+
+1. 54项合同材料和input manifest均实际读到末尾；原来41项未读限制已关闭。导航卡的全文阅读只证明读了卡本身，不代表其全部83锚点或清单2446文件已全部下钻。完整任务595行也已读完。原字节传输失败与浏览器文本成功分开，不伪造SHA复算。[reading-contract; full-prompt; input-manifest]
+2. Caco2理论满分替换的**本地valid**总分上限为 **46.3320127594**，不是48.81；**榜单显示基准**的对应上限为 **48.8115148182**。最佳历史Caco2替换的本地总分增量 **+0.1301309438** 保持成立，但只是描述性替换，不是同控制条件因果增益。[required-049; required-050; independent-arithmetic]
+3. 公开规则允许train/valid调参。执行方不拿逐行valid真值是项目控制；默认限制确认次数是降低选择偏差的建议，不是用户或赛事永久禁令。原数值Y可直接建模；单位未提供不应全面停训，而应阻止无依据log、物理裁剪、改标签和assay合并。[official-rules:R06,U01; required-045; required-046; data-intake]
+4. 首批改成 **10任务×2个只差dropout的配置×2seeds=40 fit**，取代旧版多因素H0/H1。保留50 epoch／patience8；200／20只作为后续预算组合模板，不冒充历史相同对照。Caco2已有六项独立配对不重复加入首批；加入lipophilicity作为中等规模MAE对照。剩余11任务列出具体条件扩展44 fit，未知获选任务的确认阶段只放模板。[required-047; required-048; runner-v4]
+5. 现有Mini22确有22任务CPU训练实现，不能说从未有22任务runner；但已读GPU runner是Caco2固定契约，并不支持新分类/rank监视与可验收缓存导入。本批标为new_code，并给实际接口与验收测试。旧冻结检查器的主控打包遗漏及用户报告的独立修复另列，不归为科学错误或禁新代码理由。[baseline-delivery; training-science; runner-v4; user-supplement-1]
+6. 不能再把“大valid”简单当作低方差：Ames valid单非空Murcko骨架；LD50及solubility valid均为空骨架，而train/test组成不同。训练seed重复无法填补未观察的化学覆盖。[data-profile:L59–72]
+
+## 2. 阅读、工具与证据层级
+
+必需回执55条，read_mode全部为`original`，指对应固定文件正文；实际读取方式为web逐段open。`evidence/reading-coverage.json`逐段登记可见行；input manifest读到L14689，v3列2446文件、128225676字节、send_ready=false，保留当时含义。外加读取原数据接收、盲valid投影、输入完整性、两个真实代码文件、004终态、冻结/尺度归因、claim事件链等。一个**可选**替代资产准备长原件仅读L0–223/798，明确标部分阅读，不拿它声称完整适配验收。[input-manifest; alt-prep-status]
+
+区分四个层次：**原件陈述**（历史工具/模型输出）、**主控裁定**（接受、拒绝或缩小结论）、**本次独立算术**（对已公开聚合值重算）、**未来待证假设**（本批实验建议）。例如极端特征是观察；它造成误差仍是假设。已经完成的Mini22是历史事实；自适应策略胜过均匀分配还不是实证事实。
+
+实际工具使用为web读取、容器本地文件/算术及失败的原始下载尝试；没有可调用的通用subagent工具，没有委派或模拟角色审查。float与Decimal两实现是算术交叉检查，不是两个独立研究代理，也不是独立数据来源。没有使用训练框架跑实验、没有新评分、没有外部实时研究替换这份固定历史。原始下载具体错误见 `evidence/tool-use.json`：DNS解析失败、download failed、curl7。所有公开正文仍经web读取；本地交付物的SHA是真实计算，源文件SHA只是原件公布值。[evidence/tool-use.json; evidence/recompute.py]
+
+## 3. 冻结快照内的历史，不由目录数代替学习次数
+
+| 对象 | 完成学习 | 正确用途 |
+|---|---:|---|
+| CheMeleon Mini22 | 1 run、22头 | 所有22任务的起点；不是22次优化探索 |
+| Caco2四个后续run | 4 run、4头 | 可描述成绩与成本轨迹；多个因素混杂 |
+| Caco2六个paired注册run | 0 | 尚无模型效果；保留固定实验设计 |
+| supplemental004资源拒绝 | 0 | 资源/流程终态，不是科学负结果 |
+| pilot、准备/冷启动及其他记录 | 不因此增加完成学习 | 准备、失败、推翻及边界证据 |
+
+总计 **5个已完成学习run、26头**。31记录、83锚点、12注册run属于索引/登记口径，并不矛盾。21个非Caco2任务仅有Mini22完成基线，没有快照内后续优化结果。[required-006; required-014; required-017; required-020–030]
+
+004终态的业务开始/结束约为11:40:15.496437–11:40:16.430761Z，返回78，batch_invocation=false，资源释放确认。它虽晚于11:28:28基础时间，正是用户明确纳入v3的例外；不把其他之后现场训练纳入。预检时空闲不等于稍后独占，不得杀其他PID或自动抢资源。监督进程125与worker0也必须分列，不能仅靠包装退出码否定已完成科学产物。[terminal-004; terminal-004-review; required-053]
+
+### 3.1 Caco2成绩和可比性
+
+| run（历史） | valid MAE↓ | 推断任务分 | 仅替换Caco2后的本地总分 | 增量 |
+|---|---:|---:|---:|---:|
+'''
+for x in nums['caco2_variants']:
+ analysis+=f"| `{x['run_id']}` | {float(x['valid_mae']):.9f} | {x['inferred_valid_task_score']:.6f} | {x['inferred_valid_total_if_only_caco2_replaced']:.9f} | {x['aggregate_delta']:+.9f} |\n"
+analysis+='''
+Mini22与首个Caco2头、skill-follow、index-cycle之间有宽度512/256、lr.001/.0005、seed、分组/行划分等差别。两历史stop集合各64行但交集仅8，不能说改宽度或监视指标单独造成所有变化。index-cycle按MSE选最佳18轮，完成26轮130步；MAE-monitor仍训练标准化MSE，最佳7轮、15轮75步。前一条“若改MAE监视会在15轮停”的回放不是已经执行的新run；后一条才是已完成的MAE监视历史。[required-051:L1–151; required-052:L0–282; required-053:L0–38]
+
+六个固定paired设计用同split43、seed44/45/46比较MSE监视与raw MAE监视，其作用是消除一部分上述混杂；快照内结果为零。不要把本研究变成等待这六项完成，也不要把后来的结果倒灌。内部target标准化是正仿射时，标准化MSE与raw MSE对同一固定split的epoch排序相同；真正需检验的是MSE与MAE监视及其早停路径，不是笼统“尺度不一样”。[required-048; required-052]
+
+### 3.2 推翻链
+
+`C-FREEZE`保留CE-FREEZE-01→CE-FREEZE-02：跨run wrapper总摘要不同，来源包括四个未用于encode的随机predictor张量；两个被检查run内已注册encoder参数与buffer前后不变。不能从跨run差异推断解冻，也不能把两run证明扩成未来全部run或任意未登记内存证明。未来每run仍需自身前后摘要及optimizer集合/调用路径检查。[claims-current; claims-events; freeze-attribution]
+
+`C-DOWNLOAD`保留CE-DOWNLOAD-01→02：旧工具捕获超时不是旧ZIP下载失败证明，旧ZIP摘要与CRC已通过；确切传输完成时间仍未知。这一历史推翻与本轮容器实际无法取得原字节是两件事，不可相互替代。[claims-current; claims-events; required-054]
+
+`C-SCALE`保留CE-SCALE-01为待证：训练特征std约9.875e-6，某些角色标准化极值约871.7/1637.4；double复算支持数值放大现象，但没有控制单因素的clip/floor实验，故不能认定为误差根因。若稳定化让极值下降但指标不改善，则反驳“数值现象必然造成科学退化”的强说法。[scale-attribution; required-051; required-052]
+
+## 4. 22任务完整基线与优先级
+
+下面n是**train/valid/test**，不把valid行数误写为训练样本量。正/负仅指valid数值Y=1/0，不推断生物学正类含义。原始Y单位、全部既有变换、训练标签分位数/尾部比例未在本次所读聚合材料完整提供；不补造。总train53,695、valid11,735、test16,379；13分类、9回归，指标分布8AUROC/5AP/5MAE/4Spearman。[data-profile:L11–43; input-integrity; required-011]
+
+| task | metric方向 | train/valid/test | valid正/负 | valid指标 | 参考值r | 本地推断任务分 | 阶段 |
+|---|---|---:|---:|---:|---:|---:|---|
+'''
+for t in ledger:
+ cls='—' if t['valid_positive_count'] is None else f"{t['valid_positive_count']}/{t['valid_negative_count']}"
+ analysis+=f"| `{t['task']}` | {t['metric']}{'↓' if t['metric']=='MAE' else '↑'} | {t['train_n']}/{t['valid_n']}/{t['test_n']} | {cls} | {float(t['valid_metric']):.6f} | {float(t['reference_metric']):.6f} | {t['normalized_score_recomputed']:.6f} | {t['priority']} |\n"
+analysis+='''
+数据和指标数值逐项抄录固定原件后，**任务分/均值/贡献独立复算**；没有重新读取CSV或运行RDKit重做结构画像。完整精度、22组盲valid/test摘要、误差检查见task-ledger与evidence/numeric-recomputation。[required-011; required-049; required-050; data-profile; input-integrity]
+
+### 4.1 每任务处理与停止理由
+
+所有首轮任务使用同一冻结CheMeleon原2048维表示，预测头相同；“科学资产就绪”不等于新增GPU runner已经验收。下表的成本等级只是按行数/任务性质的计划排序，不是测得GPU时间。共同立即停止条件为身份/冻结/非有限值/未定义指标故障；“两seed筛选不通过”只停止该方向自动加码，不永久淘汰任务。
+
+| task | 首先做什么／可检验因素 | 关键不确定性 | 相对头训练成本 |
+|---|---|---|---|
+'''
+for t in ledger:
+ analysis+=f"| `{t['task']}` | {t['first_diagnostics']} | {t['uncertainty']} | {t['cost_class']} |\n"
+analysis+='''
+**关键解释。** Solubility与PPBR原指标相对参考差距大，先诊断并保留高潜力假设；不能据此估计必胜概率。LD50规模较大，但valid全空骨架使其“低方差大样本”标签不成立。VDss/half-life是秩任务：正仿射改尺度不会直接改变Spearman，需排除行身份、常量/并列与表示不足。CYP2D6 substrate低AP伴随少正例，应检验排序定义和稳定性，而非先上高容量。Ames加入第一批是对覆盖差异的压力测试，不是因为1137个valid样本就可放心选冠军。Lipophilicity作为中等训练规模MAE对照，但也未证明噪声低。[required-011; data-profile]
+
+**重复与身份。** PPBR1952训练行仅1282个原串，481个原串有不同Y；hepatocyte848/712、136个原串不同Y；BBB有7个train原串同时含两类。相同SMILES不等于同测量，不能平均或删重，tiny-fit也不能普遍要求零误差。内部split按原串分组保留每行。hERG有空Drug_ID，不能用其作唯一键；真实身份为(task,role,row_index)，ID只作为保留字符串。[data-profile:L45–52]
+
+**结构覆盖。** Ames valid1137行只有苯环骨架这一个非空Murcko种类，不等于1137行是同一分子；LD50及solubility valid全空Murcko也不等于都属于一个化学家族。原train内分组诊断可检验敏感性，但不能通过多seed、row bootstrap或单骨架cluster bootstrap凭空产生未观察化学结构。观察到同任务raw/canonical/非空Murcko跨角色交集为零，并不能恢复官方历史划分算法。[data-profile:L53–72]
+
+**全量输入。** 已发表画像中solubility test两行在指定RDKit设置解析失败，另一行388重原子；最长原始串681字符，不是681 token或原子。不能推断其他编码器一定失败或默默截断。固定现有程序回退时保留原行和parse_mask，零的是原特征不是手填预测；随后仍由学习的头输出。外部模型必须另做长度/原子/构象覆盖验收。[data-profile:L88–103]
+
+## 5. 总分独立复算与预算量纲
+
+设任务原指标m、榜单参考r。固定原件反推如下，不冒称官方源码：
+
+- MAE：`s=100*r/(m+r)`。
+- AUROC/AP：`s=100*m/(m+r)`。
+- Spearman：`s=100*(1+m)/(2+m+r)`。
+- 聚合：22项任务分的算术平均。
+
+使用同一已公布输入的float与50位Decimal两实现，最大差7.11e-15；与公布本地valid分最大差0。22个官方显示tuple最大残差4.64086e-7；这支持反推公式精度，不证明未公开的AP、边界或其他榜单实现完全相同。[required-049; required-050; evidence/recompute.py; evidence/numeric-recomputation.json]
+
+| 量 | 复算值 | 解释边界 |
+|---|---:|---|
+| Mini22本地valid均分 | 43.6032169286 | 非官方hidden-test得分 |
+| 榜单显示22项均分 | 46.4184076818 | 页面总分显示46.418是舍入；不是本地valid |
+| 各任务理论最大值平均 | 65.7196424065 | 公式代理下的数学上限，不是可实现性能承诺 |
+| 只把本地valid Caco2设MAE=0 | 46.3320127594 | 其余21个本地valid任务固定 |
+| 只把榜单Caco2设MAE=0 | 48.8115148182 | 其余21个榜单任务固定 |
+
+MAE理论任务上限100；AUROC/AP的上限是`100/(1+r)`；Spearman上限是`200/(3+r)`，**不能把所有任务都当100分**。参考水平m=r对应50分；任务分略高50不等于普遍接近满分。同样，原MAE20.83与另一个MAE1.04不能直接比较对总分的影响。[independent-arithmetic]
+
+一个任务分改善Δs只贡献Δs/22。导数分别为`-100r/(m+r)^2`、`100r/(m+r)^2`、`100(1+r)/(2+m+r)^2`，可解释边际量纲；不是训练可达性估计。数值附件还给MAE下降10%、分类指标+0.01、Spearman+0.05的**假设敏感性**，明确不是预测。应逐seed先算分再形成成对差；非线性转换后平均一般不等于先平均原指标再转换。对ensemble必须另据其实际预测算指标，不能拿单模型分数平均冒充ensemble得分。
+
+按数学上限排列的headroom只是资源价值的必要条件，不足以决定投放。Solubility任务分低，数学余量大，但也可能是表示/分布外推难题；没有经验方差时不能制造“70%可改善”或置信下界。若官方AP或公式变更，统一重算全部候选的同口径排序，而非挑有利版本。[required-011; required-049; required-050]
+
+## 6. 三种预算策略：选择、代价与反证
+
+### 6.1 逐任务深挖
+
+适用于已经有可复制提升、边际收益高且新增配置有明确机制的任务。优势是局部调试连续、缓存复用、因果对照方便；缺点是其他21项停留基线、同valid反复选择及收益上限集中。Caco2历史最佳替换仅+0.13013且本地单任务理论总分上限46.332，不能用单任务深挖保证显著榜单跃升。该策略仍可能在某个可修复数值问题产生大收益时胜出，因此不永久禁止深挖。[required-012; independent-arithmetic]
+
+**支持其回归优先的条件：** 一个任务在独立train内outer划分及多seed上保持正增益，修正方向的实测每GPU小时总分收益高于广度未测任务，且没有靠多次valid查询赢得选择。**反证：** 多批改动仅在一个seed/划分有效，或同时间预算下新增任务的累计稳定贡献更高。不能拿单个历史最优run与另一策略所有平均run比较。
+
+### 6.2 平均浅调
+
+适用于获得可比较初始证据，不适合作为永久预算政策。21个非Caco2任务都做H0/H1×2seeds是84个新fit；这也是本方案条件覆盖的完整底层网格。优点是透明、覆盖充分、减少主观挑任务；缺点是头fit不等成本，Veith三任务训练量约占全部49%，tiny任务的提升不稳定，近上限任务与数值异常任务需求不同。[data-profile; experiment-matrix.json]
+
+**保留均匀分配的条件：** 首轮结果没有稳定的跨任务收益/成本差异，或所谓自适应排名随seed大幅反转。**反证：** 在共同控制、同成本测量下，有限几项稳定贡献长期高于均匀轮转，而多数任务后续边际回报持续接近零。不得仅因为低原分就跳过其诊断成本。
+
+### 6.3 自适应覆盖（本次选择）
+
+先以跨指标/规模/风险的10任务首批建立控制和成本，再经主控复核扩到剩余11非Caco2任务，确认阶段最多选4项。现有Caco2六项属于独立已注册流，不以本研究延后它，也不把其假想结果并入算法。资源严重受限时，40 fit只是**第一阶段**，不是完成所有22项深度优化的声称；全覆盖有明确S1B路径。[experiment-matrix.json; conditional-followups.json]
+
+实际排序建议：先排除身份/数值失效；对每任务报告两seed成对Δs、均值、符号、运行成本、结构覆盖风险；通过筛选门槛后按`平均成对Δs/22 ÷ 实测端到端成本`排序，成本相同按task字典序稳定决策。两seed不能估计可信的胜率，风险只按预先写明的观察约束处理，不拟合虚假的贝叶斯后验。将编码/准备成本单独列出，分别看一次性总成本和缓存已存在时的边际成本，防止摊销选择美化比率。
+
+**反证与退回规则：** 若所有候选不通过两seed门槛，不能强选4项；转诊断/重设计，或在同授权范围完成均匀浅覆盖。若第二split使排序/符号反转，不宣称稳定优胜；若新表示准备成本吃掉边际收益，保留现有底座。若后续预注册的同预算比较发现均匀政策获得更高累计稳定贡献/小时且无更大选择风险，改用均匀策略。当前证据未提供这类政策对照，故结论是可被推翻的推荐，而非已证最优。
+
+### 6.4 预算档与公平比较
+
+| 档位 | 具体新fit预算 | 能回答什么 | 不能声称什么 |
+|---|---:|---|---|
+| 小 | S1=40 | 10任务配对筛选、runner与成本校准 | 已覆盖22项优化；稳定跨split结论 |
+| 中 | S1 40 + S1B44 + T-S2≤24 = **≤108** | 21非Caco2受控覆盖，最多4任务确认 | 所有任务都需同样追加预算 |
+| 大 | 中档 + 多split增量≤24 = **≤132** | 最多2任务的split敏感性 | 新底座或200/20已自动获批 |
+
+S1B和确认可能因失败/无胜者跳过，实际总数可低于上限；所有档均不含既有六项、不含新底座准备、不含条件长预算最多12额外fit。共同H0仅在资产、完整科学配置、split、scalar seed全部一致时去重。失败前零fit的工程重试不是一个学习结果；同轨迹恢复不是新seed；同一头有22个预测文件也不是22个模型fit。
+
+进行未来政策公平比较时必须固定总实际时间或资源预算、评分口径、共享初始证据和valid暴露，按所有尝试计成本而不是只算赢家。不同策略可拥有不同选题，但不能用更大epoch上限或更多外部准备作隐藏补贴。当前本研究未执行政策比较；上表是可落地预算，不是经验收益表。
+
+## 7. 下一批的完整科学设计
+
+### 7.1 具体任务与两个配置
+
+S1：`solubility_aqsoldb`、`ppbr_az`、`ld50_zhu`、`lipophilicity_astrazeneca`、`vdss_lombardo`、`half_life_obach`、`cyp2d6_substrate_carbonmangels`、`ames`、`bioavailability_ma`、`dili`。分别覆盖数值异常、较大MAE、秩相关弱、少正类AP、结构覆盖敏感及小valid分类。选题基于已见基线，因此不把它当随机抽样的任务面板。
+
+每任务H0/H1都用：冻结CheMeleon2048维、`[256]` ReLU头、单输出、AdamW(lr0.0005, weight_decay0.0001, betas0.9/0.999, eps1e-8)、batch128、float32、max_epochs50、patience8、min_delta1e-7、无scheduler、无BatchNorm/LayerNorm/残差/梯度剪裁。H0 dropout0.1，H1 dropout0.3，**只有这个字段不同**。头参数524801。model seeds44/45；同task同seed的初始头相同；split固定43。H0不是Mini22历史512/.001/seed42的重现，所以本次结果不能把所有差异归给dropout，只有H1-H0配对差可以作有限的dropout效应观察。[required-048; runner-v4; next_experiments.json]
+
+### 7.2 split、预处理与明确指标
+
+原train内按精确原Drug字符串分组：唯一key按Unicode codepoint排序，CPython Random(43) shuffle，整组累积至`max(1,round(.1*n))` stop行，不能吃掉全部组；保留原行顺序。固定算法而非只写“seed43”，每run实际分组摘要验收。没有偷偷stratify或挑一个指标更好的seed。若分类只剩单类或rank常量，停止该任务的可比分析并明确重设计；不能换metric或给零分蒙混。单类AP可能返回约定数值，但本设计把它作为不可解释的筛选对象拒绝，而不是宣称所有AP单类数学上必无定义。[training-science; new-code-interface.json]
+
+特征mean/std只从inner-fit计算，float32、ddof0，std<1e-8置1，不clip；raw-cache可共享，标准化参数不能跨split误复用。回归Y只做inner-fit仿射标准化，零std回退1；所有输出逆变换一次到给定原Y。不从valid或test拟合任何参数。分类输入原0/1标签，loss用logits，输出sigmoid连续概率，不在AUROC/AP前二值化。[runner-v4; proposed interface]
+
+| 任务集合 | 训练loss | 早停metric、direction | 预测尺度 |
+|---|---|---|---|
+| 5个MAE任务 | inner-fit标准化Y的MSE | 原Y MAE，minimize | 仿射逆变换后的原Y，无物理裁剪 |
+| 4个Spearman任务 | 同上 | 平均并列秩Pearson相关，maximize | 原Y连续值；秩metric不需要人为反转 |
+| 8个AUROC任务 | BCEWithLogits、pos_weight1 | AUROC，maximize | 连续sigmoid概率，正类为Y=1 |
+| 5个AUPRC任务 | 同上 | 本地AP，maximize | 同上；记录与官方等价未确认 |
+
+所有具体task在JSON各有完整配置和方向；MAE绝非统一maximize。S1中`inner_stop`既选best epoch又提供初筛比较，因此此分数有选择乐观性，是**训练内筛选代理**，不是官方valid或独立泛化得分。任务分转换仍使用固定r用于量纲化，但不能将这些内部不同分布的代理相加当新榜单预测。
+
+### 7.3 筛选、确认与停止
+
+S1预设启发式门槛：H1-H0两个seed的任务分差均正，平均≥0.5任务分（单任务总分等价值0.0227273），且全部身份/冻结/finite检查通过。0.5是预算决策阈值，不是经验噪声界或显著性阈值；min_delta1e-7只是早停数值阈值，两者不同。H0也可能同时较Mini22差，不能因H1略优于弱H0就声称超越历史基线。
+
+候选确定后最多4任务进行T-S2：同H0/H1，不改loss/预算，model seeds46/47/48；原train先按同类group算法outer seed44留20%，再在outer-fit内seed144留10% early-stop。outer标签不参与梯度、任何统计或epoch选择；只用于最终配对比较。预设平均Δs≥0.5、至少2/3正且无pair低于-0.5为建议推进条件；仍不冒称三seed显著。此outer仍来自同一个训练包，且方案受历史信息启发，不是全新独立外部test。[conditional-followups.json]
+
+必要时最多2任务扩outer seeds44/45/46、inner seed=outer+100，每split三model seeds；36个全组合里12已在T-S2，最多24新增。若一个split均差为负，就报告条件性，不称通用改善。对小样本或明显分布偏移任务，进一步原train内canonical/scaffold诊断可作为新预注册方向，但不得重切官方valid/test或把所有空骨架合为一类。现有readouts不足以规定最好的化学拆分参数，故它不伪装已定训练项。
+
+训练级立即停止：freeze/行身份/非法标签通道/非finite/未经许可资源/错误metric方向。任务级不自动加码：两seed符号冲突、均值小于门槛、过大不稳定、常量metric。批级暂停并交主控：共享runner或数据契约故障。普通未提升不触发无限逐头回聊；S1/S1B整批收齐成败及成本再审议。无合格候选时S2为0 fit，不强凑任务。
+
+## 8. 准备状态、资产与新代码
+
+现成资产不是空位：CheMeleon权重SHA `c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651`，34859448字节；encoder代码 `3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712`；training_science `63bb22a2aa1634f7e3db3a3b972969ee84f3f861da6fe561608e5cb87acf046c`；GPU runner `57386ae54cc1cbb379fbff8af7a90ac34160769a8a0122402b881a8aea893abe`。官方ZIP与官方template、Caco2 train以及全部22盲valid/test SHA都在asset-bindings，来自已读原件，不宣称本次重新下载验证了权重。[weight-reference; paired-manifest; data-intake; input-integrity]
+
+| 类别 | 当前例子 | 下一步含义 |
+|---|---|---|
+| 可直接配置的既有路径 | 固定Caco2、CheMeleon、AdamW/MSE、MSE或MAE监视及已有数值参数 | 在现行runner实际接受字段范围内；仍需另行授权，不能由研究自动运行 |
+| 需新代码 | 分类BCE、AUROC/AP/Spearman监视、任务分派、可核验raw-cache导入、嵌套split、新loss/预处理/融合 | 给定API与A1–A10独立验收；42个新提案均此类 |
+| 未就绪资产 | MiniMol、MoLFormer10pct；KPGT/Uni-Mol/SMI-TED等后备 | 准备、权重/代码/许可证、覆盖和冻结验收后才能形成具体run |
+| 条件研究新模块 | scratch小D-MPNN、描述符/指纹、MTL、ensemble | 不等同现成底座；按来源/监督/预算另审，保留比赛深度学习要求 |
+
+新接口为`prepare_task(config, host_input_registry)`和`run_head(context, model_seed)`，只是设计，不是本轮已实现代码。A1–A10覆盖任务/metric方向、统计泄漏、合成指标、分组身份、坏缓存拒绝、buffer故意突变、best checkpoint/尺度、完整模板、worker/监督分离与零训练import。一个尚未写出的实现没有真实SHA，保持null是诚实状态，不能用旧runner SHA冒充。现有资产SHA则已经具体绑定，不能仍写“将来绑定”。[new-code-interface.json]
+
+21个非Caco2 train单文件SHA没有出现在所读公开按任务完整性条目；不能用blind valid摘要代填。科学配置已经绑定官方ZIP、task与role，执行前宿主核对实际train及行清单，不返回valid真值。旧files=[] pending data-manifest不是66文件验收。该限制影响dispatch-ready声明，不是取消新代码科学方案的理由。[old-data-manifest; blind-valid-projection; input-integrity]
+
+## 9. 缓存、成本与结果拼装
+
+**缓存单位。** 可缓存未经拟合变换的固定encoder原特征，key包括输入字节/原行映射、权重与encoder代码、输出维度dtype、解析策略、pooling与环境摘要。相同任务原行上的raw embedding可跨head seeds和内部split复用，不能因split变化就重复编码；但fit-only scaler/target统计必须随split重算。历史NPZ存在不表示现行runner支持导入：已读runner每run重新编码，缓存导入是需验收的新代码。跨任务相同SMILES可在更后续显式dictionary/map设计下去重，首批不默认依赖跨任务共享以免错行。[runner-v4; training-science; data-profile]
+
+**成本。** 分开记录准备/编码/fit/预测导出/取回/授权评分与复核时间、峰值CPU/GPU内存、更新步数、每run停止原因。Mini22历史CPU v2约988秒编码后EAGAIN、v3复用66缓存后22头训练/导出25.84秒是在特定ARM64受限环境，不是本批GPU报价；先前某Caco2的短worker时长也不可外推所有任务。没有本批实际GPU秒，故预算文件不填造小时。[baseline-delivery; required-018]
+
+200/20相对50/8的epoch上限四倍，但真实成本取决于早停；patience也改变轨迹，故T-LONG-BUDGET明确是两项预算组合，最多2任务×2arms×3seeds=12总fit，再减精确相同已完成control。仅在多seed触及50且仍有改进时触发，不因“没赢”就延长到赢。[conditional-followups.json]
+
+**22任务装配。** 每任务最终选择固定一个已接受模型、固定seed均值或受控train-OOF组合；这是逐任务选模/组装，不是联合MTL。回归输出原Y，分类连续概率，按官方模板task/sample_idx并核SMILES写入16379行；不改其他列、Drug_ID字符串、BOM/CRLF语义，不手改预测。官方template SHA `8ee41589d2c98e7b93081c058b3f928ac09bea4b3ffc899fa13677051e9baa20`；仓库模板7611处Drug_ID字符串不同，不能替换。所有任务缺行/重复/finite失败均不导出完成声明。[data-profile:L104–114; official-rules:R03–R05; data-intake]
+
+训练执行方只拿guide、接受的配置与来源资产和获准汇总反馈。不要把包含历史逐行valid真值的原件直接投影给执行方；本交付没有复制这些逐行表。分析报告可给主控看，执行向导刻意只含聚合与操作条件。
+
+## 10. 条件方向，不因首批小而缩减研究面
+
+`search_space.json`给20个有真实issue引用的方向：D-METRIC、D-DROPOUT、D-SEED、D-HEAD、D-LR、D-WD、D-LOSS、D-FEATURE、D-TARGET、D-OPTIMIZER、D-SCHEDULE、D-BATCH、D-BUDGET、D-POOL、D-ENC、D-CONCAT、D-ENSEMBLE、D-MTL、D-SCRATCH、D-CLASSICAL。每个方向写候选值、组合限制、seeds、count规则、成本假设、readiness和反证，不允许对全部轴做笛卡尔积。
+
+优先顺序不是永久列表：先检查身份/度量，再小幅正则；若训练曲线欠拟合才容量/lr，若指标对尾部敏感才稳健loss，若数值放大且控制实验支持才预处理。MAE任务的L1/Huber和秩任务的fit-only pairwise rank loss都是可检验后备；当前未执行。AdamW与SGD+不同lr明确是bundle，不做纯optimizer归因。新的pooling/concat改变缓存/头容量，需要参数量控制。新底座仅在就绪后比较，一个模型一个初始对照而不是同时准备多个大模型。[search_space.json]
+
+**MTL特殊边界。** 共享冻结encoder加独立head只是表示复用；只有新增共享可训练层才是本研究所称MTL。跨任务train∩valid4798、train∩test7389、valid∩test1446是分子集合重合，不自动等同目标标签泄漏。标签必须逐任务来自train，missing mask明确，不能把所有valid.Y拼成宽表训练；三Veith共26282训练标签约占49%，直接按所有label平均loss隐含任务权重，需与等任务平均分开。CYP2C9 substrate未跨任务暴露的valid子群只有3个负类，不能用其AP约定数字证明未见分子迁移失败。[data-profile:L73–87]
+
+**ensemble。** 先固定同配置确认seed的等权平均，有现成组件时额外fit可为0，但没有0-fit空seed训练proposal。若学权重，需train-only OOF、非负和为1、明确额外component/blend fit计数；不能直接用valid.Y拟合权重。本次允许主控用valid汇总选择候选，但不把无限次试权重当无成本实验。**经典路线**可作低成本诊断或与深度表示融合，不把未验收独立传统模型称为比赛要求的DL提交。[official-rules; required-045; search_space.json]
+
+## 11. 验收状态与尚未可确认的部分
+
+已完成的是：必需全文阅读、历史/推翻交叉核对、22任务及Caco2算术复算、具体配置与计数、独立输出结构/引用/依赖验证方案和真实文件交付。尚未完成的不是“41个公开必需材料不存在”，而是以下限定事项：原件原字节的独立SHA复算；官方总分/AP源码等价；非Caco2宿主train单文件绑定；新GPU接口的未来实现验收；未来增益/方差/成本证据。后四类不通过编造训练或等待现场来填补，研究建议本身可在明确限制下完成。[review.json:missing_evidence]
+
+因此保留`needs_evidence`，但具体41项阅读缺口已经关闭；不拿尚未被授权的未来实验未做来冒充本轮少读材料的借口。旧稿、旧错误、修正事件、已推翻claim与实际访问失败全部可追溯。若后续官方度量或新数据证明本建议不优，应修订分配规则，而不是继续凭“自适应”三个字证明自己正确。
+'''
+text('analysis.md',analysis)
+
+guide=f'''# 下一批实验指南：主控/执行方安全投影
+
+request_id `{REQUEST}`  
+round_id `{ROUND}`  
+input manifest `{SHA}`  
+权威科学范围 `{SNAPSHOT}` + 固定v3明确纳入的004资源拒绝终态。**本文件是研究提案，不是训练、评分、资源申请、上传或派发授权。** 不等待或更改既有六项Caco2配对任务；它们在本历史范围内没有完成学习结果。
+
+本指南只包含聚合事实、配置和验收条件；**不提供逐行valid真值、残差、误差排行榜或可反推标签的个案反馈**。执行方仅获得主控允许的汇总反馈；数据拟合仅使用对应train.Y。公开规则允许valid选模，默认少量确认是减少选择偏差的建议，不是新硬规则。参考原件的固定链接和定位见evidence/source-index，勿把含私有行级结果的历史附件整体转发执行方。[required-045; required-046; official-rules; user-supplement-1]
+
+## 1. 先明确三类路径
+
+**可直接配置：** 已验收的固定Caco2/CheMeleon路径能表达其已存在的MLP/AdamW/标准化MSE和MSE或raw-MAE监视参数；任何启动仍需主控另行授权。现有六项配对按其原合同，不在本批新增预算。
+
+**需新代码：** 本批21非Caco2任务的GPU训练、分类loss、AUROC/AP/Spearman监视、多任务类型路由、可验收raw-cache导入及确认阶段嵌套split。42条新proposal全部标`new_code`，不能把它们直接当旧runner合法参数。具体目标接口和A1–A10见new-code-interface.json；这是明确的拟实现契约，不声称代码已经存在或测试已通过。[training-science; runner-v4]
+
+**未就绪资产：** MiniMol、MoLFormer10pct及其他后备编码器。本轮默认不等待它们。GLM/DeepSeek/Qwen是准备/执行模型而不是科学分子底座。外部编码器参数与buffer始终冻结；新增头/adapter等只能从train.Y学习。[required-003; required-004; required-038]
+
+旧冻结检查器缺runner配置依赖按用户指示单列为主控打包问题，用户报告独立版本已修复。本指南不要求为绕过旧工具缩减新代码方案，也不声称本研究验收了那个新版本。[user-supplement-1]
+
+## 2. 零fit门槛，不计作训练proposal
+
+| 门槛 | 依赖 | 通过条件 |
+|---|---|---|
+| G-SCOPE | 无 | 主控对具体批次另行授权，研究文档本身不构成授权 |
+| G-IDENTITY | G-SCOPE | 已固定资产、task/role/原行/实际train文件与宿主registry一致；没有valid.Y流入执行方 |
+| G-RUNNER | G-IDENTITY | 新接口A1–A10独立验收，实际新代码和环境被记录并固定 |
+| G-METRIC | G-RUNNER | 四类指标方向/尺度/tie/异常fixture通过；官方AP等价不明如实记录 |
+| G-DIAGNOSTIC | G-METRIC | fit-only统计、一次逆变换、finite与parse回退验收；不因单位未知改原Y |
+| G-RESOURCES | G-DIAGNOSTIC | 获准资源、日志/中止/回收路径就绪，不影响别人作业 |
+| G-EXTEND | G-RESOURCES、S1整批复核 | 主控明确释放剩余11任务，不自动派发 |
+
+见preparation-gates.json。所有门槛fit_count=0，无空seed实验，无P-GATE自依赖。G-METRIC对应真实D-METRIC。合成fixture验证不是运行真实模型训练；本研究也未执行这些未来代码测试。
+
+### 已知摘要直接绑定
+
+- CheMeleon checkpoint：`{assets['chemeleon']['pretrained_sha256']}`，2048维，34859448字节。
+- encoder代码：`{assets['chemeleon']['encoder_py_sha256']}`。
+- 继承training_science：`{assets['chemeleon']['training_science_sha256']}`；继承runner：`{assets['chemeleon']['train_remote_v4_sha256']}`。
+- 官方数据ZIP：`{assets['dataset']['official_archive_sha256']}`。
+- 最终官方template：`{assets['dataset']['official_template_sha256']}`。
+
+每任务blind-valid/test摘要、Caco2 train摘要和role行数见asset-bindings.json。21个非Caco2 train单文件hash未在已读公开条目出现，不能假造；执行前由宿主核对固定ZIP中的对应task/role和私有逐文件registry，回传摘要/计数即可。新代码未实现故没有新代码SHA；这与现有权重“等待绑定”是不同情况。不得用旧pending空manifest当数据验收。[weight-reference; paired-manifest; data-intake; blind-valid-projection; input-integrity; old-data-manifest]
+
+## 3. 首批S1：20条具体proposal、40个唯一fit
+
+任务为：{', '.join('`'+x+'`' for x in s1)}。
+
+每任务都有`P-S1-<task>-H0`及`P-S1-<task>-H1`，各seeds `[44,45]`，固定split43；完整科学配置已在next_experiments逐项展开，experiment-matrix进一步展开成scalar seed。
+
+| 参数 | H0 | H1 |
+|---|---|---|
+| 输入 | 同一固定CheMeleon原2048维缓存 | 相同 |
+| 隐层/激活 | [256] / ReLU | 相同 |
+| dropout | **0.1** | **0.3** |
+| lr / weight_decay | 0.0005 / 0.0001 | 相同 |
+| optimizer | AdamW, betas(.9,.999), eps1e-8 | 相同 |
+| batch / epoch上限 / patience | 128 / 50 / 8 | 相同 |
+| seed / split | model44,45 / group43 | 相同配对 |
+| loss/监视/目标尺度 | 按下面任务表 | 相同 |
+
+只差dropout；这是单因素配对筛选，不再是旧四因素bundle。新H0不是Mini22历史512/.001/seed42对照。本批也不把200/20冒充历史同预算；预算扩展另看T-LONG-BUDGET。[required-014; required-048]
+
+原train内分组算法：精确原Drug字符串unique key排序后CPython Random43打乱，取整组至max(1,round(.1*n)) stop行，保证保留fit组；不重排官方角色，不删重复。实际split行摘要由G-IDENTITY验收，不能只凭seed号码声称同split。若单类/常量使评价无解释，不偷偷换seed或metric，报出任务级失败供主控改协议。
+
+### 每任务loss、早停和预测尺度
+
+统一缩写：`BCE`=BCEWithLogits，pos_weight1，均匀样本权重；`std-MSE`=仅fit.Y均值/标准差仿射变换后的MSE。回归预测逆变换一次回原数值Y；分类预测为连续sigmoid概率、正类Y=1。早停在原train划出的inner_stop，每epoch head.eval，patience8、min_delta1e-7，保留最早相同最佳并恢复best checkpoint。
+
+| task | 训练loss | 早停metric | direction | 输出 |
+|---|---|---|---|---|
+'''
+for t in ledger:
+ reg=t['metric'] in ['MAE','Spearman'];m='AP（本地）' if t['metric']=='AUPRC' else t['metric']
+ guide+=f"| `{t['task']}` | {'std-MSE' if reg else 'BCE'} | {m} | {t['metric_direction']} | {'原Y连续值' if reg else '连续概率'} |\n"
+guide+='''
+Caco2这一行说明任务语义，不改变既有六项中MSE-vs-MAE的固定早停对照。不能把本表倒灌成对那六项的新配置。分类loss用logit，指标用与导出同口径的float64 sigmoid概率，不二值化；AP按并列分组的average precision，不作trapezoidal替代。Spearman使用平均并列秩；常量或非finite不替换成零。单类AP可有约定值，但本设计不据此作升降级证据。
+
+特征统计仅inner_fit，float32、ddof0，std<1e-8置1，不clip；回归target仅inner_fit仿射，零std置1。没有valid/test拟合统计，也无无依据log/物理限幅/标签反向。训练head而encoder始终eval/no-grad；保存encoder参数和buffer前后摘要，optimizer不得包含encoder。RNG、数据顺序、best/last、optimizer及上下文摘要均记录；不能用“RNG能往返”冒充恢复后轨迹完全相同已证。
+
+## 4. 决策与剩余11任务条件覆盖
+
+S1成对差用**inner_stop训练内筛选代理**，不是官方valid分；同一个stop还选择best epoch，必须承认选择乐观性。先逐seed按固定r转换任务分再做H1-H0。建议推进条件为两seed均正且平均≥0.5任务分，全部身份/数值检查通过；这是预设实用门槛，不是显著性或噪声置信界。没有通过者就不强凑确认任务。
+
+S1后若共同接口与边界验收良好且主控继续释放预算，S1B给其余11非Caco2任务逐一同H0/H1、同44/45和split43：
+'''
+s1b=sorted({p['task'] for p in experiments if p['batch_id']=='S1B'})
+guide+=', '.join('`'+x+'`' for x in s1b)+'''。
+
+这11个task是已知的条件覆盖项，因此已具体列入next_experiments且stage=reserve、trigger明确；22条proposal=44fit。它们不是未知获选任务。S1+S1B一共21非Caco2任务84fit；Caco2已有独立六项，不在新84内。任务筛选失败不永久停止该端点，只不自动给同一方向加码。
+
+未知获选的最多4个task**不**出现在假造具体S2实验里；见conditional-followups.json：
+
+- T-S2：继承已经锁定的H0/H1，3 model seeds46/47/48，outer group seed44留20%，inner seed144在outer-fit留10%，最大4×2×3=24fit。outer不参与梯度、统计或早停，只做最终配对。建议平均Δs≥0.5，至少2/3正且无pair<−0.5；仍须考虑结构覆盖限制。
+- T-S2-MULTISPLIT：最多2已选任务，outer44/45/46、inner=outer+100、3modelseeds，全部36fit；与T-S2相同的12fit只算一次，最多新增24。所有三split均值为正方称在这三split稳定，不外推未观察化学空间。
+- T-LONG-BUDGET：只有多seed触及50上限且仍改善才考虑50/8 vs200/20。是epoch+patience组合比较，最多2task×2arms×3seeds=12总fit，减去确实相同已存在control；不在默认小/中/大档内。
+
+以上模板要主控先按真实S1结果填选定task、锁定具体配置并登记，再另行授权；本研究没有替未来结果作选择。
+
+## 5. 唯一组合计数与成本
+
+唯一科学组合为`(asset及版本, task, 完整科学配置, split, scalar model_seed)`。proposal名称、重试号不形成新的科学组合。共享H0仅在所有字段、split与seed完全一致时复用一次；不同early-stop metric、预处理、epoch预算、target尺度或split不是同控制。experiment-matrix.json的84条均有独立run-key，CSV提供审计索引，JSON包含完整配置。
+
+小档40；中档≤108；大档≤132。已经注册的Caco2六项、未就绪资产准备和额外长预算另计，不能偷塞到此数字。0-learning资源拒绝计工程尝试、不计完成fit；恢复同轨迹不当新seed；联合MTL一次fit与其多任务头数分列。
+
+先记录实测编码/训练/导出/取回/复核耗时和峰值内存，再用总分代理增益/成本排序。没有测得GPU时长前不可写承诺小时。50→200只是epoch上限4倍，patience变化导致真实耗时非线性。历史CPU22头25.84秒和一次编码988秒属于既定环境，不可用作本批GPU报价。[baseline-delivery]
+
+## 6. 缓存验收与停止条件
+
+raw冻结特征的cache key至少含输入/行映射、task/role、checkpoint和encoder代码摘要、pooling、dtype/shape、解析策略mask及环境版本。相同原特征可跨model seed和内部split共享；scaler/target参数必须每split只从fit再算。当前runner没有已验收的导入路径，不能“找到npz就使用”。跨任务按SMILES共享需额外显式映射验收，首批不依赖它。
+
+立即中止相关任务并通知主控：未经授权的训练/数据通道、encoder参数或buffer变化、错行/缺行、非finite、错误metric方向、共享基础设施契约失败。普通效果未提升只登记结果，到整批checkpoint复核，不无限逐头询问。资源不足不启动，绝不杀其他用户进程；004资源拒绝不是模型负结果。
+
+必须保留所有成功/失败/跳过配置、种子、更新步数、best epoch、train-fit/stop分组摘要、loss与任务metric轨迹、头/encoder摘要、worker与supervisor两个状态。训练/stop逐行预测属于train内部材料；valid反馈只由获准宿主以汇总形式给执行方。
+
+## 7. 22任务最终装配（仍需另行授权）
+
+固定每任务模型或预注册等权seed组合，保持原行身份。回归原Y、分类连续概率；不得手动编辑个别预测。官方模板固定SHA已在上文，16379行；按task/sample_idx并核SMILES，只写y_pred，Drug_ID保持字符串，包括空值、前导零与`.0`。仓库template不替代官方template。
+
+导出前：22任务齐全、每任务test行数匹配、预测finite、无重复/丢行、除y_pred外字符串字段及顺序不变。固定同seed模型平均可不增加fit，但不能当成已获批准的零seed训练项；学ensemble权重需train-only OOF并单列额外fits。每任务选模/组合不是MTL；任何共享新模块都要明确label mask、来源和任务权重。
+
+**交付与下一检查点：** 主控先验收G-SCOPE至G-RESOURCES及真实新代码，再决定是否释放S1；S1结束或重大边界故障时整批复核，决定S1B和未知任务确认模板。当前文件全是未执行研究提案，不给启动命令，不承诺后台训练，不改变既有作业。
+'''
+text('next_batch_guide.md',guide)
+
+changes='''# 第一次补全变更记录
+
+旧版八个文件原样保存在previous/；本补全未修改原目录。此表区分事实更正、设计修订和保留的不确定性，不把旧错写从历史删除。
+
+| 项目 | 上一版问题/说法 | 补读与修订 | 证据 |
+|---|---|---|---|
+| 必需阅读 | 41项未读 | 54项合同+manifest全读；正文与字节hash分记 | reading-coverage/read-receipts |
+| Caco2总分上限 | 本地语境混用约48.81 | 本地46.3320127594；榜单48.8115148182 | numeric-recomputation |
+| 最佳Caco2贡献 | +.1301 | 精确+.1301309438保留；仅描述替换非因果 | required-012/049/050 |
+| 全局任务上限 | 容易误读为每项100 | 分类100/(1+r)、rank200/(3+r)、MAE100；总65.7196424 | 独立算术 |
+| valid权限 | 单次确认可能读成硬禁令 | 官方允许valid调参；次数控制为建议；执行方仅汇总 | official-rules/R06；用户补全 |
+| 单位 | 单位未知可能被当全面门槛 | 不阻止原Y基线；不许猜log/物理剪裁/标签反向 | data-intake/data-profile |
+| 小样本描述 | 部分把valid规模当任务规模 | 完整train/valid/test表；valid少不等于train只有数十行 | input-integrity/data-profile |
+| 结构覆盖 | 缺少针对性限制 | Ames单骨架、LD50/sol全空骨架、DILI集中；多seed不能修复 | data-profile |
+| runner | 容易读成从未有22任务实现 | Mini22 CPU22头已成功；固定GPU Caco2路由扩展需new_code | baseline-delivery/runner-v4 |
+| 资产hash | 绑定待办过多 | 原件已有权重/代码/ZIP/template/22valid/test摘要现已写入 | asset-bindings |
+| train单文件hash | 不清楚 | 非Caco2 21个未在已读公开完整性条目给出；不伪造，宿主验收 | input-integrity |
+| D-METRIC/P-GATE | 悬空/自依赖 | 新建D-METRIC；零fit gates独立无环 | validator |
+| S1 H0/H1 | 宽度/dropout/lr/wd一起变 | 只有dropout .1/.3变化；50/8，200/20单列条件bundle | next_experiments |
+| task矩阵 | 泛10任务一个项、空seed门槛 | S1 20项40fit；S1B22项44fit；scalar展开84 | experiment-matrix |
+| Caco2 | 又加入新首批 | 保留独立六项；新首批换入lipophilicity | 不更改既有授权 |
+| 未知S2 | 可能伪装已选task | conditional模板，获选task=null，count仅上限 | conditional-followups |
+| 评分方向 | 通用maximize错误 | MAE minimize；AUROC/AP/Spearman maximize，逐taskloss/scale | 42项完整配置 |
+| 首筛选择数据 | 不够清楚 | 明确inner_stop训练内代理，承认选epoch乐观性；S2outer隔离 | 新配置/guide |
+| freeze归因 | 缺充分推翻阅读 | CE-FREEZE-02保留；四unused predictor差异非解冻证明 | claims/attribution |
+| 特征放大 | 因果未分清 | 数值现象已见，根因未证；D-FEATURE可证伪实验 | C-SCALE |
+| 历史下载 | 旧超时误认失败 | 保留历史推翻；与本轮实际容器访问错误分开 | C-DOWNLOAD/tool-use |
+| 检查器打包 | 科学与工程混淆 | 主控打包错误、用户报告已独立修复；本研究未验收新版 | 用户补全第6点 |
+| subagents | 可能模糊 | 没有可用通用委派工具；使用0，不扮演代理 | tool-use |
+
+保留不确定性：官方公式/AP实现等价、标签物理语义与生成划分细节、未来增益/方差/端到端成本、替代底座就绪，以及原件字节级SHA独立复算。新报告没有引入快照后的现场训练。
+'''
+text('change-log.md',changes)
+
+text('SOURCE_ACCESS.md',f'''# 审计包来源与完整性边界
+
+- 固定科学commit：{COMMIT}；输入manifest：{SHA}。
+- 54项合同材料+input manifest全文读取；full-prompt/reading-contract也完整读取。分段工具引用在evidence/reading-coverage.json；回执在review.json和evidence/read-receipts.json。
+- 浏览器显示行号是web解析后的定位，不冒称原始文件字节偏移。read_mode original表示对应文件正文已读，transport另记。
+- 未获得公共原件原始字节流，因此未独立验证55316字节full-prompt或任何合同源SHA。合同和source-index所列SHA为公布值，不是本轮计算值。
+- 容器DNS/443/下载失败具体尝试见evidence/tool-use.json；web文本成功，不能把这些公共来源称为整体不可达。
+- 本ZIP保存交付原件、算术/验证脚本、阅读记录、固定源指针、旧交付副本；**不是2446源文件的离线镜像**。reading-contract-transcription是人工结构化转录，非原合同字节副本。
+- 源源头sha不能从浏览器重排文本重造。相反，本地交付manifest每项文件bytes/SHA由真实本地bytes计算，ZIP成员与这些摘要逐项验证。
+- 未使用任何subagent。两套数值实现共享已转录聚合输入，只独立检查计算，不独立验证输入采样或重新评分。
+- 旧件previous/仅供历史审计，含已修正方案，不能当新版运行指令。所有新增实验均未执行。
+''')
+print('Built full six-deliverable content, issues, directions, receipts, reports and change events.')

@@ -1,0 +1,113 @@
+# 视角7：复现、过程与记录缺口审查
+
+固定 commit：`eaec280cf142839597fe75ce748cd2b9a8a897d4`；manifest SHA256：`dbdec244caa8ddb106721877cf93625c1957b9184985c07b1cf751eed5d70505`。本路线只做包内文本、JSON/JSONL、CSV元数据解析与静态源码审读，没有执行归档程序、加载模型/pickle/native库、安装依赖、访问服务器、训练、推理或评分。
+
+## 结论
+
+两次正式 `train01` 有完整逐epoch记录、完成标记、退出记录和有边界的历史主控验收，当前公开材料没有显示其冻结、行身份或正式资源退出失败。它们可以进入其他路线所限定的描述性模型比较。follow 的第一次 `cuda01` 是遇到其他进程后退让的预检失败，不能当成第三次训练或第三个模型。严格流程问题 `F1` 仍未经过修订版真实 Follow 复测；它不能因为后来训练成功而关闭，也不能在没有因果证据时被直接解释成模型分数变差。
+
+复现证据仍有明确层级：公开完整科学源码、事件记录和冻结摘要，可以检查内部一致性；原始系统调用轨迹、外部权重、native库、完整依赖实现和若干主控原件未公开，本路线没有重新建立这些层级的原始证明。当前缺少完整历史实验/失败/问题/否定假设总表，因此不能声称所有历史分支已覆盖、所有旧问题已继承或某方向从未试过。
+
+## 1. 实读范围与版本
+
+本路线逐文件回执为 `agent-reviews/repro-records-read-receipt.json`，117个读取项目，包含受检公开原文件的实际 SHA256、字节数、行数和覆盖方式；所有可对应manifest的受检文件均匹配。该数字包括本轮其他审查路线的交叉核验报告，不是新增的包内payload数。manifest有392条payload，source-map有440条来源映射。
+
+实读重点：START_HERE、manifest/source-map、evidence四文件、rules五文件；两run共53个 raw JSON/JSONL/log（frozen22，follow31）；两份PLAN、historical-acceptance、audit-summary、native-adapter-reference；两份common/guard/supervisor/native源码，以及follow cuda02变体；两份训练证据及训练源码中seed、优化器、记录、保存与重载部分；78包版本索引，7个关键依赖的METADATA/WHEEL/RECORD。METADATA长篇产品说明不等于已逐句科研审查；RECORD逐行解析不等于取得对应安装文件bytes。
+
+本路线复核了事件、阶段与epoch对齐，未重复承担两预测CSV按task/split/row_index全行比对；该事实由规则/统计/主控独立路线提供，不冒充本路线独立计算。
+
+## 2. 正式训练完成和失败预检的边界
+
+| 记录 | frozen | follow | 直接定位 |
+|---|---:|---:|---|
+| 正式epoch | 14 | 19 | 各 `artifacts/training-evidence.json:/history`；`raw/train01.log`物理行48–61 / 48–66 |
+| 优化更新 / 非零梯度步 | 70 / 70 | 95 / 95 | 各训练证据相应字段；`raw/train-complete.json` |
+| 最佳epoch（1起算） | 6 | 11 | 各训练证据 `/best_epoch_1_based` |
+| 正式子任务退出码 | 0 | 0 | 各 `raw/train01-exit.json:/exit_code`，reason均null |
+| 正式阶段耗时秒 | 28.922911047935486 | 28.076315389946103 | 同上 `/elapsed_seconds` |
+| 模型代码计时秒 | 4.812793065328151 | 3.562362622935325 | 各训练证据 `/elapsed_seconds`；与监督阶段计时口径不同 |
+| 预测完成计数 | 273 | 273 | 各 `raw/train-complete.json:/prediction_rows`；本项是完成记录，不替代CSV行身份验证 |
+
+逐行解析证明两份train日志的全部epoch事件，与相应训练证据中的history逐字段相等。本路线计算脚本 `repro_record_audit.py` 只读文本，不导入任何归档程序。
+
+follow `raw/cuda01-exit.json`明确exit_code=1，reason为`Other process appeared; yield own job`；该阶段没有成功complete标记、没有head-training记录。随后 `raw/cuda02-complete.json`记录真实CUDA矩阵计算成功，`raw/cuda02-exit.json`退出0，之后唯一正式train01退出0。来源：follow历史验收39、43、57行及对应raw三阶段记录。反证：单看某个cuda失败log就否定正式训练，或把预检失败纳入模型质量样本，都会混淆阶段。
+
+历史冻结run验收9行记录更早试验的GPU健康、joblib共享内存和CUDA线程命名兼容问题。它同时明确旧GPU硬件状态缺完整原件，不支持把所有旧失败归因为硬件。当前成功阶段的JOBLIB_MULTIPROCESSING=0、实际CUDA成功和写入限制回执可以证明当前配置走通，不能倒推出旧失败全部解释清楚。
+
+## 3. F1及新发现的返回状态接口风险
+
+必须沿用历史 `F1`：follow `historical-acceptance.md:9–17`记载环境检查255后约0.1秒仍部署、继续预检；随后补查不消除违规的依赖顺序。修订仅有本地故障注入验证，明确“修订版尚未经过真实Follow复测”。建议状态open或investigating，不能resolved。
+
+反证检查：同文15、25–29、37–45行记录正式训练前环境已核验，冻结/输入/文件/退出通过，未发现F1导致错误身份、标签混入或解冻。本路线不把流程缺陷自动转成科学产物无效。原始命令转录、F1故障注入报告未作为可独立读取的公开文件提供；我们实际读到的是有source SHA映射的历史验收衍生件，而非那段原始终端事件。
+
+**新增可直接由源码复核的接口风险：**两份 `source/supervisor.py:67–75`（follow `supervisor_attempt02.py`相同结构）最终写出和打印业务`exit_code`，源码没有 `sys.exit(rc)`。因此调用者只检查该Python监督器进程返回码，会错过已被记为失败的子任务；follow `raw/cuda01-supervisor.log:1`确实包含业务exit_code=1。这是静态接口问题，不等于已证明当时上层一定漏检：`operate/gate_and_train/transport`的完整原件未公开，可能另读JSON。新准备规范应明确传播业务失败，并核验状态回执，不依赖“命令退出0”或“complete文件存在”。这可归入F1修复范围，或由主控统一给新问题ID，不另造历史编号。
+
+进一步需绑定run_id、phase/attempt_id、input/config/source/asset hashes、依赖receipt hash和时间先后。当前supervisor `train01`对成功预检只做文件存在检查（26行；attempt02更换为cuda02），没有在这层验证这些绑定。当前独立验收已经检查实际对应关系，因此不能据此声称存在错绑；该设计风险应在下一版准备中补齐。
+
+## 4. 资源目标、实测值与隔离边界
+
+| 项目 | 实际机制 | 可以支持的结论 | 不支持的推论 |
+|---|---|---|---|
+| CPU | supervisor9行将进程亲和设为两个可用核心；runtime记录[0,1]；torch线程2/worker0 | 本作业观察和配置在两核亲和内 | 整机其他进程无影响、总服务器独占 |
+| GPU分配器 | 4096MiB对应PyTorch per-process allocator fraction；runtime `/limits` | PyTorch分配器预算 | 整卡硬配额，或第三方/context也受同额限制 |
+| RAM / 时长 / 总输出 | supervisor58–60行，轮询RSS>8GiB、elapsed>900秒、raw+artifacts总和>1GiB后停止自有进程组 | 监督预算与观测 | 内核RAM配额、严格瞬时峰值上界、原子产物quota |
+| 单文件 / core dump | supervisor10行：RLIMIT_FSIZE=450MiB，RLIMIT_CORE=0 | 真实进程资源限制 | 等于总输出1GiB硬限制 |
+| 写入 | guard应用Landlock ABI4、no_new_privs、先于threads | 限制所声明的文件系统写/create/unlink/rename/truncate | 读隔离、网络隔离、设备分区、ioctl/全部元数据限制或完整服务器审计 |
+
+全部正式观测解析：frozen19条记录，峰值进程树RSS1,591,902,208字节，所选整卡采样1169MiB；follow18条记录，RSS1,549,828,096字节，整卡采样1167MiB。定位各 `raw/train01-observations.jsonl`最后一条（19/18）及exit汇总。follow历史验收41行的1156MiB是进程GPU采样口径，不能与整卡1167MiB当作数值矛盾。PyTorch峰值分配分别457,361,408 / 444,438,528字节，保留507,510,784 / 505,413,632字节，见训练证据对应字段。
+
+follow失败cuda01整卡采样2727MiB含后来出现的他人作业，不归为自己模型峰值；成功cuda02采样39MiB也不能解释为没使用CUDA，短计算可能落在采样间隔，complete记录有实际矩阵运算证明。所有“峰值”须标采样、分配器或进程自身rusage口径，不能互换。
+
+源码 `common_remote.py:29–30`设置HF/Transformers离线变量，它不是网络namespace或全系统禁止联网证明。guard明确允许读，`guard_exec_v3.py:1–4,41`主动列限制。native源代码仅屏蔽/重定向可选线程命名，库hash/大小可追溯但二进制未公开，不能声称本路线重验编译产物。当前没有发现额外样本读取；可依据审读科学源码和允许输入清单作限定判断，不能把环境变量写成完整外部数据隔离证明。
+
+## 5. 78包快照的时间与实现可复现范围
+
+`environment/ENVIRONMENT.md:3`明确快照时间2026-10-31 04:10:16.582585 UTC，晚于两正式训练runtime：2026-10-30 16:48:43.477262 / 17:21:06.213953 UTC。对应北京时间均为10月31日，不能因UTC日期不同误判run命名。快照本身明确不是训练时镜像。
+
+实际runtime/preflight记录：Python3.12.3（pyvenv.cfg），torch2.6.0+cu124、CUDA12.4、Chemprop2.2.1、RDKit2024.09.6、NumPy1.26.4。7个关键发行包RECORD全行解析为Chemprop77、torch10922、RDKit979、NumPy792、joblib143、PyTorch Lightning280、scikit-learn896行，均3列；每份只有自身RECORD行缺hash，这是常规索引形态，不代表破坏。joblib1.6.0、Lightning2.5.1、sklearn1.6.1为快照版本；不能未经训练时记录补证就声称每个都在科学前向中被实际调用。
+
+历史验收报告说解释器/78包元数据前后相同；公开元数据与manifest一致可重核，但没有整个site-packages实现字节，RECORD列出的hash只是一份声明，不能独立复算那些文件。完整CPU/GPU确定性或跨环境位级复现并未证明，种子/CUBLAS环境值也不能替代实际重复实验。
+
+**预处理版本陷阱：**历史研究 `research/evidence/chemistry-audit.json:2`是RDKit2025.09.6，当前训练preflight是2024.09.6。用于新模型/缓存的预处理协议必须明确采用哪个版本；不要把历史化学审计版本默认为实际训练版本，也不要把版本差别自动归因于当前两个run质量差异（它们实训RDKit相同）。任何新版本方案作为单独因子提议，不能悄悄替换对照。
+
+## 6. 已记录与未记录
+
+完整epoch MSE、步数、最大累计L1梯度、初始头、最佳头、保存的索引/标准化参数、冻结状态、逐行盲预测和重载一致性已存在。`source/train_remote_v3.py:74,82–103,132`说明保存初始头和最佳头、aggregate counters及epoch history；不保存每步梯度、每步LR、optimizer moments、运行时RNG state或未选中各epoch/最后头。`evidence/coverage.json:16–23`显式列出这些not_recorded以及train predictions。不存在的东西不能通过事后重建冒充原记录。
+
+这些缺口**不使已保存最佳头的现有预测自动无效**，但限制：无法精确恢复某步继续训练，无法排查是否个别batch造成不稳定，无法在同一eval模式下直接比较训练/内部早停泛化间隙，无法事后完整比较不同早停规则。当前训练epoch均值是训练模式带dropout、参数逐batch变化的在线loss，不等于最终epoch固定头的eval训练误差。下一步宜优先补能回答具体假设的轻量记录，不把记录体系当成已经改善模型质量。
+
+包内没有全历史实验/失败/问题/已否定假设ledger；`research/current-research-context.md`只给当前研究与准备概况，并明确MiniMol/MoLFormer `idle_incomplete`。manifest和source-map不能当实验总表，source-inventory的318条也只覆盖fresh follow和允许环境元数据。需要主控补脱敏历史索引、已有issue_id及状态、分数使用历史和否定理由；当前“无训练在途”依据用户本轮明确声明，未伪装实时查询。
+
+## 7. 可派发的准备工作（本轮执行预算全部为0）
+
+以下是准备规格和将来验收方式；不要求本轮训练、HPO、模型推理、环境安装、海南访问或私有标签读取。正式重测由主控另行授权。不得给OpenCode私有标签、精确official valid分数或逐行误差。
+
+| work_item_id | 对应问题/假设 | 具体准备内容 | 依赖与验收规范 | blocked fallback |
+|---|---|---|---|---|
+| W-REC-01 | F1及业务退出接口风险 | 统一phase-result schema和状态机；失败显式传播；receipt包括request/round/run/attempt、phase、source/config/input/asset hashes、依赖receipt、退出状态/原因；区分failed_preflight与trained_complete | 准备前置255、业务失败但shell0、stale complete、wrong-run/config、missing receipt等静态fixture说明；将来获准验证失败后无后继部署/训练。真实Follow复测前F1不关闭 | 保留现有产物分析；新执行由主控人工核验阶段receipt，不宣称修订已实测 |
+| W-REC-02 | 环境/缓存身份不够细 | 准备resolved-config.json、runtime-manifest.json、feature-cache-manifest schema；分别记录预训练checkpoint、实际encoder模块状态、featurizer/pooling/SMILES策略、RDKit/Chemprop/torch版本、input hash、split/row schema、dtype/dim、缓存bytes hash | 对照采用当前实训RDKit2024.09.6等版本；禁止隐式升级。原始与脱敏hash映射分列；存在缺项时标unverified，不沿用其他run的ready | 只准备待核验资产卡；不下载/安装或声称新编码器可运行 |
+| W-REC-03 | 多因素/不可恢复记录 | 准备独立split_seed/head_seed/shuffle_seed；训练每步记录global_step、epoch、batch count、LR、有限loss、定义明确的gradnorm、optimizer类型/组；epoch同模式eval train/internal MAE+MSE；保存selected/last说明和对应hash | 所有指标只从获准train及其内部划分产生；不读official valid真值。保存RNG/optimizer state用于获准续训时标实际序列化格式，准备安全读验schema。不能只写随机seed便承诺bitwise复现 | 若不能留全部checkpoint，至少保留初始/selected/last，注明不可恢复范围；本轮不补造旧记录 |
+| W-REC-04 | 全历史ledger和否定假设缺失 | 准备experiments/issues/hypotheses关联表：run_id、proposal_id、parent/control、准备状态、授权状态、实际执行状态、split/seeds、改变项、排除理由、metric可比组、artifact refs、时间、发布范围 | 主控提供脱敏历史再继承旧ID；沿用F1和已有U项，未取得的历史标unknown，不擅自关单。必须区分准备、训练失败、科学阴性、未执行 | 当前仅登记两run和公开失败；候选去重/优先级标受历史覆盖限制 |
+| W-REC-05 | 资源与隔离口径混写 | 准备resource-contract、observations schema：target/enforcement/observed三列，分开allocator/device/process/RSS/rusage；阶段成本含检查等待和模型计时；注明读/设备/网络边界 | 对当前日志做只读解析即可核对单位与计时；以后资源大小/并发由主控新预算决定，不能将历史GPU1/900秒推为已授权新作业 | 使用已观测成本仅作估计，未知资产成本为TBD，不扩授权 |
+| W-REC-06 | 分析反馈泄露给准备agent | 准备analysis-private vs preparation-public schema投影：准备指南只接收问题ID、技术事实、候选参数、内部验证协议；精确valid评分和残差只留授权分析/主控侧 | 准备拒绝private label、row residual、exact official score字段的fixture；不把训练中的内部MAE/MSE误删为私有反馈 | 主控人工审读文本投影；不再向准备agent补充精确分数 |
+
+其中W-REC-01、02、04是高优先准备；03与下一轮受控head比较一起准备；05/06是模板一致性要求。它们本身不是新增科学实验，也不具有训练授权。F1只有将来实际授权范围内的真实Follow复测和相应证据齐全时才能考虑关闭；本轮最多验证静态设计是否覆盖已知失败模式。
+
+## 8. 交叉核验表
+
+| 关键主张 | 首次路线/来源 | 本路线独立核对 | 反例/不一致 | 最终结论与不确定性 |
+|---|---|---|---|---|
+| F1未关闭 | rules-data.md14–20、69 | follow历史验收9–17；source-map对原件处置；实际阶段日志 | 后来正式训练/产物验收通过 | 流程缺陷开放，训练产物不是因此自动失效；未读原始F1转录 |
+| parent audit pending不等于当前未验收 | rules-data.md20 | audit-summary auditor字段、历史验收43/49–55、source-map排除三份strace | 执行方旧摘要确有pending字样 | 可接受后来历史验收的限定证词；本轮不声称重新逐syscall审计 |
+| 完整官方原文未发布 | rules-data.md63 | contract快照142行文件中official_evidence指向materials/official/rules.json；source-map/manifest无该payload；rule-source-metadata记录API hash | 已提供规则结构化快照和用户确认 | 当前明确边界可用；逐字原文/资格细节需额外原文，不拿新网页替代历史原件 |
+| 78包快照足以完全复现 | 历史验收13/37 | 环境3行、packages78项、7套RECORD、runtime/preflight | 快照晚于训练，package code excluded | 版本和元数据可核；实现字节与训练时全镜像未独立重验 |
+| GPU峰值1156与1167冲突 | follow验收41与JSONL | supervisor分别query compute-apps和query-gpu；全部观测 | 两者不同统计主体 | 没有数值矛盾证据，须保留口径；精确进程原列表已脱敏 |
+| 所有失败与否定方向都已知 | 当前研究概况 | manifest/source-map inventory及公开历史摘要 | 无全局ledger；有摘要提更早失败 | 不能保证覆盖全历史，需补脱敏索引，不虚构历史ID |
+
+## 9. 本轮变更与证据请求
+
+仍存在：F1真实复测缺口、全历史ledger缺口、原始审计/环境实现覆盖限制、训练记录有限、其他底座准备不完整。新增观察：监督器业务失败未显式用进程退出状态传播的静态接口风险；训练与历史化学审计RDKit版本需分列；资源统计口径需在下轮记录模板固定。
+
+本轮实际核验解决的仅是**当前包受检文本身份和内部记录一致性疑问**：117项回执覆盖内manifest匹配无失败，全部14/19 epoch日志与训练证据逐字段相同，raw正式退出和完成相容。它们不等于关闭F1，不等于模型质量显著提高，也不宣称整个包全部原始证据重新验收。
+
+需要主控补充而非本轮自行越界取得：脱敏全历史总表及旧issue映射；若需正式裁定F1修复则提供将来授权真实Follow证据；若要复建完整原始运行审计则由已授权主控提供必要的审计原件/安全衍生件、执行依赖字节指纹、F1原始命令与故障注入摘要的明确来源映射。不得为满足这些缺口索取私有valid/test真值。本轮完成限定审查，但全历史关闭结论应保持needs_evidence。

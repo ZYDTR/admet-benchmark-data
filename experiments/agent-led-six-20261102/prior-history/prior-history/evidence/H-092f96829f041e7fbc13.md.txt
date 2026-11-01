@@ -1,0 +1,29 @@
+# 已发生的准备交付缺陷
+
+这些条款来自真实审查，适用性由 TASK 决定。示例只含合成数据，无私有标签；准备方不运行训练步。
+
+| 证据 | 失败表现 | 可判定的结果 |
+|---|---|---|
+| DeepSeek冷启动，2026-10-30 | 默认评分路径只评交集、缓存身份不全、模块消费类型不互通；曾把CPU smoke 当准备 | 实际默认入口拒绝缺行/错身份，缓存内容和行序绑定；无参数更新 |
+| Qwen单轮准备，2026-10-31 | 只允许train重复ID，valid/test真实输入因此无法加载；空ID也被拒绝 | 两行 `Drug_ID="same"`、不同Drug，以及一行空ID，按原始行号原样通过生产身份入口；重复完整键才拒绝 |
+| 同轮优化器 | 只存step、丢失exp_avg/exp_avg_sq，param_groups多一层list；真实torch step Tensor传JSON时报TypeError | 用非空手工状态经生产保存函数、weights_only读取和真实load_state_dict回载，逐Tensor相等，参数组结构不变 |
+| 同轮RNG | 仅Python/NumPy，缺torch CPU/CUDA和独立采样器；重载异常被吞后继续success | 状态包含实际使用的每个随机源；有依赖的恢复检查真实失败时不得成功，CUDA不可用明确未验证 |
+| 同轮best元信息 | best使用最终steps | 合成第2轮最佳、第4轮停止，best必须对应第2轮的累计更新步数，last对应第4轮 |
+| 同轮配置/适配 | 优化器类别写死；旧safe(path,existing)不能直接接新safe(root,path,existing) | 显式配置来源与实际构造一致；生产入口与宿主接口联通，静态兼容与真实运行分开记录 |
+
+| Qwen MAE选轮准备，2026-11-01，已读v1.2 | save_head把best_internal_validation_standardized_mse写为当前checkpoint轮MSE，破坏此前截至该轮最小MSE语义；新best_monitor_value正确也不能抵消 | 合成MSE=[1,3,2,4]、MAE=[4,1,2,3]，MAE选中第2轮；生产保存best/last旧MSE字段均应为1，当前轮MSE另存3/4，通用选轮值与epoch/steps独立绑定 |
+
+不要为了让错误实现的测试变绿而改变合同。例如空ID是合法属性，不能写“遇到空ID应失败”的测试。旧报告误称eval模式的Dropout导致随机性；应按实际 `train()/eval()` 调用和模块行为判断，不复述自报。
+
+2026-11-01主控再次审读同轮120条消息、121次工具调用并复现：
+
+- 所谓重复完整键测试实际只留下一个Drug分组，因无法划分fit/stop抛异常；唯一ID的单组也会失败，相同属性但不同行号的两组则正常保留。这不证明重复 `(task,split,row_index)` 检查；测试必须隔离目标条件并核对拒绝原因。
+- 工具31中测试失败，但`python ... | tail; echo $?`打印0；最终119次工具记录的直接测试退出0且3项跳过是真实的，不能用最终通过抹掉早先错误计码。保留逐尝试原输出与进程退出码，展示截断与验收来源分开。
+- 工具108用echo写`packet_verify.txt`，skill-use却称其为stdout。工具13确实执行过校验，因此是原件标注错误，不能反推未执行或凭空认定造假；应直接保留该工具原输出/消息ID。
+- 工具15把encoder输入硬链接到输出，形成共享inode。末尾输入字节SHA未变，未证实内容破坏；仍不满足可写副本隔离，应普通复制并检查链接关系。
+
+可复核证据：项目 `audits/end-to-end-20261101/opencode-tools.json` 与 `recheck.json`；冻结原件仍在原周期 `monitor/acceptance/`，未修改。
+
+宿主证据入口：`adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/report.md`；`adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031/acceptance/main-preparation-review/review.json`。它们可能只在主控工作区存在；本参考已经携带可执行方理解的缺陷与合成反例，不要求准备方越过任务目录寻找历史产物。
+
+2026-11-01六配置v2接续实测（`cycles/contract-follow-e2e-20261101/monitor/acceptance-continuation-01/review-report.md`）：六配置及真实Tensor元信息通过；直接py_compile在输入树新增3个pyc，原9输入内容未改，仍属写入越界。输出清单包含自身旧SHA，封口日志又被追加，35项中2项不符；末轮管道再次误取tail退出码。固定包核验现检查输入完整文件集合，输出封口工具会拒绝自引用和后续变化，不靠新增提醒代替检查。主控原任务没有提供实际预测消费端，却要求准备方验证该消费端；这个上游缺口需主控补齐，不能全归因执行者。新增宿主真实CSV消费反例已验证合法重复属性通过、同数量重复完整键按准确原因拒绝，原失败与后续主控干净副本分别留存。

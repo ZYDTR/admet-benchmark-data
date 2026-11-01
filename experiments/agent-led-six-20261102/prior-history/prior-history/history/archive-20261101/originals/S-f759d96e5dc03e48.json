@@ -1,0 +1,3471 @@
+{
+  "schema_version": 1,
+  "request_id": "admet-progressive-index-pro-20261031-002",
+  "round_id": "progressive-index-e2e-20261031",
+  "manifest_sha256": "b8952a9375328c775e8fcae3b3adc5a35ca6025fcc9a48e5a055371e26f7250f",
+  "scientific_status": "needs_evidence",
+  "authorization": "proposal_only",
+  "experiments": [
+    {
+      "proposal_id": "P00",
+      "direction_id": "D00",
+      "priority": "P0",
+      "tier": "immediate_preparation",
+      "status": "proposal_only",
+      "hypothesis": "先让比较可核验，避免把故障候选计入胜负。",
+      "control_run_or_config": {
+        "reference_run": "hainan-index-cycle-20261031",
+        "matched_control": "C0",
+        "reference_only_not_automatically_reusable": true,
+        "notes": "新harness/缓存/seed条件下需同版本matched control；确定性岭与新底座另列比较差异"
+      },
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": {
+          "name": "CheMeleon frozen BondMessagePassing",
+          "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "adapter_source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "adapter_source_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+          "chemprop": "2.2.1",
+          "freeze_parameters": true,
+          "freeze_buffers": true
+        },
+        "feature": {
+          "name": "2048-d mean-aggregated raw fingerprint",
+          "source_run": "hainan-index-cycle-20261031",
+          "train_array_payload_sha256_recorded": "27716ac421ac80e46adbeeb4190df93e86621f5926634e75f85679109191223a",
+          "dtype": "float32",
+          "independently_verified_array_bytes": false,
+          "cache_file_sha_is_not_array_payload_sha": true,
+          "proposal_direction": "D00"
+        },
+        "preprocess": {
+          "baseline": "legacy_z_train_fit",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "feature_statistics": "fit rows only; sd<1e-8 replaced by1 in control",
+          "target_statistics": "fit rows only; affine center/std; inverse before raw-scale metric"
+        },
+        "head": {
+          "baseline": "Linear(2048,256)-ReLU-Dropout(.1)-Linear(256,1)",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "runtime_source_sha256": "3874397451300b2b2c37eb99b5e995d53f0fcc22a7dee00c287d9ebeff65e7e0",
+          "trainable_parameter_count": 524801,
+          "proposal_version": "P00/head-spec-v1-not-materialized",
+          "proposal_code_sha256": null
+        }
+      },
+      "change_only": {
+        "axis": "证据与边界准备",
+        "explicit_configurations": [
+          {
+            "name": "evidence_contract_v1"
+          }
+        ],
+        "multi_factor_caution": [
+          "不下载私密排除项",
+          "不执行归档训练代码/模型",
+          "不访问执行方禁止的Y"
+        ]
+      },
+      "hold_fixed": {
+        "official_rows": "train637/valid91/test182原分区、原行序和原标签保留",
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "raw_feature_cache": "同一内容身份的原始float32 fingerprint；未补字节前blocked",
+        "split": "raw-SMILES group shuffle；基线seed43；fit573/stop64",
+        "training_seed_policy": "模型初始化/采样seed配对；split RNG独立",
+        "baseline_head": "2048→256→1 ReLU, dropout.1",
+        "optimizer": "AdamW lr.0005 weight_decay.0001",
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "target": "fit-only affine标准化，inverse回原numeric Y",
+        "early_stop": "基线internal standardized MSE；变体明确例外",
+        "frozen": "所有外部encoder参数及buffer、tokenizer/featurizer状态不更新",
+        "labels": "仅official train.Y用于训练与内部选择"
+      },
+      "split_id": "current_raw_smiles_group_seed43_fit573_stop64",
+      "seeds": [],
+      "metric": "evidence_and_contract_acceptance_not_model_quality",
+      "direction": "pass_defined_contracts",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "selection": "非性能试验；验收各证据/权限/负例合同，不产生质量分数。"
+      },
+      "success_criterion": "规定的输入身份、盲化、原行保留、负例门控、输出schema及引用检查有可验材料；未测项仍未测。",
+      "falsification_criterion": "任何缺证据对象被错误标为已验，或故障fixture可继续训练，则准备不通过。",
+      "compute_budget": {
+        "configuration_count": 1,
+        "model_seeds": [],
+        "planned_training_runs_if_all_selected": 0,
+        "approved_training_runs_now": 0,
+        "executed_training_runs_this_review": 0,
+        "approved_encoder_inference_now": 0,
+        "host_fixed_score_invocations_this_review": 0,
+        "cost_assumptions": "只需文档、静态代码和合成fixture；当前不跑模型。",
+        "budget_status": "proposal_only_not_authorized"
+      },
+      "dependencies": [
+        "W01输入/内容身份与权限合同",
+        "W03内部组划分验收",
+        "W10盲投影与反馈登记",
+        "主控另行授权实际训练、推理及评分"
+      ],
+      "within_current_scope": true,
+      "scope_interpretation": "true仅指冻结/官方train标签边界内的研究提案；不授予任何训练或推理许可。新资产未准入用false。",
+      "linked_issue_ids": [
+        "AR002-01",
+        "F1",
+        "AR001-15",
+        "AR001-03",
+        "AR002-02",
+        "AR002-07"
+      ],
+      "evidence_refs": [
+        "current-policy",
+        "evaluation-scope",
+        "v1-outer-exit",
+        "records/read_coverage.json"
+      ],
+      "hold_fixed_exception_rule": "仅change_only显式字段以及其必要shape/参数量派生字段可覆盖基线；任何其余变化必须另建配置并声明混杂。"
+    },
+    {
+      "proposal_id": "P01",
+      "direction_id": "D01",
+      "priority": "P0",
+      "tier": "first_panel",
+      "status": "proposal_only",
+      "hypothesis": "新实现或日志逻辑改变后必须重建同版本控制。",
+      "control_run_or_config": {
+        "reference_run": "hainan-index-cycle-20261031",
+        "matched_control": "C0",
+        "reference_only_not_automatically_reusable": true,
+        "notes": "新harness/缓存/seed条件下需同版本matched control；确定性岭与新底座另列比较差异"
+      },
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": {
+          "name": "CheMeleon frozen BondMessagePassing",
+          "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "adapter_source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "adapter_source_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+          "chemprop": "2.2.1",
+          "freeze_parameters": true,
+          "freeze_buffers": true
+        },
+        "feature": {
+          "name": "2048-d mean-aggregated raw fingerprint",
+          "source_run": "hainan-index-cycle-20261031",
+          "train_array_payload_sha256_recorded": "27716ac421ac80e46adbeeb4190df93e86621f5926634e75f85679109191223a",
+          "dtype": "float32",
+          "independently_verified_array_bytes": false,
+          "cache_file_sha_is_not_array_payload_sha": true,
+          "proposal_direction": "D01"
+        },
+        "preprocess": {
+          "baseline": "legacy_z_train_fit",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "feature_statistics": "fit rows only; sd<1e-8 replaced by1 in control",
+          "target_statistics": "fit rows only; affine center/std; inverse before raw-scale metric"
+        },
+        "head": {
+          "baseline": "Linear(2048,256)-ReLU-Dropout(.1)-Linear(256,1)",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "runtime_source_sha256": "3874397451300b2b2c37eb99b5e995d53f0fcc22a7dee00c287d9ebeff65e7e0",
+          "trainable_parameter_count": 524801,
+          "proposal_version": "P01/head-spec-v1-not-materialized",
+          "proposal_code_sha256": null
+        }
+      },
+      "change_only": {
+        "axis": "重建匹配控制C0",
+        "explicit_configurations": [
+          {
+            "config_id": "C0",
+            "width": 256,
+            "monitor": "internal_validation_standardized_mse",
+            "feature_mode": "legacy_z_train_fit"
+          }
+        ],
+        "multi_factor_caution": [
+          "保留batch128/AdamW .0005/wd.0001/dropout.1/MSE/50ep/patience8",
+          "与变体共享完全相同raw缓存",
+          "不因历史同seed存在就少计一次控制"
+        ]
+      },
+      "hold_fixed": {
+        "official_rows": "train637/valid91/test182原分区、原行序和原标签保留",
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "raw_feature_cache": "同一内容身份的原始float32 fingerprint；未补字节前blocked",
+        "split": "raw-SMILES group shuffle；基线seed43；fit573/stop64",
+        "training_seed_policy": "模型初始化/采样seed配对；split RNG独立",
+        "baseline_head": "2048→256→1 ReLU, dropout.1",
+        "optimizer": "AdamW lr.0005 weight_decay.0001",
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "target": "fit-only affine标准化，inverse回原numeric Y",
+        "early_stop": "基线internal standardized MSE；变体明确例外",
+        "frozen": "所有外部encoder参数及buffer、tokenizer/featurizer状态不更新",
+        "labels": "仅official train.Y用于训练与内部选择"
+      },
+      "split_id": "current_raw_smiles_group_seed43_fit573_stop64",
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "metric": "original_numeric_Y_MAE_on_train_only_holdouts; fixed host valid MAE only upon separate controller approval",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "reason": "暂无可靠重复run噪声和业务最小重要差，不能虚构数值阈值。",
+        "selection": "预注册train-only分组数据上比较原尺度MAE；同fold/seed配对，报告均值、中位数、每对差与不确定性；候选晋级需方向跨seed稳定且完整性门控通过。",
+        "tie_policy": "方向不稳/效果小于尚待建立的噪声尺度时判inconclusive，优先较简单/低成本配置，不读取额外valid决定。",
+        "final_generalization": "只有另行获准且未用于调参的数据评价才支持最终泛化；本valid不重新成为最终测试。",
+        "computable_directional_screen": {
+          "paired_delta_definition": "MAE(candidate, same fold and seed) - MAE(control, same fold and seed)",
+          "report": [
+            "all paired deltas",
+            "mean paired delta",
+            "median paired delta",
+            "number of negative/zero/positive deltas",
+            "between-seed and between-fold variation separately"
+          ],
+          "screen_out": "mean_delta >= 0 and median_delta >= 0 => no directional evidence to advance under this comparison",
+          "mixed_sign_or_small_effect": "inconclusive pending predeclared noise/business threshold; do not query extra valid",
+          "candidate_only": "negative mean and median with consistent paired direction may nominate confirmation, not establish generalization improvement",
+          "minimum_business_effect": null,
+          "confidence_cutoff": null,
+          "policy_status": "proposed_for_controller_review_not_a_validated_statistical_test"
+        }
+      },
+      "success_criterion": "仅在预注册对照和所有身份/冻结/标签门控通过后，train-only配对结果稳定支持该假设；报告全部seed/fold，不能以训练loss或执行成功替代。",
+      "falsification_criterion": "当前accepted单run不可自动代表新harness三个seed的对照。 若匹配对照无一致改善、尾部代价抵消均值收益或收益只在一次valid反馈成立，则否定晋级，不继续增加自由度解释。",
+      "compute_budget": {
+        "configuration_count": 1,
+        "model_seeds": [
+          43,
+          47,
+          59
+        ],
+        "planned_training_runs_if_all_selected": 3,
+        "approved_training_runs_now": 0,
+        "executed_training_runs_this_review": 0,
+        "approved_encoder_inference_now": 0,
+        "host_fixed_score_invocations_this_review": 0,
+        "cost_assumptions": "至多3×50×ceil(573/128)=750个头更新；实际早停未知。",
+        "budget_status": "proposal_only_not_authorized"
+      },
+      "dependencies": [
+        "W01输入/内容身份与权限合同",
+        "W03内部组划分验收",
+        "W10盲投影与反馈登记",
+        "主控另行授权实际训练、推理及评分"
+      ],
+      "within_current_scope": true,
+      "scope_interpretation": "true仅指冻结/官方train标签边界内的研究提案；不授予任何训练或推理许可。新资产未准入用false。",
+      "linked_issue_ids": [
+        "AR001-02",
+        "AR001-06",
+        "AR001-08"
+      ],
+      "evidence_refs": [
+        "actual-config",
+        "current-runtime-source",
+        "training-process"
+      ],
+      "hold_fixed_exception_rule": "仅change_only显式字段以及其必要shape/参数量派生字段可覆盖基线；任何其余变化必须另建配置并声明混杂。"
+    },
+    {
+      "proposal_id": "P02",
+      "direction_id": "D02",
+      "priority": "P0",
+      "tier": "first_panel",
+      "status": "proposal_only",
+      "hypothesis": "当前26点日志证实内部MSE/MAE选轮不同，优先直接检验。",
+      "control_run_or_config": {
+        "reference_run": "hainan-index-cycle-20261031",
+        "matched_control": "C0",
+        "reference_only_not_automatically_reusable": true,
+        "notes": "新harness/缓存/seed条件下需同版本matched control；确定性岭与新底座另列比较差异"
+      },
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": {
+          "name": "CheMeleon frozen BondMessagePassing",
+          "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "adapter_source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "adapter_source_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+          "chemprop": "2.2.1",
+          "freeze_parameters": true,
+          "freeze_buffers": true
+        },
+        "feature": {
+          "name": "2048-d mean-aggregated raw fingerprint",
+          "source_run": "hainan-index-cycle-20261031",
+          "train_array_payload_sha256_recorded": "27716ac421ac80e46adbeeb4190df93e86621f5926634e75f85679109191223a",
+          "dtype": "float32",
+          "independently_verified_array_bytes": false,
+          "cache_file_sha_is_not_array_payload_sha": true,
+          "proposal_direction": "D02"
+        },
+        "preprocess": {
+          "baseline": "legacy_z_train_fit",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "feature_statistics": "fit rows only; sd<1e-8 replaced by1 in control",
+          "target_statistics": "fit rows only; affine center/std; inverse before raw-scale metric"
+        },
+        "head": {
+          "baseline": "Linear(2048,256)-ReLU-Dropout(.1)-Linear(256,1)",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "runtime_source_sha256": "3874397451300b2b2c37eb99b5e995d53f0fcc22a7dee00c287d9ebeff65e7e0",
+          "trainable_parameter_count": 524801,
+          "proposal_version": "P02/head-spec-v1-not-materialized",
+          "proposal_code_sha256": null
+        }
+      },
+      "change_only": {
+        "axis": "只改选轮指标",
+        "explicit_configurations": [
+          {
+            "config_id": "C0",
+            "monitor": "internal_validation_standardized_mse"
+          },
+          {
+            "config_id": "C1",
+            "monitor": "internal_validation_raw_mae"
+          }
+        ],
+        "multi_factor_caution": [
+          "不得同时改损失或缩放",
+          "min_delta规则显式；按严格下降/1e-7的控制语义复现，MAE增量单位单独登记",
+          "同一日志回放不算训练run"
+        ]
+      },
+      "hold_fixed": {
+        "official_rows": "train637/valid91/test182原分区、原行序和原标签保留",
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "raw_feature_cache": "同一内容身份的原始float32 fingerprint；未补字节前blocked",
+        "split": "raw-SMILES group shuffle；基线seed43；fit573/stop64",
+        "training_seed_policy": "模型初始化/采样seed配对；split RNG独立",
+        "baseline_head": "2048→256→1 ReLU, dropout.1",
+        "optimizer": "AdamW lr.0005 weight_decay.0001",
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "target": "fit-only affine标准化，inverse回原numeric Y",
+        "early_stop": "基线internal standardized MSE；变体明确例外",
+        "frozen": "所有外部encoder参数及buffer、tokenizer/featurizer状态不更新",
+        "labels": "仅official train.Y用于训练与内部选择"
+      },
+      "split_id": "current_raw_smiles_group_seed43_fit573_stop64",
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "metric": "original_numeric_Y_MAE_on_train_only_holdouts; fixed host valid MAE only upon separate controller approval",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "reason": "暂无可靠重复run噪声和业务最小重要差，不能虚构数值阈值。",
+        "selection": "预注册train-only分组数据上比较原尺度MAE；同fold/seed配对，报告均值、中位数、每对差与不确定性；候选晋级需方向跨seed稳定且完整性门控通过。",
+        "tie_policy": "方向不稳/效果小于尚待建立的噪声尺度时判inconclusive，优先较简单/低成本配置，不读取额外valid决定。",
+        "final_generalization": "只有另行获准且未用于调参的数据评价才支持最终泛化；本valid不重新成为最终测试。",
+        "computable_directional_screen": {
+          "paired_delta_definition": "MAE(candidate, same fold and seed) - MAE(control, same fold and seed)",
+          "report": [
+            "all paired deltas",
+            "mean paired delta",
+            "median paired delta",
+            "number of negative/zero/positive deltas",
+            "between-seed and between-fold variation separately"
+          ],
+          "screen_out": "mean_delta >= 0 and median_delta >= 0 => no directional evidence to advance under this comparison",
+          "mixed_sign_or_small_effect": "inconclusive pending predeclared noise/business threshold; do not query extra valid",
+          "candidate_only": "negative mean and median with consistent paired direction may nominate confirmation, not establish generalization improvement",
+          "minimum_business_effect": null,
+          "confidence_cutoff": null,
+          "policy_status": "proposed_for_controller_review_not_a_validated_statistical_test"
+        }
+      },
+      "success_criterion": "仅在预注册对照和所有身份/冻结/标签门控通过后，train-only配对结果稳定支持该假设；报告全部seed/fold，不能以训练loss或执行成功替代。",
+      "falsification_criterion": "内部MAE64行有噪声，选早轮不保证外部表现；本轮无epoch7头。 若匹配对照无一致改善、尾部代价抵消均值收益或收益只在一次valid反馈成立，则否定晋级，不继续增加自由度解释。",
+      "compute_budget": {
+        "configuration_count": 2,
+        "model_seeds": [
+          43,
+          47,
+          59
+        ],
+        "planned_training_runs_if_all_selected": 6,
+        "approved_training_runs_now": 0,
+        "executed_training_runs_this_review": 0,
+        "approved_encoder_inference_now": 0,
+        "host_fixed_score_invocations_this_review": 0,
+        "cost_assumptions": "2配置×3seed；C0与首批共享，首批只新增3个变体run。",
+        "budget_status": "proposal_only_not_authorized"
+      },
+      "dependencies": [
+        "W01输入/内容身份与权限合同",
+        "W03内部组划分验收",
+        "W10盲投影与反馈登记",
+        "主控另行授权实际训练、推理及评分",
+        "W05 monitor/loss实现与选择日志"
+      ],
+      "within_current_scope": true,
+      "scope_interpretation": "true仅指冻结/官方train标签边界内的研究提案；不授予任何训练或推理许可。新资产未准入用false。",
+      "linked_issue_ids": [
+        "AR001-05",
+        "AR002-03",
+        "AR001-02"
+      ],
+      "evidence_refs": [
+        "training-process",
+        "current-runtime-source",
+        "records/numeric_checks.json"
+      ],
+      "hold_fixed_exception_rule": "仅change_only显式字段以及其必要shape/参数量派生字段可覆盖基线；任何其余变化必须另建配置并声明混杂。"
+    },
+    {
+      "proposal_id": "P03",
+      "direction_id": "D03",
+      "priority": "P1",
+      "tier": "first_panel_and_reserve",
+      "status": "proposal_only",
+      "hypothesis": "2048→256头有524801参数而fit573；低容量是可证伪的简单对照，不是过拟合定论。",
+      "control_run_or_config": {
+        "reference_run": "hainan-index-cycle-20261031",
+        "matched_control": "C0",
+        "reference_only_not_automatically_reusable": true,
+        "notes": "新harness/缓存/seed条件下需同版本matched control；确定性岭与新底座另列比较差异"
+      },
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": {
+          "name": "CheMeleon frozen BondMessagePassing",
+          "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "adapter_source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "adapter_source_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+          "chemprop": "2.2.1",
+          "freeze_parameters": true,
+          "freeze_buffers": true
+        },
+        "feature": {
+          "name": "2048-d mean-aggregated raw fingerprint",
+          "source_run": "hainan-index-cycle-20261031",
+          "train_array_payload_sha256_recorded": "27716ac421ac80e46adbeeb4190df93e86621f5926634e75f85679109191223a",
+          "dtype": "float32",
+          "independently_verified_array_bytes": false,
+          "cache_file_sha_is_not_array_payload_sha": true,
+          "proposal_direction": "D03"
+        },
+        "preprocess": {
+          "baseline": "legacy_z_train_fit",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "feature_statistics": "fit rows only; sd<1e-8 replaced by1 in control",
+          "target_statistics": "fit rows only; affine center/std; inverse before raw-scale metric"
+        },
+        "head": {
+          "baseline": "Linear(2048,256)-ReLU-Dropout(.1)-Linear(256,1)",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "runtime_source_sha256": "3874397451300b2b2c37eb99b5e995d53f0fcc22a7dee00c287d9ebeff65e7e0",
+          "trainable_parameter_count": 524801,
+          "proposal_version": "P03/head-spec-v1-not-materialized",
+          "proposal_code_sha256": null
+        }
+      },
+      "change_only": {
+        "axis": "容量与单层宽度",
+        "explicit_configurations": [
+          {
+            "width": 32,
+            "config_id": "width-32"
+          },
+          {
+            "width": 64,
+            "config_id": "width-64"
+          },
+          {
+            "width": 128,
+            "config_id": "C2"
+          },
+          {
+            "width": 256,
+            "config_id": "C0"
+          },
+          {
+            "width": 512,
+            "config_id": "width-512"
+          }
+        ],
+        "multi_factor_caution": [
+          "所有其余训练条件相同",
+          "参数数随宽度报告；不是等参数比较",
+          "冻结底座不变"
+        ]
+      },
+      "hold_fixed": {
+        "official_rows": "train637/valid91/test182原分区、原行序和原标签保留",
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "raw_feature_cache": "同一内容身份的原始float32 fingerprint；未补字节前blocked",
+        "split": "raw-SMILES group shuffle；基线seed43；fit573/stop64",
+        "training_seed_policy": "模型初始化/采样seed配对；split RNG独立",
+        "baseline_head": "2048→256→1 ReLU, dropout.1",
+        "optimizer": "AdamW lr.0005 weight_decay.0001",
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "target": "fit-only affine标准化，inverse回原numeric Y",
+        "early_stop": "基线internal standardized MSE；变体明确例外",
+        "frozen": "所有外部encoder参数及buffer、tokenizer/featurizer状态不更新",
+        "labels": "仅official train.Y用于训练与内部选择"
+      },
+      "split_id": "current_raw_smiles_group_seed43_fit573_stop64",
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "metric": "original_numeric_Y_MAE_on_train_only_holdouts; fixed host valid MAE only upon separate controller approval",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "reason": "暂无可靠重复run噪声和业务最小重要差，不能虚构数值阈值。",
+        "selection": "预注册train-only分组数据上比较原尺度MAE；同fold/seed配对，报告均值、中位数、每对差与不确定性；候选晋级需方向跨seed稳定且完整性门控通过。",
+        "tie_policy": "方向不稳/效果小于尚待建立的噪声尺度时判inconclusive，优先较简单/低成本配置，不读取额外valid决定。",
+        "final_generalization": "只有另行获准且未用于调参的数据评价才支持最终泛化；本valid不重新成为最终测试。",
+        "computable_directional_screen": {
+          "paired_delta_definition": "MAE(candidate, same fold and seed) - MAE(control, same fold and seed)",
+          "report": [
+            "all paired deltas",
+            "mean paired delta",
+            "median paired delta",
+            "number of negative/zero/positive deltas",
+            "between-seed and between-fold variation separately"
+          ],
+          "screen_out": "mean_delta >= 0 and median_delta >= 0 => no directional evidence to advance under this comparison",
+          "mixed_sign_or_small_effect": "inconclusive pending predeclared noise/business threshold; do not query extra valid",
+          "candidate_only": "negative mean and median with consistent paired direction may nominate confirmation, not establish generalization improvement",
+          "minimum_business_effect": null,
+          "confidence_cutoff": null,
+          "policy_status": "proposed_for_controller_review_not_a_validated_statistical_test"
+        }
+      },
+      "success_criterion": "仅在预注册对照和所有身份/冻结/标签门控通过后，train-only配对结果稳定支持该假设；报告全部seed/fold，不能以训练loss或执行成功替代。",
+      "falsification_criterion": "较宽旧A描述得分更好但多处混杂，不能证明宽度单调关系。 若匹配对照无一致改善、尾部代价抵消均值收益或收益只在一次valid反馈成立，则否定晋级，不继续增加自由度解释。",
+      "compute_budget": {
+        "configuration_count": 5,
+        "model_seeds": [
+          43,
+          47,
+          59
+        ],
+        "planned_training_runs_if_all_selected": 15,
+        "approved_training_runs_now": 0,
+        "executed_training_runs_this_review": 0,
+        "approved_encoder_inference_now": 0,
+        "host_fixed_score_invocations_this_review": 0,
+        "cost_assumptions": "5×3=15，首批共享C0并只抽128；其余9个后续run未申请。",
+        "budget_status": "proposal_only_not_authorized"
+      },
+      "dependencies": [
+        "W01输入/内容身份与权限合同",
+        "W03内部组划分验收",
+        "W10盲投影与反馈登记",
+        "主控另行授权实际训练、推理及评分",
+        "W06头/优化器/调度器工厂与配置校验"
+      ],
+      "within_current_scope": true,
+      "scope_interpretation": "true仅指冻结/官方train标签边界内的研究提案；不授予任何训练或推理许可。新资产未准入用false。",
+      "linked_issue_ids": [
+        "AR001-13",
+        "AR001-02",
+        "AR002-06"
+      ],
+      "evidence_refs": [
+        "actual-config",
+        "training-process",
+        "records/numeric_checks.json"
+      ],
+      "hold_fixed_exception_rule": "仅change_only显式字段以及其必要shape/参数量派生字段可覆盖基线；任何其余变化必须另建配置并声明混杂。"
+    },
+    {
+      "proposal_id": "P04",
+      "direction_id": "D04",
+      "priority": "P1",
+      "tier": "first_panel_conditional",
+      "status": "blocked_conditional_proposal",
+      "hypothesis": "历史极小sd/极大z支持检验数值条件化，当前原始数组仍需补验。",
+      "control_run_or_config": {
+        "reference_run": "hainan-index-cycle-20261031",
+        "matched_control": "C0",
+        "reference_only_not_automatically_reusable": true,
+        "notes": "新harness/缓存/seed条件下需同版本matched control；确定性岭与新底座另列比较差异"
+      },
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": {
+          "name": "CheMeleon frozen BondMessagePassing",
+          "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "adapter_source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "adapter_source_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+          "chemprop": "2.2.1",
+          "freeze_parameters": true,
+          "freeze_buffers": true
+        },
+        "feature": {
+          "name": "2048-d mean-aggregated raw fingerprint",
+          "source_run": "hainan-index-cycle-20261031",
+          "train_array_payload_sha256_recorded": "27716ac421ac80e46adbeeb4190df93e86621f5926634e75f85679109191223a",
+          "dtype": "float32",
+          "independently_verified_array_bytes": false,
+          "cache_file_sha_is_not_array_payload_sha": true,
+          "proposal_direction": "D04"
+        },
+        "preprocess": {
+          "baseline": "legacy_z_train_fit",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "feature_statistics": "fit rows only; sd<1e-8 replaced by1 in control",
+          "target_statistics": "fit rows only; affine center/std; inverse before raw-scale metric",
+          "proposal_version": "feature-ablation-v1-not-materialized"
+        },
+        "head": {
+          "baseline": "Linear(2048,256)-ReLU-Dropout(.1)-Linear(256,1)",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "runtime_source_sha256": "3874397451300b2b2c37eb99b5e995d53f0fcc22a7dee00c287d9ebeff65e7e0",
+          "trainable_parameter_count": 524801,
+          "proposal_version": "P04/head-spec-v1-not-materialized",
+          "proposal_code_sha256": null
+        }
+      },
+      "change_only": {
+        "axis": "特征条件化消融",
+        "explicit_configurations": [
+          {
+            "config_id": "C0",
+            "mode": "legacy_z_train_fit"
+          },
+          {
+            "mode": "none"
+          },
+          {
+            "mode": "center"
+          },
+          {
+            "config_id": "floor-0.0001",
+            "mode": "sd_floor",
+            "floor": 0.0001
+          },
+          {
+            "config_id": "C3",
+            "mode": "sd_floor",
+            "floor": 0.001
+          },
+          {
+            "config_id": "floor-0.01",
+            "mode": "sd_floor",
+            "floor": 0.01
+          },
+          {
+            "mode": "z_clip",
+            "clip": 6
+          },
+          {
+            "mode": "z_clip",
+            "clip": 10
+          },
+          {
+            "mode": "z_clip",
+            "clip": 20
+          }
+        ],
+        "multi_factor_caution": [
+          "floor定义max(fit_std,floor)",
+          "clip在fit-only legacy_z之后逐元素对称截断；不删行",
+          "floor与clip首轮不叠加",
+          "统计仅fit估计；不读valid/testY；target变换不改"
+        ]
+      },
+      "hold_fixed": {
+        "official_rows": "train637/valid91/test182原分区、原行序和原标签保留",
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "raw_feature_cache": "同一内容身份的原始float32 fingerprint；未补字节前blocked",
+        "split": "raw-SMILES group shuffle；基线seed43；fit573/stop64",
+        "training_seed_policy": "模型初始化/采样seed配对；split RNG独立",
+        "baseline_head": "2048→256→1 ReLU, dropout.1",
+        "optimizer": "AdamW lr.0005 weight_decay.0001",
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "target": "fit-only affine标准化，inverse回原numeric Y",
+        "early_stop": "基线internal standardized MSE；变体明确例外",
+        "frozen": "所有外部encoder参数及buffer、tokenizer/featurizer状态不更新",
+        "labels": "仅official train.Y用于训练与内部选择"
+      },
+      "split_id": "current_raw_smiles_group_seed43_fit573_stop64",
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "metric": "original_numeric_Y_MAE_on_train_only_holdouts; fixed host valid MAE only upon separate controller approval",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "reason": "暂无可靠重复run噪声和业务最小重要差，不能虚构数值阈值。",
+        "selection": "预注册train-only分组数据上比较原尺度MAE；同fold/seed配对，报告均值、中位数、每对差与不确定性；候选晋级需方向跨seed稳定且完整性门控通过。",
+        "tie_policy": "方向不稳/效果小于尚待建立的噪声尺度时判inconclusive，优先较简单/低成本配置，不读取额外valid决定。",
+        "final_generalization": "只有另行获准且未用于调参的数据评价才支持最终泛化；本valid不重新成为最终测试。",
+        "computable_directional_screen": {
+          "paired_delta_definition": "MAE(candidate, same fold and seed) - MAE(control, same fold and seed)",
+          "report": [
+            "all paired deltas",
+            "mean paired delta",
+            "median paired delta",
+            "number of negative/zero/positive deltas",
+            "between-seed and between-fold variation separately"
+          ],
+          "screen_out": "mean_delta >= 0 and median_delta >= 0 => no directional evidence to advance under this comparison",
+          "mixed_sign_or_small_effect": "inconclusive pending predeclared noise/business threshold; do not query extra valid",
+          "candidate_only": "negative mean and median with consistent paired direction may nominate confirmation, not establish generalization improvement",
+          "minimum_business_effect": null,
+          "confidence_cutoff": null,
+          "policy_status": "proposed_for_controller_review_not_a_validated_statistical_test"
+        }
+      },
+      "success_criterion": "仅在预注册对照和所有身份/冻结/标签门控通过后，train-only配对结果稳定支持该假设；报告全部seed/fold，不能以训练loss或执行成功替代。",
+      "falsification_criterion": "相关样本大误差不证明因果；无缩放也可能破坏优化。 若匹配对照无一致改善、尾部代价抵消均值收益或收益只在一次valid反馈成立，则否定晋级，不继续增加自由度解释。",
+      "compute_budget": {
+        "configuration_count": 9,
+        "model_seeds": [
+          43,
+          47,
+          59
+        ],
+        "planned_training_runs_if_all_selected": 27,
+        "approved_training_runs_now": 0,
+        "executed_training_runs_this_review": 0,
+        "approved_encoder_inference_now": 0,
+        "host_fixed_score_invocations_this_review": 0,
+        "cost_assumptions": "9×3=27潜在run；共享C0，先抽floor1e-3新增3；阈值非数据优化得出。",
+        "budget_status": "proposal_only_not_authorized"
+      },
+      "dependencies": [
+        "W01输入/内容身份与权限合同",
+        "W03内部组划分验收",
+        "W10盲投影与反馈登记",
+        "主控另行授权实际训练、推理及评分",
+        "W04安全数组读取、缓存身份和fit-only变换"
+      ],
+      "within_current_scope": true,
+      "scope_interpretation": "true仅指冻结/官方train标签边界内的研究提案；不授予任何训练或推理许可。新资产未准入用false。",
+      "linked_issue_ids": [
+        "AR001-04",
+        "AR001-08",
+        "AR002-01"
+      ],
+      "evidence_refs": [
+        "historical-primary-cache",
+        "current-runtime-source",
+        "current-feature-array",
+        "current-preprocess-array"
+      ],
+      "hold_fixed_exception_rule": "仅change_only显式字段以及其必要shape/参数量派生字段可覆盖基线；任何其余变化必须另建配置并声明混杂。"
+    },
+    {
+      "proposal_id": "P05",
+      "direction_id": "D05",
+      "priority": "P2",
+      "tier": "exploratory_reserve",
+      "status": "blocked_conditional_proposal",
+      "hypothesis": "当前校验器限制单层；可准备更深新头检验非线性组合。",
+      "control_run_or_config": {
+        "reference_run": "hainan-index-cycle-20261031",
+        "matched_control": "C0",
+        "reference_only_not_automatically_reusable": true,
+        "notes": "新harness/缓存/seed条件下需同版本matched control；确定性岭与新底座另列比较差异"
+      },
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": {
+          "name": "CheMeleon frozen BondMessagePassing",
+          "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "adapter_source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "adapter_source_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+          "chemprop": "2.2.1",
+          "freeze_parameters": true,
+          "freeze_buffers": true
+        },
+        "feature": {
+          "name": "2048-d mean-aggregated raw fingerprint",
+          "source_run": "hainan-index-cycle-20261031",
+          "train_array_payload_sha256_recorded": "27716ac421ac80e46adbeeb4190df93e86621f5926634e75f85679109191223a",
+          "dtype": "float32",
+          "independently_verified_array_bytes": false,
+          "cache_file_sha_is_not_array_payload_sha": true,
+          "proposal_direction": "D05"
+        },
+        "preprocess": {
+          "baseline": "legacy_z_train_fit",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "feature_statistics": "fit rows only; sd<1e-8 replaced by1 in control",
+          "target_statistics": "fit rows only; affine center/std; inverse before raw-scale metric"
+        },
+        "head": {
+          "baseline": "Linear(2048,256)-ReLU-Dropout(.1)-Linear(256,1)",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "runtime_source_sha256": "3874397451300b2b2c37eb99b5e995d53f0fcc22a7dee00c287d9ebeff65e7e0",
+          "trainable_parameter_count": 524801,
+          "proposal_version": "P05/head-spec-v1-not-materialized",
+          "proposal_code_sha256": null
+        }
+      },
+      "change_only": {
+        "axis": "头深度与残差结构",
+        "explicit_configurations": [
+          {
+            "architecture": "mlp256"
+          },
+          {
+            "architecture": "mlp128x64"
+          },
+          {
+            "architecture": "mlp256x128"
+          },
+          {
+            "architecture": "project128_residual2"
+          }
+        ],
+        "multi_factor_caution": [
+          "不向encoder注入可训练层",
+          "ReLU/dropout固定基线值",
+          "所有新projection/residual参数必须列入新头名单",
+          "不得仅改JSON声称已支持"
+        ]
+      },
+      "hold_fixed": {
+        "official_rows": "train637/valid91/test182原分区、原行序和原标签保留",
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "raw_feature_cache": "同一内容身份的原始float32 fingerprint；未补字节前blocked",
+        "split": "raw-SMILES group shuffle；基线seed43；fit573/stop64",
+        "training_seed_policy": "模型初始化/采样seed配对；split RNG独立",
+        "baseline_head": "2048→256→1 ReLU, dropout.1",
+        "optimizer": "AdamW lr.0005 weight_decay.0001",
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "target": "fit-only affine标准化，inverse回原numeric Y",
+        "early_stop": "基线internal standardized MSE；变体明确例外",
+        "frozen": "所有外部encoder参数及buffer、tokenizer/featurizer状态不更新",
+        "labels": "仅official train.Y用于训练与内部选择"
+      },
+      "split_id": "current_raw_smiles_group_seed43_fit573_stop64",
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "metric": "original_numeric_Y_MAE_on_train_only_holdouts; fixed host valid MAE only upon separate controller approval",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "reason": "暂无可靠重复run噪声和业务最小重要差，不能虚构数值阈值。",
+        "selection": "预注册train-only分组数据上比较原尺度MAE；同fold/seed配对，报告均值、中位数、每对差与不确定性；候选晋级需方向跨seed稳定且完整性门控通过。",
+        "tie_policy": "方向不稳/效果小于尚待建立的噪声尺度时判inconclusive，优先较简单/低成本配置，不读取额外valid决定。",
+        "final_generalization": "只有另行获准且未用于调参的数据评价才支持最终泛化；本valid不重新成为最终测试。",
+        "computable_directional_screen": {
+          "paired_delta_definition": "MAE(candidate, same fold and seed) - MAE(control, same fold and seed)",
+          "report": [
+            "all paired deltas",
+            "mean paired delta",
+            "median paired delta",
+            "number of negative/zero/positive deltas",
+            "between-seed and between-fold variation separately"
+          ],
+          "screen_out": "mean_delta >= 0 and median_delta >= 0 => no directional evidence to advance under this comparison",
+          "mixed_sign_or_small_effect": "inconclusive pending predeclared noise/business threshold; do not query extra valid",
+          "candidate_only": "negative mean and median with consistent paired direction may nominate confirmation, not establish generalization improvement",
+          "minimum_business_effect": null,
+          "confidence_cutoff": null,
+          "policy_status": "proposed_for_controller_review_not_a_validated_statistical_test"
+        }
+      },
+      "success_criterion": "仅在预注册对照和所有身份/冻结/标签门控通过后，train-only配对结果稳定支持该假设；报告全部seed/fold，不能以训练loss或执行成功替代。",
+      "falsification_criterion": "小样本可能增加方差；残差结构改变容量不能纯归因深度。 若匹配对照无一致改善、尾部代价抵消均值收益或收益只在一次valid反馈成立，则否定晋级，不继续增加自由度解释。",
+      "compute_budget": {
+        "configuration_count": 4,
+        "model_seeds": [
+          43,
+          47,
+          59
+        ],
+        "planned_training_runs_if_all_selected": 12,
+        "approved_training_runs_now": 0,
+        "executed_training_runs_this_review": 0,
+        "approved_encoder_inference_now": 0,
+        "host_fixed_score_invocations_this_review": 0,
+        "cost_assumptions": "4×3=12；更深头算力/内存需要静态估算，不把现有单层19.66秒外推。",
+        "budget_status": "proposal_only_not_authorized"
+      },
+      "dependencies": [
+        "W01输入/内容身份与权限合同",
+        "W03内部组划分验收",
+        "W10盲投影与反馈登记",
+        "主控另行授权实际训练、推理及评分",
+        "W06头/优化器/调度器工厂与配置校验"
+      ],
+      "within_current_scope": true,
+      "scope_interpretation": "true仅指冻结/官方train标签边界内的研究提案；不授予任何训练或推理许可。新资产未准入用false。",
+      "linked_issue_ids": [
+        "AR001-06",
+        "AR001-13"
+      ],
+      "evidence_refs": [
+        "actual-science",
+        "current-runtime-source"
+      ],
+      "hold_fixed_exception_rule": "仅change_only显式字段以及其必要shape/参数量派生字段可覆盖基线；任何其余变化必须另建配置并声明混杂。"
+    },
+    {
+      "proposal_id": "P06",
+      "direction_id": "D06",
+      "priority": "P2",
+      "tier": "exploratory_reserve",
+      "status": "proposal_only",
+      "hypothesis": "训练/内部stop差距支持容量控制研究，但不是已证最优正则强度。",
+      "control_run_or_config": {
+        "reference_run": "hainan-index-cycle-20261031",
+        "matched_control": "C0",
+        "reference_only_not_automatically_reusable": true,
+        "notes": "新harness/缓存/seed条件下需同版本matched control；确定性岭与新底座另列比较差异"
+      },
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": {
+          "name": "CheMeleon frozen BondMessagePassing",
+          "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "adapter_source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "adapter_source_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+          "chemprop": "2.2.1",
+          "freeze_parameters": true,
+          "freeze_buffers": true
+        },
+        "feature": {
+          "name": "2048-d mean-aggregated raw fingerprint",
+          "source_run": "hainan-index-cycle-20261031",
+          "train_array_payload_sha256_recorded": "27716ac421ac80e46adbeeb4190df93e86621f5926634e75f85679109191223a",
+          "dtype": "float32",
+          "independently_verified_array_bytes": false,
+          "cache_file_sha_is_not_array_payload_sha": true,
+          "proposal_direction": "D06"
+        },
+        "preprocess": {
+          "baseline": "legacy_z_train_fit",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "feature_statistics": "fit rows only; sd<1e-8 replaced by1 in control",
+          "target_statistics": "fit rows only; affine center/std; inverse before raw-scale metric"
+        },
+        "head": {
+          "baseline": "Linear(2048,256)-ReLU-Dropout(.1)-Linear(256,1)",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "runtime_source_sha256": "3874397451300b2b2c37eb99b5e995d53f0fcc22a7dee00c287d9ebeff65e7e0",
+          "trainable_parameter_count": 524801,
+          "proposal_version": "P06/head-spec-v1-not-materialized",
+          "proposal_code_sha256": null
+        }
+      },
+      "change_only": {
+        "axis": "Dropout与权重衰减",
+        "explicit_configurations": [
+          {
+            "dropout": 0,
+            "weight_decay": 0
+          },
+          {
+            "dropout": 0,
+            "weight_decay": 0.0001
+          },
+          {
+            "dropout": 0,
+            "weight_decay": 0.001
+          },
+          {
+            "dropout": 0.1,
+            "weight_decay": 0
+          },
+          {
+            "dropout": 0.1,
+            "weight_decay": 0.0001
+          },
+          {
+            "dropout": 0.1,
+            "weight_decay": 0.001
+          },
+          {
+            "dropout": 0.1,
+            "weight_decay": 0.01
+          },
+          {
+            "dropout": 0.25,
+            "weight_decay": 0.0001
+          },
+          {
+            "dropout": 0.25,
+            "weight_decay": 0.001
+          }
+        ],
+        "multi_factor_caution": [
+          "AdamW保持不变",
+          "dropout=.1/wd=.0001是共享控制",
+          "强wd=.01仅配dropout=.1，不默认扩为12点"
+        ]
+      },
+      "hold_fixed": {
+        "official_rows": "train637/valid91/test182原分区、原行序和原标签保留",
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "raw_feature_cache": "同一内容身份的原始float32 fingerprint；未补字节前blocked",
+        "split": "raw-SMILES group shuffle；基线seed43；fit573/stop64",
+        "training_seed_policy": "模型初始化/采样seed配对；split RNG独立",
+        "baseline_head": "2048→256→1 ReLU, dropout.1",
+        "optimizer": "AdamW lr.0005 weight_decay.0001",
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "target": "fit-only affine标准化，inverse回原numeric Y",
+        "early_stop": "基线internal standardized MSE；变体明确例外",
+        "frozen": "所有外部encoder参数及buffer、tokenizer/featurizer状态不更新",
+        "labels": "仅official train.Y用于训练与内部选择"
+      },
+      "split_id": "current_raw_smiles_group_seed43_fit573_stop64",
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "metric": "original_numeric_Y_MAE_on_train_only_holdouts; fixed host valid MAE only upon separate controller approval",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "reason": "暂无可靠重复run噪声和业务最小重要差，不能虚构数值阈值。",
+        "selection": "预注册train-only分组数据上比较原尺度MAE；同fold/seed配对，报告均值、中位数、每对差与不确定性；候选晋级需方向跨seed稳定且完整性门控通过。",
+        "tie_policy": "方向不稳/效果小于尚待建立的噪声尺度时判inconclusive，优先较简单/低成本配置，不读取额外valid决定。",
+        "final_generalization": "只有另行获准且未用于调参的数据评价才支持最终泛化；本valid不重新成为最终测试。",
+        "computable_directional_screen": {
+          "paired_delta_definition": "MAE(candidate, same fold and seed) - MAE(control, same fold and seed)",
+          "report": [
+            "all paired deltas",
+            "mean paired delta",
+            "median paired delta",
+            "number of negative/zero/positive deltas",
+            "between-seed and between-fold variation separately"
+          ],
+          "screen_out": "mean_delta >= 0 and median_delta >= 0 => no directional evidence to advance under this comparison",
+          "mixed_sign_or_small_effect": "inconclusive pending predeclared noise/business threshold; do not query extra valid",
+          "candidate_only": "negative mean and median with consistent paired direction may nominate confirmation, not establish generalization improvement",
+          "minimum_business_effect": null,
+          "confidence_cutoff": null,
+          "policy_status": "proposed_for_controller_review_not_a_validated_statistical_test"
+        }
+      },
+      "success_criterion": "仅在预注册对照和所有身份/冻结/标签门控通过后，train-only配对结果稳定支持该假设；报告全部seed/fold，不能以训练loss或执行成功替代。",
+      "falsification_criterion": "强正则可能使欠拟合更重，头宽和优化步数会混杂。 若匹配对照无一致改善、尾部代价抵消均值收益或收益只在一次valid反馈成立，则否定晋级，不继续增加自由度解释。",
+      "compute_budget": {
+        "configuration_count": 9,
+        "model_seeds": [
+          43,
+          47,
+          59
+        ],
+        "planned_training_runs_if_all_selected": 27,
+        "approved_training_runs_now": 0,
+        "executed_training_runs_this_review": 0,
+        "approved_encoder_inference_now": 0,
+        "host_fixed_score_invocations_this_review": 0,
+        "cost_assumptions": "9×3=27（含共享控制）；没有多项同时变化的因果主张。",
+        "budget_status": "proposal_only_not_authorized"
+      },
+      "dependencies": [
+        "W01输入/内容身份与权限合同",
+        "W03内部组划分验收",
+        "W10盲投影与反馈登记",
+        "主控另行授权实际训练、推理及评分",
+        "W06头/优化器/调度器工厂与配置校验"
+      ],
+      "within_current_scope": true,
+      "scope_interpretation": "true仅指冻结/官方train标签边界内的研究提案；不授予任何训练或推理许可。新资产未准入用false。",
+      "linked_issue_ids": [
+        "AR001-05",
+        "AR001-13"
+      ],
+      "evidence_refs": [
+        "training-process",
+        "actual-config"
+      ],
+      "hold_fixed_exception_rule": "仅change_only显式字段以及其必要shape/参数量派生字段可覆盖基线；任何其余变化必须另建配置并声明混杂。"
+    },
+    {
+      "proposal_id": "P07",
+      "direction_id": "D07",
+      "priority": "P2",
+      "tier": "exploratory_reserve",
+      "status": "proposal_only",
+      "hypothesis": "实际为AdamW；先匹配优化器内学习率，后才比较算法。",
+      "control_run_or_config": {
+        "reference_run": "hainan-index-cycle-20261031",
+        "matched_control": "C0",
+        "reference_only_not_automatically_reusable": true,
+        "notes": "新harness/缓存/seed条件下需同版本matched control；确定性岭与新底座另列比较差异"
+      },
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": {
+          "name": "CheMeleon frozen BondMessagePassing",
+          "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "adapter_source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "adapter_source_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+          "chemprop": "2.2.1",
+          "freeze_parameters": true,
+          "freeze_buffers": true
+        },
+        "feature": {
+          "name": "2048-d mean-aggregated raw fingerprint",
+          "source_run": "hainan-index-cycle-20261031",
+          "train_array_payload_sha256_recorded": "27716ac421ac80e46adbeeb4190df93e86621f5926634e75f85679109191223a",
+          "dtype": "float32",
+          "independently_verified_array_bytes": false,
+          "cache_file_sha_is_not_array_payload_sha": true,
+          "proposal_direction": "D07"
+        },
+        "preprocess": {
+          "baseline": "legacy_z_train_fit",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "feature_statistics": "fit rows only; sd<1e-8 replaced by1 in control",
+          "target_statistics": "fit rows only; affine center/std; inverse before raw-scale metric"
+        },
+        "head": {
+          "baseline": "Linear(2048,256)-ReLU-Dropout(.1)-Linear(256,1)",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "runtime_source_sha256": "3874397451300b2b2c37eb99b5e995d53f0fcc22a7dee00c287d9ebeff65e7e0",
+          "trainable_parameter_count": 524801,
+          "proposal_version": "P07/head-spec-v1-not-materialized",
+          "proposal_code_sha256": null
+        }
+      },
+      "change_only": {
+        "axis": "优化器与学习率",
+        "explicit_configurations": [
+          {
+            "optimizer": "AdamW",
+            "lr": 0.0001
+          },
+          {
+            "optimizer": "AdamW",
+            "lr": 0.0003
+          },
+          {
+            "optimizer": "AdamW",
+            "lr": 0.0005
+          },
+          {
+            "optimizer": "AdamW",
+            "lr": 0.001
+          },
+          {
+            "optimizer": "Adam",
+            "lr": 0.0003
+          },
+          {
+            "optimizer": "Adam",
+            "lr": 0.0005
+          },
+          {
+            "optimizer": "SGD",
+            "lr": 0.001,
+            "momentum": 0.9
+          },
+          {
+            "optimizer": "SGD",
+            "lr": 0.003,
+            "momentum": 0.9
+          },
+          {
+            "optimizer": "SGD",
+            "lr": 0.01,
+            "momentum": 0.9
+          }
+        ],
+        "multi_factor_caution": [
+          "batch128固定",
+          "算法比较明确是optimizer+合理LR配方比较，不伪装单变量因果",
+          "先不另加scheduler",
+          "wd实现差异写进resolved config"
+        ]
+      },
+      "hold_fixed": {
+        "official_rows": "train637/valid91/test182原分区、原行序和原标签保留",
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "raw_feature_cache": "同一内容身份的原始float32 fingerprint；未补字节前blocked",
+        "split": "raw-SMILES group shuffle；基线seed43；fit573/stop64",
+        "training_seed_policy": "模型初始化/采样seed配对；split RNG独立",
+        "baseline_head": "2048→256→1 ReLU, dropout.1",
+        "optimizer": "AdamW lr.0005 weight_decay.0001",
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "target": "fit-only affine标准化，inverse回原numeric Y",
+        "early_stop": "基线internal standardized MSE；变体明确例外",
+        "frozen": "所有外部encoder参数及buffer、tokenizer/featurizer状态不更新",
+        "labels": "仅official train.Y用于训练与内部选择"
+      },
+      "split_id": "current_raw_smiles_group_seed43_fit573_stop64",
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "metric": "original_numeric_Y_MAE_on_train_only_holdouts; fixed host valid MAE only upon separate controller approval",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "reason": "暂无可靠重复run噪声和业务最小重要差，不能虚构数值阈值。",
+        "selection": "预注册train-only分组数据上比较原尺度MAE；同fold/seed配对，报告均值、中位数、每对差与不确定性；候选晋级需方向跨seed稳定且完整性门控通过。",
+        "tie_policy": "方向不稳/效果小于尚待建立的噪声尺度时判inconclusive，优先较简单/低成本配置，不读取额外valid决定。",
+        "final_generalization": "只有另行获准且未用于调参的数据评价才支持最终泛化；本valid不重新成为最终测试。",
+        "computable_directional_screen": {
+          "paired_delta_definition": "MAE(candidate, same fold and seed) - MAE(control, same fold and seed)",
+          "report": [
+            "all paired deltas",
+            "mean paired delta",
+            "median paired delta",
+            "number of negative/zero/positive deltas",
+            "between-seed and between-fold variation separately"
+          ],
+          "screen_out": "mean_delta >= 0 and median_delta >= 0 => no directional evidence to advance under this comparison",
+          "mixed_sign_or_small_effect": "inconclusive pending predeclared noise/business threshold; do not query extra valid",
+          "candidate_only": "negative mean and median with consistent paired direction may nominate confirmation, not establish generalization improvement",
+          "minimum_business_effect": null,
+          "confidence_cutoff": null,
+          "policy_status": "proposed_for_controller_review_not_a_validated_statistical_test"
+        }
+      },
+      "success_criterion": "仅在预注册对照和所有身份/冻结/标签门控通过后，train-only配对结果稳定支持该假设；报告全部seed/fold，不能以训练loss或执行成功替代。",
+      "falsification_criterion": "等epochs并不等于算法均充分收敛；Adam与AdamW的wd语义不同。 若匹配对照无一致改善、尾部代价抵消均值收益或收益只在一次valid反馈成立，则否定晋级，不继续增加自由度解释。",
+      "compute_budget": {
+        "configuration_count": 9,
+        "model_seeds": [
+          43,
+          47,
+          59
+        ],
+        "planned_training_runs_if_all_selected": 27,
+        "approved_training_runs_now": 0,
+        "executed_training_runs_this_review": 0,
+        "approved_encoder_inference_now": 0,
+        "host_fixed_score_invocations_this_review": 0,
+        "cost_assumptions": "9×3=27上限；不同算法实际早停时间未知。",
+        "budget_status": "proposal_only_not_authorized"
+      },
+      "dependencies": [
+        "W01输入/内容身份与权限合同",
+        "W03内部组划分验收",
+        "W10盲投影与反馈登记",
+        "主控另行授权实际训练、推理及评分",
+        "W06头/优化器/调度器工厂与配置校验"
+      ],
+      "within_current_scope": true,
+      "scope_interpretation": "true仅指冻结/官方train标签边界内的研究提案；不授予任何训练或推理许可。新资产未准入用false。",
+      "linked_issue_ids": [
+        "AR001-06",
+        "AR001-05"
+      ],
+      "evidence_refs": [
+        "actual-config",
+        "current-runtime-source"
+      ],
+      "hold_fixed_exception_rule": "仅change_only显式字段以及其必要shape/参数量派生字段可覆盖基线；任何其余变化必须另建配置并声明混杂。"
+    },
+    {
+      "proposal_id": "P08",
+      "direction_id": "D08",
+      "priority": "P1",
+      "tier": "followup_confirmation",
+      "status": "blocked_conditional_proposal",
+      "hypothesis": "任务MAE与MSE训练不同；稳健损失值得在monitor固定后检验。",
+      "control_run_or_config": {
+        "reference_run": "hainan-index-cycle-20261031",
+        "matched_control": "C1",
+        "reference_only_not_automatically_reusable": true,
+        "notes": "新harness/缓存/seed条件下需同版本matched control；确定性岭与新底座另列比较差异"
+      },
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": {
+          "name": "CheMeleon frozen BondMessagePassing",
+          "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "adapter_source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "adapter_source_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+          "chemprop": "2.2.1",
+          "freeze_parameters": true,
+          "freeze_buffers": true
+        },
+        "feature": {
+          "name": "2048-d mean-aggregated raw fingerprint",
+          "source_run": "hainan-index-cycle-20261031",
+          "train_array_payload_sha256_recorded": "27716ac421ac80e46adbeeb4190df93e86621f5926634e75f85679109191223a",
+          "dtype": "float32",
+          "independently_verified_array_bytes": false,
+          "cache_file_sha_is_not_array_payload_sha": true,
+          "proposal_direction": "D08"
+        },
+        "preprocess": {
+          "baseline": "legacy_z_train_fit",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "feature_statistics": "fit rows only; sd<1e-8 replaced by1 in control",
+          "target_statistics": "fit rows only; affine center/std; inverse before raw-scale metric"
+        },
+        "head": {
+          "baseline": "Linear(2048,256)-ReLU-Dropout(.1)-Linear(256,1)",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "runtime_source_sha256": "3874397451300b2b2c37eb99b5e995d53f0fcc22a7dee00c287d9ebeff65e7e0",
+          "trainable_parameter_count": 524801,
+          "proposal_version": "P08/head-spec-v1-not-materialized",
+          "proposal_code_sha256": null
+        }
+      },
+      "change_only": {
+        "axis": "损失对齐与稳健性",
+        "explicit_configurations": [
+          {
+            "loss": "MSE"
+          },
+          {
+            "loss": "L1"
+          },
+          {
+            "loss": "SmoothL1",
+            "beta": 0.25
+          },
+          {
+            "loss": "SmoothL1",
+            "beta": 0.5
+          },
+          {
+            "loss": "SmoothL1",
+            "beta": 1
+          }
+        ],
+        "multi_factor_caution": [
+          "beta是标准化目标单位，不冒称物理单位",
+          "逆变换后计算MAE",
+          "MSE控制必须使用相同MAE monitor"
+        ]
+      },
+      "hold_fixed": {
+        "official_rows": "train637/valid91/test182原分区、原行序和原标签保留",
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "raw_feature_cache": "同一内容身份的原始float32 fingerprint；未补字节前blocked",
+        "split": "raw-SMILES group shuffle；基线seed43；fit573/stop64",
+        "training_seed_policy": "模型初始化/采样seed配对；split RNG独立",
+        "baseline_head": "2048→256→1 ReLU, dropout.1",
+        "optimizer": "AdamW lr.0005 weight_decay.0001",
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "target": "fit-only affine标准化，inverse回原numeric Y",
+        "early_stop": "基线internal standardized MSE；变体明确例外",
+        "frozen": "所有外部encoder参数及buffer、tokenizer/featurizer状态不更新",
+        "labels": "仅official train.Y用于训练与内部选择"
+      },
+      "split_id": "current_raw_smiles_group_seed43_fit573_stop64",
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "metric": "original_numeric_Y_MAE_on_train_only_holdouts; fixed host valid MAE only upon separate controller approval",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "reason": "暂无可靠重复run噪声和业务最小重要差，不能虚构数值阈值。",
+        "selection": "预注册train-only分组数据上比较原尺度MAE；同fold/seed配对，报告均值、中位数、每对差与不确定性；候选晋级需方向跨seed稳定且完整性门控通过。",
+        "tie_policy": "方向不稳/效果小于尚待建立的噪声尺度时判inconclusive，优先较简单/低成本配置，不读取额外valid决定。",
+        "final_generalization": "只有另行获准且未用于调参的数据评价才支持最终泛化；本valid不重新成为最终测试。",
+        "computable_directional_screen": {
+          "paired_delta_definition": "MAE(candidate, same fold and seed) - MAE(control, same fold and seed)",
+          "report": [
+            "all paired deltas",
+            "mean paired delta",
+            "median paired delta",
+            "number of negative/zero/positive deltas",
+            "between-seed and between-fold variation separately"
+          ],
+          "screen_out": "mean_delta >= 0 and median_delta >= 0 => no directional evidence to advance under this comparison",
+          "mixed_sign_or_small_effect": "inconclusive pending predeclared noise/business threshold; do not query extra valid",
+          "candidate_only": "negative mean and median with consistent paired direction may nominate confirmation, not establish generalization improvement",
+          "minimum_business_effect": null,
+          "confidence_cutoff": null,
+          "policy_status": "proposed_for_controller_review_not_a_validated_statistical_test"
+        }
+      },
+      "success_criterion": "仅在预注册对照和所有身份/冻结/标签门控通过后，train-only配对结果稳定支持该假设；报告全部seed/fold，不能以训练loss或执行成功替代。",
+      "falsification_criterion": "L1优化更难，Huber/SmoothL1也未必改善尾部；标签尺度决定beta含义。 若匹配对照无一致改善、尾部代价抵消均值收益或收益只在一次valid反馈成立，则否定晋级，不继续增加自由度解释。",
+      "compute_budget": {
+        "configuration_count": 5,
+        "model_seeds": [
+          43,
+          47,
+          59
+        ],
+        "planned_training_runs_if_all_selected": 15,
+        "approved_training_runs_now": 0,
+        "executed_training_runs_this_review": 0,
+        "approved_encoder_inference_now": 0,
+        "host_fixed_score_invocations_this_review": 0,
+        "cost_assumptions": "5×3=15；C1可按完全同版本身份复用，不能与MSE monitor C0混作loss对照。",
+        "budget_status": "proposal_only_not_authorized"
+      },
+      "dependencies": [
+        "W01输入/内容身份与权限合同",
+        "W03内部组划分验收",
+        "W10盲投影与反馈登记",
+        "主控另行授权实际训练、推理及评分",
+        "W05 monitor/loss实现与选择日志"
+      ],
+      "within_current_scope": true,
+      "scope_interpretation": "true仅指冻结/官方train标签边界内的研究提案；不授予任何训练或推理许可。新资产未准入用false。",
+      "linked_issue_ids": [
+        "AR001-05",
+        "AR002-06"
+      ],
+      "evidence_refs": [
+        "metric",
+        "actual-config",
+        "training-process"
+      ],
+      "hold_fixed_exception_rule": "仅change_only显式字段以及其必要shape/参数量派生字段可覆盖基线；任何其余变化必须另建配置并声明混杂。"
+    },
+    {
+      "proposal_id": "P09",
+      "direction_id": "D09",
+      "priority": "P2",
+      "tier": "exploratory_reserve",
+      "status": "proposal_only",
+      "hypothesis": "单目标affine标准化改变梯度尺度；须区分目标函数等价与优化轨迹。",
+      "control_run_or_config": {
+        "reference_run": "hainan-index-cycle-20261031",
+        "matched_control": "C0",
+        "reference_only_not_automatically_reusable": true,
+        "notes": "新harness/缓存/seed条件下需同版本matched control；确定性岭与新底座另列比较差异"
+      },
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": {
+          "name": "CheMeleon frozen BondMessagePassing",
+          "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "adapter_source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "adapter_source_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+          "chemprop": "2.2.1",
+          "freeze_parameters": true,
+          "freeze_buffers": true
+        },
+        "feature": {
+          "name": "2048-d mean-aggregated raw fingerprint",
+          "source_run": "hainan-index-cycle-20261031",
+          "train_array_payload_sha256_recorded": "27716ac421ac80e46adbeeb4190df93e86621f5926634e75f85679109191223a",
+          "dtype": "float32",
+          "independently_verified_array_bytes": false,
+          "cache_file_sha_is_not_array_payload_sha": true,
+          "proposal_direction": "D09"
+        },
+        "preprocess": {
+          "baseline": "legacy_z_train_fit",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "feature_statistics": "fit rows only; sd<1e-8 replaced by1 in control",
+          "target_statistics": "fit rows only; affine center/std; inverse before raw-scale metric"
+        },
+        "head": {
+          "baseline": "Linear(2048,256)-ReLU-Dropout(.1)-Linear(256,1)",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "runtime_source_sha256": "3874397451300b2b2c37eb99b5e995d53f0fcc22a7dee00c287d9ebeff65e7e0",
+          "trainable_parameter_count": 524801,
+          "proposal_version": "P09/head-spec-v1-not-materialized",
+          "proposal_code_sha256": null
+        }
+      },
+      "change_only": {
+        "axis": "目标尺度的数值条件化",
+        "explicit_configurations": [
+          {
+            "target_transform": "raw"
+          },
+          {
+            "target_transform": "fit_center"
+          },
+          {
+            "target_transform": "fit_z"
+          }
+        ],
+        "multi_factor_caution": [
+          "不新增log/单位换算",
+          "fit-only统计",
+          "常量target std保护显式",
+          "原Y文件不重写"
+        ]
+      },
+      "hold_fixed": {
+        "official_rows": "train637/valid91/test182原分区、原行序和原标签保留",
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "raw_feature_cache": "同一内容身份的原始float32 fingerprint；未补字节前blocked",
+        "split": "raw-SMILES group shuffle；基线seed43；fit573/stop64",
+        "training_seed_policy": "模型初始化/采样seed配对；split RNG独立",
+        "baseline_head": "2048→256→1 ReLU, dropout.1",
+        "optimizer": "AdamW lr.0005 weight_decay.0001",
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "target": "fit-only affine标准化，inverse回原numeric Y",
+        "early_stop": "基线internal standardized MSE；变体明确例外",
+        "frozen": "所有外部encoder参数及buffer、tokenizer/featurizer状态不更新",
+        "labels": "仅official train.Y用于训练与内部选择"
+      },
+      "split_id": "current_raw_smiles_group_seed43_fit573_stop64",
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "metric": "original_numeric_Y_MAE_on_train_only_holdouts; fixed host valid MAE only upon separate controller approval",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "reason": "暂无可靠重复run噪声和业务最小重要差，不能虚构数值阈值。",
+        "selection": "预注册train-only分组数据上比较原尺度MAE；同fold/seed配对，报告均值、中位数、每对差与不确定性；候选晋级需方向跨seed稳定且完整性门控通过。",
+        "tie_policy": "方向不稳/效果小于尚待建立的噪声尺度时判inconclusive，优先较简单/低成本配置，不读取额外valid决定。",
+        "final_generalization": "只有另行获准且未用于调参的数据评价才支持最终泛化；本valid不重新成为最终测试。",
+        "computable_directional_screen": {
+          "paired_delta_definition": "MAE(candidate, same fold and seed) - MAE(control, same fold and seed)",
+          "report": [
+            "all paired deltas",
+            "mean paired delta",
+            "median paired delta",
+            "number of negative/zero/positive deltas",
+            "between-seed and between-fold variation separately"
+          ],
+          "screen_out": "mean_delta >= 0 and median_delta >= 0 => no directional evidence to advance under this comparison",
+          "mixed_sign_or_small_effect": "inconclusive pending predeclared noise/business threshold; do not query extra valid",
+          "candidate_only": "negative mean and median with consistent paired direction may nominate confirmation, not establish generalization improvement",
+          "minimum_business_effect": null,
+          "confidence_cutoff": null,
+          "policy_status": "proposed_for_controller_review_not_a_validated_statistical_test"
+        }
+      },
+      "success_criterion": "仅在预注册对照和所有身份/冻结/标签门控通过后，train-only配对结果稳定支持该假设；报告全部seed/fold，不能以训练loss或执行成功替代。",
+      "falsification_criterion": "固定正尺度下标准化MSE与原MSE排序等价，不能把MSE/MAE选轮分歧归因z化。 若匹配对照无一致改善、尾部代价抵消均值收益或收益只在一次valid反馈成立，则否定晋级，不继续增加自由度解释。",
+      "compute_budget": {
+        "configuration_count": 3,
+        "model_seeds": [
+          43,
+          47,
+          59
+        ],
+        "planned_training_runs_if_all_selected": 9,
+        "approved_training_runs_now": 0,
+        "executed_training_runs_this_review": 0,
+        "approved_encoder_inference_now": 0,
+        "host_fixed_score_invocations_this_review": 0,
+        "cost_assumptions": "3×3=9潜在；代数/静态检查0训练。",
+        "budget_status": "proposal_only_not_authorized"
+      },
+      "dependencies": [
+        "W01输入/内容身份与权限合同",
+        "W03内部组划分验收",
+        "W10盲投影与反馈登记",
+        "主控另行授权实际训练、推理及评分"
+      ],
+      "within_current_scope": true,
+      "scope_interpretation": "true仅指冻结/官方train标签边界内的研究提案；不授予任何训练或推理许可。新资产未准入用false。",
+      "linked_issue_ids": [
+        "U01",
+        "AR001-05"
+      ],
+      "evidence_refs": [
+        "current-runtime-source",
+        "metric"
+      ],
+      "hold_fixed_exception_rule": "仅change_only显式字段以及其必要shape/参数量派生字段可覆盖基线；任何其余变化必须另建配置并声明混杂。"
+    },
+    {
+      "proposal_id": "P10",
+      "direction_id": "D10",
+      "priority": "P2",
+      "tier": "exploratory_reserve",
+      "status": "blocked_conditional_proposal",
+      "hypothesis": "已有小数值差可能影响逐步训练；首先验证同一raw数组。",
+      "control_run_or_config": {
+        "reference_run": "hainan-index-cycle-20261031",
+        "matched_control": "C0",
+        "reference_only_not_automatically_reusable": true,
+        "notes": "新harness/缓存/seed条件下需同版本matched control；确定性岭与新底座另列比较差异"
+      },
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": {
+          "name": "CheMeleon frozen BondMessagePassing",
+          "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "adapter_source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "adapter_source_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+          "chemprop": "2.2.1",
+          "freeze_parameters": true,
+          "freeze_buffers": true
+        },
+        "feature": {
+          "name": "2048-d mean-aggregated raw fingerprint",
+          "source_run": "hainan-index-cycle-20261031",
+          "train_array_payload_sha256_recorded": "27716ac421ac80e46adbeeb4190df93e86621f5926634e75f85679109191223a",
+          "dtype": "float32",
+          "independently_verified_array_bytes": false,
+          "cache_file_sha_is_not_array_payload_sha": true,
+          "proposal_direction": "D10"
+        },
+        "preprocess": {
+          "baseline": "legacy_z_train_fit",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "feature_statistics": "fit rows only; sd<1e-8 replaced by1 in control",
+          "target_statistics": "fit rows only; affine center/std; inverse before raw-scale metric"
+        },
+        "head": {
+          "baseline": "Linear(2048,256)-ReLU-Dropout(.1)-Linear(256,1)",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "runtime_source_sha256": "3874397451300b2b2c37eb99b5e995d53f0fcc22a7dee00c287d9ebeff65e7e0",
+          "trainable_parameter_count": 524801,
+          "proposal_version": "P10/head-spec-v1-not-materialized",
+          "proposal_code_sha256": null
+        }
+      },
+      "change_only": {
+        "axis": "原始缓存精度与复用",
+        "explicit_configurations": [
+          {
+            "statistics_dtype": "float64",
+            "tensor_dtype": "float32"
+          },
+          {
+            "statistics_dtype": "float32",
+            "tensor_dtype": "float32"
+          }
+        ],
+        "multi_factor_caution": [
+          "两个arm必须同raw cache",
+          "同统计定义/行索引/舍入时点",
+          "不把CPU/GPU新推理加进缓存实验"
+        ]
+      },
+      "hold_fixed": {
+        "official_rows": "train637/valid91/test182原分区、原行序和原标签保留",
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "raw_feature_cache": "同一内容身份的原始float32 fingerprint；未补字节前blocked",
+        "split": "raw-SMILES group shuffle；基线seed43；fit573/stop64",
+        "training_seed_policy": "模型初始化/采样seed配对；split RNG独立",
+        "baseline_head": "2048→256→1 ReLU, dropout.1",
+        "optimizer": "AdamW lr.0005 weight_decay.0001",
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "target": "fit-only affine标准化，inverse回原numeric Y",
+        "early_stop": "基线internal standardized MSE；变体明确例外",
+        "frozen": "所有外部encoder参数及buffer、tokenizer/featurizer状态不更新",
+        "labels": "仅official train.Y用于训练与内部选择"
+      },
+      "split_id": "current_raw_smiles_group_seed43_fit573_stop64",
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "metric": "original_numeric_Y_MAE_on_train_only_holdouts; fixed host valid MAE only upon separate controller approval",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "reason": "暂无可靠重复run噪声和业务最小重要差，不能虚构数值阈值。",
+        "selection": "预注册train-only分组数据上比较原尺度MAE；同fold/seed配对，报告均值、中位数、每对差与不确定性；候选晋级需方向跨seed稳定且完整性门控通过。",
+        "tie_policy": "方向不稳/效果小于尚待建立的噪声尺度时判inconclusive，优先较简单/低成本配置，不读取额外valid决定。",
+        "final_generalization": "只有另行获准且未用于调参的数据评价才支持最终泛化；本valid不重新成为最终测试。",
+        "computable_directional_screen": {
+          "paired_delta_definition": "MAE(candidate, same fold and seed) - MAE(control, same fold and seed)",
+          "report": [
+            "all paired deltas",
+            "mean paired delta",
+            "median paired delta",
+            "number of negative/zero/positive deltas",
+            "between-seed and between-fold variation separately"
+          ],
+          "screen_out": "mean_delta >= 0 and median_delta >= 0 => no directional evidence to advance under this comparison",
+          "mixed_sign_or_small_effect": "inconclusive pending predeclared noise/business threshold; do not query extra valid",
+          "candidate_only": "negative mean and median with consistent paired direction may nominate confirmation, not establish generalization improvement",
+          "minimum_business_effect": null,
+          "confidence_cutoff": null,
+          "policy_status": "proposed_for_controller_review_not_a_validated_statistical_test"
+        }
+      },
+      "success_criterion": "仅在预注册对照和所有身份/冻结/标签门控通过后，train-only配对结果稳定支持该假设；报告全部seed/fold，不能以训练loss或执行成功替代。",
+      "falsification_criterion": "NPZ压缩字节差不是array差，浮点微差不是已证明得分原因。 若匹配对照无一致改善、尾部代价抵消均值收益或收益只在一次valid反馈成立，则否定晋级，不继续增加自由度解释。",
+      "compute_budget": {
+        "configuration_count": 2,
+        "model_seeds": [
+          43,
+          47,
+          59
+        ],
+        "planned_training_runs_if_all_selected": 6,
+        "approved_training_runs_now": 0,
+        "executed_training_runs_this_review": 0,
+        "approved_encoder_inference_now": 0,
+        "host_fixed_score_invocations_this_review": 0,
+        "cost_assumptions": "2×3=6潜在；只读缓存核验0训练；未获得raw数组则blocked。",
+        "budget_status": "proposal_only_not_authorized"
+      },
+      "dependencies": [
+        "W01输入/内容身份与权限合同",
+        "W03内部组划分验收",
+        "W10盲投影与反馈登记",
+        "主控另行授权实际训练、推理及评分",
+        "W04安全数组读取、缓存身份和fit-only变换"
+      ],
+      "within_current_scope": true,
+      "scope_interpretation": "true仅指冻结/官方train标签边界内的研究提案；不授予任何训练或推理许可。新资产未准入用false。",
+      "linked_issue_ids": [
+        "AR001-08",
+        "AR001-04",
+        "AR002-01"
+      ],
+      "evidence_refs": [
+        "historical-primary-cache",
+        "training-process",
+        "current-runtime-source"
+      ],
+      "hold_fixed_exception_rule": "仅change_only显式字段以及其必要shape/参数量派生字段可覆盖基线；任何其余变化必须另建配置并声明混杂。"
+    },
+    {
+      "proposal_id": "P11",
+      "direction_id": "D11",
+      "priority": "P1",
+      "tier": "followup_confirmation",
+      "status": "blocked_conditional_proposal",
+      "hypothesis": "简单头用于分解表示质量和MLP复杂度，信息量高。",
+      "control_run_or_config": {
+        "reference_run": "hainan-index-cycle-20261031",
+        "matched_control": "C0",
+        "reference_only_not_automatically_reusable": true,
+        "notes": "新harness/缓存/seed条件下需同版本matched control；确定性岭与新底座另列比较差异"
+      },
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": {
+          "name": "CheMeleon frozen BondMessagePassing",
+          "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "adapter_source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "adapter_source_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+          "chemprop": "2.2.1",
+          "freeze_parameters": true,
+          "freeze_buffers": true
+        },
+        "feature": {
+          "name": "2048-d mean-aggregated raw fingerprint",
+          "source_run": "hainan-index-cycle-20261031",
+          "train_array_payload_sha256_recorded": "27716ac421ac80e46adbeeb4190df93e86621f5926634e75f85679109191223a",
+          "dtype": "float32",
+          "independently_verified_array_bytes": false,
+          "cache_file_sha_is_not_array_payload_sha": true,
+          "proposal_direction": "D11"
+        },
+        "preprocess": {
+          "baseline": "legacy_z_train_fit",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "feature_statistics": "fit rows only; sd<1e-8 replaced by1 in control",
+          "target_statistics": "fit rows only; affine center/std; inverse before raw-scale metric"
+        },
+        "head": {
+          "baseline": "Linear(2048,256)-ReLU-Dropout(.1)-Linear(256,1)",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "runtime_source_sha256": "3874397451300b2b2c37eb99b5e995d53f0fcc22a7dee00c287d9ebeff65e7e0",
+          "trainable_parameter_count": 524801,
+          "proposal_version": "P11/head-spec-v1-not-materialized",
+          "proposal_code_sha256": null
+        }
+      },
+      "change_only": {
+        "axis": "线性与岭头基线",
+        "explicit_configurations": [
+          {
+            "lambda": 0,
+            "objective": "mean_squared_error + lambda * squared_weight_norm",
+            "intercept_penalized": false
+          },
+          {
+            "lambda": 0.0001,
+            "objective": "mean_squared_error + lambda * squared_weight_norm",
+            "intercept_penalized": false
+          },
+          {
+            "lambda": 0.001,
+            "objective": "mean_squared_error + lambda * squared_weight_norm",
+            "intercept_penalized": false
+          },
+          {
+            "lambda": 0.01,
+            "objective": "mean_squared_error + lambda * squared_weight_norm",
+            "intercept_penalized": false
+          },
+          {
+            "lambda": 0.1,
+            "objective": "mean_squared_error + lambda * squared_weight_norm",
+            "intercept_penalized": false
+          },
+          {
+            "lambda": 1,
+            "objective": "mean_squared_error + lambda * squared_weight_norm",
+            "intercept_penalized": false
+          },
+          {
+            "lambda": 10,
+            "objective": "mean_squared_error + lambda * squared_weight_norm",
+            "intercept_penalized": false
+          }
+        ],
+        "multi_factor_caution": [
+          "不惩罚截距",
+          "lambda0用明确min-norm SVD；不盲求奇异矩阵逆",
+          "与MLP共享raw cache及fit-only变换",
+          "不把固定split中的重复求解当方差估计"
+        ]
+      },
+      "hold_fixed": {
+        "official_rows": "train637/valid91/test182原分区、原行序和原标签保留",
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "raw_feature_cache": "同一内容身份的原始float32 fingerprint；未补字节前blocked",
+        "split": "raw-SMILES group shuffle；基线seed43；fit573/stop64",
+        "training_seed_policy": "模型初始化/采样seed配对；split RNG独立",
+        "baseline_head": "2048→256→1 ReLU, dropout.1",
+        "optimizer": "AdamW lr.0005 weight_decay.0001",
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "target": "fit-only affine标准化，inverse回原numeric Y",
+        "early_stop": "基线internal standardized MSE；变体明确例外",
+        "frozen": "所有外部encoder参数及buffer、tokenizer/featurizer状态不更新",
+        "labels": "仅official train.Y用于训练与内部选择"
+      },
+      "split_id": "current_raw_smiles_group_seed43_fit573_stop64",
+      "seeds": [],
+      "metric": "original_numeric_Y_MAE_on_train_only_holdouts; fixed host valid MAE only upon separate controller approval",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "reason": "暂无可靠重复run噪声和业务最小重要差，不能虚构数值阈值。",
+        "selection": "预注册train-only分组数据上比较原尺度MAE；同fold/seed配对，报告均值、中位数、每对差与不确定性；候选晋级需方向跨seed稳定且完整性门控通过。",
+        "tie_policy": "方向不稳/效果小于尚待建立的噪声尺度时判inconclusive，优先较简单/低成本配置，不读取额外valid决定。",
+        "final_generalization": "只有另行获准且未用于调参的数据评价才支持最终泛化；本valid不重新成为最终测试。",
+        "computable_directional_screen": {
+          "paired_delta_definition": "MAE(candidate, same fold and seed) - MAE(control, same fold and seed)",
+          "report": [
+            "all paired deltas",
+            "mean paired delta",
+            "median paired delta",
+            "number of negative/zero/positive deltas",
+            "between-seed and between-fold variation separately"
+          ],
+          "screen_out": "mean_delta >= 0 and median_delta >= 0 => no directional evidence to advance under this comparison",
+          "mixed_sign_or_small_effect": "inconclusive pending predeclared noise/business threshold; do not query extra valid",
+          "candidate_only": "negative mean and median with consistent paired direction may nominate confirmation, not establish generalization improvement",
+          "minimum_business_effect": null,
+          "confidence_cutoff": null,
+          "policy_status": "proposed_for_controller_review_not_a_validated_statistical_test"
+        }
+      },
+      "success_criterion": "仅在预注册对照和所有身份/冻结/标签门控通过后，train-only配对结果稳定支持该假设；报告全部seed/fold，不能以训练loss或执行成功替代。",
+      "falsification_criterion": "线性可能欠拟合；不能因参数少预期必胜。 若匹配对照无一致改善、尾部代价抵消均值收益或收益只在一次valid反馈成立，则否定晋级，不继续增加自由度解释。",
+      "compute_budget": {
+        "configuration_count": 7,
+        "model_seeds": [],
+        "planned_training_runs_if_all_selected": 7,
+        "approved_training_runs_now": 0,
+        "executed_training_runs_this_review": 0,
+        "approved_encoder_inference_now": 0,
+        "host_fixed_score_invocations_this_review": 0,
+        "cost_assumptions": "7配置×1确定性fit=7；不同外层split属于P12另计。",
+        "budget_status": "proposal_only_not_authorized"
+      },
+      "dependencies": [
+        "W01输入/内容身份与权限合同",
+        "W03内部组划分验收",
+        "W10盲投影与反馈登记",
+        "主控另行授权实际训练、推理及评分",
+        "W06头/优化器/调度器工厂与配置校验",
+        "W04安全数组读取、缓存身份和fit-only变换"
+      ],
+      "within_current_scope": true,
+      "scope_interpretation": "true仅指冻结/官方train标签边界内的研究提案；不授予任何训练或推理许可。新资产未准入用false。",
+      "linked_issue_ids": [
+        "AR001-13",
+        "AR001-02"
+      ],
+      "evidence_refs": [
+        "encoder",
+        "actual-config",
+        "records/numeric_checks.json"
+      ],
+      "hold_fixed_exception_rule": "仅change_only显式字段以及其必要shape/参数量派生字段可覆盖基线；任何其余变化必须另建配置并声明混杂。"
+    },
+    {
+      "proposal_id": "P12",
+      "direction_id": "D12",
+      "priority": "P1",
+      "tier": "followup_confirmation",
+      "status": "blocked_conditional_proposal",
+      "hypothesis": "同一内部stop既早停又选模型会乐观；把外层比较与内层选轮分开。",
+      "control_run_or_config": {
+        "reference_run": "hainan-index-cycle-20261031",
+        "matched_control": "C0",
+        "reference_only_not_automatically_reusable": true,
+        "notes": "新harness/缓存/seed条件下需同版本matched control；确定性岭与新底座另列比较差异"
+      },
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": {
+          "name": "CheMeleon frozen BondMessagePassing",
+          "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "adapter_source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "adapter_source_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+          "chemprop": "2.2.1",
+          "freeze_parameters": true,
+          "freeze_buffers": true
+        },
+        "feature": {
+          "name": "2048-d mean-aggregated raw fingerprint",
+          "source_run": "hainan-index-cycle-20261031",
+          "train_array_payload_sha256_recorded": "27716ac421ac80e46adbeeb4190df93e86621f5926634e75f85679109191223a",
+          "dtype": "float32",
+          "independently_verified_array_bytes": false,
+          "cache_file_sha_is_not_array_payload_sha": true,
+          "proposal_direction": "D12"
+        },
+        "preprocess": {
+          "baseline": "legacy_z_train_fit",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "feature_statistics": "fit rows only; sd<1e-8 replaced by1 in control",
+          "target_statistics": "fit rows only; affine center/std; inverse before raw-scale metric"
+        },
+        "head": {
+          "baseline": "Linear(2048,256)-ReLU-Dropout(.1)-Linear(256,1)",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "runtime_source_sha256": "3874397451300b2b2c37eb99b5e995d53f0fcc22a7dee00c287d9ebeff65e7e0",
+          "trainable_parameter_count": 524801,
+          "proposal_version": "P12/head-spec-v1-not-materialized",
+          "proposal_code_sha256": null
+        }
+      },
+      "change_only": {
+        "axis": "共同seed与嵌套train-only确认",
+        "explicit_configurations": [
+          {
+            "selected_config": "control_locked_before_outer_read"
+          },
+          {
+            "selected_config": "one_candidate_locked_before_outer_read"
+          }
+        ],
+        "multi_factor_caution": [
+          "外层holdout不用于选epoch/变换/候选筛选",
+          "每fold统计仅inner-fit；样本数按实际group分配记录",
+          "外层结果开放前锁定2个配置",
+          "不重复使用official valid选配方"
+        ]
+      },
+      "hold_fixed": {
+        "official_rows": "train637/valid91/test182原分区、原行序和原标签保留",
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "raw_feature_cache": "同一内容身份的原始float32 fingerprint；未补字节前blocked",
+        "split": "raw-SMILES group shuffle；基线seed43；fit573/stop64",
+        "training_seed_policy": "模型初始化/采样seed配对；split RNG独立",
+        "baseline_head": "2048→256→1 ReLU, dropout.1",
+        "optimizer": "AdamW lr.0005 weight_decay.0001",
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "target": "fit-only affine标准化，inverse回原numeric Y",
+        "early_stop": "基线internal standardized MSE；变体明确例外",
+        "frozen": "所有外部encoder参数及buffer、tokenizer/featurizer状态不更新",
+        "labels": "仅official train.Y用于训练与内部选择"
+      },
+      "split_id": "nested_raw_group_3fold_outer_seed101_inner_seed43_proposed",
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "metric": "original_numeric_Y_MAE_on_train_only_holdouts; fixed host valid MAE only upon separate controller approval",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "reason": "暂无可靠重复run噪声和业务最小重要差，不能虚构数值阈值。",
+        "selection": "预注册train-only分组数据上比较原尺度MAE；同fold/seed配对，报告均值、中位数、每对差与不确定性；候选晋级需方向跨seed稳定且完整性门控通过。",
+        "tie_policy": "方向不稳/效果小于尚待建立的噪声尺度时判inconclusive，优先较简单/低成本配置，不读取额外valid决定。",
+        "final_generalization": "只有另行获准且未用于调参的数据评价才支持最终泛化；本valid不重新成为最终测试。",
+        "computable_directional_screen": {
+          "paired_delta_definition": "MAE(candidate, same fold and seed) - MAE(control, same fold and seed)",
+          "report": [
+            "all paired deltas",
+            "mean paired delta",
+            "median paired delta",
+            "number of negative/zero/positive deltas",
+            "between-seed and between-fold variation separately"
+          ],
+          "screen_out": "mean_delta >= 0 and median_delta >= 0 => no directional evidence to advance under this comparison",
+          "mixed_sign_or_small_effect": "inconclusive pending predeclared noise/business threshold; do not query extra valid",
+          "candidate_only": "negative mean and median with consistent paired direction may nominate confirmation, not establish generalization improvement",
+          "minimum_business_effect": null,
+          "confidence_cutoff": null,
+          "policy_status": "proposed_for_controller_review_not_a_validated_statistical_test"
+        }
+      },
+      "success_criterion": "仅在预注册对照和所有身份/冻结/标签门控通过后，train-only配对结果稳定支持该假设；报告全部seed/fold，不能以训练loss或执行成功替代。",
+      "falsification_criterion": "嵌套train-only估计仍不是全新最终测试；只有少量fold/seed不能提供精确总体置信度。 若匹配对照无一致改善、尾部代价抵消均值收益或收益只在一次valid反馈成立，则否定晋级，不继续增加自由度解释。",
+      "compute_budget": {
+        "configuration_count": 2,
+        "model_seeds": [
+          43,
+          47,
+          59
+        ],
+        "planned_training_runs_if_all_selected": 18,
+        "approved_training_runs_now": 0,
+        "executed_training_runs_this_review": 0,
+        "approved_encoder_inference_now": 0,
+        "host_fixed_score_invocations_this_review": 0,
+        "cost_assumptions": "2×3×3=18训练；不声称独立18个统计样本；共享fold与seed做paired汇总。",
+        "budget_status": "proposal_only_not_authorized"
+      },
+      "dependencies": [
+        "W01输入/内容身份与权限合同",
+        "W03内部组划分验收",
+        "W10盲投影与反馈登记",
+        "主控另行授权实际训练、推理及评分",
+        "W07外层未开放前锁定两个配置"
+      ],
+      "within_current_scope": true,
+      "scope_interpretation": "true仅指冻结/官方train标签边界内的研究提案；不授予任何训练或推理许可。新资产未准入用false。",
+      "linked_issue_ids": [
+        "AR001-02",
+        "AR001-03",
+        "AR001-12"
+      ],
+      "evidence_refs": [
+        "evaluation-use-history",
+        "actual-science",
+        "internal-split"
+      ],
+      "hold_fixed_exception_rule": "仅change_only显式字段以及其必要shape/参数量派生字段可覆盖基线；任何其余变化必须另建配置并声明混杂。"
+    },
+    {
+      "proposal_id": "P13",
+      "direction_id": "D13",
+      "priority": "P2",
+      "tier": "exploratory_reserve",
+      "status": "proposal_only",
+      "hypothesis": "raw字符串隔离不等于化学身份/骨架隔离；应量化相关性。",
+      "control_run_or_config": {
+        "reference_run": "hainan-index-cycle-20261031",
+        "matched_control": "C0",
+        "reference_only_not_automatically_reusable": true,
+        "notes": "新harness/缓存/seed条件下需同版本matched control；确定性岭与新底座另列比较差异"
+      },
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": {
+          "name": "CheMeleon frozen BondMessagePassing",
+          "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "adapter_source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "adapter_source_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+          "chemprop": "2.2.1",
+          "freeze_parameters": true,
+          "freeze_buffers": true
+        },
+        "feature": {
+          "name": "2048-d mean-aggregated raw fingerprint",
+          "source_run": "hainan-index-cycle-20261031",
+          "train_array_payload_sha256_recorded": "27716ac421ac80e46adbeeb4190df93e86621f5926634e75f85679109191223a",
+          "dtype": "float32",
+          "independently_verified_array_bytes": false,
+          "cache_file_sha_is_not_array_payload_sha": true,
+          "proposal_direction": "D13"
+        },
+        "preprocess": {
+          "baseline": "legacy_z_train_fit",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "feature_statistics": "fit rows only; sd<1e-8 replaced by1 in control",
+          "target_statistics": "fit rows only; affine center/std; inverse before raw-scale metric"
+        },
+        "head": {
+          "baseline": "Linear(2048,256)-ReLU-Dropout(.1)-Linear(256,1)",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "runtime_source_sha256": "3874397451300b2b2c37eb99b5e995d53f0fcc22a7dee00c287d9ebeff65e7e0",
+          "trainable_parameter_count": 524801,
+          "proposal_version": "P13/head-spec-v1-not-materialized",
+          "proposal_code_sha256": null
+        }
+      },
+      "change_only": {
+        "axis": "结构相关性与分组敏感性",
+        "explicit_configurations": [
+          {
+            "group_annotation": "raw"
+          },
+          {
+            "group_annotation": "canonical_annotation_only"
+          },
+          {
+            "group_annotation": "scaffold_annotation_only"
+          }
+        ],
+        "multi_factor_caution": [
+          "不修改Drug输入或原Y，不去重、不改官方分区",
+          "canonical/scaffold只作为内部train分配注释",
+          "RDKit版本锁定且失败不删行，需明示失败组策略"
+        ]
+      },
+      "hold_fixed": {
+        "official_rows": "train637/valid91/test182原分区、原行序和原标签保留",
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "raw_feature_cache": "同一内容身份的原始float32 fingerprint；未补字节前blocked",
+        "split": "raw-SMILES group shuffle；基线seed43；fit573/stop64",
+        "training_seed_policy": "模型初始化/采样seed配对；split RNG独立",
+        "baseline_head": "2048→256→1 ReLU, dropout.1",
+        "optimizer": "AdamW lr.0005 weight_decay.0001",
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "target": "fit-only affine标准化，inverse回原numeric Y",
+        "early_stop": "基线internal standardized MSE；变体明确例外",
+        "frozen": "所有外部encoder参数及buffer、tokenizer/featurizer状态不更新",
+        "labels": "仅official train.Y用于训练与内部选择"
+      },
+      "split_id": "train_only_group_definition_ablation_proposed",
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "metric": "original_numeric_Y_MAE_on_train_only_holdouts; fixed host valid MAE only upon separate controller approval",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "reason": "暂无可靠重复run噪声和业务最小重要差，不能虚构数值阈值。",
+        "selection": "预注册train-only分组数据上比较原尺度MAE；同fold/seed配对，报告均值、中位数、每对差与不确定性；候选晋级需方向跨seed稳定且完整性门控通过。",
+        "tie_policy": "方向不稳/效果小于尚待建立的噪声尺度时判inconclusive，优先较简单/低成本配置，不读取额外valid决定。",
+        "final_generalization": "只有另行获准且未用于调参的数据评价才支持最终泛化；本valid不重新成为最终测试。",
+        "computable_directional_screen": {
+          "paired_delta_definition": "MAE(candidate, same fold and seed) - MAE(control, same fold and seed)",
+          "report": [
+            "all paired deltas",
+            "mean paired delta",
+            "median paired delta",
+            "number of negative/zero/positive deltas",
+            "between-seed and between-fold variation separately"
+          ],
+          "screen_out": "mean_delta >= 0 and median_delta >= 0 => no directional evidence to advance under this comparison",
+          "mixed_sign_or_small_effect": "inconclusive pending predeclared noise/business threshold; do not query extra valid",
+          "candidate_only": "negative mean and median with consistent paired direction may nominate confirmation, not establish generalization improvement",
+          "minimum_business_effect": null,
+          "confidence_cutoff": null,
+          "policy_status": "proposed_for_controller_review_not_a_validated_statistical_test"
+        }
+      },
+      "success_criterion": "仅在预注册对照和所有身份/冻结/标签门控通过后，train-only配对结果稳定支持该假设；报告全部seed/fold，不能以训练loss或执行成功替代。",
+      "falsification_criterion": "更难的内部split不能直接与旧分数比较；不同分组定义会改变估计目标。 若匹配对照无一致改善、尾部代价抵消均值收益或收益只在一次valid反馈成立，则否定晋级，不继续增加自由度解释。",
+      "compute_budget": {
+        "configuration_count": 3,
+        "model_seeds": [
+          43,
+          47,
+          59
+        ],
+        "planned_training_runs_if_all_selected": 9,
+        "approved_training_runs_now": 0,
+        "executed_training_runs_this_review": 0,
+        "approved_encoder_inference_now": 0,
+        "host_fixed_score_invocations_this_review": 0,
+        "cost_assumptions": "3定义×3seed=9；仅注释准备0训练；新encoder推理不需要。",
+        "budget_status": "proposal_only_not_authorized"
+      },
+      "dependencies": [
+        "W01输入/内容身份与权限合同",
+        "W03内部组划分验收",
+        "W10盲投影与反馈登记",
+        "主控另行授权实际训练、推理及评分"
+      ],
+      "within_current_scope": true,
+      "scope_interpretation": "true仅指冻结/官方train标签边界内的研究提案；不授予任何训练或推理许可。新资产未准入用false。",
+      "linked_issue_ids": [
+        "AR001-03",
+        "AR001-12"
+      ],
+      "evidence_refs": [
+        "actual-science",
+        "historical-primary-cache"
+      ],
+      "hold_fixed_exception_rule": "仅change_only显式字段以及其必要shape/参数量派生字段可覆盖基线；任何其余变化必须另建配置并声明混杂。"
+    },
+    {
+      "proposal_id": "P14",
+      "direction_id": "D14",
+      "priority": "P2",
+      "tier": "exploratory_reserve",
+      "status": "blocked_conditional_proposal",
+      "hypothesis": "固定message passing后改变池化可能保留不同分子尺度信息。",
+      "control_run_or_config": {
+        "reference_run": "hainan-index-cycle-20261031",
+        "matched_control": "C0",
+        "reference_only_not_automatically_reusable": true,
+        "notes": "新harness/缓存/seed条件下需同版本matched control；确定性岭与新底座另列比较差异"
+      },
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": {
+          "name": "CheMeleon frozen BondMessagePassing",
+          "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "adapter_source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "adapter_source_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+          "chemprop": "2.2.1",
+          "freeze_parameters": true,
+          "freeze_buffers": true
+        },
+        "feature": {
+          "name": "2048-d mean-aggregated raw fingerprint",
+          "source_run": "hainan-index-cycle-20261031",
+          "train_array_payload_sha256_recorded": "27716ac421ac80e46adbeeb4190df93e86621f5926634e75f85679109191223a",
+          "dtype": "float32",
+          "independently_verified_array_bytes": false,
+          "cache_file_sha_is_not_array_payload_sha": true,
+          "proposal_direction": "D14",
+          "candidate_dimensions": [
+            2048,
+            4096
+          ],
+          "new_cache_required": true
+        },
+        "preprocess": {
+          "baseline": "legacy_z_train_fit",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "feature_statistics": "fit rows only; sd<1e-8 replaced by1 in control",
+          "target_statistics": "fit rows only; affine center/std; inverse before raw-scale metric"
+        },
+        "head": {
+          "baseline": "Linear(2048,256)-ReLU-Dropout(.1)-Linear(256,1)",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "runtime_source_sha256": "3874397451300b2b2c37eb99b5e995d53f0fcc22a7dee00c287d9ebeff65e7e0",
+          "trainable_parameter_count": 524801,
+          "proposal_version": "P14/head-spec-v1-not-materialized",
+          "proposal_code_sha256": null
+        }
+      },
+      "change_only": {
+        "axis": "冻结表示池化",
+        "explicit_configurations": [
+          {
+            "pooling": "mean",
+            "feature_dim": 2048
+          },
+          {
+            "pooling": "sum",
+            "feature_dim": 2048
+          },
+          {
+            "pooling": "max",
+            "feature_dim": 2048
+          },
+          {
+            "pooling": "mean_concat_max",
+            "feature_dim": 4096
+          }
+        ],
+        "multi_factor_caution": [
+          "encoder参数buffer不变",
+          "新aggregation不含拟合state；有state须单列许可",
+          "头宽固定256并同时报告concat参数翻倍混杂；后续可加等参数对照但不计入本12"
+        ]
+      },
+      "hold_fixed": {
+        "official_rows": "train637/valid91/test182原分区、原行序和原标签保留",
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "raw_feature_cache": "同一内容身份的原始float32 fingerprint；未补字节前blocked",
+        "split": "raw-SMILES group shuffle；基线seed43；fit573/stop64",
+        "training_seed_policy": "模型初始化/采样seed配对；split RNG独立",
+        "baseline_head": "2048→256→1 ReLU, dropout.1",
+        "optimizer": "AdamW lr.0005 weight_decay.0001",
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "target": "fit-only affine标准化，inverse回原numeric Y",
+        "early_stop": "基线internal standardized MSE；变体明确例外",
+        "frozen": "所有外部encoder参数及buffer、tokenizer/featurizer状态不更新",
+        "labels": "仅official train.Y用于训练与内部选择"
+      },
+      "split_id": "current_raw_smiles_group_seed43_fit573_stop64",
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "metric": "original_numeric_Y_MAE_on_train_only_holdouts; fixed host valid MAE only upon separate controller approval",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "reason": "暂无可靠重复run噪声和业务最小重要差，不能虚构数值阈值。",
+        "selection": "预注册train-only分组数据上比较原尺度MAE；同fold/seed配对，报告均值、中位数、每对差与不确定性；候选晋级需方向跨seed稳定且完整性门控通过。",
+        "tie_policy": "方向不稳/效果小于尚待建立的噪声尺度时判inconclusive，优先较简单/低成本配置，不读取额外valid决定。",
+        "final_generalization": "只有另行获准且未用于调参的数据评价才支持最终泛化；本valid不重新成为最终测试。",
+        "computable_directional_screen": {
+          "paired_delta_definition": "MAE(candidate, same fold and seed) - MAE(control, same fold and seed)",
+          "report": [
+            "all paired deltas",
+            "mean paired delta",
+            "median paired delta",
+            "number of negative/zero/positive deltas",
+            "between-seed and between-fold variation separately"
+          ],
+          "screen_out": "mean_delta >= 0 and median_delta >= 0 => no directional evidence to advance under this comparison",
+          "mixed_sign_or_small_effect": "inconclusive pending predeclared noise/business threshold; do not query extra valid",
+          "candidate_only": "negative mean and median with consistent paired direction may nominate confirmation, not establish generalization improvement",
+          "minimum_business_effect": null,
+          "confidence_cutoff": null,
+          "policy_status": "proposed_for_controller_review_not_a_validated_statistical_test"
+        }
+      },
+      "success_criterion": "仅在预注册对照和所有身份/冻结/标签门控通过后，train-only配对结果稳定支持该假设；报告全部seed/fold，不能以训练loss或执行成功替代。",
+      "falsification_criterion": "sum易受分子规模影响；concat改变维度/头参数量，不是纯信息优势证据。 若匹配对照无一致改善、尾部代价抵消均值收益或收益只在一次valid反馈成立，则否定晋级，不继续增加自由度解释。",
+      "compute_budget": {
+        "configuration_count": 4,
+        "model_seeds": [
+          43,
+          47,
+          59
+        ],
+        "planned_training_runs_if_all_selected": 12,
+        "approved_training_runs_now": 0,
+        "executed_training_runs_this_review": 0,
+        "approved_encoder_inference_now": 0,
+        "host_fixed_score_invocations_this_review": 0,
+        "cost_assumptions": "4×3=12头训练，另需最多4套池化cache（可一次冻结MP派生，需实现验收）；当前推理预算0。",
+        "budget_status": "proposal_only_not_authorized"
+      },
+      "dependencies": [
+        "W01输入/内容身份与权限合同",
+        "W03内部组划分验收",
+        "W10盲投影与反馈登记",
+        "主控另行授权实际训练、推理及评分",
+        "W04安全数组读取、缓存身份和fit-only变换"
+      ],
+      "within_current_scope": true,
+      "scope_interpretation": "true仅指冻结/官方train标签边界内的研究提案；不授予任何训练或推理许可。新资产未准入用false。",
+      "linked_issue_ids": [
+        "AR001-13",
+        "AR001-08",
+        "AR001-16"
+      ],
+      "evidence_refs": [
+        "encoder",
+        "chemprop-official-fingerprint"
+      ],
+      "hold_fixed_exception_rule": "仅change_only显式字段以及其必要shape/参数量派生字段可覆盖基线；任何其余变化必须另建配置并声明混杂。"
+    },
+    {
+      "proposal_id": "P15",
+      "direction_id": "D15",
+      "priority": "P2",
+      "tier": "exploratory_reserve",
+      "status": "blocked_conditional_proposal",
+      "hypothesis": "当前常数LR；可能通过更平稳后段更新改善内部停止表现。",
+      "control_run_or_config": {
+        "reference_run": "hainan-index-cycle-20261031",
+        "matched_control": "C0",
+        "reference_only_not_automatically_reusable": true,
+        "notes": "新harness/缓存/seed条件下需同版本matched control；确定性岭与新底座另列比较差异"
+      },
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": {
+          "name": "CheMeleon frozen BondMessagePassing",
+          "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "adapter_source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "adapter_source_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+          "chemprop": "2.2.1",
+          "freeze_parameters": true,
+          "freeze_buffers": true
+        },
+        "feature": {
+          "name": "2048-d mean-aggregated raw fingerprint",
+          "source_run": "hainan-index-cycle-20261031",
+          "train_array_payload_sha256_recorded": "27716ac421ac80e46adbeeb4190df93e86621f5926634e75f85679109191223a",
+          "dtype": "float32",
+          "independently_verified_array_bytes": false,
+          "cache_file_sha_is_not_array_payload_sha": true,
+          "proposal_direction": "D15"
+        },
+        "preprocess": {
+          "baseline": "legacy_z_train_fit",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "feature_statistics": "fit rows only; sd<1e-8 replaced by1 in control",
+          "target_statistics": "fit rows only; affine center/std; inverse before raw-scale metric"
+        },
+        "head": {
+          "baseline": "Linear(2048,256)-ReLU-Dropout(.1)-Linear(256,1)",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "runtime_source_sha256": "3874397451300b2b2c37eb99b5e995d53f0fcc22a7dee00c287d9ebeff65e7e0",
+          "trainable_parameter_count": 524801,
+          "proposal_version": "P15/head-spec-v1-not-materialized",
+          "proposal_code_sha256": null
+        }
+      },
+      "change_only": {
+        "axis": "学习率调度与batch敏感性",
+        "explicit_configurations": [
+          {
+            "schedule": "constant",
+            "warmup_epochs": 0
+          },
+          {
+            "schedule": "cosine",
+            "warmup_epochs": 0
+          },
+          {
+            "schedule": "cosine",
+            "warmup_epochs": 5
+          },
+          {
+            "schedule": "linear",
+            "warmup_epochs": 0
+          },
+          {
+            "schedule": "linear",
+            "warmup_epochs": 5
+          }
+        ],
+        "multi_factor_caution": [
+          "maxepochs50、初始/峰值LR.0005、最低LR定义预注册",
+          "early stopping与scheduler状态同步保存",
+          "batch先固定128；batch32/64/256仅在独立后续单因素面板考虑，未计本15"
+        ]
+      },
+      "hold_fixed": {
+        "official_rows": "train637/valid91/test182原分区、原行序和原标签保留",
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "raw_feature_cache": "同一内容身份的原始float32 fingerprint；未补字节前blocked",
+        "split": "raw-SMILES group shuffle；基线seed43；fit573/stop64",
+        "training_seed_policy": "模型初始化/采样seed配对；split RNG独立",
+        "baseline_head": "2048→256→1 ReLU, dropout.1",
+        "optimizer": "AdamW lr.0005 weight_decay.0001",
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "target": "fit-only affine标准化，inverse回原numeric Y",
+        "early_stop": "基线internal standardized MSE；变体明确例外",
+        "frozen": "所有外部encoder参数及buffer、tokenizer/featurizer状态不更新",
+        "labels": "仅official train.Y用于训练与内部选择"
+      },
+      "split_id": "current_raw_smiles_group_seed43_fit573_stop64",
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "metric": "original_numeric_Y_MAE_on_train_only_holdouts; fixed host valid MAE only upon separate controller approval",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "reason": "暂无可靠重复run噪声和业务最小重要差，不能虚构数值阈值。",
+        "selection": "预注册train-only分组数据上比较原尺度MAE；同fold/seed配对，报告均值、中位数、每对差与不确定性；候选晋级需方向跨seed稳定且完整性门控通过。",
+        "tie_policy": "方向不稳/效果小于尚待建立的噪声尺度时判inconclusive，优先较简单/低成本配置，不读取额外valid决定。",
+        "final_generalization": "只有另行获准且未用于调参的数据评价才支持最终泛化；本valid不重新成为最终测试。",
+        "computable_directional_screen": {
+          "paired_delta_definition": "MAE(candidate, same fold and seed) - MAE(control, same fold and seed)",
+          "report": [
+            "all paired deltas",
+            "mean paired delta",
+            "median paired delta",
+            "number of negative/zero/positive deltas",
+            "between-seed and between-fold variation separately"
+          ],
+          "screen_out": "mean_delta >= 0 and median_delta >= 0 => no directional evidence to advance under this comparison",
+          "mixed_sign_or_small_effect": "inconclusive pending predeclared noise/business threshold; do not query extra valid",
+          "candidate_only": "negative mean and median with consistent paired direction may nominate confirmation, not establish generalization improvement",
+          "minimum_business_effect": null,
+          "confidence_cutoff": null,
+          "policy_status": "proposed_for_controller_review_not_a_validated_statistical_test"
+        }
+      },
+      "success_criterion": "仅在预注册对照和所有身份/冻结/标签门控通过后，train-only配对结果稳定支持该假设；报告全部seed/fold，不能以训练loss或执行成功替代。",
+      "falsification_criterion": "训练26轮的改善不足以证明scheduler必要；更长训练/更多steps混杂。 若匹配对照无一致改善、尾部代价抵消均值收益或收益只在一次valid反馈成立，则否定晋级，不继续增加自由度解释。",
+      "compute_budget": {
+        "configuration_count": 5,
+        "model_seeds": [
+          43,
+          47,
+          59
+        ],
+        "planned_training_runs_if_all_selected": 15,
+        "approved_training_runs_now": 0,
+        "executed_training_runs_this_review": 0,
+        "approved_encoder_inference_now": 0,
+        "host_fixed_score_invocations_this_review": 0,
+        "cost_assumptions": "5×3=15；停止轮可能变化，报告真实steps；不承诺等墙钟。",
+        "budget_status": "proposal_only_not_authorized"
+      },
+      "dependencies": [
+        "W01输入/内容身份与权限合同",
+        "W03内部组划分验收",
+        "W10盲投影与反馈登记",
+        "主控另行授权实际训练、推理及评分",
+        "W06头/优化器/调度器工厂与配置校验"
+      ],
+      "within_current_scope": true,
+      "scope_interpretation": "true仅指冻结/官方train标签边界内的研究提案；不授予任何训练或推理许可。新资产未准入用false。",
+      "linked_issue_ids": [
+        "AR001-05",
+        "AR001-06"
+      ],
+      "evidence_refs": [
+        "actual-config",
+        "training-process"
+      ],
+      "hold_fixed_exception_rule": "仅change_only显式字段以及其必要shape/参数量派生字段可覆盖基线；任何其余变化必须另建配置并声明混杂。"
+    },
+    {
+      "proposal_id": "P16",
+      "direction_id": "D16",
+      "priority": "P3",
+      "tier": "exploratory_reserve",
+      "status": "blocked_conditional_proposal",
+      "hypothesis": "原论文支持冻结分子表示+小头的可行路径，可研究互补性。",
+      "control_run_or_config": {
+        "reference_run": "hainan-index-cycle-20261031",
+        "matched_control": "C0",
+        "reference_only_not_automatically_reusable": true,
+        "notes": "新harness/缓存/seed条件下需同版本matched control；确定性岭与新底座另列比较差异"
+      },
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": {
+          "name": "MiniMol",
+          "revision": null,
+          "checkpoint_sha256": null,
+          "status": "blocked_not_admitted",
+          "freeze_parameters": true,
+          "freeze_buffers": true
+        },
+        "feature": {
+          "dimension": null,
+          "status": "unverified"
+        },
+        "preprocess": {
+          "baseline": "legacy_z_train_fit",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "feature_statistics": "fit rows only; sd<1e-8 replaced by1 in control",
+          "target_statistics": "fit rows only; affine center/std; inverse before raw-scale metric"
+        },
+        "head": {
+          "baseline": "Linear(2048,256)-ReLU-Dropout(.1)-Linear(256,1)",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "runtime_source_sha256": "3874397451300b2b2c37eb99b5e995d53f0fcc22a7dee00c287d9ebeff65e7e0",
+          "trainable_parameter_count": 524801,
+          "proposal_version": "P16/head-spec-v1-not-materialized",
+          "proposal_code_sha256": null
+        }
+      },
+      "change_only": {
+        "axis": "MiniMol冻结底座",
+        "explicit_configurations": [
+          {
+            "head": "linear"
+          },
+          {
+            "head": "mlp128"
+          },
+          {
+            "head": "mlp256"
+          }
+        ],
+        "multi_factor_caution": [
+          "checkpoint revision及sha未补不得运行",
+          "不导入论文valid选模策略",
+          "若linear选择确定性solver则其3seed合并为1并重算本9预算；本9按SGD/AdamW训练线性头定义"
+        ]
+      },
+      "hold_fixed": {
+        "official_rows": "train637/valid91/test182原分区、原行序和原标签保留",
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "raw_feature_cache": "同一内容身份的原始float32 fingerprint；未补字节前blocked",
+        "split": "raw-SMILES group shuffle；基线seed43；fit573/stop64",
+        "training_seed_policy": "模型初始化/采样seed配对；split RNG独立",
+        "baseline_head": "2048→256→1 ReLU, dropout.1",
+        "optimizer": "AdamW lr.0005 weight_decay.0001",
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "target": "fit-only affine标准化，inverse回原numeric Y",
+        "early_stop": "基线internal standardized MSE；变体明确例外",
+        "frozen": "所有外部encoder参数及buffer、tokenizer/featurizer状态不更新",
+        "labels": "仅official train.Y用于训练与内部选择"
+      },
+      "split_id": "current_raw_smiles_group_seed43_fit573_stop64",
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "metric": "original_numeric_Y_MAE_on_train_only_holdouts; fixed host valid MAE only upon separate controller approval",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "reason": "暂无可靠重复run噪声和业务最小重要差，不能虚构数值阈值。",
+        "selection": "预注册train-only分组数据上比较原尺度MAE；同fold/seed配对，报告均值、中位数、每对差与不确定性；候选晋级需方向跨seed稳定且完整性门控通过。",
+        "tie_policy": "方向不稳/效果小于尚待建立的噪声尺度时判inconclusive，优先较简单/低成本配置，不读取额外valid决定。",
+        "final_generalization": "只有另行获准且未用于调参的数据评价才支持最终泛化；本valid不重新成为最终测试。",
+        "computable_directional_screen": {
+          "paired_delta_definition": "MAE(candidate, same fold and seed) - MAE(control, same fold and seed)",
+          "report": [
+            "all paired deltas",
+            "mean paired delta",
+            "median paired delta",
+            "number of negative/zero/positive deltas",
+            "between-seed and between-fold variation separately"
+          ],
+          "screen_out": "mean_delta >= 0 and median_delta >= 0 => no directional evidence to advance under this comparison",
+          "mixed_sign_or_small_effect": "inconclusive pending predeclared noise/business threshold; do not query extra valid",
+          "candidate_only": "negative mean and median with consistent paired direction may nominate confirmation, not establish generalization improvement",
+          "minimum_business_effect": null,
+          "confidence_cutoff": null,
+          "policy_status": "proposed_for_controller_review_not_a_validated_statistical_test"
+        }
+      },
+      "success_criterion": "仅在预注册对照和所有身份/冻结/标签门控通过后，train-only配对结果稳定支持该假设；报告全部seed/fold，不能以训练loss或执行成功替代。",
+      "falsification_criterion": "论文结果不是当前任务已验证优势；exact权重和许可未知。 若匹配对照无一致改善、尾部代价抵消均值收益或收益只在一次valid反馈成立，则否定晋级，不继续增加自由度解释。",
+      "compute_budget": {
+        "configuration_count": 3,
+        "model_seeds": [
+          43,
+          47,
+          59
+        ],
+        "planned_training_runs_if_all_selected": 9,
+        "approved_training_runs_now": 0,
+        "executed_training_runs_this_review": 0,
+        "approved_encoder_inference_now": 0,
+        "host_fixed_score_invocations_this_review": 0,
+        "cost_assumptions": "3个可训练头×3seed=9，另需新底座cache推理成本未知；当前不安装/下载权重。",
+        "budget_status": "proposal_only_not_authorized"
+      },
+      "dependencies": [
+        "W01输入/内容身份与权限合同",
+        "W03内部组划分验收",
+        "W10盲投影与反馈登记",
+        "主控另行授权实际训练、推理及评分",
+        "W08资产与新增模块许可；未经准入保持blocked"
+      ],
+      "within_current_scope": false,
+      "scope_interpretation": "true仅指冻结/官方train标签边界内的研究提案；不授予任何训练或推理许可。新资产未准入用false。",
+      "linked_issue_ids": [
+        "AR001-10",
+        "U02",
+        "AR001-13"
+      ],
+      "evidence_refs": [
+        "minimol-paper",
+        "issues#L136-L143"
+      ],
+      "hold_fixed_exception_rule": "仅change_only显式字段以及其必要shape/参数量派生字段可覆盖基线；任何其余变化必须另建配置并声明混杂。"
+    },
+    {
+      "proposal_id": "P17",
+      "direction_id": "D17",
+      "priority": "P3",
+      "tier": "exploratory_reserve",
+      "status": "blocked_conditional_proposal",
+      "hypothesis": "固定revision配置可读，文本分子表示提供不同归纳偏置的假设。",
+      "control_run_or_config": {
+        "reference_run": "hainan-index-cycle-20261031",
+        "matched_control": "C0",
+        "reference_only_not_automatically_reusable": true,
+        "notes": "新harness/缓存/seed条件下需同版本matched control；确定性岭与新底座另列比较差异"
+      },
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": {
+          "name": "ibm-research/MoLFormer-XL-both-10pct",
+          "config_revision": "361063d0ad524ef77cf39b08469f6be770dc550f",
+          "weight_sha256": null,
+          "tokenizer_revision": null,
+          "remote_code_revision": null,
+          "status": "blocked_not_admitted",
+          "freeze_parameters": true,
+          "freeze_buffers": true
+        },
+        "feature": {
+          "dimension": 768,
+          "pooling_definition": "pending_source_confirmation"
+        },
+        "preprocess": {
+          "baseline": "legacy_z_train_fit",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "feature_statistics": "fit rows only; sd<1e-8 replaced by1 in control",
+          "target_statistics": "fit rows only; affine center/std; inverse before raw-scale metric"
+        },
+        "head": {
+          "baseline": "Linear(2048,256)-ReLU-Dropout(.1)-Linear(256,1)",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "runtime_source_sha256": "3874397451300b2b2c37eb99b5e995d53f0fcc22a7dee00c287d9ebeff65e7e0",
+          "trainable_parameter_count": 524801,
+          "proposal_version": "P17/head-spec-v1-not-materialized",
+          "proposal_code_sha256": null
+        }
+      },
+      "change_only": {
+        "axis": "MoLFormer冻结底座",
+        "explicit_configurations": [
+          {
+            "pooling": "documented_pooler",
+            "width": 128
+          },
+          {
+            "pooling": "documented_pooler",
+            "width": 256
+          },
+          {
+            "pooling": "masked_mean",
+            "width": 128
+          },
+          {
+            "pooling": "masked_mean",
+            "width": 256
+          }
+        ],
+        "multi_factor_caution": [
+          "config revision361063d0ad524ef77cf39b08469f6be770dc550f",
+          "任何长序列处理必须明确记录、获批；不静默截断或丢行",
+          "随机feature/其他buffer冻结；eval重复性先验收",
+          "固定SMILES原输入，不擅自生成多视图"
+        ]
+      },
+      "hold_fixed": {
+        "official_rows": "train637/valid91/test182原分区、原行序和原标签保留",
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "raw_feature_cache": "同一内容身份的原始float32 fingerprint；未补字节前blocked",
+        "split": "raw-SMILES group shuffle；基线seed43；fit573/stop64",
+        "training_seed_policy": "模型初始化/采样seed配对；split RNG独立",
+        "baseline_head": "2048→256→1 ReLU, dropout.1",
+        "optimizer": "AdamW lr.0005 weight_decay.0001",
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "target": "fit-only affine标准化，inverse回原numeric Y",
+        "early_stop": "基线internal standardized MSE；变体明确例外",
+        "frozen": "所有外部encoder参数及buffer、tokenizer/featurizer状态不更新",
+        "labels": "仅official train.Y用于训练与内部选择"
+      },
+      "split_id": "current_raw_smiles_group_seed43_fit573_stop64",
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "metric": "original_numeric_Y_MAE_on_train_only_holdouts; fixed host valid MAE only upon separate controller approval",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "reason": "暂无可靠重复run噪声和业务最小重要差，不能虚构数值阈值。",
+        "selection": "预注册train-only分组数据上比较原尺度MAE；同fold/seed配对，报告均值、中位数、每对差与不确定性；候选晋级需方向跨seed稳定且完整性门控通过。",
+        "tie_policy": "方向不稳/效果小于尚待建立的噪声尺度时判inconclusive，优先较简单/低成本配置，不读取额外valid决定。",
+        "final_generalization": "只有另行获准且未用于调参的数据评价才支持最终泛化；本valid不重新成为最终测试。",
+        "computable_directional_screen": {
+          "paired_delta_definition": "MAE(candidate, same fold and seed) - MAE(control, same fold and seed)",
+          "report": [
+            "all paired deltas",
+            "mean paired delta",
+            "median paired delta",
+            "number of negative/zero/positive deltas",
+            "between-seed and between-fold variation separately"
+          ],
+          "screen_out": "mean_delta >= 0 and median_delta >= 0 => no directional evidence to advance under this comparison",
+          "mixed_sign_or_small_effect": "inconclusive pending predeclared noise/business threshold; do not query extra valid",
+          "candidate_only": "negative mean and median with consistent paired direction may nominate confirmation, not establish generalization improvement",
+          "minimum_business_effect": null,
+          "confidence_cutoff": null,
+          "policy_status": "proposed_for_controller_review_not_a_validated_statistical_test"
+        }
+      },
+      "success_criterion": "仅在预注册对照和所有身份/冻结/标签门控通过后，train-only配对结果稳定支持该假设；报告全部seed/fold，不能以训练loss或执行成功替代。",
+      "falsification_criterion": "配置deterministic_eval=false及长度字段不能直接解释运行行为，需实际源码与重复性证据。 若匹配对照无一致改善、尾部代价抵消均值收益或收益只在一次valid反馈成立，则否定晋级，不继续增加自由度解释。",
+      "compute_budget": {
+        "configuration_count": 4,
+        "model_seeds": [
+          43,
+          47,
+          59
+        ],
+        "planned_training_runs_if_all_selected": 12,
+        "approved_training_runs_now": 0,
+        "executed_training_runs_this_review": 0,
+        "approved_encoder_inference_now": 0,
+        "host_fixed_score_invocations_this_review": 0,
+        "cost_assumptions": "4×3=12头训练，冻结表示推理成本未知；不以当前CheMeleon速度估算。",
+        "budget_status": "proposal_only_not_authorized"
+      },
+      "dependencies": [
+        "W01输入/内容身份与权限合同",
+        "W03内部组划分验收",
+        "W10盲投影与反馈登记",
+        "主控另行授权实际训练、推理及评分",
+        "W08资产与新增模块许可；未经准入保持blocked"
+      ],
+      "within_current_scope": false,
+      "scope_interpretation": "true仅指冻结/官方train标签边界内的研究提案；不授予任何训练或推理许可。新资产未准入用false。",
+      "linked_issue_ids": [
+        "AR001-10",
+        "U02",
+        "AR001-13"
+      ],
+      "evidence_refs": [
+        "molformer-config"
+      ],
+      "hold_fixed_exception_rule": "仅change_only显式字段以及其必要shape/参数量派生字段可覆盖基线；任何其余变化必须另建配置并声明混杂。"
+    },
+    {
+      "proposal_id": "P18",
+      "direction_id": "D18",
+      "priority": "P3",
+      "tier": "exploratory_reserve",
+      "status": "blocked_conditional_proposal",
+      "hypothesis": "冻结外部状态不排斥另列的新头模块，低秩post-pooling适配可限制新增容量。",
+      "control_run_or_config": {
+        "reference_run": "hainan-index-cycle-20261031",
+        "matched_control": "C0",
+        "reference_only_not_automatically_reusable": true,
+        "notes": "新harness/缓存/seed条件下需同版本matched control；确定性岭与新底座另列比较差异"
+      },
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": {
+          "name": "CheMeleon frozen BondMessagePassing",
+          "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "adapter_source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "adapter_source_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+          "chemprop": "2.2.1",
+          "freeze_parameters": true,
+          "freeze_buffers": true
+        },
+        "feature": {
+          "name": "2048-d mean-aggregated raw fingerprint",
+          "source_run": "hainan-index-cycle-20261031",
+          "train_array_payload_sha256_recorded": "27716ac421ac80e46adbeeb4190df93e86621f5926634e75f85679109191223a",
+          "dtype": "float32",
+          "independently_verified_array_bytes": false,
+          "cache_file_sha_is_not_array_payload_sha": true,
+          "proposal_direction": "D18"
+        },
+        "preprocess": {
+          "baseline": "legacy_z_train_fit",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "feature_statistics": "fit rows only; sd<1e-8 replaced by1 in control",
+          "target_statistics": "fit rows only; affine center/std; inverse before raw-scale metric"
+        },
+        "head": {
+          "baseline": "Linear(2048,256)-ReLU-Dropout(.1)-Linear(256,1)",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "runtime_source_sha256": "3874397451300b2b2c37eb99b5e995d53f0fcc22a7dee00c287d9ebeff65e7e0",
+          "trainable_parameter_count": 524801,
+          "proposal_version": "P18/head-spec-v1-not-materialized",
+          "proposal_code_sha256": null
+        }
+      },
+      "change_only": {
+        "axis": "编码器之后的新适配模块",
+        "explicit_configurations": [
+          {
+            "rank": 32,
+            "gate": false
+          },
+          {
+            "rank": 32,
+            "gate": true
+          },
+          {
+            "rank": 64,
+            "gate": false
+          },
+          {
+            "rank": 64,
+            "gate": true
+          },
+          {
+            "rank": 128,
+            "gate": false
+          },
+          {
+            "rank": 128,
+            "gate": true
+          }
+        ],
+        "multi_factor_caution": [
+          "只有post-encoder新模块可训练",
+          "禁止in-backbone LoRA、更新embedding或BN统计",
+          "每个参数归属列入允许新模块集合"
+        ]
+      },
+      "hold_fixed": {
+        "official_rows": "train637/valid91/test182原分区、原行序和原标签保留",
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "raw_feature_cache": "同一内容身份的原始float32 fingerprint；未补字节前blocked",
+        "split": "raw-SMILES group shuffle；基线seed43；fit573/stop64",
+        "training_seed_policy": "模型初始化/采样seed配对；split RNG独立",
+        "baseline_head": "2048→256→1 ReLU, dropout.1",
+        "optimizer": "AdamW lr.0005 weight_decay.0001",
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "target": "fit-only affine标准化，inverse回原numeric Y",
+        "early_stop": "基线internal standardized MSE；变体明确例外",
+        "frozen": "所有外部encoder参数及buffer、tokenizer/featurizer状态不更新",
+        "labels": "仅official train.Y用于训练与内部选择"
+      },
+      "split_id": "current_raw_smiles_group_seed43_fit573_stop64",
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "metric": "original_numeric_Y_MAE_on_train_only_holdouts; fixed host valid MAE only upon separate controller approval",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "reason": "暂无可靠重复run噪声和业务最小重要差，不能虚构数值阈值。",
+        "selection": "预注册train-only分组数据上比较原尺度MAE；同fold/seed配对，报告均值、中位数、每对差与不确定性；候选晋级需方向跨seed稳定且完整性门控通过。",
+        "tie_policy": "方向不稳/效果小于尚待建立的噪声尺度时判inconclusive，优先较简单/低成本配置，不读取额外valid决定。",
+        "final_generalization": "只有另行获准且未用于调参的数据评价才支持最终泛化；本valid不重新成为最终测试。",
+        "computable_directional_screen": {
+          "paired_delta_definition": "MAE(candidate, same fold and seed) - MAE(control, same fold and seed)",
+          "report": [
+            "all paired deltas",
+            "mean paired delta",
+            "median paired delta",
+            "number of negative/zero/positive deltas",
+            "between-seed and between-fold variation separately"
+          ],
+          "screen_out": "mean_delta >= 0 and median_delta >= 0 => no directional evidence to advance under this comparison",
+          "mixed_sign_or_small_effect": "inconclusive pending predeclared noise/business threshold; do not query extra valid",
+          "candidate_only": "negative mean and median with consistent paired direction may nominate confirmation, not establish generalization improvement",
+          "minimum_business_effect": null,
+          "confidence_cutoff": null,
+          "policy_status": "proposed_for_controller_review_not_a_validated_statistical_test"
+        }
+      },
+      "success_criterion": "仅在预注册对照和所有身份/冻结/标签门控通过后，train-only配对结果稳定支持该假设；报告全部seed/fold，不能以训练loss或执行成功替代。",
+      "falsification_criterion": "新增模块可能只是增加过拟合；获准新头范围须主控确认，不能偷改底座。 若匹配对照无一致改善、尾部代价抵消均值收益或收益只在一次valid反馈成立，则否定晋级，不继续增加自由度解释。",
+      "compute_budget": {
+        "configuration_count": 6,
+        "model_seeds": [
+          43,
+          47,
+          59
+        ],
+        "planned_training_runs_if_all_selected": 18,
+        "approved_training_runs_now": 0,
+        "executed_training_runs_this_review": 0,
+        "approved_encoder_inference_now": 0,
+        "host_fixed_score_invocations_this_review": 0,
+        "cost_assumptions": "6×3=18；实际新参数量由adapter定义静态验算；额外等参控制另申请。",
+        "budget_status": "proposal_only_not_authorized"
+      },
+      "dependencies": [
+        "W01输入/内容身份与权限合同",
+        "W03内部组划分验收",
+        "W10盲投影与反馈登记",
+        "主控另行授权实际训练、推理及评分",
+        "W06头/优化器/调度器工厂与配置校验",
+        "W08资产与新增模块许可；未经准入保持blocked"
+      ],
+      "within_current_scope": true,
+      "scope_interpretation": "true仅指冻结/官方train标签边界内的研究提案；不授予任何训练或推理许可。新资产未准入用false。",
+      "linked_issue_ids": [
+        "AR001-13",
+        "U02",
+        "AR001-06"
+      ],
+      "evidence_refs": [
+        "current-policy",
+        "encoder",
+        "actual-science"
+      ],
+      "hold_fixed_exception_rule": "仅change_only显式字段以及其必要shape/参数量派生字段可覆盖基线；任何其余变化必须另建配置并声明混杂。"
+    },
+    {
+      "proposal_id": "P19",
+      "direction_id": "D19",
+      "priority": "P2",
+      "tier": "exploratory_reserve",
+      "status": "proposal_only",
+      "hypothesis": "共同seed成员可能降低初始化方差；误差相关性高则收益有限。",
+      "control_run_or_config": {
+        "reference_run": "hainan-index-cycle-20261031",
+        "matched_control": "C0",
+        "reference_only_not_automatically_reusable": true,
+        "notes": "新harness/缓存/seed条件下需同版本matched control；确定性岭与新底座另列比较差异"
+      },
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": {
+          "name": "CheMeleon frozen BondMessagePassing",
+          "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "adapter_source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "adapter_source_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+          "chemprop": "2.2.1",
+          "freeze_parameters": true,
+          "freeze_buffers": true
+        },
+        "feature": {
+          "name": "2048-d mean-aggregated raw fingerprint",
+          "source_run": "hainan-index-cycle-20261031",
+          "train_array_payload_sha256_recorded": "27716ac421ac80e46adbeeb4190df93e86621f5926634e75f85679109191223a",
+          "dtype": "float32",
+          "independently_verified_array_bytes": false,
+          "cache_file_sha_is_not_array_payload_sha": true,
+          "proposal_direction": "D19"
+        },
+        "preprocess": {
+          "baseline": "legacy_z_train_fit",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "feature_statistics": "fit rows only; sd<1e-8 replaced by1 in control",
+          "target_statistics": "fit rows only; affine center/std; inverse before raw-scale metric"
+        },
+        "head": {
+          "baseline": "Linear(2048,256)-ReLU-Dropout(.1)-Linear(256,1)",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "runtime_source_sha256": "3874397451300b2b2c37eb99b5e995d53f0fcc22a7dee00c287d9ebeff65e7e0",
+          "trainable_parameter_count": 524801,
+          "proposal_version": "P19/head-spec-v1-not-materialized",
+          "proposal_code_sha256": null
+        }
+      },
+      "change_only": {
+        "axis": "无valid拟合的集成与误差切片",
+        "explicit_configurations": [
+          {
+            "combiner": "uniform_mean"
+          },
+          {
+            "combiner": "median"
+          }
+        ],
+        "multi_factor_caution": [
+          "不能用valid拟合权重或挑seed",
+          "members未产生则需另批3个训练，不能说集成免费且已有成员",
+          "对每行保持位置、不排除大误差样本",
+          "准备方只拿结构性切片定义，无真值/分数"
+        ]
+      },
+      "hold_fixed": {
+        "official_rows": "train637/valid91/test182原分区、原行序和原标签保留",
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "raw_feature_cache": "同一内容身份的原始float32 fingerprint；未补字节前blocked",
+        "split": "raw-SMILES group shuffle；基线seed43；fit573/stop64",
+        "training_seed_policy": "模型初始化/采样seed配对；split RNG独立",
+        "baseline_head": "2048→256→1 ReLU, dropout.1",
+        "optimizer": "AdamW lr.0005 weight_decay.0001",
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "target": "fit-only affine标准化，inverse回原numeric Y",
+        "early_stop": "基线internal standardized MSE；变体明确例外",
+        "frozen": "所有外部encoder参数及buffer、tokenizer/featurizer状态不更新",
+        "labels": "仅official train.Y用于训练与内部选择"
+      },
+      "split_id": "current_raw_smiles_group_seed43_fit573_stop64",
+      "seeds": [
+        43,
+        47,
+        59
+      ],
+      "metric": "original_numeric_Y_MAE_on_train_only_holdouts; fixed host valid MAE only upon separate controller approval",
+      "direction": "minimize",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "reason": "暂无可靠重复run噪声和业务最小重要差，不能虚构数值阈值。",
+        "selection": "预注册train-only分组数据上比较原尺度MAE；同fold/seed配对，报告均值、中位数、每对差与不确定性；候选晋级需方向跨seed稳定且完整性门控通过。",
+        "tie_policy": "方向不稳/效果小于尚待建立的噪声尺度时判inconclusive，优先较简单/低成本配置，不读取额外valid决定。",
+        "final_generalization": "只有另行获准且未用于调参的数据评价才支持最终泛化；本valid不重新成为最终测试。",
+        "computable_directional_screen": {
+          "paired_delta_definition": "MAE(candidate, same fold and seed) - MAE(control, same fold and seed)",
+          "report": [
+            "all paired deltas",
+            "mean paired delta",
+            "median paired delta",
+            "number of negative/zero/positive deltas",
+            "between-seed and between-fold variation separately"
+          ],
+          "screen_out": "mean_delta >= 0 and median_delta >= 0 => no directional evidence to advance under this comparison",
+          "mixed_sign_or_small_effect": "inconclusive pending predeclared noise/business threshold; do not query extra valid",
+          "candidate_only": "negative mean and median with consistent paired direction may nominate confirmation, not establish generalization improvement",
+          "minimum_business_effect": null,
+          "confidence_cutoff": null,
+          "policy_status": "proposed_for_controller_review_not_a_validated_statistical_test"
+        }
+      },
+      "success_criterion": "仅在预注册对照和所有身份/冻结/标签门控通过后，train-only配对结果稳定支持该假设；报告全部seed/fold，不能以训练loss或执行成功替代。",
+      "falsification_criterion": "当前与历史预测高度相关且有配置混杂，不能先挑best valid成员/权重。 若匹配对照无一致改善、尾部代价抵消均值收益或收益只在一次valid反馈成立，则否定晋级，不继续增加自由度解释。",
+      "compute_budget": {
+        "configuration_count": 2,
+        "model_seeds": [
+          43,
+          47,
+          59
+        ],
+        "planned_training_runs_if_all_selected": 0,
+        "approved_training_runs_now": 0,
+        "executed_training_runs_this_review": 0,
+        "approved_encoder_inference_now": 0,
+        "host_fixed_score_invocations_this_review": 0,
+        "cost_assumptions": "已有3成员时2个派生预测、0额外训练；无成员时3训练不是6，且本proposal未授权评分。",
+        "budget_status": "proposal_only_not_authorized"
+      },
+      "dependencies": [
+        "W01输入/内容身份与权限合同",
+        "W03内部组划分验收",
+        "W10盲投影与反馈登记",
+        "主控另行授权实际训练、推理及评分",
+        "已合法产生三个固定成员；组合器不拟合任何valid标签"
+      ],
+      "within_current_scope": true,
+      "scope_interpretation": "true仅指冻结/官方train标签边界内的研究提案；不授予任何训练或推理许可。新资产未准入用false。",
+      "linked_issue_ids": [
+        "AR001-09",
+        "AR001-12",
+        "AR002-02",
+        "AR002-04"
+      ],
+      "evidence_refs": [
+        "records/numeric_checks.json",
+        "evaluation-scope",
+        "evaluation-use-history"
+      ],
+      "hold_fixed_exception_rule": "仅change_only显式字段以及其必要shape/参数量派生字段可覆盖基线；任何其余变化必须另建配置并声明混杂。"
+    },
+    {
+      "proposal_id": "P20",
+      "direction_id": "D20",
+      "priority": "P2",
+      "tier": "exploratory_reserve",
+      "status": "proposal_only",
+      "hypothesis": "状态抽样roundtrip不能代替优化轨迹恢复，需单独控制。",
+      "control_run_or_config": {
+        "reference_run": "hainan-index-cycle-20261031",
+        "matched_control": "C0",
+        "reference_only_not_automatically_reusable": true,
+        "notes": "新harness/缓存/seed条件下需同版本matched control；确定性岭与新底座另列比较差异"
+      },
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": {
+          "name": "CheMeleon frozen BondMessagePassing",
+          "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "adapter_source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "adapter_source_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+          "chemprop": "2.2.1",
+          "freeze_parameters": true,
+          "freeze_buffers": true
+        },
+        "feature": {
+          "name": "2048-d mean-aggregated raw fingerprint",
+          "source_run": "hainan-index-cycle-20261031",
+          "train_array_payload_sha256_recorded": "27716ac421ac80e46adbeeb4190df93e86621f5926634e75f85679109191223a",
+          "dtype": "float32",
+          "independently_verified_array_bytes": false,
+          "cache_file_sha_is_not_array_payload_sha": true,
+          "proposal_direction": "D20"
+        },
+        "preprocess": {
+          "baseline": "legacy_z_train_fit",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "feature_statistics": "fit rows only; sd<1e-8 replaced by1 in control",
+          "target_statistics": "fit rows only; affine center/std; inverse before raw-scale metric"
+        },
+        "head": {
+          "baseline": "Linear(2048,256)-ReLU-Dropout(.1)-Linear(256,1)",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "runtime_source_sha256": "3874397451300b2b2c37eb99b5e995d53f0fcc22a7dee00c287d9ebeff65e7e0",
+          "trainable_parameter_count": 524801,
+          "proposal_version": "P20/head-spec-v1-not-materialized",
+          "proposal_code_sha256": null
+        }
+      },
+      "change_only": {
+        "axis": "续训复现与完整状态边界",
+        "explicit_configurations": [
+          {
+            "execution_mode": "continuous"
+          },
+          {
+            "execution_mode": "resume_at_epoch5_boundary"
+          }
+        ],
+        "multi_factor_caution": [
+          "head/optimizer/scheduler/RNG/sampler/step来自同一边界",
+          "不把best18与last26状态混搭",
+          "精度容差在观察差异前预注册；暂无官方值"
+        ]
+      },
+      "hold_fixed": {
+        "official_rows": "train637/valid91/test182原分区、原行序和原标签保留",
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "raw_feature_cache": "同一内容身份的原始float32 fingerprint；未补字节前blocked",
+        "split": "raw-SMILES group shuffle；基线seed43；fit573/stop64",
+        "training_seed_policy": "模型初始化/采样seed配对；split RNG独立",
+        "baseline_head": "2048→256→1 ReLU, dropout.1",
+        "optimizer": "AdamW lr.0005 weight_decay.0001",
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "target": "fit-only affine标准化，inverse回原numeric Y",
+        "early_stop": "基线internal standardized MSE；变体明确例外",
+        "frozen": "所有外部encoder参数及buffer、tokenizer/featurizer状态不更新",
+        "labels": "仅official train.Y用于训练与内部选择"
+      },
+      "split_id": "current_raw_smiles_group_seed43_fit573_stop64",
+      "seeds": [
+        43
+      ],
+      "metric": "trajectory_state_equivalence_with_predeclared_numerical_tolerances",
+      "direction": "equivalence_not_quality_ranking",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "selection": "复现试验；数值容差预注册且不晚于看差异，比较完整状态/轨迹，不以MAE胜负评价。"
+      },
+      "success_criterion": "未来另授权的连续/恢复轨迹满足预注册边界一致性和数值容差；本轮只交测试计划。",
+      "falsification_criterion": "head/optimizer/RNG来自不同step，或后续batch/状态差异超过事前容差，或无法解释非确定性。",
+      "compute_budget": {
+        "configuration_count": 2,
+        "model_seeds": [
+          43
+        ],
+        "planned_training_runs_if_all_selected": 2,
+        "approved_training_runs_now": 0,
+        "executed_training_runs_this_review": 0,
+        "approved_encoder_inference_now": 0,
+        "host_fixed_score_invocations_this_review": 0,
+        "cost_assumptions": "2条完整等长轨迹（恢复含分段启动，不虚数为额外独立seed）；当前实际0。",
+        "budget_status": "proposal_only_not_authorized"
+      },
+      "dependencies": [
+        "W01输入/内容身份与权限合同",
+        "W03内部组划分验收",
+        "W10盲投影与反馈登记",
+        "主控另行授权实际训练、推理及评分",
+        "W09完整同边界状态与连续/恢复比较计划"
+      ],
+      "within_current_scope": true,
+      "scope_interpretation": "true仅指冻结/官方train标签边界内的研究提案；不授予任何训练或推理许可。新资产未准入用false。",
+      "linked_issue_ids": [
+        "U05",
+        "AR001-07",
+        "AR002-05"
+      ],
+      "evidence_refs": [
+        "training-process",
+        "current-runtime-source"
+      ],
+      "hold_fixed_exception_rule": "仅change_only显式字段以及其必要shape/参数量派生字段可覆盖基线；任何其余变化必须另建配置并声明混杂。"
+    },
+    {
+      "proposal_id": "P21",
+      "direction_id": "D21",
+      "priority": "P4",
+      "tier": "exploratory_reserve",
+      "status": "out_of_scope_not_executable",
+      "hypothesis": "避免把广泛方向误解为授权。",
+      "control_run_or_config": null,
+      "task": "caco2_wang",
+      "asset_versions": {
+        "encoder": {
+          "name": "CheMeleon frozen BondMessagePassing",
+          "checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "adapter_source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "adapter_source_sha256": "3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712",
+          "chemprop": "2.2.1",
+          "freeze_parameters": true,
+          "freeze_buffers": true
+        },
+        "feature": {
+          "name": "2048-d mean-aggregated raw fingerprint",
+          "source_run": "hainan-index-cycle-20261031",
+          "train_array_payload_sha256_recorded": "27716ac421ac80e46adbeeb4190df93e86621f5926634e75f85679109191223a",
+          "dtype": "float32",
+          "independently_verified_array_bytes": false,
+          "cache_file_sha_is_not_array_payload_sha": true,
+          "proposal_direction": "D21"
+        },
+        "preprocess": {
+          "baseline": "legacy_z_train_fit",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "feature_statistics": "fit rows only; sd<1e-8 replaced by1 in control",
+          "target_statistics": "fit rows only; affine center/std; inverse before raw-scale metric"
+        },
+        "head": {
+          "baseline": "Linear(2048,256)-ReLU-Dropout(.1)-Linear(256,1)",
+          "source_version": "1c5592e98f3fff1c29369bd521f39e0cc044f3d3",
+          "runtime_source_sha256": "3874397451300b2b2c37eb99b5e995d53f0fcc22a7dee00c287d9ebeff65e7e0",
+          "trainable_parameter_count": 524801,
+          "proposal_version": "P21/head-spec-v1-not-materialized",
+          "proposal_code_sha256": null
+        }
+      },
+      "change_only": {
+        "axis": "明确排除的范围外研究",
+        "explicit_configurations": [],
+        "multi_factor_caution": [
+          "任何底座参数/buffer更新拒绝",
+          "valid/test标签不得流向训练准备",
+          "禁止去重/补标签/单位擅变/额外样本"
+        ]
+      },
+      "hold_fixed": {
+        "official_rows": "train637/valid91/test182原分区、原行序和原标签保留",
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "raw_feature_cache": "同一内容身份的原始float32 fingerprint；未补字节前blocked",
+        "split": "raw-SMILES group shuffle；基线seed43；fit573/stop64",
+        "training_seed_policy": "模型初始化/采样seed配对；split RNG独立",
+        "baseline_head": "2048→256→1 ReLU, dropout.1",
+        "optimizer": "AdamW lr.0005 weight_decay.0001",
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "target": "fit-only affine标准化，inverse回原numeric Y",
+        "early_stop": "基线internal standardized MSE；变体明确例外",
+        "frozen": "所有外部encoder参数及buffer、tokenizer/featurizer状态不更新",
+        "labels": "仅official train.Y用于训练与内部选择"
+      },
+      "split_id": "current_raw_smiles_group_seed43_fit573_stop64",
+      "seeds": [],
+      "metric": null,
+      "direction": "not_applicable",
+      "minimum_effect_or_decision_rule": {
+        "minimum_effect": null,
+        "selection": "无执行计划；权限未改变时拒绝。"
+      },
+      "success_criterion": "权限未变时验证器拒绝范围外动作；不产生训练计划。",
+      "falsification_criterion": "任何提案暗中扩大数据或冻结边界。",
+      "compute_budget": {
+        "configuration_count": 0,
+        "model_seeds": [],
+        "planned_training_runs_if_all_selected": 0,
+        "approved_training_runs_now": 0,
+        "executed_training_runs_this_review": 0,
+        "approved_encoder_inference_now": 0,
+        "host_fixed_score_invocations_this_review": 0,
+        "cost_assumptions": "0配置、0运行；外部拟合资产如TabPFN仅可单独询证，当前不准入。",
+        "budget_status": "proposal_only_not_authorized"
+      },
+      "dependencies": [
+        "W01输入/内容身份与权限合同",
+        "W03内部组划分验收",
+        "W10盲投影与反馈登记",
+        "主控另行授权实际训练、推理及评分"
+      ],
+      "within_current_scope": false,
+      "scope_interpretation": "true仅指冻结/官方train标签边界内的研究提案；不授予任何训练或推理许可。新资产未准入用false。",
+      "linked_issue_ids": [
+        "U02",
+        "U03",
+        "U01",
+        "AR001-12"
+      ],
+      "evidence_refs": [
+        "current-policy",
+        "evaluation-scope",
+        "current-rule-source-map"
+      ],
+      "hold_fixed_exception_rule": "仅change_only显式字段以及其必要shape/参数量派生字段可覆盖基线；任何其余变化必须另建配置并声明混杂。"
+    }
+  ],
+  "first_panel": {
+    "configs": [
+      {
+        "config_id": "C0",
+        "proposal_id": "P01",
+        "change_from_C0": {},
+        "model_seeds": [
+          43,
+          47,
+          59
+        ]
+      },
+      {
+        "config_id": "C1",
+        "proposal_id": "P02",
+        "change_from_C0": {
+          "monitor": "internal_validation_raw_mae"
+        },
+        "model_seeds": [
+          43,
+          47,
+          59
+        ]
+      },
+      {
+        "config_id": "C2",
+        "proposal_id": "P03",
+        "change_from_C0": {
+          "hidden_dims": [
+            128
+          ]
+        },
+        "model_seeds": [
+          43,
+          47,
+          59
+        ]
+      },
+      {
+        "config_id": "C3",
+        "proposal_id": "P04",
+        "change_from_C0": {
+          "feature_mode": "sd_floor",
+          "feature_std_floor": 0.001
+        },
+        "model_seeds": [
+          43,
+          47,
+          59
+        ]
+      }
+    ],
+    "unique_configuration_count": 4,
+    "common_model_seeds": [
+      43,
+      47,
+      59
+    ],
+    "split_seed": 43,
+    "planned_runs_if_authorized": 12,
+    "approved_runs_now": 0
+  },
+  "budget_accounting": {
+    "first_panel_unique_configurations": 4,
+    "first_panel_common_seeds": 3,
+    "first_panel_future_training_runs": 12,
+    "optional_followup_nested_confirmation_runs": 18,
+    "first_plus_nested_future_runs_if_separately_approved": 30,
+    "approved_training_now": 0,
+    "executed_training_now": 0,
+    "approved_additional_host_scores": 0,
+    "note": "12与18只是不同阶段建议，不是本轮执行预算；次阶段仅锁定2配置，未申领所有搜索空间。"
+  },
+  "selection_feedback_disclosure": "本轮valid诊断提高对尾部稳定性和匹配对照的关注；具体monitor比较主要来自训练内日志。记录为新增反馈，不宣称独立最终测试。"
+}

@@ -1,0 +1,13 @@
+# 审计侧车与复算边界
+
+这些记录仅供主控/本request授权分析侧；不得连同ZIP转发盲准备方。只有next_batch_guide.md是盲准备投影。
+
+read_coverage.json记录52项实际读取范围，不是独立阅读证明。45项全文、7项部分；没有声明完整52项验收。
+cross_review.json记录同一主模型的八视角证据复核，实际subagents和独立评审者均为0。
+numeric_checks.json与arithmetic_crosscheck.json是获准固定预测上的分析算术，不是模型推理或新增宿主评分。
+reproduce_checks.py仅读取主控另行取得的本地CSV，不联网、不加载模型、不训练。reproduction_test_output.json记录本轮实际执行结果。
+原始真值CSV、本地预测转录和内部工作脚本未放入本包。复算测试中的current是91行valid摘录，故其hash不等于完整273行预测原件的期望hash；该false明确表示未验证整文件，不表示源文件损坏。
+validation_report.json是本交付结构、数值一致性、计数、引用根和盲投影检查；不替代原件及科学结论的主控核验。
+records-manifest.json为侧车文件独立完整性清单；根delivery-manifest.json只登记六份正式交付。
+
+三处部分原件的evidence_locator在封口前修正，coverage_complete和缺读区间从未升级为全文。

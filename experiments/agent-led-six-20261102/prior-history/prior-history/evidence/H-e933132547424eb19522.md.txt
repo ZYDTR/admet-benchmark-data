@@ -1,0 +1,269 @@
+# 22项ADMET广度策略：第一次补全研究
+
+**request_id** `admet-breadth-strategy-pro-20261101-001`  
+**round_id** `training-breadth-strategy-20261101`  
+**input manifest SHA256** `2b37cecef4b6f45481ba1991766a2b15eaaffb672a695d193ae03b878c5e04e8`  
+**历史科学范围** `2026-11-01T11:28:28.074304Z`，仅另含固定v3明确追加的 supplemental004 资源拒绝终态；权威发布 `31a9bb2729ff1464bf6d4be1e23fcba0bf391725`。  
+**状态：needs_evidence。** 必需文本阅读和本轮算术/计划补全已完成；原件字节级复算、官方评分等价性及具体执行准入仍分别留有边界。未执行训练、对原始预测的新评分、私有valid真值读取、远程作业或提交。
+
+本报告的 `[required-xxx]`、`[data-profile]` 等是证据键；完整固定URI、原件版本和位置见 `evidence/source-index.json`。本地复算引用脚本和结果文件，不把自述回执当第三方阅读证明。旧版八件文件在 `previous/` 原样保留；更改事件见 `claim-events.json` 与 `change-log.md`。
+
+## 1. 结论及相对上一版的实质变化
+
+**推荐：先完成可检验的数据/指标/身份门槛，再做覆盖四类指标的受控广度筛选；把后续预算给出稳定、可解释且单位成本有效的任务。** 不推荐立即把全部预算投入Caco2，也不推荐无条件给22任务相同深度。这个推荐是基于现有证据的决策，不是已通过三策略等预算实验证明的最优政策。
+
+保留上一版“自适应扩大覆盖、先诊断异常”的方向，作以下实质修正：
+
+1. 54项合同材料和input manifest均实际读到末尾；原来41项未读限制已关闭。导航卡的全文阅读只证明读了卡本身，不代表其全部83锚点或清单2446文件已全部下钻。完整任务595行也已读完。原字节传输失败与浏览器文本成功分开，不伪造SHA复算。[reading-contract; full-prompt; input-manifest]
+2. Caco2理论满分替换的**本地valid**总分上限为 **46.3320127594**，不是48.81；**榜单显示基准**的对应上限为 **48.8115148182**。最佳历史Caco2替换的本地总分增量 **+0.1301309438** 保持成立，但只是描述性替换，不是同控制条件因果增益。[required-049; required-050; independent-arithmetic]
+3. 公开规则允许train/valid调参。执行方不拿逐行valid真值是项目控制；默认限制确认次数是降低选择偏差的建议，不是用户或赛事永久禁令。原数值Y可直接建模；单位未提供不应全面停训，而应阻止无依据log、物理裁剪、改标签和assay合并。[official-rules:R06,U01; required-045; required-046; data-intake]
+4. 首批改成 **10任务×2个只差dropout的配置×2seeds=40 fit**，取代旧版多因素H0/H1。保留50 epoch／patience8；200／20只作为后续预算组合模板，不冒充历史相同对照。Caco2已有六项独立配对不重复加入首批；加入lipophilicity作为中等规模MAE对照。剩余11任务列出具体条件扩展44 fit，未知获选任务的确认阶段只放模板。[required-047; required-048; runner-v4]
+5. 现有Mini22确有22任务CPU训练实现，不能说从未有22任务runner；但已读GPU runner是Caco2固定契约，并不支持新分类/rank监视与可验收缓存导入。本批标为new_code，并给实际接口与验收测试。旧冻结检查器的主控打包遗漏及用户报告的独立修复另列，不归为科学错误或禁新代码理由。[baseline-delivery; training-science; runner-v4; user-supplement-1]
+6. 不能再把“大valid”简单当作低方差：Ames valid单非空Murcko骨架；LD50及solubility valid均为空骨架，而train/test组成不同。训练seed重复无法填补未观察的化学覆盖。[data-profile:L59–72]
+
+## 2. 阅读、工具与证据层级
+
+必需回执55条，read_mode全部为`original`，指对应固定文件正文；实际读取方式为web逐段open。`evidence/reading-coverage.json`逐段登记可见行；input manifest读到L14689，v3列2446文件、128225676字节、send_ready=false，保留当时含义。外加读取原数据接收、盲valid投影、输入完整性、两个真实代码文件、004终态、冻结/尺度归因、claim事件链等。一个**可选**替代资产准备长原件仅读L0–223/798，明确标部分阅读，不拿它声称完整适配验收。[input-manifest; alt-prep-status]
+
+区分四个层次：**原件陈述**（历史工具/模型输出）、**主控裁定**（接受、拒绝或缩小结论）、**本次独立算术**（对已公开聚合值重算）、**未来待证假设**（本批实验建议）。例如极端特征是观察；它造成误差仍是假设。已经完成的Mini22是历史事实；自适应策略胜过均匀分配还不是实证事实。
+
+实际工具使用为web读取、容器本地文件/算术及失败的原始下载尝试；没有可调用的通用subagent工具，没有委派或模拟角色审查。float与Decimal两实现是算术交叉检查，不是两个独立研究代理，也不是独立数据来源。没有使用训练框架跑实验、没有新评分、没有外部实时研究替换这份固定历史。原始下载具体错误见 `evidence/tool-use.json`：DNS解析失败、download failed、curl7。所有公开正文仍经web读取；本地交付物的SHA是真实计算，源文件SHA只是原件公布值。[evidence/tool-use.json; evidence/recompute.py]
+
+## 3. 冻结快照内的历史，不由目录数代替学习次数
+
+| 对象 | 完成学习 | 正确用途 |
+|---|---:|---|
+| CheMeleon Mini22 | 1 run、22头 | 所有22任务的起点；不是22次优化探索 |
+| Caco2四个后续run | 4 run、4头 | 可描述成绩与成本轨迹；多个因素混杂 |
+| Caco2六个paired注册run | 0 | 尚无模型效果；保留固定实验设计 |
+| supplemental004资源拒绝 | 0 | 资源/流程终态，不是科学负结果 |
+| pilot、准备/冷启动及其他记录 | 不因此增加完成学习 | 准备、失败、推翻及边界证据 |
+
+总计 **5个已完成学习run、26头**。31记录、83锚点、12注册run属于索引/登记口径，并不矛盾。21个非Caco2任务仅有Mini22完成基线，没有快照内后续优化结果。[required-006; required-014; required-017; required-020–030]
+
+004终态的业务开始/结束约为11:40:15.496437–11:40:16.430761Z，返回78，batch_invocation=false，资源释放确认。它虽晚于11:28:28基础时间，正是用户明确纳入v3的例外；不把其他之后现场训练纳入。预检时空闲不等于稍后独占，不得杀其他PID或自动抢资源。监督进程125与worker0也必须分列，不能仅靠包装退出码否定已完成科学产物。[terminal-004; terminal-004-review; required-053]
+
+### 3.1 Caco2成绩和可比性
+
+| run（历史） | valid MAE↓ | 推断任务分 | 仅替换Caco2后的本地总分 | 增量 |
+|---|---:|---:|---:|---:|
+| `mini22-chemeleon` | 0.426065031 | 39.966492 | 43.603216929 | +0.000000000 |
+| `hainan-frozen-training-20261031` | 0.378625136 | 42.829372 | 43.733347872 | +0.130130944 |
+| `hainan-skill-follow-20261031` | 0.389188594 | 42.156955 | 43.702783451 | +0.099566522 |
+| `hainan-index-cycle-20261031` | 0.421472161 | 40.226818 | 43.615049930 | +0.011833001 |
+| `hainan-mae-monitor-20261101` | 0.403021173 | 41.307725 | 43.664182074 | +0.060965145 |
+
+Mini22与首个Caco2头、skill-follow、index-cycle之间有宽度512/256、lr.001/.0005、seed、分组/行划分等差别。两历史stop集合各64行但交集仅8，不能说改宽度或监视指标单独造成所有变化。index-cycle按MSE选最佳18轮，完成26轮130步；MAE-monitor仍训练标准化MSE，最佳7轮、15轮75步。前一条“若改MAE监视会在15轮停”的回放不是已经执行的新run；后一条才是已完成的MAE监视历史。[required-051:L1–151; required-052:L0–282; required-053:L0–38]
+
+六个固定paired设计用同split43、seed44/45/46比较MSE监视与raw MAE监视，其作用是消除一部分上述混杂；快照内结果为零。不要把本研究变成等待这六项完成，也不要把后来的结果倒灌。内部target标准化是正仿射时，标准化MSE与raw MSE对同一固定split的epoch排序相同；真正需检验的是MSE与MAE监视及其早停路径，不是笼统“尺度不一样”。[required-048; required-052]
+
+### 3.2 推翻链
+
+`C-FREEZE`保留CE-FREEZE-01→CE-FREEZE-02：跨run wrapper总摘要不同，来源包括四个未用于encode的随机predictor张量；两个被检查run内已注册encoder参数与buffer前后不变。不能从跨run差异推断解冻，也不能把两run证明扩成未来全部run或任意未登记内存证明。未来每run仍需自身前后摘要及optimizer集合/调用路径检查。[claims-current; claims-events; freeze-attribution]
+
+`C-DOWNLOAD`保留CE-DOWNLOAD-01→02：旧工具捕获超时不是旧ZIP下载失败证明，旧ZIP摘要与CRC已通过；确切传输完成时间仍未知。这一历史推翻与本轮容器实际无法取得原字节是两件事，不可相互替代。[claims-current; claims-events; required-054]
+
+`C-SCALE`保留CE-SCALE-01为待证：训练特征std约9.875e-6，某些角色标准化极值约871.7/1637.4；double复算支持数值放大现象，但没有控制单因素的clip/floor实验，故不能认定为误差根因。若稳定化让极值下降但指标不改善，则反驳“数值现象必然造成科学退化”的强说法。[scale-attribution; required-051; required-052]
+
+## 4. 22任务完整基线与优先级
+
+下面n是**train/valid/test**，不把valid行数误写为训练样本量。正/负仅指valid数值Y=1/0，不推断生物学正类含义。原始Y单位、全部既有变换、训练标签分位数/尾部比例未在本次所读聚合材料完整提供；不补造。总train53,695、valid11,735、test16,379；13分类、9回归，指标分布8AUROC/5AP/5MAE/4Spearman。[data-profile:L11–43; input-integrity; required-011]
+
+| task | metric方向 | train/valid/test | valid正/负 | valid指标 | 参考值r | 本地推断任务分 | 阶段 |
+|---|---|---:|---:|---:|---:|---:|---|
+| `ames` | AUROC↑ | 4684/1137/1457 | 479/658 | 0.796606 | 0.871945 | 47.742395 | S1 |
+| `bbb_martins` | AUROC↑ | 1421/203/406 | 149/54 | 0.893674 | 0.927779 | 49.063793 | S1B |
+| `bioavailability_ma` | AUROC↑ | 448/64/128 | 43/21 | 0.744186 | 0.722248 | 50.748007 | S1 |
+| `caco2_wang` | MAE↓ | 637/91/182 | — | 0.426065 | 0.283647 | 39.966492 | existing_independent_pair |
+| `clearance_hepatocyte_az` | Spearman↑ | 848/122/243 | — | 0.357606 | 0.552040 | 46.658809 | S1B |
+| `clearance_microsome_az` | Spearman↑ | 770/111/221 | — | 0.487330 | 0.642814 | 47.516336 | S1B |
+| `cyp2c9_substrate_carbonmangels` | AUPRC↑ | 467/67/135 | 12/55 | 0.420994 | 0.443370 | 48.705649 | S1B |
+| `cyp2c9_veith` | AUPRC↑ | 8463/1210/2419 | 406/804 | 0.759450 | 0.790586 | 48.995650 | S1B |
+| `cyp2d6_substrate_carbonmangels` | AUPRC↑ | 465/67/135 | 14/53 | 0.463777 | 0.747531 | 38.287302 | S1 |
+| `cyp2d6_veith` | AUPRC↑ | 9191/1313/2626 | 250/1063 | 0.690734 | 0.719172 | 48.991502 | S1B |
+| `cyp3a4_substrate_carbonmangels` | AUROC↑ | 468/67/135 | 36/31 | 0.729391 | 0.725249 | 50.142361 | S1B |
+| `cyp3a4_veith` | AUPRC↑ | 8628/1233/2467 | 581/652 | 0.877173 | 0.884121 | 49.802753 | S1B |
+| `dili` | AUROC↑ | 331/48/96 | 13/35 | 0.861538 | 0.908609 | 48.670435 | S1 |
+| `half_life_obach` | Spearman↑ | 465/67/135 | — | 0.073700 | 0.491390 | 41.858182 | S1 |
+| `herg` | AUROC↑ | 457/66/132 | 42/24 | 0.896825 | 0.863358 | 50.950679 | S1B |
+| `hia_hou` | AUROC↑ | 403/58/117 | 48/10 | 0.966667 | 0.994280 | 49.295918 | S1B |
+| `ld50_zhu` | MAE↓ | 3970/1937/1478 | — | 1.043589 | 0.603071 | 36.623899 | S1 |
+| `lipophilicity_astrazeneca` | MAE↓ | 2940/420/840 | — | 0.539647 | 0.472895 | 46.703765 | S1 |
+| `pgp_broccatelli` | AUROC↑ | 851/122/245 | 61/61 | 0.905402 | 0.938363 | 49.106143 | S1B |
+| `ppbr_az` | MAE↓ | 1952/279/559 | — | 20.831835 | 7.330617 | 26.029754 | S1 |
+| `solubility_aqsoldb` | MAE↓ | 5045/2940/1997 | — | 11.113364 | 0.738443 | 6.230636 | S1 |
+| `vdss_lombardo` | Spearman↑ | 791/113/226 | — | -0.016927 | 0.660995 | 37.180313 | S1 |
+
+数据和指标数值逐项抄录固定原件后，**任务分/均值/贡献独立复算**；没有重新读取CSV或运行RDKit重做结构画像。完整精度、22组盲valid/test摘要、误差检查见task-ledger与evidence/numeric-recomputation。[required-011; required-049; required-050; data-profile; input-integrity]
+
+### 4.1 每任务处理与停止理由
+
+所有首轮任务使用同一冻结CheMeleon原2048维表示，预测头相同；“科学资产就绪”不等于新增GPU runner已经验收。下表的成本等级只是按行数/任务性质的计划排序，不是测得GPU时间。共同立即停止条件为身份/冻结/非有限值/未定义指标故障；“两seed筛选不通过”只停止该方向自动加码，不永久淘汰任务。
+
+| task | 首先做什么／可检验因素 | 关键不确定性 | 相对头训练成本 |
+|---|---|---|---|
+| `ames` | 先核valid单骨架代表性；dropout与后续容量/骨架诊断 | valid全部1个非空Murcko；n大不等于化学覆盖广 | medium |
+| `bbb_martins` | 原串分组保留冲突Y；低容量/正则 | train7个原串双类别；原串相同不等于可合并标签 | small |
+| `bioavailability_ma` | 小训练集/小valid，低容量正则与划分敏感性 | valid64、正43；跨任务暴露55行不代表标签泄漏 | small |
+| `caco2_wang` | 独立六项固定配对优先回答监视选择，不追加本轮H0/H1 | 四历史run混杂；六项0 learning，不能等结果才完成广度研究 | existing_only |
+| `clearance_hepatocyte_az` | rank早停、冲突重复测量诊断、受控loss | train848/712原串、136原串不同Y；单位未知不阻止原Y基线 | small |
+| `clearance_microsome_az` | rank早停与种子；与hepatocyte不能视为同一标签 | n770/111，Spearman须检查tie与常量预测 | small |
+| `cyp2c9_substrate_carbonmangels` | AP版本、少正类、低容量 | valid12正；跨任务未暴露子群0正，不能作可比较AP | small |
+| `cyp2c9_veith` | AP版本固定；普通正则对照，后续train-only权重 | train8463；绝对预算较大，原分近参考非无余量 | large |
+| `cyp2d6_substrate_carbonmangels` | 低AP先校定义，再dropout/小头/划分稳定性 | valid14正；低分不是高概率可改善 | small |
+| `cyp2d6_veith` | AP版本与不平衡；train-only pos_weight条件方向 | train9191；验证正250/1313 | large |
+| `cyp3a4_substrate_carbonmangels` | AUROC非AP；小头与划分 | valid36正31负；不能借Veith标签语义 | small |
+| `cyp3a4_veith` | 大任务稳定对照；AP实现和早停 | valid581正652负；高原指标不是满归一化分 | large |
+| `dili` | 低容量、train内分组诊断；不从48行valid挤出结论 | valid35空Murcko/48；13正35负 | small |
+| `half_life_obach` | rank/常量/tie/极端预测检查；稳健loss条件方向 | 弱相关；正仿射只改尺度不改Spearman | small |
+| `herg` | 原行身份允许空ID；小头/正则 | train20个空Drug_ID、valid/test各1；不能ID字典去重 | small |
+| `hia_hou` | 少数负类敏感性；避免高容量穷举 | valid只有10负；0.9667 AUROC不证明普遍近天花板 | small |
+| `ld50_zhu` | MAE原尺度/极端预测/特征标准化诊断 | valid全部空Murcko，train/test有环，均匀seed不能补化学覆盖 | medium |
+| `lipophilicity_astrazeneca` | MAE原尺度对照；稳健loss/容量 | train2940 valid420，可作相对平稳回归锚点但未证低噪声 | medium |
+| `pgp_broccatelli` | 平衡分类正则对照；后续容量 | valid61/61，但n122仍有限 | small |
+| `ppbr_az` | 先身份/逆变换/预测尾部，再dropout与特征条件化 | 481原串不同Y；高MAE不是错误标签或百分比范围已证实 | medium |
+| `solubility_aqsoldb` | 优先诊断高MAE/极端预测，保留解析失败回退 | valid全空Murcko；test2解析失败；最长原串681字符，重原子最大388 | medium |
+| `vdss_lombardo` | 负rank先查身份与tie，受控loss和稳定性 | 正仿射缩放不会改变Spearman；不得无证据反转标签 | small |
+
+**关键解释。** Solubility与PPBR原指标相对参考差距大，先诊断并保留高潜力假设；不能据此估计必胜概率。LD50规模较大，但valid全空骨架使其“低方差大样本”标签不成立。VDss/half-life是秩任务：正仿射改尺度不会直接改变Spearman，需排除行身份、常量/并列与表示不足。CYP2D6 substrate低AP伴随少正例，应检验排序定义和稳定性，而非先上高容量。Ames加入第一批是对覆盖差异的压力测试，不是因为1137个valid样本就可放心选冠军。Lipophilicity作为中等训练规模MAE对照，但也未证明噪声低。[required-011; data-profile]
+
+**重复与身份。** PPBR1952训练行仅1282个原串，481个原串有不同Y；hepatocyte848/712、136个原串不同Y；BBB有7个train原串同时含两类。相同SMILES不等于同测量，不能平均或删重，tiny-fit也不能普遍要求零误差。内部split按原串分组保留每行。hERG有空Drug_ID，不能用其作唯一键；真实身份为(task,role,row_index)，ID只作为保留字符串。[data-profile:L45–52]
+
+**结构覆盖。** Ames valid1137行只有苯环骨架这一个非空Murcko种类，不等于1137行是同一分子；LD50及solubility valid全空Murcko也不等于都属于一个化学家族。原train内分组诊断可检验敏感性，但不能通过多seed、row bootstrap或单骨架cluster bootstrap凭空产生未观察化学结构。观察到同任务raw/canonical/非空Murcko跨角色交集为零，并不能恢复官方历史划分算法。[data-profile:L53–72]
+
+**全量输入。** 已发表画像中solubility test两行在指定RDKit设置解析失败，另一行388重原子；最长原始串681字符，不是681 token或原子。不能推断其他编码器一定失败或默默截断。固定现有程序回退时保留原行和parse_mask，零的是原特征不是手填预测；随后仍由学习的头输出。外部模型必须另做长度/原子/构象覆盖验收。[data-profile:L88–103]
+
+## 5. 总分独立复算与预算量纲
+
+设任务原指标m、榜单参考r。固定原件反推如下，不冒称官方源码：
+
+- MAE：`s=100*r/(m+r)`。
+- AUROC/AP：`s=100*m/(m+r)`。
+- Spearman：`s=100*(1+m)/(2+m+r)`。
+- 聚合：22项任务分的算术平均。
+
+使用同一已公布输入的float与50位Decimal两实现，最大差7.11e-15；与公布本地valid分最大差0。22个官方显示tuple最大残差4.64086e-7；这支持反推公式精度，不证明未公开的AP、边界或其他榜单实现完全相同。[required-049; required-050; evidence/recompute.py; evidence/numeric-recomputation.json]
+
+| 量 | 复算值 | 解释边界 |
+|---|---:|---|
+| Mini22本地valid均分 | 43.6032169286 | 非官方hidden-test得分 |
+| 榜单显示22项均分 | 46.4184076818 | 页面总分显示46.418是舍入；不是本地valid |
+| 各任务理论最大值平均 | 65.7196424065 | 公式代理下的数学上限，不是可实现性能承诺 |
+| 只把本地valid Caco2设MAE=0 | 46.3320127594 | 其余21个本地valid任务固定 |
+| 只把榜单Caco2设MAE=0 | 48.8115148182 | 其余21个榜单任务固定 |
+
+MAE理论任务上限100；AUROC/AP的上限是`100/(1+r)`；Spearman上限是`200/(3+r)`，**不能把所有任务都当100分**。参考水平m=r对应50分；任务分略高50不等于普遍接近满分。同样，原MAE20.83与另一个MAE1.04不能直接比较对总分的影响。[independent-arithmetic]
+
+一个任务分改善Δs只贡献Δs/22。导数分别为`-100r/(m+r)^2`、`100r/(m+r)^2`、`100(1+r)/(2+m+r)^2`，可解释边际量纲；不是训练可达性估计。数值附件还给MAE下降10%、分类指标+0.01、Spearman+0.05的**假设敏感性**，明确不是预测。应逐seed先算分再形成成对差；非线性转换后平均一般不等于先平均原指标再转换。对ensemble必须另据其实际预测算指标，不能拿单模型分数平均冒充ensemble得分。
+
+按数学上限排列的headroom只是资源价值的必要条件，不足以决定投放。Solubility任务分低，数学余量大，但也可能是表示/分布外推难题；没有经验方差时不能制造“70%可改善”或置信下界。若官方AP或公式变更，统一重算全部候选的同口径排序，而非挑有利版本。[required-011; required-049; required-050]
+
+## 6. 三种预算策略：选择、代价与反证
+
+### 6.1 逐任务深挖
+
+适用于已经有可复制提升、边际收益高且新增配置有明确机制的任务。优势是局部调试连续、缓存复用、因果对照方便；缺点是其他21项停留基线、同valid反复选择及收益上限集中。Caco2历史最佳替换仅+0.13013且本地单任务理论总分上限46.332，不能用单任务深挖保证显著榜单跃升。该策略仍可能在某个可修复数值问题产生大收益时胜出，因此不永久禁止深挖。[required-012; independent-arithmetic]
+
+**支持其回归优先的条件：** 一个任务在独立train内outer划分及多seed上保持正增益，修正方向的实测每GPU小时总分收益高于广度未测任务，且没有靠多次valid查询赢得选择。**反证：** 多批改动仅在一个seed/划分有效，或同时间预算下新增任务的累计稳定贡献更高。不能拿单个历史最优run与另一策略所有平均run比较。
+
+### 6.2 平均浅调
+
+适用于获得可比较初始证据，不适合作为永久预算政策。21个非Caco2任务都做H0/H1×2seeds是84个新fit；这也是本方案条件覆盖的完整底层网格。优点是透明、覆盖充分、减少主观挑任务；缺点是头fit不等成本，Veith三任务训练量约占全部49%，tiny任务的提升不稳定，近上限任务与数值异常任务需求不同。[data-profile; experiment-matrix.json]
+
+**保留均匀分配的条件：** 首轮结果没有稳定的跨任务收益/成本差异，或所谓自适应排名随seed大幅反转。**反证：** 在共同控制、同成本测量下，有限几项稳定贡献长期高于均匀轮转，而多数任务后续边际回报持续接近零。不得仅因为低原分就跳过其诊断成本。
+
+### 6.3 自适应覆盖（本次选择）
+
+先以跨指标/规模/风险的10任务首批建立控制和成本，再经主控复核扩到剩余11非Caco2任务，确认阶段最多选4项。现有Caco2六项属于独立已注册流，不以本研究延后它，也不把其假想结果并入算法。资源严重受限时，40 fit只是**第一阶段**，不是完成所有22项深度优化的声称；全覆盖有明确S1B路径。[experiment-matrix.json; conditional-followups.json]
+
+实际排序建议：先排除身份/数值失效；对每任务报告两seed成对Δs、均值、符号、运行成本、结构覆盖风险；通过筛选门槛后按`平均成对Δs/22 ÷ 实测端到端成本`排序，成本相同按task字典序稳定决策。两seed不能估计可信的胜率，风险只按预先写明的观察约束处理，不拟合虚假的贝叶斯后验。将编码/准备成本单独列出，分别看一次性总成本和缓存已存在时的边际成本，防止摊销选择美化比率。
+
+**反证与退回规则：** 若所有候选不通过两seed门槛，不能强选4项；转诊断/重设计，或在同授权范围完成均匀浅覆盖。若第二split使排序/符号反转，不宣称稳定优胜；若新表示准备成本吃掉边际收益，保留现有底座。若后续预注册的同预算比较发现均匀政策获得更高累计稳定贡献/小时且无更大选择风险，改用均匀策略。当前证据未提供这类政策对照，故结论是可被推翻的推荐，而非已证最优。
+
+### 6.4 预算档与公平比较
+
+| 档位 | 具体新fit预算 | 能回答什么 | 不能声称什么 |
+|---|---:|---|---|
+| 小 | S1=40 | 10任务配对筛选、runner与成本校准 | 已覆盖22项优化；稳定跨split结论 |
+| 中 | S1 40 + S1B44 + T-S2≤24 = **≤108** | 21非Caco2受控覆盖，最多4任务确认 | 所有任务都需同样追加预算 |
+| 大 | 中档 + 多split增量≤24 = **≤132** | 最多2任务的split敏感性 | 新底座或200/20已自动获批 |
+
+S1B和确认可能因失败/无胜者跳过，实际总数可低于上限；所有档均不含既有六项、不含新底座准备、不含条件长预算最多12额外fit。共同H0仅在资产、完整科学配置、split、scalar seed全部一致时去重。失败前零fit的工程重试不是一个学习结果；同轨迹恢复不是新seed；同一头有22个预测文件也不是22个模型fit。
+
+进行未来政策公平比较时必须固定总实际时间或资源预算、评分口径、共享初始证据和valid暴露，按所有尝试计成本而不是只算赢家。不同策略可拥有不同选题，但不能用更大epoch上限或更多外部准备作隐藏补贴。当前本研究未执行政策比较；上表是可落地预算，不是经验收益表。
+
+## 7. 下一批的完整科学设计
+
+### 7.1 具体任务与两个配置
+
+S1：`solubility_aqsoldb`、`ppbr_az`、`ld50_zhu`、`lipophilicity_astrazeneca`、`vdss_lombardo`、`half_life_obach`、`cyp2d6_substrate_carbonmangels`、`ames`、`bioavailability_ma`、`dili`。分别覆盖数值异常、较大MAE、秩相关弱、少正类AP、结构覆盖敏感及小valid分类。选题基于已见基线，因此不把它当随机抽样的任务面板。
+
+每任务H0/H1都用：冻结CheMeleon2048维、`[256]` ReLU头、单输出、AdamW(lr0.0005, weight_decay0.0001, betas0.9/0.999, eps1e-8)、batch128、float32、max_epochs50、patience8、min_delta1e-7、无scheduler、无BatchNorm/LayerNorm/残差/梯度剪裁。H0 dropout0.1，H1 dropout0.3，**只有这个字段不同**。头参数524801。model seeds44/45；同task同seed的初始头相同；split固定43。H0不是Mini22历史512/.001/seed42的重现，所以本次结果不能把所有差异归给dropout，只有H1-H0配对差可以作有限的dropout效应观察。[required-048; runner-v4; next_experiments.json]
+
+### 7.2 split、预处理与明确指标
+
+原train内按精确原Drug字符串分组：唯一key按Unicode codepoint排序，CPython Random(43) shuffle，整组累积至`max(1,round(.1*n))` stop行，不能吃掉全部组；保留原行顺序。固定算法而非只写“seed43”，每run实际分组摘要验收。没有偷偷stratify或挑一个指标更好的seed。若分类只剩单类或rank常量，停止该任务的可比分析并明确重设计；不能换metric或给零分蒙混。单类AP可能返回约定数值，但本设计把它作为不可解释的筛选对象拒绝，而不是宣称所有AP单类数学上必无定义。[training-science; new-code-interface.json]
+
+特征mean/std只从inner-fit计算，float32、ddof0，std<1e-8置1，不clip；raw-cache可共享，标准化参数不能跨split误复用。回归Y只做inner-fit仿射标准化，零std回退1；所有输出逆变换一次到给定原Y。不从valid或test拟合任何参数。分类输入原0/1标签，loss用logits，输出sigmoid连续概率，不在AUROC/AP前二值化。[runner-v4; proposed interface]
+
+| 任务集合 | 训练loss | 早停metric、direction | 预测尺度 |
+|---|---|---|---|
+| 5个MAE任务 | inner-fit标准化Y的MSE | 原Y MAE，minimize | 仿射逆变换后的原Y，无物理裁剪 |
+| 4个Spearman任务 | 同上 | 平均并列秩Pearson相关，maximize | 原Y连续值；秩metric不需要人为反转 |
+| 8个AUROC任务 | BCEWithLogits、pos_weight1 | AUROC，maximize | 连续sigmoid概率，正类为Y=1 |
+| 5个AUPRC任务 | 同上 | 本地AP，maximize | 同上；记录与官方等价未确认 |
+
+所有具体task在JSON各有完整配置和方向；MAE绝非统一maximize。S1中`inner_stop`既选best epoch又提供初筛比较，因此此分数有选择乐观性，是**训练内筛选代理**，不是官方valid或独立泛化得分。任务分转换仍使用固定r用于量纲化，但不能将这些内部不同分布的代理相加当新榜单预测。
+
+### 7.3 筛选、确认与停止
+
+S1预设启发式门槛：H1-H0两个seed的任务分差均正，平均≥0.5任务分（单任务总分等价值0.0227273），且全部身份/冻结/finite检查通过。0.5是预算决策阈值，不是经验噪声界或显著性阈值；min_delta1e-7只是早停数值阈值，两者不同。H0也可能同时较Mini22差，不能因H1略优于弱H0就声称超越历史基线。
+
+候选确定后最多4任务进行T-S2：同H0/H1，不改loss/预算，model seeds46/47/48；原train先按同类group算法outer seed44留20%，再在outer-fit内seed144留10% early-stop。outer标签不参与梯度、任何统计或epoch选择；只用于最终配对比较。预设平均Δs≥0.5、至少2/3正且无pair低于-0.5为建议推进条件；仍不冒称三seed显著。此outer仍来自同一个训练包，且方案受历史信息启发，不是全新独立外部test。[conditional-followups.json]
+
+必要时最多2任务扩outer seeds44/45/46、inner seed=outer+100，每split三model seeds；36个全组合里12已在T-S2，最多24新增。若一个split均差为负，就报告条件性，不称通用改善。对小样本或明显分布偏移任务，进一步原train内canonical/scaffold诊断可作为新预注册方向，但不得重切官方valid/test或把所有空骨架合为一类。现有readouts不足以规定最好的化学拆分参数，故它不伪装已定训练项。
+
+训练级立即停止：freeze/行身份/非法标签通道/非finite/未经许可资源/错误metric方向。任务级不自动加码：两seed符号冲突、均值小于门槛、过大不稳定、常量metric。批级暂停并交主控：共享runner或数据契约故障。普通未提升不触发无限逐头回聊；S1/S1B整批收齐成败及成本再审议。无合格候选时S2为0 fit，不强凑任务。
+
+## 8. 准备状态、资产与新代码
+
+现成资产不是空位：CheMeleon权重SHA `c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651`，34859448字节；encoder代码 `3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712`；training_science `63bb22a2aa1634f7e3db3a3b972969ee84f3f861da6fe561608e5cb87acf046c`；GPU runner `57386ae54cc1cbb379fbff8af7a90ac34160769a8a0122402b881a8aea893abe`。官方ZIP与官方template、Caco2 train以及全部22盲valid/test SHA都在asset-bindings，来自已读原件，不宣称本次重新下载验证了权重。[weight-reference; paired-manifest; data-intake; input-integrity]
+
+| 类别 | 当前例子 | 下一步含义 |
+|---|---|---|
+| 可直接配置的既有路径 | 固定Caco2、CheMeleon、AdamW/MSE、MSE或MAE监视及已有数值参数 | 在现行runner实际接受字段范围内；仍需另行授权，不能由研究自动运行 |
+| 需新代码 | 分类BCE、AUROC/AP/Spearman监视、任务分派、可核验raw-cache导入、嵌套split、新loss/预处理/融合 | 给定API与A1–A10独立验收；42个新提案均此类 |
+| 未就绪资产 | MiniMol、MoLFormer10pct；KPGT/Uni-Mol/SMI-TED等后备 | 准备、权重/代码/许可证、覆盖和冻结验收后才能形成具体run |
+| 条件研究新模块 | scratch小D-MPNN、描述符/指纹、MTL、ensemble | 不等同现成底座；按来源/监督/预算另审，保留比赛深度学习要求 |
+
+新接口为`prepare_task(config, host_input_registry)`和`run_head(context, model_seed)`，只是设计，不是本轮已实现代码。A1–A10覆盖任务/metric方向、统计泄漏、合成指标、分组身份、坏缓存拒绝、buffer故意突变、best checkpoint/尺度、完整模板、worker/监督分离与零训练import。一个尚未写出的实现没有真实SHA，保持null是诚实状态，不能用旧runner SHA冒充。现有资产SHA则已经具体绑定，不能仍写“将来绑定”。[new-code-interface.json]
+
+21个非Caco2 train单文件SHA没有出现在所读公开按任务完整性条目；不能用blind valid摘要代填。科学配置已经绑定官方ZIP、task与role，执行前宿主核对实际train及行清单，不返回valid真值。旧files=[] pending data-manifest不是66文件验收。该限制影响dispatch-ready声明，不是取消新代码科学方案的理由。[old-data-manifest; blind-valid-projection; input-integrity]
+
+## 9. 缓存、成本与结果拼装
+
+**缓存单位。** 可缓存未经拟合变换的固定encoder原特征，key包括输入字节/原行映射、权重与encoder代码、输出维度dtype、解析策略、pooling与环境摘要。相同任务原行上的raw embedding可跨head seeds和内部split复用，不能因split变化就重复编码；但fit-only scaler/target统计必须随split重算。历史NPZ存在不表示现行runner支持导入：已读runner每run重新编码，缓存导入是需验收的新代码。跨任务相同SMILES可在更后续显式dictionary/map设计下去重，首批不默认依赖跨任务共享以免错行。[runner-v4; training-science; data-profile]
+
+**成本。** 分开记录准备/编码/fit/预测导出/取回/授权评分与复核时间、峰值CPU/GPU内存、更新步数、每run停止原因。Mini22历史CPU v2约988秒编码后EAGAIN、v3复用66缓存后22头训练/导出25.84秒是在特定ARM64受限环境，不是本批GPU报价；先前某Caco2的短worker时长也不可外推所有任务。没有本批实际GPU秒，故预算文件不填造小时。[baseline-delivery; required-018]
+
+200/20相对50/8的epoch上限四倍，但真实成本取决于早停；patience也改变轨迹，故T-LONG-BUDGET明确是两项预算组合，最多2任务×2arms×3seeds=12总fit，再减精确相同已完成control。仅在多seed触及50且仍有改进时触发，不因“没赢”就延长到赢。[conditional-followups.json]
+
+**22任务装配。** 每任务最终选择固定一个已接受模型、固定seed均值或受控train-OOF组合；这是逐任务选模/组装，不是联合MTL。回归输出原Y，分类连续概率，按官方模板task/sample_idx并核SMILES写入16379行；不改其他列、Drug_ID字符串、BOM/CRLF语义，不手改预测。官方template SHA `8ee41589d2c98e7b93081c058b3f928ac09bea4b3ffc899fa13677051e9baa20`；仓库模板7611处Drug_ID字符串不同，不能替换。所有任务缺行/重复/finite失败均不导出完成声明。[data-profile:L104–114; official-rules:R03–R05; data-intake]
+
+训练执行方只拿guide、接受的配置与来源资产和获准汇总反馈。不要把包含历史逐行valid真值的原件直接投影给执行方；本交付没有复制这些逐行表。分析报告可给主控看，执行向导刻意只含聚合与操作条件。
+
+## 10. 条件方向，不因首批小而缩减研究面
+
+`search_space.json`给20个有真实issue引用的方向：D-METRIC、D-DROPOUT、D-SEED、D-HEAD、D-LR、D-WD、D-LOSS、D-FEATURE、D-TARGET、D-OPTIMIZER、D-SCHEDULE、D-BATCH、D-BUDGET、D-POOL、D-ENC、D-CONCAT、D-ENSEMBLE、D-MTL、D-SCRATCH、D-CLASSICAL。每个方向写候选值、组合限制、seeds、count规则、成本假设、readiness和反证，不允许对全部轴做笛卡尔积。
+
+优先顺序不是永久列表：先检查身份/度量，再小幅正则；若训练曲线欠拟合才容量/lr，若指标对尾部敏感才稳健loss，若数值放大且控制实验支持才预处理。MAE任务的L1/Huber和秩任务的fit-only pairwise rank loss都是可检验后备；当前未执行。AdamW与SGD+不同lr明确是bundle，不做纯optimizer归因。新的pooling/concat改变缓存/头容量，需要参数量控制。新底座仅在就绪后比较，一个模型一个初始对照而不是同时准备多个大模型。[search_space.json]
+
+**MTL特殊边界。** 共享冻结encoder加独立head只是表示复用；只有新增共享可训练层才是本研究所称MTL。跨任务train∩valid4798、train∩test7389、valid∩test1446是分子集合重合，不自动等同目标标签泄漏。标签必须逐任务来自train，missing mask明确，不能把所有valid.Y拼成宽表训练；三Veith共26282训练标签约占49%，直接按所有label平均loss隐含任务权重，需与等任务平均分开。CYP2C9 substrate未跨任务暴露的valid子群只有3个负类，不能用其AP约定数字证明未见分子迁移失败。[data-profile:L73–87]
+
+**ensemble。** 先固定同配置确认seed的等权平均，有现成组件时额外fit可为0，但没有0-fit空seed训练proposal。若学权重，需train-only OOF、非负和为1、明确额外component/blend fit计数；不能直接用valid.Y拟合权重。本次允许主控用valid汇总选择候选，但不把无限次试权重当无成本实验。**经典路线**可作低成本诊断或与深度表示融合，不把未验收独立传统模型称为比赛要求的DL提交。[official-rules; required-045; search_space.json]
+
+## 11. 验收状态与尚未可确认的部分
+
+已完成的是：必需全文阅读、历史/推翻交叉核对、22任务及Caco2算术复算、具体配置与计数、独立输出结构/引用/依赖验证方案和真实文件交付。尚未完成的不是“41个公开必需材料不存在”，而是以下限定事项：原件原字节的独立SHA复算；官方总分/AP源码等价；非Caco2宿主train单文件绑定；新GPU接口的未来实现验收；未来增益/方差/成本证据。后四类不通过编造训练或等待现场来填补，研究建议本身可在明确限制下完成。[review.json:missing_evidence]
+
+因此保留`needs_evidence`，但具体41项阅读缺口已经关闭；不拿尚未被授权的未来实验未做来冒充本轮少读材料的借口。旧稿、旧错误、修正事件、已推翻claim与实际访问失败全部可追溯。若后续官方度量或新数据证明本建议不优，应修订分配规则，而不是继续凭“自适应”三个字证明自己正确。

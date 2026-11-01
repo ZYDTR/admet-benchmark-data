@@ -1,0 +1,53 @@
+from pathlib import Path
+import sys,json,base64,hashlib,time
+P=Path(__file__).resolve().parent;TRAIN=P.parents[1];OP=TRAIN/'operator';H=OP/'resource-resume-execution-05'
+sys.path.insert(0,str(OP));import transport
+transport.EVIDENCE=P/'raw';transport.RUN=P
+old=json.loads((H/'postcheck-request.json').read_text())['identities'];needle="import base64;exec(base64.b64decode("+repr(base64.b64encode((H/'fetch-remote.py').read_bytes()).decode())+"))"
+source='''import os,socket,json,hashlib,stat,datetime
+from pathlib import Path
+assert socket.gethostname().split('.')[0]=='project-compute' and os.getuid()==os.getgid()==1012
+BASE=Path('<AUTHORIZED_PROJECT_ROOT>/admet');assert BASE.resolve(strict=True)==BASE
+out={'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'host':socket.gethostname(),'uid':os.getuid(),'gid':os.getgid(),'registered_identities':[],'exact_reader_command_matches':[],'reader_scan_unknown':[],'files':[],'expected_paths':[],'json_artifacts':{}}
+seen=set()
+for old in IDENTITIES:
+ ticks=str(old.get('start_ticks') or old['start_stat'].rsplit(')',1)[1].split()[19]);key=(old['pid'],ticks)
+ if key in seen:continue
+ seen.add(key);item={'pid':old['pid'],'start_ticks':ticks}
+ try:raw=(Path('/proc')/str(old['pid'])/'stat').read_text()
+ except FileNotFoundError:item['state']='absent_now'
+ except OSError as e:item.update(state='unknown',error=repr(e))
+ else:
+  fields=raw.rsplit(')',1)[1].split();item.update(raw_stat=raw,state='pid_reused' if fields[19]!=ticks else 'terminal' if fields[0] in ('Z','X') else 'matching_live')
+ out['registered_identities'].append(item)
+needle=NEEDLE.encode()
+for directory in Path('/proc').iterdir():
+ if not directory.name.isdigit():continue
+ try:
+  if directory.stat().st_uid!=1012:continue
+  args=(directory/'cmdline').read_bytes().split(b'\x00')
+  if needle in args:
+   raw=(directory/'stat').read_text();out['exact_reader_command_matches'].append({'pid':int(directory.name),'start_stat':raw,'start_ticks':raw.rsplit(')',1)[1].split()[19],'command_sha256':hashlib.sha256(needle).hexdigest()})
+ except FileNotFoundError:pass
+ except OSError as e:out['reader_scan_unknown'].append({'pid':int(directory.name),'error':type(e).__name__})
+ROOT=BASE/'hainan-paired-mse-s44-20261101'
+for relative in ('outputs/recovery-02','raw/recovery-02/attempt-02','state/recovery-02'):
+ folder=ROOT/relative;assert folder.resolve(strict=False)==folder
+ if not folder.exists():continue
+ paths=list(folder.rglob('*'));assert len(paths)<500
+ for path in paths:
+  assert path.resolve(strict=True)==path and not path.is_symlink();s=path.lstat()
+  if stat.S_ISDIR(s.st_mode):continue
+  assert stat.S_ISREG(s.st_mode) and s.st_nlink==1 and s.st_size<100*1024**2
+  h=hashlib.sha256()
+  with path.open('rb') as stream:
+   for block in iter(lambda:stream.read(1024*1024),b''):h.update(block)
+  name=str(path.relative_to(ROOT));out['files'].append({'path':name,'size':s.st_size,'sha256':h.hexdigest(),'mtime_ns':s.st_mtime_ns})
+  if path.suffix=='.json' and s.st_size<100000 and not '/cache/' in name and not '/data/' in name:out['json_artifacts'][name]=json.loads(path.read_text())
+for relative in ('outputs/recovery-02/artifacts/head.pt','outputs/recovery-02/artifacts/training-state.pt','outputs/recovery-02/artifacts/training-state.json','outputs/recovery-02/raw/training-progress.jsonl','outputs/recovery-02/raw/train-exit.json','outputs/recovery-02/artifacts/predictions.csv','outputs/recovery-02/raw/freeze-proof.json','state/learning-started.lock'):
+ path=ROOT/relative;assert path.resolve(strict=False)==path;out['expected_paths'].append({'path':relative,'exists_at_source':path.exists()})
+print(json.dumps(out))
+'''.replace('IDENTITIES',repr(old)).replace('NEEDLE',repr(needle)).replace("b'\x00'","b'\\x00'")
+compile(source,'readonly-reconcile-remote.py','exec');(P/'readonly-reconcile-remote.py').write_text(source)
+raw=transport.read_only(source,'reconcile-007',timeout=55);(P/'target-reconcile.json').write_bytes(raw);v=json.loads(raw)
+print(json.dumps({'at':v['at'],'identities':len(v['registered_identities']),'matching_live':[x['pid'] for x in v['registered_identities'] if x['state']=='matching_live'],'reader_command_matches':v['exact_reader_command_matches'],'reader_scan_unknown':len(v['reader_scan_unknown']),'files':len(v['files']),'expected_paths':v['expected_paths'],'artifact_json_names':list(v['json_artifacts'])},ensure_ascii=False))

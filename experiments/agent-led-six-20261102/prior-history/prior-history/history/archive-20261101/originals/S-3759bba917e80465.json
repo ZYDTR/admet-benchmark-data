@@ -1,0 +1,183 @@
+[
+  {
+    "name": "model-selftests",
+    "expected": "accept",
+    "exit_code": 0,
+    "pass_check": true,
+    "log": "logs/model-selftests.log"
+  },
+  {
+    "name": "data-eval-selftests",
+    "expected": "accept",
+    "exit_code": 0,
+    "pass_check": true,
+    "log": "logs/data-eval-selftests.log"
+  },
+  {
+    "name": "make-split-inputs",
+    "expected": "accept",
+    "exit_code": 0,
+    "pass_check": true,
+    "log": "logs/make-split-inputs.log"
+  },
+  {
+    "name": "score-valid-duplicate",
+    "expected": "reject",
+    "exit_code": 2,
+    "pass_check": true,
+    "log": "logs/score-valid-duplicate.log"
+  },
+  {
+    "name": "score-valid-empty",
+    "expected": "reject",
+    "exit_code": 2,
+    "pass_check": true,
+    "log": "logs/score-valid-empty.log"
+  },
+  {
+    "name": "score-valid-inf",
+    "expected": "reject",
+    "exit_code": 2,
+    "pass_check": true,
+    "log": "logs/score-valid-inf.log"
+  },
+  {
+    "name": "score-valid-missing",
+    "expected": "reject",
+    "exit_code": 2,
+    "pass_check": true,
+    "log": "logs/score-valid-missing.log"
+  },
+  {
+    "name": "score-valid-nan",
+    "expected": "reject",
+    "exit_code": 2,
+    "pass_check": true,
+    "log": "logs/score-valid-nan.log"
+  },
+  {
+    "name": "score-valid-negative-index",
+    "expected": "reject",
+    "exit_code": 2,
+    "pass_check": true,
+    "log": "logs/score-valid-negative-index.log"
+  },
+  {
+    "name": "score-valid-perfect",
+    "expected": "accept",
+    "exit_code": 0,
+    "pass_check": true,
+    "log": "logs/score-valid-perfect.log"
+  },
+  {
+    "name": "score-valid-unknown-task",
+    "expected": "reject",
+    "exit_code": 2,
+    "pass_check": true,
+    "log": "logs/score-valid-unknown-task.log"
+  },
+  {
+    "name": "score-valid-wrong-split",
+    "expected": "reject",
+    "exit_code": 2,
+    "pass_check": true,
+    "log": "logs/score-valid-wrong-split.log"
+  },
+  {
+    "name": "score-required-csv",
+    "expected": "accept",
+    "exit_code": 2,
+    "pass_check": false,
+    "log": "logs/score-required-csv.log"
+  },
+  {
+    "name": "labels-fraction",
+    "expected": "reject",
+    "exit_code": 2,
+    "pass_check": true,
+    "log": "logs/labels-fraction.log"
+  },
+  {
+    "name": "labels-nan",
+    "expected": "reject",
+    "exit_code": 2,
+    "pass_check": true,
+    "log": "logs/labels-nan.log"
+  },
+  {
+    "name": "labels-inf",
+    "expected": "reject",
+    "exit_code": 2,
+    "pass_check": true,
+    "log": "logs/labels-inf.log"
+  },
+  {
+    "name": "default-empty",
+    "expected": "reject",
+    "exit_code": 0,
+    "pass_check": false,
+    "log": "logs/default-empty.log"
+  },
+  {
+    "name": "default-truncated",
+    "expected": "reject",
+    "exit_code": 0,
+    "pass_check": false,
+    "log": "logs/default-truncated.log"
+  },
+  {
+    "name": "export-json",
+    "expected": "accept",
+    "exit_code": 0,
+    "pass_check": true,
+    "log": "logs/export-json.log"
+  },
+  {
+    "name": "independent-export-fields-json",
+    "pass_check": true,
+    "rows": 16379
+  },
+  {
+    "name": "export-csv",
+    "expected": "accept",
+    "exit_code": 2,
+    "pass_check": false,
+    "log": "logs/export-csv.log"
+  },
+  {
+    "name": "non-prediction-format-byte-preservation",
+    "pass_check": false,
+    "expected": "b'\\xef\\xbb\\xbftask,drug_id,smiles,y_pred\\r\\n\"ames\",\"001\",\"C\",0.25\\r\\n'",
+    "actual": "b'\\xef\\xbb\\xbftask,drug_id,smiles,y_pred\\r\\names,001,C,0.25\\r\\n'"
+  },
+  {
+    "name": "auroc-ties",
+    "actual": 0.5,
+    "expected": 0.5,
+    "pass_check": true
+  },
+  {
+    "name": "ap-ties",
+    "actual": 0.5,
+    "expected": 0.5,
+    "pass_check": true
+  },
+  {
+    "name": "ap-single",
+    "actual": "undefined",
+    "expected": "undefined",
+    "pass_check": true
+  },
+  {
+    "name": "auc-single",
+    "actual": "undefined",
+    "expected": "undefined",
+    "pass_check": true
+  },
+  {
+    "name": "spearman-constant",
+    "actual": "undefined",
+    "expected": "undefined",
+    "pass_check": true
+  }
+]

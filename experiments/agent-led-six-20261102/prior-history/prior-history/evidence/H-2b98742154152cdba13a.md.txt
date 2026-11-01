@@ -1,0 +1,21 @@
+# 已发生的运行恢复问题
+
+2026-10-31，来自 [hainan-index-cycle执行v1](../../../runs/hainan-index-cycle-20261031/acceptance/execution-01/report.md)。这些是实际故障和主控复核结果，不是通用环境故障的猜测。
+
+- 环境元数据应按同一口径比较。`torch`发行元数据版本与运行时`torch.__version__`可能相差CUDA构建后缀；`read_text()`会归一化CRLF，不能和历史原始字节SHA比较。本次两项检查均在部署前阻断，改为78项原始METADATA字节及解释器摘要后全部匹配，没有修改依赖。缺失或实际摘要不一致仍须调查，不能忽略。
+- Linux进程退出时，`/proc/<pid>/status`可能已无`VmRSS`，分次读取也有竞态。本次预检CUDA计算与worker返回0，但监控读取该字段抛KeyError，外层125，学习正确跳过。原异常没有保留具体PID/State；终态缺字段是已复现解释，不能冒充现场唯一根因。
+- 资源监控区分已确认终态与未知。修复仅在确认Z/X退出状态时将已释放地址空间记零；活跃/未知进程缺内存字段、负值或解析异常仍失败。采样需保存PID身份、状态和字段存在性，不能普遍用`get(...,0)`把未知当低资源。
+- CUDA预检成功不代表外层通过。原125和所有原件保持，不能改成成功。恢复在新attempt和源码版本留证，重新真实预检后才能进入学习；正式恢复绑定应要求旧退出记录存在且SHA匹配、旧自有PID已退出、学习产物不存在。全run首次学习锁防重复，收到启动响应不明先对账。
+
+主控独立核验47文件摘要、预检轨迹、未开始学习和3个自有PID退出；v2修复22项流程检查和8项进程夹具通过。详见[主控恢复审查](../../../cycles/progressive-index-e2e-20261031/acceptance/production-adapter-v2/review.json)。随后v2在海南完成真实CUDA预检和唯一一次学习，26个epoch、130次新头更新；主控核验全部11项编码器状态不变及273行盲预测身份。实际train监控原件记录Z终态缺VmRSS并正常退出，修复分支已在真机命中；不能据此覆盖活跃/未知缺字段分支。三个worker写入轨迹与9个登记自有PID退出均已复核，详见[本轮主控终态报告](../../../cycles/progressive-index-e2e-20261031/acceptance/training-final/report.md)。这是单作业范围，不证明共享/并行或精确断点续训轨迹通过。
+
+2026-11-01用户确认的现行规则：未来批次允许在原科学配置及已批准总预算内有界恢复，具体判断与验收见[训练Skill](../SKILL.md#批次故障的有界恢复)。上文“学习产物不存在/首次学习锁”属于当时只准首次学习的试验，不是通用断点恢复条件；旧记录不改，当前已完成学习的作业不因此重跑。
+
+2026-11-01，六项配对试验的核心运行源码已通过本地反例，但后加的transport host waiter在保存GPU原件和进入try/finally之前拒绝启动。错误为`GPU field failed or unknown: utilization/gpu_util`，六项均未进入batch/学习；失败当刻XML和历史OS退出码缺失。之后的GPU占用只能描述之后的状态，不能还原原值或确认唯一根因。主控核验468件封存证据、原进程已无匹配活动实例，保留原启动锁；以独立恢复版本修补最外层留证与实际拒绝反例，计入同批剩余额度。证据见[本轮原始报告](../../../cycles/contract-follow-e2e-20261101/training/operator/REPORT.md)与[主控故障接续](../../../cycles/contract-follow-e2e-20261101/training/recovery-01/main-fault-acceptance.json)。修复候选、离线反例和后续真机恢复分别验收；此记录不宣称后续训练已经成功。
+
+2026-11-01，本批第一次真实恢复已成功部署并进入预检，但产物大小扫描对rglob列出的临时文件执行strict resolve时，worker已成功将它rename为正式worker-start.json，导致FileNotFoundError和监督125。目标strace中同一文件的创建/写入/成功rename及随后ENOENT、监督器完整堆栈相互印证；这次根因不能套用到历史VmRSS故障。主控复核461件摘要，第一项未进入学习、其余五项未启动。此前toy流程测试替换了生产monitor，遗漏真实文件并发变化。对应修复应在实际result_bytes及生产监控回调验证有界重采，同时保留PermissionError、越界/链接、持续不可观察和真实超额的拒绝；不是普遍忽略异常。证据见[恢复原件报告](../../../cycles/contract-follow-e2e-20261101/training/operator/recovery-execution-02/REPORT.md)与[主控候选反例](../../../cycles/contract-follow-e2e-20261101/training/recovery-02/main-resource-scan-candidate/test-results.json)。10项本机反例已通过，完整生产接入和新海南恢复尚未通过。
+
+
+2026-11-01 execution006：第一项已通过CUDA预检并启动训练worker，运行中资源保护以“other process appeared”结束作业。生产monitor先执行enforce，再由外层写observed，导致触发拒绝的apps_csv丢失；此前成功样本只有自有worker，因此真实外来PID与误报均未证实。0/6完成、一次学习尝试锁保留，实际优化步未知。主控核对875件封存字节，另复算两份写入轨迹、六项仅GPU身份变化、683件本机原件及6份未下载权重的远端摘要记录；27个已登记身份在终态复核时均已退出，第三次只读取回进程的远端退出仍未知。见[主控独立检查](../../../cycles/contract-follow-e2e-20261101/training/recovery-03/main-006-review/INDEPENDENT_CHECKS.json)。
+
+本次修复把原始查询、完整资源观察放在拒绝之前持久化，不改变占用资格或停止条件；实际非零退出、stderr、超时部分字节必须保存。独立候选见[留证修复](../../../cycles/contract-follow-e2e-20261101/training/operator/monitor-evidence-main-v1/SCOPE.json)，13项本机反例覆盖真实生产monitor、真实查询子进程及监督器清理，但GPU与Linux进程数据仍为合成夹具，尚未部署或真机验证。恢复仍须主控另行准入、核对旧身份和已消耗学习尝试，不能借日志修复清旧锁重训。

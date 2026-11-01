@@ -1,0 +1,1464 @@
+{
+  "rdkit_version": "2025.09.6",
+  "commit": "0275588ac7a5d3df032ec7dc0794cab21dfcfeeb",
+  "scope": "Diagnostic only. No standardization, salt removal, neutralization, tautomer normalization, split changes, label edits, feature fitting or model training.",
+  "identity_definitions": {
+    "canonical_isomeric": "Default sanitized MolFromSmiles, canonical MolToSmiles(isomericSmiles=True); preserves supported specified stereochemistry.",
+    "canonical_without_stereo": "Sensitivity analysis only; cannot be interpreted as biological identity or automatic deduplication key.",
+    "murcko_without_stereo": "RDKit Bemis-Murcko scaffold without stereochemistry; empty acyclic scaffolds counted separately and excluded from nonempty overlap."
+  },
+  "source_hashes": {
+    "data_benchmark/ames/train.csv": "1f31f914999a8b1281dc9353d6d8a6f9e11cdabf4d9b43cb2984edd1775a771d",
+    "data_benchmark/ames/valid.csv": "128351f2830547b4de22a1d8bccff5b2d128f0386bffef74bcb9e5ad437c7d1a",
+    "data_benchmark/ames/test.csv": "490271384316e8f4bd414346ef74105057383682389006f2e24a77a87891ae1a",
+    "data_benchmark/bbb_martins/train.csv": "b3223c2fa0fff26ab990b4dbafbbe435a8ceb6114d76488bc3be27a68dfe23b9",
+    "data_benchmark/bbb_martins/valid.csv": "eaed2376463a79a7783308be4c35f74b7662f66df29811f8462d3ebfda47b58f",
+    "data_benchmark/bbb_martins/test.csv": "19deb430b339574eec9f0b9e04acca64adc2c3979bf200634bb03cbbeda99ef5",
+    "data_benchmark/bioavailability_ma/train.csv": "67d201f36ee1eb8b202ea5ac30624045a839747143d45ef11ee91017db82ccca",
+    "data_benchmark/bioavailability_ma/valid.csv": "ba5b96027613461c29dade0355eb83bb90ed36e39f5b2889da8e42658e6d5bc1",
+    "data_benchmark/bioavailability_ma/test.csv": "4f8eb0694b2f72d83e9131667980bd0ba54ba2ecdb5a8ef2fce0f36a5f73e786",
+    "data_benchmark/caco2_wang/train.csv": "3061c58d3601d081e5459a2de03dc1d189243c4b5683d1b7288577a29fed4d6f",
+    "data_benchmark/caco2_wang/valid.csv": "63328bf307b850a4a0986165d0800bae5aa737c41bd63f1026d16114d8560bb4",
+    "data_benchmark/caco2_wang/test.csv": "d87dac944bedcefb216bce57ba5a8de93d3781172c66653b937e5065b9c2579c",
+    "data_benchmark/clearance_hepatocyte_az/train.csv": "5075b6a07d08d50c22a3a434e4708eb34b2d310b612a0a1c523bd153c11ba1f0",
+    "data_benchmark/clearance_hepatocyte_az/valid.csv": "70b8909657f590a92b84ef4d3758e10a7ab688083971b939daf0c5004bbe04e5",
+    "data_benchmark/clearance_hepatocyte_az/test.csv": "104ed6e16c206737f97c2e814ae36aa8acce459d94d39df78bbc07eb0ac2ef90",
+    "data_benchmark/clearance_microsome_az/train.csv": "4a0844973f3b059417c1214becff7ed7be69d457661c3ebb96a26099cc2e0038",
+    "data_benchmark/clearance_microsome_az/valid.csv": "b5df9dd9902e743b932811acb330edf1250bca279aa7086a087dd8e58394fbb5",
+    "data_benchmark/clearance_microsome_az/test.csv": "fbd5934690e000e1fba8ea5aa0fdf5cd8977fdff91a0abbd06f78c62085fb39a",
+    "data_benchmark/cyp2c9_substrate_carbonmangels/train.csv": "cbd2423a4da38cfadcd266f3287c0894f23577917d5f12144eade9f5c0967009",
+    "data_benchmark/cyp2c9_substrate_carbonmangels/valid.csv": "020195bff8520972c02dc7bf0739fd7815c548372bd1e6b12eca95619ddcfe0f",
+    "data_benchmark/cyp2c9_substrate_carbonmangels/test.csv": "a14381ca18fb91af76b336917a42bdec7dd71ffc745230684bfe674c96488a44",
+    "data_benchmark/cyp2c9_veith/train.csv": "4414aaa7ce7ac6d588c55d09292a47dd74b4c70bb78338affff655fbe715ebf2",
+    "data_benchmark/cyp2c9_veith/valid.csv": "3eb039546951c292faeac419ed22f0e08e3a38a2b90ef62c76e6db736a89b864",
+    "data_benchmark/cyp2c9_veith/test.csv": "10a2feb061bf63c48da7ad74b94991693e382d7fa0d56acb37fc4a306ae727d2",
+    "data_benchmark/cyp2d6_substrate_carbonmangels/train.csv": "8278fde03c27e594079d600e9565d48c3c97dc6daf51113f3b4ba7023ecd8301",
+    "data_benchmark/cyp2d6_substrate_carbonmangels/valid.csv": "46d79fa0b3cf13975f97364835e3f4f97c648de7041332101bbb02f1456b1e4c",
+    "data_benchmark/cyp2d6_substrate_carbonmangels/test.csv": "e0ccecf7b99a3b0629cfe8a0423b65e48e1f4a6049c4d4b8e69926b8de0783ca",
+    "data_benchmark/cyp2d6_veith/train.csv": "f9ddcf3ef3bfda8ec7ccfc3f3882296f3562861df01a28432560781bc9eaa1d6",
+    "data_benchmark/cyp2d6_veith/valid.csv": "a783012454209e47640cadb83cf5f84408bf375ca13fa0ea3335482e901823e7",
+    "data_benchmark/cyp2d6_veith/test.csv": "45e6e276b45169003f4e73c795fa4ea059780cfce04c1d06fdb1852b8849dccc",
+    "data_benchmark/cyp3a4_substrate_carbonmangels/train.csv": "f840554ef680fe42b5334aac398141fb94b510bee7f935549ee2521a47eda55b",
+    "data_benchmark/cyp3a4_substrate_carbonmangels/valid.csv": "368546f70970e88249dd0cfa93f943ea97a4363abaf98861cbc701690efaabc6",
+    "data_benchmark/cyp3a4_substrate_carbonmangels/test.csv": "909ac1d0820299fe87037bf2b375f7316f37ba13b3b110c7a0d83a45a67ece6f",
+    "data_benchmark/cyp3a4_veith/train.csv": "ed009e2d43cbc4278cf7f4c0923b63aa570009f0bfd532a7139ea395cfe5be90",
+    "data_benchmark/cyp3a4_veith/valid.csv": "db7aa095189723c24dc30b73caa76c53b381cebe9a5d409ef54da3644313e6a6",
+    "data_benchmark/cyp3a4_veith/test.csv": "340a65aa43306ab010fb20607938ea37d5c45a03be7152081b9949520ab03228",
+    "data_benchmark/dili/train.csv": "33981936021d3c360fc0e6e92a701fea80705a3915c0cdb49751312dcd2235cd",
+    "data_benchmark/dili/valid.csv": "944ca7ad4f4416a43aa5a5d943d0b4fbed3fcf763a63c835b7d3761bcc15c626",
+    "data_benchmark/dili/test.csv": "9b4c5f90f78005a305e425076ef2adf59404152134786991db3e13acdaa7f847",
+    "data_benchmark/half_life_obach/train.csv": "61774bf5dfc29bee0768038dcbf16319e9fc19e2bee63659f2cfed687477e2f9",
+    "data_benchmark/half_life_obach/valid.csv": "34b97b09010371060136b6af941c84ede93be9d563807ac5d35ca6fba618aa9a",
+    "data_benchmark/half_life_obach/test.csv": "c6fbbab02b52618c35661a350d3c3aec700b835ad0bdc9f820fc6b3145ff985d",
+    "data_benchmark/herg/train.csv": "97f2f48846378bc4bb51e9d0a0041ac9e3686423a06f20a5119a842212a5b64e",
+    "data_benchmark/herg/valid.csv": "4898ea81ba70fcacc21f733e9e8446bf8001566032902245405978f0d86332a6",
+    "data_benchmark/herg/test.csv": "df63e59212e9667145c4c9b371cd32207e7339b360ce0469b23287766b973cc8",
+    "data_benchmark/hia_hou/train.csv": "59291200064e1b3be437437208a45d62f8eea6f6c372b4820e11e20fd1ffb2be",
+    "data_benchmark/hia_hou/valid.csv": "31990f1c03ca7c4aad2115835a5e0a6f9de2e83609fd855205508513cbfb14bd",
+    "data_benchmark/hia_hou/test.csv": "acd125be19a4b7b361152e331c80dc3124f1eda36fe7a112cbbc6e921fbdf137",
+    "data_benchmark/ld50_zhu/train.csv": "749c76c38fdf4fb147f8fa5ae4dfa247cca26b152461a1e52234bca441626daa",
+    "data_benchmark/ld50_zhu/valid.csv": "6943341be1314231509651426ea0293e9460bfd80e76f8df8e76485c820e0b05",
+    "data_benchmark/ld50_zhu/test.csv": "ddf437d076faebad8fb5e74a85379643f3e05824fa5a8aeaf37f725edf8cad5d",
+    "data_benchmark/lipophilicity_astrazeneca/train.csv": "0049aa6d5b56d2f8c22e475b11b837ebfa86536d0c8ede06d432e854fb9d83d3",
+    "data_benchmark/lipophilicity_astrazeneca/valid.csv": "5dd44fdbcefd3dc94de24479f557c3fa6f1e4f69094f2161173b005cb6da5b01",
+    "data_benchmark/lipophilicity_astrazeneca/test.csv": "d768c259d5e8222b5a9dd29bcfccb5cc46560b190a4ec66b1ca4bf1a4ff59568",
+    "data_benchmark/pgp_broccatelli/train.csv": "6eb86ba5d8cfa87b8d0950d55e8054586994ea21c8b59e461743117ffe8a9a46",
+    "data_benchmark/pgp_broccatelli/valid.csv": "9e10c20d5e373547c69ffb5db88c6bece98a6da079f86314147b492fb78b0f57",
+    "data_benchmark/pgp_broccatelli/test.csv": "4c831f1af48c75b931954ef2c1462e48000c53dcba9e501edf58856a50bd67fe",
+    "data_benchmark/ppbr_az/train.csv": "92842d88cc0f9fe41a14d1effcf1f3a23d0a6415df4d6e615af6458dc6de8281",
+    "data_benchmark/ppbr_az/valid.csv": "c1effe3ddc607ce177d59c1f5eebb9466a96f714edbf34f6f4f725988640cb36",
+    "data_benchmark/ppbr_az/test.csv": "d1512eb4a58d434663cd3edfc7b0d5c80a376445e1d00cb0c6e65100b4a81be4",
+    "data_benchmark/solubility_aqsoldb/train.csv": "744ee3d69e3f0d9230894a62a95bc64ea15b2d6d44f1a5fb890c5c3260ce89c2",
+    "data_benchmark/solubility_aqsoldb/valid.csv": "576ef180e4c3ab36853708e092bb8a1da7178a0a0456ef7bbfc41e4e9ec97817",
+    "data_benchmark/solubility_aqsoldb/test.csv": "ad5814c7b77ff79de9c99b97d667ab8762e78933a4f0147030c6615d3111ce90",
+    "data_benchmark/vdss_lombardo/train.csv": "246dd203c300181b1df73c90cb349a0db1a1bd848dfa32895222cd4d4d89bc94",
+    "data_benchmark/vdss_lombardo/valid.csv": "572d0d7b72016acc9feefcb0d1652d0c356cf304fb71fd123652cca3fbbe0661",
+    "data_benchmark/vdss_lombardo/test.csv": "e59e7ba03645b2086bb67a8a8e063c1959f5ef93e592dc5efcdc0e39a65479e8"
+  },
+  "unique_raw_smiles": 46202,
+  "parse_failures_unique": 2,
+  "input_coverage_exceptions": [
+    {
+      "task": "solubility_aqsoldb",
+      "role": "test",
+      "row_index": 171,
+      "heavy_atoms": 388,
+      "source_path": "data_benchmark/solubility_aqsoldb/test.csv"
+    },
+    {
+      "task": "solubility_aqsoldb",
+      "role": "test",
+      "row_index": 1159,
+      "reason": "RDKit2025.09.6 default sanitized parse returned None",
+      "source_path": "data_benchmark/solubility_aqsoldb/test.csv"
+    },
+    {
+      "task": "solubility_aqsoldb",
+      "role": "test",
+      "row_index": 1160,
+      "reason": "RDKit2025.09.6 default sanitized parse returned None",
+      "source_path": "data_benchmark/solubility_aqsoldb/test.csv"
+    }
+  ],
+  "tasks": {
+    "ames": {
+      "roles": {
+        "train": {
+          "rows": 4684,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 4667,
+          "nonempty_murcko_scaffolds": 1126,
+          "empty_murcko_rows": 1268,
+          "heavy_atom_max": 55,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "valid": {
+          "rows": 1137,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 1135,
+          "nonempty_murcko_scaffolds": 1,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 39,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "test": {
+          "rows": 1457,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 1453,
+          "nonempty_murcko_scaffolds": 449,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 56
+        }
+      },
+      "overlap": {
+        "train_valid": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "train_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "valid_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        }
+      }
+    },
+    "bbb_martins": {
+      "roles": {
+        "train": {
+          "rows": 1421,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 1384,
+          "nonempty_murcko_scaffolds": 695,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 123,
+          "raw_smiles_distinct_numeric_labels": 7,
+          "canonical_isomeric_distinct_numeric_labels": 7
+        },
+        "valid": {
+          "rows": 203,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 197,
+          "nonempty_murcko_scaffolds": 134,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 82,
+          "raw_smiles_distinct_numeric_labels": 1,
+          "canonical_isomeric_distinct_numeric_labels": 1
+        },
+        "test": {
+          "rows": 406,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 394,
+          "nonempty_murcko_scaffolds": 195,
+          "empty_murcko_rows": 99,
+          "heavy_atom_max": 132
+        }
+      },
+      "overlap": {
+        "train_valid": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "train_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "valid_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        }
+      }
+    },
+    "bioavailability_ma": {
+      "roles": {
+        "train": {
+          "rows": 448,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 448,
+          "nonempty_murcko_scaffolds": 299,
+          "empty_murcko_rows": 17,
+          "heavy_atom_max": 71,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "valid": {
+          "rows": 64,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 64,
+          "nonempty_murcko_scaffolds": 47,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 57,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "test": {
+          "rows": 128,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 128,
+          "nonempty_murcko_scaffolds": 93,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 61
+        }
+      },
+      "overlap": {
+        "train_valid": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "train_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "valid_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        }
+      }
+    },
+    "caco2_wang": {
+      "roles": {
+        "train": {
+          "rows": 637,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 634,
+          "nonempty_murcko_scaffolds": 324,
+          "empty_murcko_rows": 25,
+          "heavy_atom_max": 67,
+          "raw_smiles_distinct_numeric_labels": 3,
+          "canonical_isomeric_distinct_numeric_labels": 3
+        },
+        "valid": {
+          "rows": 91,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 91,
+          "nonempty_murcko_scaffolds": 53,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 67,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "test": {
+          "rows": 182,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 181,
+          "nonempty_murcko_scaffolds": 72,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 68
+        }
+      },
+      "overlap": {
+        "train_valid": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "train_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "valid_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        }
+      }
+    },
+    "clearance_hepatocyte_az": {
+      "roles": {
+        "train": {
+          "rows": 848,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 712,
+          "nonempty_murcko_scaffolds": 529,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 82,
+          "raw_smiles_distinct_numeric_labels": 136,
+          "canonical_isomeric_distinct_numeric_labels": 136
+        },
+        "valid": {
+          "rows": 122,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 105,
+          "nonempty_murcko_scaffolds": 72,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 44,
+          "raw_smiles_distinct_numeric_labels": 17,
+          "canonical_isomeric_distinct_numeric_labels": 17
+        },
+        "test": {
+          "rows": 243,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 203,
+          "nonempty_murcko_scaffolds": 143,
+          "empty_murcko_rows": 4,
+          "heavy_atom_max": 73
+        }
+      },
+      "overlap": {
+        "train_valid": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "train_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "valid_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        }
+      }
+    },
+    "clearance_microsome_az": {
+      "roles": {
+        "train": {
+          "rows": 770,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 770,
+          "nonempty_murcko_scaffolds": 518,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 64,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "valid": {
+          "rows": 111,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 111,
+          "nonempty_murcko_scaffolds": 69,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 40,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "test": {
+          "rows": 221,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 221,
+          "nonempty_murcko_scaffolds": 123,
+          "empty_murcko_rows": 1,
+          "heavy_atom_max": 72
+        }
+      },
+      "overlap": {
+        "train_valid": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "train_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "valid_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        }
+      }
+    },
+    "cyp2c9_substrate_carbonmangels": {
+      "roles": {
+        "train": {
+          "rows": 467,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 465,
+          "nonempty_murcko_scaffolds": 295,
+          "empty_murcko_rows": 21,
+          "heavy_atom_max": 86,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "valid": {
+          "rows": 67,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 66,
+          "nonempty_murcko_scaffolds": 50,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 46,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "test": {
+          "rows": 135,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 135,
+          "nonempty_murcko_scaffolds": 105,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 73
+        }
+      },
+      "overlap": {
+        "train_valid": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "train_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "valid_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        }
+      }
+    },
+    "cyp2c9_veith": {
+      "roles": {
+        "train": {
+          "rows": 8463,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 8463,
+          "nonempty_murcko_scaffolds": 4983,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 106,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "valid": {
+          "rows": 1210,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 1210,
+          "nonempty_murcko_scaffolds": 744,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 87,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "test": {
+          "rows": 2419,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 2419,
+          "nonempty_murcko_scaffolds": 1420,
+          "empty_murcko_rows": 270,
+          "heavy_atom_max": 114
+        }
+      },
+      "overlap": {
+        "train_valid": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "train_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "valid_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        }
+      }
+    },
+    "cyp2d6_substrate_carbonmangels": {
+      "roles": {
+        "train": {
+          "rows": 465,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 463,
+          "nonempty_murcko_scaffolds": 291,
+          "empty_murcko_rows": 21,
+          "heavy_atom_max": 86,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "valid": {
+          "rows": 67,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 67,
+          "nonempty_murcko_scaffolds": 61,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 59,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "test": {
+          "rows": 135,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 134,
+          "nonempty_murcko_scaffolds": 97,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 68
+        }
+      },
+      "overlap": {
+        "train_valid": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "train_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "valid_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        }
+      }
+    },
+    "cyp2d6_veith": {
+      "roles": {
+        "train": {
+          "rows": 9191,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 9191,
+          "nonempty_murcko_scaffolds": 5750,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 114,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "valid": {
+          "rows": 1313,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 1313,
+          "nonempty_murcko_scaffolds": 893,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 123,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "test": {
+          "rows": 2626,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 2626,
+          "nonempty_murcko_scaffolds": 1134,
+          "empty_murcko_rows": 273,
+          "heavy_atom_max": 101
+        }
+      },
+      "overlap": {
+        "train_valid": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "train_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "valid_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        }
+      }
+    },
+    "cyp3a4_substrate_carbonmangels": {
+      "roles": {
+        "train": {
+          "rows": 468,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 466,
+          "nonempty_murcko_scaffolds": 304,
+          "empty_murcko_rows": 21,
+          "heavy_atom_max": 86,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "valid": {
+          "rows": 67,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 67,
+          "nonempty_murcko_scaffolds": 50,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 68,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "test": {
+          "rows": 135,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 134,
+          "nonempty_murcko_scaffolds": 98,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 73
+        }
+      },
+      "overlap": {
+        "train_valid": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "train_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "valid_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        }
+      }
+    },
+    "cyp3a4_veith": {
+      "roles": {
+        "train": {
+          "rows": 8628,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 8628,
+          "nonempty_murcko_scaffolds": 5028,
+          "empty_murcko_rows": 277,
+          "heavy_atom_max": 123,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "valid": {
+          "rows": 1233,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 1233,
+          "nonempty_murcko_scaffolds": 783,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 93,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "test": {
+          "rows": 2467,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 2467,
+          "nonempty_murcko_scaffolds": 1616,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 114
+        }
+      },
+      "overlap": {
+        "train_valid": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "train_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "valid_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        }
+      }
+    },
+    "dili": {
+      "roles": {
+        "train": {
+          "rows": 331,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 331,
+          "nonempty_murcko_scaffolds": 219,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 93,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "valid": {
+          "rows": 48,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 48,
+          "nonempty_murcko_scaffolds": 11,
+          "empty_murcko_rows": 35,
+          "heavy_atom_max": 39,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "test": {
+          "rows": 96,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 96,
+          "nonempty_murcko_scaffolds": 80,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 87
+        }
+      },
+      "overlap": {
+        "train_valid": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "train_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "valid_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        }
+      }
+    },
+    "half_life_obach": {
+      "roles": {
+        "train": {
+          "rows": 465,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 464,
+          "nonempty_murcko_scaffolds": 299,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 132,
+          "raw_smiles_distinct_numeric_labels": 1,
+          "canonical_isomeric_distinct_numeric_labels": 1
+        },
+        "valid": {
+          "rows": 67,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 67,
+          "nonempty_murcko_scaffolds": 41,
+          "empty_murcko_rows": 15,
+          "heavy_atom_max": 115,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "test": {
+          "rows": 135,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 134,
+          "nonempty_murcko_scaffolds": 104,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 128
+        }
+      },
+      "overlap": {
+        "train_valid": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "train_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "valid_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        }
+      }
+    },
+    "herg": {
+      "roles": {
+        "train": {
+          "rows": 457,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 454,
+          "nonempty_murcko_scaffolds": 278,
+          "empty_murcko_rows": 18,
+          "heavy_atom_max": 58,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "valid": {
+          "rows": 66,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 66,
+          "nonempty_murcko_scaffolds": 45,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 58,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "test": {
+          "rows": 132,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 128,
+          "nonempty_murcko_scaffolds": 69,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 74
+        }
+      },
+      "overlap": {
+        "train_valid": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "train_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "valid_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        }
+      }
+    },
+    "hia_hou": {
+      "roles": {
+        "train": {
+          "rows": 403,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 403,
+          "nonempty_murcko_scaffolds": 276,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 101,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "valid": {
+          "rows": 58,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 58,
+          "nonempty_murcko_scaffolds": 41,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 67,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "test": {
+          "rows": 117,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 117,
+          "nonempty_murcko_scaffolds": 67,
+          "empty_murcko_rows": 19,
+          "heavy_atom_max": 66
+        }
+      },
+      "overlap": {
+        "train_valid": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "train_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "valid_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        }
+      }
+    },
+    "ld50_zhu": {
+      "roles": {
+        "train": {
+          "rows": 3970,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 3946,
+          "nonempty_murcko_scaffolds": 1206,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 90,
+          "raw_smiles_distinct_numeric_labels": 14,
+          "canonical_isomeric_distinct_numeric_labels": 14
+        },
+        "valid": {
+          "rows": 1937,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 1930,
+          "nonempty_murcko_scaffolds": 0,
+          "empty_murcko_rows": 1937,
+          "heavy_atom_max": 36,
+          "raw_smiles_distinct_numeric_labels": 6,
+          "canonical_isomeric_distinct_numeric_labels": 6
+        },
+        "test": {
+          "rows": 1478,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 1466,
+          "nonempty_murcko_scaffolds": 470,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 64
+        }
+      },
+      "overlap": {
+        "train_valid": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "train_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "valid_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        }
+      }
+    },
+    "lipophilicity_astrazeneca": {
+      "roles": {
+        "train": {
+          "rows": 2940,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 2940,
+          "nonempty_murcko_scaffolds": 1688,
+          "empty_murcko_rows": 5,
+          "heavy_atom_max": 100,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "valid": {
+          "rows": 420,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 420,
+          "nonempty_murcko_scaffolds": 239,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 115,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "test": {
+          "rows": 840,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 840,
+          "nonempty_murcko_scaffolds": 480,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 72
+        }
+      },
+      "overlap": {
+        "train_valid": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "train_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "valid_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        }
+      }
+    },
+    "pgp_broccatelli": {
+      "roles": {
+        "train": {
+          "rows": 851,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 845,
+          "nonempty_murcko_scaffolds": 469,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 51,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "valid": {
+          "rows": 122,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 122,
+          "nonempty_murcko_scaffolds": 77,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 48,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "test": {
+          "rows": 245,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 245,
+          "nonempty_murcko_scaffolds": 135,
+          "empty_murcko_rows": 19,
+          "heavy_atom_max": 48
+        }
+      },
+      "overlap": {
+        "train_valid": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "train_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "valid_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        }
+      }
+    },
+    "ppbr_az": {
+      "roles": {
+        "train": {
+          "rows": 1952,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 1282,
+          "nonempty_murcko_scaffolds": 812,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 82,
+          "raw_smiles_distinct_numeric_labels": 481,
+          "canonical_isomeric_distinct_numeric_labels": 481
+        },
+        "valid": {
+          "rows": 279,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 172,
+          "nonempty_murcko_scaffolds": 130,
+          "empty_murcko_rows": 5,
+          "heavy_atom_max": 48,
+          "raw_smiles_distinct_numeric_labels": 70,
+          "canonical_isomeric_distinct_numeric_labels": 70
+        },
+        "test": {
+          "rows": 559,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 343,
+          "nonempty_murcko_scaffolds": 222,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 64
+        }
+      },
+      "overlap": {
+        "train_valid": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "train_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "valid_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        }
+      }
+    },
+    "solubility_aqsoldb": {
+      "roles": {
+        "train": {
+          "rows": 5045,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 5045,
+          "nonempty_murcko_scaffolds": 1325,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 185,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "valid": {
+          "rows": 2940,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 2940,
+          "nonempty_murcko_scaffolds": 0,
+          "empty_murcko_rows": 2940,
+          "heavy_atom_max": 156,
+          "raw_smiles_distinct_numeric_labels": 0,
+          "canonical_isomeric_distinct_numeric_labels": 0
+        },
+        "test": {
+          "rows": 1997,
+          "parse_failed_rows": [
+            1159,
+            1160
+          ],
+          "canonical_isomeric_unique": 1995,
+          "nonempty_murcko_scaffolds": 621,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 388
+        }
+      },
+      "overlap": {
+        "train_valid": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "train_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "valid_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        }
+      }
+    },
+    "vdss_lombardo": {
+      "roles": {
+        "train": {
+          "rows": 791,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 780,
+          "nonempty_murcko_scaffolds": 529,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 155,
+          "raw_smiles_distinct_numeric_labels": 9,
+          "canonical_isomeric_distinct_numeric_labels": 9
+        },
+        "valid": {
+          "rows": 113,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 110,
+          "nonempty_murcko_scaffolds": 84,
+          "empty_murcko_rows": 0,
+          "heavy_atom_max": 128,
+          "raw_smiles_distinct_numeric_labels": 3,
+          "canonical_isomeric_distinct_numeric_labels": 3
+        },
+        "test": {
+          "rows": 226,
+          "parse_failed_rows": [],
+          "canonical_isomeric_unique": 221,
+          "nonempty_murcko_scaffolds": 152,
+          "empty_murcko_rows": 38,
+          "heavy_atom_max": 115
+        }
+      },
+      "overlap": {
+        "train_valid": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "train_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        },
+        "valid_test": {
+          "canonical_isomeric_unique_intersection": 0,
+          "canonical_isomeric_right_rows_seen_in_left": 0,
+          "canonical_without_stereo_unique_intersection": 0,
+          "canonical_without_stereo_right_rows_seen_in_left": 0,
+          "murcko_without_stereo_unique_intersection": 0,
+          "murcko_without_stereo_right_rows_seen_in_left": 0
+        }
+      }
+    }
+  },
+  "structure_summary_unique_raw_inputs": {
+    "unique_canonical_isomeric": 46200,
+    "heavy_atom_min": 1,
+    "heavy_atom_max": 388,
+    "heavy_atoms_over_200": 1,
+    "multi_fragment_inputs": 1905,
+    "inputs_with_specified_atom_stereo": 7996,
+    "elements": [
+      "Ag",
+      "Al",
+      "As",
+      "Au",
+      "B",
+      "Ba",
+      "Be",
+      "Bi",
+      "Br",
+      "C",
+      "Ca",
+      "Cd",
+      "Ce",
+      "Cl",
+      "Co",
+      "Cr",
+      "Cs",
+      "Cu",
+      "Dy",
+      "F",
+      "Fe",
+      "Gd",
+      "Ge",
+      "H",
+      "Hf",
+      "Hg",
+      "I",
+      "In",
+      "Ir",
+      "K",
+      "La",
+      "Li",
+      "Lu",
+      "Mg",
+      "Mn",
+      "Mo",
+      "N",
+      "Na",
+      "Nb",
+      "Nd",
+      "Ni",
+      "O",
+      "P",
+      "Pb",
+      "Pd",
+      "Pr",
+      "Pt",
+      "Re",
+      "Rh",
+      "Ru",
+      "S",
+      "Sb",
+      "Se",
+      "Si",
+      "Sm",
+      "Sn",
+      "Sr",
+      "Ta",
+      "Te",
+      "Ti",
+      "V",
+      "W",
+      "Y",
+      "Zn",
+      "Zr"
+    ]
+  },
+  "aggregate": {
+    "same_task_train_valid_canonical_intersections_sum": 0,
+    "same_task_train_test_canonical_intersections_sum": 0,
+    "tasks_with_train_valid_nonempty_scaffold_overlap": []
+  }
+}

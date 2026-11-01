@@ -1,0 +1,62 @@
+# 六项已部署，预启动失败，学习均未开始
+
+请求 `admet-contract-follow-training-20261101-001`；正式逻辑派发
+`contract-follow-e2e-20261101:main:execute-six:v1`。六份已准入科学/运行/PLAN未改。
+本次不是训练完成回报。下一责任人为主控：登记明确的有界恢复或资源等待；执行者未清锁或重投。
+
+## 实际执行与失败
+
+六项正式PLAN检查通过，全部本地包按主控local-inputs-manifest逐件核验；78项只读环境METADATA及
+解释器摘要匹配既有基线。消费观察 `hainan-20261101T094313-562014Z` 后直接查询现场：
+2026-11-01 17:55:31–17:55:38北京时间，GPU3同UUID三次健康、无活动PID、利用率0%，
+显存已用4 MiB、可用81087 MiB，超过本任务8192 MiB需求及余量。没有将旧GPU6快照当作预留。
+
+一次发送2,779,929字节ZIP和74,760字节header，接收器先核验完整帧/摘要及自有冻结权重，再独占
+创建六run和批次根。共372件文件，权重从已核验旧自有普通单链接文件逐字复制，六项生产准入均通过。
+部署接收器没有执行CUDA或学习。目录、文件清单、真实argv、源码/帧SHA和回执分别在
+`package-review.json`、`deployment-header.json`、`raw/`、`deployment-receipt.json`。
+四项截断/篡改帧在读取任何目标文件前拒绝，见`transport-framing-tests.json`。
+
+随后仅一次启动transport host waiter，PID3697174、start_ticks388988619。
+它在**实际batch启动之前**重新查询GPU3，`validate_idle_gpu`抛出：
+
+```
+ValueError: GPU field failed or unknown: utilization/gpu_util
+```
+
+原始traceback见
+`fault-01-snapshot/contract-follow-e2e-20261101/raw/host-waiter.log`，首次对账见`query-095938.json`。
+`batch.py`没有启动，六run没有job/pipeline/learning锁、attempt或产物；批次也没有batch-state及
+host-batch-start锁。原`host-start-request.lock`保留，未重投、未覆盖。
+
+故障发生在transport host waiter的prelaunch与实际batch wait的try/finally之前，故该层没有历史
+OS wait退出原件；历史OS退出码为null，不能根据traceback捏造为1。这是transport层的证据缺口。
+该层先验证GPU再写prelaunch原件，失败当刻原始XML未落盘，所以具体值及原因仍unknown；未来恢复
+应先写原始检查值并覆盖前置失败的终态记录，不能改原件补成当时已经记录。
+
+## 已取回与现场复核
+
+失败后18:00:49–18:00:56北京时间三次采样，GPU3利用率100%、已用61135 MiB，存在其他登记PID。
+这些是后采样事实，不能冒充失败当刻值或证明唯一原因。其他占用/健康原件见
+`postfailure-resources.json`，没有触碰任何他人作业或重置设备。
+
+`postcheck-fault-01.json`确认372件部署文件全部仍与接收回执相同，78项环境元数据、解释器及旧
+自有权重摘要不变；登记的接收器和host waiter两个进程均无匹配活动实例。读取范围仅本批目录和
+必要系统/进程元数据。没有全机审计，不声明目录外零变化。
+
+七目录原始快照共376件，压缩1,161,363字节，逐件hash校验后保存在`fault-01-snapshot/`；各run另有
+`raw/execution-01/remote-snapshot/`。科学源码未加载，未读取私有valid真值，未评分或上传。
+实际CUDA预检、Tensor状态/冻结、新头学习、273行预测和写入trace均未发生，不声明通过。
+
+## 预算与接续
+
+`RUN_RESULTS.json`逐项记录六个已部署但未开始的身份，所有worker/pipeline/waiter退出码为null。
+实际GPU/学习phase为0，batch计时尚未初始化。失败host启动至首次对账的保守上界为36.358058秒；
+任何主控恢复均应将其作为既有5400秒额度的保守扣账，剩余不多于5363.641942秒，不能以新attempt
+重置。本角色完整计时从原生turn起点17:52:57北京时间计，含阅读、准备、部署、检查、封存与回传，
+详见`TIMING.json`；本次transport/setup仍在1200秒内。
+
+`main-fault-01-request.json`与回执已把实质故障交回主控。现有成功部署和请求锁要求先核对旧身份，
+不能再次部署或直接运行旧launcher。需要主控登记新attempt及其预算、允许的profile派生绑定和
+transport前置失败记录方案；如无合格资源，沿用既有观察通知链。原科学、运行代码及六个科学身份
+保持已准入版本，通用checkpoint恢复不因此获得授权。

@@ -1,0 +1,325 @@
+[
+  {
+    "direction_id": "D-HEAD",
+    "linked_issues": [
+      "ISSUE-002",
+      "ISSUE-003",
+      "ISSUE-004"
+    ],
+    "rationale": "Head capacity may affect task-specific generalization, but should be tested after measurement validity.",
+    "evidence_refs": [
+      "required-003",
+      "required-005",
+      "required-011"
+    ],
+    "counterevidence": "No complete 22-task matched comparison or stable variance estimate exists.",
+    "candidate_models_or_modules": [
+      "frozen CheMeleon",
+      "new task-specific prediction head"
+    ],
+    "parameters": [
+      "[128]",
+      "[256]",
+      "[256,128]"
+    ],
+    "combination_constraints": "One-factor contrasts; no Cartesian grid.",
+    "search_method": "staged one-factor contrasts with shared controls; no full Cartesian product",
+    "configuration_count_or_counting_rule": "S1 20 task-config cells × 2 seeds = 40 fits; S2 up to 8 cells × 3 seeds = 24 fits.",
+    "seeds": [
+      43,
+      44,
+      45,
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": 40,
+    "cost_assumptions": "Encoding and per-head runtime unmeasured; only run counts are arithmetic estimates.",
+    "readiness": "new_code",
+    "priority": "high",
+    "scope_status": "proposed_not_authorized"
+  },
+  {
+    "direction_id": "D-DROPOUT",
+    "linked_issues": [
+      "ISSUE-002",
+      "ISSUE-003",
+      "ISSUE-004"
+    ],
+    "rationale": "Dropout may affect task-specific generalization, but should be tested after measurement validity.",
+    "evidence_refs": [
+      "required-003",
+      "required-005",
+      "required-011"
+    ],
+    "counterevidence": "No complete 22-task matched comparison or stable variance estimate exists.",
+    "candidate_models_or_modules": [
+      "frozen CheMeleon",
+      "new task-specific prediction head"
+    ],
+    "parameters": [
+      "0.0",
+      "0.1",
+      "0.3",
+      "0.5"
+    ],
+    "combination_constraints": "Tune after width fixed; small-N regularization.",
+    "search_method": "staged one-factor contrasts with shared controls; no full Cartesian product",
+    "configuration_count_or_counting_rule": "S1 20 task-config cells × 2 seeds = 40 fits; S2 up to 8 cells × 3 seeds = 24 fits.",
+    "seeds": [
+      43,
+      44,
+      45,
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": 40,
+    "cost_assumptions": "Encoding and per-head runtime unmeasured; only run counts are arithmetic estimates.",
+    "readiness": "new_code",
+    "priority": "medium",
+    "scope_status": "proposed_not_authorized"
+  },
+  {
+    "direction_id": "D-LR",
+    "linked_issues": [
+      "ISSUE-002",
+      "ISSUE-003",
+      "ISSUE-004"
+    ],
+    "rationale": "Learning rate may affect task-specific generalization, but should be tested after measurement validity.",
+    "evidence_refs": [
+      "required-003",
+      "required-005",
+      "required-011"
+    ],
+    "counterevidence": "No complete 22-task matched comparison or stable variance estimate exists.",
+    "candidate_models_or_modules": [
+      "frozen CheMeleon",
+      "new task-specific prediction head"
+    ],
+    "parameters": [
+      "1e-4",
+      "3e-4",
+      "5e-4",
+      "1e-3"
+    ],
+    "combination_constraints": "Log-spaced one-dimensional screen.",
+    "search_method": "staged one-factor contrasts with shared controls; no full Cartesian product",
+    "configuration_count_or_counting_rule": "S1 20 task-config cells × 2 seeds = 40 fits; S2 up to 8 cells × 3 seeds = 24 fits.",
+    "seeds": [
+      43,
+      44,
+      45,
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": 40,
+    "cost_assumptions": "Encoding and per-head runtime unmeasured; only run counts are arithmetic estimates.",
+    "readiness": "new_code",
+    "priority": "medium",
+    "scope_status": "proposed_not_authorized"
+  },
+  {
+    "direction_id": "D-WD",
+    "linked_issues": [
+      "ISSUE-002",
+      "ISSUE-003",
+      "ISSUE-004"
+    ],
+    "rationale": "Weight decay may affect task-specific generalization, but should be tested after measurement validity.",
+    "evidence_refs": [
+      "required-003",
+      "required-005",
+      "required-011"
+    ],
+    "counterevidence": "No complete 22-task matched comparison or stable variance estimate exists.",
+    "candidate_models_or_modules": [
+      "frozen CheMeleon",
+      "new task-specific prediction head"
+    ],
+    "parameters": [
+      "1e-5",
+      "1e-4",
+      "1e-3",
+      "1e-2"
+    ],
+    "combination_constraints": "Pair with fixed width and learning rate.",
+    "search_method": "staged one-factor contrasts with shared controls; no full Cartesian product",
+    "configuration_count_or_counting_rule": "S1 20 task-config cells × 2 seeds = 40 fits; S2 up to 8 cells × 3 seeds = 24 fits.",
+    "seeds": [
+      43,
+      44,
+      45,
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": 40,
+    "cost_assumptions": "Encoding and per-head runtime unmeasured; only run counts are arithmetic estimates.",
+    "readiness": "new_code",
+    "priority": "medium",
+    "scope_status": "proposed_not_authorized"
+  },
+  {
+    "direction_id": "D-LOSS",
+    "linked_issues": [
+      "ISSUE-002",
+      "ISSUE-003",
+      "ISSUE-004"
+    ],
+    "rationale": "Loss and target scaling may affect task-specific generalization, but should be tested after measurement validity.",
+    "evidence_refs": [
+      "required-003",
+      "required-005",
+      "required-011"
+    ],
+    "counterevidence": "No complete 22-task matched comparison or stable variance estimate exists.",
+    "candidate_models_or_modules": [
+      "frozen CheMeleon",
+      "new task-specific prediction head"
+    ],
+    "parameters": [
+      "standardized MSE",
+      "raw-MAE monitor",
+      "BCEWithLogits"
+    ],
+    "combination_constraints": "Separate loss from monitor; fit transforms only inner fit.",
+    "search_method": "staged one-factor contrasts with shared controls; no full Cartesian product",
+    "configuration_count_or_counting_rule": "S1 20 task-config cells × 2 seeds = 40 fits; S2 up to 8 cells × 3 seeds = 24 fits.",
+    "seeds": [
+      43,
+      44,
+      45,
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": 40,
+    "cost_assumptions": "Encoding and per-head runtime unmeasured; only run counts are arithmetic estimates.",
+    "readiness": "new_code",
+    "priority": "high",
+    "scope_status": "proposed_not_authorized"
+  },
+  {
+    "direction_id": "D-SEED",
+    "linked_issues": [
+      "ISSUE-002",
+      "ISSUE-003",
+      "ISSUE-004"
+    ],
+    "rationale": "Seeds and splits may affect task-specific generalization, but should be tested after measurement validity.",
+    "evidence_refs": [
+      "required-003",
+      "required-005",
+      "required-011"
+    ],
+    "counterevidence": "No complete 22-task matched comparison or stable variance estimate exists.",
+    "candidate_models_or_modules": [
+      "frozen CheMeleon",
+      "new task-specific prediction head"
+    ],
+    "parameters": [
+      "model seeds 44,45 then 46,47,48",
+      "split seeds 43,44"
+    ],
+    "combination_constraints": "Paired seeds; group-aware task-specific splits.",
+    "search_method": "staged one-factor contrasts with shared controls; no full Cartesian product",
+    "configuration_count_or_counting_rule": "S1 20 task-config cells × 2 seeds = 40 fits; S2 up to 8 cells × 3 seeds = 24 fits.",
+    "seeds": [
+      43,
+      44,
+      45,
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": 40,
+    "cost_assumptions": "Encoding and per-head runtime unmeasured; only run counts are arithmetic estimates.",
+    "readiness": "new_code",
+    "priority": "high",
+    "scope_status": "proposed_not_authorized"
+  },
+  {
+    "direction_id": "D-POOL",
+    "linked_issues": [
+      "ISSUE-002",
+      "ISSUE-003",
+      "ISSUE-004"
+    ],
+    "rationale": "Pooling/representation may affect task-specific generalization, but should be tested after measurement validity.",
+    "evidence_refs": [
+      "required-003",
+      "required-005",
+      "required-011"
+    ],
+    "counterevidence": "No complete 22-task matched comparison or stable variance estimate exists.",
+    "candidate_models_or_modules": [
+      "frozen CheMeleon",
+      "new task-specific prediction head"
+    ],
+    "parameters": [
+      "accepted CheMeleon pooling",
+      "one alternative pooling after evidence"
+    ],
+    "combination_constraints": "Require exact cache identity and freeze proof.",
+    "search_method": "staged one-factor contrasts with shared controls; no full Cartesian product",
+    "configuration_count_or_counting_rule": "S1 20 task-config cells × 2 seeds = 40 fits; S2 up to 8 cells × 3 seeds = 24 fits.",
+    "seeds": [
+      43,
+      44,
+      45,
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": 40,
+    "cost_assumptions": "Encoding and per-head runtime unmeasured; only run counts are arithmetic estimates.",
+    "readiness": "new_code",
+    "priority": "medium",
+    "scope_status": "proposed_not_authorized"
+  },
+  {
+    "direction_id": "D-ENC",
+    "linked_issues": [
+      "ISSUE-002",
+      "ISSUE-003",
+      "ISSUE-004"
+    ],
+    "rationale": "Alternative encoders may affect task-specific generalization, but should be tested after measurement validity.",
+    "evidence_refs": [
+      "required-003",
+      "required-005",
+      "required-011"
+    ],
+    "counterevidence": "No complete 22-task matched comparison or stable variance estimate exists.",
+    "candidate_models_or_modules": [
+      "frozen CheMeleon",
+      "new task-specific prediction head"
+    ],
+    "parameters": [
+      "MiniMol",
+      "MoLFormer 10pct",
+      "KPGT",
+      "Uni-Mol",
+      "SMI-TED"
+    ],
+    "combination_constraints": "No candidate is assumed ready; verify weights/license/interface/version first.",
+    "search_method": "staged one-factor contrasts with shared controls; no full Cartesian product",
+    "configuration_count_or_counting_rule": "S1 20 task-config cells × 2 seeds = 40 fits; S2 up to 8 cells × 3 seeds = 24 fits.",
+    "seeds": [
+      43,
+      44,
+      45,
+      46,
+      47,
+      48
+    ],
+    "estimated_run_count": 0,
+    "cost_assumptions": "Encoding and per-head runtime unmeasured; only run counts are arithmetic estimates.",
+    "readiness": "blocked_assets",
+    "priority": "medium",
+    "scope_status": "proposed_not_authorized"
+  }
+]

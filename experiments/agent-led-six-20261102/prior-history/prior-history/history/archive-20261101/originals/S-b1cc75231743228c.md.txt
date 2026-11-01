@@ -1,0 +1,57 @@
+# 本 run 的阶段一运行包装
+
+阶段一已准备本地包装，只开放无 GPU、无训练的假子进程测试。科学代码绑定、正式执行消息和远端资源绑定为空；此目录没有 SSH、上传或科学训练入口。旧 run 的源码仅作读取参考，没有执行或修改。
+
+## 文件及来源
+
+| 文件 | 内容 | 本轮验证 |
+| --- | --- | --- |
+| `runtime-profile.json` | 新 run 身份、PLAN 预算、只读环境路径、关闭的执行门 | 本机核对 |
+| `common_guarded.py` | 从已验证 common_remote/common_guarded 提取的干净环境、缓存和 joblib 设置；规范路径、链接、挂载检查；原子 JSON 写入 | 环境与路径反例通过；Linux 挂载分支未实测 |
+| `supervisor.py` | 独占尝试目录、前置检查、实际 Popen 子任务、超时/信号/监测失败处理、完成凭据核验、外层退出传播 | 真实本机子进程验证 |
+| `linux_boundary.py` | guard_exec_v3 的延迟调用 Landlock、CPU affinity/CORE/FSIZE 设置和完整 strace argv 构造 | 仅 AST/参数检查；没有调用 Linux 机制 |
+| `resource_checks.py` | UUID/索引、Recovery/ECC/占用、自己的 PID、RAM/结果/GPU 显存预算检查；延迟调用 /proc 观察 | 仅离线数据反例；目标机未检查 |
+| `readonly_recovery.py` | 固定只读动作的有界恢复与检查顺序契约，不含 transport | 注入式离线验证；实际连接使用海南 Skill 的固定客户端 |
+
+来源原件及摘要见本 run `operator/stage1-read-receipt.json`；最终源码清单见 `operator/runtime-source-manifest.json`。旧 run 的 ROOT 和 GPU UUID 均未复用。
+
+## 外层退出语义
+
+旧 supervisor 虽写入失败状态，脚本末尾却没有将 returncode 传给解释器。新入口使用 `raise SystemExit(main())`，成功还须同时满足前置检查通过、子进程已知返回 0、本次 run/token/PID 完成凭据匹配。状态未知保持非零。
+
+| 情形 | 外层退出 | 状态 |
+| --- | --- | --- |
+| 子任务成功且凭据匹配 | 0 | succeeded |
+| 子任务退出 7 / 未处理异常 | 7 / 1 | child_failed |
+| 子任务被 SIGTERM | 143，另存原始 -15 | child_failed |
+| 超时 | 124 | timed_out |
+| 前置检查、启动或监测失败 | 125 | precheck_failed / monitor_or_launch_failed |
+| 子任务 0，但缺失、错误或无法解析完成凭据 | 126 | unknown |
+| supervisor 收到 SIGTERM | 143 | cancelled |
+| 同一独占尝试已存在 | 73 | existing_attempt_query_original；保留原尝试状态 |
+| 请求科学执行 | 78 | stage_one_gate_closed |
+| 证据落盘或安全清理失败 | 70 | best-effort evidence_or_cleanup_failed；存储本身故障时不能保证状态文件可写 |
+
+每个尝试保留启动锁、带时间的状态、事件、子任务日志及真实外层 returncode。运行中和已完成尝试都拒绝重放。超时/监测失败只向本包装创建且身份匹配的子进程组发信号；本机测试验证了 leader 被回收。科学 runner 的后代进程、GPU 释放及完整进程组退出仍须阶段二单独验收。
+
+## 重跑离线检查
+
+在工作区运行：
+
+```sh
+python3 -I -B adhoc_jobs/admet_training/runs/hainan-index-cycle-20261031/tests/test_runtime.py
+```
+
+每次产生新的 `raw/local-runtime-checks/suite-*` 目录，保留之前记录。测试只用标准库，通过真实外层 supervisor 启动真实内层假任务；没有模型、网络、GPU 或评分。最终验证入口见 `operator/offline-validation.json`。
+
+## 阶段二须由主控另行接续
+
+1. 收到主控正式执行消息并确认本轮一次新 run 的范围。核对主控 `MAIN_ACCEPTANCE.json` 的 passed=true 及其精确科学源码 manifest；验证每项路径和 SHA，绑定到本 run，不因验收文件出现就自动运行。当前 CLI 故意没有科学执行实现，须在该授权后审查并接入专用 adapter。
+2. 按海南 Skill 的固定路由和凭据入口恢复只读身份/环境/资源检查，逐阶段核对返回值。只读临时失败最多 4 次，退避 2/5/10 秒；真实身份、主机密钥、路径、文件权限等异常立即阻断。重试用尽保留 waiting_for_connection，既有持续机制才可在至少 300 秒冷却后接续。
+3. 上传、部署、启动不进入通用重试。已发送但响应丢失时按原 run、独占启动身份、PID/启动时间及退出/产物记录查询原操作，避免重复提交。后续检查成功不能改写此前失败为通过。
+4. 在批准根内核验目标真实路径、只读 venv 和输入/权重身份，记录新的 GPU UUID/索引；按 PLAN 做当前健康、占用、预算检查和启动前复核。三次空闲观察结构来自参考实现，共享使用尚未准备或验证。
+5. 先接入有边界的完整依赖导入及真实 CUDA 计算预检，再启动训练。前一阶段只有 outer rc=0 且对应原件/完成凭据通过，后一步才能执行。线程命名兼容层须有本 run 审查和摘要，不盲用旧二进制或放宽目录写入。
+6. 在真实进程中验证 Landlock/affinity/FSIZE 的效果、缓存落点、strace 覆盖和预算监测。RAM/GPU/结果预算目前是监测目标，未声明硬配额。Linux 边界不隔离读取、chmod/chown/xattr/utime 或 ioctl；原始轨迹和代码审读仍是必要证据。
+7. 科学适配须支持约定的冻结、梯度、head 更新、预测完整性、重载和过程产物。最终还要核对磁盘/内存冻结、所有写入、退出码、自己的进程/GPU释放。当前材料不证明这些科学或远端结果。
+
+完整依赖安装、真实 CUDA、共享/并行、远端 Linux 分支、完整树释放、存储故障及强制 SIGKILL supervisor 等分支本轮未测；未知结果保持 null 或明确待验收。

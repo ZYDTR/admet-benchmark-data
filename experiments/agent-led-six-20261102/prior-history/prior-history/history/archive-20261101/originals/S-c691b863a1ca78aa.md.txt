@@ -1,0 +1,16 @@
+# 按需技能索引
+
+这里仅做路由。选择最贴近当前交付物的一项，读对应文件；CLI `context --skill <id>` 可只显示该技能。没有匹配项时先按普通任务处理，不能强拉进参赛工作流。
+
+| 当前任务 | 主技能 | 条件分流 |
+| --- | --- | --- |
+| 规则变更、任务标签/指标含义、官方信息冲突 | [competition-contract](competition-contract/SKILL.md) | 涉及新增输入再读 data-provenance |
+| 接入数据、补标签、缓存/预训练/归一化来源、怀疑污染 | [data-provenance](data-provenance/SKILL.md) | 官方解释不明确转 competition-contract |
+| 模型调研、候选证据、下一步实验、训练排障、选模、运行恢复/接入 | [experiment](experiment/SKILL.md) | 调研先读研究入口；其他按意图读决策/排障/搜索；已有结果比较只读证据；新输入先 data-provenance |
+| 预测回填、CSV 检查、候选提交准备 | [submission](submission/SKILL.md) | 无成功推理记录则回 experiment |
+| 重跑核验、源码和运行证据打包、复现差异 | [reproduction](reproduction/SKILL.md) | 不以推理重跑代替训练复现 |
+| 接着上次、交接、上下文恢复、沉淀真实经验 | [context-maintenance](context-maintenance/SKILL.md) | 恢复后只加载待办所需技能 |
+| 改 Harness/CLI/测试/权限集成、工程排障 | [harness-development](harness-development/SKILL.md) | 改技能路由另读 skill-authoring |
+| 新写或修改 Skill、精简入口、修复路由遗漏 | [skill-authoring](skill-authoring/SKILL.md) | 优先扩展已有能力；同步本索引 |
+
+组合任务按真实依赖处理：例如“从网上补数据再训练”先判断来源，不能跳到实验；“找回上次结果做 CSV”先恢复，再做提交。无需因为任务含有“数据”二字就读取全部数据文档。

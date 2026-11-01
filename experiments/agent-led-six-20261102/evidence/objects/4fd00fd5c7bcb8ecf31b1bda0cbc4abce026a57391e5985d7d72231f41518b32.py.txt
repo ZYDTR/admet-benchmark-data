@@ -1,0 +1,153 @@
+"""One concrete scientific run. No transport, scheduling, model agent or retry."""
+import ctypes, json, os, resource, sys, time
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import common_guarded_v3
+sys.modules['common_guarded'] = common_guarded_v3
+from common_guarded import ROOT, GPU_UUID, environment, now, safe, write_json
+assert sys.platform == 'linux' and os.getuid() == os.getgid() == 1012 and (Path('<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102') in ROOT.parents)
+record = {'at': now(), 'pid': os.getpid(), 'start_stat': Path('/proc/self/stat').read_text(), 'gpu_uuid': GPU_UUID, 'root': str(ROOT)}
+with safe(ROOT / 'raw/compute-start.json').open('x') as stream:
+    json.dump(record, stream)
+    stream.flush()
+    os.fsync(stream.fileno())
+os.environ.clear()
+os.environ.update(environment())
+os.chdir(ROOT)
+affinity = sorted(os.sched_getaffinity(0))[:2]
+assert len(affinity) == 2
+os.sched_setaffinity(0, affinity)
+resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
+resource.setrlimit(resource.RLIMIT_FSIZE, (450 * 1024 ** 2, 450 * 1024 ** 2))
+lib = ctypes.CDLL(None, use_errno=True)
+lib.syscall.restype = ctypes.c_long
+abi = lib.syscall(444, ctypes.c_void_p(), ctypes.c_size_t(0), ctypes.c_uint(1))
+assert abi >= 1, (abi, ctypes.get_errno())
+handled = sum((1 << i for i in [1, *range(4, 13)]))
+if abi >= 2:
+    handled |= 1 << 13
+if abi >= 3:
+    handled |= 1 << 14
+
+class Ruleset(ctypes.Structure):
+    _fields_ = [('handled_access_fs', ctypes.c_uint64)]
+
+class Beneath(ctypes.Structure):
+    _pack_ = 1
+    _fields_ = [('allowed_access', ctypes.c_uint64), ('parent_fd', ctypes.c_int32)]
+attr = Ruleset(handled)
+fd = lib.syscall(444, ctypes.byref(attr), ctypes.sizeof(attr), 0)
+assert fd >= 0, ctypes.get_errno()
+
+def allow(path, access):
+    descriptor = os.open(path, os.O_PATH | os.O_CLOEXEC)
+    try:
+        rule = Beneath(access, descriptor)
+        assert lib.syscall(445, fd, 1, ctypes.byref(rule), 0) == 0, (str(path), ctypes.get_errno())
+    finally:
+        os.close(descriptor)
+allow(ROOT, handled)
+devices = []
+for pattern in ('nvidia[0-9]*', 'nvidiactl', 'nvidia-uvm', 'nvidia-uvm-tools', 'nvidia-modeset'):
+    for path in Path('/dev').glob(pattern):
+        if path.is_char_device():
+            allow(path, 1 << 1)
+            devices.append(str(path))
+allow(Path('/dev/null'), 1 << 1)
+assert lib.prctl(38, 1, 0, 0, 0) == 0
+assert lib.syscall(446, fd, 0) == 0, ctypes.get_errno()
+os.close(fd)
+write_json(ROOT / 'raw/protection.json', dict(record, landlock_abi=abi, handled_access=handled, allowed_write_tree=str(ROOT), device_write_handles=devices, affinity=affinity, fs_size_limit=450 * 1024 ** 2, coverage='filesystem mutation classes handled by Landlock; device IO and own prctl thread naming are separate'))
+sys.path.insert(0, str(ROOT))
+'CPU-only weights_only inspection and independent head inference; no learning.'
+import csv, math, hashlib
+import torch, numpy as np
+torch.set_num_threads(2)
+torch.set_num_interop_threads(1)
+assert os.environ['CUDA_VISIBLE_DEVICES'] == '', 'GPU intentionally hidden for artifact inspection'
+task = json.loads((ROOT / 'source/verification-inputs.json').read_text())
+results = []
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+for item in task['completed']:
+    r = Path(item['root'])
+    cfg = json.loads((r / 'source/config.json').read_text())
+    e = json.loads((r / 'artifacts/training-evidence.json').read_text())
+    initial = torch.load(r / 'artifacts/head-initial.pt', map_location='cpu', weights_only=True)
+    last = torch.load(r / 'artifacts/caco2_wang-head-last.pt', map_location='cpu', weights_only=True)
+    best = torch.load(r / 'artifacts/caco2_wang-head-best.pt', map_location='cpu', weights_only=True)
+    state = torch.load(r / 'artifacts/training-state-last.pt', map_location='cpu', weights_only=True)
+    assert initial['run_id'] == last['run_id'] == best['run_id'] == state['run_id'] == cfg['run_id']
+    assert last['config'] == best['config'] == state['config'] == cfg
+    assert state['config_sha256'] == last['config_sha256'] == digest(r / 'source/config.json')
+    assert state['last_head_sha256'] == digest(r / 'artifacts/caco2_wang-head-last.pt')
+    assert state['optimizer_steps'] == last['optimizer_steps'] == e['optimizer_steps']
+    assert best['optimizer_steps'] == e['history'][best['epoch_1_based'] - 1]['steps'] and best['epoch_1_based'] == e['best_epoch_1_based']
+    changes = {}
+    for name, start in initial['state_dict'].items():
+        end = last['state_dict'][name]
+        assert start.shape == end.shape and torch.isfinite(end).all()
+        changes[name] = float((end - start).abs().max())
+    assert any((x > 0 for x in changes.values()))
+    for value in state['optimizer']['state'].values():
+        assert value['step'].item() == e['optimizer_steps']
+    assert {'cpu_rng', 'torch_cpu', 'torch_cuda', 'sampler', 'sampler_device'} <= set(state['rng'])
+    assert {'python_state', 'numpy_state'} <= set(state['rng']['cpu_rng'])
+    width = cfg['head_config']['hidden_dims'][0]
+    dim = best['feature_dim']
+    head = torch.nn.Sequential(torch.nn.Linear(dim, width), torch.nn.ReLU(), torch.nn.Dropout(cfg['head_config']['dropout']), torch.nn.Linear(width, 1))
+    head.load_state_dict(best['state_dict'], strict=True)
+    head.eval()
+    assert dim == 2048 and width == 256
+    with np.load(r / 'artifacts/preprocessing.npz', allow_pickle=False) as p:
+        mu = p['feature_mean']
+        sd = p['feature_std']
+        ym = float(p['target_mean'])
+        ys = float(p['target_std'])
+        fit = p['train_row_indices']
+        stop = p['internal_validation_row_indices']
+    assert len(fit) == 573 and len(stop) == 64 and (sorted(list(fit) + list(stop)) == list(range(637)))
+    with np.load(r / 'artifacts/features-train.npz', allow_pickle=False) as p:
+        features = p['features']
+    check_mu = features[fit].mean(0)
+    check_sd = features[fit].std(0)
+    check_sd[check_sd < 1e-08] = 1
+    assert np.array_equal(mu, check_mu) and np.array_equal(sd, check_sd)
+    with (r / 'artifacts/predictions.csv').open(newline='') as f:
+        preds = list(csv.DictReader(f))
+    numerical = {}
+    for split in ('valid', 'test'):
+        with np.load(r / 'artifacts' / ('features-' + split + '.npz'), allow_pickle=False) as p:
+            x = p['features']
+        tensor = torch.from_numpy(np.ascontiguousarray((np.where(np.isfinite(x), x, np.float32(0)).astype(np.float32) - mu) / sd))
+        with torch.no_grad():
+            actual = (head(tensor) * ys + ym).numpy().reshape(-1)
+        recorded = np.asarray([float(v['y_pred']) for v in preds if v['split'] == split], dtype=np.float64)
+        assert actual.size == recorded.size and np.allclose(actual, recorded, rtol=1e-05, atol=1e-05)
+        numerical[split] = {'rows': int(actual.size), 'maximum_abs_difference': float(np.max(np.abs(actual - recorded))), 'rtol': 1e-05, 'atol': 1e-05}
+    resume = r / 'raw/checkpoint-resume.json'
+    if resume.exists():
+        rv = json.loads(resume.read_text())
+        old = torch.load(Path(rv['original_root']) / 'artifacts/progress-state.pt', map_location='cpu', weights_only=True)
+        assert e['history'][:rv['restored_epochs']] == old['history'] and rv['restored_steps'] == 30 and (e['optimizer_steps'] > 30)
+        assert rv['head_optimizer_RNG_history_best_preprocessing_initial_and_encoder_verified'] is True
+    results.append({'run_id': cfg['run_id'], 'actual_serialized_head_changed': changes, 'last_optimizer_tensor_step': e['optimizer_steps'], 'best_step': best['optimizer_steps'], 'checkpoint_identity_verified': True, 'optimizer_RNG_payload_loaded_weights_only': True, 'CPU_model_architecture': [2048, 256, 1], 'CPU_recomputed_blind_predictions': numerical, 'preprocessing_fit_only_verified': True})
+partial = []
+for item in task['partial']:
+    r = Path(item['root'])
+    path = r / 'artifacts/progress-state.pt'
+    if not path.exists():
+        partial.append({'run_id': item['run_id'], 'checkpoint_available': False})
+        continue
+    value = torch.load(path, map_location='cpu', weights_only=True)
+    cfg = json.loads((r / 'source/config.json').read_text())
+    assert value['config'] == cfg and value['run_id'] == cfg['run_id']
+    assert value['steps'] == value['history'][-1]['steps'] > 0
+    required = {'head', 'optimizer', 'rng', 'history', 'best_state', 'best', 'best_epoch', 'steps', 'nonzero_steps', 'grad_max'}
+    assert required <= set(value)
+    for state in value['optimizer']['state'].values():
+        assert state['step'].item() == value['steps']
+    partial.append({'run_id': cfg['run_id'], 'checkpoint_available': True, 'sha256': digest(path), 'durable_optimizer_steps': value['steps'], 'durable_epochs': len(value['history']), 'best_epoch_zero_based': value['best_epoch'], 'head_optimizer_RNG_best_state_present': True, 'resume_not_executed': True, 'completed_learning': False})
+write_json(ROOT / 'raw/tensor-verification.json', {'completed': results, 'partial': partial, 'GPU_hidden': True, 'training_or_optimizer_step_executed': False})
+print(json.dumps({'completed': results, 'partial': partial, 'GPU_hidden': True}))

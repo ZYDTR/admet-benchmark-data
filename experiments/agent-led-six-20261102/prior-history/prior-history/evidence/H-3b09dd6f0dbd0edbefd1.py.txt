@@ -1,0 +1,6 @@
+from pathlib import Path
+import sys,json,time
+P=Path(__file__).resolve().parent;sys.path.insert(0,str(P.parent));import transport
+transport.EVIDENCE=P/'raw';transport.RUN=P
+started=time.time();raw=transport.read_only((P/'fetch-compact-remote.py').read_text(),'terminal-compact-snapshot',timeout=55)
+(P/'remote-snapshot.zip').write_bytes(raw);(P/'fetch-compact-timing.json').write_text(json.dumps({'started_epoch':started,'finished_epoch':time.time(),'compressed_bytes':len(raw)},indent=2)+'\n');print('ZIP_BYTES',len(raw))

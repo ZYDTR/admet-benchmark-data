@@ -1,0 +1,55 @@
+# 交付验证记录
+
+日期：2026-10-28。工程交付验收已完成；真实比赛训练尚未接入。
+
+2026-10-30新增的数据研究与V2规范验收，单独见 [研究修订与验证](research/2026-10-30/revision-and-validation.md)。下面保留原工程验收范围，不把历史测试当本轮新增训练结果。
+
+## 实际执行结果
+
+| 验证 | 实际结果 | 证据 |
+| --- | --- | --- |
+| Python 工程测试 | 71 tests，exit 0，全部通过 | [执行摘要](validation/unit-tests.json)、[原始测试输出](validation/unit-tests.txt) |
+| 上下文图 | 8 项技能、无孤儿技能/内部断链，入口与索引均在预算内 | [结构检查](validation/context-graph.json) |
+| 独立 Agent 场景 | 6 个无项目编写前情的 Agent；按需路由、真实缺项和无关请求均有记录 | [实际读取链与观察](validation/cold-routes.json) |
+| 合成工程演示 | 3 行/2 任务；保持空ID、前导零、重复ID与映射；不冒充模型结果 | [演示摘要](validation/demo-summary.json) |
+| 环境诊断 | Python 3.12.14；数据 pending、标签 unconfirmed、Docker 不可用 | [环境记录](validation/environment.json) |
+| 容器边界脚本 | 明确返回 DOCKER_UNAVAILABLE；没有退回宿主执行 | [未运行记录](validation/boundary-not-run.json) |
+
+测试命令为 `python3 -m unittest discover -s tests -v`。Docker 进程、所有权系统调用在需要处使用 mock；快照、哈希、权限模式、CSV 和 JSON 检查实际在临时文件上执行。全套通过不能证明容器实机隔离。
+
+## 路由验证与一次实际迭代
+
+| 自然语言场景 | 观察到的路由与行为 |
+| --- | --- |
+| 接着上次工作做，不重复训练 | context-maintenance → 必要的工程检查；识别没有正式完成训练，恢复三人待办 |
+| 缓存权重与 PubChem 补标签 | data-provenance → 未决规则触发 competition-contract；保留来源边界，不下载数据 |
+| 想新增模型比较 Skill | skill-authoring → 已有 experiment；优先修订，发现只读比较输出边界不清 |
+| 准备 CSV，处理空ID/重复ID/超1分数 | submission → 无真实推理时 experiment；保留原字符串，不截断score，识别合成演示 |
+| 只比较已有两次结果 | 修改后的 experiment → run-comparison/evaluation；没有加载运行/模型接口，不启动训练 |
+| 单纯翻译 | 只读根入口后直接翻译，不加载state/INDEX或比赛技能 |
+
+观察到的路由问题已修订：experiment 明确区分只读比较与启动运行；AGENTS 先判断请求是否与项目相关。之后分别用新的独立 Agent 验证比较和翻译。没有用关键词规则或向执行者透露预期答案来替代行为验证。
+
+## 独立代码审查修复
+
+以下 7 个具体问题由独立审查实际复现，已修复并做针对回归；审查者再次确认原反例被拒绝或正常通过。
+
+1. 原始输入路径别名可把同一文件登记为训练/验证：改为规范化文件身份去重。
+2. 产物路径别名可把同一文件登记为checkpoint/metrics：改为规范化输出身份去重。
+3. root + umask 077 导致非root worker无法遍历快照：显式设置目录/文件权限，并检查训练和预测路径。
+4. 镜像检查期间配置变坏留下无run.json目录：独占创建后立即建立preparing，失败留记录。
+5. 空容器值被当作已确认标签语义：明确要求非空字符串。
+6. 只信plan.json模板条目可与冻结输入冲突：核对run记录哈希约束下的输入控制文件、manifest及模板快照。
+7. 合法大整数预测在导出和验证中使用不同语义：统一float转换，并说明数值表示范围。
+
+另修复了全套无环境变量启动测试时的测试模块导入问题。正常train/predict快照链由运行器实际代码生成并通过候选验证，Docker调用仍为mock。
+
+## 尚未验证与后续接入
+
+- 官方训练包、标签定义和真实深度模型尚未接入。
+- 真实 Docker/GPU 网络、只读挂载及目标主机权限尚未实测；应在有Docker的目标机器运行边界脚本。
+- 未完成真实模型训练、官方线上评分、从头重训复现或平台上传。
+- 首版支持独立train/validation原始输入；若实际官方包不同，先扩展有来源证据的分区接口，不能伪装官方文件。
+- 数据审查字段和哈希提供可检查记录，不提供无法伪造的历史合规证明，也不约束拥有任意宿主权限的外层Agent。
+
+这些是明确的运行前提和验证范围；不能将工程验收通过扩写成参赛模型已经完成。

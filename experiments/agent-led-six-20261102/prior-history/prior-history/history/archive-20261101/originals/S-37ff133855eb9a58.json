@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "contract_id": "admet-review-output-v1",
+  "files": {
+    "review.json": {
+      "shape": "object",
+      "fields": [
+        "schema_version",
+        "request_id",
+        "round_id",
+        "manifest_sha256",
+        "status",
+        "read_receipt",
+        "read_checks",
+        "findings",
+        "missing_evidence",
+        "not_assessed",
+        "comparison_groups",
+        "stop_reasons"
+      ]
+    },
+    "issues.json": {
+      "shape": "array",
+      "id": "issue_id",
+      "fields": [
+        "issue_id",
+        "status",
+        "severity",
+        "category",
+        "statement",
+        "affected_run_ids",
+        "evidence_refs",
+        "hypothesis",
+        "counterevidence",
+        "impact",
+        "proposed_resolution",
+        "verification_criterion",
+        "related_proposal_ids"
+      ]
+    },
+    "next_experiments.json": {
+      "shape": "array",
+      "id": "proposal_id",
+      "fields": [
+        "proposal_id",
+        "priority",
+        "hypothesis",
+        "control_run_or_config",
+        "task",
+        "scientific_asset_id",
+        "asset_versions",
+        "change_only",
+        "hold_fixed",
+        "split_id",
+        "seeds",
+        "metric",
+        "direction",
+        "minimum_effect_or_decision_rule",
+        "success_criterion",
+        "falsification_criterion",
+        "compute_budget",
+        "dependencies",
+        "within_current_scope",
+        "stage",
+        "exact_config",
+        "preparation_mode",
+        "reuse_assets",
+        "estimated_run_count",
+        "trigger",
+        "skip_or_stop_if",
+        "review_checkpoint",
+        "direction_ids"
+      ]
+    },
+    "search_space.json": {
+      "shape": "array",
+      "id": "direction_id",
+      "fields": [
+        "direction_id",
+        "linked_issues",
+        "rationale",
+        "evidence_refs",
+        "counterevidence",
+        "candidate_models_or_modules",
+        "parameters",
+        "combination_constraints",
+        "search_method",
+        "configuration_count_or_counting_rule",
+        "seeds",
+        "estimated_run_count",
+        "cost_assumptions",
+        "readiness",
+        "priority",
+        "scope_status"
+      ]
+    }
+  },
+  "text_files": [
+    "analysis.md",
+    "next_batch_guide.md"
+  ],
+  "extra_files": "allowed, each bound in delivery-manifest; originals unchanged",
+  "manifest_required": [
+    "request_id",
+    "round_id",
+    "input_manifest_sha256",
+    "files",
+    "scientific_status"
+  ],
+  "enums": {
+    "preparation_mode": [
+      "config_only",
+      "new_code",
+      "blocked_assets"
+    ],
+    "stage": [
+      "screen",
+      "confirm",
+      "reserve"
+    ],
+    "review_status": [
+      "complete",
+      "needs_evidence",
+      "inconclusive"
+    ]
+  },
+  "identity": "manifest+review bind root arrays; unknown extra fields allowed",
+  "science_checks": "exact_config uses the separately pinned actual runner contract; new code has concrete intended interface and independent acceptance, no guessing",
+  "counts": "unique (asset, task, full scientific config, split, seed) tuples across all proposals; shared control counted once",
+  "read_receipt": "entry_id,layer,uri,source_version{commit,sha256},read_mode,evidence_locator,observed_fact,limitation; self-report not actual read proof"
+}

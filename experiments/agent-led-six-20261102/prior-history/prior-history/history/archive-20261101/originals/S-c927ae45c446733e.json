@@ -1,0 +1,213 @@
+{
+  "method": "Python stdlib csv/json/statistics; means from decimal strings in prediction CSV, never inferred from scores. Original valid/test Y not present or accessed. No scorer or model executed.",
+  "read_checks": [
+    {
+      "run_id": "hainan-frozen-training-20261031",
+      "all_prediction_rows": 273,
+      "valid_rows": 91,
+      "mean_valid_prediction": "-5.3383347542967032967032967032967032967032967032967",
+      "optimizer_steps": 70,
+      "best_epoch_1_based": 6,
+      "epochs_run": 14,
+      "row_alignment_passed": true,
+      "prediction_distribution": {
+        "valid": {
+          "n": 91,
+          "mean": -5.338334754296704,
+          "std_population": 0.5690496801991645,
+          "minimum": -6.964211941,
+          "maximum": -4.293442726,
+          "unique_prediction_values": 91
+        },
+        "test": {
+          "n": 182,
+          "mean": -5.36395629421978,
+          "std_population": 0.6319369890609144,
+          "minimum": -7.524028778,
+          "maximum": -3.826202869,
+          "unique_prediction_values": 181
+        }
+      },
+      "split_identity": {
+        "fit_payload_sha256": "d77ee5ee6665b536863cc5cbc3a5375c200b18ff5c209eaab60b0e4a42f8aea8",
+        "stop_payload_sha256": "030e2009b9c7ca4461c666665780ccc764708e066637be7b83a760414dfd8261",
+        "fit_rows": 573,
+        "stop_rows": 64,
+        "fit_stop_raw_smiles_overlap": [
+          {
+            "row_indices": [
+              182,
+              184
+            ],
+            "roles": [
+              "fit",
+              "internal_stop"
+            ],
+            "Drug_ID": [
+              "Tiotidine",
+              "tiotidine"
+            ],
+            "train_Y": [
+              "-5.6587887000000014",
+              "-5.8800000999999975"
+            ]
+          }
+        ]
+      },
+      "train_transform": {
+        "recorded_target_mean": -5.1942267417907715,
+        "independent_double_mean": -5.194227083420594,
+        "recorded_target_std": 0.8041454553604126,
+        "independent_double_std": 0.8041454836081268,
+        "stop_mean": -5.2891822109375,
+        "stop_std": 0.7831219286769415
+      },
+      "encoder_before_after_equal": true,
+      "tensor_kinds": {
+        "parameter": 8,
+        "buffer": 3
+      },
+      "encoder_events": {
+        "count": 15,
+        "all_no_grad_eval_cuda": true
+      },
+      "best_internal_raw_RMSE_from_logged_MSE": 0.7887405672526382,
+      "last_to_best_internal_mse_ratio": 1.214318621590704
+    },
+    {
+      "run_id": "hainan-skill-follow-20261031",
+      "all_prediction_rows": 273,
+      "valid_rows": 91,
+      "mean_valid_prediction": "-5.3012504158461538461538461538461538461538461538462",
+      "optimizer_steps": 95,
+      "best_epoch_1_based": 11,
+      "epochs_run": 19,
+      "row_alignment_passed": true,
+      "prediction_distribution": {
+        "valid": {
+          "n": 91,
+          "mean": -5.3012504158461535,
+          "std_population": 0.5931019009794778,
+          "minimum": -6.534286976,
+          "maximum": -3.640128613,
+          "unique_prediction_values": 91
+        },
+        "test": {
+          "n": 182,
+          "mean": -5.359299261439561,
+          "std_population": 0.6648263951946363,
+          "minimum": -7.186165333,
+          "maximum": -3.722984791,
+          "unique_prediction_values": 181
+        }
+      },
+      "split_identity": {
+        "fit_payload_sha256": "c460d8b564843656f46cf7ad2028b2b41e45d139943c61d90593be42db1eb3e5",
+        "stop_payload_sha256": "4a08228f3db20b5c096dd34c914f4f0904f16eea5f90ac392bee3859a84df400",
+        "fit_rows": 573,
+        "stop_rows": 64,
+        "fit_stop_raw_smiles_overlap": [
+          {
+            "row_indices": [
+              605,
+              606
+            ],
+            "roles": [
+              "fit",
+              "internal_stop"
+            ],
+            "Drug_ID": [
+              "943-Ketotifen fumarate (38)",
+              "Ketotifen"
+            ],
+            "train_Y": [
+              "-3.9546771",
+              "-4.9499998"
+            ]
+          }
+        ]
+      },
+      "train_transform": {
+        "recorded_target_mean": -5.232780456542969,
+        "independent_double_mean": -5.232780593019197,
+        "recorded_target_std": 0.7998837232589722,
+        "independent_double_std": 0.7998837102235867,
+        "stop_mean": -4.9440078203125,
+        "stop_std": 0.7794759201041357
+      },
+      "encoder_before_after_equal": true,
+      "tensor_kinds": {
+        "parameter": 8,
+        "buffer": 3
+      },
+      "encoder_events": {
+        "count": 15,
+        "all_no_grad_eval_cuda": true
+      },
+      "best_internal_raw_RMSE_from_logged_MSE": 1.0087869163293783,
+      "last_to_best_internal_mse_ratio": 1.8999693759024778
+    }
+  ],
+  "data_checks": {
+    "train": {
+      "rows": 637,
+      "fields": [
+        "Drug_ID",
+        "Drug",
+        "Y"
+      ],
+      "unique_raw_smiles": 634,
+      "unique_ids": 581
+    },
+    "valid": {
+      "rows": 91,
+      "fields": [
+        "Drug_ID",
+        "Drug"
+      ],
+      "unique_raw_smiles": 91,
+      "unique_ids": 89
+    },
+    "test": {
+      "rows": 182,
+      "fields": [
+        "Drug_ID",
+        "Drug"
+      ],
+      "unique_raw_smiles": 181,
+      "unique_ids": 177
+    },
+    "train_Y": {
+      "mean": -5.203767316012558,
+      "std_population": 0.8025659602494993,
+      "minimum": -7.7600002,
+      "maximum": -3.51,
+      "all_finite": true
+    },
+    "cross_split_raw_smiles_overlap": {
+      "train__valid": 0,
+      "train__test": 0,
+      "valid__test": 0
+    }
+  },
+  "paired_prediction_comparison": {
+    "valid": {
+      "mean_B_minus_A": 0.03708433845054951,
+      "mean_abs_prediction_difference": 0.18612762080219777,
+      "rms_prediction_difference": 0.24822736056883726,
+      "maximum_abs_prediction_difference": 0.7629790300000003,
+      "pearson_prediction_correlation": 0.911611438651025,
+      "n": 91
+    },
+    "test": {
+      "mean_B_minus_A": 0.004657032780219771,
+      "mean_abs_prediction_difference": 0.14525444429670328,
+      "rms_prediction_difference": 0.1931890353901944,
+      "maximum_abs_prediction_difference": 0.7408695220000006,
+      "pearson_prediction_correlation": 0.9568957927742124,
+      "n": 182
+    }
+  },
+  "published_score_delta_B_minus_A": "0.01056345798901076",
+  "internal_stop_index_intersection": 8
+}

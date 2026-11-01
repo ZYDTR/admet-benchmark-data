@@ -1,0 +1,44 @@
+# 模型成员与工程成员的接口
+
+本项目没有得到正式训练包，因此不猜训练列名、不预装公开分子权重，也不把合成演示叫作比赛模型。C 在 B 确认标签契约后提供一个审查过的适配器目录。
+
+## 入口
+
+适配器包含 `train.py` 和 `predict.py`。执行器固定调用：
+
+```bash
+python3 /adapter/train.py --inputs /control/inputs.json --config /control/model.json --output /output
+python3 /adapter/predict.py --inputs /control/inputs.json --config /control/model.json --output /output --checkpoint /checkpoint/model
+```
+
+`inputs.json` 给出本次挂载的官方文件 ID、role、容器路径和 SHA-256。训练只读 train/validation，推理只读 test/submission_template。`model.json` 提供 run_id、phase、seed、model 配置和确认后的完整 task_schema。具体完整结构以 [运行契约](runtime-contract.md) 为准。
+
+## 训练输出
+
+`result.json`：
+
+```json
+{"schema_version":1,"phase":"train","checkpoint":"model.pt","metrics":"metrics.json"}
+```
+
+checkpoint 包含实际训练的深度模型及推理必要变换。metrics 保存数据划分、逐任务验证结果和明确定义的本地评价方法。记录模型结构、随机性、实际依赖版本、设备、训练过程和初始化来源；这些内容不能只留在 Agent 对话里。实际 checkpoint 格式由所选框架决定，不从文件名推断模型真实性。
+
+## 推理输出
+
+`result.json`：
+
+```json
+{"schema_version":1,"phase":"predict","predictions":"predictions.json"}
+```
+
+`predictions.json` 使用 [提交接口](submission.md) 的固定 schema。run_id 是本次 predict run，model_artifact_sha256 是实际输入 checkpoint 的 SHA-256。原始 task/sample_idx 字符串来自模板，不用药物 ID 猜唯一键。输出所有任务，缺失/异常必须修复推理流程，不能人工补预测。
+
+## 模型自由度与验收
+
+可从随机初始化 MLP/GNN 等深度模型开始；模型结构不被 Harness 写死。缺失标签掩码、分类/回归头、标准化和损失计算必须依据已确认标签契约。标准化器的 fit 范围、分类正类方向和反变换是验收重点。
+
+运行适配器前由 C 与 B 检查模型和标签解释，由 A 检查依赖与自动下载、代码摘要及镜像。`adapter-digest --path adapters/<名称>` 输出确定性摘要。适配器目录允许代码和配置文档，不接受 checkpoint/数据缓存；外部资产不能藏入配置常量。
+
+## 当前可执行范围
+
+使用 `scripts/demo.py` 验证合成预测的格式与逐行对齐；它不训练模型。正式适配器、批准镜像和官方训练数据是明确的后续接入任务，见 context/tasks。它们缺失时运行失败关闭属于预期行为。

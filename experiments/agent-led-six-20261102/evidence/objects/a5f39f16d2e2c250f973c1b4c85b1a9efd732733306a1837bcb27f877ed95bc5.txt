@@ -1,0 +1,80 @@
+--- train_cached.py
++++ train_gpu1.py
+@@ -116,7 +116,7 @@
+     random.seed(hc["seed"])
+     torch.cuda.set_device(0)
+     props = torch.cuda.get_device_properties(0)
+-    torch.cuda.set_per_process_memory_fraction((4096 * 1024 ** 2) / props.total_memory, 0)
++    torch.cuda.set_per_process_memory_fraction((1024 * 1024 ** 2) / props.total_memory, 0)
+     device = "cuda:0"
+     write_json(ROOT / "raw/train-runtime.json", {
+         "at": now(), "pid": os.getpid(), "pgid": os.getpgid(0),
+@@ -125,9 +125,9 @@
+         "visible_gpu_uuid": os.environ["CUDA_VISIBLE_DEVICES"], "device_properties": str(props),
+         "cpu_affinity": sorted(os.sched_getaffinity(0)), "torch_threads": torch.get_num_threads(),
+         "dataloader_workers": 0,
+-        "limits": {"allocator_fraction": (4096 * 1024 ** 2) / props.total_memory,
+-                   "allocator_target_bytes": 4096 * 1024 ** 2,
+-                   "note": "PyTorch allocator cap only, excludes CUDA context/third-party allocations. Supervisor observes RSS and walltime."},
++        "limits": {"allocator_fraction": (1024 * 1024 ** 2) / props.total_memory,
++                   "allocator_target_bytes": 1024 * 1024 ** 2,
++                   "note": "PyTorch allocator cap only, excludes CUDA context/third-party allocations. Own identity monitor observes RSS, framebuffer usage and walltime."},
+         "script": "train_remote_v4", "run_id": cfg["run_id"], "task": cfg["task"],
+         "config_sha256": cfg_source_sha256, "monitor": cfg["monitor"],
+     })
+@@ -267,7 +267,54 @@
+         m = scale_metrics(orig, orig_col.cpu().numpy().reshape(-1))
+         return std, m
+ 
+-    for epoch in range(hc["epochs"]):
++    start_epoch = 0
++    resume_spec = ROOT / "source/resume.json"
++    if resume_spec.exists():
++        spec = json.loads(resume_spec.read_text())
++        original = Path(spec["original_root"])
++        assert original.resolve(strict=True) == original and original != ROOT
++        assert original.parent == ROOT.parent.parent or original == ROOT.parent
++        for rel, expected in spec["source_hashes"].items():
++            path = original / rel
++            assert path.resolve(strict=True) == path and path.stat().st_nlink == 1
++            assert hashlib.sha256(path.read_bytes()).hexdigest() == expected
++        assert before == json.loads((original / "artifacts/encoder-before.json").read_text())
++        assert split_record == json.loads((original / "artifacts/internal-split.json").read_text())
++        with np.load(original / "artifacts/preprocessing.npz", allow_pickle=False) as previous:
++            with np.load(ROOT / "artifacts/preprocessing.npz", allow_pickle=False) as current:
++                assert set(previous.files) == set(current.files)
++                assert all(np.array_equal(previous[k], current[k]) for k in previous.files)
++        old_initial = torch.load(original / "artifacts/head-initial.pt", map_location="cpu", weights_only=True)
++        assert state_equal(old_initial["state_dict"], initial) and old_initial["head_config"] == hc
++        progress = torch.load(original / "artifacts/progress-state.pt", map_location="cpu", weights_only=True)
++        assert progress["config"] == cfg and progress["run_id"] == cfg["run_id"]
++        history = progress["history"]
++        assert len(history) == spec["durable_epochs"] == 6
++        assert progress["steps"] == history[-1]["steps"] == spec["durable_steps"] == 30
++        assert all(row["epoch"] == i+1 and row["monitor"] == cfg["monitor"] for i,row in enumerate(history))
++        best_index = min(range(len(history)), key=lambda i: history[i]["monitor_value"])
++        assert best_index == progress["best_epoch"] and history[best_index]["monitor_value"] == progress["best"]
++        head.load_state_dict(progress["head"])
++        opt.load_state_dict(progress["optimizer"])
++        assert state_equal(optimizer_payload(opt.state_dict()), progress["optimizer"])
++        assert all(int(v["step"]) == progress["steps"] for v in opt.state_dict()["state"].values())
++        steps = progress["steps"];nonzero_steps = progress["nonzero_steps"];grad_max = progress["grad_max"]
++        best = progress["best"];best_epoch = progress["best_epoch"]
++        best_state = {k:v.to(device).clone() for k,v in progress["best_state"].items()}
++        last_state = {k:v.detach().clone() for k,v in head.state_dict().items()}
++        assert state_equal(last_state, progress["head"])
++        restore_training_rng(progress["rng"], gen)
++        assert state_equal(capture_training_rng(hc["seed"],gen), progress["rng"])
++        start_epoch = len(history)
++        if start_epoch - 1 - best_epoch >= hc["patience"]:
++            start_epoch = hc["epochs"]  # already stopped: finalize saved state without more learning
++        write_json(ROOT / "raw/checkpoint-resume.json", {
++            "original_root":str(original),"source_hashes":spec["source_hashes"],
++            "restored_epochs":len(history),"restored_steps":steps,
++            "head_optimizer_RNG_history_best_preprocessing_initial_and_encoder_verified":True,
++            "next_epoch_1_based":start_epoch+1,"no_completed_run_retrained":True})
++
++    for epoch in range(start_epoch, hc["epochs"]):
+         enc.assert_frozen()
+         head.train()
+         perm = torch.randperm(len(tr), generator=gen)

@@ -1,0 +1,126 @@
+"""Actual new gate/path/budget/receiver counterexamples plus production monitor cases."""
+import unittest,tempfile,json,sys,subprocess,hashlib,io,zipfile,os,time
+from pathlib import Path
+P=Path(__file__).resolve().parent;sys.path.insert(0,str(P/'source/production-adapter-v4'))
+import recovery_policy as gate
+from layout import prepare_science_workspace,SCIENCE,RAW,STATE
+from budget import allowance,remaining_after,REMAINING,DEADLINE
+from package import pack,receive,framed_transfer
+from test_evidence import EvidenceTests
+def dead(pid):raise FileNotFoundError(pid)
+def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
+class RecoveryTests(unittest.TestCase):
+ def setUp(self):
+  self.temp=tempfile.TemporaryDirectory(dir=P/'raw');self.base=Path(self.temp.name);self.root=self.base/gate.FIRST;self.root.mkdir();(self.root/'state').mkdir();(self.root/'raw/recovery-02/attempt-02').mkdir(parents=True)
+  self.lock=self.root/'state/learning-started.lock';self.lock.write_text('{"attempt":"02","token":"old"}')
+  self.pipeline=self.root/'raw/recovery-02/attempt-02/pipeline-exit.json';self.pipeline.write_text(json.dumps({'training_completed':False,'supervisor_exit_code':125,'training_process_launched':True,'learning_attempt_registered':True}))
+  self.contract={'attempt':'03','run_id':self.root.name,'runtime_admitted':True,'checkpoint_resume':False,'action':'restart_failed_once_unknown_steps','prior_optimizer_steps':None,'protected_files':{str(self.lock.relative_to(self.base)):{'size':self.lock.stat().st_size,'sha256':digest(self.lock)}},'old_identities':[{'pid':999999,'start_ticks':'7'}],'old_output_files':{},'prior_learning_lock_sha256':digest(self.lock),'prior_pipeline_sha256':digest(self.pipeline)}
+ def tearDown(self):self.temp._finalizer.detach()
+ def record(self,name=None):return {'run_id':name or self.root.name,'attempt':'03','token':'new-token','supervisor_identity':{'pid':os.getpid(),'start_ticks':'88','pgid':os.getpid()}}
+ def test_explicit_failed_once_restart_preserves_old_lock_and_duplicate_refused(self):
+  old=self.lock.read_bytes();gate.register_learning(self.root,self.contract,self.record(),reader=dead);self.assertEqual(old,self.lock.read_bytes());self.assertTrue((self.root/STATE/'learning-started.lock').exists())
+  with self.assertRaises(ValueError):gate.register_learning(self.root,self.contract,self.record(),reader=dead)
+ def test_all_five_initial_states_register_once(self):
+  names=['hainan-paired-'+m+'-s'+str(s)+'-20261101' for s in (44,45,46) for m in ('mse','mae')][1:]
+  for name in names:
+   root=self.base/name;root.mkdir();c=dict(self.contract,run_id=name,action='initial_start',protected_files={},old_identities=[])
+   gate.register_learning(root,c,self.record(name),reader=dead);self.assertEqual((root/'state/learning-started.lock').read_bytes(),(root/STATE/'learning-started.lock').read_bytes())
+   with self.assertRaises(ValueError):gate.register_learning(root,c,self.record(name),reader=dead)
+ def test_completed_prior_refused(self):
+  f=self.root/'outputs/recovery-02/raw/train-complete.json';f.parent.mkdir(parents=True);f.write_text('{}')
+  with self.assertRaisesRegex(ValueError,'completed'):gate.validate_contract(self.root,self.contract,reader=dead)
+ def test_live_prior_refused(self):
+  child=subprocess.Popen([sys.executable,'-B','-c','import time;time.sleep(30)'])
+  try:
+   c=dict(self.contract,old_identities=[{'pid':child.pid,'start_ticks':'7'}])
+   with self.assertRaisesRegex(ValueError,'live'):gate.validate_contract(self.root,c,reader=lambda pid:{'pid':pid,'start_ticks':'7','state':'S'})
+   self.assertIsNone(child.poll())
+  finally:child.terminate();self.assertEqual(child.wait(timeout=2),-15)
+ def test_unknown_prior_refused(self):
+  def unknown(pid):raise PermissionError('unknown proc state')
+  with self.assertRaises(PermissionError):gate.validate_contract(self.root,self.contract,reader=unknown)
+ def test_missing_failure_receipt_refused(self):
+  self.pipeline.unlink()
+  with self.assertRaises(FileNotFoundError):gate.validate_contract(self.root,self.contract,reader=dead)
+ def test_changed_failure_receipt_refused(self):
+  self.pipeline.write_text('{}')
+  with self.assertRaises(ValueError):gate.validate_contract(self.root,self.contract,reader=dead)
+ def test_changed_or_missing_old_lock_refused(self):
+  self.lock.write_text('changed')
+  with self.assertRaises(ValueError):gate.validate_contract(self.root,self.contract,reader=dead)
+ def test_unaccounted_partial_progress_refused(self):
+  f=self.root/'outputs/recovery-02/artifacts/progress.json';f.parent.mkdir(parents=True);f.write_text('{"steps":1}')
+  with self.assertRaisesRegex(ValueError,'unaccounted'):gate.validate_contract(self.root,self.contract,reader=dead)
+ def test_default_disabled_refused(self):
+  with self.assertRaises(ValueError):gate.validate_contract(self.root,dict(self.contract,runtime_admitted=False),reader=dead)
+ def test_new_science_namespace_and_exact_private_copies(self):
+  for n in ('source/config.json','encoder.py','data/train.csv','data/valid.csv','data/test.csv','assets/chemeleon_mp.pt'):
+   p=self.root/n;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(b'fixture-input')
+  work=prepare_science_workspace(self.root);self.assertEqual(work,self.root/'outputs/recovery-03');self.assertEqual((work/'assets/chemeleon_mp.pt').read_bytes(),b'fixture-input');self.assertFalse((self.root/'outputs/recovery-02').exists())
+ def test_actual_supervisor_precheck_refusal_never_invokes_child(self):
+  from phase_supervisor import run_phase
+  context={'root':self.root,'attempt_root':self.root/'raw/new','run_id':self.root.name,'offline':True,'environment':dict(os.environ),'gpu_uuid':'fixture','manifest_sha256':'fixture','observed_workers':{}}
+  context['attempt_root'].mkdir();marker=self.root/'invoked'
+  def reject():gate.validate_contract(self.root,dict(self.contract,runtime_admitted=False),reader=dead)
+  code,status=run_phase(context,'preflight','x',[sys.executable,'-B','-c',f'from pathlib import Path;Path({str(marker)!r}).write_text("bad")'],reject,lambda child:{},1,{'signal':None})
+  self.assertEqual(code,125);self.assertIsNone(status['child_identity']);self.assertFalse(marker.exists());self.assertTrue((context['attempt_root']/'preflight/status.json').exists())
+ def test_budget_remaining_and_deadline_never_reset(self):
+  dispatch={'execution_enabled':True,'max_learning_starts':6,'max_concurrent_jobs':1,'remaining_seconds':REMAINING,'deadline_epoch_seconds':DEADLINE}
+  self.assertEqual(allowance(dispatch,now=DEADLINE-100)[0],100);self.assertEqual(remaining_after(REMAINING,100,DEADLINE,now=DEADLINE-9000),REMAINING-100)
+  for key,value in [('remaining_seconds',REMAINING+1),('deadline_epoch_seconds',DEADLINE+1),('execution_enabled',False)]:
+   with self.assertRaises(ValueError):allowance(dict(dispatch,**{key:value}),now=DEADLINE-100)
+ def test_helper_manifest_and_default_profiles_coherent(self):
+  c=P/'candidate';manifest=json.loads((c/'runtime-manifest.json').read_text());names={x['path'] for x in manifest['files']}
+  from admission import RUNTIME_REQUIRED
+  self.assertTrue(RUNTIME_REQUIRED<=names);self.assertIn('source/production-adapter-v4/resource_evidence.py',names)
+  for f in (c/'tree').glob('hainan-paired-*/operator/recovery-03/profile.json'):
+   profile=json.loads(f.read_text());self.assertIs(profile['execution_enabled'],False);root=f.parents[2];binding=json.loads((root/profile['admission_binding']).read_text());dispatch=(root/binding['formal_dispatch']['path']);self.assertEqual(digest(dispatch),binding['formal_dispatch']['sha256']);self.assertEqual(profile['runtime_source_manifest']['sha256'],digest(c/'runtime-manifest.json'))
+ def test_exact_append_receiver_refuses_old_paths_and_duplicate(self):
+  root=self.base/'receiver';root.mkdir();names=['one'];contract={'deployment_enabled':True,'main_controller_thread':gate.MAIN,'protected_files':{},'old_identities':[],'roots':names};blob,manifest=pack({'one/operator/recovery-03/x.json':b'{}'});h=hashlib.sha256(blob).hexdigest();receive(root,blob,manifest,h,contract)
+  with self.assertRaises(AssertionError):receive(root,blob,manifest,h,contract)
+  for name in ('one/state/learning-started.lock','one/source/config.json','one/operator/recovery-02/x.json'):
+   b,m=pack({name:b'bad'})
+   with self.assertRaises(AssertionError):receive(root,b,m,hashlib.sha256(b).hexdigest(),contract)
+ def test_receiver_disabled_refused_before_append(self):
+  root=self.base/'disabled';root.mkdir();b,m=pack({'one/operator/recovery-03/x':b'{}'})
+  with self.assertRaises(AssertionError):receive(root,b,m,hashlib.sha256(b).hexdigest(),{'deployment_enabled':False})
+  self.assertEqual(list(root.iterdir()),[])
+ def test_exact_in_memory_frame_actual_OS_child(self):
+  receiver='import sys;assert sys.stdin.buffer.read()==b"payload";print("frame-ok")';bootstrap,payload=framed_transfer(receiver,b'payload');child=subprocess.run([sys.executable,'-I','-B','-c',bootstrap],input=payload,capture_output=True);self.assertEqual(child.returncode,0);self.assertEqual(child.stdout,b'frame-ok\n');self.assertLess(len(bootstrap),1000)
+ def test_actual_outer_propagates_batch_exit_and_records_raw_query(self):
+  from outer import run_outer
+  from process_state import native_identity
+  records={}
+  class Context:
+   def record(_,name,value):records[name]=json.loads(json.dumps(value));(self.base/name).write_text(json.dumps(value))
+   def identity(_,pid):return native_identity(pid)
+   def prepare(_):return 10
+   def commands(_):return [['fixture-query']]
+   def query(_,command):return subprocess.CompletedProcess(command,0,'observed','')
+   def validate(_,raw):self.assertIn('query-00.json',records)
+   def reconcile(_):pass
+   def start_batch(_,deadline):return subprocess.Popen([sys.executable,'-B','-c','raise SystemExit(7)'])
+  self.assertEqual(run_outer(Context()),7);self.assertTrue(records['outer-outcome.json']['batch_invocation_attempted']);self.assertEqual(records['outer-outcome.json']['actual_batch_OS_exit'],7)
+ def test_actual_outer_prelaunch_denial_does_not_start_batch(self):
+  from outer import run_outer
+  from process_state import native_identity
+  records={}
+  class Context:
+   def record(_,name,value):records[name]=value
+   def identity(_,pid):return native_identity(pid)
+   def prepare(_):raise ValueError('unadmitted')
+   def start_batch(_,deadline):self.fail('must never launch')
+  self.assertEqual(run_outer(Context()),78);self.assertFalse(records['outer-outcome.json']['batch_invocation_attempted']);self.assertIsNone(records['outer-outcome.json']['actual_batch_OS_exit'])
+ def test_actual_watch_wait_propagates_outer_exit(self):
+  from watch import held_wait
+  records={};code=held_wait([sys.executable,'-B','-c','print("outer-raw");raise SystemExit(7)'],lambda n,v:records.update({n:json.loads(json.dumps(v))}),self.base,dict(os.environ),2)
+  self.assertEqual(code,7);self.assertEqual(records['watch-actual-exit.json']['actual_outer_OS_exit'],7);self.assertIn('outer-raw',records['watch-actual-exit.json']['stdout'])
+ def test_actual_batch_timeout_cancels_only_owned_child(self):
+  from batch import wait_owned_job
+  from process_state import native_identity
+  child=subprocess.Popen([sys.executable,'-B','-c','import time;time.sleep(30)'],start_new_session=True)
+  identity=native_identity(child.pid);outcome=wait_owned_job(child,identity,.03)
+  self.assertEqual(outcome['propagated_exit'],124);self.assertEqual(outcome['actual_child_OS_exit'],-15);self.assertTrue(outcome['release_verified'])
+if __name__=='__main__':
+ suite=unittest.TestSuite([unittest.defaultTestLoader.loadTestsFromTestCase(RecoveryTests),unittest.defaultTestLoader.loadTestsFromTestCase(EvidenceTests)]);result=unittest.TextTestRunner(verbosity=2).run(suite)
+ (P/'test-results.json').write_text(json.dumps({'tests':result.testsRun,'failures':len(result.failures),'errors':len(result.errors),'passed':result.wasSuccessful(),'live_GPU':False,'science_training':False},indent=2)+'\n');raise SystemExit(0 if result.wasSuccessful() else 1)

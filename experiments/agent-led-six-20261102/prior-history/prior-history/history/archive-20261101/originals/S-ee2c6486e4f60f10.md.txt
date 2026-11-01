@@ -1,0 +1,17 @@
+# MiniMol 冻结编码器接入准备
+
+从 <PRIVATE_RUNTIME_PATH> 根目录执行。你是独立、无历史的叶子准备会话，只负责 MiniMol。首读 input/rules/PREPARATION_SKILL.md（主工作区 rules/skills/ml-preparation-only/SKILL.md 的冻结 v1.1），再读 input/rules/policy.json、source-map.md 和 input/research。任务包位于 adhoc_jobs/admet_qwen_preparation_20261031/minimol。
+
+目标：交付主控可审核、安装、下载资产后接手运行的 MiniMol 冻结编码器及每任务新 MLP 头的代码、命令和证据。预训练权重始终冻结；模型权重、参数和buffer前后摘要检查、新头优化器隔离必须写入实际训练代码。首选作者 MiniMol 固定预训练资产。研究快照 commit 41642328affbb35e4950b7b7a9020aa95919b503、minimol/ckpts/minimol_v1/state_dict.pth；重新核对官方代码/许可证与加载接口，特别是 strict=False 缺失与额外键的失败条件。不能用随机初始化替代缺失权重。
+
+只读取本 TASK、自己的 input/、必要的上级工作区指令和官方公开模型/库技术资料。只写自己的 output/，包括 tmp、缓存、日志和 __pycache__；设置 TMPDIR、各库缓存和 PYTHONDONTWRITEBYTECODE 后再运行检查。禁止读取其他会话产物、别的任务目录、会话库、私有标签、精确成绩及凭据。原数据和规则快照只读。没有服务端、海南或GPU操作权限。
+
+执行准备 Skill 的边界：可以写完整训练代码，但不执行 fit/backward/optimizer.step/训练入口，不做整批特征提取、不安装依赖、不下载权重、不连接服务器、不上传赛事。缺依赖写原始错误和未验证项，继续完成可做的代码、静态检查和固定合成反例。公开技术源码可通过 webfetch 阅读；如需保存小份源码/许可证快照只放 output/，记录来源与版本，不能运行未审查的下载脚本。不做外部数据或标签调研。
+
+数据合同：22任务，input/data/official/data_benchmark/<task>/train.csv 有 Drug_ID,Drug,Y；test.csv 及 input/data/blind_validation/<task>/valid.csv 只有 Drug_ID,Drug。保持原split/行序/空ID/重复行，不清洗、不去重、不改标签。唯一键为(task,split,row_index)，row_index是原CSV数据行0基索引。预测CSV列固定 task,split,row_index,y_pred。输入、编码器、权重、配置、版本及逐行身份绑定缓存；检查数组摘要、维度、dtype、有限值，错序和损坏拒绝。无法编码不得丢行，明确确定性处理及统计。只在内部train拟合转换，回归预测还原原Y尺度。valid-only/test-only分别可用，不读取Y或依赖另一split输出。
+
+模板 input/data/official/submission_template.csv 的sample_idx与原行映射需核对；导出保留16379行、顺序、非预测字段，只替换y_pred。训练代码覆盖22任务，任务类型据research/data-profile.md核对。固定一组默认新头配置（hidden256、dropout0.1、lr0.0005、weight_decay0.0001、batch128、seed43、最大50epoch、patience8；内部train划分90/10），不搜索、不运行。支持显式CPU/单GPU、资源预算、重载推理、输入和资产摘要。
+
+交付 output/ 下的实现、依赖锁/版本说明、ASSETS.json（官方URL、固定revision、文件列表、尺寸/官方摘要或主控下载后待补项、许可证据）、配置、静态/合成检查记录、HANDOFF.md。主控下一步安装、下载、无更新接口验证、训练分别给具体命令；未验证的真实模型加载和端到端必须明示。允许的合成测试验证重复/空ID、顺序、无Y盲输入、缓存损坏/错源、模板缺失/重复/额外行等；至少把生产端输出直接送消费端。只跑不更新参数的测试。不要提供真实评分器或读取评分标签。
+
+你是 leaf，亲自完成；禁止调用task/delegate、创建或切换thread/session、fork工作树、启动CLI Agent或模型服务、联系其他会话。已有上下文不授予主控权限。完成后停止并总结实际交付和未验证项。

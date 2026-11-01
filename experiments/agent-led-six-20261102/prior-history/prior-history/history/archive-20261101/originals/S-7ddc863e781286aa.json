@@ -1,0 +1,371 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-10-30T15:38:56.505088+00:00",
+  "run_id": "hainan-skill-pilot-20261030",
+  "request": "One real Caco2/CheMeleon frozen encoder plus new head GPU training via updated Hainan Skill",
+  "authorization": {
+    "role": "explicitly_authorized_host_operator_leaf",
+    "local_write_root": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-skill-pilot-20261030",
+    "target_write_root": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030",
+    "parent_creation_allowed": "project-owner/admet only as necessary",
+    "max_concurrent_gpu_jobs": 1,
+    "no_official_upload": true,
+    "no_nested_delegation": true
+  },
+  "target": {
+    "hostname": "private-compute",
+    "uid": 1012,
+    "gid": 1012,
+    "address": "<COMPUTE_ADDRESS>:22",
+    "route": "Registered Mac -> Windows fixed TCP stream -> private-compute; pinned keys strictly checked",
+    "gpu_index": 4,
+    "gpu_uuid": "<REGISTERED_GPU>",
+    "driver_version": "570.211.01",
+    "final_compute_mode": "Default",
+    "final_mig_mode": "Disabled",
+    "final_gpu_recovery_action": "Reset",
+    "gpu_health_observed_at": "2026-10-30T15:29:51.176855+00:00"
+  },
+  "workspace": {
+    "canonical_root": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030",
+    "tree_identity_violations": [],
+    "symlinks": [
+      {
+        "path": "venv/lib64",
+        "target": "lib",
+        "realpath": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/venv/lib",
+        "inside_task": true
+      }
+    ],
+    "bytes_by_top_directory": {
+      "tmp": 638320640,
+      "raw": 173300355,
+      "cache": 30531,
+      "assets": 34859448,
+      "input": 76643,
+      "artifacts": 31336,
+      "state": 608,
+      "venv": 5969996470,
+      "source": 202480,
+      "attempts": 3236312021
+    }
+  },
+  "checks": {
+    "registered_route_and_identity": "pass",
+    "plan_and_input_identity": "pass",
+    "dependency_install_and_import": "pass",
+    "gpu_idle_metadata": "observed_but_not_sufficient_for_compute_availability",
+    "selected_gpu_health": "fail_final_snapshot_recovery_action_reset",
+    "actual_gpu_encoder_execution": "fail_not_reached",
+    "actual_head_training": "fail_not_reached",
+    "optimizer_steps": 0,
+    "runtime_freeze_parameters_and_buffers": "not_verified_model_not_loaded",
+    "optimizer_excludes_encoder": "not_verified_optimizer_not_created",
+    "head_nonzero_parameter_update": "fail_no_head_created",
+    "model_reload_prediction": "not_verified_no_model",
+    "prediction_coverage": "fail_no_predictions",
+    "strict_write_scope": "fail_joblib_dev_shm_semaphore",
+    "post_correction_traced_persistent_file_effects": "pass_for_observed_calls",
+    "whole_system_zero_changes": "not_verified",
+    "own_process_and_gpu_release": "pass",
+    "official_upload": "not_performed",
+    "private_validation_labels": "excluded_from_inputs_and_execution",
+    "policy_plan_skill_unchanged": "pass",
+    "nested_delegation": "not_performed"
+  },
+  "outcome": {
+    "status": "failed",
+    "training_completed": false,
+    "objective_achieved": false,
+    "completed_model_trainings": 0,
+    "cuda_startup_attempts": 3,
+    "optimizer_steps": 0,
+    "encoder_forward_batches": 0,
+    "prediction_rows": 0,
+    "trained_checkpoint": null,
+    "stopping_reason": "Repeated CUDA startup/context failure; no further attempts after original 45-minute preparation window; final GPU health reports Reset. Known outside-root setup side effect independently fails scope."
+  },
+  "changes": {
+    "pretrace_directories_created": [
+      "<AUTHORIZED_PROJECT_ROOT>/admet",
+      "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030",
+      "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/raw"
+    ],
+    "task_tree_manifest": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-skill-pilot-20261030/raw/inventory-final.stdout",
+    "downloaded_evidence_manifest": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-skill-pilot-20261030/raw/final-fetch/fetch-manifest.json",
+    "fetched_files": 143,
+    "all_fetched_sha256_verified": true,
+    "trained_artifacts": [],
+    "helper_binaries": [
+      {
+        "path": "artifacts/avoid_thread_name.so",
+        "sha256": "4b096ea5f50998086ec3815c332d8595c06167951fff0550b8a9744729e442a8",
+        "size_bytes": 16208
+      },
+      {
+        "path": "artifacts/no_thread_name.so",
+        "sha256": "2cfd66554e734a8503c0b14fedf6bfa3e6cb51d6b171208509510ded4977fbab",
+        "size_bytes": 15128
+      }
+    ],
+    "protected_source_identities": [
+      {
+        "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/AGENTS.md",
+        "initial_sha256": "dba32dbe20ffd5859b1dae4ba5fb7030b27fd15276fbb648cd05d46f5c881165",
+        "current_sha256": "dba32dbe20ffd5859b1dae4ba5fb7030b27fd15276fbb648cd05d46f5c881165",
+        "unchanged": true
+      },
+      {
+        "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/policy.json",
+        "initial_sha256": "38796c896885963c4ed220ed4ee28b7cc78b4ed1f0d08bf30c76b19f4c22d4e5",
+        "current_sha256": "38796c896885963c4ed220ed4ee28b7cc78b4ed1f0d08bf30c76b19f4c22d4e5",
+        "unchanged": true
+      },
+      {
+        "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-skill-pilot-20261030/PLAN.json",
+        "initial_sha256": "8767494513fdd3c0dffb58de67b83dc952579deb8c4f0a6004bcbd3cea01035b",
+        "current_sha256": "8767494513fdd3c0dffb58de67b83dc952579deb8c4f0a6004bcbd3cea01035b",
+        "unchanged": true
+      },
+      {
+        "path": "<LOCAL_WORKSPACE>/rules/skills/hainan-compute-access/SKILL.md",
+        "initial_sha256": "0b5846a3810be333f5c0c233b01344acefccef139043e38566bb436f6c18b64f",
+        "current_sha256": "0b5846a3810be333f5c0c233b01344acefccef139043e38566bb436f6c18b64f",
+        "unchanged": true
+      }
+    ]
+  },
+  "resource_budget": {
+    "plan": {
+      "gpu_count": 1,
+      "gpu_peak_target_mib": 4096,
+      "cpu_threads": 2,
+      "dataloader_workers": 0,
+      "ram_target_gib": 8,
+      "training_timeout_seconds": 900,
+      "setup_budget_seconds": 2700,
+      "dependency_download_budget_gib": 8,
+      "result_budget_gib": 1,
+      "limits_are_targets_until_enforcement_verified": true
+    },
+    "enforced_or_observed": {
+      "cpu_affinity": [
+        0,
+        1
+      ],
+      "cpu_thread_library_configuration": 2,
+      "dataloader_workers_configured": 0,
+      "cuda_visible_devices": "<REGISTERED_GPU>",
+      "training_watchdog_seconds": 900,
+      "gpu_allocator_cap": "attempted but function failed before enforcement; not_verified",
+      "ram_guard": "sampled descendant RSS; own process group termination configured above 8GiB",
+      "peak_observed_tree_rss_bytes": 889974784,
+      "max_observed_selected_card_memory_mib": 1,
+      "own_gpu_process_samples": [],
+      "cuda_allocator_peak": "not_verified_no_successful_model_context",
+      "environment_install_wall_seconds_from_first_setup": 1186.951135,
+      "last_attempt_start_seconds_from_first_setup": 2597.464958,
+      "last_attempt_exit_seconds_from_first_setup": 2618.071386,
+      "complete_wheel_bytes": 3234533399,
+      "temporary_partial_files_bytes": 638320640,
+      "network_download_byte_quota": "not_verified; completed wheel total bounded before download, metadata and failed attempts not packet-metered",
+      "result_raw_plus_artifact_bytes": 173331691,
+      "installed_venv_bytes": 5969996470
+    }
+  },
+  "resource_observations": {
+    "initial": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-skill-pilot-20261030/raw/inventory.stdout",
+    "per_job": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-skill-pilot-20261030/raw/final-fetch/raw",
+    "final": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-skill-pilot-20261030/raw/inventory-final.stdout",
+    "gpu_health": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-skill-pilot-20261030/raw/gpu-final.stdout",
+    "release": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-skill-pilot-20261030/raw/release-final.stdout"
+  },
+  "jobs": [
+    {
+      "job_id": "setup",
+      "supervisor_pid": 1668709,
+      "strace_pid": 1668753,
+      "pgid": 1668753,
+      "started_at": "2026-10-30T14:42:58.418709+00:00",
+      "completed_at": "2026-10-30T14:46:34.483240+00:00",
+      "exit_code": 1,
+      "elapsed_seconds": 216.06457134103402,
+      "peak_observed_tree_rss_bytes": 30097408,
+      "reason": "Official CDN pip bootstrap timeout",
+      "selected_gpu_uuid": null,
+      "all_recorded_processes_terminated": true
+    },
+    {
+      "job_id": "setup02",
+      "supervisor_pid": 1799083,
+      "strace_pid": 1799124,
+      "pgid": 1799124,
+      "started_at": "2026-10-30T14:47:54.272396+00:00",
+      "completed_at": "2026-10-30T14:50:12.330998+00:00",
+      "exit_code": -15,
+      "elapsed_seconds": 138.05863461317495,
+      "peak_observed_tree_rss_bytes": 77934592,
+      "reason": "Own cancellation to correct dependency file-size cap",
+      "selected_gpu_uuid": null,
+      "all_recorded_processes_terminated": true
+    },
+    {
+      "job_id": "setup03",
+      "supervisor_pid": 1872661,
+      "strace_pid": 1872696,
+      "pgid": 1872696,
+      "started_at": "2026-10-30T14:50:26.847805+00:00",
+      "completed_at": "2026-10-30T14:50:29.849257+00:00",
+      "exit_code": 1,
+      "elapsed_seconds": 3.0014971010386944,
+      "peak_observed_tree_rss_bytes": 995328,
+      "reason": "Operator launch bug: old setup worker selected; immediate assertion failure",
+      "selected_gpu_uuid": null,
+      "all_recorded_processes_terminated": true
+    },
+    {
+      "job_id": "setup04",
+      "supervisor_pid": 1929073,
+      "strace_pid": 1929112,
+      "pgid": 1929112,
+      "started_at": "2026-10-30T14:52:32.914577+00:00",
+      "completed_at": "2026-10-30T14:58:51.110171+00:00",
+      "exit_code": -15,
+      "elapsed_seconds": 378.1956328791566,
+      "peak_observed_tree_rss_bytes": 73502720,
+      "reason": "Own cancellation: sequential mirror route too slow for remaining preparation budget",
+      "selected_gpu_uuid": null,
+      "all_recorded_processes_terminated": true
+    },
+    {
+      "job_id": "setup05",
+      "supervisor_pid": 2099536,
+      "strace_pid": 2099578,
+      "pgid": 2099578,
+      "started_at": "2026-10-30T14:59:03.649418+00:00",
+      "completed_at": "2026-10-30T15:02:45.724999+00:00",
+      "exit_code": 0,
+      "elapsed_seconds": 222.07563159707934,
+      "peak_observed_tree_rss_bytes": 873058304,
+      "reason": "Private environment installed; import generated one out-of-root joblib semaphore",
+      "selected_gpu_uuid": null,
+      "all_recorded_processes_terminated": true
+    },
+    {
+      "job_id": "train",
+      "supervisor_pid": 2415132,
+      "strace_pid": 2416259,
+      "pgid": 2416259,
+      "started_at": "2026-10-30T15:11:07.093804+00:00",
+      "completed_at": "2026-10-30T15:11:27.440958+00:00",
+      "exit_code": 1,
+      "elapsed_seconds": 20.347190691158175,
+      "peak_observed_tree_rss_bytes": 889974784,
+      "reason": "CUDA error 304 at set_device; no encoder/head load",
+      "selected_gpu_uuid": "<REGISTERED_GPU>",
+      "all_recorded_processes_terminated": true
+    },
+    {
+      "job_id": "train02",
+      "supervisor_pid": 2594243,
+      "strace_pid": 2595295,
+      "pgid": 2595295,
+      "started_at": "2026-10-30T15:18:13.625700+00:00",
+      "completed_at": "2026-10-30T15:18:31.316354+00:00",
+      "exit_code": 1,
+      "elapsed_seconds": 17.690692700911313,
+      "peak_observed_tree_rss_bytes": 883367936,
+      "reason": "CUDA error 304 persists; pthread-only naming hook did not cover direct file writes",
+      "selected_gpu_uuid": "<REGISTERED_GPU>",
+      "all_recorded_processes_terminated": true
+    },
+    {
+      "job_id": "train03",
+      "supervisor_pid": 2796514,
+      "strace_pid": 2797587,
+      "pgid": 2797587,
+      "started_at": "2026-10-30T15:26:15.883667+00:00",
+      "completed_at": "2026-10-30T15:26:36.490095+00:00",
+      "exit_code": 1,
+      "elapsed_seconds": 20.606470425147563,
+      "peak_observed_tree_rss_bytes": 886231040,
+      "reason": "CUDA device properties obtained; memory allocator/context setup reports devices busy/unavailable",
+      "selected_gpu_uuid": "<REGISTERED_GPU>",
+      "all_recorded_processes_terminated": true
+    }
+  ],
+  "actual_concurrency": {
+    "max_completed_or_attempted_cuda_jobs_running_together": 1,
+    "completed_trainings": 0
+  },
+  "outside_scope_changes": {
+    "status": "fail",
+    "observed_joblib_semaphore": {
+      "pid": 2187947,
+      "bytes": 32,
+      "object_count": 1,
+      "paths": [
+        "/dev/shm/sem.kK3d5M",
+        "/dev/shm/sem.joblib-2187947-jg6d0uzx"
+      ],
+      "successful_effects": [
+        {
+          "syscall": "openat",
+          "path": "/dev/shm/sem.kK3d5M",
+          "line": "2187947 openat(AT_FDCWD<<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030>, \"/dev/shm/sem.kK3d5M\", O_RDWR|O_CREAT|O_EXCL|O_NOFOLLOW|O_CLOEXEC, 0600) = 3</dev/shm/sem.kK3d5M>"
+        },
+        {
+          "syscall": "write",
+          "path": "/dev/shm/sem.kK3d5M",
+          "line": "2187947 write(3</dev/shm/sem.kK3d5M>, \"\\0\\0\\0\\0\\0\\0\\0\\0\\200\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\", 32) = 32"
+        },
+        {
+          "syscall": "mmap",
+          "path": "/dev/shm/sem.kK3d5M",
+          "line": "2187947 mmap(NULL, 32, PROT_READ|PROT_WRITE, MAP_SHARED, 3</dev/shm/sem.kK3d5M>, 0) = 0x79d24d054000"
+        },
+        {
+          "syscall": "link",
+          "path": "/dev/shm/sem.kK3d5M",
+          "line": "2187947 link(\"/dev/shm/sem.kK3d5M\", \"/dev/shm/sem.joblib-2187947-jg6d0uzx\") = 0"
+        },
+        {
+          "syscall": "link",
+          "path": "/dev/shm/sem.joblib-2187947-jg6d0uzx",
+          "line": "2187947 link(\"/dev/shm/sem.kK3d5M\", \"/dev/shm/sem.joblib-2187947-jg6d0uzx\") = 0"
+        },
+        {
+          "syscall": "unlink",
+          "path": "/dev/shm/sem.kK3d5M",
+          "line": "2187947 unlink(\"/dev/shm/sem.kK3d5M\")   = 0"
+        },
+        {
+          "syscall": "unlink",
+          "path": "/dev/shm/sem.joblib-2187947-jg6d0uzx",
+          "line": "2187947 unlink(\"/dev/shm/sem.joblib-2187947-jg6d0uzx\") = 0"
+        }
+      ],
+      "dependency_unlinked_both_names": true,
+      "manual_outside_cleanup_performed": false,
+      "phase": "setup05 import smoke test",
+      "event_time": "Not individually timestamped by strace; exact syscall sequence retained, bounded by setup05 import-command and completion timestamps."
+    },
+    "other_successful_traced_outside_file_effects": [],
+    "denied_driver_device_link_and_thread_metadata_attempts": "Retained in per-attempt strace; unsuccessful attempts are not reported as completed modifications.",
+    "ssh_server_kernel_unrelated_system_effects": "not_verified; not instrumented and not claimed zero"
+  },
+  "release": {
+    "recorded_identities": 29,
+    "all_recorded_processes_terminated": true,
+    "recorded_pids_on_any_gpu": [],
+    "verified_at": "2026-10-30T15:35:00.924805+00:00"
+  },
+  "limitations": [
+    "No real encoder forward pass or optimizer update occurred. On-disk checkpoint identity is not in-memory freeze verification.",
+    "Landlock and optional thread naming hooks were operator-added run-local experiments, not Skill requirements. CUDA failures under this path do not establish that all Hainan GPUs or the Skill connection are unusable.",
+    "Initial GPU selection missed hardware recovery state. Reset was only queried at final read-only audit; it is not proven to have been present at initial selection or caused by this task.",
+    "Filesystem traces cover selected task descendants/syscalls, not a complete system audit.",
+    "No device reset, global environment repair, colleague process termination, official upload, HPO, private valid labels, policy/Skill/PLAN modification, or nested agent/thread/CLI model operation was performed."
+  ],
+  "independent_acceptance": "Pending parent inspection; operator outcome is FAIL, not a pass claim."
+}

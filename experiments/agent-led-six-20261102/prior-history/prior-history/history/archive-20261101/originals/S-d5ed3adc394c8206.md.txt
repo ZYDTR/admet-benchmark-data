@@ -1,0 +1,20 @@
+# 设计依据与来源
+
+## grapeot 原始材料
+
+阅读并固定到 `grapeot/context-infrastructure` 的 commit `c747317c90af9d1071a1157fa95e3766edcb6441`（2026-10-24T18:39:01Z）。本项目为原创实现，没有把作者的个人公理、权限或工具配置当成本项目指令。
+
+- [Project Scaffold](https://github.com/grapeot/context-infrastructure/blob/c747317c90af9d1071a1157fa95e3766edcb6441/rules/skills/project_scaffold.md)：采用 PRD/RFC/working/test、稳定 CLI、局部技能与行为验收。
+- [Best Practice Skill Writing](https://github.com/grapeot/context-infrastructure/blob/c747317c90af9d1071a1157fa95e3766edcb6441/rules/skills/bestpractice_skill_writing.md)：采用目标、可判断的完成条件、资源边界和输出规格；方法保持适当自由度；经验来自真实结果。
+- [Context Infrastructure 原文](https://yage.ai/context-infrastructure.html)：采用分层提炼、按需加载和工作结果反哺上下文。未复制作者个人观察，也不把其关于 LLM 的解释框架写成本项目实验证明。
+- [上游 README](https://github.com/grapeot/context-infrastructure/blob/c747317c90af9d1071a1157fa95e3766edcb6441/README.md)：声明 MIT；该版本没有独立 LICENSE 文件。本项目以方法参考和归属说明使用这些材料。
+
+## 赛事与工具
+
+- [官方赛题](http://www.aiinnovation.com.cn/web/#/trackDetail?id=159)：以 2026-10-26 更新、2026-10-28 核对的页面为本次契约依据；详细字段与模板哈希见 [competition/sources](../competition/sources.json)。
+- [Docker none network](https://docs.docker.com/engine/network/drivers/none/)：隔离容器网络栈，不能顺带限制容器外 Agent。
+- [Hugging Face 环境变量](https://huggingface.co/docs/huggingface_hub/en/package_reference/environment_variables)：离线模式仍会读取已有缓存。
+- [Chemprop training](https://chemprop.readthedocs.io/en/main/tutorial/cli/train.html)：预训练能力及部分外部拟合归一化参数需审查。
+- [PyTorch reproducibility](https://docs.pytorch.org/docs/stable/notes/randomness.html)：跨版本/平台完全复现不能保证；比赛要求仍需官方确认。
+
+来源网页可能更新；复核新规则时保留新版本并说明影响，不静默替换既有实验所依据的契约。

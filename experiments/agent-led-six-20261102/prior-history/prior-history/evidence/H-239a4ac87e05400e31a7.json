@@ -1,0 +1,202 @@
+[
+  {
+    "issue_id": "ISSUE-001",
+    "status": "open",
+    "severity": "critical",
+    "category": "reading_contract",
+    "statement": "54-entry reading contract incomplete; missing artifacts prevent complete evidence audit",
+    "affected_run_ids": [
+      "baseline-22"
+    ],
+    "evidence_refs": [
+      "required-013",
+      "required-011",
+      "required-005"
+    ],
+    "hypothesis": "This issue may bias model selection or invalidate cross-task comparison.",
+    "counterevidence": "Existing aggregate metrics and some historical controls are available; the gap is not proof of failure.",
+    "impact": "Cannot claim complete evidence or robust expected aggregate gain until resolved.",
+    "proposed_resolution": "Open every remaining exact URI; record commit/SHA and visible facts.",
+    "verification_criterion": "Independent reviewer opens exact registered artifacts, checks hashes/identity/contracts and records passing fixture or paired result.",
+    "related_proposal_ids": [
+      "P-GATE",
+      "P-S1",
+      "P-S2"
+    ]
+  },
+  {
+    "issue_id": "ISSUE-002",
+    "status": "open",
+    "severity": "high",
+    "category": "runner",
+    "statement": "Task-aware runner beyond fixed Caco2 path not demonstrated",
+    "affected_run_ids": [
+      "hainan-frozen-training-20261031"
+    ],
+    "evidence_refs": [
+      "required-013",
+      "required-011",
+      "required-005"
+    ],
+    "hypothesis": "This issue may bias model selection or invalidate cross-task comparison.",
+    "counterevidence": "Existing aggregate metrics and some historical controls are available; the gap is not proof of failure.",
+    "impact": "Cannot claim complete evidence or robust expected aggregate gain until resolved.",
+    "proposed_resolution": "Implement schema and acceptance fixtures; independently verify exact runner fields and outputs.",
+    "verification_criterion": "Independent reviewer opens exact registered artifacts, checks hashes/identity/contracts and records passing fixture or paired result.",
+    "related_proposal_ids": [
+      "P-GATE",
+      "P-S1",
+      "P-S2"
+    ]
+  },
+  {
+    "issue_id": "ISSUE-003",
+    "status": "open",
+    "severity": "high",
+    "category": "metric",
+    "statement": "Official AUPRC equivalence unconfirmed for five tasks",
+    "affected_run_ids": [
+      "baseline-22"
+    ],
+    "evidence_refs": [
+      "required-013",
+      "required-011",
+      "required-005"
+    ],
+    "hypothesis": "This issue may bias model selection or invalidate cross-task comparison.",
+    "counterevidence": "Existing aggregate metrics and some historical controls are available; the gap is not proof of failure.",
+    "impact": "Cannot claim complete evidence or robust expected aggregate gain until resolved.",
+    "proposed_resolution": "Verify official AP definition/ties/interpolation before official score comparisons.",
+    "verification_criterion": "Independent reviewer opens exact registered artifacts, checks hashes/identity/contracts and records passing fixture or paired result.",
+    "related_proposal_ids": [
+      "P-GATE",
+      "P-S1",
+      "P-S2"
+    ]
+  },
+  {
+    "issue_id": "ISSUE-004",
+    "status": "open",
+    "severity": "high",
+    "category": "data_identity",
+    "statement": "Task/split/row_index alignment and all cache identities not reverified",
+    "affected_run_ids": [
+      "baseline-22"
+    ],
+    "evidence_refs": [
+      "required-013",
+      "required-011",
+      "required-005"
+    ],
+    "hypothesis": "This issue may bias model selection or invalidate cross-task comparison.",
+    "counterevidence": "Existing aggregate metrics and some historical controls are available; the gap is not proof of failure.",
+    "impact": "Cannot claim complete evidence or robust expected aggregate gain until resolved.",
+    "proposed_resolution": "Provide signed row identity manifests and cache digests; no raw valid labels in guide.",
+    "verification_criterion": "Independent reviewer opens exact registered artifacts, checks hashes/identity/contracts and records passing fixture or paired result.",
+    "related_proposal_ids": [
+      "P-GATE",
+      "P-S1",
+      "P-S2"
+    ]
+  },
+  {
+    "issue_id": "ISSUE-005",
+    "status": "open",
+    "severity": "high",
+    "category": "target_scale",
+    "statement": "PPBR and solubility raw MAE are far from reference scale",
+    "affected_run_ids": [
+      "baseline-22"
+    ],
+    "evidence_refs": [
+      "required-013",
+      "required-011",
+      "required-005"
+    ],
+    "hypothesis": "This issue may bias model selection or invalidate cross-task comparison.",
+    "counterevidence": "Existing aggregate metrics and some historical controls are available; the gap is not proof of failure.",
+    "impact": "Cannot claim complete evidence or robust expected aggregate gain until resolved.",
+    "proposed_resolution": "Audit unit, transform, inverse transform, finite policy, row identity and scorer before model changes.",
+    "verification_criterion": "Independent reviewer opens exact registered artifacts, checks hashes/identity/contracts and records passing fixture or paired result.",
+    "related_proposal_ids": [
+      "P-GATE",
+      "P-S1",
+      "P-S2"
+    ]
+  },
+  {
+    "issue_id": "ISSUE-006",
+    "status": "open",
+    "severity": "medium",
+    "category": "variance",
+    "statement": "One Mini22 head per task does not estimate seed/split variance",
+    "affected_run_ids": [
+      "baseline-22"
+    ],
+    "evidence_refs": [
+      "required-013",
+      "required-011",
+      "required-005"
+    ],
+    "hypothesis": "This issue may bias model selection or invalidate cross-task comparison.",
+    "counterevidence": "Existing aggregate metrics and some historical controls are available; the gap is not proof of failure.",
+    "impact": "Cannot claim complete evidence or robust expected aggregate gain until resolved.",
+    "proposed_resolution": "Run matched model seeds and second split on selected tasks.",
+    "verification_criterion": "Independent reviewer opens exact registered artifacts, checks hashes/identity/contracts and records passing fixture or paired result.",
+    "related_proposal_ids": [
+      "P-GATE",
+      "P-S1",
+      "P-S2"
+    ]
+  },
+  {
+    "issue_id": "ISSUE-007",
+    "status": "open",
+    "severity": "medium",
+    "category": "asset_readiness",
+    "statement": "Alternative encoder assets not training-ready or deferred",
+    "affected_run_ids": [
+      "baseline-22"
+    ],
+    "evidence_refs": [
+      "required-013",
+      "required-011",
+      "required-005"
+    ],
+    "hypothesis": "This issue may bias model selection or invalidate cross-task comparison.",
+    "counterevidence": "Existing aggregate metrics and some historical controls are available; the gap is not proof of failure.",
+    "impact": "Cannot claim complete evidence or robust expected aggregate gain until resolved.",
+    "proposed_resolution": "Keep them blocked until exact weights, license, interface, frozen-state proof and asset version are accepted.",
+    "verification_criterion": "Independent reviewer opens exact registered artifacts, checks hashes/identity/contracts and records passing fixture or paired result.",
+    "related_proposal_ids": [
+      "P-GATE",
+      "P-S1",
+      "P-S2"
+    ]
+  },
+  {
+    "issue_id": "ISSUE-008",
+    "status": "open",
+    "severity": "medium",
+    "category": "selection_bias",
+    "statement": "Repeated valid evaluation can overfit the public validation set",
+    "affected_run_ids": [
+      "baseline-22"
+    ],
+    "evidence_refs": [
+      "required-013",
+      "required-011",
+      "required-005"
+    ],
+    "hypothesis": "This issue may bias model selection or invalidate cross-task comparison.",
+    "counterevidence": "Existing aggregate metrics and some historical controls are available; the gap is not proof of failure.",
+    "impact": "Cannot claim complete evidence or robust expected aggregate gain until resolved.",
+    "proposed_resolution": "Predeclare one candidate per task; report historic exposure, paired uncertainty and selection bias.",
+    "verification_criterion": "Independent reviewer opens exact registered artifacts, checks hashes/identity/contracts and records passing fixture or paired result.",
+    "related_proposal_ids": [
+      "P-GATE",
+      "P-S1",
+      "P-S2"
+    ]
+  }
+]

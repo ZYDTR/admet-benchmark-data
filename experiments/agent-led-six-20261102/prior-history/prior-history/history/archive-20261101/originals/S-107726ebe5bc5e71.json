@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "request_id": "admet-progressive-index-pro-20261031-002",
+  "round_id": "progressive-index-e2e-20261031",
+  "manifest_sha256": "b8952a9375328c775e8fcae3b3adc5a35ca6025fcc9a48e5a055371e26f7250f",
+  "actual_subagent_count": 0,
+  "independent_reviewers": 0,
+  "subagent_tasks": [],
+  "review_method": "single primary assistant; cross-document checks and separately implemented arithmetic; no role-play agents",
+  "checks": [
+    {
+      "cross_check_id": "CR01",
+      "perspective": "规则与数据边界",
+      "key_claim": "冻结许可与valid可见性不能混为一谈",
+      "first_review_source": [
+        "current-policy"
+      ],
+      "independent_recheck_evidence": [
+        "current-rule-source-map",
+        "official-rules-original",
+        "evaluation-scope",
+        "current-entry"
+      ],
+      "counterexample_or_disagreement": "policy允许受控valid调参反馈，但明确禁止prepare/train直接读Y；不能拿前者覆盖后者。",
+      "final_conclusion": "RULE-002的4字段按来源分层成立。",
+      "uncertainty": "只对本request/scope成立；不是一般赛事法律意见。",
+      "actual_reviewer": "same_primary_assistant",
+      "independent_subagent_used": false,
+      "independence_level": "distinct original evidence and/or independent arithmetic implementation, not independent reviewer"
+    },
+    {
+      "cross_check_id": "CR02",
+      "perspective": "实际实现与冻结",
+      "key_claim": "wrapper总摘要不同不是冻结失效充分条件",
+      "first_review_source": [
+        "refutations"
+      ],
+      "independent_recheck_evidence": [
+        "historical-primary-tensors",
+        "historic-d8a78f8e9442",
+        "historic-b9787d313ec9",
+        "historic-21240283e2c1",
+        "historic-951bebadd66d",
+        "chemprop-official-fingerprint"
+      ],
+      "counterexample_or_disagreement": "4差异位于未调用predictor；直接反驳粗粒度hash推断。",
+      "final_conclusion": "保持CE-FREEZE-02 refuted；当前登记参数buffer一致。",
+      "uncertainty": "没有独立加载权重；不覆盖未登记内存。",
+      "actual_reviewer": "same_primary_assistant",
+      "independent_subagent_used": false,
+      "independence_level": "distinct original evidence and/or independent arithmetic implementation, not independent reviewer"
+    },
+    {
+      "cross_check_id": "CR03",
+      "perspective": "评分、身份和可比较性",
+      "key_claim": "当前91行原Y/预测可合法计算MAE",
+      "first_review_source": [
+        "new-fixed-score"
+      ],
+      "independent_recheck_evidence": [
+        "caco2-valid-original",
+        "predictions",
+        "records/arithmetic_crosscheck.json"
+      ],
+      "counterexample_or_disagreement": "p95的两个常见算法不同；旧CSV身份未机器重建。",
+      "final_conclusion": "当前MAE复算一致；历史差值限条件性描述。",
+      "uncertainty": "两套算术实现共享已校验truth和同一预测转录，非独立采样；预测全文件SHA未验。",
+      "actual_reviewer": "same_primary_assistant",
+      "independent_subagent_used": false,
+      "independence_level": "distinct original evidence and/or independent arithmetic implementation, not independent reviewer"
+    },
+    {
+      "cross_check_id": "CR04",
+      "perspective": "误差与预测分布",
+      "key_claim": "少数尾误差影响均值，不能只看改善行数",
+      "first_review_source": [
+        "records/numeric_checks.json#paired"
+      ],
+      "independent_recheck_evidence": [
+        "records/numeric_checks.json#top_errors",
+        "records/numeric_checks.json#top_error_concentration",
+        "records/numeric_checks.json#/paired",
+        "records/row_identity_audit.json"
+      ],
+      "counterexample_or_disagreement": "当前对A改善49行，但MAE更差；去掉任一行仍同方向，不是只一行导致。",
+      "final_conclusion": "保留全部原行，提出稳定性研究而非数据清洗。",
+      "uncertainty": "事后切片、多次valid反馈、化学相关性使外推不可靠。",
+      "actual_reviewer": "same_primary_assistant",
+      "independent_subagent_used": false,
+      "independence_level": "distinct original evidence and/or independent arithmetic implementation, not independent reviewer"
+    },
+    {
+      "cross_check_id": "CR05",
+      "perspective": "冻结表示与其他底座",
+      "key_claim": "其他底座值得研究但尚未就绪",
+      "first_review_source": [
+        "issues#AR001-10"
+      ],
+      "independent_recheck_evidence": [
+        "minimol-paper",
+        "molformer-config",
+        "encoder"
+      ],
+      "counterexample_or_disagreement": "论文/配置不是本任务实测，也不是权重、许可与确定性检查。",
+      "final_conclusion": "MiniMol/MoLFormer归条件储备；先同底座对照。",
+      "uncertainty": "读论文为部分方法，未完整系统搜尽所有模型。",
+      "actual_reviewer": "same_primary_assistant",
+      "independent_subagent_used": false,
+      "independence_level": "distinct original evidence and/or independent arithmetic implementation, not independent reviewer"
+    },
+    {
+      "cross_check_id": "CR06",
+      "perspective": "头与优化器/选轮",
+      "key_claim": "monitor错位比广泛换模型更直接可检验",
+      "first_review_source": [
+        "training-process"
+      ],
+      "independent_recheck_evidence": [
+        "current-runtime-source",
+        "actual-config",
+        "actual-science",
+        "records/numeric_checks.json#epoch_analysis"
+      ],
+      "counterexample_or_disagreement": "MSE/MAE最优轮不同不等于MAE轮外部更好；校验器只支持单层，广泛头需新实现。",
+      "final_conclusion": "C1只改monitor；C2只改宽度；C3只改feature，禁止混改因果归因。",
+      "uncertainty": "原64行internal stop也被反复使用，无可靠噪声/业务阈值。",
+      "actual_reviewer": "same_primary_assistant",
+      "independent_subagent_used": false,
+      "independence_level": "distinct original evidence and/or independent arithmetic implementation, not independent reviewer"
+    },
+    {
+      "cross_check_id": "CR07",
+      "perspective": "复现、故障与记录",
+      "key_claim": "v2有真实学习和终态缺RSS修复证据，但续训未证",
+      "first_review_source": [
+        "v2-unique-learning",
+        "training-process"
+      ],
+      "independent_recheck_evidence": [
+        "v1-outer-exit",
+        "v2-train-events#L70",
+        "current-runtime-source"
+      ],
+      "counterexample_or_disagreement": "成功路径不测所有失败码；随机抽样一致不测恢复后优化。",
+      "final_conclusion": "故障不入胜负；保留状态边界与负例准备任务。",
+      "uncertainty": "events尚未全读；v1原故障时进程状态未知。",
+      "actual_reviewer": "same_primary_assistant",
+      "independent_subagent_used": false,
+      "independence_level": "distinct original evidence and/or independent arithmetic implementation, not independent reviewer"
+    },
+    {
+      "cross_check_id": "CR08",
+      "perspective": "独立反证要求的替代性主模型检查",
+      "key_claim": "交付完整与科学证据完整是两回事",
+      "first_review_source": [
+        "read_receipt",
+        "comparison_groups"
+      ],
+      "independent_recheck_evidence": [
+        "records/read_coverage.json",
+        "history-coverage-gaps",
+        "evaluation-use-history",
+        "records/tool_limitations.json"
+      ],
+      "counterexample_or_disagreement": "45全文+7部分不能写52全读；多个“视角”并非多个实际代理。",
+      "final_conclusion": "完整六文件可交付；scientific_status仍needs_evidence。",
+      "uncertainty": "实际subagent数0；主控独立复核仍必要。",
+      "actual_reviewer": "same_primary_assistant",
+      "independent_subagent_used": false,
+      "independence_level": "distinct original evidence and/or independent arithmetic implementation, not independent reviewer"
+    }
+  ],
+  "primary_reviewers": 1
+}

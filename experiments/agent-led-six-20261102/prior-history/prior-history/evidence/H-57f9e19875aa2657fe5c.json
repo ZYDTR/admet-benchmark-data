@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "execution_models": [
+    "GLM 5.3",
+    "DeepSeek 1017",
+    "Qwen 3.8 Flash",
+    "gpt-6.1-sol",
+    "gpt-6.1-terra",
+    "ChatGPT Pro"
+  ],
+  "roles": {
+    "controller": {
+      "name": "脑-兴智杯",
+      "thread_id": "private-role-298cc5edc25e",
+      "execution_model": "current main",
+      "responsibility": "任务/上下文/验收/继续决策"
+    },
+    "preparation_monitor": {
+      "name": "👁️OpenCode的准备",
+      "thread_id": "private-role-718a07757988",
+      "execution_model": "gpt-6.1-terra",
+      "responsibility": "只监控主控已派发的准确准备请求，验收后回主控；队列空暂停"
+    },
+    "trainer": {
+      "name": "海南训练执行",
+      "thread_id": "private-role-78713649c4c9",
+      "execution_model": "gpt-6.1-sol/xhigh",
+      "responsibility": "获准任务的部署、真实学习和自有作业监督"
+    },
+    "resource_observer": {
+      "name": "👁️海南算力观察",
+      "thread_id": "private-role-30ee14458d35",
+      "execution_model": "gpt-6.1-sol/xhigh",
+      "responsibility": "每10分钟只读记录；资源变化通知已登记等待训练"
+    },
+    "retriever": {
+      "name": "海南训练产物取回与测速",
+      "thread_id": "private-role-45108974a7af",
+      "execution_model": "gpt-6.1-sol/xhigh",
+      "responsibility": "取回、宿主固定评分、候选打包及获准发布"
+    },
+    "gateway": {
+      "name": "🔄Chat收发与分析交接",
+      "thread_id": "private-role-d3ccfb533c01",
+      "execution_model": "existing assigned model",
+      "responsibility": "仅向登记Pro发送封口提示、取回、核验运输并回主控"
+    }
+  },
+  "opencode": {
+    "project_directory": "<PRIVATE_LOCAL_PATH>",
+    "execution_models": [
+      "GLM 5.3",
+      "DeepSeek 1017",
+      "Qwen 3.8 Flash"
+    ],
+    "scientific_model_role": false,
+    "credential_access": false
+  },
+  "manual_submission": "outside this consolidation; user handles separately"
+}

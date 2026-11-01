@@ -1,0 +1,136 @@
+{
+  "request_id": "admet-agent-led-six-resume-20261102-001",
+  "created_at": "2026-11-01T16:05:29.201445+00:00",
+  "source_controller_thread": "private-role-298cc5edc25e",
+  "executor_thread": "private-role-78713649c4c9",
+  "model": "gpt-6.1-sol",
+  "reasoning": "xhigh",
+  "user_authorization": "用户在本主聊天要求继续推进已授权ADMET闭环；主控据此版本化接续尚未完成的六项既有科学任务。旧009及旧窗口不恢复。",
+  "goal": "按当前结果导向Skill完成既有六配置的真实海南CUDA学习及逐行预测，并交付可独立复核的科学、冻结、写入和资源证据。",
+  "skill": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/skills/admet-frozen-training/SKILL.md",
+  "skill_version": "3.0.0",
+  "skill_sha256": "e16e460a14bd1701df8ab0774686afdbb237c7bf3496edf2781fc70eb44ee2a6",
+  "normative_snapshot": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/context/MANIFEST.json",
+  "runs": [
+    {
+      "run_id": "hainan-agentled-mse-s44-20261102",
+      "prior_run_id": "hainan-paired-mse-s44-20261101",
+      "seed": 44,
+      "monitor": "internal_validation_standardized_mse",
+      "config": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/science/configs/hainan-agentled-mse-s44-20261102.json",
+      "remote_directory": "<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mse-s44-20261102"
+    },
+    {
+      "run_id": "hainan-agentled-mse-s45-20261102",
+      "prior_run_id": "hainan-paired-mse-s45-20261101",
+      "seed": 45,
+      "monitor": "internal_validation_standardized_mse",
+      "config": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/science/configs/hainan-agentled-mse-s45-20261102.json",
+      "remote_directory": "<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mse-s45-20261102"
+    },
+    {
+      "run_id": "hainan-agentled-mse-s46-20261102",
+      "prior_run_id": "hainan-paired-mse-s46-20261101",
+      "seed": 46,
+      "monitor": "internal_validation_standardized_mse",
+      "config": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/science/configs/hainan-agentled-mse-s46-20261102.json",
+      "remote_directory": "<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mse-s46-20261102"
+    },
+    {
+      "run_id": "hainan-agentled-mae-s44-20261102",
+      "prior_run_id": "hainan-paired-mae-s44-20261101",
+      "seed": 44,
+      "monitor": "internal_validation_raw_mae",
+      "config": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/science/configs/hainan-agentled-mae-s44-20261102.json",
+      "remote_directory": "<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mae-s44-20261102"
+    },
+    {
+      "run_id": "hainan-agentled-mae-s45-20261102",
+      "prior_run_id": "hainan-paired-mae-s45-20261101",
+      "seed": 45,
+      "monitor": "internal_validation_raw_mae",
+      "config": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/science/configs/hainan-agentled-mae-s45-20261102.json",
+      "remote_directory": "<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mae-s45-20261102"
+    },
+    {
+      "run_id": "hainan-agentled-mae-s46-20261102",
+      "prior_run_id": "hainan-paired-mae-s46-20261101",
+      "seed": 46,
+      "monitor": "internal_validation_raw_mae",
+      "config": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/science/configs/hainan-agentled-mae-s46-20261102.json",
+      "remote_directory": "<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mae-s46-20261102"
+    }
+  ],
+  "inputs": [
+    {
+      "role": "train",
+      "task": "caco2_wang",
+      "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/execution/data/official/data_benchmark/caco2_wang/train.csv",
+      "sha256": "3061c58d3601d081e5459a2de03dc1d189243c4b5683d1b7288577a29fed4d6f",
+      "rows": 637
+    },
+    {
+      "role": "validation",
+      "task": "caco2_wang",
+      "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/execution/data/blind_validation/caco2_wang/valid.csv",
+      "sha256": "41370e87d89a96a7481425dae1bf7c45184bd116b353e96719b2afcd0a8a5ca3",
+      "rows": 91
+    },
+    {
+      "role": "test",
+      "task": "caco2_wang",
+      "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/execution/data/official/data_benchmark/caco2_wang/test.csv",
+      "sha256": "d87dac944bedcefb216bce57ba5a8de93d3781172c66653b937e5065b9c2579c",
+      "rows": 182
+    }
+  ],
+  "backbone": {
+    "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/assets/chemeleon_mp.pt",
+    "sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651"
+  },
+  "scientific_reference": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/science",
+  "scientific_scope": "Caco2; frozen CheMeleon; MLP256 dropout0.1 AdamW lr0.0005 wd0.0001 batch128; model seeds44/45/46; raw-SMILES grouped split seed43 fit/stop0.9/0.1; learning standardized MSE; paired stop selection standardized MSE vs raw MAE; max50 epochs patience8",
+  "existing_environment_readonly": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/venv",
+  "remote_write_root": "<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102",
+  "local_write_scope": [
+    "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/operator"
+  ],
+  "read_only_prior_job_evidence": [
+    "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/training/deadline-closure-20261101/REPORT.md",
+    "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/training/recovery-04/operator/REPORT.md",
+    "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/training/recovery-04/operator/six-state.json"
+  ],
+  "prior_remote_roots": [
+    "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-paired-mse-s44-20261101",
+    "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-paired-mse-s45-20261101",
+    "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-paired-mse-s46-20261101",
+    "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-paired-mae-s44-20261101",
+    "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-paired-mae-s45-20261101",
+    "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-paired-mae-s46-20261101"
+  ],
+  "compute_budget": {
+    "remaining_gpu_job_seconds_total": 5296.074905887725,
+    "accounting": "沿用旧六项窗口保守扣除后的计算剩余；本次所有CUDA检查/编码/学习尝试的GPU作业秒求和，资源等待/本地诊断另记；历史步数未知不填0。",
+    "per_fit_target_seconds": 900,
+    "concurrency": "按现场资源与单项/合计峰值决定，可在不影响他人前提下并行；六项不是同时占卡承诺。",
+    "peak_gpu_memory_target_mib_per_job": 4096,
+    "cpu_threads_per_job": 2,
+    "ram_target_gib_per_job": 8,
+    "old_wall_deadline_replaced": true,
+    "new_wall_deadline": null,
+    "bounded_recovery": "同一六配置范围内，先确认原进程和已完成产物；在上述总剩余内自行安排有依据的修复/续接。已完成学习不重跑，科学参数不变，预算用尽交实质阻点。"
+  },
+  "runtime_methods": "由执行Agent现场判断；不恢复已退役的launcher/receiver/supervisor等通用流程，不绑定旧包或固定检查器。科学参考中的common_guarded是历史耦合，按新任务私有目录适配最小必要上下文，不复制旧流程引擎。",
+  "required_outputs": [
+    "实际源码、输入/权重/环境身份和执行命令",
+    "每run模型、best/last、训练历史、内部划分/预处理、原始训练行预测及273行盲valid/test预测",
+    "实际CUDA与新头更新、编码器参数/buffer不变、重载核验",
+    "实际写入/拒绝、GPU UUID/PID/启动身份、资源影响和退出释放原件",
+    "operator/status.json与报告：实际完成数、优化步/停止原因、未知项、完整Thread耗时及准备/等待/计算分段"
+  ],
+  "resource_handoff": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/resource-handoff.json",
+  "no_private_valid_scoring": true,
+  "no_official_upload": true,
+  "no_new_model_agents_or_threads": true,
+  "callback": "完成、实质故障或无法在范围内解决的阻点回原主控；等待资源/连接时写准确状态，由既有观察接续，不要求新建定时。"
+}

@@ -1,0 +1,137 @@
+# 下一批实验指南：主控/执行方安全投影
+
+request_id `admet-breadth-strategy-pro-20261101-001`  
+round_id `training-breadth-strategy-20261101`  
+input manifest `2b37cecef4b6f45481ba1991766a2b15eaaffb672a695d193ae03b878c5e04e8`  
+权威科学范围 `2026-11-01T11:28:28.074304Z` + 固定v3明确纳入的004资源拒绝终态。**本文件是研究提案，不是训练、评分、资源申请、上传或派发授权。** 不等待或更改既有六项Caco2配对任务；它们在本历史范围内没有完成学习结果。
+
+本指南只包含聚合事实、配置和验收条件；**不提供逐行valid真值、残差、误差排行榜或可反推标签的个案反馈**。执行方仅获得主控允许的汇总反馈；数据拟合仅使用对应train.Y。公开规则允许valid选模，默认少量确认是减少选择偏差的建议，不是新硬规则。参考原件的固定链接和定位见evidence/source-index，勿把含私有行级结果的历史附件整体转发执行方。[required-045; required-046; official-rules; user-supplement-1]
+
+## 1. 先明确三类路径
+
+**可直接配置：** 已验收的固定Caco2/CheMeleon路径能表达其已存在的MLP/AdamW/标准化MSE和MSE或raw-MAE监视参数；任何启动仍需主控另行授权。现有六项配对按其原合同，不在本批新增预算。
+
+**需新代码：** 本批21非Caco2任务的GPU训练、分类loss、AUROC/AP/Spearman监视、多任务类型路由、可验收raw-cache导入及确认阶段嵌套split。42条新proposal全部标`new_code`，不能把它们直接当旧runner合法参数。具体目标接口和A1–A10见new-code-interface.json；这是明确的拟实现契约，不声称代码已经存在或测试已通过。[training-science; runner-v4]
+
+**未就绪资产：** MiniMol、MoLFormer10pct及其他后备编码器。本轮默认不等待它们。GLM/DeepSeek/Qwen是准备/执行模型而不是科学分子底座。外部编码器参数与buffer始终冻结；新增头/adapter等只能从train.Y学习。[required-003; required-004; required-038]
+
+旧冻结检查器缺runner配置依赖按用户指示单列为主控打包问题，用户报告独立版本已修复。本指南不要求为绕过旧工具缩减新代码方案，也不声称本研究验收了那个新版本。[user-supplement-1]
+
+## 2. 零fit门槛，不计作训练proposal
+
+| 门槛 | 依赖 | 通过条件 |
+|---|---|---|
+| G-SCOPE | 无 | 主控对具体批次另行授权，研究文档本身不构成授权 |
+| G-IDENTITY | G-SCOPE | 已固定资产、task/role/原行/实际train文件与宿主registry一致；没有valid.Y流入执行方 |
+| G-RUNNER | G-IDENTITY | 新接口A1–A10独立验收，实际新代码和环境被记录并固定 |
+| G-METRIC | G-RUNNER | 四类指标方向/尺度/tie/异常fixture通过；官方AP等价不明如实记录 |
+| G-DIAGNOSTIC | G-METRIC | fit-only统计、一次逆变换、finite与parse回退验收；不因单位未知改原Y |
+| G-RESOURCES | G-DIAGNOSTIC | 获准资源、日志/中止/回收路径就绪，不影响别人作业 |
+| G-EXTEND | G-RESOURCES、S1整批复核 | 主控明确释放剩余11任务，不自动派发 |
+
+见preparation-gates.json。所有门槛fit_count=0，无空seed实验，无P-GATE自依赖。G-METRIC对应真实D-METRIC。合成fixture验证不是运行真实模型训练；本研究也未执行这些未来代码测试。
+
+### 已知摘要直接绑定
+
+- CheMeleon checkpoint：`c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651`，2048维，34859448字节。
+- encoder代码：`3adfea2d761e416f4aedcd42d36587e1b6961fbf57efb76995cfd99890942712`。
+- 继承training_science：`63bb22a2aa1634f7e3db3a3b972969ee84f3f861da6fe561608e5cb87acf046c`；继承runner：`57386ae54cc1cbb379fbff8af7a90ac34160769a8a0122402b881a8aea893abe`。
+- 官方数据ZIP：`4f4a0b67a67cae51cb166cd071d16bfc0c369947b5b0f8902ebaafdc7e3418b4`。
+- 最终官方template：`8ee41589d2c98e7b93081c058b3f928ac09bea4b3ffc899fa13677051e9baa20`。
+
+每任务blind-valid/test摘要、Caco2 train摘要和role行数见asset-bindings.json。21个非Caco2 train单文件hash未在已读公开条目出现，不能假造；执行前由宿主核对固定ZIP中的对应task/role和私有逐文件registry，回传摘要/计数即可。新代码未实现故没有新代码SHA；这与现有权重“等待绑定”是不同情况。不得用旧pending空manifest当数据验收。[weight-reference; paired-manifest; data-intake; blind-valid-projection; input-integrity; old-data-manifest]
+
+## 3. 首批S1：20条具体proposal、40个唯一fit
+
+任务为：`solubility_aqsoldb`, `ppbr_az`, `ld50_zhu`, `lipophilicity_astrazeneca`, `vdss_lombardo`, `half_life_obach`, `cyp2d6_substrate_carbonmangels`, `ames`, `bioavailability_ma`, `dili`。
+
+每任务都有`P-S1-<task>-H0`及`P-S1-<task>-H1`，各seeds `[44,45]`，固定split43；完整科学配置已在next_experiments逐项展开，experiment-matrix进一步展开成scalar seed。
+
+| 参数 | H0 | H1 |
+|---|---|---|
+| 输入 | 同一固定CheMeleon原2048维缓存 | 相同 |
+| 隐层/激活 | [256] / ReLU | 相同 |
+| dropout | **0.1** | **0.3** |
+| lr / weight_decay | 0.0005 / 0.0001 | 相同 |
+| optimizer | AdamW, betas(.9,.999), eps1e-8 | 相同 |
+| batch / epoch上限 / patience | 128 / 50 / 8 | 相同 |
+| seed / split | model44,45 / group43 | 相同配对 |
+| loss/监视/目标尺度 | 按下面任务表 | 相同 |
+
+只差dropout；这是单因素配对筛选，不再是旧四因素bundle。新H0不是Mini22历史512/.001/seed42对照。本批也不把200/20冒充历史同预算；预算扩展另看T-LONG-BUDGET。[required-014; required-048]
+
+原train内分组算法：精确原Drug字符串unique key排序后CPython Random43打乱，取整组至max(1,round(.1*n)) stop行，保证保留fit组；不重排官方角色，不删重复。实际split行摘要由G-IDENTITY验收，不能只凭seed号码声称同split。若单类/常量使评价无解释，不偷偷换seed或metric，报出任务级失败供主控改协议。
+
+### 每任务loss、早停和预测尺度
+
+统一缩写：`BCE`=BCEWithLogits，pos_weight1，均匀样本权重；`std-MSE`=仅fit.Y均值/标准差仿射变换后的MSE。回归预测逆变换一次回原数值Y；分类预测为连续sigmoid概率、正类Y=1。早停在原train划出的inner_stop，每epoch head.eval，patience8、min_delta1e-7，保留最早相同最佳并恢复best checkpoint。
+
+| task | 训练loss | 早停metric | direction | 输出 |
+|---|---|---|---|---|
+| `ames` | BCE | AUROC | maximize | 连续概率 |
+| `bbb_martins` | BCE | AUROC | maximize | 连续概率 |
+| `bioavailability_ma` | BCE | AUROC | maximize | 连续概率 |
+| `caco2_wang` | std-MSE | MAE | minimize | 原Y连续值 |
+| `clearance_hepatocyte_az` | std-MSE | Spearman | maximize | 原Y连续值 |
+| `clearance_microsome_az` | std-MSE | Spearman | maximize | 原Y连续值 |
+| `cyp2c9_substrate_carbonmangels` | BCE | AP（本地） | maximize | 连续概率 |
+| `cyp2c9_veith` | BCE | AP（本地） | maximize | 连续概率 |
+| `cyp2d6_substrate_carbonmangels` | BCE | AP（本地） | maximize | 连续概率 |
+| `cyp2d6_veith` | BCE | AP（本地） | maximize | 连续概率 |
+| `cyp3a4_substrate_carbonmangels` | BCE | AUROC | maximize | 连续概率 |
+| `cyp3a4_veith` | BCE | AP（本地） | maximize | 连续概率 |
+| `dili` | BCE | AUROC | maximize | 连续概率 |
+| `half_life_obach` | std-MSE | Spearman | maximize | 原Y连续值 |
+| `herg` | BCE | AUROC | maximize | 连续概率 |
+| `hia_hou` | BCE | AUROC | maximize | 连续概率 |
+| `ld50_zhu` | std-MSE | MAE | minimize | 原Y连续值 |
+| `lipophilicity_astrazeneca` | std-MSE | MAE | minimize | 原Y连续值 |
+| `pgp_broccatelli` | BCE | AUROC | maximize | 连续概率 |
+| `ppbr_az` | std-MSE | MAE | minimize | 原Y连续值 |
+| `solubility_aqsoldb` | std-MSE | MAE | minimize | 原Y连续值 |
+| `vdss_lombardo` | std-MSE | Spearman | maximize | 原Y连续值 |
+
+Caco2这一行说明任务语义，不改变既有六项中MSE-vs-MAE的固定早停对照。不能把本表倒灌成对那六项的新配置。分类loss用logit，指标用与导出同口径的float64 sigmoid概率，不二值化；AP按并列分组的average precision，不作trapezoidal替代。Spearman使用平均并列秩；常量或非finite不替换成零。单类AP可有约定值，但本设计不据此作升降级证据。
+
+特征统计仅inner_fit，float32、ddof0，std<1e-8置1，不clip；回归target仅inner_fit仿射，零std置1。没有valid/test拟合统计，也无无依据log/物理限幅/标签反向。训练head而encoder始终eval/no-grad；保存encoder参数和buffer前后摘要，optimizer不得包含encoder。RNG、数据顺序、best/last、optimizer及上下文摘要均记录；不能用“RNG能往返”冒充恢复后轨迹完全相同已证。
+
+## 4. 决策与剩余11任务条件覆盖
+
+S1成对差用**inner_stop训练内筛选代理**，不是官方valid分；同一个stop还选择best epoch，必须承认选择乐观性。先逐seed按固定r转换任务分再做H1-H0。建议推进条件为两seed均正且平均≥0.5任务分，全部身份/数值检查通过；这是预设实用门槛，不是显著性或噪声置信界。没有通过者就不强凑确认任务。
+
+S1后若共同接口与边界验收良好且主控继续释放预算，S1B给其余11非Caco2任务逐一同H0/H1、同44/45和split43：
+`bbb_martins`, `clearance_hepatocyte_az`, `clearance_microsome_az`, `cyp2c9_substrate_carbonmangels`, `cyp2c9_veith`, `cyp2d6_veith`, `cyp3a4_substrate_carbonmangels`, `cyp3a4_veith`, `herg`, `hia_hou`, `pgp_broccatelli`。
+
+这11个task是已知的条件覆盖项，因此已具体列入next_experiments且stage=reserve、trigger明确；22条proposal=44fit。它们不是未知获选任务。S1+S1B一共21非Caco2任务84fit；Caco2已有独立六项，不在新84内。任务筛选失败不永久停止该端点，只不自动给同一方向加码。
+
+未知获选的最多4个task**不**出现在假造具体S2实验里；见conditional-followups.json：
+
+- T-S2：继承已经锁定的H0/H1，3 model seeds46/47/48，outer group seed44留20%，inner seed144在outer-fit留10%，最大4×2×3=24fit。outer不参与梯度、统计或早停，只做最终配对。建议平均Δs≥0.5，至少2/3正且无pair<−0.5；仍须考虑结构覆盖限制。
+- T-S2-MULTISPLIT：最多2已选任务，outer44/45/46、inner=outer+100、3modelseeds，全部36fit；与T-S2相同的12fit只算一次，最多新增24。所有三split均值为正方称在这三split稳定，不外推未观察化学空间。
+- T-LONG-BUDGET：只有多seed触及50上限且仍改善才考虑50/8 vs200/20。是epoch+patience组合比较，最多2task×2arms×3seeds=12总fit，减去确实相同已存在control；不在默认小/中/大档内。
+
+以上模板要主控先按真实S1结果填选定task、锁定具体配置并登记，再另行授权；本研究没有替未来结果作选择。
+
+## 5. 唯一组合计数与成本
+
+唯一科学组合为`(asset及版本, task, 完整科学配置, split, scalar model_seed)`。proposal名称、重试号不形成新的科学组合。共享H0仅在所有字段、split与seed完全一致时复用一次；不同early-stop metric、预处理、epoch预算、target尺度或split不是同控制。experiment-matrix.json的84条均有独立run-key，CSV提供审计索引，JSON包含完整配置。
+
+小档40；中档≤108；大档≤132。已经注册的Caco2六项、未就绪资产准备和额外长预算另计，不能偷塞到此数字。0-learning资源拒绝计工程尝试、不计完成fit；恢复同轨迹不当新seed；联合MTL一次fit与其多任务头数分列。
+
+先记录实测编码/训练/导出/取回/复核耗时和峰值内存，再用总分代理增益/成本排序。没有测得GPU时长前不可写承诺小时。50→200只是epoch上限4倍，patience变化导致真实耗时非线性。历史CPU22头25.84秒和一次编码988秒属于既定环境，不可用作本批GPU报价。[baseline-delivery]
+
+## 6. 缓存验收与停止条件
+
+raw冻结特征的cache key至少含输入/行映射、task/role、checkpoint和encoder代码摘要、pooling、dtype/shape、解析策略mask及环境版本。相同原特征可跨model seed和内部split共享；scaler/target参数必须每split只从fit再算。当前runner没有已验收的导入路径，不能“找到npz就使用”。跨任务按SMILES共享需额外显式映射验收，首批不依赖它。
+
+立即中止相关任务并通知主控：未经授权的训练/数据通道、encoder参数或buffer变化、错行/缺行、非finite、错误metric方向、共享基础设施契约失败。普通效果未提升只登记结果，到整批checkpoint复核，不无限逐头询问。资源不足不启动，绝不杀其他用户进程；004资源拒绝不是模型负结果。
+
+必须保留所有成功/失败/跳过配置、种子、更新步数、best epoch、train-fit/stop分组摘要、loss与任务metric轨迹、头/encoder摘要、worker与supervisor两个状态。训练/stop逐行预测属于train内部材料；valid反馈只由获准宿主以汇总形式给执行方。
+
+## 7. 22任务最终装配（仍需另行授权）
+
+固定每任务模型或预注册等权seed组合，保持原行身份。回归原Y、分类连续概率；不得手动编辑个别预测。官方模板固定SHA已在上文，16379行；按task/sample_idx并核SMILES，只写y_pred，Drug_ID保持字符串，包括空值、前导零与`.0`。仓库template不替代官方template。
+
+导出前：22任务齐全、每任务test行数匹配、预测finite、无重复/丢行、除y_pred外字符串字段及顺序不变。固定同seed模型平均可不增加fit，但不能当成已获批准的零seed训练项；学ensemble权重需train-only OOF并单列额外fits。每任务选模/组合不是MTL；任何共享新模块都要明确label mask、来源和任务权重。
+
+**交付与下一检查点：** 主控先验收G-SCOPE至G-RESOURCES及真实新代码，再决定是否释放S1；S1结束或重大边界故障时整批复核，决定S1B和未知任务确认模板。当前文件全是未执行研究提案，不给启动命令，不承诺后台训练，不改变既有作业。

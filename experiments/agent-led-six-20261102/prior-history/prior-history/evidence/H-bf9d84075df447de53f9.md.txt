@@ -1,0 +1,85 @@
+# 本轮完整自主闭环
+
+## 当前方法更新：结果导向 Skill
+
+2026-11-01 用户要求撤除固定流程脚本，主控已删除本轮活动运行源码和 attempt03 候选包；原件及摘要见[重写与删除报告](../../audits/agent-led-execution-20261101/REPORT.md)。本文件下方保留当时接续与失败历史，其中关于固定检查器、整包准入及旧候选的命令或建议不再是当前执行入口。旧009仍关闭，新版 Skill 不自动重启训练。后续任务从项目 AGENTS.md 和当前 Skill 进入，由 Agent 在授权范围内判断方法，以实际结果验收。
+
+## 当前收口 2026-11-01T14:59:25.485989+00:00
+
+本批原定北京时间22:50:04执行窗口已到期。主控已将009登记移出等待队列、关闭资源唤醒；新增训练完成0/6，首项此前学习步数未知、其余五未启动。原始执行记录不改，收口与局限见[主控报告](training/deadline-closure-20261101/REPORT.md)。完整训练闭环未通过；不能依据旧remaining字段恢复009。独立资源观察继续，另行广度策略研究已审读完成，不等同本批训练后评审。
+
+用户明确要求实际自动走一圈；只完成Skill不是终点。唯一身份见CYCLE.json与control/authorization.json，运行状态以status.json和各角色原始回执为准。主控消费每个回报并及时准入下一阶段，不另建主控定时。复用现有Terra观察、Sol/xhigh训练、Sol/xhigh取回、Chat网关，冻结新版Skill及Prompt。官网提交不处理。
+
+科学批次是Caco2/CheMeleon冻结编码器，MSE与原尺度MAE选轮，各模型seed44/45/46，共6个新run；固定raw-SMILES组划分seed43、MLP256/lr0.0005。每run50epoch、patience8，单作业序列运行，批次总GPU执行不超5400秒。这个单作业安排是本次测试规模，不是共享/并行通用禁令。六个结果收齐后固定评分并一次Pro，绝不重放旧完成run。
+
+准备和运行包装修复可并行；海南启动必须等待主控实际科学与runtime准入。原监督125缺VmRSS根因未知，修复以进程身份/终态及真实资源违规分类为准，不能让worker0覆盖边界失败。历史打包可并行，发布与Chat等待本批材料封口。
+
+完成标准：每角色真实执行与独立核查、全历史来源映射/匿名读回、新Pro读取证据和完整原件、下一批方案字段/引用/科学可用性全部有结论。遇小可修复缺陷在本轮预算内留证修复，原件保留；真正未通过项不能改叫good enough。依赖现有角色回传接续，无变化不提示用户。
+
+## 已实际接续 2026-11-01T08:57:53.903109+00:00
+
+OpenCode session `<PRIVATE_SESSION_OBJECT>` 已发出，mini根目录API及桌面UI可见；模型/准备Skill读取/零子会话已观察，行为验收尚待终态。Terra已接手并恢复原10分钟opencode心跳。原Sol训练Thread正在执行runtime/TASK.json的本地运行包装准备；原取回Thread正在执行retrieval/history-preparation/TASK.json的全历史候选准备。两者已确认active并按授权回传主控，禁止本阶段远端/训练/新评分/发布。收到任何终态回报必须消费，不能只登记待审。下一个门槛是主控接受六配置及生产运行包装，随后创建真实六run PLAN并现场资源核验，才下发部署学习。
+
+## 故障01已由主控接续
+
+09:00UTC无关token统计插件插入原准备，不能以末条stop认定任务完成。旧用户已要求关闭插件，但旧服务进程未换；全会话idle时仅重启mini-opencode，82条历史逐对象不变，其他容器ID不变。证据control/plugin-recovery。原准备中断快照preparation/interruption-01完整树清单22,950项、28个非依赖文件199,717字节；依赖只存摘要。09:06:35UTC向原session发一次有界接续request002，期限09:21:35UTC；原2400秒总预算不扩，Terra接续观察。原失败及原件保留，不当冷启动通过。准备自有旧host_suite路径错误尚待交付验收，不因基础设施修复自动通过。
+
+## 准备和历史回报已消费 2026-11-01T09:28:20.187707+00:00
+
+002在09:09:21UTC终态；Terra于09:21回报准备未全通过。主控核验35输出、真实生产六JSON消费、完整网格/原科学代码不变、全输入行，封独立preparation/host-admitted-v1（MANIFEST SHA f32c327656ae4bf07adc3b7bb4686c719fcae20599d7028e8bb73f8d1a9b95b6）。准备Skill仍失败：3输入pyc越界、清单自引用/封后日志变化、管道退出码、负例不命中。主控也承认未给实际预测消费端的上游缺口。新scripts/check_prediction_table.py真实CSV入口5项反例和旧273预测通过；用于本轮后续真实预测验收，不训练不评分。准备Skill2.0.1与固定输入树/输出封口检查已更新并通过20项离线检查，下次派发才生效，当前冻结2.0不改、不追加Qwen测试。
+
+历史候选已主控复核1746文件和2438来源对象SHA、导航/10科学资产/26历史评分表，acceptance/history-intake.json。保持候选原件，不发布；待本轮六run证据齐后合并。Sol/xhigh本机runtime仍在做最终检查；收到其终态必须立即主控亲审并接续，不因本次回报结束目标。
+
+## 下游提前准备
+
+原Chat网关已收到gateway/readiness/TASK.json（正式消息额度0、600秒），按冻结revision11准备普通Pro空白草稿，不发占位消息；完成回本主控。完整研究目标草案control/research-objective.md，待实际结果和固定URI后由主控填模板。所有正式发送须最终CONTEXT_CONTRACT通过，不将历史候选或空白页当完成研究。
+
+## 网关预备已验收；runtime补充检查 2026-11-01T09:36:05.070307+00:00
+
+主控已亲看空白Pro截图及模型菜单原文，回算回调五证据SHA；gateway/readiness/main-ack.json绑定event/outbox SHA接受仅readiness，状态waiting_dependency。保留Browser3/tab9，server UUID未知；不得发占位或正式消息。等本批训练/取回固定评分/发布封口后再下发SEND。
+
+主控在runtime终态前审读process_state.py、phase_supervisor.py、batch.py，发现query经过生产deadline门槛，授权到期后会阻断只读对账；另指出timeout后二次wait异常的终态留证风险。已向原Sol发具体复核修复消息，仍限本机runtime与原预算、不训练。初审原代码/发现保留acceptance/runtime-preliminary。下一次必须消费Sol终态，核对这两项反例，再亲审完整runtime、正式登记六run、扩展生产plan准入并做现场资源核验后执行；不能直接从toy测试通过推真机通过。
+
+主控追加审读runtime的pipeline/admission/guarded_worker/completion/state_contract/trace/job_waiter/common/boundary/resource等13项，逐文件摘要在acceptance/runtime-preliminary/main-source-review.json。两项batch修复已出现在活动源码，但尚未以终态清单和反例验收；不要先启动。训练Thread最新cursor :86仍active，已明确正在补反例；终态回报仍由本主控接续。网关readiness已消费，无待发正式消息。
+
+## 六run正式执行已派发 2026-11-01T09:53:42.673244+00:00
+
+已消费Sol终态runtime manifest243c7e...、source manifest1a04c5...；63交付/9831raw/21运行文件全部SHA核验，主控独立副本真实复跑29运行场景+5批次+5review通过，两项预审缺陷关闭。training/RUNTIME_ACCEPTANCE.json只准入目标试跑源码，不预宣告Linux/CUDA通过。主控精确扩展plan_checks并13测试通过，六个新runs的PLAN/科学/运行/规则/正式dispatch均已冻结登记；未重放旧run。
+
+原Sol/xhigh已收到training/TASK.json和native-prompt.txt，原生回执training/native-send-receipt.json。正式逻辑ID contract-follow-e2e-20261101:main:execute-six:v1。远端只限六run及本批根，序列、5400秒全阶段总额、原22:50北京时间截止。原角色负责现场身份/环境/资源、受保护CUDA预检和真实学习；主控等待实际终态亲自验收后交原取回Thread。training/resource-handoff.json已进既有观察registry，只有真实waiting_for_resources才直连通知原训练。没有主控新定时。
+
+历史候选和Pro空白页仍保留等待真实本批；后续必须加入新六run和本轮失败/修复/运行证据，更新完整历史索引与最终CONTEXT_CONTRACT再发Pro。已知共享/并行/通用checkpoint恢复未实测，不可宣称通过。
+
+## 2026-11-01T10:07:06.715554+00:00 主控消费启动前故障
+468件原始证据逐件摘要通过；六项未学习，原进程无匹配活动实例；原OS退出和失败当刻XML未知。原故障和锁保留。仅派发 training/recovery-01/TASK.json 的400秒本地transport候选修复，不远端启动；之后主控准入并接既有算力观察。GPU额度保守扣36.358058秒，余5363.641942秒。当前后采样无已证实合格卡，不冒称共享已经验证。
+
+## 2026-11-01T10:19:20.594228+00:00 主控修正恢复候选并正式接续
+候选原件61件摘要通过，但真实依赖process_identity(pid)被漏传参数，原fixture默认值掩盖；主控在operator/recovery-main-v1仅修正两处PID调用，保留原版。实际依赖反例原版失败/修正版通过，6进程场景和6profile绑定通过；不声称真机成功。精确准入见training/recovery-01/MAIN_ACCEPTANCE.json，使用新冻结训练Skill2.0.1的EXECUTE_TASK.json已发原Sol/xhigh。原native turn457.380秒超过400；预算未通过如实保留。主控将自己设定的transport总限额1200版本化为1800用于必要恢复，新增setup450秒；科学配置、六次学习、GPU原5400与剩余5363.641942、全周期22:50北京截止均不变。资源观察登记已换新live_state/operator/recovery-execution-01/status.json，等待时原观察直接唤醒执行方。没有新主控定时任务。
+
+## 2026-11-01T10:24:50.100025+00:00 主控接收初始资源等待回执
+已校验12件封存原件摘要及三轮资格结果；状态、request、观察registry和resource-handoff完全一致。所有已部署六项均未学习、恢复尚未启动。由automation-5既有观察对有意义资源变化直接通知原训练Thread，主控不新增轮询、不重复派发。接受明确外部等待，见training/recovery-01/main-resource-wait-acceptance.json。该原生turn完整277.055秒；执行方TIMING到回传271.425秒，主控保留差额，450秒setup按完整turn余172.945秒，不能复位。GPU5363.641942秒和全周期截止不变。
+
+## 2026-11-01T10:40:08.639069+00:00 用户要求的官网榜单/换算核验
+主控通过内置Browser已看实时榜单和本队结果，见../../audits/leaderboard-score-mapping-20261101/REPORT.md。最新历史登记新增该审核，未来取回/发布/Pro包须合并本条与三项证据，保留“数值推导非官方明文公式”、Valid/Test区分、AUPRC定义未确认和提交身份局限。现有历史候选不覆盖，本次六项冻结科学任务不改，不新增训练/上传。重要方向：官方总分是当前22项归一化均值，Caco2单任务改进空间不足弥补与第十名7.270644分差距。
+
+## 2026-11-01T10:49:46.537101+00:00 主控已消费资源复核与setup耗尽
+三次直接快照主控重析无本批合格卡；恢复部署/启动/学习均0。执行方到回报477.205秒，三个完整原生turn累计501.469秒，450秒未通过；transport累计1746.546/1800秒，原件不改、不自动扩额。控制决定见training/recovery-01/resource-budget-hold-20261101T1050/main-decision.json。观察继续既有10分钟只读记录；本批停止重复唤醒已耗尽setup的训练Thread，只在出现本批真正合格候选或原截止时通知主控作具体预算接续判断。GPU额度和22:50北京截止不变。这是本批旧实现分支限制，不是全局禁止共享或要求0MiB。
+
+## 2026-11-01T10:56:28.199773+00:00 主控消费GPU5释放并接续
+观察hainan-20261101T105316-850272Z原始SHA与project-compute/UID1012、GPU5健康/无进程/余量核对通过，非预留。training/recovery-01/setup-continuation-02登记新request003和额外600秒setup；主控自设transport上限1800明确版本化2400，原450秒失败及累计1746.546秒保留，GPU余量/六学习/一次恢复启动/原截止均不变。新原件在operator/recovery-execution-02；旧10:43草稿不能直接运行。原Sol按冻结Skill2.0.1和已准入源码完成当前资源直接复核、九文件接收测试、追加部署及一次启动。无新科学配置/新Thread/计时器；等待时只允许与已准入分支真正相符的资源信号。
+
+## 2026-11-01T11:07:33.607094+00:00 主控确认临时文件改名竞态并准备第二版core
+461件原件摘要通过；实际GPU6，第一预检125、学习0、其他五项未启动；其余退出/释放见原件。相同临时文件成功rename与严格旧路径解析冲突已确认，非旧VmRSS根因。主控最小候选10项反例通过，真实生产回调/attempt02接入待验。训练Skill2.0.2保存旧版并新增实际并发输出监控验收，下次任务绑定。只派本机LOCAL_TASK，1200秒内准备完整追加源码/旧锁隔离/共享首次学习锁及生产入口反例；主控自行设置的工程总限3600版本化5400，新增1800中600留主控验证，不增加GPU或学习。原执行剩5352.469100秒、22:50北京截止不变。资源唤醒关闭，不能因新空卡绕过源码准入。
+
+
+2026-11-01T12:51:18.624719+00:00 主控接续：execution006独立验收完成，0/6完成、第一项worker启动但优化步未知；875件原件摘要核对、683件下载保护文件及6份远端权重摘要区分，2轨迹/6配置/27登记身份复核。记录见 training/recovery-03/main-006-review/REPORT.md。原始拒绝观察丢失，真实外来PID未证实；独立monitor-evidence-main-v1修复13项本机检查通过，未部署。训练Skill2.0.3与引用/项目索引已保存旧版后更新，按BestPractice，现有冻结任务未改。原Sol/xhigh Thread正在recovery-04/TASK.json限定的360秒只读对账及恢复建议任务007，native turnprivate-role-1ddc6da34dcd；不启动训练，旧锁与5296.074906秒/原截止时间保持。主控实际派发记录替代review_pending。
+另行策略咨询reference002已由真实原生消息核对接受，Chat <PRIVATE_RESEARCH_SESSION> 仍在研究；网关继续全文件回收，阅读与科学质量待验。旧inline Send/Retry接受仍未知。主控当前没有新定时任务。
+
+
+2026-11-01T13:01:01.872432+00:00 主控已消费两项回报：Pro首版ZIP/7成员独立摘要与CRC通过，研究needs_evidence；亲审发现41未读项、D-METRIC悬空、未展开任务矩阵、MAE方向含混与bundle/单因素表述冲突。主控遗漏checker依赖与网关过宽引用结论分别留证；修复按需runner/先完整引用检查，29项测试通过，项目证据Skill1.0.2与旧版/新冻结包齐备。原网关正在同一Chat按repair-001/message.txt补全1/2，不增加咨询或训练。
+训练007终态22原件核验；旧身份不活、未发现匹配旧读取命令、历史exit仍未知；首项无检查点/优化步未知，其他五未启动。原Sol/xhigh已接recovery-05/TASK008，仅本地新attempt运行候选与测试，不连接/部署/训练。主控工程限额明确版本化5000秒、此项600秒，旧耗时/超限保留；科学配置/5296.074906秒/原14:50:04UTC截止不变。首次重训未启用，候选需主控独立准入。
+
+
+2026-11-01T13:24:26.008124+00:00 主控008完整包复现/修复及验收完成，记录training/recovery-06/MAIN_REVIEW.json；下一任务009仅原六配置有界恢复，精确TASK、准入和预算见该目录。不要用原candidate-framed或本地测试回执部署。Pro补全独立等待，不阻塞此恢复。
+
+2026-11-01T13:30:06.933000+00:00 009现场只读对账通过，无合格卡，未部署/未启动。主控独立复核15原件/798保护项；原native240.483秒计入准备，剩359.517秒，GPU余量未花。已修正resources/hainan/registry.json旧006镜像，匹配009 live status与resource-handoff。既有observer按原10分钟周期直接通知原trainer，主控不另轮询。见training/recovery-06/main-wait-review/RESULT.json。

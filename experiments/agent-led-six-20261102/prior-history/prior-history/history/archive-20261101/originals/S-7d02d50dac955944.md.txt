@@ -1,0 +1,123 @@
+# 新头、优化与参数空间审查
+
+请求 `admet-public-repo-pro-20261031-001`；固定 commit `eaec280cf142839597fe75ce748cd2b9a8a897d4`；manifest `dbdec244caa8ddb106721877cf93625c1957b9184985c07b1cf751eed5d70505`。本路线读取当前包的源码、配置、完整 epoch、完整公开变换数组和既有研究，另用标准库读取两份既有 train 特征 NPZ 做定向算术复核。没有训练、推理、安装、执行归档代码或读取任何额外 valid/test 真值；没有重评分。
+
+下文 F=`hainan-frozen-training-20261031`、S=`hainan-skill-follow-20261031`，源码定位均相对 `runs/<run_id>/`。参数值是待批准探索候选，不是从两分数推导出的最佳值或显著性阈值；所有执行预算当前为零。
+
+## 1. 最值得先验证什么
+
+**先把同一缓存、同一内部划分、同一初始化/批次随机性上的比较做实，然后优先检验输入特征缩放与模型选择指标。容量、正则和替代底座仍有价值，但当前没有证据把瓶颈单独归给“大头过拟合”。**
+
+### 直接证据及可推翻条件
+
+| 判断 | 当前直接证据 | 反证、混杂及范围 |
+| --- | --- | --- |
+| 现有训练脚本不是可以直接改 JSON 的通用 HPO 接口 | F `source/train_remote_v3.py:70–72` 硬编码512；S同文件:17仍断言256/LR/seed，:73–74虽读取宽度 | 两个既有配置与实现相符，所以这是下一批准备缺口，不是已有运行失效。若统一构造器能从 resolved config 推导形状并由验收对应，才关闭准备缺口。 |
+| 实际优化器是 AdamW | F源码:75，S:77 | `comparison.md:3` 的Adam摘要不应被拿来复建普通Adam对照；旧run不能据此判无效。 |
+| 特征缩放是有直接数值线索的候选瓶颈 | F源码:63–68；完整保存变换；两train NPZ的定向解码，见下节 | 极端输入不等于极端误差；没有 row327/129 的预测/残差，不能说它们支配内部MSE。裁剪、方差下限可能损失有效稀有结构信息。 |
+| 训练目标与选模目标尚未对齐主指标 | F源码:82、91–97用标准化MSE训练和早停；bundle固定评分为原Y的MAE | MSE是合法代理，尚未证明改MAE更好。需要先保持训练loss，只比较checkpoint选择策略；再独立比较loss。 |
+| 曲线支持检验正则/容量，不支持因果定论 | F完整14行/S完整19行；最佳epoch6/11，之后internal MSE变差，而online train MSE继续下降 | F:84–93的train是dropout开启且参数更新中的batch累计，val是epoch末eval；两run还改变width/LR/seed/split/target transform。不能把两列比值当严格泛化gap，不能凭S较窄却更差永久否定小头。 |
+| 非零有限梯度和模型重载是交付证据 | 两份training-evidence里的70/95步、非零梯度、4头张量变化、重载检查 | 这些都不是准确率或泛化证据；最大L1梯度不能当L2裁剪阈值依据，也不能据此诊断梯度爆炸。 |
+
+两run新头参数数目由形状直接算得：单隐藏层宽度h的参数数为`2048h+h+h+1=2050h+1`，h=512为1,049,601，h=256为524,801；内部拟合仅573行。此事实支持保留小容量/强正则对照，但参数/样本比本身没有提供泛化定理或最优宽度。
+
+## 2. 对另一条路线的独立反证核查
+
+实现路线提出标准化放大；本路线没有仅接受其结论，而是用独立的 `zipfile + ast.literal_eval + struct` 解码既有 `features-train.npz`，读取保存的六个变换数组。数组值按声明dtype反编码后全部payload SHA匹配，见 `head-preprocessing-checks.json`。没有调用numpy、模型或评分器。
+
+独立结果记录于 `head-scaling-countercheck.json`：
+
+| run / 既有official-train零基行 / 特征维 | 573个fit值的结构 | early-stop值 | 既有变换产生的绝对z |
+| --- | --- | ---: | ---: |
+| F / 327 / 1279 | 572个严格0，仅1个非零；最大0.02084164135 | 0.75830304623 | 871.66526029 |
+| S / 327 / 1279 | 同样572个0，仅1个非零 | 0.75830304623 | 871.66041931 |
+| S / 129 / 1507 | 570个严格0，仅3个非零；最大0.00293665659 | 0.20594605803 | 1637.41477926 |
+
+这些行在相应内部早停索引内，变换仅由其余fit行拟合。这提供“稀疏激活、fit内低方差、holdout罕见高激活被逐维z放大”的具体机制；它与错误地把valid/test用于拟合不是一回事。源码`sd<1e-8 -> 1`只处理近零数值，不控制这种分布外激活。
+
+**反证检查改变建议：** 不应直接将“robust median/IQR”写成修复，因为上面这些fit维度的IQR为0。它仍需要退化分母与稀疏维度策略。也不应删methanol等行、修改Y或将其当坏样本；当前没有这些行的残差。优先测试不同缩放机制，结果若不改善共同holdout/seed的原Y MAE、或只移动错误到其他化学组，就撤回“这是质量瓶颈”的强解释。不能用更小z作为成功指标替代MAE。
+
+交叉核对统计路线后保留另一限制：两条曲线早停集只重叠部分行；新实验应独立固定split身份和算法seed。全部公开原始数据仍保留原行、分区与标签。
+
+## 3. 共同实验合同（准备规格，未执行）
+
+- 编码器资产固定为 `chemeleon_mp.pt` SHA256 `c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651`；Chemprop2.2.1的既有MeanAggregation/输入定义，所有预训练参数和buffer冻结。新的头/变换有自己的版本，不冒充原模型配置。
+- 新匹配比较选一份已验证原始特征缓存，记录文件hash、input hash、task/split/row顺序、编码器/featurizer/pooling/软件版本和dtype。不要在同一比较内交替使用两个数值不逐字相同的缓存。
+- 历史S42内部行索引可用于“解释旧run”的诊断对照，但有同分子跨内部fit/stop，不能称molecule-unseen。主比较应准备新的train-only分子组划分，保持全部637原行和每个Y，只让同组的行进入同一内部角色；真实行数以manifest为准，不硬凑573/64。
+- 分离`split_id/split_seed`、`init_seed`、`batch_order_seed`与dropout随机流；首轮固定split，算法seed用同一预注册三元组集合，例如(42,42,42)、(43,43,43)、(44,44,44)。这些编号只是离散设计，不是最优seed。三seed估计算法波动，不解决有限化学覆盖。
+- scaler/PCA/特征选择/目标变换仅fit当前内部fit索引；内部stop只选epoch/配置；outer-confirm角色若启用，其标签不参与内层选择。official valid/test保持盲输入；执行者不读analysis评分材料。新group/outer协议必须由主控批准后执行。
+- 每epoch在同一固定checkpoint、eval模式记录fit与stop的raw-Y MAE、MSE，另留online训练loss；记录损失精确定义、LR、parameter groups、grad L2（若计划使用裁剪）、update norm、best criterion/epoch/step、checkpoint SHA、reload输出身份。
+- 每个候选的成功定义是通过资格检查后，对预注册数据/seed的主要MAE给出可重复的改进及失败范围。`minimum_effect=TBD`，由主控依据匹配噪声/目标意义后设定；目前不填虚假固定改善阈值、置信度或p值。
+
+## 4. 广泛但条件化的参数空间
+
+下表是研究候选目录，不应一次执行相乘。配置数在“其它因素固定”下计算；普通神经头默认三个共同算法seed，所以`runs=配置数×3`。可复用的对照只在代码、数据、缓存、split、seed、所有有效参数和预算全同且通过验收时抵扣；旧两个run不能自动抵扣新协议对照。每一方向对应一个问题，主控将这些临时H编号映射到最终proposal/issue ID。
+
+| ID / 优先级 | 假设与具体空间 | 配置数 / 运行数 | 组合限制、反证与准备依赖 |
+| --- | --- | --- | --- |
+| H01 / 最高：输入缩放 | `{当前逐维z无裁剪, raw无缩放, 仅中心化, z+sd下限Q05, z+sd下限Q10, z截断±5, z截断±10, raw逐行L2}` | 8配置/24fits；首批只抽`当前,raw,Q05,clip10`=4/12 | Q取fit非零原始std分布分位数，常量维独立处理；clip值是预先离散候选，不能由valid/test拟合。先不与loss/head同时全交叉。无改进则高z仅是数值观察。raw/L2会改变几何及幅度信息，不能预判更好。 |
+| H02 / 高：宽度与历史LR混杂 | hidden `{256,512}` × LR `{5e-4,1e-3}`，其余保持真实AdamW/MSE/WD1e-4/dropout0.1/batch128 | 4/12；便宜方案4×1初筛，再2个入围×2新seed，总8fits | 用同一个split/cache；此小factorial估计交互的线索，不给显著性承诺。新group协议下的结果不单独解释旧分差。统一配置构造器是依赖。 |
+| H03 / 高：MSE选模是否偏离MAE | 固定训练loss=MSE，只将stop monitor设`{standardized MSE, raw-Y MAE}` | 分开早停是2/6；固定50epoch单轨迹同时留2个best是1拟合/seed、共3fits及6候选checkpoint | 两方案只能选其一计预算；同轨迹两个checkpoint不是独立重复。历史没有逐epochMAE/权重，不能事后评出历史MAE-best。当前patience8/max50先保留，不同时改。 |
+| H04 / 高：损失与尾部权衡 | 在共同MAE monitor下，`{MSE, MAE, Huber δ=0.5,1,2}`；误差以fit标准化Y计 | 5/15 | 明确PyTorch Huber定义，不混称SmoothL1；保留MSE与MAE，Huberδ由预设网格而非隐藏误差设定。相同LR是首层机制对照，若需配套LR另记整套方案预算。主指标MAE，不因RMSE好看更换赢家标准。 |
+| H05 / 高：容量阶梯 | 新头`{Linear, MLP[64], MLP[128], MLP[256], MLP[512]}`，ReLU，固定初始化规则和主协议 | 5/15 | 单层线性作为表示可解码诊断；不能独自假定满足赛事深度模型交付解释。参数数分别2049/131201/262401/524801/1049601。若更小头同预算不稳胜，不宣称容量病因。 |
+| H06 / 高：正则化 | 固定入围头，dropout轴`{0,0.1,0.3}`，WD轴`{0,1e-4,1e-3,1e-2}`，锚点(0.1,1e-4) | 单轴联合6配置/18fits，而非12/36；只有两轴均有信息时补一个交互配置/3fits | AdamW当前对所有头参数含bias衰减；另改bias分组算独立方案。强正则可能欠拟合；train loss高不自动坏，选模看原Y MAE。 |
+| H07 / 中高：学习率 | 入围头/缩放/损失固定，LR `{1e-4,3e-4,5e-4,1e-3,3e-3}`，AdamW其它默认明确记录 | 5/15 | 两个已用LR仅是锚点。小LR在50epoch内未收敛应记预算内未收敛，不能永久判劣；增大epoch是新预算，不暗中给不同配置不同资源。 |
+| H08 / 中：训练进度 | `constant`、`5epoch线性warmup后constant`、`50epoch cosine到0.1×初始LR` | 3/9 | 固定初始LR/max50/patience/主monitor；warmup和cosine不同时全交叉。现有70/95步没有逐步LR轨迹，不能声称已经需要scheduler。 |
+| H09 / 中：batch及梯度限制 | batch轴`{32,128,full_fit}`，另一个独立轴grad-L2 clip`{none,1,5}` | 单轴联合5配置/15fits（共用128/none） | 同epoch预算时每epoch更新数不同：573fit对应18/5/1步；相同step预算又不等样本曝光。必须明确采用哪种资源口径，不能同时宣称二者公平。现有L1最大值不是clip1/5的依据；这些是探索值。 |
+| H10 / 中：目标数值尺度 | 相同原Y不变，只选`fit z-score`、`fit中心化不除std` | 2/6 | 变换有精确逆变换与raw-Y metric；缩放改变梯度和正则相对量，结果归完整优化参数化。未知物理单位不支持再log、指数还原或裁标签。 |
+| H11 / 中：压缩及新模块 | PCA维度`{32,64,128,256}`、whiten=false，fit-only，配固定MLP[64]；对照为不PCA同头 | 5/15 | d<n_fit且不读stop/valid/test拟合；维度减少同时改变头参数数目，称压缩方案比较，不纯表示因果。PCA最大方差未必保留预测信号；whitening会再次放大小特征，故首轮不加。 |
+| H12 / 中：更合适的非线性头 | `MLP[128]`、`MLP[128,64]`、`Linear skip + MLP[128]`、`new LayerNorm(affine=true,eps=1e-5)+MLP[128]` | 4/12 | 只改新头，预训练模块永远eval且buffer冻结。两层参数270593，单层262401，residual264450；是近容量而非完全等容量比较。LN逐样本归一化可能损失幅度，不预判修复。插入预训练层内的LoRA/adapter不在这个空间。 |
+| H13 / 中：冻结表示上的简单监督头 | Ridge objective `mean(e²)+α||w||²`，α `{0.01,0.1,1,10,100}`；另留训练均值/中位数常数诊断 | 5个Ridge拟合+2常数拟合；固定求解器无init seed，不机械×3 | 若用sum-squared sklearn定义要把库alpha换成`n_fit×α`，不能混网格。测试输入只predict，不fit。线性/常数结果仅研究对照，不替代深度模型参赛资格检查。此轮也不能实际fit或生成新预测。 |
+| H14 / 中：冻结表示及pooling | 保留原mean；条件候选`sum`、`mean+sum concat`，新头容量另明确 | 3配置/9fits，至少2种新feature版本和新编码/缓存验收 | 不更新message-passing参数；需原子表示或可核验原子计数，不从当前只有分子向量的缓存虚构atom tensor。新pooling不是原CheMeleon表示的同一版本，concat维度/参数数改变。若新模块插入方式不在计划允许范围则停在准备。 |
+| H15 / 条件：替代冻结底座 | CheMeleon、MiniMol、MoLFormer公开10pct × 相同基础头`[64]`及一个`[256]` | 若三者就绪，共6配置/18fits；每个encoder只一次固定特征生成，再训头 | MiniMol/MoLFormer目前idle_incomplete；精确资产、许可、tokenizer/配置、覆盖、冻结记录齐全才可执行。相同宽度不等参数预算，必要时另做一个参数预算匹配敏感性，不把同头当绝对公平。原始论文成绩只作方法线索。 |
+| H16 / 条件：表示融合 | 有用的CheMeleon+另一已准入表示，分块fit-only缩放；`concat→MLP[64]`、`concat→MLP[128]` | 2配置/6fits，加单表示同头控制；控制若已存在可抵扣 | 增维和容量是混杂；必须有同协议单表示控制。不能拿低预测相关当误差互补证明。Morgan/基础RDKit分支先明确定义，不引入外部预拟合CDF参数。 |
+| H17 / 后续：集成 | 同配置3seed算术均值；两种已通过方案固定0.5/0.5均值，各一条规则 | 若父模型已有，无额外训练；新增2组预测产物及受授权评分任务；否则父模型训练数另计 | 不在91个valid样本上密搜权重；目前没有误差相关性，不能算未发布ensemble分数。固定融合仍要验证全行身份/可复现，不获当前推理授权。 |
+| H18 / 条件：确认划分 | 锁定control+1challenger，3个预先指定train-only外层分子组划分×3共同seed | 2配置、18fits；各outer内有独立fit/stop，必要内层HPO预算另外计 | 不能边看outer边改配置；已探索train上的补充协议不是新的独立外部测试。真实untouched终评不在本包。不要对所有18方向全部乘外层fold。 |
+
+这些空间没有全局总运行数：不同方向共享对照、存在先后选择和互斥方案。主控若选定一个具体批次，必须展开唯一config_id×split_id×seed元组、去掉完全相同的重复项，再求实际run数。以“18个方向”为18次训练、或把所有表格run数相加当获批预算，都是错误。
+
+## 5. 最有信息的分层批次建议
+
+### P0：准备及记录，零模型运行
+
+优先准备通用头构造器、显式randomness/split/cache身份、原Y双指标日志、同模式epoch评估、best/last记录和失败闭锁。保留原run不修改。冻结及输入身份检查不降低。先核对历史F1门禁修订证据，未通过就不启动未来训练。
+
+### P1：缩放机制，建议最多12个新训练fits
+
+四个配置：现有z、raw、train-std Q05下限、z clip10；每个共同3seed，共12fits。统一512头、LR1e-3、AdamW1e-4、dropout0.1、batch128、标准化MSE训练、同一早停规则和同一个新train-only group split。此选择保留已有实现锚点，但不是声称512/LR1e-3较优。若主控预算更低，可4×1=4fits做机制筛查，再只对control及1challenger加2seed，共8fits；单seed筛查不宣称优胜。
+
+为什么先它：只需要一个已有缓存，具体反例来源于现存数值；正负结果都会决定后续是否还要在当前缩放上调头。若四者的paired结果都不稳定，直接降低因果主张，转向split稳健性/简单头，不自动扩更多clip数值。
+
+### P2：指标选择与小容量对照，建议按新增信息抽取
+
+在P1未明显失败的固定表示/缩放上：先H03的MSE/MAE monitor对照（2配置×3seed=6fits，或固定轨迹3fits/6个checkpoint），然后只保留一个monitor比较H05的Linear/MLP64/MLP256/MLP512四种（12fits，完全同协议已存在控制可抵扣）。loss轴、正则轴随后按结果挑一个；不要同时改变缩放+loss+宽度+LR后说是某一项带来提升。
+
+### P3：锁定候选后的确认，或替代底座
+
+若同一底座已有稳定候选，用H18的18fits确认配置在未用于该fold选模的outer角色上的表现。若当前表示在多种合理头/缩放下均无增量、或另一底座的准备闭合且能回答不同信号问题，则先做H15中已就绪的两个encoder的对称有限head比较；不因CheMeleon已接入就排除其他表示，也不因论文名气跳过当前准备缺口。
+
+## 6. 可直接派给准备会话的模块工作
+
+此段不含精确官方valid分数或逐行误差；转交时只转技术规格与主控映射的issue/proposal ID，不能转整份分析包。
+
+1. **配置编译器与头工厂。** 输入不可变config/spec；输出resolved config、头层形状、参数个数、可训练参数名列表、optimizer参数组。支持宽度/深度/activation/dropout/loss/monitor等明确白名单；无效组合fail closed。删除未来实现中的历史固定值断言不是修改旧原件，而是新版本实现。静态形状/配置测试可先准备；任何模型forward验收留待授权。
+2. **冻结缓存合同。** 输入批准的固定encoder/feature身份及逐行输入manifest；输出缓存metadata与按task/split/row的索引校验。raw编码缓存与fold-fit变换分开，禁止把不同split拟合的scaled cache互用。未知或hash不符不静默重新下载、重新编码。
+3. **变换策略模块。** 支持当前z、raw、中心化、train-std分位下限、预设z clip、L2；每种记录所有拟合行hash、统计参数、常量/非有限处理，保存逆目标变换。clip只用于特征，不能裁Y或删原行。
+4. **独立随机性与split模块。** 准备固定训练行索引文件和原始串/保留立体canonical组身份约定；split、init、shuffle、dropout种子分别记录。不能用Drug_ID覆盖重复；不能把所有空Murcko归同一化学组。新split只分官方train内部，official分区不变。
+5. **指标、早停和证据模块。** epoch-end同checkpoint/eval的fit、stop raw MAE/MSE；精确best monitor与保存/重载SHA；online loss另命名；optimizer state/RNG/last checkpoint若计划保存则明确预算。当前缺历史记录不能补造。新增日志输出不包括官方valid真值、残差或精确评分。
+6. **选择与确认登记器。** 每批预登记config_id、parentcontrol、change_only/hold_fixed、scaler fit scope、split/seed、候选/实际run数、批准预算、提前停止原因。确认fold访问与调参暴露单独记；自动拒绝把失败资源/冻结/行身份run加入性能排名。
+7. **新底座适配器准备。** MiniMol/MoLFormer按当前候选卡精确版本编写asset依赖清单、无自动外部数据入口、冻结参数/buffer、覆盖与失败策略和新头接口；当前只是准备，不能安装到海南、拉外部标签或跑官方benchmark runner。
+
+### 不能塞入当前可执行空间的变更
+
+- 更新预训练权重或buffer、解冻后再冻结、外部教师/伪标签/样本、测试拟合：当前排除。
+- 擅自去重、平均冲突Y、删高z样本、改分子或物理阈值裁Y：当前排除；特征变换不是改原标签。
+- 插入骨干内部LoRA/adapter、外部拟合标准化、利用其他任务监督的MTL：需要单独边界和资产/标签来源计划，不能由“新头可训”自动推定全部获准。
+- 全637行final refit而不保留内部早停：可提出未来锁定epoch的研究问题，但当前明确要求内部划分早停，不纳入本轮可执行建议。
+- 直接用公开signed mean error给预测加常数：不是train-only校准。若将来研究校准，应使用train-only的cross-fitted预测拟合并记清全部训练成本，此轮不计算或执行。
+
+## 7. 结果边界
+
+本路线没有估计任何新增配置成绩、CI、p值、GPU小时或真实排名。数据输入极端、loss下降、冻结验收通过与泛化质量是不同证据。最小实际补证是同协议匹配运行及主控允许发布的paired/切片聚合；当前不能从两run推断有效样本尾部是谁、哪种剪裁最优、哪个底座最强。
+
+本路线未独立重审全部系统调用/未公开环境实现，也未亲读外部权重或模型head二进制。原始论文具体性能协议由表示路线核查；本报告的候选数量和参数是基于包内机制证据的研究设计，不借用外部论文成绩作为本赛预期收益。

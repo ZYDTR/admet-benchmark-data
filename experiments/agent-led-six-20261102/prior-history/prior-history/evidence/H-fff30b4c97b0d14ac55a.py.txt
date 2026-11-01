@@ -1,0 +1,7 @@
+from coverage_tools import add,gaps
+rows=[('required-007',868,729,792,'turn266212view0'),('required-007',868,846,867,'turn266212view1'),('required-041',275,105,145,'turn266212view2'),('required-041',275,172,217,'turn266212view3'),('required-052',283,111,158,'turn266212view4'),('required-052',283,83,110,'turn355468view0'),('required-052',283,148,198,'turn355468view1'),('required-052',283,216,244,'turn355468view2'),('required-052',283,267,280,'turn355468view3'),('required-052',283,162,242,'turn858855view0'),('required-052',283,247,280,'turn858855view1'),('required-052',283,265,282,'turn196518view0'),('prediction-ranges',156,0,155,'turn943779view0'),('baseline-delivery',29,0,28,'turn943779view1'),('alt-prep-status',798,0,223,'turn943779view2'),('input-manifest',14690,562,817,'turn196518view1'),('input-manifest',14690,542,901,'turn195971view0')]
+for row in rows:add(*row)
+for i in range(1,55):
+ k=f'required-{i:03d}';g=gaps(k)
+ if g: print(k,g)
+print('manifest',gaps('input-manifest'))

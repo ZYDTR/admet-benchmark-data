@@ -1,0 +1,226 @@
+{
+  "task_ids": [
+    "ames",
+    "bbb_martins",
+    "bioavailability_ma",
+    "caco2_wang",
+    "clearance_hepatocyte_az",
+    "clearance_microsome_az",
+    "cyp2c9_substrate_carbonmangels",
+    "cyp2c9_veith",
+    "cyp2d6_substrate_carbonmangels",
+    "cyp2d6_veith",
+    "cyp3a4_substrate_carbonmangels",
+    "cyp3a4_veith",
+    "dili",
+    "half_life_obach",
+    "herg",
+    "hia_hou",
+    "ld50_zhu",
+    "lipophilicity_astrazeneca",
+    "pgp_broccatelli",
+    "ppbr_az",
+    "solubility_aqsoldb",
+    "vdss_lombardo"
+  ],
+  "task_metrics": {
+    "ames": {
+      "metric": "AUROC",
+      "direction": "maximize",
+      "definition": "mann_whitney_average_ranks",
+      "official_equivalence": "unconfirmed"
+    },
+    "bbb_martins": {
+      "metric": "AUROC",
+      "direction": "maximize",
+      "definition": "mann_whitney_average_ranks",
+      "official_equivalence": "unconfirmed"
+    },
+    "bioavailability_ma": {
+      "metric": "AUROC",
+      "direction": "maximize",
+      "definition": "mann_whitney_average_ranks",
+      "official_equivalence": "unconfirmed"
+    },
+    "caco2_wang": {
+      "metric": "MAE",
+      "direction": "minimize",
+      "definition": "mean_absolute_error",
+      "official_equivalence": "unconfirmed"
+    },
+    "clearance_hepatocyte_az": {
+      "metric": "Spearman",
+      "direction": "maximize",
+      "definition": "pearson_correlation_of_average_ranks",
+      "official_equivalence": "unconfirmed"
+    },
+    "clearance_microsome_az": {
+      "metric": "Spearman",
+      "direction": "maximize",
+      "definition": "pearson_correlation_of_average_ranks",
+      "official_equivalence": "unconfirmed"
+    },
+    "cyp2c9_substrate_carbonmangels": {
+      "metric": "AUPRC",
+      "direction": "maximize",
+      "definition": "average_precision",
+      "official_equivalence": "unconfirmed"
+    },
+    "cyp2c9_veith": {
+      "metric": "AUPRC",
+      "direction": "maximize",
+      "definition": "average_precision",
+      "official_equivalence": "unconfirmed"
+    },
+    "cyp2d6_substrate_carbonmangels": {
+      "metric": "AUPRC",
+      "direction": "maximize",
+      "definition": "average_precision",
+      "official_equivalence": "unconfirmed"
+    },
+    "cyp2d6_veith": {
+      "metric": "AUPRC",
+      "direction": "maximize",
+      "definition": "average_precision",
+      "official_equivalence": "unconfirmed"
+    },
+    "cyp3a4_substrate_carbonmangels": {
+      "metric": "AUROC",
+      "direction": "maximize",
+      "definition": "mann_whitney_average_ranks",
+      "official_equivalence": "unconfirmed"
+    },
+    "cyp3a4_veith": {
+      "metric": "AUPRC",
+      "direction": "maximize",
+      "definition": "average_precision",
+      "official_equivalence": "unconfirmed"
+    },
+    "dili": {
+      "metric": "AUROC",
+      "direction": "maximize",
+      "definition": "mann_whitney_average_ranks",
+      "official_equivalence": "unconfirmed"
+    },
+    "half_life_obach": {
+      "metric": "Spearman",
+      "direction": "maximize",
+      "definition": "pearson_correlation_of_average_ranks",
+      "official_equivalence": "unconfirmed"
+    },
+    "herg": {
+      "metric": "AUROC",
+      "direction": "maximize",
+      "definition": "mann_whitney_average_ranks",
+      "official_equivalence": "unconfirmed"
+    },
+    "hia_hou": {
+      "metric": "AUROC",
+      "direction": "maximize",
+      "definition": "mann_whitney_average_ranks",
+      "official_equivalence": "unconfirmed"
+    },
+    "ld50_zhu": {
+      "metric": "MAE",
+      "direction": "minimize",
+      "definition": "mean_absolute_error",
+      "official_equivalence": "unconfirmed"
+    },
+    "lipophilicity_astrazeneca": {
+      "metric": "MAE",
+      "direction": "minimize",
+      "definition": "mean_absolute_error",
+      "official_equivalence": "unconfirmed"
+    },
+    "pgp_broccatelli": {
+      "metric": "AUROC",
+      "direction": "maximize",
+      "definition": "mann_whitney_average_ranks",
+      "official_equivalence": "unconfirmed"
+    },
+    "ppbr_az": {
+      "metric": "MAE",
+      "direction": "minimize",
+      "definition": "mean_absolute_error",
+      "official_equivalence": "unconfirmed"
+    },
+    "solubility_aqsoldb": {
+      "metric": "MAE",
+      "direction": "minimize",
+      "definition": "mean_absolute_error",
+      "official_equivalence": "unconfirmed"
+    },
+    "vdss_lombardo": {
+      "metric": "Spearman",
+      "direction": "maximize",
+      "definition": "pearson_correlation_of_average_ranks",
+      "official_equivalence": "unconfirmed"
+    }
+  },
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question": "下一阶段应该逐项深挖、平均浅调，还是自适应扩大覆盖？",
+      "acceptance_criteria": [
+        "比较三种策略的适用条件、收益/成本证据与反证；明确推荐，区分假设与已验证事实"
+      ],
+      "required_outputs": [
+        "analysis.md#策略"
+      ]
+    },
+    {
+      "question_id": "Q2",
+      "question": "22项任务各处于什么状态，哪些值得优先投入？",
+      "acceptance_criteria": [
+        "逐项列当前指标/方向、样本结构及已知覆盖风险、异常检查、改进因素、底座准备度、成本/收益不确定性、优先级与跳过理由；未知注明来源缺口"
+      ],
+      "required_outputs": [
+        "analysis.md#任务全景"
+      ]
+    },
+    {
+      "question_id": "Q3",
+      "question": "给出可比较的预算情景和下一批确定矩阵。",
+      "acceptance_criteria": [
+        "分别给小/中/大情景及推荐；每档任务集合、配置、model/split seeds、去重fit与编码次数、成本式和未知量明确",
+        "确定任务逐task/config/split展开；准备门槛及未选定任务的条件确认单列，不冒充已获授权"
+      ],
+      "required_outputs": [
+        "next_experiments.json"
+      ]
+    },
+    {
+      "question_id": "Q4",
+      "question": "如何复用冻结编码、逐任务选头并合成完整候选？",
+      "acceptance_criteria": [
+        "说明raw/fit后缓存区别、身份与行映射；区分逐任务装配、ensemble和联合多任务；明确模板导出与验收"
+      ],
+      "required_outputs": [
+        "next_batch_guide.md"
+      ]
+    },
+    {
+      "question_id": "Q5",
+      "question": "如何判断改进、控制valid适应偏差和混杂？",
+      "acceptance_criteria": [
+        "区分训练loss、内部早停、外部指标与方向；给成对seed/split/对照和不确定性",
+        "区分建议与用户/赛事硬规则，记录历史valid使用，不把新Chat当清零；阈值来源与未来验证明确"
+      ],
+      "required_outputs": [
+        "analysis.md#验证"
+      ]
+    },
+    {
+      "question_id": "Q6",
+      "question": "如何一次给足后续方向并减少无效往返？",
+      "acceptance_criteria": [
+        "给有依据的广泛参数方向、成本与成熟度；条件分支含触发/选择/跳过/停止和评审节点",
+        "保留历史问题/推翻事件并按问题给证据/反证；明确需要补材料、准备新代码或新实验的责任和产物"
+      ],
+      "required_outputs": [
+        "search_space.json"
+      ]
+    }
+  ],
+  "usage": "Example for a future controller-bound packet; not a new request or training authorization. Refresh with current admitted evidence."
+}

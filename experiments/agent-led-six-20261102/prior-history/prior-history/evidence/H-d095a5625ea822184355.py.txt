@@ -1,0 +1,115 @@
+"""Read-only scientific-plan checks plus local validation report. No ML fitting/scoring."""
+import json, hashlib, math, pathlib, copy, sys
+R=pathlib.Path(__file__).resolve().parents[1]
+def load(p):return json.loads((R/p).read_text())
+def canon(o):return json.dumps(o,ensure_ascii=False,sort_keys=True,separators=(',',':'),allow_nan=False).encode()
+def sha(b):return hashlib.sha256(b).hexdigest()
+checks=[]
+def check(name,condition,details=None):
+ checks.append({'check':name,'passed':bool(condition),'details':details})
+ if not condition:raise AssertionError((name,details))
+reqfields={
+ 'review.json':'schema_version request_id round_id manifest_sha256 status read_receipt read_checks findings missing_evidence not_assessed comparison_groups stop_reasons'.split(),
+ 'issues.json':'issue_id status severity category statement affected_run_ids evidence_refs hypothesis counterevidence impact proposed_resolution verification_criterion related_proposal_ids'.split(),
+ 'next_experiments.json':'proposal_id priority hypothesis control_run_or_config task scientific_asset_id asset_versions change_only hold_fixed split_id seeds metric direction minimum_effect_or_decision_rule success_criterion falsification_criterion compute_budget dependencies within_current_scope stage exact_config preparation_mode reuse_assets estimated_run_count trigger skip_or_stop_if review_checkpoint direction_ids'.split(),
+ 'search_space.json':'direction_id linked_issues rationale evidence_refs counterevidence candidate_models_or_modules parameters combination_constraints search_method configuration_count_or_counting_rule seeds estimated_run_count cost_assumptions readiness priority scope_status'.split()}
+for p,fields in reqfields.items():
+ data=load(p); check('root type '+p,isinstance(data,dict if p=='review.json' else list))
+ rows=[data] if isinstance(data,dict) else data
+ check('required fields '+p,all(set(fields)<=set(x) for x in rows))
+review=load('review.json'); proposals=load('next_experiments.json'); issues=load('issues.json'); directions=load('search_space.json'); gates=load('preparation-gates.json'); ledger=load('task-ledger.json')['tasks']; matrix=load('experiment-matrix.json');sources=load('evidence/source-index.json');cov=load('evidence/reading-coverage.json')
+check('request identity',review['request_id']=='admet-breadth-strategy-pro-20261101-001' and review['round_id']=='training-breadth-strategy-20261101' and review['manifest_sha256']=='2b37cecef4b6f45481ba1991766a2b15eaaffb672a695d193ae03b878c5e04e8')
+check('review status',review['status']=='needs_evidence')
+for rows,key in [(proposals,'proposal_id'),(issues,'issue_id'),(directions,'direction_id'),(gates,'gate_id')]:
+ check('unique '+key,len(rows)==len({x[key] for x in rows}))
+pids={p['proposal_id'] for p in proposals};iids={x['issue_id'] for x in issues};dids={x['direction_id'] for x in directions};gids={x['gate_id'] for x in gates}; tids={x['task'] for x in ledger}
+check('D-METRIC actual target','D-METRIC' in dids)
+check('no old P-GATE or abstract P-S1/P-S2',not({'P-GATE','P-S1','P-S2'} & pids))
+check('proposal directions resolve',all(set(p['direction_ids'])<=dids for p in proposals))
+check('issue proposals resolve',all(set(i['related_proposal_ids'])<=pids for i in issues))
+check('direction issues resolve',all(set(d['linked_issues'])<=iids for d in directions))
+check('gate issue IDs resolve',all(set(g['issue_ids'])<=iids for g in gates))
+for rows in [proposals,issues,directions]:check('source refs resolve '+str(len(rows)),all(set(p.get('evidence_refs',[]))<=set(sources) for p in rows))
+check('issue evidence locators specific',all(i.get('evidence_locations') and all(x.get('uri') and x.get('locator') for x in i['evidence_locations']) for i in issues))
+check('issue reasoning not common boilerplate',len({i['hypothesis'] for i in issues})==len(issues) and len({i['verification_criterion'] for i in issues})==len(issues))
+graph={p['proposal_id']:p['dependencies'] for p in proposals};graph.update({g['gate_id']:g['dependencies'] for g in gates})
+check('dependencies resolve',all(set(deps)<=set(graph) for deps in graph.values()))
+check('no self dependencies',all(node not in deps for node,deps in graph.items()))
+visiting=set();visited=set()
+def dfs(k):
+ if k in visiting:raise AssertionError('Cycle '+k)
+ if k in visited:return
+ visiting.add(k)
+ for dep in graph[k]:dfs(dep)
+ visiting.remove(k);visited.add(k)
+for k in graph:dfs(k)
+check('DAG',len(visited)==len(graph))
+check('zero-fit gates separate',all(g['fit_count']==0 for g in gates) and all(p['seeds'] for p in proposals))
+check('concrete tasks',all(isinstance(p['task'],str) and p['task'] in tids for p in proposals))
+check('enum prep/stage',all(p['preparation_mode'] in ['config_only','new_code','blocked_assets'] and p['stage'] in ['screen','confirm','reserve'] for p in proposals))
+check('all generalized proposals new_code',all(p['preparation_mode']=='new_code' for p in proposals))
+check('no execution authorized',not review['execution_authorized'] and all(not p['exact_config']['execution_authorized'] for p in proposals))
+check('no placeholder seeds',all(p['seeds']==[44,45] and p['estimated_run_count']==2 for p in proposals))
+check('split seed fixed43',all(p['exact_config']['split']['seed']==43 and p['split_id']==p['exact_config']['split']['split_id'] for p in proposals))
+check('50/8 first stages',all(p['exact_config']['training']['max_epochs']==50 and p['exact_config']['early_stopping']['patience']==8 for p in proposals))
+check('per task metric directions',all(p['direction']==('minimize' if p['metric']=='MAE' else 'maximize') and p['exact_config']['early_stopping']['direction']==p['direction'] for p in proposals))
+for p in proposals:
+ c=p['exact_config'];reg=p['metric'] in ['MAE','Spearman']
+ check('loss/scale '+p['proposal_id'],c['loss']['name']==('MSELoss' if reg else 'BCEWithLogitsLoss') and c['target']['inverse_transform_at_prediction']==reg)
+ check('frozen asset '+p['proposal_id'],c['encoder']['freeze_parameters'] and c['encoder']['freeze_buffers'] and not c['encoder']['autograd'] and c['encoder']['checkpoint_sha256']==p['asset_versions']['pretrained_sha256'])
+ check('fit-only preprocessing '+p['proposal_id'],c['feature_preprocessing']['fit_partition']=='inner_fit_only' and c['target']['fit_partition']=='inner_fit_only' and not c['training']['official_valid_used_for_gradients_or_early_stopping'])
+check('hypothesis threshold not significance',all(p['minimum_effect_or_decision_rule']['proposed_not_empirical_threshold'] for p in proposals))
+byid={p['proposal_id']:p for p in proposals}
+def diff(a,b,path=''):
+ if isinstance(a,dict) and isinstance(b,dict):
+  out=[]
+  for k in set(a)|set(b):
+   if k not in a or k not in b:out.append(path+'.'+k)
+   else:out+=diff(a[k],b[k],path+'.'+k)
+  return out
+ return [] if a==b else [path]
+for p in proposals:
+ if p['config_tag']=='H1':
+  control=p['control_run_or_config']['proposal_id'];check('real H0 '+p['proposal_id'],control in byid and control in p['dependencies'])
+  check('one factor '+p['proposal_id'],diff(byid[control]['exact_config'],p['exact_config'])==['.head.dropout'])
+ else:check('H0 not self-ref '+p['proposal_id'],p['control_run_or_config']['proposal_id'] is None)
+keys=[]
+for p in proposals:
+ for seed in p['seeds']:
+  c=copy.deepcopy(p['exact_config']);c['training'].pop('model_seed_values');c['training']['model_seed']=seed
+  key=sha(canon({'asset':p['scientific_asset_id'],'asset_versions':p['asset_versions'],'task':p['task'],'full_scientific_config':c,'split_id':p['split_id'],'seed':seed}))
+  keys.append(key)
+check('unique tuples84',len(keys)==len(set(keys))==84)
+check('matrix agrees',set(keys)=={x['run_key_sha256'] for x in matrix['runs']} and matrix['unique_count']==84)
+check('S1 20 proposals40fits',sum(p['batch_id']=='S1' for p in proposals)==20 and sum(x['batch_id']=='S1' for x in matrix['runs'])==40)
+check('S1B22 proposals44fits',sum(p['batch_id']=='S1B' for p in proposals)==22 and sum(x['batch_id']=='S1B' for x in matrix['runs'])==44)
+check('21 new tasks+Caco2 covers22',{p['task'] for p in proposals}|{'caco2_wang'}==tids and 'caco2_wang' not in {p['task'] for p in proposals})
+check('unselected confirm tasks not fake proposals',all(p['stage']!='confirm' for p in proposals) and load('conditional-followups.json')['templates'][0]['selected_tasks'] is None)
+check('task sizes',sum(t['train_n'] for t in ledger)==53695 and sum(t['valid_n'] for t in ledger)==11735 and sum(t['test_n'] for t in ledger)==16379)
+check('metric task counts',{m:sum(t['metric']==m for t in ledger) for m in ['MAE','AUROC','AUPRC','Spearman']}=={'MAE':5,'AUROC':8,'AUPRC':5,'Spearman':4})
+check('55 read receipts',len(review['read_receipt'])==55 and {r['entry_id'] for r in review['read_receipt']}=={f'required-{i:03d}' for i in range(1,55)}|{'input-manifest'})
+for r in review['read_receipt']:
+ c=cov[r['entry_id']];seen=set()
+ for s in c['segments']:seen.update(range(s['start'],s['end']+1))
+ check('full coverage '+r['entry_id'],seen>=set(range(c['total_web_lines'])))
+check('read mode separate byte hash',all(r['read_mode']=='original' and r['full_text_read'] and r['byte_hash_recomputed'] is False for r in review['read_receipt']))
+check('allowed read_mode values',all(r['read_mode'] in ['original','summary','hash_only','unread'] for r in review['read_receipt']))
+check('source_version binding',all(r['source_version'].get('commit') and r['source_version'].get('sha256') for r in review['read_receipt']))
+nums=load('evidence/numeric-recomputation.json')
+check('local ceiling corrected',math.isclose(nums['perfect_caco2_only_local_valid_total'],46.33201275937977,abs_tol=1e-12))
+check('official ceiling separate',math.isclose(nums['perfect_caco2_only_official_display_mean_total'],48.81151481818182,abs_tol=1e-12))
+check('independent arithmetic residual',nums['max_float_decimal_abs_difference']<1e-12 and nums['max_official_display_abs_difference']<5e-7)
+check('previous files unchanged',all((R/'previous'/x['path']).is_file() and (R/'previous'/x['path']).stat().st_size==x['bytes'] and sha((R/'previous'/x['path']).read_bytes())==x['sha256'] for x in load('evidence/previous-version-hashes.json')['files']))
+check('previous8 retained',len(list((R/'previous').iterdir()))==8)
+# Privacy scope check: structured task ledger is aggregate-only; no row-level truth/prediction fields.
+check('aggregate-only ledger',all(t.get('no_raw_labels_in_this_file') for t in ledger) and not review['raw_valid_truth_in_delivery'])
+check('no model artifacts created',not any(p.suffix in ['.pt','.pth','.ckpt','.npz','.npy'] for p in R.rglob('*') if p.is_file()))
+check('required deliverables nonempty',all((R/p).is_file() and (R/p).stat().st_size>0 for p in ['analysis.md','review.json','issues.json','next_batch_guide.md','next_experiments.json','search_space.json']))
+# Structural check is not an execution acceptance test of proposed A1-A10 implementation.
+for row in review['read_checks']:
+ if row['check_id']=='RC-07':row['status']='passed_local_delivery_structure';row['qualification']='Does not execute proposed runner A1-A10; archive verification handled by package_delivery.py.'
+review['completion_layers']['proposal_schema_and_counts']='validated_by_bundled_validator'
+(R/'review.json').write_text(json.dumps(review,ensure_ascii=False,indent=2,allow_nan=False)+'\n')
+report={'request_id':review['request_id'],'status':'pass','check_count':len(checks),'checks':checks,'scope':'Local document/schema/reference/DAG/config/count/arithmetic checks only. No training, scorer execution or source-byte SHA verification.','archive_verification':'package_delivery.py verifies ZIP CRC and every manifest member after final build. This report itself is then hashed in manifest.'}
+(R/'evidence/validation-report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2,allow_nan=False)+'\n')
+print(json.dumps({'passed':len(checks),'unique_fits':84,'S1':40,'S1B_conditional':44,'required_text_receipts':55},ensure_ascii=False))

@@ -1,0 +1,30 @@
+# ADMET 项目 Skill 索引
+
+唯一入口：[项目 AGENTS.md](../AGENTS.md)。这些能力仅服务本项目，不在全局 Codex Skill 注册。项目创建、修订 Skill 遵守[工作区写作标准](../../../rules/skills/bestpractice_skill_writing.md)。
+
+| 角色/任务 | 必读入口 | 实际验收范围 |
+|---|---|---|
+| OpenCode 准备；主控派发 | [训练前准备](ml-preparation-only/SKILL.md) | v2.0.1；v2六配置接续的科学配置可用，输入缓存越界、封口及退出码未全通过；主控补齐实际预测消费端。新增输入树及封口固定检查，20项离线检查通过；新版本模型行为未实测，旧冻结任务保持原样 |
+| 专职海南算力观察 | [资源观察](hainan-resource-observation/SKILL.md) | v1.0.0；10分钟只读采样已持续实测，11月1日截至07:33 UTC共46次、无超过15分钟空档；直接通知后训练自动恢复、共享卡资格尚未端到端实测，文档协议存在不等于通过 |
+| 海南训练执行 | [冻结底座训练](admet-frozen-training/SKILL.md) | v2.0.3；运行前与运行中拒绝前保存原始资源证据，13项本机生产回调/真实子进程反例通过，未部署。execution006完成0/6，拒绝帧丢失使根因未定；旧index-cycle与monitor-mae科学验收保留。共享/并行及通用断点恢复尚未实测 |
+| 取回、固定评分、批准发布 | [训练取回](hainan-training-retrieval/SKILL.md) | v1.0.0；允许任务/分组汇总反馈，原始真值隔离；最新run99文件取回/91行固定评分/144文件批准发布已独立验收；按既定范围完成，不代表全项目历史已迁入 |
+| 历史索引、Chat网关、主控研究验收 | [实验知识与评审交接](admet-evidence-review/SKILL.md) | v1.0.1；显式历史快照解耦训练与研究，全文/精确引用运输；新运输模型行为待测。普通Pro首发→原生接管→六文件回收已测；本轮阅读与方案准入未通过。新增角色/来源/计划一致性审读与格式分层检查，7项本地反例通过，新版模型行为待测 |
+| 用户手动官网提交与查分 | [赛事提交](competition-submission/SKILL.md) | v0.1.2；Sol正常选文件上传2份，页面有46.418分，第一份按顺序/状态变化关联基线但无唯一提交ID、时间戳异常保留；第二份分数归属未确定，另2份未提交。新增下载超时对账和旧分数归属教训；仍只由用户手动触发 |
+
+通用基础设施仍由全局能力提供：[海南连接](../../../rules/skills/hainan-compute-access/SKILL.md)、[mini/OpenCode运维](../../../rules/skills/<PREPARATION_HOST>-orbstack-ops/SKILL.md)。OpenCode仍从mini既有Context Infrastructure根目录创建会话；准备任务包是该项目下的独立子目录，这不改变ADMET规范的归属。
+
+最近已结束闭环：[monitor-mae-e2e-20261101](../cycles/monitor-mae-e2e-20261101/CONTINUE.md)。旧 progressive-index 周期为历史记录。角色与消息协议以[统一控制合同](../control/README.md)为准；历史设计见[设计入口](../design/chat_gateway_20261031/README.md)。算力日志：[资源入口](../resources/hainan/README.md)。
+
+历史Harness只作来源：[采用/排除映射](../docs/source-map.md)、[旧评分规范](../../admet_sap_setup_20261029/external-grading/SKILL.md)、[旧远端规范](../../admet_sap_setup_20261029/remote-execution/SKILL.md)。它们不是当前统一入口，未部署的网关不能成为通用禁令。独立公开候选审计的局部Skill仍留在[其原任务](../../admet_public_candidate_challenge_20261031/input/skill/SKILL.md)，不纳入训练输入或自动启用。
+
+2026-10-31：四个专用Skill由全局迁入本项目；全局注册已撤销，历史冻结材料不改。迁移证据见本轮 `control/project-skill-migration-20261031/receipt.json`。
+
+主控问题反馈与新版交付统一遵守[项目入口的修订/派发合同](../AGENTS.md#主控复核与新版-skill-派发)：每次修订前完整读Best Practice；下一任务显式绑定对方可读的新版及引用，原运行冻结材料保持。
+
+2026-11-01用户确认四项偏好已纳入当前规则，见[落实记录](../audits/control-plane-20261101/user-decisions-20261101/REPORT.md)。训练Skill增加未来批次有界恢复的证据与预算标准；当前完成作业不重跑，通用恢复实现尚未真机验收。下一次派发绑定本索引对应新版及引用，旧任务快照保留。
+
+主控全流程审计与当前通过/失败/未测范围见[审计报告](../audits/end-to-end-20261101/REPORT.md)。本轮只能称训练及材料往返完成，不能称研究方案已经准入或稳定自动循环通过。
+
+2026-11-01控制面整合：主控先读[控制合同](../control/README.md)，所有角色使用[对应固定派发模板](../control/templates/README.md)；Prompt revision11与返回schema、历史/资产登记共同封口。新增门槛已接准备打包和Prompt渲染实际入口。验收与未测范围见[本次报告](../audits/control-consolidation-20261101/REPORT.md)。官网提交Skill和其Thread按用户要求未改。
+
+2026-11-01广度研究接续：证据Skill1.0.1/Prompt revision12支持主控准入的逐件来源快照及精确引用运输；旧live模式仍拒绝漂移。原55KB首发及Retry未确认服务端接受，不能称长文导致；原件、修订前版本与本地反例在audits/training-breadth-strategy-20261101/snapshot-and-transport-repair。

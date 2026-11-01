@@ -1,0 +1,29 @@
+本轮 Caco2 训练完成，执行会话自检通过，主控独立验收待进行。实际配置为 **CheMeleon 冻结底座 + 256 单元预测头，lr=0.0005，seed=43**；其余参数与原 PLAN 一致。共训练 **19 epoch、95 个优化步**，最佳内部早停 epoch 为 11。产出 91 行 valid 和 182 行 test 的完整预测。未做私有 valid 评分或赛事上传。
+
+主要产物：[新头 checkpoint](<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031/artifacts/caco2_wang-head.pt)、[273 行预测](<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031/artifacts/predictions.csv)、[完整训练证据](<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031/artifacts/training-evidence.json)。复现代码、预处理统计、573/64 原始 train 行划分、特征和解析掩码随本 run 留存。
+
+65 个取回文件逐项 SHA256 核对通过。CheMeleon 内存状态的 11 个张量（8 个参数、3 个 buffer）前后摘要相等，完整状态摘要为 `3dcc8242cc8b63aa1813cf06cb686ae09056e725a415bf244e7aa32c26cc9c74`；原始 checkpoint 摘要不变。运行断言覆盖 eval、requires_grad=False、无梯度 CUDA 编码和优化器排除底座。四个新头张量均发生有限非零变化，梯度非零步数与 95 优化步一致。除模型自报外，还直接比较 checkpoint ZIP 的原始张量存储，确认 256 单元形状、524801 个参数和四项真实变化，宿主不反序列化 pickle 或执行返回模型。
+
+仅使用官方 train 的 637 行，按 seed=43 划为 573 行拟合、64 行内部早停；标准化统计只在 573 行拟合。valid/test 输入不含 Y。预测逐行核对 task/split/row_index/Drug_ID/Drug，全部行序、空或重复 ID 语义及 SMILES 保留，273 个预测均有限。模型重新加载后的最大绝对预测差为 9.536743164e-07，预测已还原原 Y 数值尺度。
+
+执行绑定 GPU 3 / `<REGISTERED_GPU>`，实际训练 PID 为 1527655，运行中 nvidia-smi 将该 PID 映射到同一 UUID。GPU 4/7 的恢复状态为 Reset，已排除。以下时间均为 2026-10-31 北京时间：
+
+| 阶段 | 开始 | 退出码 | 阶段耗时 | 结果 |
+| --- | --- | --- | --- | --- |
+| cuda01 | 01:03:53 | 1 | 17.07s | Other process appeared; yield own job |
+| cuda02 | 01:19:39 | 0 | 25.24s | 完成 |
+| train01 | 01:20:41 | 0 | 28.08s | 完成 |
+
+首次预检期间其他 GPU 作业在预检的空闲快照之后出现，监控主动终止了本次自有预检；未控制该外部 PID。随后该卡被约 30–40GiB、100% 利用率的活动作业占用，本会话只读等待至健康空闲。旧尝试的源码、启动快照、日志、轨迹、退出状态均保留；第二次 CUDA 矩阵和完整依赖导入预检通过后才启动正式训练。CUDA 预检不是训练步，也没有将合成计算冒充学习。
+
+本轮只读复用既有私有 venv，无安装或依赖下载。解释器和 78 项包元数据与已验收环境一致，本轮前后摘要也一致。一次环境元数据读取发生 SSH 认证失败，后续同一固定路由读取成功；没有修改凭据、网络或 SSH 设置。bootstrap 的实际输入和代码清单可核对 [初始上传](<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031/raw/upload-manifest-initial.json) 与 [第二预检新增源码](<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031/raw/upload-retry02-manifest.json)。
+
+三份 strace 共覆盖退让预检、成功预检和正式训练，审读未发现成功的目录外项目文件改动，未解析写入为 0；设备节点单列，驱动被拒绝的设备链接尝试保留。任务写入根为 `<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-follow-20261031`，Landlock 从完整库导入前启用，joblib 不需要的多进程探测在导入前禁用。私有环境只读使用。它们不是读隔离、GPU 分区、IOCTL 隔离或全机审计，SSH/内核及无关进程的影响仍为未验证项。
+
+正式训练整卡采样峰值 1167MiB，自有 PID 采样峰值 1156MiB；torch 分配器峰值 423.85MiB、保留峰值 482MiB。4GiB 限制覆盖 torch 分配器，不是全设备硬限额。CPU 亲和 `[0,1]`，库线程 2，数据加载 worker 0；正式阶段进程树 RSS 采样峰值 1.443GiB，8GiB 采样监护不是内核内存配额；900 秒自有作业监护及 1GiB 结果预算未触发。模型本体约 3.56 秒，含导入、预启动与轨迹的正式阶段约 28.08 秒。
+
+最终核对 9 个登记 PID/启动时间身份均已退出，GPU 3 回到 0MiB 且 Recovery Action=None。PLAN、两项 Skill 及项目规则摘要保持不变，[原始释放/身份复核](<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031/acceptance/postcheck.json)和 [逐轨迹审查](<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031/acceptance/audit-final-fetch.json)可复查。
+
+[只读证据检查](<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031/operator/evidence-check.json)使用原 Skill 检查器的本 run 适配版：PLAN 把选卡交给操作者，GPU 字段据实际 config 读取；成功预检阶段为 cuda02，同时要求三份轨迹全部审查。冻结、张量变化、行身份、退出和释放条件未降低，原 Skill、PLAN 及主控 criteria 均未改。适配差异和原版摘要在 [检查器说明](<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031/operator/checker-adapter.json)；独立形状/学习率/seed/环境复核在 [补充检查](<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031/operator/supplemental-checks.json)。本报告由执行会话给出，不能替代主控对原始代码和轨迹的独立结论。
+
+本轮是同一已有聊天中的新固定配置训练，不是冷启动测试；保留了历史上下文。没有参数搜索、额外任务或委派。刻意共享、并行训练、其他任务/模型、环境新安装及真实 valid 评分均不据此宣称通过。全局项目工作记录和 Skill 索引归主控维护，本会话只写本 run。

@@ -1,0 +1,91 @@
+# HANDOFF — ADMET data-eval preparation (no training)
+
+Role: leaf executor. Nothing here trained a model, ran inference, or touched an
+optimizer. The main controller owns training/execution.
+
+## Command contract (all relative to this `data-eval/` directory)
+
+Scripts resolve `input/...` from their own package root (`common.PACKAGE_ROOT`),
+so they work from any cwd. Run them from the task root to keep paths readable.
+
+```bash
+# 1. Verify inputs + template integrity (exit 0 ok / 2 contract fail / 3 internal)
+python3 output/scripts/verify_data.py \
+  --schema output/admet_eval/task_schema.json \
+  --report output/reports/verify_data_report.json
+
+# 2. Record per-split row counts + hashes (completeness source for scoring)
+python3 output/scripts/make_split_inputs.py \
+  --schema output/admet_eval/task_schema.json \
+  --out output/reports/split_inputs.json
+
+# 3. Score. Labels are ALWAYS passed explicitly. --split names the split the
+#    predictions cover; completeness is checked against split_inputs.
+python3 output/scripts/score.py \
+  --predictions <preds.json> \
+  --labels-json <labels.json> \
+  --schema output/admet_eval/task_schema.json \
+  --split-inputs output/reports/split_inputs.json \
+  --split test \
+  --out output/reports/score.json
+#  or: --labels-csv <file.csv> --labels-csv-task <task> --labels-csv-split test
+
+# 4. Export submission (byte-faithful y_pred replacement, refuses overwrite)
+python3 output/scripts/export_submission.py \
+  --predictions <preds.json> \
+  --output output/submission.csv \
+  --schema output/admet_eval/task_schema.json
+```
+
+Prediction JSON: `{"schema_version":1,"predictions":[{"task","split","row_index","y_pred"},...]}`
+Label JSON: `{"schema_version":<C.LABELS_SCHEMA_VERSION>,"split_id":..,"labels":[{"task","split","row_index","y"},...]}`
+
+## Verified in this session
+
+- `verify_data.py`: exit 0, `ok=true`. 22 tasks, template 16379 rows,
+  sha256 `8ee41589...51e9baa20`, header `task,sample_idx,drug_id,smiles,y_pred,metric`,
+  BOM+CRLF preserved, template matches every `test.csv` on (drug_id, smiles)
+  row-by-row, all train labels in range, classification labels strictly {0,1}.
+- `make_split_inputs.py`: train=53695, test=16379, valid=11735 rows
+  (`output/reports/split_inputs.json`).
+- `score.py --split test` on synthetic labels/preds: exit 0,
+  `complete_key_set_checked=true`, 22/22 tasks `ok`
+  (`output/reports/synthetic_score_testsplit.json`).
+- `export_submission.py` on synthetic test predictions: 16379 rows, 22 tasks,
+  all non-prediction fields byte-identical, order/BOM/CRLF preserved,
+  values round-trip (`output/reports/synthetic_submission.csv.provenance.json`).
+  Blank `drug_id` (herg row 61) and 2384 quoted SMILES lines preserved.
+- Unit + CLI tests: `cd output && python3 -m unittest tests.test_metrics tests.test_cli_contracts`
+  → 43 tests OK.
+
+## NOT verified (and why)
+
+- **No real-label scoring.** Session has no ground-truth labels for test/valid;
+  scoring only exercised with synthetic fixtures. Official leaderboard metric
+  behavior on real data is unconfirmed.
+- **AUPRC == average precision** is a local assumption (`local_definition:
+  "average_precision"`, `official_equivalence:"unconfirmed"`). Not proven equal
+  to the official harness's AUPRC implementation.
+- **Overall score aggregation** across 22 tasks is unknown; only per-task
+  results are emitted.
+- **No numpy/sklearn cross-check.** Environment has neither; metrics are pure
+  stdlib and validated against hand-computed cases only.
+- **Template `drug_id` differs from raw test.csv in 7611 rows**
+  (`input/research/validation/verification-summary.json:
+  current_template_difference.drug_id=7611`), yet (drug_id, smiles) row-matches
+  test.csv. Meaning of the difference (drug_id rewrites) unexplained; export
+  copies template drug_id verbatim, so this is safe as long as template is the
+  submission of record.
+- No end-to-end train/infer run (out of scope for this leaf by design).
+
+## Next command for the controller
+
+After producing real `test` predictions in the schema above:
+
+```bash
+python3 output/scripts/verify_data.py --schema output/admet_eval/task_schema.json --report output/reports/verify_data_report.json
+python3 output/scripts/export_submission.py --predictions <real_preds.json> --output output/submission.csv --schema output/admet_eval/task_schema.json
+```
+
+If a labeled valid set becomes available, score it with `--split valid`
+(default) using the same `--split-inputs`.

@@ -1,0 +1,336 @@
+"""One registered Caco2 run: frozen CheMeleon + new MLP head on a deterministic raw-SMILES group split.
+
+v5 changes vs train_remote_v4.py (single scientific change; everything else identical):
+* the internal best-head selection and early-stopping metric is now chosen by config ``monitor``:
+  ``internal_validation_raw_mae`` (original-scale MAE of inverse-transformed stop-group predictions)
+  or the legacy ``internal_validation_standardized_mse`` path kept for compatibility checks;
+  training loss remains MSE, both metrics are still computed every epoch under eval/no_grad and
+  logged; best comparison uses ``value < best - MIN_DELTA`` (ties keep the earlier epoch);
+* history rows carry monitor/monitor_key/monitor_value plus both metrics; checkpoint_identity binds
+  each checkpoint's own epoch/steps/value and the true-MSE semantics of the legacy field name;
+
+v4 changes vs train_remote_v3.py (single fixed config from source/config.json, no HPO):
+* internal fit/stop split comes from training_science.split_train_stop_groups: explicit
+  split_config (method raw_smiles_group_shuffle, seed, fraction), groups keyed by the RAW Drug
+  string, codepoint-sorted keys shuffled by a dedicated random.Random(seed) (never global RNG,
+  never model-init RNG); full row-index record + audit + source hashes are persisted;
+* hidden_dims / lr / seed / dropout / optimizer / epochs / patience / batch_size are read and
+  validated from config instead of hardcoded assertions about an old run's identity;
+* every epoch logs standardized MSE + original-scale MAE/MSE for fit and stop under eval/no_grad
+  (same mode as early-stopping), plus lr, epoch wall time, update steps, gradient finite checks;
+* best and last heads use their own epoch/step identity; full optimizer and Python/numpy/torch
+  CPU/CUDA/independent-sampler states use weights_only-loadable containers and tensors;
+* artifacts/train-predictions.csv adds per-row official-train predictions with fit/stop markers;
+  artifacts/predictions.csv keeps the exact v3 schema and contains ONLY blind valid+test rows;
+* feature arrays carry content-bound identity records (input hash, row identity, encoder version,
+  shape/dtype/parse-mask digests). Nothing external is reused as a cache this cycle; npz writes are
+  fresh evidence only.
+
+The module body performs no work: importing it never starts training. main() is the host entry.
+"""
+from __future__ import annotations
+import csv
+import hashlib
+import importlib.metadata
+import json
+import os
+import random
+import resource
+import sys
+import time
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from training_science import MIN_DELTA, PreparationError, canonical_json_bytes, capture_training_rng, checkpoint_identity, check_rows_identity, load_input_tables, feature_identity, float10g, monitor_metric_key, optimizer_payload, restore_training_rng, select_monitor_value, state_equal, scale_metrics, sha256_hex, split_train_stop_groups, standardized_mse, validate_config
+
+def _load_late():
+    """Heavy imports happen inside main() only, so static parsing/import stays safe."""
+    global np, torch, nn, CheMeleonEmbedder
+    import numpy
+    import torch as _torch
+    from torch import nn as _nn
+    from encoder import CheMeleonEmbedder as _CE
+    np = numpy
+    torch = _torch
+    nn = _nn
+    CheMeleonEmbedder = _CE
+
+def digest_state(model):
+    each = {}
+    aggregate = hashlib.sha256()
+    kinds = {name: 'parameter' for name, _ in model.named_parameters()}
+    kinds.update({name: 'buffer' for name, _ in model.named_buffers()})
+    for name, t in sorted(model.state_dict().items()):
+        value = t.detach().cpu().contiguous().reshape(-1).view(torch.uint8).numpy().tobytes()
+        item = {'sha256': hashlib.sha256(value).hexdigest(), 'shape': list(t.shape), 'dtype': str(t.dtype), 'kind': kinds.get(name, 'state')}
+        each[name] = item
+        aggregate.update(name.encode() + b'\x00' + json.dumps(item, sort_keys=True).encode() + b'\x00')
+    return {'sha256': aggregate.hexdigest(), 'tensors': each}
+
+def main() -> int:
+    from common_guarded import ROOT, GPU_UUID, environment, now, safe, sha, write_json
+    start = time.monotonic()
+    os.chdir(safe(ROOT, True))
+    sys.path.insert(0, str(safe(ROOT, True)))
+    os.environ.clear()
+    os.environ.update(environment())
+    _load_late()
+    cfg_path = safe(ROOT / 'source/config.json', True)
+    cfg_source_sha256 = sha(cfg_path)
+    cfg = validate_config(json.loads(cfg_path.read_text(encoding='utf-8')))
+    hc = cfg['head_config']
+    sc = cfg['split_config']
+    assert torch.cuda.is_available() and torch.cuda.device_count() == 1, 'Single explicit CUDA device required'
+    torch.set_num_threads(2)
+    torch.set_num_interop_threads(1)
+    torch.manual_seed(hc['seed'])
+    np.random.seed(hc['seed'])
+    random.seed(hc['seed'])
+    torch.cuda.set_device(0)
+    props = torch.cuda.get_device_properties(0)
+    torch.cuda.set_per_process_memory_fraction(4096 * 1024 ** 2 / props.total_memory, 0)
+    device = 'cuda:0'
+    write_json(ROOT / 'raw/train-runtime.json', {'at': now(), 'pid': os.getpid(), 'pgid': os.getpgid(0), 'start_stat': Path('/proc/self/stat').read_text(), 'torch': torch.__version__, 'cuda': torch.version.cuda, 'device': device, 'device_name': props.name, 'visible_gpu_uuid': os.environ['CUDA_VISIBLE_DEVICES'], 'device_properties': str(props), 'cpu_affinity': sorted(os.sched_getaffinity(0)), 'torch_threads': torch.get_num_threads(), 'dataloader_workers': 0, 'limits': {'allocator_fraction': 4096 * 1024 ** 2 / props.total_memory, 'allocator_target_bytes': 4096 * 1024 ** 2, 'note': 'PyTorch allocator cap only, excludes CUDA context/third-party allocations. Supervisor observes RSS and walltime.'}, 'script': 'train_remote_v4', 'run_id': cfg['run_id'], 'task': cfg['task'], 'config_sha256': cfg_source_sha256, 'monitor': cfg['monitor']})
+    rows, input_hashes, row_audits = load_input_tables(cfg, ROOT, safe, sha)
+    checkpoint = safe(ROOT / 'assets/chemeleon_mp.pt', True)
+    assert sha(checkpoint) == cfg['pretrained_sha256']
+    split_record = split_train_stop_groups(rows['train'], seed=sc['seed'], validation_fraction=sc['validation_fraction'])
+    split_record['source_files'] = {'config': {'path': 'source/config.json', 'sha256': cfg_source_sha256}, 'train_csv': {'path': next((i['path'] for i in cfg['inputs'] if i['role'] == 'train')), 'sha256': input_hashes['train']}}
+    split_record.pop('split_record_sha256', None)
+    split_record['split_record_sha256'] = sha256_hex(canonical_json_bytes(split_record))
+    write_json(ROOT / 'artifacts/internal-split.json', split_record)
+    tr = split_record['fit_row_indices']
+    va = split_record['stop_row_indices']
+    enc = CheMeleonEmbedder(checkpoint, device=device, batch_size=64)
+    enc.assert_frozen()
+    assert all((p.device.type == 'cuda' for p in enc.model.parameters()))
+    before = digest_state(enc.model)
+    write_json(ROOT / 'artifacts/encoder-before.json', before)
+    enc_events = []
+
+    def enc_hook(module, inputs, out):
+        tensors = [out] if isinstance(out, torch.Tensor) else [x for x in out if isinstance(x, torch.Tensor)]
+        assert tensors and all((x.device.type == 'cuda' for x in tensors))
+        assert not torch.is_grad_enabled() and (not enc.model.training)
+        enc_events.append({'output_shapes': [list(x.shape) for x in tensors], 'devices': [str(x.device) for x in tensors], 'grad_enabled': torch.is_grad_enabled(), 'training': enc.model.training})
+    enc_handle = enc.model.message_passing.register_forward_hook(enc_hook)
+    X = {}
+    masks = {}
+    identities = {}
+    encoder_meta = {'module': 'encoder.CheMeleonEmbedder', 'encoder_py_sha256': sha(safe(ROOT / 'encoder.py', True)), 'checkpoint_sha256': cfg['pretrained_sha256'], 'feature_dim': enc.feature_dim, 'embed_batch_size': enc.batch_size, 'dependencies': {name: importlib.metadata.version(name) for name in ('numpy', 'torch', 'chemprop', 'rdkit')}}
+    for split in ['train', 'valid', 'test']:
+        enc.assert_frozen()
+        X[split], masks[split] = enc.embed([r['Drug'] for r in rows[split]])
+        assert X[split].shape == (len(rows[split]), enc.feature_dim)
+        role = 'validation' if split == 'valid' else split
+        identities[split] = feature_identity(X[split], masks[split], rows[split], encoder_meta, enc.feature_dim, input_hashes[role])
+        np.savez(ROOT / 'artifacts' / f'features-{split}.npz', features=X[split], parse_mask=masks[split])
+        write_json(ROOT / 'artifacts' / f'features-{split}-identity.json', identities[split])
+        print(json.dumps({'phase': 'encoded', 'split': split, 'rows': len(rows[split]), 'parsed': int(masks[split].sum()), 'feature_dim': enc.feature_dim, 'features_sha256': identities[split]['features']['sha256'], 'at': now()}), flush=True)
+    y = np.asarray([float(r['Y']) for r in rows['train']], dtype=np.float32)
+    assert np.isfinite(y).all()
+    filled = {s: np.where(np.isfinite(v), v, np.float32(0)).astype(np.float32) for s, v in X.items()}
+    mu = filled['train'][tr].mean(axis=0)
+    sd = filled['train'][tr].std(axis=0)
+    sd[sd < 1e-08] = 1
+    ym = float(y[tr].mean())
+    ys = float(y[tr].std()) or 1.0
+    yy = (y - ym) / ys
+    scaled = {k: (v - mu) / sd for k, v in filled.items()}
+    assert all((np.isfinite(v).all() for v in scaled.values()))
+    np.savez(ROOT / 'artifacts/preprocessing.npz', feature_mean=mu, feature_std=sd, train_row_indices=tr, internal_validation_row_indices=va, target_mean=ym, target_std=ys)
+
+    def build_head(seed):
+        torch.manual_seed(seed)
+        width = int(hc['hidden_dims'][0])
+        layers = []
+        dim = enc.feature_dim
+        for w in hc['hidden_dims']:
+            layers += [nn.Linear(dim, int(w)), nn.ReLU(), nn.Dropout(hc['dropout'])]
+            dim = int(w)
+        layers += [nn.Linear(dim, 1)]
+        return nn.Sequential(*layers).to(device)
+    head = build_head(hc['seed'])
+    initial = {k: v.detach().cpu().clone() for k, v in head.state_dict().items()}
+    initial_digest = digest_state(head)
+    torch.save({'state_dict': initial, 'seed': hc['seed'], 'run_id': cfg['run_id'], 'head_config': hc}, ROOT / 'artifacts/head-initial.pt')
+    optimizer_class = {'AdamW': torch.optim.AdamW}[hc['optimizer']]
+    opt = optimizer_class(head.parameters(), lr=hc['lr'], weight_decay=hc['weight_decay'])
+    eids = {id(p) for p in enc.model.parameters()}
+    hids = {id(p) for p in head.parameters()}
+    oids = {id(p) for g in opt.param_groups for p in g['params']}
+    assert oids == hids and oids.isdisjoint(eids)
+    optimizer_check = {'optimizer_param_count': len(oids), 'head_param_count': len(hids), 'encoder_param_count': len(eids), 'optimizer_exactly_head': oids == hids, 'optimizer_encoder_intersection': len(oids & eids), 'encoder_requires_grad_count': sum((p.requires_grad for p in enc.model.parameters())), 'encoder_training': enc.model.training, 'optimizer_type': hc['optimizer'], 'lr': hc['lr'], 'weight_decay': hc['weight_decay']}
+    write_json(ROOT / 'artifacts/optimizer-separation.json', optimizer_check)
+    Xt = torch.as_tensor(np.ascontiguousarray(scaled['train'][tr]), device=device)
+    yt = torch.as_tensor(yy[tr], device=device).reshape(-1, 1)
+    Xv = torch.as_tensor(np.ascontiguousarray(scaled['train'][va]), device=device)
+    yv = torch.as_tensor(yy[va], device=device).reshape(-1, 1)
+    Xtr_all = torch.as_tensor(np.ascontiguousarray(scaled['train']), device=device)
+    tr_idx_t = torch.as_tensor(tr, dtype=torch.long, device=device)
+    va_idx_t = torch.as_tensor(va, dtype=torch.long, device=device)
+    y_full_t = torch.as_tensor(yy, device=device).reshape(-1, 1)
+    y_orig_t = torch.as_tensor(y, device=device).reshape(-1, 1)
+    loss_fn = nn.MSELoss()
+    monitor = cfg['monitor']
+    monitor_key = monitor_metric_key(monitor)
+    gen = torch.Generator(device='cpu').manual_seed(hc['seed'])
+    best = float('inf')
+    best_epoch = -1
+    best_state = None
+    last_state = None
+    steps = 0
+    nonzero_steps = 0
+    grad_max = 0.0
+    history = []
+    head_devices = set()
+
+    def eval_pack(idx_t, std_col, orig_col):
+        """Standardized MSE + original-scale MAE/MSE for one index set under current head mode."""
+        pred = head(Xtr_all[idx_t])
+        std = float(loss_fn(pred, std_col))
+        orig = (pred * ys + ym).cpu().numpy().reshape(-1)
+        m = scale_metrics(orig, orig_col.cpu().numpy().reshape(-1))
+        return (std, m)
+    for epoch in range(hc['epochs']):
+        enc.assert_frozen()
+        head.train()
+        perm = torch.randperm(len(tr), generator=gen)
+        train_loss = 0.0
+        epoch_start = time.monotonic()
+        steps_before = steps
+        for s in range(0, len(tr), hc['batch_size']):
+            sel = perm[s:s + hc['batch_size']].to(device)
+            opt.zero_grad(set_to_none=True)
+            out = head(Xt[sel])
+            assert out.device.type == 'cuda'
+            head_devices.add(str(out.device))
+            loss = loss_fn(out, yt[sel])
+            assert torch.isfinite(loss)
+            loss.backward()
+            grad = sum((float(p.grad.detach().abs().sum()) for p in head.parameters() if p.grad is not None))
+            assert np.isfinite(grad) and grad > 0 and all((p.grad is None or p.grad.device.type == 'cuda' for p in head.parameters()))
+            nonzero_steps += 1
+            grad_max = max(grad_max, grad)
+            opt.step()
+            steps += 1
+            train_loss += float(loss) * len(sel)
+            assert all((p.grad is None for p in enc.model.parameters()))
+        lr_now = [g['lr'] for g in opt.param_groups]
+        head.eval()
+        with torch.no_grad():
+            val = float(loss_fn(head(Xv), yv))
+            fit_std, fit_scale = eval_pack(tr_idx_t, y_full_t[tr_idx_t], y_orig_t[tr_idx_t])
+            stop_std, stop_scale = eval_pack(va_idx_t, y_full_t[va_idx_t], y_orig_t[va_idx_t])
+            last_state = {k: v.detach().clone() for k, v in head.state_dict().items()}
+        assert abs(stop_std - val) <= 1e-09, 'early-stop metric must equal the logged stop MSE'
+        monitor_value = select_monitor_value(monitor, val, stop_scale)
+        history.append({'epoch': epoch + 1, 'train_standardized_mse': train_loss / len(tr), 'internal_validation_standardized_mse': val, 'internal_validation_raw_mae': stop_scale['mae'], 'monitor': monitor, 'monitor_key': monitor_key, 'monitor_value': monitor_value, 'fit_eval_standardized_mse': fit_std, 'fit_eval_mae': fit_scale['mae'], 'fit_eval_mse': fit_scale['mse'], 'stop_eval_standardized_mse': stop_std, 'stop_eval_mae': stop_scale['mae'], 'stop_eval_mse': stop_scale['mse'], 'learning_rate': lr_now, 'steps': steps, 'steps_this_epoch': steps - steps_before, 'max_gradient_l1_so_far': grad_max, 'epoch_wall_seconds': time.monotonic() - epoch_start})
+        progress_path = ROOT / 'artifacts/progress-state.pt'
+        progress_tmp = ROOT / 'artifacts/progress-state.tmp'
+        torch.save({'run_id': cfg['run_id'], 'config': cfg, 'history': history, 'head': {k: v.detach().cpu() for k, v in head.state_dict().items()}, 'optimizer': optimizer_payload(opt.state_dict()), 'rng': capture_training_rng(hc['seed'], gen), 'steps': steps, 'nonzero_steps': nonzero_steps, 'grad_max': grad_max, 'best': monitor_value if monitor_value < best - MIN_DELTA else best, 'best_epoch': epoch if monitor_value < best - MIN_DELTA else best_epoch, 'best_state': {k: v.detach().cpu() for k, v in (last_state if monitor_value < best - MIN_DELTA else best_state).items()}, 'current_monitor_value': monitor_value, 'note': 'durable epoch observation; best-state selection remains unchanged below'}, progress_tmp)
+        progress_tmp.replace(progress_path)
+        print(json.dumps({'phase': 'head_training', **history[-1]}), flush=True)
+        if monitor_value < best - MIN_DELTA:
+            best = monitor_value
+            best_epoch = epoch
+            best_state = {k: v.detach().clone() for k, v in head.state_dict().items()}
+        elif epoch - best_epoch >= hc['patience']:
+            break
+    assert best_state is not None and steps > 0 and (nonzero_steps > 0) and (last_state is not None)
+
+    def save_head(state, tag, epoch_identity):
+        ck = {'format': 'hainan_caco2_chemeleon_head_v2', 'run_id': cfg['run_id'], 'task': cfg['task'], 'encoder_sha256': cfg['pretrained_sha256'], 'head_config': hc, 'split_config': sc, 'config_sha256': cfg_source_sha256, 'which': tag, 'epoch_1_based': epoch_identity['epoch'], 'optimizer_steps': epoch_identity['steps'], 'monitor': cfg['monitor'], 'monitor_key': epoch_identity['monitor_key'], 'best_monitor_value': epoch_identity['best_monitor_value'], 'internal_validation_best_monitor_value': epoch_identity['best_monitor_value'], 'best_internal_validation_standardized_mse': epoch_identity['best_internal_validation_standardized_mse'], 'internal_validation_standardized_mse_at_checkpoint': epoch_identity['internal_validation_standardized_mse'], 'monitor_value_at_checkpoint': epoch_identity['monitor_value'], 'config': cfg, 'feature_dim': enc.feature_dim, 'state_dict': {k: v.detach().cpu() for k, v in state.items()}, 'feature_mean': mu.tolist(), 'feature_std': sd.tolist(), 'target_mean': ym, 'target_std': ys, 'fill_value': 0.0, 'fit_row_indices': list(tr), 'internal_validation_row_indices': list(va), 'split_record_sha256': split_record['split_record_sha256']}
+        path = ROOT / 'artifacts' / f'caco2_wang-head-{tag}.pt'
+        torch.save(ck, path)
+        return (ck, path)
+    best_ck, best_path = save_head(best_state, 'best', checkpoint_identity(history, best_epoch))
+    last_ck, last_path = save_head(last_state, 'last', checkpoint_identity(history, len(history) - 1))
+    saved_optimizer = optimizer_payload(opt.state_dict())
+    saved_rng = capture_training_rng(hc['seed'], gen)
+    torch.save({'optimizer': saved_optimizer, 'rng': saved_rng, 'run_id': cfg['run_id'], 'seed': hc['seed'], 'which': 'last', 'epoch_1_based': len(history), 'optimizer_steps': steps, 'head_tag': 'last', 'config': cfg, 'config_sha256': cfg_source_sha256, 'split_record_sha256': split_record['split_record_sha256'], 'last_head_sha256': sha(last_path)}, ROOT / 'artifacts/training-state-last.pt')
+    probe = torch.load(ROOT / 'artifacts/training-state-last.pt', map_location='cpu', weights_only=True)
+    assert probe['config'] == cfg and probe['last_head_sha256'] == sha(last_path)
+    assert probe['epoch_1_based'] == last_ck['epoch_1_based'] and probe['optimizer_steps'] == last_ck['optimizer_steps']
+    assert state_equal(probe['optimizer'], saved_optimizer) and state_equal(probe['rng'], saved_rng)
+    opt.load_state_dict(probe['optimizer'])
+    assert state_equal(optimizer_payload(opt.state_dict()), saved_optimizer)
+
+    def rng_draws():
+        return {'python': random.random(), 'numpy': np.random.random(3).tolist(), 'torch_cpu': torch.rand(3), 'torch_cuda': torch.rand(3, device=device).cpu(), 'sampler': torch.randperm(11, generator=gen)}
+    restore_training_rng(probe['rng'], gen)
+    first_draws = rng_draws()
+    restore_training_rng(probe['rng'], gen)
+    second_draws = rng_draws()
+    assert state_equal(first_draws, second_draws), 'complete RNG replay failed'
+    restore_training_rng(probe['rng'], gen)
+    assert state_equal(capture_training_rng(hc['seed'], gen), probe['rng'])
+    rng_replay_ok = {'weights_only_load': True, 'optimizer_roundtrip_exact': True, 'restored_sources': list(first_draws), 'restore_reproducible': True, 'restored_back_to_checkpoint_state': True}
+    write_json(ROOT / 'artifacts/training-state-reload.json', rng_replay_ok)
+    head.load_state_dict(best_state)
+    head.eval()
+    final_digest = digest_state(head)
+    changed = {k: float((v.detach().cpu() - initial[k]).abs().max()) for k, v in head.state_dict().items()}
+    assert any((v > 0 for v in changed.values())) and final_digest['sha256'] != initial_digest['sha256']
+
+    def predict(model, features, mean, std, y_mean, y_std):
+        a = np.where(np.isfinite(features), features, np.float32(0))
+        a = (a - mean) / std
+        out = []
+        with torch.no_grad():
+            for s in range(0, len(a), hc['batch_size']):
+                yhat = model(torch.as_tensor(np.ascontiguousarray(a[s:s + hc['batch_size']]), dtype=torch.float32, device=device))
+                assert yhat.device.type == 'cuda'
+                out.append(yhat.cpu().numpy().reshape(-1))
+        result = np.concatenate(out) * y_std + y_mean
+        assert np.isfinite(result).all()
+        return result
+    pred_train = predict(head, X['train'], mu, sd, ym, ys)
+    marker = {}
+    for i in tr:
+        marker[i] = 'fit'
+    for i in va:
+        marker[i] = 'internal_stop'
+    with (ROOT / 'artifacts/train-predictions.csv').open('w', newline='', encoding='utf-8') as f:
+        w = csv.DictWriter(f, fieldnames=['task', 'row_index', 'Drug_ID', 'Drug', 'Y', 'y_pred', 'split_marker', 'used_for_fitting'])
+        w.writeheader()
+        for i, row in enumerate(rows['train']):
+            w.writerow({'task': cfg['task'], 'row_index': i, 'Drug_ID': row['Drug_ID'], 'Drug': row['Drug'], 'Y': row['Y'], 'y_pred': float10g(float(pred_train[i])), 'split_marker': marker[i], 'used_for_fitting': marker[i] == 'fit'})
+    pred = {s: predict(head, X[s], mu, sd, ym, ys) for s in ['valid', 'test']}
+    after = digest_state(enc.model)
+    assert before == after and all((p.grad is None for p in enc.model.parameters()))
+    enc.assert_frozen()
+    enc_handle.remove()
+    loaded = torch.load(best_path, map_location='cpu', weights_only=True)
+    reloaded = build_head(0)
+    reloaded.load_state_dict(loaded['state_dict'])
+    reloaded.eval()
+    assert digest_state(reloaded) == final_digest
+    torch.manual_seed(hc['seed'])
+    enc2 = CheMeleonEmbedder(checkpoint, device=device, batch_size=64)
+    enc2.assert_frozen()
+    assert digest_state(enc2.model) == before
+    reload_checks = {}
+    pred_rows = []
+    for split in ['valid', 'test']:
+        xx, ok = enc2.embed([r['Drug'] for r in rows[split]])
+        assert np.array_equal(ok, masks[split])
+        pp = predict(reloaded, xx, np.asarray(loaded['feature_mean'], dtype=np.float32), np.asarray(loaded['feature_std'], dtype=np.float32), loaded['target_mean'], loaded['target_std'])
+        delta = float(np.max(np.abs(pred[split] - pp)))
+        assert np.allclose(pred[split], pp, rtol=1e-05, atol=1e-05)
+        reload_checks[split] = {'rows': len(pp), 'max_abs_prediction_difference': delta, 'allclose_rtol': 1e-05, 'allclose_atol': 1e-05}
+        for i, (row, v) in enumerate(zip(rows[split], pp)):
+            pred_rows.append({'task': cfg['task'], 'split': split, 'row_index': i, 'Drug_ID': row['Drug_ID'], 'Drug': row['Drug'], 'y_pred': float10g(float(v))})
+    assert digest_state(enc.model) == before and digest_state(enc2.model) == before
+    assert sha(checkpoint) == cfg['pretrained_sha256']
+    assert len(pred_rows) == len(rows['valid']) + len(rows['test'])
+    with (ROOT / 'artifacts/predictions.csv').open('w', newline='', encoding='utf-8') as f:
+        w = csv.DictWriter(f, fieldnames=['task', 'split', 'row_index', 'Drug_ID', 'Drug', 'y_pred'])
+        w.writeheader()
+        w.writerows(pred_rows)
+    write_json(ROOT / 'artifacts/encoder-after.json', after)
+    write_json(ROOT / 'artifacts/training-evidence.json', {'started_at': json.loads((ROOT / 'raw/train-runtime.json').read_text())['at'], 'completed_at': now(), 'device': device, 'gpu_uuid': GPU_UUID, 'run_id': cfg['run_id'], 'task': cfg['task'], 'config_sha256': cfg_source_sha256, 'input_file_sha256': input_hashes, 'row_identity_audit': row_audits, 'internal_split': {'method': split_record['method'], 'seed': split_record['seed'], 'shuffle_algorithm': split_record['shuffle_algorithm'], 'fit_rows': split_record['fit_rows'], 'stop_rows': split_record['stop_rows'], 'split_record_sha256': split_record['split_record_sha256'], 'duplicate_raw_drug_groups': split_record['duplicate_raw_drug_groups']}, 'feature_identity': identities, 'encoder_forward_events': enc_events, 'encoder_state_unchanged': before == after, 'encoder_gradients_none': all((p.grad is None for p in enc.model.parameters())), 'encoder_eval': not enc.model.training, 'encoder_parameters_frozen': all((not p.requires_grad for p in enc.model.parameters())), 'encoder_checkpoint_sha256_unchanged': sha(checkpoint) == cfg['pretrained_sha256'], 'optimizer_separation': optimizer_check, 'head_output_devices': sorted(head_devices), 'head_initial_sha256': initial_digest['sha256'], 'head_final_sha256': final_digest['sha256'], 'head_changed_max_abs_by_tensor': changed, 'head_config': hc, 'split_config': sc, 'head_parameter_shapes': {k: list(v.shape) for k, v in head.state_dict().items()}, 'optimizer_config': [{'lr': g['lr'], 'weight_decay': g['weight_decay']} for g in opt.param_groups], 'optimizer_steps': steps, 'nonzero_gradient_steps': nonzero_steps, 'maximum_gradient_l1': grad_max, 'epochs_run': len(history), 'monitor': monitor, 'monitor_key': monitor_key, 'min_delta': MIN_DELTA, 'best_epoch_1_based': best_epoch + 1, 'history': history, 'saved_heads': {'best': {'path': 'artifacts/caco2_wang-head-best.pt', 'sha256': sha(best_path)}, 'last': {'path': 'artifacts/caco2_wang-head-last.pt', 'sha256': sha(last_path)}}, 'training_state_reload': rng_replay_ok, 'fit_rows': len(tr), 'internal_validation_rows': len(va), 'parse_counts': {s: {'rows': len(v), 'parsed': int(masks[s].sum())} for s, v in rows.items()}, 'reload_checks': reload_checks, 'official_validation_scoring': False, 'test_fitting': False, 'cuda_peak_allocated_bytes': torch.cuda.max_memory_allocated(), 'cuda_peak_reserved_bytes': torch.cuda.max_memory_reserved(), 'elapsed_seconds': time.monotonic() - start, 'maximum_rss_kib': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss})
+    write_json(ROOT / 'raw/train-complete.json', {'status': 'success', 'at': now(), 'optimizer_steps': steps, 'prediction_rows': len(pred_rows), 'encoder_frozen': True})
+    print(json.dumps({'status': 'success', 'optimizer_steps': steps, 'rows': len(pred_rows), 'elapsed_seconds': time.monotonic() - start}), flush=True)
+    return 0
+if __name__ == '__main__':
+    sys.exit(main())

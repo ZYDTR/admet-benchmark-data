@@ -1,0 +1,195 @@
+"""Actual production callback + real OS query/child fixtures; no CUDA or learning."""
+import base64
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+import unittest
+from unittest.mock import patch
+
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE / 'source/production-adapter-v4'))
+import pipeline
+import resource_evidence
+from adapter_common import load_runtime
+
+
+class EvidenceTests(unittest.TestCase):
+    def setUp(self):
+        (HERE / 'raw').mkdir(exist_ok=True)
+        self.tmp = tempfile.TemporaryDirectory(dir=HERE / 'raw')
+        self.root = Path(self.tmp.name).resolve()
+        for name in ('raw/attempt/train', 'artifacts', 'outputs', 'bin', 'proc/self'):
+            (self.root / name).mkdir(parents=True)
+        self.log = self.root / 'raw/resource.jsonl'
+        self.child = subprocess.Popen([sys.executable, '-B', '-c', 'import time;time.sleep(60)'], start_new_session=True)
+        self.foreign = subprocess.Popen([sys.executable, '-B', '-c', 'import time;time.sleep(60)'], start_new_session=True)
+        pid = self.child.pid
+        (self.root / f'proc/{pid}/task/{pid}').mkdir(parents=True)
+        fields = ['S', str(os.getpid()), str(pid)] + ['0'] * 16 + ['1234']
+        stat = f'{pid} (fixture) ' + ' '.join(fields)
+        (self.root / f'proc/{pid}/stat').write_text(stat)
+        (self.root / 'proc/self/stat').write_text(stat)
+        (self.root / f'proc/{pid}/status').write_text('State:\tS (sleeping)\nVmRSS:\t1024 kB\n')
+        (self.root / f'proc/{pid}/task/{pid}/children').write_text('')
+        script = self.root / 'bin/nvidia-smi'
+        script.write_text('#!' + sys.executable + '\n' + '''import json,sys
+from pathlib import Path
+v=json.loads((Path(__file__).parents[1]/'fixture.json').read_text())
+apps=any('--query-compute-apps' in x for x in sys.argv)
+k='apps' if apps else 'gpu'
+print(v[k],end='');print(v.get(k+'_stderr',''),file=sys.stderr,end='')
+raise SystemExit(v.get(k+'_exit',0))
+''')
+        script.chmod(0o700)
+        self.context = {'root': self.root, 'gpu_uuid': 'GPU-fixture',
+                        'attempt_root': self.root / 'raw/attempt',
+                        'owned_processes': {pid: {'pid': pid, 'pgid': pid, 'start_ticks': '1234'}},
+                        'observed_workers': {}, 'process_audit': lambda x: None,
+                        'environment': {'PATH': str(self.root / 'bin'), 'PYTHONDONTWRITEBYTECODE': '1'},
+                        'resource_audit': self.record}
+        self.profile = {'gpu_index': 0, 'resource_budget': {'ram_target_gib': 1,
+                         'result_budget_gib': 1, 'gpu_peak_target_mib': 4096}}
+        self.resource = load_runtime('resource_checks')
+        original = self.resource.own_process_observation
+        self.resource.own_process_observation = lambda leader, expected, audit: original(
+            leader, proc_root=self.root / 'proc', expected=expected, audit=audit)
+        self.loader = patch.object(pipeline, 'load_runtime', return_value=self.resource)
+        self.loader.start()
+        self.precheck, self.monitor, self.final = pipeline.production_callbacks(self.context, self.profile, 'train')
+        self.fixture()
+
+    def tearDown(self):
+        self.loader.stop()
+        for child in (self.child, self.foreign):
+            if child.poll() is None:
+                child.terminate()
+            child.wait(timeout=2)
+        # Preserve all test inputs/outputs for review, rather than deleting them.
+        self.tmp._finalizer.detach()
+
+    def record(self, value):
+        with self.log.open('a') as f:
+            f.write(json.dumps(value) + '\n'); f.flush(); os.fsync(f.fileno())
+
+    def records(self):
+        return [json.loads(x) for x in self.log.read_text().splitlines()]
+
+    def fixture(self, **kwargs):
+        value = {'apps': f'GPU-fixture, {self.child.pid}, 516\n', 'gpu': 'GPU-fixture, 544, 0\n'}
+        value.update(kwargs)
+        (self.root / 'fixture.json').write_text(json.dumps(value))
+
+    def test_own_process_passes(self):
+        value = self.monitor(self.child)
+        self.assertEqual(value['pids'], [self.child.pid])
+        self.assertEqual(self.records()[-1]['state'], 'accepted')
+
+    def test_foreign_process_is_rejected_with_raw_PID_before_error(self):
+        apps = f'GPU-fixture, {self.foreign.pid}, 32\n'
+        self.fixture(apps=apps)
+        with self.assertRaisesRegex(RuntimeError, 'other process appeared'):
+            self.monitor(self.child)
+        records = self.records()
+        self.assertEqual(records[-2]['observation']['apps_csv'], apps)
+        self.assertEqual(records[-1]['state'], 'rejected')
+        self.assertIsNone(self.foreign.poll())
+        self.assertIsNone(self.child.poll())
+
+    def test_malformed_apps_retained(self):
+        self.fixture(apps='bad CSV\n')
+        with self.assertRaises(ValueError): self.monitor(self.child)
+        self.assertEqual(self.records()[-2]['observation']['apps_csv'], 'bad CSV\n')
+
+    def test_actual_nonzero_preserves_stdout_stderr_exit(self):
+        self.fixture(apps='partial', apps_stderr='driver unavailable', apps_exit=7)
+        with self.assertRaises(subprocess.CalledProcessError): self.monitor(self.child)
+        record = self.records()[-1]
+        self.assertEqual(record['actual_OS_exit'], 7)
+        self.assertEqual(record['stderr']['text'], 'driver unavailable')
+        self.assertEqual(base64.b64decode(record['stdout']['base64']), b'partial')
+
+    def test_second_query_failure_keeps_first(self):
+        self.fixture(gpu_exit=9, gpu_stderr='failed second query')
+        with self.assertRaises(subprocess.CalledProcessError): self.monitor(self.child)
+        returned = [x for x in self.records() if x['state'] == 'returned']
+        self.assertEqual([x['actual_OS_exit'] for x in returned], [0, 9])
+        self.assertIn(str(self.child.pid), returned[0]['stdout']['text'])
+
+    def test_timeout_preserves_partial_without_invented_exit(self):
+        command = [sys.executable, '-B', '-c', 'import sys,time;print("partial",flush=True);print("err",file=sys.stderr,flush=True);time.sleep(2)']
+        with self.assertRaises(subprocess.TimeoutExpired): resource_evidence.query(self.context, command, .1)
+        record = self.records()[-1]
+        self.assertEqual(record['state'], 'timeout')
+        self.assertIsNone(record['actual_OS_exit'])
+        self.assertEqual(record['stdout']['text'], 'partial\n')
+        self.assertEqual(record['stderr']['text'], 'err\n')
+
+    def test_launch_error_preserved(self):
+        with self.assertRaises(FileNotFoundError): resource_evidence.query(self.context, [str(self.root / 'missing')])
+        self.assertEqual(self.records()[-1]['state'], 'launch_error')
+
+    def test_invalid_utf8_preserves_exact_bytes(self):
+        with self.assertRaises(UnicodeDecodeError):
+            resource_evidence.query(self.context, [sys.executable, '-B', '-c', 'import os;os.write(1,b"\\xff")'])
+        self.assertEqual(base64.b64decode(self.records()[-1]['stdout']['base64']), b'\xff')
+
+    def test_precheck_query_failure_is_saved_before_validation(self):
+        self.fixture(gpu_exit=8, gpu_stderr='precheck failure')
+        with self.assertRaises(subprocess.CalledProcessError): self.precheck()
+        self.assertEqual(self.records()[-1]['actual_OS_exit'], 8)
+
+    def test_final_rejection_is_saved(self):
+        with self.assertRaisesRegex(RuntimeError, 'active process after verified own exits'):
+            self.final({}, [])
+        self.assertIn(str(self.child.pid), self.records()[-2]['observation']['apps_csv'])
+        self.assertEqual(self.records()[-1]['state'], 'rejected')
+
+    def test_ram_rejection_keeps_raw_observation(self):
+        self.profile['resource_budget']['ram_target_gib'] = 0
+        with self.assertRaisesRegex(RuntimeError, 'RAM target exceeded'): self.monitor(self.child)
+        self.assertGreater(self.records()[-2]['observation']['tree_rss_bytes'], 0)
+
+    def test_evidence_write_failure_blocks_before_query(self):
+        def denied(value): raise PermissionError('fixture evidence unwritable')
+        self.context['resource_audit'] = denied
+        with self.assertRaises(PermissionError): self.monitor(self.child)
+        self.assertFalse(self.log.exists())
+
+    def test_real_supervisor_persists_rejection_then_reaps_own_child(self):
+        from phase_supervisor import run_phase
+        self.context.update(attempt_root=self.root / 'raw/supervised', run_id='evidence-fixture',
+                            offline=False, manifest_sha256='fixture')
+        self.context['attempt_root'].mkdir()
+        # macOS has no Linux /proc; this one integration fixture isolates the
+        # observation source. The production monitor, guard, query processes,
+        # event writer, OS child wait and identity-bound cleanup are real.
+        self.resource.own_process_observation = lambda leader, expected, audit: {
+            'pids': [leader], 'tree_rss_bytes': 1024}
+        self.fixture(apps=f'GPU-fixture, {self.foreign.pid}, 32\n')
+        _, monitor, final = pipeline.production_callbacks(self.context, self.profile, 'train')
+        self.context['final_checks'] = final
+        code, status = run_phase(self.context, 'train', 'fixture',
+            [sys.executable, '-B', '-c', 'import time;time.sleep(60)'],
+            lambda: None, monitor, 4, {'signal': None})
+        self.assertEqual(code, 125)
+        self.assertEqual(status['child_returncode'], -15)
+        self.assertTrue(status['cleanup']['leader_reaped'])
+        records = [json.loads(x) for x in
+            (self.context['attempt_root'] / 'train/events.jsonl').read_text().splitlines()]
+        rejected = next(i for i, x in enumerate(records) if x['kind'] == 'raw_resource_sample'
+                        and x['sample']['state'] == 'rejected')
+        terminal = next(i for i, x in enumerate(records) if x['kind'] == 'terminal')
+        self.assertLess(rejected, terminal)
+        self.assertIsNone(self.foreign.poll())
+
+
+if __name__ == '__main__':
+    suite = unittest.defaultTestLoader.loadTestsFromTestCase(EvidenceTests)
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
+    (HERE / 'test-result.json').write_text(json.dumps({'tests': result.testsRun,
+        'failures': len(result.failures), 'errors': len(result.errors),
+        'passed': result.wasSuccessful(), 'scope': 'production callbacks, real query subprocesses and Popen children; synthetic Linux proc and GPU data, no CUDA/learning'}, indent=2) + '\n')
+    raise SystemExit(0 if result.wasSuccessful() else 1)

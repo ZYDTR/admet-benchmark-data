@@ -1,0 +1,15 @@
+# execution006只读对账与恢复建议
+
+结论：首项没有可用断点，当前包装不能直接接续。建议由主控另行准入一次首项有界重训及其余五项首次启动，保留原六项科学配置、源码、输入与所有旧锁。本报告不启用执行。实际优化步仍未知。
+
+2026-11-01T12:51:32.160256+00:00现场只读复核27个登记PID/启动身份均无匹配活跃进程。读取同UID必要进程命令元数据，未见与第三次取回源码对应的完整`python -c`参数匹配者，读取错误0。它当时未记远端PID/start，历史退出码和生命周期仍未知；本次未发任何信号。
+
+首项已知作用域现场枚举29文件，均与006封存摘要一致（含私有work权重的已留SHA）。输出仅9文件：config、encoder、三CSV、权重、字体缓存、train-runtime和internal-split。现场无encoder-before、features、preprocessing、head-initial、optimizer-separation、caco2_wang-head-best/last、training-state-last、重载证明或预测。目录枚举是源端新证据，非仅快照缺件；但缺件和检查点只在训练末保存的源码设计，不能证明零优化步。实际CUDA已在旧预检和train-runtime证明，最终冻结与学习成果未证明。完整断点所需head/optimizer/RNG/累计步不存在，当前科学入口也没有断点续训参数。
+
+其余五项全run学习锁现场仍不存在；六项拟用recovery-03路径均不存在。原first学习锁保留。六项仍是seed44/45/46×MSE/MAE早停监控、split43、单256层新头、lr0.0005等原配置，配置SHA及全部字段列于RECOVERY_PROPOSAL.json。
+
+候选manifest与13项结果SHA匹配，逐文件仅pipeline、phase_supervisor和新增resource_evidence改变；resource_checks与冻结/准入/科学代码未变。读回测试源码和原始集成事件：13项覆盖生产monitor、真实查询子进程、原始字节/退出/超时/异常、拒绝前留证、持久化失败与监督清理。Linux proc/GPU数据是合成夹具，尚无真GPU、attempt03、断点或完整六项恢复证明。本次未运行会写候选目录的测试入口。
+
+仅合入日志修复仍会被旧runtime挡住：recovery_gate只接受02且拒绝已消费学习锁，layout/batch/job/pipeline固定recovery-02，resource-resume已消费batch-intent。应由主控准备独立production-adapter-v4与recovery-03命名空间及明示的旧失败准入；首项原全run锁作为不可变历史回执保留，新attempt锁精确绑定其SHA与主控决定。五项首次学习各保持唯一登记。严禁删锁、换根伪装新科学run或让新namespace重置预算。
+
+具体路径、所需反例、一次重训额度及退出准则见RECOVERY_PROPOSAL.json。剩余执行5296.074905887725秒不变，截止14:50:04.502622Z不变。每项最大965秒，六项最长5790秒，超出剩余493.925094秒；本批没有成功完整训练时长可供可靠预估。建议原顺序单并发，实时按总剩余裁定allocation=min(965,remaining)，共用一个外层硬截止和累计账本；运行不足就明确未完成，不保证六项跑满。当前role截至报告337.818/360秒，累计active setup3557.078/3900秒，后续实现/准入/部署只能使用余量并仍需主控单独决定。

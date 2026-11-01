@@ -1,0 +1,87 @@
+"""Recompute ONLY published aggregate arithmetic. No labels, predictions or training.
+Input values are manual transcriptions of fixed published aggregate sources;
+this script does NOT certify the source-file byte hashes or official scorer parity.
+"""
+from pathlib import Path
+from decimal import Decimal, getcontext
+import json, math
+getcontext().prec=50
+ROOT=Path(__file__).resolve().parent
+ROWS='''ames|AUROC|.7966064051881135|.871945|1137|479|658|47.74239515253673|.8233869862343104|48.567891
+bbb_martins|AUROC|.8936738752174994|.927779|203|149|54|49.063793380368736|.9098655409631019|49.512597
+bioavailability_ma|AUROC|.7441860465116279|.722248|64|43|21|50.74800658658378|.6464915197871632|47.232619
+caco2_wang|MAE|.4260650306813186|.283647|91|||39.96649172308673|.315375512967033|47.351643
+clearance_hepatocyte_az|Spearman|.35760632366306705|.55204|122|||46.6588091006856|.2714868182127723|45.031866
+clearance_microsome_az|Spearman|.48732952225400383|.642814|111|||47.51633628553185|.5276252986089686|48.183395
+cyp2c9_substrate_carbonmangels|AUPRC|.42099418064714555|.44337|67|12|55|48.70564862277716|.37772762589531467|46.002767
+cyp2c9_veith|AUPRC|.7594504271256293|.790586|1210|406|804|48.99565028506755|.7450552251129954|48.517532
+cyp2d6_substrate_carbonmangels|AUPRC|.46377724431807144|.747531|67|14|53|38.28730188979796|.5979551517934315|44.441569
+cyp2d6_veith|AUPRC|.6907342342611147|.719172|1313|250|1063|48.9915015251426|.6387327486395475|47.038111
+cyp3a4_substrate_carbonmangels|AUROC|.7293906810035843|.725249|67|36|31|50.142361062250366|.6573236889692586|47.543518
+cyp3a4_veith|AUPRC|.877172798563802|.884121|1233|581|652|49.8027529126071|.8523130237639165|49.084101
+dili|AUROC|.8615384615384616|.908609|48|13|35|48.670434540503514|.8952173913043479|49.6288
+half_life_obach|Spearman|.0737000716718027|.49139|67|||41.85818203927695|-.06028022432597493|38.653943
+herg|AUROC|.8968253968253969|.863358|66|42|24|50.950679255518416|.8440353460972018|49.434148
+hia_hou|AUROC|.9666666666666667|.99428|58|48|10|49.29591829796493|.9008230452674897|47.534251
+ld50_zhu|MAE|1.0435887458260573|.603071|1937|||36.623898867307624|.6324707799986469|48.810247
+lipophilicity_astrazeneca|MAE|.53964650071|.472895|420|||46.7037647018323|.55134853335425|46.170172
+pgp_broccatelli|AUROC|.9054017737167428|.938363|122|61|61|49.10614339873701|.9082244734737404|49.18394
+ppbr_az|MAE|20.83183522548387|7.330617|279|||26.02975387692486|10.340929662522361|41.4826
+solubility_aqsoldb|MAE|11.113363941834361|.738443|2940|||6.230636422142964|.9529807767805007|43.658071
+vdss_lombardo|Spearman|-.016927405626888218|.660995|113|||37.180312502797065|.024143857333575595|38.141188'''
+B='https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/31a9bb2729ff1464bf6d4be1e23fcba0bf391725/experiments/training-breadth-strategy-20261101/'
+inputs=[]
+for line in ROWS.splitlines():
+    task,metric,m,r,n,p,neg,s,om,os=line.split('|')
+    inputs.append(dict(task=task,metric=metric,valid_metric=m,reference_metric=r,valid_n=int(n),valid_positive_count=int(p) if p else None,valid_negative_count=int(neg) if neg else None,published_inferred_valid_task_score=s,official_snapshot_metric=om,official_snapshot_displayed_task_score=os))
+assert len(inputs)==22 and len({x['task'] for x in inputs})==22
+assert sum(x['valid_n'] for x in inputs)==11735
+for x in inputs:
+    if x['valid_positive_count'] is not None:assert x['valid_positive_count']+x['valid_negative_count']==x['valid_n']
+def f(metric,m,r):
+    if metric=='MAE':return 100*r/(m+r)
+    if metric in ('AUROC','AUPRC'):return 100*m/(m+r)
+    if metric=='Spearman':return 100*(1+m)/(2+m+r)
+    raise ValueError(metric)
+def d(metric,m,r):
+    a,b=Decimal(m),Decimal(r)
+    if metric=='MAE':return Decimal(100)/(1+a/b)
+    if metric in ('AUROC','AUPRC'):return Decimal(100)/(1+b/a)
+    if metric=='Spearman':return Decimal(100)/(1+(1+b)/(1+a))
+    raise ValueError(metric)
+results=[]
+for x in inputs:
+    metric=x['metric'];m=float(x['valid_metric']);r=float(x['reference_metric'])
+    sf=f(metric,m,r);sd=d(metric,x['valid_metric'],x['reference_metric'])
+    mx=f(metric,0. if metric=='MAE' else 1.,r)
+    om=f(metric,float(x['official_snapshot_metric']),r)
+    scenario_m=m*.9 if metric=='MAE' else min(1.,m+(.05 if metric=='Spearman' else .01))
+    sc=f(metric,scenario_m,r)
+    results.append(dict(task=x['task'],metric=metric,score_float=sf,score_decimal=str(sd),float_decimal_abs_difference=abs(sf-float(sd)),published_abs_difference=abs(sf-float(x['published_inferred_valid_task_score'])),theoretical_task_max=mx,theoretical_local_headroom=mx-sf,aggregate_contribution_if_theoretically_perfect=(mx-sf)/22,official_score_recomputed=om,official_display_abs_difference=abs(om-float(x['official_snapshot_displayed_task_score'])),sensitivity_scenario={'not_forecast':True,'metric_value':scenario_m,'task_score_gain':sc-sf,'aggregate_score_gain':(sc-sf)/22}))
+base=math.fsum(x['score_float'] for x in results)/22
+base_d=sum(Decimal(x['score_decimal']) for x in results)/Decimal(22)
+base_caco=next(x['score_float'] for x in results if x['task']=='caco2_wang')
+official_mean=math.fsum(float(x['official_snapshot_displayed_task_score']) for x in inputs)/22
+variants=[]
+for run,m in [('mini22-chemeleon','.4260650306813186'),('hainan-frozen-training-20261031','.37862513598901104'),('hainan-skill-follow-20261031','.3891885939780218'),('hainan-index-cycle-20261031','.42147216141758237'),('hainan-mae-monitor-20261101','.40302117308791197')]:
+    score=f('MAE',float(m),.283647)
+    delta=(score-base_caco)/22
+    variants.append(dict(run_id=run,valid_mae=m,inferred_valid_task_score=score,inferred_valid_total_if_only_caco2_replaced=base+delta,aggregate_delta=delta,comparison_status='descriptive_not_causal'))
+output={'scope':'Arithmetic of already published aggregates only; no scorer, training or label access. Formula remains inferred and official AP parity unconfirmed.',
+ 'valid_record_count':sum(x['valid_n'] for x in inputs),'task_count':22,
+ 'valid_aggregate_float':base,'valid_aggregate_decimal':str(base_d),
+ 'max_float_decimal_abs_difference':max(x['float_decimal_abs_difference'] for x in results),
+ 'max_published_valid_score_abs_difference':max(x['published_abs_difference'] for x in results),
+ 'max_official_display_abs_difference':max(x['official_display_abs_difference'] for x in results),
+ 'official_display_mean':official_mean,'official_display_rounded':46.418,
+ 'theoretical_22_task_max':math.fsum(x['theoretical_task_max'] for x in results)/22,
+ 'perfect_caco2_only_local_valid_total':base+(100-base_caco)/22,
+ 'perfect_caco2_only_official_display_mean_total':official_mean+(100-47.351643)/22,
+ 'correction':'Prior ~48.81 ceiling is official-snapshot based, NOT local valid ceiling; local ceiling is computed separately.',
+ 'caco2_variants':variants,'tasks':results}
+prov={'kind':'manual_transcription_of_published_aggregates_not_original_file_bytes','scientific_snapshot':'2026-11-01T11:28:28.074304Z',
+ 'sources':[{'uri':B+'history/evaluations/mini22-scores.json','locator':'per_task[*].metric/value/sample_count/class_counts; 382 web lines'}, {'uri':B+'originals/N-32099e3fce4b5fa09189.json','locator':'tasks and aggregate; 195 web lines'}, {'uri':B+'originals/N-c68dbae0295309d2f4f2.json','locator':'per_task_tuples and inferred formulas; 320 web lines'}, {'uri':B+'history/evaluations/existing-caco2-scores.json','locator':'four fixed_score objects; 133 web lines'}], 'tasks':inputs}
+(ROOT/'numeric-inputs.json').write_text(json.dumps(prov,ensure_ascii=False,indent=2)+'\n')
+(ROOT/'numeric-recomputation.json').write_text(json.dumps(output,ensure_ascii=False,indent=2)+'\n')
+print(json.dumps({k:v for k,v in output.items() if k not in ('tasks','caco2_variants')},ensure_ascii=False,indent=2))
+print('Caco2 substitution:',[(x['run_id'],x['aggregate_delta']) for x in variants])

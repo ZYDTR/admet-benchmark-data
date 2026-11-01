@@ -1,0 +1,49 @@
+{
+  "at_epoch": 1793553295.789143,
+  "decision": "conditional_eligibility_for_serial_cached_head_calculation_on_GPU1",
+  "history_evidence_path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/controller/resource-reassessment-001/evidence.json",
+  "history_sha256": "00f9591b98fd5cdada0620a1360db74c52f2331ef7a25135fb4c23b63ba8ead2",
+  "source_files_hash_verified": true,
+  "record_count": 187,
+  "complete_numeric_records": 186,
+  "unique_timestamps": 186,
+  "initial_numeric_record_unknown": 1,
+  "history_device_compute_percent_values": [
+    0
+  ],
+  "resident_identity": {
+    "pid": "process-fb67c9fdc7e9",
+    "start_ticks": "process-26b69d599746"
+  },
+  "historical_device_used_mib": 72207,
+  "historical_device_free_mib": 8883,
+  "fresh_three_samples": "../gpu1-resource-summary-002.json",
+  "fresh_at": "2026-11-01T17:07:34.427067+00:00",
+  "equivalent_own_observed_framebuffer_peak_mib": 918,
+  "own_expected_framebuffer_mib": 1200,
+  "torch_allocator_cap_mib": 1024,
+  "own_total_observed_framebuffer_exit_mib": 2048,
+  "minimum_free_memory_during_calculation_mib": 6144,
+  "serial_only": true,
+  "per_step_idle_seconds": 0.5,
+  "sufficient_basis": "Long representative sampled idle residency with stable allocation, fresh healthy/idle matching identity, one small bounded cached-head workload consumes about1GiB of8.7GiB free leaving about7.7GiB; fresh qualification and own-only exit upon any observed resident activation/memory growth protects its resumption. This is a finite controlled job, not a claim of no possible future burst.",
+  "control": "Calibrated own-only monitor observe-calculation-v2.py; direct GPU and memory conditions unchanged, N/A retained unknown.",
+  "limitations": [
+    "Discrete history misses inter-sample activity",
+    "pmon N/A is unknown",
+    "Allocator cap excludes CUDA driver/context",
+    "Monitor has sample/command latency; not a hard GPU partition",
+    "No resident latency/throughput metric is available; observed idle/no activation and reserve constitute current judgment, not absolute zero-impact proof"
+  ],
+  "gpu0_prohibited": true,
+  "new_science": false,
+  "no_probe_of_other_service": true,
+  "prior_GPU1_attempt": {
+    "attempt": 2,
+    "elapsed_seconds": 3.874494835268706,
+    "learning_started": false,
+    "actual_strace_wait_exit": -15,
+    "trigger": "resident CPU +1 clock tick; original trigger treated any change as activation"
+  },
+  "calibration": "20 subsequent read-only samples over20.4s: same sleeping PID, stable72,207MiB/8,883MiB and zero device compute/memory utilization, CPU increased1tick at100Hz. One tick is demonstrated idle background CPU activity, not evidence of GPU demand. Permit delta<=3 ticks per sample, stop above3; prelaunch permit<=2 total ticks across3 fresh samples. Keep immediate exit on resident numericGPU SM>0, memory growth>16MiB,new PID,identity/health/query uncertainty."
+}

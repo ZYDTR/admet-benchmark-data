@@ -1,0 +1,79 @@
+"""Exact append-only receiver, including fresh per-slot candidates. No network."""
+import hashlib,io,json,os,re,stat,zipfile
+from pathlib import Path
+PREFIX='contract-follow-e2e-20261101/operator/resource-resume-01/'
+ALLOWED={'resume.py','contract.json','source-manifest.json','MAIN_ACCEPTANCE.json'}|{'slot-%02d/candidate.json'%x for x in range(1,4)}
+def canonical(root,path,mountinfo=None):
+    assert root.resolve(strict=True)==root and (path==root or root in path.parents)
+    assert path.resolve(strict=False)==path
+    for parent in (path,*path.parents):
+        if parent.exists() or parent.is_symlink():
+            info=parent.lstat();assert not stat.S_ISLNK(info.st_mode)
+            if stat.S_ISREG(info.st_mode):assert info.st_nlink==1
+    if mountinfo is None:
+        file=Path('/proc/self/mountinfo');mountinfo=file.read_text() if file.exists() else ''
+    for line in mountinfo.splitlines():
+        fields=line.split();assert len(fields)>=6
+        mount=Path(re.sub(r'\\([0-7]{3})',lambda m:chr(int(m[1],8)),fields[4]))
+        assert not ((mount==root or root in mount.parents) and (mount==path or mount in path.parents))
+    return path
+
+def collect(blob,manifest,digest):
+    assert 0<len(manifest)<=7 and len(blob)<=4*1024**2 and hashlib.sha256(blob).hexdigest()==digest
+    for name,item in manifest.items():
+        assert name.startswith(PREFIX) and name[len(PREFIX):] in ALLOWED and 0<=item['size']<=1024**2
+    with zipfile.ZipFile(io.BytesIO(blob)) as archive:
+        assert len(archive.namelist())==len(manifest) and set(archive.namelist())==set(manifest)
+        result={}
+        for item in archive.infolist():
+            mode=stat.S_IFMT(item.external_attr>>16)
+            assert not item.is_dir() and mode in (0,stat.S_IFREG) and not item.flag_bits&1
+            assert item.file_size==manifest[item.filename]['size']
+            value=archive.read(item.filename);assert len(value)==manifest[item.filename]['size'] and hashlib.sha256(value).hexdigest()==manifest[item.filename]['sha256'];result[item.filename]=value
+    return result
+
+def read_frame(stream,size):
+    assert 0<size<=4*1024**2
+    value=stream.read(size+1);assert len(value)==size,'truncated or extra transport bytes'
+    return value
+
+def append(base,data):
+    for name in data:
+        assert name.startswith(PREFIX) and name[len(PREFIX):] in ALLOWED
+        path=canonical(base,base/name);assert not path.exists() and not path.is_symlink()
+    for name,value in data.items():
+        path=canonical(base,base/name);path.parent.mkdir(parents=True,exist_ok=True);canonical(base,path.parent)
+        with path.open('xb') as stream:stream.write(value);stream.flush();os.fsync(stream.fileno())
+
+def verify_prior(base,cfg):
+    assert cfg['execution_enabled'] is True and len(cfg['protected_files'])==689
+    assert cfg['main_thread']=='private-role-298cc5edc25e'
+    for name,item in cfg['protected_files'].items():
+        p=canonical(base,base/name);assert p.stat().st_size==item['size'] and hashlib.sha256(p.read_bytes()).hexdigest()==item['sha256']
+    for old in cfg['old_identities']:
+        p=Path('/proc')/str(old['pid'])/'stat'
+        try:v=p.read_text().rsplit(')',1)[1].split()
+        except FileNotFoundError:continue
+        ticks=str(old.get('start_ticks') or old['start_stat'].rsplit(')',1)[1].split()[19]);assert v[19]!=ticks or v[0] in ('Z','X')
+    for root in cfg['run_roots']:
+        p=canonical(base,Path(root)/'state/learning-started.lock');assert not p.exists()
+    for name in ('batch-lifetime.lock','batch-state.json','host-batch-start.lock'):
+        assert not canonical(base,base/'contract-follow-e2e-20261101/state/recovery-02'/name).exists()
+    assert not canonical(base,base/'contract-follow-e2e-20261101/state/resource-resume-01/batch-intent.json').exists()
+
+
+import socket,sys
+assert socket.gethostname().split('.')[0]=='project-compute' and os.getuid()==os.getgid()==1012
+BASE=Path('<AUTHORIZED_PROJECT_ROOT>/admet')
+MANIFEST={'contract-follow-e2e-20261101/operator/resource-resume-01/resume.py': {'size': 18317, 'sha256': '43de3839ad37dd3550aa2e4b56d4b0169ab5b85543bb39b25f4050f6488d28a0'}, 'contract-follow-e2e-20261101/operator/resource-resume-01/contract.json': {'size': 149111, 'sha256': 'cff94bdf00354d59d9bee966d15967a26195de16df32d7e6786901c2b419cecf'}, 'contract-follow-e2e-20261101/operator/resource-resume-01/source-manifest.json': {'size': 253, 'sha256': 'f615fdc304accab9a01af737eab921fc1ea694976a437d1c0f86f6f0a11244c5'}, 'contract-follow-e2e-20261101/operator/resource-resume-01/MAIN_ACCEPTANCE.json': {'size': 2166, 'sha256': '82f192a6b6cd6161c2bb2067f8894e9fe80ec090d841c69a080ab176b4bd467e'}, 'contract-follow-e2e-20261101/operator/resource-resume-01/slot-01/candidate.json': {'size': 79, 'sha256': 'edb95ebb55011e07d2c39df053aaaf3eab5e6af9891681efdb5ce1f7a5119749'}}
+data=collect(read_frame(sys.stdin.buffer,22950),MANIFEST,'864fc7c08f80ae4ea1e2d3fc488df66c178b1b3a733c823ed359371342fb5241')
+cfg_bytes=data.get(PREFIX+'contract.json')
+if cfg_bytes is None:cfg_bytes=canonical(BASE,BASE/(PREFIX+'contract.json')).read_bytes()
+assert hashlib.sha256(cfg_bytes).hexdigest()=='cff94bdf00354d59d9bee966d15967a26195de16df32d7e6786901c2b419cecf'
+cfg=json.loads(cfg_bytes)
+verify_prior(BASE,cfg)
+for name,value in data.items():
+ if name.endswith('/candidate.json'):
+  v=json.loads(value);assert set(v)=={'gpu_index','gpu_uuid'} and type(v['gpu_index']) is int and 0<=v['gpu_index']<8 and re.fullmatch('GPU-[0-9a-f-]{36}',v['gpu_uuid'])
+append(BASE,data)
+print(json.dumps({'exact_append_complete':True,'files':MANIFEST,'training_started':False}))

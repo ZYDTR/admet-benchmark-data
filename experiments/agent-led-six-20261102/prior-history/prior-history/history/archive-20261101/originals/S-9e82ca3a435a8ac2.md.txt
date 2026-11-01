@@ -1,0 +1,16 @@
+# Qwen 单轮准备：独立验收未通过
+
+验收对象：session `<PRIVATE_SESSION_OBJECT>`；收到的原消息摘要与登记请求相符，最终 assistant 正常 stop。原始消息、文件和哈希冻结在 `frozen-opencode-20261031/`。本次未训练、未预测、未评分、未读取私有标签、未安装或下载。
+
+## 阻断问题
+
+1. **盲输入身份被错误拒绝。** `train_remote_v4.py:133` 只允许 train 的 Drug_ID 重复；`training_science.py:201` 和 `:218` 分别拒绝空 ID 与重复 ID，违背所有分区空 ID 和重复 ID 可保留的合同。独立核对获准盲输入：valid 存在 2 个重复 ID 值、test 存在 4 个；只读 ID、Drug 并确认盲输入没有 Y 列。构造两行同 ID 盲输入，实际调用生产 helper 得到 `PreparationError: duplicate Drug_ID`；合成空 ID 也被拒绝。因而现有真实 valid 会在模型运行前失败。
+2. **优化器和随机状态不完整。** `training_science.py:465` 的 `optimizer_payload` 只保存参数组及 step，丢失 AdamW 的一阶/二阶矩，且将 param_groups 包成额外一层 list；合成状态检查实测丢失 `exp_avg`。`train_remote_v4.py:332` 保存的随机状态仅有 Python/numpy，不包含 PyTorch CPU/CUDA 或独立 `torch.Generator`，无法按合同恢复轨迹；真实 torch step 是 tensor 时，JSON hash 序列化能否通过未实测。
+3. **最佳检查点身份不准确。** `train_remote_v4.py:330` 给 best head 记录的是训练结束时的 steps，而非最佳轮次对应的 steps；`optimizer` 类型亦在 :219 固定 AdamW 而非来自显式配置。
+
+## 已验证与未验证
+
+- 输入 6 项和交付清单 7 项 SHA-256 独立核对一致，原始输入未修改；冻结包含 158 个准备方留下的 bytecode 缓存，均作为原件保留。
+- 三份 Python 文件可 AST 解析；对生产 helper 的合成组划分独立检查通过：可重复、覆盖、互斥，重复原始 Drug 同组。
+- 原始消息共 51 条，检查摘要见 `frozen-opencode-20261031/manifest.json`。准备环境 torch 缺失；没有执行任何训练入口、GPU、特征提取或 torch 存取验证。助手的 48 项结果是其报告，未作为本次独立验收通过证据。
+- 无法从静态代码证明真实训练、底座冻结、恢复及 CUDA 端到端行为。不得将本交付视为可执行训练包；建议来源主控在获授权范围内修复身份、完整状态保存和检查点身份后重新独立验收，不扩大模型或数据权限。

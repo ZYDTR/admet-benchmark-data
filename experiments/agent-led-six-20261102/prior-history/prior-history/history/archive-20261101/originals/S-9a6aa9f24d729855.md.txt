@@ -1,0 +1,62 @@
+# 本地运行包装准备结果
+
+`source_work_complete: true`。状态为 `local_prepared_waiting_main_admission`。
+本阶段只有本地准备，生产默认 profile 的 `execution_enabled` 保持 `false`。
+没有连接海南、部署、调用科学 main、编码/模型推理、fit/backward/step、依赖安装、读取私有 valid 真值/评分或上传。
+
+## 交付
+
+- 有限外层入口：`source/production-adapter-v1/job_waiter.py`，等待实际 pipeline OS 退出并记账。
+- 默认关闭配置：`source/production-adapter-v1/adapter-profile.json`。
+- 22 文件运行源码摘要：`source/production-adapter-v1/source-manifest.json`。
+  SHA256 为 `ee05673669f7f02670f620451cb46271410b575f189d11cba3c9f07bdc9032ba`。
+- 未来部署布局：`deployment-layout.json`，42 个精确文件及目标位置，不含任何 checks、PID、锁、旧完成凭据。
+- 关闭的执行配置、主控 dispatch 与 normalized binding 模板分别为
+  `execution-profile.template.json`、`formal-dispatch.template.json`、`admission-binding.template.json`。
+  它们是待正式绑定的模板，不是本阶段执行授权。
+- 权威四科学文件及原 flat-map manifest 全部保持原字节。runner/helper/config
+  未来分别放在 `source/`，encoder 放在 run 根；映射见 `science-binding.json`。
+
+`readiness.json` 给出实际绝对入口、未来目标命令、证据路径/摘要与耗时。
+当前未创建真实执行 profile、GPU 身份或正式执行消息。
+
+## 关键行为
+
+新 run 不依赖旧 v1 失败、旧 PID、旧锁或 recovery 前提。只复用经摘要核验的运行参考源码；
+首次学习锁与作业/阶段身份凭据保持独立。只有外层 CUDA/存取预检通过、学习产物不存在并取得
+独占首次学习锁，才能进入学习。返回 0、旧 train-complete 或进程启动本身均不能满足完成条件。
+
+准入核验原科学 acceptance/manifest、PLAN、全部冻结规范、运行源码 manifest、数据/权重摘要和
+单作业正式派发。新增 `runtime_source_manifest_sha256` 必须在正式派发中绑定；该摘要独立于原四文件
+科学 manifest。可选 preload 仍需另绑 runtime artifacts；复制的旧二进制本机未加载/编译。
+
+保护环境及 Linux 限制在 helper 顶层 NumPy 导入之前建立。未来预检必须通过真实 Tensor、optimizer
+payload、RNG 的 weights_only 存取；这是零参数更新探针。未来训练返回后还必须验证实际 best/last/
+optimizer/RNG checkpoint，才能生成完成凭据。MSE loss 与获准科学代码均未改变；MAE 选轮字段、旧
+best-MSE 前缀最小值和 checkpoint 当轮 MSE 分别核验。
+
+资源监控保留实际确认的 Z/X 缺 VmRSS 修复，活跃/未知缺字段、负值及解析错误仍失败。
+失败、超时、取消、缺失凭据逐层传播非零码，只清理登记的自有进程。
+
+## 本地检查
+
+- 20 项包装检查通过，其中 17 个真实 toy 子进程流程覆盖 fail-fast、退出传播、凭据身份、产物篡改、首次学习锁和重复启动。
+- 11 项 proc 夹具通过，含 Z/X、S→Z/X 分次读取、活跃/未知缺 RSS、负值/异常值和进程消失。
+- 8 项有限等待器检查通过：六个实际外层退出 0/7/124/125/126/143，加重复启动锁与默认生产门关闭。
+- 实际生产独立函数检查通过：真实 CSV 637/91/182 行、573/64 无 raw-Drug 交叉的确定性内部划分、原权重 size/MD5/SHA、配置与旧接口签名。
+- 两种 monitor 各 best/last 共四组实际生产 `save_head` 定义元数据检查通过，含旧 best-MSE 误写和当轮 MSE 混淆的拒绝反例。
+- 13 项准入反例拒绝通过；最终 42 文件精确部署布局也用实际运行 manifest 通过纯函数准入检查。
+- 20 个 Python 文件 AST 语法通过。所有已读取不可变源与旧参考摘要保持一致，详见 `immutable-source-check.json`。
+
+详细原件见 `readiness.json` 内的各检查路径。假学习文件是 inert bytes；checkpoint 元数据用显式
+metadata-only serializer。它们没有被当作真实 Tensor 存取验收。
+
+## 未验证与下一门槛
+
+本机解释器没有 NumPy/Torch，未安装依赖；helper/runner 全模块导入、NumPy 数值接口、真实 Tensor/
+optimizer/RNG 存取、CUDA/encoder/model 执行及本次 target Linux Landlock/strace 尚未验证。
+本次没有新鲜目标资源、环境一致性、真实写入轨迹、训练产物和进程释放证据。预算仍须区分目标、
+监测退出阈值与实际 OS 强制限额；本地检查不授予这些事实通过。
+
+主控复核精确源码/布局后，才能另行发出本 run 唯一作业的正式部署/执行指令。
+本角色回传一次结果后等待，不创建计时器、常驻循环或后续训练。

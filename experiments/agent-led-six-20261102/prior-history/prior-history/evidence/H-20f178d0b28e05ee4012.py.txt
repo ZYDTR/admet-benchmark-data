@@ -1,0 +1,35 @@
+from pathlib import Path
+import sys,json,io,zipfile,hashlib,importlib.util,time
+P=Path(__file__).resolve().parent;OP=P.parent;Q=OP/'resource-resume-main-v1'
+sys.path.insert(0,str(OP));import transport
+transport.EVIDENCE=P/'raw';transport.RUN=P
+task=json.loads((OP.parent/'recovery-03/EXECUTE_TASK.json').read_text())
+assert time.time()-1793535733<600
+spec=importlib.util.spec_from_file_location('admitted_package',Q/'source/package.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+prefix=m.PREFIX
+data={prefix+k:Path(v).read_bytes() for k,v in task['initial_append'].items()}
+data[prefix+'slot-01/candidate.json']=(P/'candidate.json').read_bytes()
+manifest={k:{'size':len(v),'sha256':hashlib.sha256(v).hexdigest()} for k,v in data.items()}
+stream=io.BytesIO()
+with zipfile.ZipFile(stream,'w',zipfile.ZIP_DEFLATED) as archive:
+ for k,v in data.items():archive.writestr(k,v)
+payload=stream.getvalue();digest=hashlib.sha256(payload).hexdigest()
+receiver=m.make_receiver(manifest,len(payload),digest,task['contract']['sha256'])
+(P/'receiver-exact.py').write_text(receiver);(P/'payload.zip').write_bytes(payload);(P/'append-manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+source='''import sys,os,json,subprocess,time,hashlib
+from pathlib import Path
+def identity(pid):
+ value=(Path('/proc')/str(pid)/'stat').read_text();return {'pid':pid,'start_stat':value,'start_ticks':value.rsplit(')',1)[1].split()[19]}
+started=time.monotonic();parent=identity(os.getpid());data=sys.stdin.buffer.read()
+command=['python3','-I','-B','-c',RECEIVER]
+child=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+own=identity(child.pid);out,err=child.communicate(data,timeout=45)
+print(json.dumps({'launcher_identity':parent,'receiver_identity':own,'actual_receiver_OS_exit':child.returncode,'stdout':out.decode('utf-8','replace'),'stderr':err.decode('utf-8','replace'),'elapsed_seconds':time.monotonic()-started}))
+raise SystemExit(child.returncode)
+'''.replace('RECEIVER',repr(receiver))
+(P/'receiver-launcher-remote.py').write_text(source)
+raw=transport.remote_once(source,'exact-append',payload=payload,timeout=55)
+(P/'append-result.json').write_bytes(raw)
+out=json.loads(raw);assert out['actual_receiver_OS_exit']==0
+receipt=json.loads(out['stdout']);assert receipt['exact_append_complete'] is True and receipt['files']==manifest
+print(json.dumps({'append_files':len(manifest),'actual_receiver_OS_exit':out['actual_receiver_OS_exit'],'receiver_pid':out['receiver_identity']['pid'],'setup_spent_seconds':time.time()-1793535733}))

@@ -1,0 +1,47 @@
+{
+  "request_id": "admet-monitor-mae-e2e-20261101:main:resume-residual:v4",
+  "run_id": "hainan-mae-monitor-20261101",
+  "updated_at": "2026-11-01T03:39:05.766837+00:00",
+  "human_steering": "User asks observer and Hainan training to directly exchange resource updates; main handles task/code admission, substantive faults and final acceptance. User rejects zero-memory requirements: use forecast demand/headroom and non-interference, sharing allowed after qualification.",
+  "resource_observer_thread": "private-role-30ee14458d35",
+  "execution_thread": "private-role-78713649c4c9",
+  "controller_thread": "private-role-298cc5edc25e",
+  "live_state_path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101/operator/execution-04/status.json",
+  "dispatch_path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/acceptance/residual-memory-v4/dispatch.json",
+  "deadline_utc": "2026-11-01T05:59:12.742475+00:00",
+  "routine_resource_notification_target": "execution_thread_only",
+  "routine_main_notification": false,
+  "wake_only_state": "waiting_for_resources",
+  "skip_states": [
+    "dispatch_pending",
+    "checking",
+    "deploying",
+    "preflight",
+    "training",
+    "collecting",
+    "completed",
+    "failed",
+    "budget_expired"
+  ],
+  "unknown_state": "record uncertainty; never assume waiting",
+  "notification_fields": [
+    "same request_id/run_id",
+    "observation_id/time",
+    "candidate UUID and raw evidence paths/hash",
+    "explicit existing-task-only signal"
+  ],
+  "execution_action": "Read new record, reconcile original operation, directly recheck. Continue only original bound code/budget and remaining learning count. No resending ambiguous mutations.",
+  "main_callback_conditions": [
+    "training completed with evidence",
+    "substantive fault requiring code/policy change",
+    "budget deadline or human blocker"
+  ],
+  "observer_cannot": [
+    "create training or changeparameters",
+    "grant new budget",
+    "touch other work",
+    "notify unrelated threads"
+  ],
+  "new_timer": false,
+  "notification_dedup": "request+waiting_generation+candidateUUID+meaningful evidence transition; one initial qualifying notice on entering wait, unchanged no repeat"
+}

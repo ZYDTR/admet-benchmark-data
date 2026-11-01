@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "run_id": "hainan-paired-mae-s46-20261101",
+  "purpose": "authorized six-run paired monitor trial; main science and local runtime admitted",
+  "authorization": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/control/authorization.json",
+  "executor_role": "explicitly_authorized_host_operator",
+  "model": "CheMeleon_frozen_plus_MLP",
+  "pretrained_backbone_frozen": true,
+  "pretrained_backbone_path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/assets/chemeleon_mp.pt",
+  "pretrained_backbone_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+  "training_labels": "official_train_only",
+  "validation_labels_allowed": false,
+  "external_labels_allowed": false,
+  "test_fitting_allowed": false,
+  "new_cleaning_allowed": false,
+  "official_upload_allowed": false,
+  "task": "caco2_wang",
+  "device": "cuda",
+  "max_concurrent_jobs": 1,
+  "remote_directory": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-paired-mae-s46-20261101",
+  "inputs": [
+    {
+      "role": "train",
+      "task": "caco2_wang",
+      "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/execution/data/official/data_benchmark/caco2_wang/train.csv",
+      "sha256": "3061c58d3601d081e5459a2de03dc1d189243c4b5683d1b7288577a29fed4d6f",
+      "rows": 637
+    },
+    {
+      "role": "validation",
+      "task": "caco2_wang",
+      "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/execution/data/blind_validation/caco2_wang/valid.csv",
+      "sha256": "41370e87d89a96a7481425dae1bf7c45184bd116b353e96719b2afcd0a8a5ca3",
+      "rows": 91
+    },
+    {
+      "role": "test",
+      "task": "caco2_wang",
+      "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/execution/data/official/data_benchmark/caco2_wang/test.csv",
+      "sha256": "d87dac944bedcefb216bce57ba5a8de93d3781172c66653b937e5065b9c2579c",
+      "rows": 182
+    }
+  ],
+  "head_config": {
+    "hidden_dims": [
+      256
+    ],
+    "dropout": 0.1,
+    "lr": 0.0005,
+    "weight_decay": 0.0001,
+    "batch_size": 128,
+    "epochs": 50,
+    "patience": 8,
+    "val_fraction_from_train": 0.1,
+    "seed": 46
+  },
+  "resource_budget": {
+    "gpu_count": 1,
+    "gpu_peak_target_mib": 4096,
+    "cpu_threads": 2,
+    "dataloader_workers": 0,
+    "ram_target_gib": 8,
+    "training_timeout_seconds": 900,
+    "setup_budget_seconds": 3600,
+    "dependency_download_budget_gib": 0,
+    "result_budget_gib": 1,
+    "limits_are_targets_until_enforcement_verified": true,
+    "setup_budget_scope": "shared_runtime_preparation_budget_all_six_not_per_run"
+  },
+  "reference_source": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101/raw/execution-04/remote-snapshot/source",
+  "policy_sha256": "2caaacda612fe825633d2215ac87c323b4e26fd9db5dc9b652721cfdfff10414",
+  "hainan_skill_sha256": "9ac7ef264137cb82d11a595df9c4e50d0e587de972b8bbe4ca877a6a906367e3",
+  "requirements": [
+    "Read skill before any remote action",
+    "Fresh prelaunch resource/process checks",
+    "Actual GPU encoder and head execution",
+    "Frozen in-memory parameters and buffers before/after",
+    "Optimizer encoder/head parameter identity separation",
+    "Nonzero head update",
+    "All writes and caches inside task root; trace or equivalent audit",
+    "Exit status and own process release",
+    "No private valid labels or real scoring",
+    "One job; no nested delegation"
+  ],
+  "existing_environment_readonly": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/venv",
+  "gpu_selection": "Bind current qualifying UUID/index only after future main dispatch and fresh resource observation",
+  "split_config": {
+    "method": "raw_smiles_group_shuffle",
+    "seed": 43,
+    "validation_fraction": 0.1
+  },
+  "scientific_code_admission": {
+    "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-paired-mae-s46-20261101/admission/MAIN_ACCEPTANCE.json",
+    "sha256": "089482e83325a2d3c83147a26c1c971506f73d15f6409b68955d09412a242f72"
+  },
+  "execution_gate": "requires_main_science_and_runtime_acceptance_and_formal_dispatch",
+  "cycle_id": "contract-follow-e2e-20261101",
+  "process_evidence": [
+    "same_mode_fit_stop_mae_mse",
+    "train_predictions",
+    "best_and_last_head",
+    "last_optimizer_rng",
+    "config_and_feature_identity"
+  ],
+  "monitor": "internal_validation_raw_mae",
+  "loss": "standardized_mse",
+  "runtime_code_admission": {
+    "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/training/RUNTIME_ACCEPTANCE.json",
+    "sha256": "477e4ba537d55bab018087f5fd116284d31204df2c03fd79eca80359ff62f054"
+  },
+  "batch_request_sha256": "03ba9526ab3505c2f2dff8727ce6ddc8536c8763ad47cc1a8ebdab06d99c453f",
+  "training_skill_sha256": "a6ad8b347bfe1cd156335627ce35f2a092f24c3a57309313745ba865554f0c34",
+  "candidate_config_sha256": "ff2b991e736d805513775cc93c2dc77d4cd1204efa4ce3ccf1366e3110c58e13",
+  "scientific_source_status": "main_scientific_source_admitted",
+  "batch_budget": {
+    "order": 5,
+    "runs": 6,
+    "sequential": true,
+    "total_gpu_execution_seconds": 5400,
+    "all_attempts_and_phases_count": true,
+    "overall_deadline_utc": "2026-11-01T14:50:04.502622+00:00"
+  },
+  "current_task_scope": "formal_target_execution_after_current_identity_resource_and_preflight_checks"
+}

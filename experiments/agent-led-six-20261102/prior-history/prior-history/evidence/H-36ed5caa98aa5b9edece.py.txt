@@ -1,0 +1,100 @@
+"""Main-only read-only review of frozen execution006 evidence; no ML or network."""
+import datetime
+import hashlib
+import importlib.util
+import json
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+T = HERE.parents[1]
+E = T / 'operator/resource-resume-execution-05'
+S = E / 'remote-snapshot'
+M = T / 'operator/resource-resume-main-v1'
+
+
+def sha(p):
+    return hashlib.sha256(p.read_bytes()).hexdigest()
+
+
+def read(p):
+    return json.loads(p.read_text())
+
+
+post = read(E / 'postcheck.json')
+contract = read(M / 'contract.enabled.json')
+assert {x['path'] for x in post['protected']} == set(contract['protected_files'])
+hash_only = []
+for x in post['protected']:
+    v = contract['protected_files'][x['path']]
+    assert all(x[k] == v[k] for k in ['size', 'sha256'])
+    p = S / x['path']
+    if p.exists():
+        assert p.stat().st_size == x['size'] and sha(p) == x['sha256']
+    else:
+        assert Path(x['path']).parts[1:] == ('assets', 'chemeleon_mp.pt')
+        assert x['sha256'] == 'c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651'
+        hash_only.append(x)
+for x in post['append']:
+    assert (S / x['path']).stat().st_size == x['size'] and sha(S / x['path']) == x['sha256']
+for x in post['prior']:
+    assert sha(S / 'contract-follow-e2e-20261101' / x['path']) == x['sha256'] == contract['prior_files'][x['path']]['sha256']
+ids = {(x['pid'], str(x['start_ticks'])) for x in post['processes']}
+assert len(ids) == 27 and all(x['state'] == 'absent_now' for x in post['processes'])
+assert all(x['actual_OS_exit'] == 0 for x in post['gpu_queries'])
+xml = ET.fromstring(post['gpu_queries'][0]['stdout'])
+assert xml.findtext('gpu/uuid') == '<REGISTERED_GPU>'
+assert not xml.findall('gpu/processes/process_info')
+source = T / 'operator/runtime-recovery-main-v1/source/production-adapter-v3/trace_contract.py'
+spec = importlib.util.spec_from_file_location('admet_main_trace', source)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+
+
+class MappedTrace:
+    """Read local bytes while retaining the original remote pathname namespace."""
+    def __init__(self, path, remote_root):
+        self.path, self.remote_root = path, remote_root
+
+    def open(self, *args, **kwargs):
+        return self.path.open(*args, **kwargs)
+
+    def relative_to(self, root):
+        assert str(root) == self.remote_root
+        return self.path.relative_to(S / Path(self.remote_root).name)
+
+
+root = '<AUTHORIZED_PROJECT_ROOT>/admet/hainan-paired-mse-s44-20261101'
+traces = []
+for phase in ['preflight', 'train']:
+    p = S / Path(root).name / 'raw/recovery-02/attempt-02' / phase / 'write.strace'
+    traces.append(module.verify_trace(Path(root), MappedTrace(p, root)))
+profiles = []
+for remote_root in contract['run_roots']:
+    name = Path(remote_root).name
+    old = read(S / name / 'operator/recovery-02/execution-profile.json')
+    p = S / name / 'operator/resource-resume-01/slot-01/profile.json'
+    new = read(p)
+    changes = {k for k in set(old) | set(new) if old.get(k) != new.get(k)}
+    assert changes == {'gpu_index', 'gpu_uuid'}
+    profiles.append({'run_id': name, 'changes': sorted(changes), 'new_sha256': sha(p)})
+result = {
+    'recorded_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    'protected_actual_local_bytes_verified': len(post['protected']) - len(hash_only),
+    'protected_remote_hash_reports_checked': len(post['protected']),
+    'protected_weights_not_downloaded': hash_only,
+    'new_append_actual_bytes_verified': len(post['append']),
+    'old_failure_actual_bytes_verified': len(post['prior']),
+    'recorded_process_identities_absent_at_postcheck': len(ids),
+    'selected_GPU_empty_at_postcheck': True, 'postcheck_at': post['at'],
+    'trace_parser_source_sha256': sha(source),
+    'independently_replayed_traces': traces, 'profile_deltas_verified': profiles,
+    'scope': 'recorded queries/identities and narrow file trace only; not whole host',
+    'unknowns': ['optimizer updates', 'final encoder parameters and buffers',
+                 'causal rejected GPU observation', 'third retrieval reader remote exit'],
+    'scientific_pass': False, 'native_turn_duration_ms': 885573,
+}
+(HERE / 'INDEPENDENT_CHECKS.json').write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
+print(json.dumps({'status': 'checked', 'local_protected_files': len(post['protected']) - len(hash_only),
+                  'remote_hash_only_weights': len(hash_only), 'trace_count': len(traces),
+                  'profiles': len(profiles), 'scientific_pass': False}))

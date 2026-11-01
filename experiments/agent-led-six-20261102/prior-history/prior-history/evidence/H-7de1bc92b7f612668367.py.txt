@@ -1,0 +1,23 @@
+from pathlib import Path
+import json,zipfile,hashlib,importlib.util
+P=Path(__file__).resolve().parent;OP=P.parent;DEST=P/'remote-snapshot';DEST.mkdir()
+with zipfile.ZipFile(P/'remote-snapshot.zip') as archive:
+ manifest=json.loads(archive.read('fetch-manifest.json'));omitted=json.loads(archive.read('omitted-files.json'))
+ assert len(archive.namelist())==len(manifest)+2 and len(set(archive.namelist()))==len(archive.namelist())
+ for name,item in manifest.items():
+  path=Path(name);assert not path.is_absolute() and '..' not in path.parts
+  data=archive.read(name);assert len(data)==item['size'] and hashlib.sha256(data).hexdigest()==item['sha256']
+  target=DEST/path;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
+(P/'remote-fetch-manifest.json').write_text(json.dumps(manifest,indent=2)+'\n');(P/'remote-omitted-files.json').write_text(json.dumps(omitted,indent=2)+'\n')
+spec=importlib.util.spec_from_file_location('admitted_trace',OP/'runtime-recovery-main-v1/source/production-adapter-v3/trace_contract.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+class RetrievedPath:
+ def __init__(self,local,relative):self.local=local;self.relative=relative
+ def open(self,*a,**kw):return self.local.open(*a,**kw)
+ def relative_to(self,root):return self.relative
+audits=[]
+for path in DEST.rglob('write.strace'):
+ relative=path.relative_to(DEST);run=relative.parts[0]
+ # Evaluate writes against original target root rather than local retrieval directory.
+ result=m.audit_trace(RetrievedPath(path,Path(*relative.parts[1:])),Path('<AUTHORIZED_PROJECT_ROOT>/admet')/run);result['run_id']=run;audits.append(result)
+(P/'trace-audit.json').write_text(json.dumps(audits,indent=2)+'\n')
+print(json.dumps({'verified_snapshot_files':len(manifest),'omitted_weight_hashes':omitted,'trace_summaries':[{'run_id':a['run_id'],'path':a['path'],'outside':len(a['outside_mutation_evidence']),'unresolved':a['unresolved_count'],'pending':len(a['pending_at_eof']),'denied':a['denied_counts']} for a in audits]},ensure_ascii=False))

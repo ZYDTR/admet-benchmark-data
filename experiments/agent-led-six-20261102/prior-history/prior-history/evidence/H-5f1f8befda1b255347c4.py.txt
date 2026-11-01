@@ -1,0 +1,20 @@
+"""Attempt02 paths; science bytes are copied, never rewritten or linked."""
+from pathlib import Path
+from adapter_common import generic
+RAW='raw/recovery-02'
+STATE='state/recovery-02'
+SCIENCE='outputs/recovery-02'
+def science_root(root):return Path(root)/SCIENCE
+def prepare_science_workspace(root):
+    root=Path(root);work=generic.safe(root,science_root(root));work.mkdir(parents=True,exist_ok=True)
+    for name in ('raw','artifacts','state','source','data','assets'):
+        generic.safe(root,work/name).mkdir(exist_ok=True)
+    for name in ('source/config.json','encoder.py','data/train.csv','data/valid.csv','data/test.csv','assets/chemeleon_mp.pt'):
+        source=generic.safe(root,root/name,True);target=generic.safe(root,work/name)
+        if target.exists():
+            assert generic.sha(target)==generic.sha(source),'attempt input-copy drift'
+        else:
+            with source.open('rb') as incoming,target.open('xb') as outgoing:
+                for block in iter(lambda:incoming.read(1024*1024),b''):outgoing.write(block)
+        assert target.stat().st_nlink==1 and generic.sha(target)==generic.sha(source)
+    return work

@@ -1,0 +1,94 @@
+"""Read-only structures/provenance review; no model/pickle or returned code execution."""
+import ast, collections, csv, datetime, hashlib, io, json, math, struct, time, zipfile
+from pathlib import Path
+R = Path('<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/retrieval/stable-two-001')
+T = json.loads((R / 'RETRIEVAL_TASK.json').read_text())
+start = time.monotonic()
+
+def sha(b):
+    return hashlib.sha256(b).hexdigest()
+
+def load(p):
+    return json.loads(p.read_text())
+
+def rows(p):
+    return list(csv.DictReader(io.StringIO(p.read_text(encoding='utf-8-sig'), newline='')))
+
+def dump(p, x):
+    p.write_text(json.dumps(x, ensure_ascii=False, indent=2, allow_nan=False) + '\n')
+result = {'at': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'runs': [], 'attempts': [], 'containers': [], 'source_code_executed': False, 'model_or_pickle_loaded': False}
+source_by_run = {}
+for run in T['successful_attempts']:
+    full = R / 'snapshot' / run['run_id']
+    root = full / Path(run['remote_success_root']).name
+    config = load(root / 'source/config.json')
+    e = load(root / 'artifacts/training-evidence.json')
+    split = load(root / 'artifacts/internal-split.json')
+    train = rows(root / 'data/train.csv')
+    valid = rows(root / 'data/valid.csv')
+    test = rows(root / 'data/test.csv')
+    assert len(train) == 637 and len(valid) == 91 and (len(test) == 182)
+    assert set(train[0]) == {'Drug_ID', 'Drug', 'Y'} and set(valid[0]) == set(test[0]) == {'Drug_ID', 'Drug'}
+    for inp in config['inputs']:
+        assert sha((root / inp['path']).read_bytes()) == inp['sha256']
+    assert sha((root / 'source/config.json').read_bytes()) == e['config_sha256']
+    assert config['run_id'] == e['run_id'] == run['run_id']
+    fit = split['fit_row_indices']
+    stop = split['stop_row_indices']
+    assert len(fit) == 573 and len(stop) == 64 and (len(set(fit)) == 573) and (len(set(stop)) == 64) and set(fit).isdisjoint(stop) and (set(fit) | set(stop) == set(range(637)))
+    assert {train[i]['Drug'] for i in fit}.isdisjoint({train[i]['Drug'] for i in stop})
+    assert split['seed'] == config['split_config']['seed'] == 43 and split['method'] == 'raw_smiles_group_shuffle'
+    assert load(root / 'artifacts/encoder-before.json') == load(root / 'artifacts/encoder-after.json')
+    for key in ['encoder_state_unchanged', 'encoder_gradients_none', 'encoder_eval', 'encoder_parameters_frozen', 'encoder_checkpoint_sha256_unchanged']:
+        assert e[key] is True
+    opt = e['optimizer_separation']
+    assert opt['optimizer_exactly_head'] is True and opt['optimizer_encoder_intersection'] == 0 and (opt['encoder_requires_grad_count'] == 0) and (opt['encoder_training'] is False)
+    assert e['optimizer_steps'] == e['nonzero_gradient_steps'] > 0 and len(e['history']) == e['epochs_run']
+    assert e['head_initial_sha256'] != e['head_final_sha256']
+    assert any((v > 0 for v in e['head_changed_max_abs_by_tensor'].values()))
+    assert e['official_validation_scoring'] is False and e['test_fitting'] is False
+    for name, h in e['saved_heads'].items():
+        assert sha((root / h['path']).read_bytes()) == h['sha256'], 'saved-head identity mismatch'
+    forward = e['encoder_forward_events']
+    assert all((x['grad_enabled'] is False and x['training'] is False for x in forward))
+    source_by_run[run['run_id']] = {name: sha((root / 'artifacts' / ('features-' + name + '.npz')).read_bytes()) for name in ['train', 'valid', 'test']}
+    record = {'run_id': run['run_id'], 'success_attempt': Path(run['remote_success_root']).name, 'input_rows': {'train': len(train), 'valid': len(valid), 'test': len(test)}, 'all_registered_input_hashes_match': True, 'internal_fit_rows': len(fit), 'internal_stop_rows': len(stop), 'original_row_partition_complete_disjoint': True, 'raw_smiles_groups_disjoint': True, 'split_seed': 43, 'model_seed': config['head_config']['seed'], 'encoder_before_after_exactly_equal': True, 'frozen_flags_and_optimizer_separation_verified_from_evidence': True, 'frozen_evidence_limitation': 'recorded evidence and reviewed source; no model loaded or independent replay', 'encoder_forward_event_count': len(forward), 'optimizer_steps': e['optimizer_steps'], 'nonzero_gradient_steps': e['nonzero_gradient_steps'], 'epochs_run': e['epochs_run'], 'best_epoch_1_based': e['best_epoch_1_based'], 'monitor': e['monitor'], 'saved_head_metadata': e['saved_heads'], 'training_state_reload_evidence': e['training_state_reload'], 'prediction_rows': len(rows(root / 'artifacts/predictions.csv')), 'train_prediction_rows': len(rows(root / 'artifacts/train-predictions.csv')), 'head_and_state_files': [p.name for p in (root / 'artifacts').glob('*.pt')], 'cache_note': 'Second run may reuse same frozen train/valid/test representation; identity checked below.'}
+    assert record['prediction_rows'] == 273 and record['train_prediction_rows'] == 637
+    result['runs'].append(record)
+    for p in sorted(full.rglob('job-exit.json')):
+        x = load(p)
+        result['attempts'].append({'run_id': run['run_id'], 'path': p.relative_to(R / 'snapshot').as_posix(), 'exit_record': x})
+    for p in sorted(full.rglob('*.npz')):
+        header = []
+        with zipfile.ZipFile(p) as z:
+            assert len(z.namelist()) == len(set(z.namelist()))
+            for info in z.infolist():
+                assert info.filename.endswith('.npy') and info.file_size < 128 * 1024 * 1024
+                with z.open(info) as f:
+                    magic = f.read(8)
+                    assert magic[:6] == b'\x93NUMPY'
+                    v = tuple(magic[6:])
+                    length = struct.unpack('<H' if v == (1, 0) else '<I', f.read(2 if v == (1, 0) else 4))[0]
+                    assert length <= 100000
+                    h = ast.literal_eval(f.read(length).decode('latin1'))
+                    assert set(h) == {'descr', 'fortran_order', 'shape'}
+                    header.append({'member': info.filename, 'uncompressed_bytes': info.file_size, 'npy_header': h, 'object_dtype': bool('O' in str(h['descr']))})
+        result['containers'].append({'path': p.relative_to(R / 'snapshot').as_posix(), 'kind': 'NPZ headers only', 'members': header})
+    for p in sorted(full.rglob('*.pt')):
+        assert zipfile.is_zipfile(p), 'PT container not ZIP; do not load unknown format'
+        with zipfile.ZipFile(p) as z:
+            result['containers'].append({'path': p.relative_to(R / 'snapshot').as_posix(), 'kind': 'PT ZIP directory only; data.pkl never read or executed', 'member_count': len(z.infolist()), 'uncompressed_member_bytes': sum((x.file_size for x in z.infolist())), 'member_names': z.namelist()})
+a, b = T['successful_attempts']
+result['shared_feature_cache_hashes_equal'] = source_by_run[a['run_id']] == source_by_run[b['run_id']]
+assert result['shared_feature_cache_hashes_equal']
+second = R / 'snapshot' / b['run_id'] / Path(b['remote_success_root']).name
+ref = load(second / 'source/cache-reference.json')
+for name in ['train', 'valid', 'test']:
+    assert ref['artifacts/features-' + name + '.npz'] == source_by_run[b['run_id']][name]
+    result.setdefault('cache_hash_bindings', {})[name] = source_by_run[b['run_id']][name]
+result['seconds'] = time.monotonic() - start
+result['state'] = 'structures_and_saved_evidence_consistent'
+result['sharing_acceptance'] = 'not_passed; not re-evaluated by quality scoring'
+result['not_recorded_or_not_proven'] = ['Direct other workload throughput/latency during sharing absent; contention evidence exists.', 'No independent full runtime trace replay or framework/tensor loading performed.', 'No assertion of whole server zero side effects; current read-only retrieval source reviewed.', 'Shared venv copied only as pyvenv.cfg/dist-info metadata; full installed environment not copied.']
+dump(R / 'materials-review.json', result)
+print(json.dumps({'state': result['state'], 'run_count': len(result['runs']), 'attempt_exit_records': len(result['attempts']), 'containers': len(result['containers']), 'same_feature_cache': result['shared_feature_cache_hashes_equal'], 'seconds': result['seconds']}))

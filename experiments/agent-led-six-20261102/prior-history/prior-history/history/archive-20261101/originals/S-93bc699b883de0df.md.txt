@@ -1,0 +1,15 @@
+# 执行v1：预检收尾失败，学习尚未启动
+
+本轮按主控正式消息 `admet-progressive-index-e2e-20261031:main:execute-one:v1` 部署33项文件并启动一次生产pipeline。科学四文件、12项适配、3项runtime依赖、兼容库、PLAN及正式绑定均核对摘要后使用。消费观察 `hainan-20261031T102616-397498Z`，另有初查、host即时复核及阶段内3次启动前原件；选GPU5，UUID `<REGISTERED_GPU>`。未使用Reset卡，也未共享占用卡。
+
+GPU5上完整依赖导入与CUDA矩阵计算已发生，worker PID3249500返回0并生成本次token/PID绑定凭据。Landlock ABI4、导入前环境/joblib开关及CPU affinity 0/1已应用。监督器随后在`own_process_observation`读取缺失VmRSS时抛KeyError，26.09秒后记录退出125；训练按门禁跳过。原阶段保持失败，不能用CUDA凭据改写它，也不能把SSH启动命令返回0当作学习完成。
+
+原始现场：`raw/execution-01/remote-snapshot-v1/`，47文件、24,953,354原始字节，全部SHA一致。`raw/preflight/status.json`保留错误栈、child_returncode=0、supervisor_exit_code=125；`preflight-proof.json`和`adapter-complete.json`证明实际计算与身份，已用本机可信适配库独立校验。训练目录和科学学习产物尚不存在。
+
+预检轨迹审查在`write-audit.json`：成功目录外写入0、未解析0、EOF未完成0。保留允许的NVIDIA/null设备IO和被拒绝操作；这只覆盖本次预检，不是全机或IOCTL隔离证明。观察峰值RSS约1.014GiB、GPU676MiB；RAM/GPU仍为监测目标，非硬配额声明。
+
+结束只读核验在`../../operator/execution-01/postcheck.json`：pipeline3247307、strace3249495、worker3249500均gone，GPU无登记PID残留；部署文件、固定checkpoint、解释器及78项原始包METADATA摘要未变。环境前置检查曾因误用runtime版本后缀、文本读取CRLF归一化先后失败，均在部署前核清并保留原件；最终按原始字节对照通过，详见environment-gate.json。没有环境改动或安装。
+
+本地恢复候选为`../../source/production-adapter-v2/`及`../../source/runtime-recovery-v2/`，尚未部署。缺VmRSS仅在确认Z/X终态时按已释放地址空间处理，活着或未知仍失败；10ms有界复查处理分次读取的退出竞态。本机夹具已重现旧KeyError。新阶段使用raw/attempt-v2独立证据及锁，并在训练前要求旧记录明确未学习、输出不存在、全run学习锁可独占。22项pipeline检查（18组真实假任务）、8项proc反例和实际科学源码早期接口探针通过，无参数更新。确切抛错PID/状态未被v1保留，终态触发属可重现解释，尚不能作为原现场唯一因果证明。
+
+主控须先审候选的精确manifest和patch，更新独立runtime与正式恢复绑定；执行方随后刷新当前资源，重新做真实有界预检，再接续这一run尚未开始的唯一学习。原科学manifest、模型、数据、预算、PLAN和Skill均不变。没有重放训练、评分、发布、新Agent或新定时器。

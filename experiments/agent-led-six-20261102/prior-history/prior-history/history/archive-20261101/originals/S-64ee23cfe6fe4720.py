@@ -1,0 +1,155 @@
+"""Adapter-owned attempt receipt; raw train-complete.status never grants success."""
+from pathlib import Path
+
+from adapter_common import generic, strict_json, write
+
+TRAIN_FILES = (
+    'raw/train-runtime.json', 'raw/train-complete.json',
+    'artifacts/training-evidence.json', 'artifacts/encoder-before.json',
+    'artifacts/encoder-after.json', 'artifacts/optimizer-separation.json',
+    'artifacts/internal-split.json', 'artifacts/head-initial.pt',
+    'artifacts/caco2_wang-head-best.pt', 'artifacts/caco2_wang-head-last.pt',
+    'artifacts/training-state-last.pt', 'artifacts/training-state-reload.json',
+    'artifacts/preprocessing.npz',
+    'artifacts/predictions.csv', 'artifacts/train-predictions.csv',
+    'artifacts/features-train.npz', 'artifacts/features-valid.npz',
+    'artifacts/features-test.npz', 'artifacts/features-train-identity.json',
+    'artifacts/features-valid-identity.json', 'artifacts/features-test-identity.json',
+)
+
+
+def require_fresh_training_outputs(root):
+    for name in TRAIN_FILES:
+        path = generic.safe(root, root/name)
+        if path.exists():
+            raise ValueError('existing science output; query original, do not replay: '+name)
+
+
+def training_claims(root, run_id, pid, gpu_uuid, config_sha256):
+    runtime = strict_json(generic.safe(root, root/'raw/train-runtime.json', True))
+    evidence = strict_json(generic.safe(root, root/'artifacts/training-evidence.json', True))
+    cfg = strict_json(generic.safe(root, root/'source/config.json', True))
+    complete = strict_json(generic.safe(root, root/'raw/train-complete.json', True))
+    if (runtime.get('pid') != pid or runtime.get('run_id') != run_id
+            or runtime.get('visible_gpu_uuid') != gpu_uuid
+            or runtime.get('config_sha256') != config_sha256):
+        raise ValueError('science runtime identity mismatch')
+    if (evidence.get('run_id') != run_id or evidence.get('gpu_uuid') != gpu_uuid
+            or evidence.get('config_sha256') != config_sha256):
+        raise ValueError('science evidence identity mismatch')
+    if (runtime.get('monitor') != cfg['monitor'] or evidence.get('monitor') != cfg['monitor']
+            or evidence.get('monitor_key') != cfg['monitor']):
+        raise ValueError('configured monitor identity mismatch')
+    for field in ('encoder_state_unchanged', 'encoder_gradients_none', 'encoder_eval',
+                  'encoder_parameters_frozen', 'encoder_checkpoint_sha256_unchanged'):
+        if evidence.get(field) is not True:
+            raise ValueError('science claim failed/unknown: '+field)
+    separation = evidence['optimizer_separation']
+    if (separation.get('optimizer_exactly_head') is not True
+            or separation.get('optimizer_encoder_intersection') != 0):
+        raise ValueError('optimizer separation claim failed')
+    if (type(evidence.get('optimizer_steps')) is not int or evidence['optimizer_steps'] <= 0
+            or evidence.get('nonzero_gradient_steps') != evidence['optimizer_steps']
+            or evidence.get('head_initial_sha256') == evidence.get('head_final_sha256')
+            or evidence.get('head_output_devices') != ['cuda:0']):
+        raise ValueError('head update/CUDA claim failed')
+    if (evidence.get('official_validation_scoring') is not False
+            or evidence.get('test_fitting') is not False
+            or complete.get('status') != 'success' or complete.get('encoder_frozen') is not True
+            or complete.get('optimizer_steps') != evidence['optimizer_steps']):
+        raise ValueError('scope/completion claim failed')
+    before = strict_json(generic.safe(root, root/'artifacts/encoder-before.json', True))
+    after = strict_json(generic.safe(root, root/'artifacts/encoder-after.json', True))
+    if not before or before != after:
+        raise ValueError('encoder digest records differ or empty')
+    replay = strict_json(generic.safe(root, root/'artifacts/training-state-reload.json', True))
+    for field in ('weights_only_load', 'optimizer_roundtrip_exact', 'restore_reproducible',
+                  'restored_back_to_checkpoint_state'):
+        if replay.get(field) is not True:
+            raise ValueError('optimizer/RNG replay claim failed: '+field)
+    if set(replay.get('restored_sources', [])) != {'python', 'numpy', 'torch_cpu', 'torch_cuda', 'sampler'}:
+        raise ValueError('optimizer/RNG sources missing')
+    # These are structural source claims plus file identity, not independent
+    # scientific acceptance. Tensor/row/trace/score validation remains with main.
+    return {'structural_claims_checked': True, 'independent_scientific_acceptance': False}
+
+
+def create_receipt(root, attempt, phase, run_id, token, identity, manifest_sha256,
+                   gpu_uuid, evidence_paths, offline, protection, claims):
+    files = []
+    for name in evidence_paths:
+        path = generic.safe(root, root/name, True)
+        if not path.is_file() or path.stat().st_size == 0:
+            raise ValueError('required evidence missing/empty: '+name)
+        files.append({'path': name, 'sha256': generic.sha(path)})
+    receipt = {'schema_version': 1, 'producer': 'production-adapter-v1',
+               'run_id': run_id, 'phase': phase, 'token': token,
+               'worker_identity': identity, 'accepted_manifest_sha256': manifest_sha256,
+               'gpu_uuid': gpu_uuid, 'offline_fixture': offline,
+               'science_main_returncode': 0, 'status': 'completed',
+               'evidence_files': files, 'protection': protection, 'claims': claims,
+               'at': generic.now()}
+    write(root, attempt/'adapter-complete.json', receipt)
+    return receipt
+
+
+def verify_receipt(root, attempt, phase, run_id, token, launcher_pid,
+                   manifest_sha256, gpu_uuid, offline):
+    started = strict_json(generic.safe(root, attempt/'worker-start.json', True))
+    receipt = strict_json(generic.safe(root, attempt/'adapter-complete.json', True))
+    expected = {'run_id': run_id, 'phase': phase, 'token': token,
+                'accepted_manifest_sha256': manifest_sha256, 'gpu_uuid': gpu_uuid,
+                'offline_fixture': offline}
+    for key, value in expected.items():
+        if started.get(key) != value or receipt.get(key) != value:
+            raise ValueError('attempt receipt identity mismatch: '+key)
+    worker = started['worker_identity']
+    if (worker != receipt.get('worker_identity') or type(worker.get('pid')) is not int
+            or worker['pid'] <= 0 or worker.get('pgid') != launcher_pid):
+        raise ValueError('receipt PID/launcher group mismatch')
+    if offline and worker['pid'] != launcher_pid:
+        raise ValueError('untraced fake worker must be exact Popen child')
+    if (receipt.get('producer') != 'production-adapter-v1'
+            or receipt.get('science_main_returncode') != 0
+            or receipt.get('status') != 'completed'):
+        raise ValueError('adapter receipt not complete')
+    protection = receipt['protection']
+    if protection.get('environment_before_scientific_import') is not True:
+        raise ValueError('missing protection before import')
+    if not offline and (protection.get('landlock_applied') is not True
+                        or protection.get('process_limits_applied') is not True
+                        or protection.get('offline_test_only') is not False):
+        raise ValueError('production boundary protection unverified')
+    if not receipt.get('evidence_files'):
+        raise ValueError('adapter receipt missing artifact hashes')
+    expected_paths = set(TRAIN_FILES) if phase == 'train' else {
+        str((attempt/'preflight-proof.json').relative_to(root))}
+    if not offline and phase == 'preflight':
+        expected_paths.add(str((attempt/'storage-probe.pt').relative_to(root)))
+    actual_paths = [item['path'] for item in receipt['evidence_files']]
+    if len(actual_paths) != len(set(actual_paths)) or set(actual_paths) != expected_paths:
+        raise ValueError('adapter receipt required artifact set mismatch')
+    if not offline and phase == 'preflight':
+        proof = strict_json(generic.safe(root, attempt/'preflight-proof.json', True))
+        for key in ('actual_cuda_matmul', 'single_cuda_device', 'full_imports'):
+            if proof.get(key) is not True:
+                raise ValueError('CUDA preflight proof failed/unknown: '+key)
+        if proof.get('pid') != worker['pid'] or proof.get('joblib_mp', 'unknown') is not None:
+            raise ValueError('CUDA preflight PID/joblib proof mismatch')
+        cfg = strict_json(generic.safe(root, root/'source/config.json', True))
+        storage = proof['storage_probe']
+        if (proof.get('run_id') != run_id or proof.get('monitor') != cfg['monitor']
+                or storage.get('weights_only_load') is not True
+                or storage.get('full_payload_exact') is not True
+                or storage.get('actual_tensor_storage') is not True
+                or storage.get('parameter_updates') != 0
+                or storage.get('sha256') != generic.sha(attempt/'storage-probe.pt')):
+            raise ValueError('real preflight storage/config contract unverified')
+    if not offline and phase == 'train':
+        if receipt['claims'].get('checkpoint_state', {}).get('actual_tensor_state_checked') is not True:
+            raise ValueError('real checkpoint/optimizer/RNG contract not checked')
+    for item in receipt['evidence_files']:
+        path = generic.safe(root, root/item['path'], True)
+        if generic.sha(path) != item['sha256']:
+            raise ValueError('post-completion artifact hash mismatch')
+    return receipt

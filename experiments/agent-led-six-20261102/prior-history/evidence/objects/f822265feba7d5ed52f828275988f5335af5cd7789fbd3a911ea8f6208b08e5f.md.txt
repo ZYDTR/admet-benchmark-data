@@ -1,0 +1,13 @@
+# 本任务安全资源接续点
+
+状态：waiting_for_resources。两项科学完成，一项中途检查点，三项未开始。不得重训已完成 seed44/45；不得在繁忙 GPU0 上探测性学习。当前暂停的是不具充分无干扰依据的共享，不是零显存规则或通用共享禁令。主控允许在充分核验的其他共享资源/空闲卡上按原预算继续。
+
+先读同目录 REPORT.md、RESULT.json、ARTIFACT_INDEX.json、TIMING.json、compute-ledger.json。规则入口仍为父目录 TASK.md/TASK.json、项目训练 Skill3.0.0 与通用海南连接 Skill；此文件不新增权限。写入仍限本 operator 及远端本批根。
+
+原观察者通过已登记的 resource-handoff.json 消费 status.json，不创建新定时。收到资源变化时由本执行 Agent 现场复核健康/负载/占用及潜在突发需求。没有充分依据就继续等待；不要通过读取同事项目正文/私有日志或压测补证据。
+
+安全资源确认后，需先修正本批辅助代码对 GPU0/旧其他PID 的绑定，核对 UUID/index 与实际监控；fit.py 现有暂缓断言只能由本 Agent 在资格核实后解除，不是新的用户审批门槛。原 run-one-remote.py 的连续3样本与N/A聚合不足以接受共享，不能原样作为共享准入。继续须在新独立 attempt 下保留失败原件。
+
+下一项是 MSE seed46：原 snapshots/hainan-agentled-mse-s46-20261102/artifacts/progress-state.pt，SHA fa5ca2301369646d1f3a4e6d4b5e2260d8becaeebdc392ab43ae143354964d57。已用 weights_only 实读完整head/optimizer/RNG/history/best_state，6轮、30个持久化步；可能额外未落盘步数未知。实施恢复时先匹配科学配置、输入、特征缓存、预处理、原始初始化、状态结构，再恢复全部RNG/优化器/计数/历史/选模状态。当前没有执行恢复，也没有假称已有恢复代码通过。学习源在epoch落盘后才执行下面的best/stop判定，恢复需尊重其状态含义和patience8，不新增epoch或重置耐心。完成新快照应另定目录，避免覆盖当前partial snapshot。
+
+随后三个 MAE seed44/45/46，原配置不变，仍以MSE学习、raw MAE仅用于内部早停选模。余量5102.971911738175 GPU作业秒；所有失败/检查/编码/学习尝试累计计入。无新墙钟截止，旧009不恢复。完成证据交原主控；不读私有valid标签、不自行评分/发布/上传，不派Agent/新聊天。

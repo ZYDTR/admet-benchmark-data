@@ -1,0 +1,32 @@
+# Chat Prompt 的主控与网关分工
+
+v1，2026-11-01。唯一固定模板是本目录 `CHAT_PROMPT.md` 的text区块；由主控维护。本合同只服务ADMET项目。固定文本的科学内容、真实性和充分性由主控验收，网关不自由改写。
+
+## 谁决定什么
+
+| 内容 | 负责人 | 本批变化的来源 |
+|---|---|---|
+| 研究目标、规则、渐进式阅读、Pro深度与交叉核验、六件交付、批量规划要求 | 主控 | 主控另存模板版本，不随网关填值改变 |
+| research_question、evaluation_scope、approved_budget_or_proposal_only、independent_read_checks_request、batch_execution_context | 主控 | 当批主控原文；即使这些也是占位符，网关也没有改写权 |
+| request/round/packet身份、run_ids、完成/待定状态、历史截止时间、材料链接与摘要 | 网关填入 | 主控已准入的任务、清单、发布回执；保持实际事实，不补造 |
+
+完整白名单及类型见 `prompt_contract.json`。网关可根据新批次生成值文件，不必每批重写Prompt。主控在既有材料准入节点将完整值文件、模板和字段合同摘要绑定到派发记录；不额外要求用户确认。链接缺失或材料变化时返回具体差异，由主控重新封口，不能由网关重算绑定冒充批准。
+
+`batch_execution_context` 应交代已验收runner/缓存/底座的身份与准备度、已知成本及未知项、本批决策问题和范围。配置和预算不能仅写“自行发挥”；Chat可以广泛研究并提建议，主控决定实际派发矩阵。正常在约定批次收齐后再做深评审，提前回报实质故障与决定性反证。20–40个任务×配置只是曾讨论的粗筛例子，不构成数量下限或执行授权。
+
+## 本地输出与验证
+
+输入均放在本批独占任务目录：`CHAT_PROMPT.md`、`prompt_contract.json`、`PROMPT_VALUES.json`、`PROMPT_BINDING.json`。最后一件由主控生成并通过主控派发绑定，只有四个键：request_id、template_sha256、contract_sha256、values_sha256。摘要是对原文件字节计算的SHA256；单独拥有一份可重写JSON不是身份认证或授权证明。
+
+固定工具位于项目 `skills/admet-evidence-review/scripts/render_chat_prompt.py`，仅用Python标准库：
+
+```sh
+python3 -B render_chat_prompt.py render --template CHAT_PROMPT.md --contract prompt_contract.json --values PROMPT_VALUES.json --binding PROMPT_BINDING.json --out rendered
+python3 -B render_chat_prompt.py verify --template CHAT_PROMPT.md --contract prompt_contract.json --values PROMPT_VALUES.json --binding PROMPT_BINDING.json --out rendered
+```
+
+命令示例中的文件均指本批冻结副本，脚本用派发记录的实际路径。输出 `rendered/prompt.txt` 和 `receipt.json`，已有目录拒绝覆盖。发送前verify，发送内容逐字取prompt.txt；原生/Browser通道另按已授权合同选择。发送后记录实际消息身份与全文核对结果，工具通过本身不代表已经发送。
+
+工具拒绝缺字段、额外字段、类型错误、重复JSON键、残留占位符、模板/值/合同摘要不符，以及未固定commit或不同commit的GitHub材料入口。它不下载材料，不推断标签权限，不验证网页可读，不检查科学内容正确性，也不能保证Chat遵从。上述事项仍由主控与网关各自依据实际证据验收。
+
+主控给网关一次新模板交接不等于正式分析请求；正式派发还必须有封口证据包、主控绑定、唯一request与目标Pro身份。模板更新保留旧原件，旧Chat请求与进行中的冻结任务不回写。未来修改本Skill仍先完整读工作区Best Practice Skill Writing。

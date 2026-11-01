@@ -1,0 +1,56 @@
+from pathlib import Path
+import sys,json,time
+P=Path(__file__).resolve().parent;OP=P.parent;Q=OP/'resource-resume-main-v1'
+sys.path.insert(0,str(OP));import transport
+transport.EVIDENCE=P/'raw';transport.RUN=P
+prefix=(Q/'source/package.py').read_text().split('def make_receiver(')[0]
+source=prefix+'''
+import socket,subprocess,datetime
+assert socket.gethostname().split('.')[0]=='project-compute' and os.getuid()==os.getgid()==1012
+BASE=Path('<AUTHORIZED_PROJECT_ROOT>/admet');ROOT=BASE/'contract-follow-e2e-20261101'
+NAMES=['hainan-paired-'+m+'-s'+str(s)+'-20261101' for s in (44,45,46) for m in ('mse','mae')]+[ROOT.name]
+out={'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'roots':[],'processes':[]};registered={}
+def register(v):
+ if isinstance(v,dict):
+  if type(v.get('pid')) is int and ('start_stat' in v or 'start_ticks' in v):registered[v['pid']]=v
+  for x in v.values():register(x)
+ elif isinstance(v,list):
+  for x in v:register(x)
+for name in NAMES:
+ root=canonical(BASE,BASE/name);entry={'root':str(root),'json':{},'log_tail':{},'outputs':[]}
+ for directory in ('raw/recovery-02','state/recovery-02','raw/resource-resume-01','state/resource-resume-01'):
+  folder=canonical(BASE,root/directory)
+  if not folder.exists():continue
+  files=list(folder.rglob('*.json'));assert len(files)<500
+  for path in files:
+   canonical(BASE,path)
+   if path.stat().st_size>1024**2:continue
+   try:v=json.loads(path.read_text())
+   except (ValueError,FileNotFoundError):continue
+   entry['json'][str(path.relative_to(root))]=v;register(v)
+ for path in (root/'state/learning-started.lock',):
+  if path.exists():entry['json'][str(path.relative_to(root))]=path.read_text()
+ for folder in (root/'raw/recovery-02',root/'raw/resource-resume-01'):
+  if not folder.exists():continue
+  for path in folder.rglob('*.log'):
+   canonical(BASE,path)
+   with path.open('rb') as stream:stream.seek(max(0,path.stat().st_size-6000));entry['log_tail'][str(path.relative_to(root))]=stream.read(6000).decode('utf-8','replace')
+ folder=root/'outputs/recovery-02'
+ if folder.exists():
+  for path in folder.rglob('*'):
+   canonical(BASE,path)
+   if path.is_file():entry['outputs'].append({'path':str(path.relative_to(root)),'size':path.stat().st_size})
+ out['roots'].append(entry)
+for pid,old in registered.items():
+ item={'pid':pid,'expected':old}
+ try:raw=(Path('/proc')/str(pid)/'stat').read_text()
+ except FileNotFoundError:item['state']='absent_now'
+ else:
+  fields=raw.rsplit(')',1)[1].split();ticks=str(old.get('start_ticks') or old['start_stat'].rsplit(')',1)[1].split()[19]);item.update(raw_stat=raw,state='pid_reused' if ticks!=fields[19] else 'terminal' if fields[0] in ('Z','X') else 'matching_live')
+ out['processes'].append(item)
+out['gpu_apps_csv']=subprocess.run(['/usr/bin/nvidia-smi','--query-compute-apps=gpu_uuid,pid,used_gpu_memory','--format=csv,noheader,nounits'],capture_output=True,text=True,timeout=15).stdout
+print(json.dumps(out))
+'''
+(P/'poll-remote.py').write_text(source)
+tag=sys.argv[1];raw=transport.read_only(source,tag,timeout=55);(P/(tag+'.json')).write_bytes(raw);out=json.loads(raw)
+print(json.dumps({'at':out['at'],'live':[x['pid'] for x in out['processes'] if x['state']=='matching_live'],'roots':[{'name':Path(x['root']).name,'state':{k:v for k,v in x['json'].items() if '/state' in '/'+k and k.endswith(('batch-state.json','job-state.json','pipeline-state.json','batch-intent.json','learning-started.lock'))},'outcomes':{k:v for k,v in x['json'].items() if k.endswith(('outcome.json','actual-wait.json','launcher-wait-slot-01.json'))},'logs':x['log_tail'],'outputs':x['outputs']} for x in out['roots']]},ensure_ascii=False)[:15000])

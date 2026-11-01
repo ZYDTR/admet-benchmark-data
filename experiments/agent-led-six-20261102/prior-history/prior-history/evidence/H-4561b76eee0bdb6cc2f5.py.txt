@@ -1,0 +1,32 @@
+from pathlib import Path
+import sys,json,time
+P=Path(__file__).resolve().parent;OP=P.parent;Q=OP/'resource-resume-main-v1'
+sys.path.insert(0,str(OP));import transport
+transport.EVIDENCE=P/'raw';transport.RUN=P
+task=json.loads((OP.parent/'recovery-03/EXECUTE_TASK.json').read_text())
+assert time.time()-1793535733<600
+assert json.loads((P/'append-result.json').read_text())['actual_receiver_OS_exit']==0
+prefix=(Q/'source/package.py').read_text().split('def make_receiver(')[0]
+source=prefix+'''
+import sys,socket,subprocess,time,datetime
+assert socket.gethostname().split('.')[0]=='project-compute' and os.getuid()==os.getgid()==1012
+BASE=Path('<AUTHORIZED_PROJECT_ROOT>/admet')
+ROOT=BASE/'contract-follow-e2e-20261101';folder=canonical(BASE,ROOT/'raw/resource-resume-01');folder.mkdir(parents=True,exist_ok=True)
+def identity(pid):
+ value=(Path('/proc')/str(pid)/'stat').read_text();return {'pid':pid,'start_stat':value,'start_ticks':value.rsplit(')',1)[1].split()[19]}
+def save(name,value):
+ with canonical(BASE,folder/name).open('x') as stream:json.dump(value,stream,indent=2);stream.write('\n');stream.flush();os.fsync(stream.fileno())
+started=time.monotonic();record={'started_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'launcher_identity':identity(os.getpid()),'argv':COMMAND,'actual_watch_OS_exit':None}
+child=subprocess.Popen(COMMAND,stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+record['watch_identity']=identity(child.pid);save('launcher-start-slot-01.json',record)
+out,err=child.communicate(timeout=5375)
+record.update(actual_watch_OS_exit=child.returncode,stdout=out.decode('utf-8','replace'),stderr=err.decode('utf-8','replace'),elapsed_seconds=time.monotonic()-started,finished_at=datetime.datetime.now(datetime.timezone.utc).isoformat())
+save('launcher-wait-slot-01.json',record);print(json.dumps(record));raise SystemExit(child.returncode)
+'''.replace('COMMAND',repr(task['actual_start'])).replace("stream.write('\n')","stream.write('\\n')")
+(P/'watch-launcher-remote.py').write_text(source)
+compile(source,'watch-launcher-remote.py','exec')
+launched=time.time();(P/'phase-launch.json').write_text(json.dumps({'host_launch_requested_epoch':launched,'active_setup_seconds_to_launch':launched-1793535733,'prior_transport_seconds':2877.7182131492154,'native_turn_started_epoch':1793535733},indent=2)+'\n')
+status=json.loads((P/'status.json').read_text());status.update(state='launch_requested',setup_role_spent_seconds=launched-1793535733,setup_role_remaining_seconds=600-(launched-1793535733),candidate=json.loads((P/'candidate.json').read_text()));(P/'status.json').write_text(json.dumps(status,indent=2)+'\n')
+raw=transport.remote_once(source,'watch-launch',timeout=5400)
+(P/'watch-launch-result.json').write_bytes(raw)
+print(raw.decode())

@@ -1,0 +1,15 @@
+"""One immutable remaining allowance and original absolute deadline."""
+import math,time
+REMAINING=5296.074905887725
+DEADLINE=1793544604.502622
+def allowance(dispatch,now=None):
+    if dispatch.get('execution_enabled') is not True or dispatch.get('max_learning_starts')!=6 or dispatch.get('max_concurrent_jobs')!=1:
+        raise ValueError('explicit six logical-run execution admission absent')
+    remaining=dispatch.get('remaining_seconds');deadline=dispatch.get('deadline_epoch_seconds')
+    if (type(remaining) not in (int,float) or not math.isfinite(remaining) or not 0<remaining<=REMAINING
+            or type(deadline) not in (int,float) or not math.isfinite(deadline)
+            or not (time.time() if now is None else now)<deadline<=DEADLINE):raise ValueError('remaining/deadline increased, expired or unknown')
+    return min(remaining,deadline-(time.time() if now is None else now)),deadline
+def remaining_after(initial,spent,deadline,now=None):
+    if not 0<initial<=REMAINING or spent<0:raise ValueError('budget reset or invalid debit')
+    return max(0,min(initial-spent,deadline-(time.time() if now is None else now)))

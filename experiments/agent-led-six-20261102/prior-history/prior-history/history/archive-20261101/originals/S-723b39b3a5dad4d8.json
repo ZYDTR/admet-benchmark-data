@@ -1,0 +1,35 @@
+{
+  "auditor": "execution operator offline parser copied from validated reference; parent acceptance pending",
+  "manifest_files": 25,
+  "manifest_mismatches": [],
+  "traces": [
+    {
+      "path": "raw/cuda01.strace",
+      "sha256": "5b7c8489837b284dfe603aa5c64a4c340291197330556effa4fa8013a3ed86f0",
+      "counts": {
+        "openat": 8,
+        "inside": 26,
+        "write": 21,
+        "unlink": 2,
+        "mkdir": 2,
+        "ipc_fd": 2
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {
+        "/dev/null": 4
+      },
+      "denied_counts": {
+        "EEXIST": 1
+      },
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    }
+  ],
+  "limitations": [
+    "Conservative traced filesystem syscall review only; not whole-server proof, ioctl/device partitioning or SSH-daemon audit.",
+    "Relative paths without annotated dirfd and unresolved inherited descriptors are reported, not silently passed.",
+    "Argument parser is narrow; exact positive findings independently checked against original line numbers."
+  ]
+}

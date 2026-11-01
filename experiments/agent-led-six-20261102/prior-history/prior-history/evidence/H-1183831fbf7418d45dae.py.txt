@@ -1,0 +1,59 @@
+"""Persist raw resource queries and rejected observations before propagating failure."""
+import base64
+import subprocess
+import time
+from adapter_common import generic
+
+
+def emit(context, value):
+    # The phase supervisor installs a durable, run-local recorder. Missing or
+    # failed evidence is an error, never a reason to silently bypass the guard.
+    context['resource_audit'](value)
+
+
+def captured(value):
+    if value is None:
+        return {'bytes': None, 'base64': None, 'text': None}
+    if isinstance(value, str):
+        value = value.encode('utf-8')
+    return {'bytes': len(value), 'base64': base64.b64encode(value).decode('ascii'),
+            'text': value.decode('utf-8', errors='replace')}
+
+
+def query(context, args, timeout=10):
+    started = time.monotonic()
+    evidence = {'kind': 'resource_query', 'argv': list(args), 'at': generic.now(),
+                'cwd': str(context['root']), 'timeout_seconds': timeout,
+                'actual_OS_exit': None, 'stdout': captured(None), 'stderr': captured(None)}
+    emit(context, {**evidence, 'state': 'started'})
+    try:
+        result = subprocess.run(args, capture_output=True, timeout=timeout,
+                                env=context['environment'], cwd=context['root'], check=False)
+    except (OSError, subprocess.TimeoutExpired) as error:
+        evidence.update(state='timeout' if isinstance(error, subprocess.TimeoutExpired) else 'launch_error',
+                        elapsed_seconds=time.monotonic()-started,
+                        exception_type=type(error).__name__, error=str(error),
+                        stdout=captured(getattr(error, 'stdout', None)),
+                        stderr=captured(getattr(error, 'stderr', None)))
+        emit(context, evidence)
+        raise
+    evidence.update(state='returned', elapsed_seconds=time.monotonic()-started,
+                    actual_OS_exit=result.returncode,
+                    stdout=captured(result.stdout), stderr=captured(result.stderr))
+    emit(context, evidence)
+    result.check_returncode()
+    return result.stdout.decode('utf-8', errors='strict')
+
+
+def enforce(context, observation, check):
+    emit(context, {'kind': 'resource_observation', 'state': 'before_check',
+                   'at': generic.now(), 'observation': observation})
+    try:
+        result = check()
+    except Exception as error:
+        emit(context, {'kind': 'resource_observation', 'state': 'rejected',
+                       'at': generic.now(), 'exception_type': type(error).__name__,
+                       'error': str(error)})
+        raise
+    emit(context, {'kind': 'resource_observation', 'state': 'accepted', 'at': generic.now()})
+    return result

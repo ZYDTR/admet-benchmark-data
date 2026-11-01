@@ -1,0 +1,22 @@
+# ADMET 项目 Skill 索引
+
+唯一入口：[项目 AGENTS.md](../AGENTS.md)。这些能力仅服务本项目，不在全局 Codex Skill 注册。项目创建、修订 Skill 遵守[工作区写作标准](../../../rules/skills/bestpractice_skill_writing.md)。
+
+| 角色/任务 | 必读入口 | 实际验收范围 |
+|---|---|---|
+| OpenCode 准备；主控派发 | [训练前准备](ml-preparation-only/SKILL.md) | v1.2.1；v1.2冷启动真实读取已验，但旧best-MSE元数据语义缺陷被反例复现并由主控修复；新增兼容反例的新版行为待测 |
+| 专职海南算力观察 | [资源观察](hainan-resource-observation/SKILL.md) | 每10分钟只读采样；可用性以实时证据为准 |
+| 海南训练执行 | [冻结底座训练](admet-frozen-training/SKILL.md) | 本轮v1预检监控失败留证；v2真机完成130次新头更新，底座11项状态/273行预测/写入轨迹/自有退出经主控复核；共享/并行未测；部署恢复7项、GPU绑定重建8项本地检查通过；已登记资源等待，新远端部署/训练待测，少量残余显存资格未实测 |
+| 取回、固定评分、批准发布 | [训练取回](hainan-training-retrieval/SKILL.md) | 历史302文件完整取回、固定评分/发布已测；新run独立验收 |
+| 历史索引、Chat网关、主控研究验收 | [实验知识与评审交接](admet-evidence-review/SKILL.md) | v0.4.1；主控Prompt模板/受检填值，原生消息与Browser回收已有实证；新版模板实读、创建→原生接管与新整轮待实测 |
+| 用户手动官网提交与查分 | [赛事提交](competition-submission/SKILL.md) | v0.1.1；4个完整候选本地通过、已登录；Terra误判原生选文件窗口，Codex应用控制被拒，用户改由新Sol接手；Browser上传/官网分数待实测，无自动触发 |
+
+通用基础设施仍由全局能力提供：[海南连接](../../../rules/skills/hainan-compute-access/SKILL.md)、[mini/OpenCode运维](../../../rules/skills/<PREPARATION_HOST_ALIAS>-orbstack-ops/SKILL.md)。OpenCode仍从mini既有Context Infrastructure根目录创建会话；准备任务包是该项目下的独立子目录，这不改变ADMET规范的归属。
+
+当前闭环：[progressive-index-e2e-20261031](../cycles/progressive-index-e2e-20261031/CONTINUE.md)。角色与消息协议：[设计入口](../design/chat_gateway_20261031/README.md)。算力日志：[资源入口](../resources/hainan/README.md)。
+
+历史Harness只作来源：[采用/排除映射](../docs/source-map.md)、[旧评分规范](../../admet_sap_setup_20261029/external-grading/SKILL.md)、[旧远端规范](../../admet_sap_setup_20261029/remote-execution/SKILL.md)。它们不是当前统一入口，未部署的网关不能成为通用禁令。独立公开候选审计的局部Skill仍留在[其原任务](../../admet_public_candidate_challenge_20261031/input/skill/SKILL.md)，不纳入训练输入或自动启用。
+
+2026-10-31：四个专用Skill由全局迁入本项目；全局注册已撤销，历史冻结材料不改。迁移证据见本轮 `control/project-skill-migration-20261031/receipt.json`。
+
+主控问题反馈与新版交付统一遵守[项目入口的修订/派发合同](../AGENTS.md#主控复核与新版-skill-派发)：每次修订前完整读Best Practice；下一任务显式绑定对方可读的新版及引用，原运行冻结材料保持。

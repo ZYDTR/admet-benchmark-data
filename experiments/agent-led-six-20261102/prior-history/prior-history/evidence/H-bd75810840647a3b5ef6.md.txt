@@ -1,0 +1,173 @@
+# Skills Index
+
+本索引指向可复用的 Skills（技能）—— AI 可以调用的工具、流程和最佳实践。
+
+- **想使用某个能力** → 浏览下方分类，找到对应的 skill 文件
+- **想添加新 skill** → 参考现有文件格式，添加到对应分类
+
+---
+
+## 组件状态
+
+### Tier 1: 核心（clone 后即可开始）
+- ✅ Rules 框架（SOUL/USER/COMMUNICATION/WORKSPACE）— 填写即用
+- ✅ Skills 框架（本目录）— 填写即用
+- ✅ 三层记忆系统 — 需配置 OpenCode + cron
+
+### Tier 2: 扩展（需要额外配置）
+- ⚙️ Semantic Search — 需要 LLM Studio 或 OpenAI API
+- ⚙️ Share Report — 需要 SSH 服务器或 GitHub Pages
+- ⚙️ Delayed Execution — 适配你自己的工具路径
+
+### 说明
+✅ = 最多 15 分钟即可使用
+⚙️ = 需要额外配置，不配不影响核心功能
+
+---
+
+## 分类索引
+
+### API Guide（API 指南）
+
+调用外部系统或工具的操作手册。
+
+- [AI CLI Agent 实用指南](./ai_agent_cli_guide.md) — CLI Agent 设计原则、工具对比（Claude Code / Codex / OpenCode）、文件响应模式、AI 调用 AI
+- [分享报告到 Web](./share_report.md) ⚙️ — 将 MD 报告转 HTML 发布到你自己的服务器，返回 URL
+- [阿里云轻量服务器管理](./aliyun-swas-admin/SKILL.md) ✅ — ZYDTR 上海轻量服务器的唯一操作入口；通过 `ssh aliyun-zydtr` 免交互管理，并索引资产清单、配置快照和恢复路径
+- [Windows Codex Remote 快速接通](./windows-codex-remote-connect/SKILL.md) ✅ — 快速验证并使用已部署的 `42023` 持久 Windows 通道；自带有界协议客户端，区分设备离线、残留监听、agent 忙和命令失败
+- [海南算力连接与 project-compute 边界](./hainan-compute-access/SKILL.md) ✅ — 海南 project-compute 唯一入口；已授权训练可用健康空闲 GPU 或核验不影响他人的共享余量，并发按实际资源决定。写入仅 project-compute，严禁停止他人服务或删除他人文件；须核对 GPU 恢复状态和首次导入副作用。2026-10-31 主控修复后健康空闲GPU单作业通过，旧失败保留；共享/并行仍未测。 2026-10-31补充固定只读入口4次退避恢复，耗尽保留等待状态，不因单次认证失败终止训练。
+- [macOS Codex Remote 确定性接通](./macos-codex-remote-connect/SKILL.md) ✅ — 唯一连接 `profiles/active.json` 固定的 2018 Air（`<PRIVATE_DEVICE>` / `42026`）；离线时不切换其他设备；确定性验证 root SSH；目标机已有长期完整操作授权，任务内变更默认直接执行，退出或重启 UURemote 仍须逐次确认；支持五次完整稳定性验收
+- [Mac mini / OrbStack / OpenCode 运维](./<PREPARATION_HOST>-orbstack-ops/SKILL.md) ✅ — M4 mini 的统一运维入口：核对 SSH 身份、区分本机转发与远端执行，维护容器、OpenCode、网络和持久数据。除用户明确指定其他入口外，OpenCode 一律从既有 Context Infrastructure 项目根进入；重跑原会话也须核对根目录可见性，保护活跃任务。2026-10-31新增专用Terra观察交接：主控派发后通知已登记Thread，由Terra定时检查并验收回传，空队列暂停；实际状态见监控registry。包含部署地图、接口和故障证据；与2018 Air入口分开。
+- [多杰（Duojie）gpt-image-2 文生图 / 图生图](./api_duojie_image_generation.md) — 多杰网关调用 gpt-image-2：文生图、图生图、并发策略、超时与定价
+- [Typefully 发帖 CLI](./typefully_post.md) ⚙️ — 通过 Typefully v2 API 创建草稿、排期发布和直接发布 tweet / thread
+
+### Workflow（工作流）
+
+特定任务的完整工作流程。
+
+- [海南训练产物取回](./hainan-training-retrieval/SKILL.md) — 专用宿主会话只读取回指定训练的完整质量材料，调用海南连接Skill，核验文件集合/大小/SHA256、源稳定性、质量材料缺口与各阶段耗时。首次全新Sol/xhigh会话和主控独立复算通过：302文件/110.81MB全新下载，传输66.97秒、字节校验完成77.42秒、执行会话575.06秒；原训练未记录项和全环境排除明确保留。证据见admet_training/retrievals/hainan-follow-full-20261031/acceptance/report.md。
+
+- [ADMET 冻结底座训练](./admet-frozen-training/SKILL.md) — 宿主真实训练入口：规则/数据准入、健康选卡、环境复用、冻结参数与buffer证明、新头更新、预测身份及资源释放。2026-10-31主控Caco2训练通过；原会话续聊新256头训练也完成（19epoch/95步、273行），但发现检查失败后仍继续部署的门禁缺陷，严格Follow未全通过。Skill已补失败依赖阻断并留原件，修订仅离线验证。附只读证据检查器；无私有valid评分，共享/并行及冷启动未测。 现行恢复策略：偶发连接自动重试并接续，未知启动先查原作业，避免重复训练。
+- [训练前准备交付](./ml-preparation-only/SKILL.md) — DeepSeek 等叶子会话只准备模型/数据/评分代码时使用；训练与整批编码留给主控，临时写入受限，强调入口覆盖、缓存身份、反例验收与诚实交接。2026-10-30 两条全新 mini OpenCode 冷启动整体未通过；已守住不训练，仍有接口与入口校验/写入缺陷。v1.1补充实际教训，尚未重新冷启动验证；报告见 `adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/report.md`。
+
+- [共享科研证据分析 V5](../../adhoc_jobs/truthinsight_bench_harness/experiments/shared-context-v5-20261021/subject/scientific-evidence/SKILL.md) — 5.0.0：文献实验对齐、问题对应直接比较量、执行/保存/结论闭合；已安装3550平台Skill及probe_admin用户薄入口。12文件容器实读和索引验证通过，用户自行运行，尚无V5行为或质量结论；版本与回滚见实验README。
+- [共享科研证据分析 V4](../../adhoc_jobs/truthinsight_bench_harness/experiments/shared-context-v4-20261021/subject/project/.claude/skills/scientific-evidence/SKILL.md) — 4.0.2冻结ef5f1d78；针对性复验通过，Life03单题完整重跑及Qwen3.8 Max关闭thinking评分已完成：44.8→57.9，隐藏目标仍0/10。完整研究质量未通过（执行元数据、图表标签、分离验证等）；保留为实验候选，非已验证可靠能力。结果和限制见实验docs/final-comparison.md。
+- [共享科研证据分析 V1](../../adhoc_jobs/truthinsight_bench_harness/experiments/shared-context-v1-20261016/subject/project/.claude/skills/scientific-evidence/SKILL.md) — TruthInsightBench 五题共享实验配置，适用于数据发现、效应比较与结构识别；薄 CLAUDE.md 经索引按需加载数据设计、推断、独立复核与交付模块。当前真实运行验收未完成，状态以实验 README/docs/working.md 为准。
+- [共享科研证据分析 V2](../../adhoc_jobs/truthinsight_bench_harness/experiments/shared-context-v2-20261016/subject/project/.claude/skills/scientific-evidence/SKILL.md) — 冻结实验候选2.0.0：明确加载、原生委派合同、最终结果整合及干净目录复现；V1原样保留。五个OpenCode操作者一人一题、共用控制面，在最新main后端上测试同Qwen配置，不评分，效果以本轮执行与比较报告为准。
+- [共享科研证据分析 V3 修订版](../../adhoc_jobs/truthinsight_bench_harness/experiments/shared-context-v3.1-20261016/subject/project/.claude/skills/scientific-evidence/SKILL.md) — 3.1.0：提前主体委派与状态维护，新增实际分析口径、语义复核、反证进入核心结论、完整复现验收；薄入口按需加载。用户授权五个新 OpenCode 一人一题，固定 V2 模型/后端、不评分；原 3.0.0 保留，实际状态见实验 README。
+- [共享科研证据分析 V3](../../adhoc_jobs/truthinsight_bench_harness/experiments/shared-context-v3-20261016/subject/project/.claude/skills/scientific-evidence/SKILL.md) — 实验候选3.0.0：主体分析提前委派与主侧事实/任务/权威产物状态维护，核心 Skill 按需加载状态模块。V2先完成；相同模型和固定后端、五新OpenCode一人一题一新Conversation验证，不评分。实际状态与接续门槛见实验README，静态通过不代表行为改善。
+
+- [voice-lora：中文文风评分、改写与训练](./voice-lora/SKILL.md) — 唯一根入口，按需读取上游训练、改写、评分文档；公开仓库位于 `external_skills/voice_lora/`，私有配置使用仓库外本地 overlay。CPU 离线工具已安装，模型服务和训练资源按任务配置。触发词：voice-lora、voice rewrite、AI 味评分、去 AI 味、作者文风微调。
+
+- [地理底图上的地铁制图](../../adhoc_jobs/shanghai_geographic_metro/SKILL.md) ✅ — 将真实轨道和车站叠加到带公园、道路、河流与地标的地图上；上海认可局部样张的离线复现与扩展入口，含私人 Agent 完整交接包。无需 Browser Use/Computer Use；不可把站间直线示意当成真实轨道。
+
+- [Air ↔ Pro 豆包语音连接](./uu-doubao-voice-bridge/SKILL.md) ✅ — 唯一语音维护入口；覆盖2018新Air桥接和Pro本机故障、五分钟日志、无声/不出字分层定位、失效SSH端口回收与真实转录验收；保护UU、右Option和输入设备选择。
+
+- [AI Session Export（会话导出）](../../external_skills/ai_session_export/skill.md) — 将 Codex、Claude Code、OpenCode 等会话导出为 Markdown，支持增量同步和按日期补导。触发词：Codex Session Export、AI Session Export、会话导出、聊天记录归档。
+- [Codex 内置浏览器超时恢复](./codex-iab-recovery/SKILL.md) ✅ — 内置 Browser / Browser Use / IAB 连接、getTab、正文/截图超时，以及主 Agent 可用但子代理无 IAB 时触发；支持由主 Agent 打开原子聊天恢复会话连接，再由 leaf 验证真实页面，禁止 leaf 自行切聊天。保留标签与登录态；备用读取 10 轮、五位原子代理恢复已有本机证据，非全站保证。
+- [Codex Chrome 连接恢复](./codex-chrome-recovery/SKILL.md) ✅ — Codex Desktop 控制 Chrome 时出现 discovery/openTabs/claim/goto/DOM 超时或 stale socket 证据时触发；支持原生 Computer Use 完成已授权的扩展重连/重载，再以原业务 API 验收，禁止 `about:blank` 和多 Profile 实验
+- [DINOv3 Classifier Skill](./dinov3-classifier-skill/README.md) ✅ — 从未标注图片或视频构建轻量二分类视觉模型；完整 Agent 流程见 `skills/skill.md`，配套 Python CLI、测试与硬件示例
+- [Windows Codex Remote 建立与修复](./windows-codex-remote-bootstrap/SKILL.md) ✅ — 为已授权、位于 NAT 后的 Windows 从零建立或修复经阿里云中转的持久反向 SSH；包含端到端验收、安全限制和真实故障判读
+- [结构化创新助手](./innovation-assistant-skill/skills/innovation_assistant.md) ✅ — 用 SIT 与 Think Bigger 把明确问题转化为带推导链、硬校验和人工决策节点的创新候选；根入口负责选择适用流程，并加载完整 pipeline、10 条证据公理和 A/B 实验材料。触发词：结构化创新、创新方案、SIT、Think Bigger、run structured innovation
+- [并行 Subagent 工作流](./workflow_parallel_subagents.md) ✅ — 调用后台 agent、并行执行多个 subagent
+  - **必配护栏**：只要使用任何 subagent / 子代理 / delegate，同时读取 `workflow_subagent_guard.md`
+  - **必读**：初次使用并行 subagent 前，必须先读此 skill
+  - **禁止轮询**：agent 运行期间不要反复调用 `background_output`，系统会自动通知
+  - 判断标准：任务可拆分为 ≥2 个子任务，每个 ≥5 tool calls
+  - 核心参数：并行度 ≤5，调研 overlap 30-50%，代码 overlap 0-20%
+- [Subagent 防嵌套调度护栏](./workflow_subagent_guard.md) ✅ — **只要使用 subagent、子代理、并行 agent、后台 agent、delegate、分派测试/扫描/调研任务就必须读**。定义 leaf 授权不可传递、禁止嵌套派发和开 session/thread/CLI agent、启动后轻量监测一次、发现嵌套立即中断并记录证据。
+- [深度调研工作流](./workflow_deep_research_survey.md) ✅ — 多 Agent 并行 + 交叉验证
+- [文献证据提取](./workflow_literature_evidence_extraction.md) — 按研究问题定向阅读 PDF、CAJ 转换件或扫描论文，交付带原页定位的证据卡、模型适用条件和迁移判断；明确摘要、选读与全文精读边界。
+- [分析写作工作流](./workflow_analytical_writing.md) ✅ — 将调研素材转化为有判断力的分析文章。包含 Thesis Catalog（核心分析视角 L1-L6）和判断合成步骤。**做深度调研并写 external 文章时，两个 skill 都要读**
+- [Writing Skill 写作总控](../../external_skills/writing-skill/skills/writing_workflows.md) ✅ — 写作任务统一 Router：按读者是否共享项目上下文分流到 internal memo 或 external-facing article；外部流程包含全文独立重写、确定性 prose lint 和终端陌生读者冷读。触发词：writing-skill、write this up、draft the article、写内部 memo、写外部文章
+- [内部写作工作流](./workflow_internal_writing.md) ✅ — 面向已有共享上下文的决策 brief、工作记录和内部汇报；结论前置，首屏支持快速判断，细节通过 anchor、链接和 `<details>` 下钻，同一结论只保留一个 source of truth。写 Human Review 入口、需求变更简报或执行总结时使用。
+- [面向老板的方案汇报](./workflow_management_proposal_writing.md) ✅ — 内部写作的方案汇报分支：重点与候选方案简述前置，方法依据体现借鉴理由，先共同配置再分别分配，明确数量口径、实际场景与评价标准；按用户格式交付，Agent 方案统一使用主 Agent / sub Agent。触发词：给老板汇报方案、report to 老板、方案汇报版。
+- [机制拆解报告工作流](./workflow_mechanism_breakdown_report.md) ✅ — 把新技术/复杂机制 break down 到本质的叙事文档流程：主问题脊柱、术语出现即解释、核心概念钉到机械层、比喻纪律、承重句锚点、图的统一方块语言；触发后先确认工作量再执行（2026-09-16 按读者纠偏整体重写）
+- [Teach Through Breakdown](./teach-through-breakdown/SKILL.md) ✅ — 明确调用后，把复杂主题重构成可复述的自包含解释；包含概念出场顺序、KEEP/DELETE/RELATE 账本、一术语一专属卡、结构型术语卡内拓扑、独立 HTML 阅读器和冷读验收。仅当用户点名 Teach-through / Teach Through Breakdown / Teach-through Skill 时触发；普通解释或术语说明不得自动调用。
+- [MD to HTML Viewer 工作流](./workflow_md_to_html_viewer.md) ✅ — Markdown/MD 转 HTML、md to html、文档可视化、可阅读 HTML viewer；使用 `tools/build_html.py` 生成带目录、KaTeX、选中文字高亮、批注和右侧笔记面板的静态 HTML。**不是 McDonald's Design Template，也不是普通 Pandoc 转换**
+- [交互式映射界面](./build-interactive-mapping-interface/SKILL.md) ✅ — 用户要求结合 GitLab 代码、项目源码或项目现状，用可视化界面呈现详细代码改动、架构转变、实现关系或版本差异时触发；左侧条目或流程节点驱动右侧按需详情，不预设业务字段或固定 tab。
+- [Architecture SVG Visualization 工作流](./workflow_architecture_svg_visualization.md) ✅ — 架构图/Mermaid 拓扑/运行空间分层图转 deterministic SVG；使用 JSON spec + `tools/render_architecture_svg.py` + `tools/validate_architecture_svg.py`，解决 md-to-html 中复杂架构图横向滚动、文字越框和线条杂乱问题
+- [认知画像提取工作流](./workflow_cognitive_profile_extraction.md) — 从非结构化对话数据提取可预测的认知公理
+  - 适用：群聊/Slack/Discord/邮件/播客转录等任意对话数据
+  - 流程：广泛扫描 → 深度验证 → 压力测试 → 定稿（≥3 轮动态滚动）
+  - **要求 Opus 模型**：写作由 Opus 亲自完成，调研全部 delegate + 并行
+- [长文档到 Frontend Slides 工作流](./workflow_long_md_to_frontend_slides.md) ✅ — 将 `.md` / 调研报告 / 中间稿转成可分享的 HTML slides；触发词：长文档转 slides、MD 做 PPT、报告转 PPT、用 Zara / Playful 做 slides、把这篇文章做分享
+- [知识飞轮设计模式](./workflow_knowledge_flywheel.md) — 笨数据+笨方法+笨模型=精知识
+- [视频下载与语音识别工作流](./workflow_bilibili_whisper_transcription.md) — Bilibili/YouTube 视频处理
+- [延时执行技能](./delayed_execution.md) ⚙️ — 定时任务：sleep + 后台执行，或 OpenCode API 智能任务
+- [ADMET容器外验证评分](../../adhoc_jobs/admet_sap_setup_20261029/external-grading/SKILL.md) — 宿主Codex操作规范，不进入实验Agent包。答案保管、请求核验、受控反馈与共享预算；当前仅接口设计，外部通道未实现/启用，不宣称无法反推。
+- [ADMET经Windows使用远端GPU](../../adhoc_jobs/admet_sap_setup_20261029/remote-execution/SKILL.md) — 宿主提交/查询/取回/取消训练与预测的必用规范；固定作业权限、Windows中转、包身份、隔离与资源验收。v0.1设计，网关未部署，不进入实验Agent包。
+- [项目脚手架与重整](./project_scaffold.md) ✅ — 把散装目录升级成标准项目结构：`docs/`、`src/`、`scripts/`、`tests/`、`AGENTS.md` 与独立 git
+- [Dynamic Workflow 论文测试控制面](../../adhoc_jobs/conversation_dynamic_workflow_harness/SKILL.md) — 在独立本地候选上用同版通用Prompt/Skill运行不同论文主题，支持运行中普通消息、实时采样和task/JSONL审计；外层OpenCode监督交接入口，默认SAP模型与外层模型分开，新完整E2E状态见README。
+- [Conversation 论文测试控制面](../../adhoc_jobs/conversation_paper_harness/SKILL.md) — 本地科学综述测试与交接入口；日常只输入主题，冻结通用 Prompt/Skill/政策，通过普通 Conversation 消息驱动七路科研子 Agent，保留 SSE/JSONL、独立审查、DOCX与下载验收。当前本地通用版的真实 E2E 状态见项目 README，不引用旧 R6 成功冒充新版本通过。
+- [需求交付总控](./product-delta-delivery/SKILL.md) ✅ — **产品需求交付 Router，规定方法与验收边界**。用户说“实现一个新需求/实现这个需求”“按这个 PRD 开始开发”“启动需求交付总控”“继续上次需求/继续这个需求”“写下一个 Delta”“切换/新建 worktree”“开始实现”“回灌 canonical”或“收口”时触发；先确认本次需求所属控制面及其权威入口，经该入口声明的唯一 Delta 索引定位需求和 worktree/SHA，并遵守各代码仓库适用的 AGENTS.md，以代码和调用链核验相关 canonical/Delta，按需选择最多 `PRD.md`、`RFC.md`、`TEST.md` 三份文档后实现并验证。所有已识别 Delta 无论状态都永久留在 `deltas/`；history 默认不读，只保存原始材料；canonical 只有用户明确授权时才回灌。
+- [测试总控](./test-orchestration/SKILL.md) ✅ — 用户说“启动测试总控”“启动总控测试”“开始测试总控”“开始总控测试”“开始做一下总测试”“做一下总测试”“开始总测试”“总控测试”或“总测试”时触发；每次强制执行 Shipping Preflight、Docker E2E、异步安全、代码规范与注释四个硬 Gate，再补充 risk-to-oracle 的 unit/contract、integration、UI 和 regression，最终给出可追溯的 PASS / FAIL / BLOCKED。普通的“测试一下”不触发总控。
+- [Docker E2E / 真实拓扑测试工作流](./workflow_docker_e2e_testing.md) ✅ — Docker/compose/runtime worker/临时 DB/真实 API 链路验证；强制 RUN_ID、label、证据落盘、finally 自清理和残留检查。涉及 Agent 实际运行行为时，必须由专门测试 subagent 完成真实 Docker 实测，并阅读对应 Run 原始 JSONL；restart/disconnect 测试必须先证明进入被测阶段。
+- [IN-Spark 本地 Docker 调试 SOP](./workflow_inspark_local_debug.md) ✅ — 后端 worktree/Docker、前端 Vite 代理、调试登录态、Chrome/CDP 直达目标页面验证；事故记录含音色工作室中文失败原因调试
+- [泛微工时填报自动化 SOP](./workflow_weaver_timesheet_fill.md) ✅ — 泛微/Ecology 工时提交流程N：Chrome CDP + `WfForm` 批量填明细，固定字段映射，补齐某月工作日，只填写不提交
+- [Cockpit Codex 多账号续接对话 SOP](./workflow_codex_multi_account_turn.md) ✅ — 不用 Computer Use，通过 Cockpit 账号状态 + Codex app-server 在固定 thread 中按账号顺序发送 `1`；硬限制 Codex GUI 主实例数不超过 2
+
+### Design（设计系统）
+
+前端视觉设计规范、配色方案、HTML 模板。
+
+- [纸感颜料风格](./paper-pigment-style/SKILL.md) — 用七项关键结果验收约束纸感底色、柔和颜料配色、哑光颗粒与手工笔触；覆盖插画、海报、图解、演示、界面和图表，附真实返工图与视觉判断 references。v0.1：跨媒介适配待实际作品验证，不锁定绘图引擎。
+
+- [McDonald's Design Template](./mcdonalds-design-template/SKILL.md) ✅ — 从 <PRIVATE_SERVICE_ENDPOINT> 完整提取的麦当劳风格精致设计系统。暖米纸质底 + 番茄红 + 芥末黄，Fraunces/DM Sans/JetBrains Mono 三字体，明暗双模式，含纸张噪点、Hero 背景大字、横线代码块、FAQ 手风琴、步骤时间线、提示块、特征卡片等全部组件。附带可直接运行的 `template.html` 和完整 CSS 规范 `references/design-system.md`。
+
+### BestPractice（最佳实践）
+
+通用的最佳实践和经验教训。
+
+- [自主推进与交付闭环](./autonomous-task-delivery/SKILL.md) — **仅在用户明确要求进行自主循环时触发**；普通“继续做”“推进完”“别等我催”、任务复杂或已有定时任务均不触发。授权范围内以可验证交付、即时接续和明确退出条件推进；不强制定时或多代理。附真实复盘、轻量状态和情景审查；v0.2，长期跨任务效果待实际验证。
+- [AI 编程核心方法论](./bestpractice_ai_programming_mindset.md) ✅ — 70%问题、成功标准、可验证性
+- [生产交付型 Agent 工作法](./bestpractice_production_agent_delivery.md) ✅ — L3、长链路重构、runtime/Docker/部署、MR/release 或用户显式要求完整生产交付时，由需求交付 Router 调用的 Full Profile；不是新产品需求的第一跳。用户明确要求执行此 skill 且授权 subagent 时，主 Agent 先读 subagent guard，再调度下游 preflight / Docker E2E / 扫描 / 测试。
+- [Skill 写作指南（Meta-Skill）](./bestpractice_skill_writing.md) ✅ — 本 workspace 创建、重写或修改 Skill 的唯一标准；强调结果确定性、验收标准和边界条件。禁止读取或使用 OpenAI 系统 `skill-creator` 作为替代或补充。
+- [前端合同文档写作](./bestpractice_frontend_contract_doc_writing.md) ✅ — 写给前端联调的接口/页面/运行状态合同；正文第一节先列全部相关接口及用途，再写调用、JSON 路径、展示刷新和错误处理，剔除分支状态、DB/migration、实现日志等后端中间态
+- [高颗粒度解释文档写作](./bestpractice_explainer_doc_writing.md) ✅ — 写自包含 deep dive / 解释文档时使用；要求从具体对象开始、术语出现即解释、命令逐段拆解、显式区分执行空间与验证路径
+- [FastAPI 项目架构机制拆解](./bestpractice_fastapi_architecture_breakdown.md) ✅ — FastAPI 后端目录结构、文件放置、router/dependency/service/repository/model/schema/adapter 职责边界、生命周期和架构健康验收标准
+- [Mermaid 状态机图视觉风格](./bestpractice_mermaid_state_machine_visual_style.md) ✅ — Mermaid 状态机/流程状态图的产品语义、中文标签、线条少交叉、`curve: linear` 和渲染视觉 QA 规范
+- [API Key 管理与调用](./bestpractice_api_key_management_1password_cli.md) ✅ — 使用 1Password CLI 安全管理密钥
+- [面试评估框架](./bestpractice_interview_evaluation.md) ✅ — Trait > Skill、AI 作弊识别、技术深度探测
+- [PDF 转 Markdown](./bestpractice_pdf_to_markdown.md) ✅ — 默认用 Docling，避免 PDF 场景下 MarkItDown / PyMuPDF4LLM / Marker 的质量或许可问题
+- [时间敏感信息验证](./bestpractice_temporal_info_verification.md) ✅ — 验证可能超出 knowledge cutoff 的信息
+- [分阶段工作法](./bestpractice_staged_approach.md) ✅ — 隔离-处理-验证闭环，破坏性操作前 Dry Run
+- [GUI 自动化方法论](./bestpractice_gui_automation.md) ✅ — 把没有 API 的界面转化为可编程接口
+- [AI 辅助调试诊断](./bestpractice_ai_debugging_diagnosis.md) ✅ — "代码改不好"的根因诊断决策树
+- [Regression Test 实践](./bestpractice_regression_test.md) ✅ — 把真实失败固化成最低充分、可重复且能区分错误行为与修复行为的测试，并接入项目实际测试入口
+- [Subagent 防嵌套监测](./bestpractice_subagent_anti_nesting_monitor.md) ✅ — 只要使用 subagent / 后台 agent / 并行 agent 就触发：主 Agent 必须把子任务设为 leaf，启动后做一次 task tree 轻量检查，发现嵌套或横向调度立即中断/隔离并排除其结果
+- [Fact-Check 方法论](./bestpractice_fact_check.md) ✅ — 四步断言验证、六类认知偏差对策
+- [AI 产品设计原则](./bestpractice_ai_product_design.md) ✅ — 线性聊天 vs 知识工作、感知规则解耦
+- [产品/技术决策逆向工程](./bestpractice_product_decision_analysis.md) ✅ — 从设计空间、约束和 trade-off 分析产品或技术决策
+- [配置变更操作面优先原则](./bestpractice_config_change_operation_surface.md) ✅ — 模型/机构/用户/权限/功能开关等配置变更，优先产品后台/管理 API；数据库直改只作为只读核查、紧急回滚或明确要求的兜底路径
+- [DaVinci Resolve 片段级 Marker 约定](./davinci_clip_marker_convention.md) ✅ — 用 `TimelineItem.AddMarker`（不是 `Timeline.AddMarker`）；颜色↔语义对应表；`<namespace>_v<ver>::<type>::<uuid4>` customData 规范；静默失败必须回读验证
+- [Shipping Preflight 代码起飞前检查](./bestpractice_shipping_preflight.md) ✅ — **任何 push / merge / 发 MR / 部署 / code review 前必读**。覆盖 worktree 污染、同类漏扫、落后 origin/main、静默合并冲突、工具 cache bug、FastAPI/API 合同、异步阻塞、Docker 部署拓扑、runtime/SSE 状态语义、验收前环境匹配与完整链路验证；区分候选验证、配置核查与部署后验收。每组检查都有验收标准和红线。触发词：preflight、code review、推、push、提交、commit、merge、合并、发 MR、部署、上线
+
+---
+
+## 如何添加你自己的 Skill
+
+1. 参考现有 skill 文件的格式（元数据、核心说明、使用步骤、示例）
+2. 以 `<category>_<name>.md` 命名（例如 `workflow_my_process.md`、`bestpractice_my_insight.md`）
+3. 在 INDEX.md 对应分类下添加一行
+
+Skill 格式参考（最简版）：
+```markdown
+# Skill: 名称
+
+## When to Use
+什么情况下触发这个 skill
+
+## Prerequisites
+需要什么工具/配置
+
+## 步骤
+1. 步骤一
+2. 步骤二
+```
+
+## Progressive Disclosure
+
+Skills 采用渐进式披露原则：
+- **INDEX.md** 提供概览，快速定位
+- **具体 skill 文件** 包含完整的操作步骤和示例

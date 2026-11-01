@@ -1,0 +1,13 @@
+# 六配置成对选轮批次准备
+
+使用本任务冻结PREPARATION_SKILL v2及TASK_CONTRACT。你是叶子准备执行者。执行你的Qwen是编程模型；科学对象仅CheMeleon冻结编码器+新MLP256头。mini Context Infrastructure是会话根，本目录是任务包；只读TASK/输入，写output内，既有主控文件和其他任务不改。
+
+目标：把input/batch_request.json的6个新run准备成宿主能直接逐一消费的配置与检查交接。沿用input/reference已主控修复、真实训练过的代码，不改科学实现；3源文件按原字节独立复制，不做硬链接。输出configs/<run_id>.json，每个文件沿用base_config全部字段，只改run_id、monitor、head_config.seed；split seed固定43，输入路径仍data/train.csv、data/valid.csv、data/test.csv，由宿主部署。原run_id仅是参考，不是本轮输出或启动对象。输出batch-manifest.json逐项绑定配置/输入/源码SHA和具体seed/monitor。你不实现执行循环，不运行训练、backward、optimizer.step或整批编码；宿主串行执行6个独立run。
+
+以实际生产validate_config逐一加载写出的JSON并验证完整网格，与独立batch_request集合相等；不要只验证生成前内存对象。保持旧MSE选轮和MAE选轮字段兼容，使用input/acceptance固定轨迹检查生产选轮/检查点元数据函数，保持best/last的轮次、步骤、旧best-MSE含义。不以测试替身证明实际checkpoint Tensor存取。代码不改时可明确引用旧实现哪些路径已审、这次只测哪些，无需虚构全训练已测。
+
+行身份检查直接消费生产入口；空/重复Drug_ID和相同Drug但不同原始行都合法，固定合法样例必须保留三行。出现单组不足划分的拒绝须写真实原因，不计为重复完整行键验证。盲valid/test不读Y；只有train带Y。
+
+可在output/.venv、output/cache、output/tmp等私有目录准备必需依赖，最高下载2GiB/40分钟。首选只需NumPy的实际配置及无更新接口；不必下载编码器权重或Torch来完成本次配置任务。不能通过改实现绕开依赖；失败保留日志并交接明确未验证项。无海南连接资料/权限，不探寻或访问；不派子会话、不联系其他角色。
+
+交付6配置、3源文件、batch-manifest、检查脚本/原stdout/stderr/被测退出码、HANDOFF.md、skill-use.json、输入未变和输出清单。skill-use给条款→实际函数→证据映射。任务目标是准备通过真实消费端的配置，允许清晰指出已有实现问题，但不得偷偷修输入或运行训练来凑通过。完成后停止，由Terra及主控验收。

@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "project": "admet-host-training",
+  "visibility": "team_private",
+  "competition_id": 159,
+  "official_rules_source": "evidence/official-contract-20261029.json",
+  "pretrained_weights": {
+    "admitted": true,
+    "must_remain_frozen": true,
+    "basis": "User reports organizer confirmation; reaffirmed in current chat on 2026-10-30. Not claimed as verbatim public rule.",
+    "runtime_checks": [
+      "requires_grad_false",
+      "eval_mode",
+      "no_grad_encoding",
+      "optimizer_excludes_encoder",
+      "state_dict_including_buffers_sha256_before_after_equal",
+      "checkpoint_file_sha256_before_after_equal",
+      "new_head_parameters_changed"
+    ]
+  },
+  "training_labels": [
+    "official_train_Y"
+  ],
+  "validation_policy": {
+    "training_execution_input": "Drug_ID,Drug only",
+    "official_valid_tuning_allowed": true,
+    "private_host_scoring": true,
+    "pilot_scoring": false
+  },
+  "excluded_current": [
+    "external_samples_or_labels",
+    "external_teacher_outputs",
+    "test_fitting",
+    "new_cleaning",
+    "official_upload"
+  ],
+  "hainan_skill": "rules/skills/hainan-compute-access/SKILL.md",
+  "hainan_write_root": "<AUTHORIZED_PROJECT_ROOT>",
+  "pilot_max_concurrent_jobs": 1,
+  "unresolved": [
+    "other_external_fitted_assets",
+    "teacher_or_test_transduction_permission",
+    "official_aggregate_metric_definition"
+  ],
+  "input_version": "official_raw_plus_label_redacted_validation",
+  "cleaned_archive_adopted": false
+}

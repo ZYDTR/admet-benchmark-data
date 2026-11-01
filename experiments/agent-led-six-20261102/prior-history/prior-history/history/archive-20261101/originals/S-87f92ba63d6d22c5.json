@@ -1,0 +1,47 @@
+{
+  "decision_id": "D-VALID-ANALYSIS",
+  "events": [
+    {
+      "event_id": "DE-VALID-01",
+      "decision_id": "D-VALID-ANALYSIS",
+      "supersedes_event_id": null,
+      "status": "historical_runtime_control",
+      "decision": "首轮分析Chat只接收评分和聚合诊断，不读取valid原真值。",
+      "reason": "采用分析/训练信息隔离的保守本地控制；不是官方禁止分析者查看valid。",
+      "evidence": [
+        {
+          "path": "adhoc_jobs/admet_training/exchange/trials/public-repo-20261031/control/CHAT_PROMPT.txt",
+          "sha256": "81596096c3b4acaa44fe55f91b1c2dd104b487964de8662d21dc6909f7783fca"
+        }
+      ],
+      "occurred_at": null,
+      "time_precision": "historical_order_only"
+    },
+    {
+      "event_id": "DE-VALID-02",
+      "decision_id": "D-VALID-ANALYSIS",
+      "supersedes_event_id": "DE-VALID-01",
+      "status": "selected_design_pending_task_admission",
+      "decision": "后续专职研究Chat可在核验官方来源/任务/split/行身份/尺度并登记范围后查看valid真值和对齐预测；训练/准备仍盲。",
+      "reason": "仅聚合诊断限制自由误差研究。开放分析有诊断价值，但即使角色隔离仍会间接适应valid，因此主要筛选用内部验证，official valid按批次研究问题使用并记账。不能因GitHub已有Y认定正确或应当公开。",
+      "evidence": [
+        {
+          "path": "rules/skills/admet-evidence-review/SKILL.md",
+          "sha256": "44e4f260121b8d5ff872f9715ca6c1601e5a5e2b72d9bb96991a0b6b6db2811b"
+        }
+      ],
+      "occurred_at": "2026-10-31T08:00:56.831555+00:00",
+      "time_precision": "recorded_decision_time",
+      "runtime_policy_changed": false,
+      "raw_labels_sent": false,
+      "affected_next_steps": [
+        "来源和字段准入",
+        "下一批evaluation_scope",
+        "Chat输入与输出技术投影",
+        "评价反馈使用记录"
+      ]
+    }
+  ],
+  "effective_current_task": "首轮封口Prompt不改；本轮无新分析请求。",
+  "new_task_activation": "具体来源及接收任务准入后按主控已选设计落地；当前未发送任何真值。"
+}

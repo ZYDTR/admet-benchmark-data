@@ -1,0 +1,90 @@
+{
+  "traces": [
+    {
+      "path": "raw/attempt-01/preflight/write.strace",
+      "sha256": "69f3961c65290da308816dc553467eeb6b65eaa0bfe749d251ca4f9e1754708d",
+      "counts": {
+        "openat": 138,
+        "inside": 59,
+        "write": 52,
+        "rename": 4,
+        "mkdir": 33,
+        "unlink": 60,
+        "ipc_fd": 15,
+        "symlink": 57,
+        "mmap": 51,
+        "anonymous_memory": 7,
+        "writev": 2,
+        "unlinkat": 1,
+        "rmdir": 1
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {
+        "/dev/null": 8,
+        "/dev/nvidiactl": 63,
+        "/dev/nvidia0": 11,
+        "/dev/nvidia1": 11,
+        "/dev/nvidia2": 21,
+        "/dev/nvidia3": 11,
+        "/dev/nvidia4": 11,
+        "/dev/nvidia5": 11,
+        "/dev/nvidia6": 11,
+        "/dev/nvidia7": 11,
+        "/dev/nvidia-uvm": 5
+      },
+      "denied_counts": {
+        "EEXIST": 89,
+        "EACCES": 57,
+        "ENOENT": 2
+      },
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    },
+    {
+      "path": "raw/attempt-01/train/write.strace",
+      "sha256": "0879f984bdbae91a004e63c9360e994a11dabeb98a8306230422ba32bace0a1e",
+      "counts": {
+        "openat": 155,
+        "inside": 207,
+        "write": 155,
+        "rename": 14,
+        "mkdir": 33,
+        "unlink": 59,
+        "ipc_fd": 13,
+        "symlink": 57,
+        "mmap": 51,
+        "anonymous_memory": 7,
+        "writev": 9,
+        "unlinkat": 1,
+        "rmdir": 1
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {
+        "/dev/null": 8,
+        "/dev/nvidiactl": 63,
+        "/dev/nvidia-uvm": 5,
+        "/dev/nvidia0": 11,
+        "/dev/nvidia1": 11,
+        "/dev/nvidia2": 21,
+        "/dev/nvidia3": 11,
+        "/dev/nvidia4": 11,
+        "/dev/nvidia5": 11,
+        "/dev/nvidia6": 11,
+        "/dev/nvidia7": 11
+      },
+      "denied_counts": {
+        "EEXIST": 89,
+        "ENOENT": 2,
+        "EACCES": 57
+      },
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    }
+  ],
+  "parser_sha256": "f791a4b9fb24d8b121fe415d67c953de7d5e9df4603bc3bae55b6f7b55cf61fa",
+  "scope": "traced filesystem mutations; no claim of whole-server, read or ioctl isolation"
+}

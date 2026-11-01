@@ -1,0 +1,60 @@
+# ADMET Agent Harness
+
+为兴智杯“小分子药物预测技术创新赛”（赛题 159）构建的工程与 Agent 工作环境。核心是薄入口、按需技能、持久交接、可检查的运行与提交链。
+
+**从 [AGENTS.md](AGENTS.md) 进入。** 给 Agent 的启动请求可以是：“先读 AGENTS.md，恢复当前状态，按需加载技能，完成当前可推进的工作并保留交接证据。”
+
+## 立即可运行
+
+Python 3.11+，核心仅用标准库，不需下载依赖或模型。在项目根目录：
+
+```bash
+python3 scripts/harness.py status
+python3 scripts/harness.py doctor
+python3 scripts/harness.py check-context
+python3 -m unittest discover -s tests -v
+python3 scripts/demo.py
+```
+
+demo 使用隔离在 local/ 的合成夹具，检查评价与提交工程，不训练比赛模型、不上传预测。doctor 返回正式训练尚缺的条件，这是当前真实状态。
+
+## 项目组成
+
+| 入口/目录 | 作用 |
+| --- | --- |
+| AGENTS.md → skills/INDEX.md | 选择当前任务需要的局部规范 |
+| competition/ | 已核对官方事实、模板观察、团队默认和未知标签 |
+| context/ | 当前状态、三人待办、版本化交接和有依据的决策 |
+| src/admet_harness/ | 数据准入、运行、评价、提交、来源链和上下文工具 |
+| scripts/ | 稳定 CLI、合成演示、可选容器边界实测 |
+| docs/ | 架构、接口、验证结果与工程说明 |
+| tests/ | 实际行为与错误恢复的回归检查 |
+
+八项局部技能覆盖规则、数据来源、实验、提交、复现、上下文、工程和 Skill 写作。只在宿主工作区暴露一个项目入口，避免全局技能列表膨胀。
+
+## 正式训练接入
+
+B 按 [数据政策](docs/data-policy.md) 接入报名后官方文件并确认标签；C 按 [模型接口](docs/model-adapter.md) 实现实际深度模型；A 按 [宿主集成](docs/host-integration.md) 准备固定本地镜像及受限 Agent 工具权限。配置 schema 见 [运行契约](docs/runtime-contract.md)。
+
+```bash
+python3 scripts/harness.py check-data
+python3 scripts/harness.py adapter-digest --path adapters/your-reviewed-model
+python3 scripts/harness.py plan --config config/your-reviewed-run.json
+python3 scripts/harness.py run --config config/your-reviewed-run.json
+```
+
+后两项需要真实准入条件，示例配置故意保持 pending。Docker 不可用时不退回宿主训练；外层 Agent 任意 shell/MCP 的权限必须由宿主另行限制。
+
+## 评价与候选
+
+`evaluate` 计算明确定义的逐任务本地指标；不编造官方总分。`export-submission` 保持模板原字符串并生成来源 sidecar；`validate-submission` 检查格式；`verify-candidate` 核查真实本地运行链。详见 [评价](docs/evaluation.md) 与 [提交](docs/submission.md)。无自动平台上传。
+
+## 当前验证范围
+
+完整结果与独立路由验证见 [validation](docs/validation.md)。正式数据尚未接入，Docker/GPU 实机隔离、训练成绩和从头重训未验证。框架可运行不等于赛事模型已完成。
+
+## 参考与版本
+
+基于 grapeot 的 Project Scaffold、Best Practice Skill Writing 和 Context Infrastructure 方法原创实现。固定上游版本与逐项采用/调整说明见 [sources](docs/sources.md)。当前交付为本地项目；未发布公共仓库。数据、运行产物、密钥和个人缓存被排除在版本化源码之外。
+
+交付归档另附 `project-history.bundle` 与 `DELIVERY.json`，可查看交付版本。需要恢复完整提交历史时，在解压目录执行 `git clone project-history.bundle ../admet-agent-harness-with-history`；直接使用源码无需这一步。

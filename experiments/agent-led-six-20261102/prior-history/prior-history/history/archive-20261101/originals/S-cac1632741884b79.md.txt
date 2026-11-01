@@ -1,0 +1,123 @@
+# HANDOFF — A 路：CheMeleon 冻结编码器 + 小型预测头（准备完成）
+
+日期：2026-10-30。本会话是叶子执行者：只写了 `output/model/`，未运行任何训练/反向传播/optimizer.step/fit，未下载权重，未安装环境，未访问服务器（仅只读获取 CheMeleon 官方 pinned 源码与 Zenodo 元数据），未派发 Agent，未读取 B 路产物。所有训练与整批特征计算留给主 Codex。
+
+## 0. 结论与下一条命令
+
+交付物齐备：冻结编码器加载与指纹提取、每任务独立 MLP 头的固定配置训练、模型保存/加载、valid/test 统一预测、四级非训练自检、资产与依赖清单。数据侧全部可在本地核验的检查已通过；模型侧（编码、训练、预测）因本机无 torch/chemprop/rdkit 而未运行，需主 Codex 按序执行冒烟确认。
+
+主 Codex 的下一条运行命令（依次）：
+
+```bash
+cd output/model
+python -m chemeleon_baseline.selfcheck data                       # 已通过，重跑应复现 OK
+# 然后按 README.md 前置节安装环境并下载 chemeleon_mp.pt 到 assets/，接着：
+python -m chemeleon_baseline.selfcheck encoder --weights ../../assets/chemeleon_mp.pt \
+    --report ../../runs/selfcheck_encoder.json                   # 关键冒烟：加载+冻结+digest 不变
+# 通过后按 README.md 第 2–5 步：features -> train -> predict -> selfcheck cache/artifacts
+```
+
+若 `selfcheck encoder` 报 `encoder load failed`，先核对权重文件大小/MD5，再检查 chemprop 版本是否为 2.2.1（见 §5 风险）。
+
+## 1. 交付物清单
+
+```
+output/model/
+├── HANDOFF.md                 # 本文件
+├── README.md                  # 简短运行说明（命令序列、产物位置）
+├── requirements.txt           # 精确依赖（torch/chemprop/rdkit/numpy 固定版本）
+├── tasks.json                 # 22 任务注册表：kind/metric/行数/唯一串数/已知异常行锚点（含来源）
+└── chemeleon_baseline/
+    ├── __init__.py            # 约定说明（行身份、列契约、冻结承诺）
+    ├── tasks.py               # 任务注册表加载/子集选择/数据根校验
+    ├── data_io.py             # CSV 读取（utf-8-sig、保行序保原串、Y 有限性断言）、路径/哈希工具
+    ├── encoder.py             # CheMeleonFrozen：显式权重路径、大小+MD5 硬校验、requires_grad_(False)
+    │                          #   +eval+no_grad、parameter_digest()（冻结证明）、无任何自动下载
+    ├── features.py            # 提取并缓存指纹；逐分子容错+批次失败二分重试；uncoded.json；
+    │                          #   仅 train 拟合的回退向量；覆盖报告；元数据（哈希链）
+    ├── heads.py               # MLPHead 定义、固定 v1 配置、checkpoint 保存/加载（weights_only 安全）
+    ├── train.py               # 每任务训练 CLI（固定配置，无超参 CLI 覆盖；只读各任务 train.csv）
+    ├── predict.py             # valid/test 预测 CLI（列契约 task,split,row_index,y_pred；冻结链校验；
+    │                          #   覆盖/有限性断言；fallback 行 provenance）
+    └── selfcheck.py           # data/cache/encoder/artifacts 四级自检（data/artifacts 纯标准库）
+```
+
+命令行约定：`--device cpu|cuda:0`（单 GPU 或 CPU），`--threads N`（`torch.set_num_threads`，有界 CPU），`--tasks` 子集（冒烟用）。`--data-root` 默认按包位置推导为项目 `data/`，可显式覆盖。输出目录全部显式传入，不写 `output/model/` 之外的隐含位置。
+
+## 2. 资产与依赖（精确版本、下载入口、校验值）
+
+| 项 | 值 |
+| --- | --- |
+| 权重文件 | `chemeleon_mp.pt`，34,859,448 字节，MD5 `6a80b54fdb7de37ef0374d302f01e8ce` |
+| 下载入口 | `https://zenodo.org/records/15460715/files/chemeleon_mp.pt`（API：`https://zenodo.org/api/records/15460715`） |
+| 发布记录 | Zenodo 15460715，DOI `10.5281/zenodo.15460715`，2025-05-18，open access，resource_type=model |
+| 许可 | 权重：MIT（记录 `metadata.license.id = "mit-license"`，本地留存 API 响应 `research/evidence/chemeleon-zenodo-metadata.json`）。代码：MIT |
+| 发布方 SHA256 | 未提供（只发布 MD5）；下载后本地 SHA-256 由 encoder 记录进 `metadata.json`，形成本地指纹 |
+| 代码锚点 | `github.com/JacksonBurns/chemeleon` @ `b5e5bd88a7070c3f278e7e65e85b792617bf125c`，入口 `chemeleon_fingerprint.py`（本会话已读原文并逐行对照复刻，见 §4） |
+| Python | 3.11（reference-harness 要求 3.11+；发布方参考环境即 3.11） |
+| torch | 2.6.0（CPU wheel：`pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cpu`；CUDA 用对应 cu12x wheel） |
+| chemprop | 2.2.1（发布方入口要求 >=2.2.0；研究卡 M06 的原子编码事实按 v2.2.1 核对） |
+| rdkit | 2024.09.6（发布方参考环境版本；见 §6 覆盖的环境依赖说明） |
+| numpy | 1.26.4 |
+
+chemprop 会传递安装 lightning/pandas/scipy 等；本包直接 import 的只有上列四项加标准库。`selfcheck data`/`artifacts` 两级纯标准库，装环境前后都能跑。
+
+## 3. 设计决定（第一版固定，无搜索）
+
+- **表示**：CheMeleon 指纹 = 冻结 D-MPNN（`BondMessagePassing` + `MeanAggregation`）的分子级输出，维度运行时从 `mp.output_dim` 读取并记录（预计 300，以实际为准）。
+- **头**：每任务独立 `Linear(d,512)-ReLU-Dropout(0.1)-Linear(512,128)-ReLU-Dropout(0.1)-Linear(128,1)`，约 2.2e5 参数。是表示复用，不是多任务学习；任务间不共享任何可训练参数。
+- **固定训练配置 v1**（`heads.py:HEAD_CONFIG`，train.py 无任何超参覆盖入口）：AdamW lr=1e-3 wd=1e-4，epoch=100，batch=256，seed=42；分类 `BCEWithLogitsLoss(pos_weight=n_neg/n_pos)`，回归 `SmoothL1(β=1)` 作用在 train 标准化后的 Y 上。无早停、无任何基于标签的模型选择（盲验证无标签），保存的是最后一个固定 epoch 的状态。改任何值=新实验，需另行登记。
+- **仅 train 拟合的变换**：逐任务输入标准化（均值/方差来自该任务 train 行，含 fallback 行；σ<1e-8 置 1）、回归 Y 的均值/方差（预测时反变换回原尺度）、分类 pos_weight、回退向量（全部所选任务 train 唯一编码串的均值）。valid/test 不参与任何拟合。
+- **推理输出**：分类 y_pred=P(Y=1)（数值 1 定义正类，与 task_schema 一致）；回归 y_pred 已反标准化为原 Y 尺度。文件列严格为 `task,split,row_index,y_pred`，row_index 为该 split CSV 数据行 0 基位置，行序为任务注册表顺序+行号升序。
+
+## 4. 冻结保证与验证方法
+
+复刻关系：`encoder.py` 与发布方 `chemeleon_fingerprint.py`（pinned commit）逐行对照，仅两处有意差异——(1) 权重必须显式传本地路径，删除 `urlretrieve` 自动下载；(2) 增加冻结强制与可外证度量。构造路径（`SimpleMoleculeMolGraphFeaturizer` → `BondMessagePassing(**hyper_parameters)` → `load_state_dict`（strict）→ `MPNN(mp, MeanAggregation(), RegressionFFN 占位)`）与官方一致；`RegressionFFN` 为随机初始化占位、永不参与 fingerprint()，digest 只覆盖 `self.mp`。
+
+可验证的冻结链（主 Codex 执行时自动留痕，可复核）：
+
+1. `CheMeleonFrozen.__init__` 硬校验文件大小与 MD5 等于发布方值，加载后立即 `assert_frozen()`（所有参数 requires_grad=False 且无梯度）。
+2. `parameter_digest()`：对 mp state_dict 键名+形状+dtype+字节做 SHA-256。`features.py` 在提取前后各算一次，不一致即中止；digest 存入缓存 `metadata.json`。
+3. `train.py` 不加载编码器（只消费缓存），但把缓存身份（4 个内容文件 SHA-256 + metadata 权重 SHA-256 + 编码器 digest + 维度）写进每个头 checkpoint。
+4. `predict.py` 重新哈希当前缓存并逐头比对，不一致拒绝预测。链条：权重 → 缓存 → 头 → 预测。
+5. `selfcheck encoder` 独立复验：加载 → 冒烟指纹（C/CC/CCC）→ digest 前后一致 → assert_frozen。全程无 optimizer/backward/step。
+
+## 5. 已做检查（本会话实际执行，可复现）
+
+全部为只读检查，命令与结果：
+
+| 检查 | 结果 |
+| --- | --- |
+| `python -m py_compile`（9 个模块） | 通过 |
+| `chemeleon_baseline.selfcheck data` | OK：22 任务×3 文件头/行数与 tasks.json 完全一致；train Y 全部数值有限；13 个分类任务 Y 严格 {0.0,1.0}；唯一 SMILES 34,610/10,417/13,818、全局 46,202，与 research 审计一致；模板 16,379 行且 (task,sample_idx) 与 test.csv row_index 逐行 drug_id+smiles 全等；3 个已知异常行 SMILES 与审计锚点一致 |
+| 逻辑抽查（stdlib） | `select_tasks` 子集/未知名拒绝、`split_path` 三种 split 路径、`read_rows` 行号/列/首末行、`smiles_sha` 长度：全部符合预期 |
+| 静态边界检查 | grep 确认无任何网络/下载调用；optimizer/backward/step 仅存在于 train.py（主 Codex 运行）；预测/编码路径均为 eval+no_grad |
+| 官方接口对照 | 逐行阅读 pinned commit 的 `chemeleon_fingerprint.py` 与 README（Exact Versions），复刻关系见 §4 |
+| artifacts 检查器回环（/tmp 合成数据） | 用合成固定值生成全量 valid+test 预测文件后 `selfcheck artifacts` 通过；再删 1 行+注入 NaN，退出码 2 且报覆盖缺失与非有限值。合成文件只存在于 /tmp，未进入项目输出 |
+| tasks.json 生成 | 从实际 CSV + reference-harness task_schema.json 程序化生成并回读校验（模板 SHA-256 已与本地文件字节核对；一处手抄哈希末位错误在生成时被复核捕获并修正） |
+
+## 6. 未验证项（本地无法执行，留给主 Codex）
+
+1. **编码器实际加载与指纹**：本机无 torch/chemprop，`BondMessagePassing(**hyper_parameters)` 在 chemprop 2.2.1 下与该 checkpoint 的兼容性按发布方代码推定，未运行验证。第一道门是 `selfcheck encoder`。若 2.2.1 报构造/加载错误，先试 chemprop 2.2.0，并把实际可用版本写回 requirements 与运行记录（这属于版本适配，不是调参）。
+2. **指纹维度与数值分布**：`mp.output_dim`（预计 300）、指纹是否有限、批内/单独编码是否逐位一致（MeanAggregation 按分子聚合、eval 模式无批统计，理论上批次无关；建议主 Codex 在冒烟时抽查 3 个分子单独 vs 混批编码的一致性，一次 numpy allclose 即可）。
+3. **整批特征计算**：46,202 唯一串未提取。solubility test 1159/1160（两个 n-氧化物，RDKit 默认解析返回 None）与 171 行（388 重原子、24 片段、681 字符）的实际运行时行为未验证——uncoded.json 与覆盖报告是运行时真相。rdkit 版本差异可能改变可编码集合（2024.09.6 vs 审计用 2025.09.6），覆盖检查在每个环节强制执行，属预期内的环境依赖，如实记录即可。
+4. **训练与预测**：全部未运行。固定配置的收敛质量、逐任务损失、预测分布、CUDA 确定性（Linear/ReLU/Dropout 为主，种子已固定 CPU+CUDA；GPU 上逐位复现不作承诺，跨 seed 波动属正常统计现象）。
+5. **真实评分**：valid 真标签不在本会话；逐任务 AUROC/AP/MAE/Spearman 与任何官方聚合均由 B 路代码 + 主 Codex 独立执行。本路不产出任何分数。
+6. **模板 sample_idx 映射**：本会话核对了快照内 sample_idx==row_index 的字节事实（§5），但正式映射与导出是 B 路职责，该事实不替代 B 的核对。
+
+## 7. 无法编码行：记录与程序化完整覆盖方案
+
+- **记录**：`features.py` 对每个唯一串先 RDKit 解析、再 featurize、再批指纹；任何一步失败记入 `uncoded.json`（原因 + 受影响的全部 (task,split,row_index) 行）。批级异常会退化为逐分子重试，单点毒批次不会掩盖其他分子。
+- **回退**：确定性、仅 train 拟合——回退向量 = 所选任务 train 行中出现且成功编码的唯一串指纹均值（`fallback_vector.npy`）。uncoded 行的输入即此向量，由该任务正常训练的头产生预测；全程无人工填数。
+- **可审计性**：`features` 的 coverage 报告、`train` 的 `n_train_fallback_rows`、`predict` 的 `predictions_provenance.json` 与 summary（fallback 行的 task/split/row_index/smiles/reason）逐级留痕；`selfcheck artifacts`/`cache` 复核覆盖闭合。预期 fallback 行=2（solubility test 1159/1160），实际数字以运行时为准并在 HANDOFF 更新。
+- **禁止事项已内建**：缺行/重复行/非有限值/分类值越界都会使相应命令非零退出；预测文件在有问题的 split 上不落盘。
+
+## 8. 运行预算与参数
+
+- 有界 CPU：所有入口 `--threads`（torch.set_num_threads）；features 另受 `--batch-size`（默认 256）控制内存峰值。CPU 全量提取预计数十分钟级。
+- 单 GPU：`--device cuda:0`；显存占用小（34.9MB 编码器 + 批图）；train 全 22 任务在单卡上预计几分钟。不使用多卡/多进程并行。
+- 缓存复用：`runs/features/` 一次生成可重复供 train/predict 与后续多 seed 使用（身份哈希链防串用）。
+
+## 9. 边界遵守声明
+
+按 TASK.md：本会话只写 `output/model/`；原件（data/、research/、reference-harness/）只读；未运行训练、反向传播、optimizer.step、fit 或含训练的测试；自检均为静态/数据侧/不更新参数的接口检查；未下载权重、未安装环境、未访问赛事服务器、未上传任何东西；网络读取仅限 CheMeleon 官方 pinned 源码与 Zenodo 元数据（属“自行阅读官方资料”）；未创建其他会话/Agent；未读取 `output/data-eval/` 或其他会话产物。

@@ -1,0 +1,44 @@
+from pathlib import Path
+import json, sys, time, hashlib
+Q = Path(__file__).resolve().parent
+P = Q.parent
+sys.path.insert(0, str(P))
+import hainan
+index = int(sys.argv[1])
+assert index in (2, 3, 4, 5)
+t = json.loads((P.parent / 'TASK.json').read_text())
+run = t['runs'][index]['run_id']
+attempt = int(sys.argv[2]) if len(sys.argv) > 2 else 3 if index == 2 else 1
+ledger = json.loads((Q / 'compute-ledger.json').read_text())
+assert not any((x['run_id'] == run and x.get('complete') for x in ledger['attempts']))
+remaining = ledger['allowance'] - sum((x['elapsed_seconds'] for x in ledger['attempts']))
+assert remaining > 30
+relative = run + ('/attempt-%02d' % attempt if attempt > 1 else '')
+source = (Q / 'observe-calculation-v2.py').read_text().replace('TARGET_RUN', repr(run)).replace('TARGET_RELATIVE', repr(relative)).replace('TIME_LIMIT', str(min(900, remaining)))
+tag = f'gpu1-fit-{index}-{attempt}-002'
+(Q / f'{tag}-remote.py').write_text(source)
+s = json.loads((P / 'status.json').read_text())
+s.update(state='starting_qualified_gpu1_calculation', updated_epoch=time.time(), new_learning_temporarily_deferred=False, active_jobs=[{'run_id': run, 'attempt': attempt, 'gpu_index': 1, 'gpu_uuid': 'registered-gpu-5606cf9d8021', 'phase': 'fresh_prelaunch_qualification_before_CUDA'}], compute_ledger='gpu1-002/compute-ledger.json', resource_note='Long-history reassessment conditionally supports small serial cached heads on GPU1; each actual launch must pass fresh health/identity/idle/memory qualification. GPU0 forbidden. Any resident observed activity/memory growth or query uncertainty stops own job.')
+(P / 'status.json').write_text(json.dumps(s, ensure_ascii=False, indent=2) + '\n')
+try:
+    raw = hainan.once(source, tag, timeout=min(900, remaining) + 45)
+except Exception:
+    rawfile = P / 'raw' / f'{tag}.stdout'
+    if not rawfile.exists():
+        raise
+    try:
+        v = json.loads(rawfile.read_bytes())
+        assert 'actual_strace_wait_exit' in v
+    except Exception:
+        raise
+else:
+    v = json.loads(raw)
+v.update(attempt=attempt, output_relative=relative, gpu_index=1, gpu_uuid='registered-gpu-5606cf9d8021', resumed_steps=30 if index == 2 else 0)
+ledger['attempts'].append(v)
+(Q / 'compute-ledger.json').write_text(json.dumps(ledger, indent=2) + '\n')
+(Q / f'{tag}-result.json').write_text(json.dumps(v, indent=2) + '\n')
+s = json.loads((P / 'status.json').read_text())
+s.update(updated_epoch=time.time(), active_jobs=[], state='verifying_gpu1_result' if v['complete'] else 'gpu1_calculation_stopped', compute_seconds_used=sum((x['elapsed_seconds'] for x in ledger['attempts'])), compute_seconds_remaining=ledger['allowance'] - sum((x['elapsed_seconds'] for x in ledger['attempts'])), completed_runs=sum((1 for x in ledger['attempts'] if x.get('complete'))), partial_runs=0 if any((x['run_id'] == t['runs'][2]['run_id'] and x.get('complete') for x in ledger['attempts'])) else 1, not_started_runs=sum((not any((y['run_id'] == x['run_id'] for y in ledger['attempts'])) for x in t['runs'])))
+(P / 'status.json').write_text(json.dumps(s, ensure_ascii=False, indent=2) + '\n')
+print(json.dumps(v))
+raise SystemExit(0 if v['complete'] and v['actual_strace_wait_exit'] == 0 and (v['reason'] is None) else 70)

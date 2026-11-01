@@ -1,0 +1,61 @@
+{
+  "at": "2026-10-31T10:43:31.406898+00:00",
+  "run_id": "hainan-index-cycle-20261031",
+  "state": "preflight_monitor_failed_runtime_recovery_candidate_ready",
+  "formal_dispatch_message_id": "admet-progressive-index-e2e-20261031:main:execute-one:v1",
+  "training_started": false,
+  "training_completed": false,
+  "freeze_verified": null,
+  "write_scope_verified": null,
+  "own_resources_released": true,
+  "scoring_performed": false,
+  "upload_performed": false,
+  "deployment_performed": true,
+  "preflight": {
+    "actual_cuda_matmul": true,
+    "full_imports": true,
+    "guard_abi": 4,
+    "worker_returncode": 0,
+    "supervisor_recorded_exit": 125,
+    "outer_phase_passed": false,
+    "adapter_receipt_independently_verified": true,
+    "failure": "KeyError: 'VmRSS'",
+    "write_scope_verified": true,
+    "trace_sha256": "172f961379a80420b8001dd340fc941ed3e324a765623697485d5f7ddec502ce",
+    "outside_mutations": 0,
+    "unresolved_trace_items": 0,
+    "peak_observed_rss_bytes": 1089294336,
+    "peak_observed_gpu_mib": 676
+  },
+  "resources": {
+    "observation_id": "hainan-20261031T102616-397498Z",
+    "gpu_index": 5,
+    "gpu_uuid": "<REGISTERED_GPU>",
+    "registered_processes_checked": 3,
+    "all_registered_processes_exited": true
+  },
+  "protected_files": {
+    "deployed_files_unchanged": true,
+    "environment_raw_metadata_unchanged": 78,
+    "scientific_source_unchanged": true,
+    "current_plan_unchanged": true
+  },
+  "evidence": {
+    "snapshot": "raw/execution-01/remote-snapshot-v1",
+    "postcheck": "operator/execution-01/postcheck.json",
+    "write_audit": "acceptance/execution-01/write-audit.json",
+    "environment_gate": "operator/execution-01/environment-gate.json",
+    "recovery_candidate": "source/production-adapter-v2/source-manifest.json",
+    "recovery_candidate_sha256": "4cc5009522611d0705212ab45c2aba78c4d0f9a45f012f30912f97f02f8a17c0",
+    "recovery_validation": "source/production-adapter-v2/checks/final-validation.json",
+    "recovery_validation_sha256": "5bcff696aa2551f2e6f3eb637eeccc6f8d7db693d89e976558b7be12e76b9f90"
+  },
+  "next_step": "Main review and new exact runtime/formal recovery binding; then fresh target check and bounded preflight before still-unstarted single learning job.",
+  "limitations": [
+    "No training/freeze/predictions occurred.",
+    "V1 phase stays failed125 although CUDA proof and receipt are valid.",
+    "Terminal/no-VmRSS reproduced locally; original failing PID/state was not retained.",
+    "Trace review covers this preflight, not whole-server/device isolation.",
+    "V2 has no production or real Linux validation yet."
+  ]
+}

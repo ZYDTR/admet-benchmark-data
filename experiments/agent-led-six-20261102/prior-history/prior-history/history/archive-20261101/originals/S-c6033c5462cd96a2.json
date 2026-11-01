@@ -1,0 +1,50 @@
+{
+  "at": "2026-10-31T09:02:35.311251+00:00",
+  "classification": "probable_pre_model_snapshot_lock_wait_not_yet_runtime_stack_proven",
+  "evidence": {
+    "service_api_version": "1.19.5",
+    "health_calls_seconds": 0.03645154199330136,
+    "busy_session_count": 4,
+    "target_last_observed": "2026-10-31T09:01:46.441845+00:00",
+    "target_assistant_parts": 0,
+    "gc_pid": 112,
+    "gc_start_epoch": 1793432983.384882,
+    "gc_cmd": "git --git-dir <Context Infra snapshot store> --work-tree <PRIVATE_RUNTIME_PATH> gc --prune=7.days",
+    "repack_pid": 115,
+    "repack_observed_at_first_probe": true,
+    "repack_absent_at_09_01_29": true,
+    "gc_still_present_at_09_01_29": true,
+    "pack_bytes": 333422523,
+    "gc_pid_file_matches_process": true,
+    "memory_mib": 615.1,
+    "container_memory_limit_gib": 13.7
+  },
+  "source_reasoning": [
+    "release snapshot cleanup and track both use same per-gitdir semaphore",
+    "release SessionProcessor.create awaits snapshot.track before LLM stream starts",
+    "our session has assistant created and loop step0 only; no provider/tool/stream parts",
+    "matching project snapshot gc has remained running over one hour; repack phase changed during read-only inspection"
+  ],
+  "limitations": [
+    "No live Effect fiber stack proves exact suspended await",
+    "No provider request receipt or model response observed; cannot call this provider timeout",
+    "GC phase changed, so not established permanently deadlocked",
+    "Aggregate CPU is not per-session CPU"
+  ],
+  "actions_taken": "read-only API, metadata and target-scoped logs; official release source inspection",
+  "mutations_to_remote_or_original_session": false,
+  "no_model_probe_no_resend_no_restart": true,
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/anomalyco/opencode/v1.19.5/packages/opencode/src/snapshot/index.ts",
+      "path": "snapshot-index.ts",
+      "sha256": "d301ef3dce67c870247bf65db962c2f0c7881f9ffd0e564167605111c9a2065f"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/anomalyco/opencode/v1.19.5/packages/opencode/src/session/processor.ts",
+      "path": "session-processor.ts",
+      "sha256": "0b31e207beda56bd9a4b9b88c9e42d89a0651dd011773748c8e2938dfc3dcb74"
+    }
+  ],
+  "next": "monitor original request and matching GC process metadata; if process completes check whether original session begins without any new prompt"
+}

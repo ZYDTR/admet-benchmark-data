@@ -1,0 +1,282 @@
+{
+  "schema_version": 1,
+  "status": "first_trial_artifact_roundtrip_accepted_transport_terminal_unverified",
+  "owner_thread_id": "private-role-298cc5edc25e",
+  "gateway_thread_id": "private-role-d3ccfb533c01",
+  "chat_target": {
+    "id": "private-role-162611f9ee94",
+    "title": "解读药物预测赛",
+    "kind": "chatgpt",
+    "project_id": null,
+    "file_roundtrip_verified": true,
+    "required_model": "Pro",
+    "Chat_terminal_verified": false
+  },
+  "training_thread_id": "private-role-78713649c4c9",
+  "retrieval_thread_id": "private-role-45108974a7af",
+  "opencode_monitor_thread_id": "private-role-718a07757988",
+  "local_exchange_proposed": "adhoc_jobs/admet_training/exchange",
+  "cloud_exchange_uri": "https://github.com/ZYDTR/admet-benchmark-data",
+  "message_envelope_required": [
+    "event_id",
+    "event_type",
+    "source_role",
+    "target_role",
+    "request_id",
+    "round_id",
+    "run_ids",
+    "attempt",
+    "sequence",
+    "source_turn_id",
+    "artifact_manifest_uri",
+    "artifact_manifest_sha256",
+    "observed_at",
+    "terminal_evidence",
+    "authorization_reference"
+  ],
+  "producer_events": {
+    "controller": [
+      "PREPARATION_REGISTERED",
+      "TRAINING_AUTHORIZED",
+      "RUN_ACCEPTED",
+      "REVIEW_CONSUMED"
+    ],
+    "training": [
+      "TRAINING_STARTED",
+      "TRAINING_TERMINAL",
+      "TRAINING_UNKNOWN"
+    ],
+    "retrieval": [
+      "ARTIFACTS_VERIFIED",
+      "ARTIFACTS_PARTIAL",
+      "SOURCE_CHANGED",
+      "SCORING_COMPLETED",
+      "SCORING_FAILED",
+      "PACKET_PUBLISHED"
+    ],
+    "gateway": [
+      "CHAT_SENT",
+      "CHAT_REPLY_RECEIVED",
+      "REVIEW_DELIVERED",
+      "GATEWAY_BLOCKED",
+      "CHAT_ARTIFACTS_RECOVERED",
+      "CHAT_TERMINAL_UNKNOWN"
+    ],
+    "opencode_monitor": [
+      "PREPARATION_ACCEPTED",
+      "PREPARATION_REJECTED",
+      "PREPARATION_UNKNOWN"
+    ]
+  },
+  "handoff_receipt_required": [
+    "event_id",
+    "consumer",
+    "accepted_at",
+    "resulting_state",
+    "delivery_message_id"
+  ],
+  "dispatch_policy": {
+    "delivery_semantics": "at_least_once_with_persisted_deduplication",
+    "single_active_chat_request_per_research_branch": true,
+    "unknown_send_reconcile_before_retry": true,
+    "idle_is_not_success": true,
+    "controller_is_only_training_dispatcher": true,
+    "terminal_unknown_keeps_request_branch_locked": true
+  },
+  "proposed_cadence": {
+    "screen_configurations": [
+      4,
+      8
+    ],
+    "confirmation_configurations": [
+      2,
+      4
+    ],
+    "confirmation_common_seeds": 3,
+    "partial_review_check_minutes": 30,
+    "partial_review_max_wait_minutes": 60,
+    "new_evidence_required": true,
+    "existing_terra_interval_minutes": 10,
+    "chat_repair_attempts_max": 2
+  },
+  "campaign_budget_required_before_training_loop": [
+    "max_total_runs",
+    "max_gpu_hours",
+    "max_wall_seconds",
+    "gpu_peak_resource_budget",
+    "max_chat_rounds",
+    "evaluation_scope",
+    "max_private_validation_evaluations",
+    "stop_conditions"
+  ],
+  "review_contract": {
+    "status": [
+      "complete",
+      "needs_evidence",
+      "inconclusive"
+    ],
+    "required": [
+      "schema_version",
+      "request_id",
+      "round_id",
+      "manifest_sha256",
+      "status",
+      "read_receipt",
+      "findings",
+      "missing_evidence",
+      "not_assessed",
+      "comparison_groups",
+      "stop_reasons"
+    ],
+    "finding_required": [
+      "claim",
+      "run_ids",
+      "evidence_refs",
+      "counterevidence",
+      "uncertainty",
+      "decision_impact"
+    ],
+    "proposal_required": [
+      "proposal_id",
+      "priority",
+      "hypothesis",
+      "control_run_or_config",
+      "task",
+      "asset_versions",
+      "change_only",
+      "hold_fixed",
+      "split_id",
+      "seeds",
+      "metric",
+      "direction",
+      "minimum_effect_or_decision_rule",
+      "success_criterion",
+      "falsification_criterion",
+      "compute_budget",
+      "dependencies",
+      "within_current_scope"
+    ],
+    "code_execution_from_reply": false,
+    "raw_text_and_attachments_preserved": true,
+    "required_outputs": [
+      "analysis.md",
+      "issues.json",
+      "next_batch_guide.md",
+      "next_experiments.json",
+      "review.json",
+      "search_space.json"
+    ],
+    "issue_required": [
+      "issue_id",
+      "status",
+      "severity",
+      "category",
+      "statement",
+      "affected_run_ids",
+      "evidence_refs",
+      "hypothesis",
+      "counterevidence",
+      "impact",
+      "proposed_resolution",
+      "verification_criterion",
+      "related_proposal_ids"
+    ],
+    "guide_work_item_required": [
+      "work_item_id",
+      "issue_ids",
+      "goal",
+      "model_and_asset_versions",
+      "input_contract",
+      "output_contract",
+      "implementation_scope",
+      "frozen_components",
+      "preparation_steps",
+      "dependencies",
+      "acceptance_checks",
+      "priority",
+      "budget",
+      "blocked_fallback"
+    ],
+    "broad_search_then_prioritize": true,
+    "recommendation_count_cap": null,
+    "cross_check_required": true,
+    "actual_subagents_requested": true,
+    "return_transport": {
+      "preferred": "six actual files plus delivery-manifest.json and audit.zip, compact final message",
+      "fallback": "full marked inline content only if actual files unavailable; no silent truncation",
+      "artifact_and_chat_terminal_states_separate": true,
+      "revision4_tested": false
+    }
+  },
+  "timing_required": [
+    "packet_build_seconds",
+    "publish_seconds",
+    "access_verification_seconds",
+    "chat_queue_and_generation_seconds",
+    "completion_detection_seconds",
+    "reply_download_seconds",
+    "response_validation_seconds",
+    "end_to_end_seconds"
+  ],
+  "authorization_notes": "2026-10-31 本轮现存两run取回/固定评分/公开发布/Pro实读/六原文件回收及主控科学验收完成；原Chat正文断流终态未验证。下一批仅保存建议，未训练/派发/新建定时。",
+  "known_unverified": [
+    "Original long reply final state and REVIEW_COMPLETE marker after stream disconnection",
+    "Revision4 compact-message+delivery-manifest return protocol has not been tested",
+    "Autonomous training-to-retrieval-to-Chat chaining",
+    "Duplicate-completion and automatic unknown-state recovery",
+    "Batch training/resource sharing"
+  ],
+  "revision": 4,
+  "role_assignments": {
+    "retrieval": [
+      "remote_read_only_retrieval",
+      "byte_and_identity_validation",
+      "local_valid_fixed_scoring",
+      "package_rules_data_results",
+      "publish_registered_user_authorized_destination"
+    ],
+    "gateway": [
+      "observe_registered_training",
+      "request_retrieval_scoring_publication",
+      "send_analysis_prompt_to_chat",
+      "verify_actual_chat_read",
+      "recover_full_issues_and_guidance",
+      "notify_controller"
+    ],
+    "controller": [
+      "independent_acceptance",
+      "persist_and_reconcile_issue_ledger",
+      "dispatch_preparation_guidance_to_opencode",
+      "register_terra_monitor",
+      "authorize_and_dispatch_training"
+    ]
+  },
+  "local_issue_ledger_proposed": "adhoc_jobs/admet_training/exchange/issues",
+  "cloud_publication_owner": "retrieval",
+  "publication_method_proposed": "Normal append-only immutable public commit, 393 files anonymously SHA-verified; scoped current packet accepted.",
+  "scoring": {
+    "executor_thread_id": "private-role-45108974a7af",
+    "local_only": true,
+    "fixed_scorer_required": true,
+    "exact_task_coverage_required": true,
+    "raw_labels_to_training_or_preparation": false,
+    "completed_for_current_hainan_runs": true,
+    "historical_full_suite_wrapper_not_directly_compatible_with_single_task": true
+  },
+  "gateway_title": "🔄Chat收发与分析交接",
+  "trial_entry": "../../exchange/trials/public-repo-20261031/AGENTS.md",
+  "measured_trial": {
+    "send_to_six_original_files_verified_seconds": 3887.165404333,
+    "actual_original_byte_transfer_seconds": null,
+    "ui_thinking_label_only": "36m31s",
+    "single_sample_no_latency_SLA": true,
+    "send_to_six_original_files_verified_seconds_scope": "send marker to gateway acceptance receipt, after content structure validation; includes handoff record preparation"
+  },
+  "research_quality_policy": {
+    "depth_and_breadth_encouraged": true,
+    "length_itself_is_not_a_defect": true,
+    "compact_transport_does_not_limit_full_files": true
+  },
+  "single_trigger_full_cycle_verified": false,
+  "one_trigger_audit": "one-trigger-audit.json"
+}

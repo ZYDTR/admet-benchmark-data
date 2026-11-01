@@ -1,0 +1,29 @@
+"""Readonly exact new batch snapshot after failed prelaunch; no weights/model load."""
+import hashlib,io,json,os,socket,stat,sys,zipfile
+from pathlib import Path
+PARENT=Path('<AUTHORIZED_PROJECT_ROOT>/admet')
+NAMES=['hainan-paired-mse-s44-20261101','hainan-paired-mae-s44-20261101',
+       'hainan-paired-mse-s45-20261101','hainan-paired-mae-s45-20261101',
+       'hainan-paired-mse-s46-20261101','hainan-paired-mae-s46-20261101','contract-follow-e2e-20261101']
+assert socket.gethostname().split('.')[0]=='project-compute' and os.getuid()==os.getgid()==1012
+files=[]
+for name in NAMES:
+    root=PARENT/name;assert root.resolve(strict=True)==root
+    for basename in ('PLAN.json','inputs-manifest.json','encoder.py','batch-dispatch.json'):
+        if (root/basename).exists():files.append(root/basename)
+    for directory in ('source','data','inputs','admission','raw','state','operator','artifacts','outputs'):
+        if not (root/directory).exists():continue
+        for path in (root/directory).rglob('*'):
+            assert path.resolve(strict=True)==path and not path.is_symlink()
+            info=path.lstat();assert stat.S_ISDIR(info.st_mode) or stat.S_ISREG(info.st_mode)
+            if stat.S_ISREG(info.st_mode):
+                assert info.st_nlink==1;files.append(path)
+assert len(files)<2000 and sum(p.stat().st_size for p in files)<512*1024**2
+manifest={};buffer=io.BytesIO()
+with zipfile.ZipFile(buffer,'w',zipfile.ZIP_DEFLATED,compresslevel=3) as archive:
+    for path in sorted(files):
+        name=str(path.relative_to(PARENT));data=path.read_bytes()
+        manifest[name]={'size':len(data),'sha256':hashlib.sha256(data).hexdigest()}
+        archive.writestr(name,data)
+    archive.writestr('fetch-manifest.json',json.dumps(manifest,indent=2)+'\n')
+sys.stdout.buffer.write(buffer.getvalue())

@@ -1,0 +1,100 @@
+"""One concrete scientific run. No transport, scheduling, model agent or retry."""
+import ctypes, json, os, resource, sys, time
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from common_guarded import ROOT, GPU_UUID, environment, now, safe, write_json
+assert sys.platform == 'linux' and os.getuid() == os.getgid() == 1012 and (ROOT.parent.name == 'agent-led-resume-20261102')
+record = {'at': now(), 'pid': os.getpid(), 'start_stat': Path('/proc/self/stat').read_text(), 'gpu_uuid': GPU_UUID, 'root': str(ROOT)}
+with safe(ROOT / 'raw/compute-start.json').open('x') as stream:
+    json.dump(record, stream)
+    stream.flush()
+    os.fsync(stream.fileno())
+os.environ.clear()
+os.environ.update(environment())
+os.chdir(ROOT)
+affinity = sorted(os.sched_getaffinity(0))[:2]
+assert len(affinity) == 2
+os.sched_setaffinity(0, affinity)
+resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
+resource.setrlimit(resource.RLIMIT_FSIZE, (450 * 1024 ** 2, 450 * 1024 ** 2))
+lib = ctypes.CDLL(None, use_errno=True)
+lib.syscall.restype = ctypes.c_long
+abi = lib.syscall(444, ctypes.c_void_p(), ctypes.c_size_t(0), ctypes.c_uint(1))
+assert abi >= 1, (abi, ctypes.get_errno())
+handled = sum((1 << i for i in [1, *range(4, 13)]))
+if abi >= 2:
+    handled |= 1 << 13
+if abi >= 3:
+    handled |= 1 << 14
+
+class Ruleset(ctypes.Structure):
+    _fields_ = [('handled_access_fs', ctypes.c_uint64)]
+
+class Beneath(ctypes.Structure):
+    _pack_ = 1
+    _fields_ = [('allowed_access', ctypes.c_uint64), ('parent_fd', ctypes.c_int32)]
+attr = Ruleset(handled)
+fd = lib.syscall(444, ctypes.byref(attr), ctypes.sizeof(attr), 0)
+assert fd >= 0, ctypes.get_errno()
+
+def allow(path, access):
+    descriptor = os.open(path, os.O_PATH | os.O_CLOEXEC)
+    try:
+        rule = Beneath(access, descriptor)
+        assert lib.syscall(445, fd, 1, ctypes.byref(rule), 0) == 0, (str(path), ctypes.get_errno())
+    finally:
+        os.close(descriptor)
+allow(ROOT, handled)
+devices = []
+for pattern in ('nvidia[0-9]*', 'nvidiactl', 'nvidia-uvm', 'nvidia-uvm-tools', 'nvidia-modeset'):
+    for path in Path('/dev').glob(pattern):
+        if path.is_char_device():
+            allow(path, 1 << 1)
+            devices.append(str(path))
+allow(Path('/dev/null'), 1 << 1)
+assert lib.prctl(38, 1, 0, 0, 0) == 0
+assert lib.syscall(446, fd, 0) == 0, ctypes.get_errno()
+os.close(fd)
+write_json(ROOT / 'raw/protection.json', dict(record, landlock_abi=abi, handled_access=handled, allowed_write_tree=str(ROOT), device_write_handles=devices, affinity=affinity, fs_size_limit=450 * 1024 ** 2, coverage='filesystem mutation classes handled by Landlock; device IO and own prctl thread naming are separate'))
+import train_paced as science
+science._load_late()
+torch = science.torch
+assert torch.cuda.is_available() and torch.cuda.device_count() == 1
+props = torch.cuda.get_device_properties(0)
+torch.cuda.set_per_process_memory_fraction(4096 * 1024 ** 2 / props.total_memory, 0)
+x = torch.ones((64, 64), device='cuda:0')
+z = x @ x
+torch.cuda.synchronize()
+assert bool(torch.all(z == 64))
+del x, z
+write_json(ROOT / 'raw/cuda-check.json', dict(record, actual_cuda_matmul=True, device=str(props), torch=torch.__version__))
+
+class PacedEncoder(science.CheMeleonEmbedder):
+
+    def __init__(self, *args, **kwargs):
+        kwargs['batch_size'] = 8
+        super().__init__(*args, **kwargs)
+
+    def embed(self, smiles):
+        features = []
+        masks = []
+        for start in range(0, len(smiles), 8):
+            x, mask = super().embed(smiles[start:start + 8])
+            features.append(x)
+            masks.append(mask)
+            torch.cuda.synchronize()
+            time.sleep(0.2)
+        return (science.np.concatenate(features), science.np.concatenate(masks))
+science.CheMeleonEmbedder = PacedEncoder
+original_step = torch.optim.AdamW.step
+
+def paced_step(self, *args, **kwargs):
+    value = original_step(self, *args, **kwargs)
+    torch.cuda.synchronize()
+    time.sleep(0.005)
+    return value
+torch.optim.AdamW.step = paced_step
+write_json(ROOT / 'raw/pacing.json', {'encode_batch': 8, 'encode_pause_seconds': 0.2, 'head_step_pause_seconds': 0.005, 'scientific_head_batch': 128, 'scientific_parameters_unchanged': True, 'purpose': 'low duty cycle coexistence; no throughput guarantee implied'})
+exit_code = science.main()
+write_json(ROOT / 'raw/science-return.json', dict(record, finished_at=now(), actual_science_return=exit_code))
+raise SystemExit(exit_code)

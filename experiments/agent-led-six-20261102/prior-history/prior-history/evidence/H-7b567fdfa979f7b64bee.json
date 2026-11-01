@@ -1,0 +1,70 @@
+{
+  "run_id": "hainan-paired-mse-s44-20261101",
+  "phase": "preflight",
+  "token": "1c0e8373c1ee4b14ada9d5f53ccfebfc",
+  "offline_fixture": false,
+  "state": "monitor_or_launch_failed",
+  "success": false,
+  "child_returncode": -15,
+  "supervisor_exit_code": 125,
+  "child_identity": {
+    "pid": 1068898,
+    "state": "S",
+    "ppid": 1066674,
+    "pgid": 1068898,
+    "start_ticks": "389344893",
+    "start_stat": "1068898 (strace) S 1066674 1068898 1068898 0 -1 4194304 233 0 0 0 0 0 0 0 20 0 1 0 389344893 8970240 768 18446744073709551615 105499686260736 105499686949213 140735210055872 0 0 0 0 0 0 1 0 0 17 0 0 0 0 0 0 105499687340464 105499687756080 105499705831424 140735210058479 140735210059408 140735210059408 140735210061800 0\n"
+  },
+  "receipt_verified": false,
+  "at": "2026-11-01T10:58:23.278190+00:00",
+  "command": [
+    "/usr/bin/strace",
+    "-f",
+    "-qq",
+    "-yy",
+    "-s",
+    "160",
+    "-e",
+    "trace=%file,write,writev,pwrite64,ftruncate,mmap,msync,close,dup,dup2,dup3,fchdir,fchmod,fchown,fsetxattr,fremovexattr,fallocate,copy_file_range,sendfile,landlock_create_ruleset,landlock_add_rule,landlock_restrict_self,prctl",
+    "-o",
+    "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-paired-mse-s44-20261101/raw/attempt-01/preflight/write.strace",
+    "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/venv/bin/python3",
+    "-I",
+    "-B",
+    "-u",
+    "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-paired-mse-s44-20261101/source/production-adapter-v2/guarded_worker.py",
+    "production",
+    "--root",
+    "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-paired-mse-s44-20261101",
+    "--attempt",
+    "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-paired-mse-s44-20261101/raw/attempt-01/preflight",
+    "--phase",
+    "preflight",
+    "--token",
+    "1c0e8373c1ee4b14ada9d5f53ccfebfc",
+    "--profile",
+    "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-paired-mse-s44-20261101/operator/recovery-01/execution-profile.json"
+  ],
+  "reason": "FileNotFoundError: [Errno 2] No such file or directory: '<AUTHORIZED_PROJECT_ROOT>/admet/hainan-paired-mse-s44-20261101/raw/attempt-01/preflight/worker-start.json.fc9ce5929a32486d837916c98468215e.tmp'",
+  "exception": "Traceback (most recent call last):\n  File \"<AUTHORIZED_PROJECT_ROOT>/admet/hainan-paired-mse-s44-20261101/source/production-adapter-v2/phase_supervisor.py\", line 98, in run_phase\n    event('observed', **monitor(child))\n                        ^^^^^^^^^^^^^^\n  File \"<AUTHORIZED_PROJECT_ROOT>/admet/hainan-paired-mse-s44-20261101/source/production-adapter-v2/pipeline.py\", line 74, in monitor\n    observation['result_bytes'] = resource.result_bytes(root)\n                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<AUTHORIZED_PROJECT_ROOT>/admet/hainan-paired-mse-s44-20261101/source/runtime-v1/resource_checks.py\", line 92, in result_bytes\n    safe(root, path, True)\n  File \"<AUTHORIZED_PROJECT_ROOT>/admet/hainan-paired-mse-s44-20261101/source/runtime-v1/common_guarded.py\", line 27, in safe\n    if path.resolve(strict=existing) != path:\n       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/pathlib.py\", line 1242, in resolve\n    s = self._flavour.realpath(self, strict=strict)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen posixpath>\", line 432, in realpath\n  File \"<frozen posixpath>\", line 476, in _joinrealpath\nFileNotFoundError: [Errno 2] No such file or directory: '<AUTHORIZED_PROJECT_ROOT>/admet/hainan-paired-mse-s44-20261101/raw/attempt-01/preflight/worker-start.json.fc9ce5929a32486d837916c98468215e.tmp'\n",
+  "cleanup": {
+    "signals": [
+      {
+        "pid": 1068903,
+        "signalled": true,
+        "signal": 15,
+        "kernel_handle": "pidfd"
+      },
+      {
+        "pid": 1068898,
+        "signalled": true,
+        "signal": 15,
+        "kernel_handle": "pidfd"
+      }
+    ],
+    "leader_reaped": true,
+    "group_signal_used": false
+  },
+  "finished_at": "2026-11-01T10:58:28.903911+00:00",
+  "elapsed_seconds": 5.625732447952032
+}

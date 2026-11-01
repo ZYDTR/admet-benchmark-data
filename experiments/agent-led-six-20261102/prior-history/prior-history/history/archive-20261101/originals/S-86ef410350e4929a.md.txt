@@ -1,0 +1,27 @@
+---
+name: experiment
+description: 运行或恢复模型实验、实现模型适配器、比较验证结果；用于训练评价与自动调参，新增数据先经过 data-provenance。
+---
+# 可追溯实验
+
+## 目标
+
+把一个明确实验问题变成可比较的逐任务结果、对应模型和可恢复运行记录。
+
+## 验收标准
+
+- 声明本次假设、数据/划分版本、标签与评价约定、配置、种子和选模依据；比较使用相同条件。
+- 启动正式运行时，`check-data` 与 `plan` 通过；固定适配器和本地镜像经过审查，训练输入不含测试文件。只读比较不要求启动训练或具备 Docker。
+- 运行完成有可核验 artifact；崩溃或超时保留失败记录，不能写成 completed。已有成功 run 不重跑覆盖。
+- 逐任务指标与本地汇总明确命名；未知官方聚合公式时不输出官方总分。缺标签或指标不可定义时显式报告。
+- 深度模型实际训练证据由模型适配器提供；Harness 的格式检查不能证明模型质量。
+
+## 资源与边界
+
+恢复先查看 `status` 中任务的证据与 next_action。只比较已有结果时读 [比较契约](../../docs/run-comparison.md) 和实际证据；启动运行才读 [运行契约](../../docs/runtime-contract.md) 及 [run.example](../../config/run.example.json)；接入/修改模型才读 [模型接口](../../docs/model-adapter.md)，评价设计读 [评价约定](../../docs/evaluation.md)。新输入、外部权重、补标签或未知来源先转 data-provenance。
+
+`plan --config <项目相对路径>` 仅生成检查后的计划；`run --config ...` 才启动正式执行器。Docker 不可用就报告运行阻塞，不改成宿主机执行。无训练数据可运行 `python3 scripts/demo.py` 验证工程，并将结果明确标记为合成演示。
+
+## 输出
+
+实际运行产出新 `runs/<run_id>/`，由执行器保存计划、快照、日志、结果与哈希。只读比较产出 `deliverables/comparisons/<comparison-id>.json` 与交接，指向真实证据；没有结果时报告证据不足，不创建训练 run。恢复训练使用新 run_id 和有记录的恢复设计；失败运行不能直接假装续训成功。

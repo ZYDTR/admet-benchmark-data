@@ -1,0 +1,18 @@
+# 已发生的准备交付缺陷
+
+这些条款来自真实审查，适用性由 TASK 决定。示例只含合成数据，无私有标签；准备方不运行训练步。
+
+| 证据 | 失败表现 | 可判定的结果 |
+|---|---|---|
+| DeepSeek冷启动，2026-10-30 | 默认评分路径只评交集、缓存身份不全、模块消费类型不互通；曾把CPU smoke 当准备 | 实际默认入口拒绝缺行/错身份，缓存内容和行序绑定；无参数更新 |
+| Qwen单轮准备，2026-10-31 | 只允许train重复ID，valid/test真实输入因此无法加载；空ID也被拒绝 | 两行 `Drug_ID="same"`、不同Drug，以及一行空ID，按原始行号原样通过生产身份入口；重复完整键才拒绝 |
+| 同轮优化器 | 只存step、丢失exp_avg/exp_avg_sq，param_groups多一层list；真实torch step Tensor传JSON时报TypeError | 用非空手工状态经生产保存函数、weights_only读取和真实load_state_dict回载，逐Tensor相等，参数组结构不变 |
+| 同轮RNG | 仅Python/NumPy，缺torch CPU/CUDA和独立采样器；重载异常被吞后继续success | 状态包含实际使用的每个随机源；有依赖的恢复检查真实失败时不得成功，CUDA不可用明确未验证 |
+| 同轮best元信息 | best使用最终steps | 合成第2轮最佳、第4轮停止，best必须对应第2轮的累计更新步数，last对应第4轮 |
+| 同轮配置/适配 | 优化器类别写死；旧safe(path,existing)不能直接接新safe(root,path,existing) | 显式配置来源与实际构造一致；生产入口与宿主接口联通，静态兼容与真实运行分开记录 |
+
+| Qwen MAE选轮准备，2026-11-01，已读v1.2 | save_head把best_internal_validation_standardized_mse写为当前checkpoint轮MSE，破坏此前截至该轮最小MSE语义；新best_monitor_value正确也不能抵消 | 合成MSE=[1,3,2,4]、MAE=[4,1,2,3]，MAE选中第2轮；生产保存best/last旧MSE字段均应为1，当前轮MSE另存3/4，通用选轮值与epoch/steps独立绑定 |
+
+不要为了让错误实现的测试变绿而改变合同。例如空ID是合法属性，不能写“遇到空ID应失败”的测试。旧报告误称eval模式的Dropout导致随机性；应按实际 `train()/eval()` 调用和模块行为判断，不复述自报。
+
+宿主证据入口：`adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/report.md`；`adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031/acceptance/main-preparation-review/review.json`。它们可能只在主控工作区存在；本参考已经携带可执行方理解的缺陷与合成反例，不要求准备方越过任务目录寻找历史产物。

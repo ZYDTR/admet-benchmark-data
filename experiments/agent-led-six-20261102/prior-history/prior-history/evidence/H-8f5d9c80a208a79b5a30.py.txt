@@ -1,0 +1,71 @@
+"""Read-only old failure/lifetime admission; shared first-learning lock survives."""
+import os
+from pathlib import Path
+from adapter_common import generic,process_identity,strict_json
+from layout import RAW,STATE,SCIENCE
+
+def old_processes_exited(identities,reader=process_identity):
+    proof=[]
+    for prior in identities:
+        ticks=str(prior.get('start_ticks') or prior['start_stat'].rsplit(')',1)[1].split()[19])
+        try:current=reader(prior['pid'])
+        except (FileNotFoundError,ProcessLookupError):proof.append({'expected':prior,'state':'absent'});continue
+        if str(current['start_ticks'])==ticks and current.get('state') not in ('Z','X'):
+            raise ValueError('old process live or unknown; query original')
+        proof.append({'expected':prior,'current':current,'state':'old_lifetime_exited'})
+    return proof
+
+def validate_contract(root,contract,allow_current_learning=False,token=None,reader=process_identity):
+    if contract.get('attempt')!='02' or contract.get('run_id')!=root.name:
+        raise ValueError('recovery attempt/run mismatch')
+    if contract.get('runtime_admitted') is not True:
+        raise ValueError('separate main runtime acceptance pending')
+    for item in contract['old_evidence']:
+        path=generic.safe(root,root/item['path'],True)
+        if generic.sha(path)!=item['sha256']:raise ValueError('old evidence drift')
+    for item in contract.get('batch_old_evidence',[]):
+        batch=Path('<AUTHORIZED_PROJECT_ROOT>/admet/contract-follow-e2e-20261101')
+        path=generic.safe(batch,batch/item['path'],True)
+        if generic.sha(path)!=item['sha256']:raise ValueError('old batch evidence drift')
+    proof=old_processes_exited(contract['old_identities'],reader)
+    for path in (root/'raw/train-complete.json',root/'raw/train-runtime.json'):
+        if path.exists():raise ValueError('old learning evidence exists')
+    old_artifacts=root/'artifacts'
+    if old_artifacts.exists() and any(old_artifacts.iterdir()):raise ValueError('old scientific artifacts exist')
+    learning=generic.safe(root,root/'state/learning-started.lock')
+    if learning.exists():
+        lock=strict_json(learning)
+        if (not allow_current_learning or lock.get('attempt')!='02' or not token
+                or lock.get('token')!=token or lock.get('run_id')!=root.name):
+            raise ValueError('shared learning lock already exists; never replay')
+        prior=lock['supervisor_identity'];current=reader(prior['pid'])
+        if (str(current['start_ticks'])!=str(prior['start_ticks']) or current['pgid']!=prior['pgid']):
+            raise ValueError('current learning owner lifetime mismatch')
+    return proof
+
+def require_recovery(profile,root,allow_current_learning=False,token=None,dispatch=None):
+    spec=profile.get('recovery_contract')
+    if not spec:raise ValueError('recovery contract absent')
+    path=generic.safe(root,root/spec['path'],True)
+    if generic.sha(path)!=spec['sha256']:raise ValueError('recovery contract drift')
+    contract=strict_json(path)
+    required={'raw/deployment.json'}
+    if root.name=='hainan-paired-mse-s44-20261101':
+        required|={'raw/attempt-01/pipeline-exit.json','raw/job-wait-exit.json'}
+    if not required <= {x['path'] for x in contract.get('old_evidence',[])}:
+        raise ValueError('mandatory old failure/deployment evidence absent')
+    if not {'state/batch-state.json','raw/recovery-01/outer-outcome.json','raw/recovery-01/watch-actual-exit.json','raw/recovery-01/launcher-watch-exit.json'} <= {x['path'] for x in contract.get('batch_old_evidence',[])}:
+        raise ValueError('mandatory old batch wait evidence absent')
+    if dispatch is None or dispatch.get('recovery_contract_sha256')!=spec['sha256']:
+        raise ValueError('main dispatch does not pin recovery contract')
+    authority=contract.get('main_runtime_acceptance')
+    if not authority:raise ValueError('separate main runtime acceptance absent')
+    receipt=generic.safe(root,root/authority['path'],True)
+    if generic.sha(receipt)!=authority['sha256']:raise ValueError('main runtime acceptance drift')
+    accepted=strict_json(receipt)
+    if (accepted.get('passed') is not True or accepted.get('attempt')!='02'
+            or root.name not in accepted.get('run_ids',[])
+            or accepted.get('runtime_source_manifest_sha256')!=profile['runtime_source_manifest']['sha256']
+            or accepted.get('main_controller_thread')!='private-role-298cc5edc25e'):
+        raise ValueError('main runtime acceptance does not admit this exact recovery')
+    return validate_contract(root,contract,allow_current_learning,token)

@@ -1,0 +1,440 @@
+{
+  "commit": "0275588ac7a5d3df032ec7dc0794cab21dfcfeeb",
+  "scope": "Read-only reaggregation of train molecular strings and validation labels. No test data or labels read.",
+  "definition": "Validation row exposure means exact raw SMILES is present in at least one other task original train.csv. This is not proof of forbidden leakage; it describes an estimand boundary for multi-task learning.",
+  "script_sha256": "d82874c2dc4c19b4e655ec044920a5b4d34fa48936981be61cddc5563bc7835b",
+  "source_sha256": {
+    "data_benchmark/bioavailability_ma/train.csv": "67d201f36ee1eb8b202ea5ac30624045a839747143d45ef11ee91017db82ccca",
+    "data_benchmark/ld50_zhu/train.csv": "749c76c38fdf4fb147f8fa5ae4dfa247cca26b152461a1e52234bca441626daa",
+    "data_benchmark/ames/train.csv": "1f31f914999a8b1281dc9353d6d8a6f9e11cdabf4d9b43cb2984edd1775a771d",
+    "data_benchmark/bbb_martins/train.csv": "b3223c2fa0fff26ab990b4dbafbbe435a8ceb6114d76488bc3be27a68dfe23b9",
+    "data_benchmark/ppbr_az/train.csv": "92842d88cc0f9fe41a14d1effcf1f3a23d0a6415df4d6e615af6458dc6de8281",
+    "data_benchmark/clearance_hepatocyte_az/train.csv": "5075b6a07d08d50c22a3a434e4708eb34b2d310b612a0a1c523bd153c11ba1f0",
+    "data_benchmark/hia_hou/train.csv": "59291200064e1b3be437437208a45d62f8eea6f6c372b4820e11e20fd1ffb2be",
+    "data_benchmark/cyp3a4_substrate_carbonmangels/train.csv": "f840554ef680fe42b5334aac398141fb94b510bee7f935549ee2521a47eda55b",
+    "data_benchmark/cyp2d6_veith/train.csv": "f9ddcf3ef3bfda8ec7ccfc3f3882296f3562861df01a28432560781bc9eaa1d6",
+    "data_benchmark/cyp3a4_veith/train.csv": "ed009e2d43cbc4278cf7f4c0923b63aa570009f0bfd532a7139ea395cfe5be90",
+    "data_benchmark/solubility_aqsoldb/train.csv": "744ee3d69e3f0d9230894a62a95bc64ea15b2d6d44f1a5fb890c5c3260ce89c2",
+    "data_benchmark/caco2_wang/train.csv": "3061c58d3601d081e5459a2de03dc1d189243c4b5683d1b7288577a29fed4d6f",
+    "data_benchmark/cyp2c9_veith/train.csv": "4414aaa7ce7ac6d588c55d09292a47dd74b4c70bb78338affff655fbe715ebf2",
+    "data_benchmark/vdss_lombardo/train.csv": "246dd203c300181b1df73c90cb349a0db1a1bd848dfa32895222cd4d4d89bc94",
+    "data_benchmark/cyp2d6_substrate_carbonmangels/train.csv": "8278fde03c27e594079d600e9565d48c3c97dc6daf51113f3b4ba7023ecd8301",
+    "data_benchmark/dili/train.csv": "33981936021d3c360fc0e6e92a701fea80705a3915c0cdb49751312dcd2235cd",
+    "data_benchmark/lipophilicity_astrazeneca/train.csv": "0049aa6d5b56d2f8c22e475b11b837ebfa86536d0c8ede06d432e854fb9d83d3",
+    "data_benchmark/cyp2c9_substrate_carbonmangels/train.csv": "cbd2423a4da38cfadcd266f3287c0894f23577917d5f12144eade9f5c0967009",
+    "data_benchmark/half_life_obach/train.csv": "61774bf5dfc29bee0768038dcbf16319e9fc19e2bee63659f2cfed687477e2f9",
+    "data_benchmark/herg/train.csv": "97f2f48846378bc4bb51e9d0a0041ac9e3686423a06f20a5119a842212a5b64e",
+    "data_benchmark/pgp_broccatelli/train.csv": "6eb86ba5d8cfa87b8d0950d55e8054586994ea21c8b59e461743117ffe8a9a46",
+    "data_benchmark/clearance_microsome_az/train.csv": "4a0844973f3b059417c1214becff7ed7be69d457661c3ebb96a26099cc2e0038",
+    "data_benchmark/ames/valid.csv": "128351f2830547b4de22a1d8bccff5b2d128f0386bffef74bcb9e5ad437c7d1a",
+    "data_benchmark/bbb_martins/valid.csv": "eaed2376463a79a7783308be4c35f74b7662f66df29811f8462d3ebfda47b58f",
+    "data_benchmark/bioavailability_ma/valid.csv": "ba5b96027613461c29dade0355eb83bb90ed36e39f5b2889da8e42658e6d5bc1",
+    "data_benchmark/caco2_wang/valid.csv": "63328bf307b850a4a0986165d0800bae5aa737c41bd63f1026d16114d8560bb4",
+    "data_benchmark/clearance_hepatocyte_az/valid.csv": "70b8909657f590a92b84ef4d3758e10a7ab688083971b939daf0c5004bbe04e5",
+    "data_benchmark/clearance_microsome_az/valid.csv": "b5df9dd9902e743b932811acb330edf1250bca279aa7086a087dd8e58394fbb5",
+    "data_benchmark/cyp2c9_substrate_carbonmangels/valid.csv": "020195bff8520972c02dc7bf0739fd7815c548372bd1e6b12eca95619ddcfe0f",
+    "data_benchmark/cyp2c9_veith/valid.csv": "3eb039546951c292faeac419ed22f0e08e3a38a2b90ef62c76e6db736a89b864",
+    "data_benchmark/cyp2d6_substrate_carbonmangels/valid.csv": "46d79fa0b3cf13975f97364835e3f4f97c648de7041332101bbb02f1456b1e4c",
+    "data_benchmark/cyp2d6_veith/valid.csv": "a783012454209e47640cadb83cf5f84408bf375ca13fa0ea3335482e901823e7",
+    "data_benchmark/cyp3a4_substrate_carbonmangels/valid.csv": "368546f70970e88249dd0cfa93f943ea97a4363abaf98861cbc701690efaabc6",
+    "data_benchmark/cyp3a4_veith/valid.csv": "db7aa095189723c24dc30b73caa76c53b381cebe9a5d409ef54da3644313e6a6",
+    "data_benchmark/dili/valid.csv": "944ca7ad4f4416a43aa5a5d943d0b4fbed3fcf763a63c835b7d3761bcc15c626",
+    "data_benchmark/half_life_obach/valid.csv": "34b97b09010371060136b6af941c84ede93be9d563807ac5d35ca6fba618aa9a",
+    "data_benchmark/herg/valid.csv": "4898ea81ba70fcacc21f733e9e8446bf8001566032902245405978f0d86332a6",
+    "data_benchmark/hia_hou/valid.csv": "31990f1c03ca7c4aad2115835a5e0a6f9de2e83609fd855205508513cbfb14bd",
+    "data_benchmark/ld50_zhu/valid.csv": "6943341be1314231509651426ea0293e9460bfd80e76f8df8e76485c820e0b05",
+    "data_benchmark/lipophilicity_astrazeneca/valid.csv": "5dd44fdbcefd3dc94de24479f557c3fa6f1e4f69094f2161173b005cb6da5b01",
+    "data_benchmark/pgp_broccatelli/valid.csv": "9e10c20d5e373547c69ffb5db88c6bece98a6da079f86314147b492fb78b0f57",
+    "data_benchmark/ppbr_az/valid.csv": "c1effe3ddc607ce177d59c1f5eebb9466a96f714edbf34f6f4f725988640cb36",
+    "data_benchmark/solubility_aqsoldb/valid.csv": "576ef180e4c3ab36853708e092bb8a1da7178a0a0456ef7bbfc41e4e9ec97817",
+    "data_benchmark/vdss_lombardo/valid.csv": "572d0d7b72016acc9feefcb0d1652d0c356cf304fb71fd123652cca3fbbe0661"
+  },
+  "tasks": {
+    "ames": {
+      "metric": "AUROC",
+      "valid_rows": 1137,
+      "groups": {
+        "exposed_to_other_task_train": {
+          "rows": 550,
+          "unique_raw_smiles": 550,
+          "positive_rows": 179,
+          "negative_rows": 371,
+          "both_classes_present": true
+        },
+        "unexposed_to_other_task_train": {
+          "rows": 587,
+          "unique_raw_smiles": 585,
+          "positive_rows": 300,
+          "negative_rows": 287,
+          "both_classes_present": true
+        }
+      }
+    },
+    "bbb_martins": {
+      "metric": "AUROC",
+      "valid_rows": 203,
+      "groups": {
+        "exposed_to_other_task_train": {
+          "rows": 65,
+          "unique_raw_smiles": 61,
+          "positive_rows": 46,
+          "negative_rows": 19,
+          "both_classes_present": true
+        },
+        "unexposed_to_other_task_train": {
+          "rows": 138,
+          "unique_raw_smiles": 136,
+          "positive_rows": 103,
+          "negative_rows": 35,
+          "both_classes_present": true
+        }
+      }
+    },
+    "bioavailability_ma": {
+      "metric": "AUROC",
+      "valid_rows": 64,
+      "groups": {
+        "exposed_to_other_task_train": {
+          "rows": 55,
+          "unique_raw_smiles": 55,
+          "positive_rows": 38,
+          "negative_rows": 17,
+          "both_classes_present": true
+        },
+        "unexposed_to_other_task_train": {
+          "rows": 9,
+          "unique_raw_smiles": 9,
+          "positive_rows": 5,
+          "negative_rows": 4,
+          "both_classes_present": true
+        }
+      }
+    },
+    "caco2_wang": {
+      "metric": "MAE",
+      "valid_rows": 91,
+      "groups": {
+        "exposed_to_other_task_train": {
+          "rows": 18,
+          "unique_raw_smiles": 18
+        },
+        "unexposed_to_other_task_train": {
+          "rows": 73,
+          "unique_raw_smiles": 73
+        }
+      }
+    },
+    "clearance_hepatocyte_az": {
+      "metric": "Spearman",
+      "valid_rows": 122,
+      "groups": {
+        "exposed_to_other_task_train": {
+          "rows": 93,
+          "unique_raw_smiles": 79
+        },
+        "unexposed_to_other_task_train": {
+          "rows": 29,
+          "unique_raw_smiles": 26
+        }
+      }
+    },
+    "clearance_microsome_az": {
+      "metric": "Spearman",
+      "valid_rows": 111,
+      "groups": {
+        "exposed_to_other_task_train": {
+          "rows": 97,
+          "unique_raw_smiles": 97
+        },
+        "unexposed_to_other_task_train": {
+          "rows": 14,
+          "unique_raw_smiles": 14
+        }
+      }
+    },
+    "cyp2c9_substrate_carbonmangels": {
+      "metric": "AUPRC",
+      "valid_rows": 67,
+      "groups": {
+        "exposed_to_other_task_train": {
+          "rows": 64,
+          "unique_raw_smiles": 63,
+          "positive_rows": 12,
+          "negative_rows": 52,
+          "both_classes_present": true
+        },
+        "unexposed_to_other_task_train": {
+          "rows": 3,
+          "unique_raw_smiles": 3,
+          "positive_rows": 0,
+          "negative_rows": 3,
+          "both_classes_present": false
+        }
+      }
+    },
+    "cyp2c9_veith": {
+      "metric": "AUPRC",
+      "valid_rows": 1210,
+      "groups": {
+        "exposed_to_other_task_train": {
+          "rows": 992,
+          "unique_raw_smiles": 992,
+          "positive_rows": 338,
+          "negative_rows": 654,
+          "both_classes_present": true
+        },
+        "unexposed_to_other_task_train": {
+          "rows": 218,
+          "unique_raw_smiles": 218,
+          "positive_rows": 68,
+          "negative_rows": 150,
+          "both_classes_present": true
+        }
+      }
+    },
+    "cyp2d6_substrate_carbonmangels": {
+      "metric": "AUPRC",
+      "valid_rows": 67,
+      "groups": {
+        "exposed_to_other_task_train": {
+          "rows": 62,
+          "unique_raw_smiles": 62,
+          "positive_rows": 13,
+          "negative_rows": 49,
+          "both_classes_present": true
+        },
+        "unexposed_to_other_task_train": {
+          "rows": 5,
+          "unique_raw_smiles": 5,
+          "positive_rows": 1,
+          "negative_rows": 4,
+          "both_classes_present": true
+        }
+      }
+    },
+    "cyp2d6_veith": {
+      "metric": "AUPRC",
+      "valid_rows": 1313,
+      "groups": {
+        "exposed_to_other_task_train": {
+          "rows": 1001,
+          "unique_raw_smiles": 1001,
+          "positive_rows": 195,
+          "negative_rows": 806,
+          "both_classes_present": true
+        },
+        "unexposed_to_other_task_train": {
+          "rows": 312,
+          "unique_raw_smiles": 312,
+          "positive_rows": 55,
+          "negative_rows": 257,
+          "both_classes_present": true
+        }
+      }
+    },
+    "cyp3a4_substrate_carbonmangels": {
+      "metric": "AUROC",
+      "valid_rows": 67,
+      "groups": {
+        "exposed_to_other_task_train": {
+          "rows": 61,
+          "unique_raw_smiles": 61,
+          "positive_rows": 32,
+          "negative_rows": 29,
+          "both_classes_present": true
+        },
+        "unexposed_to_other_task_train": {
+          "rows": 6,
+          "unique_raw_smiles": 6,
+          "positive_rows": 4,
+          "negative_rows": 2,
+          "both_classes_present": true
+        }
+      }
+    },
+    "cyp3a4_veith": {
+      "metric": "AUPRC",
+      "valid_rows": 1233,
+      "groups": {
+        "exposed_to_other_task_train": {
+          "rows": 1001,
+          "unique_raw_smiles": 1001,
+          "positive_rows": 443,
+          "negative_rows": 558,
+          "both_classes_present": true
+        },
+        "unexposed_to_other_task_train": {
+          "rows": 232,
+          "unique_raw_smiles": 232,
+          "positive_rows": 138,
+          "negative_rows": 94,
+          "both_classes_present": true
+        }
+      }
+    },
+    "dili": {
+      "metric": "AUROC",
+      "valid_rows": 48,
+      "groups": {
+        "exposed_to_other_task_train": {
+          "rows": 21,
+          "unique_raw_smiles": 21,
+          "positive_rows": 8,
+          "negative_rows": 13,
+          "both_classes_present": true
+        },
+        "unexposed_to_other_task_train": {
+          "rows": 27,
+          "unique_raw_smiles": 27,
+          "positive_rows": 5,
+          "negative_rows": 22,
+          "both_classes_present": true
+        }
+      }
+    },
+    "half_life_obach": {
+      "metric": "Spearman",
+      "valid_rows": 67,
+      "groups": {
+        "exposed_to_other_task_train": {
+          "rows": 43,
+          "unique_raw_smiles": 43
+        },
+        "unexposed_to_other_task_train": {
+          "rows": 24,
+          "unique_raw_smiles": 24
+        }
+      }
+    },
+    "herg": {
+      "metric": "AUROC",
+      "valid_rows": 66,
+      "groups": {
+        "exposed_to_other_task_train": {
+          "rows": 16,
+          "unique_raw_smiles": 16,
+          "positive_rows": 8,
+          "negative_rows": 8,
+          "both_classes_present": true
+        },
+        "unexposed_to_other_task_train": {
+          "rows": 50,
+          "unique_raw_smiles": 50,
+          "positive_rows": 34,
+          "negative_rows": 16,
+          "both_classes_present": true
+        }
+      }
+    },
+    "hia_hou": {
+      "metric": "AUROC",
+      "valid_rows": 58,
+      "groups": {
+        "exposed_to_other_task_train": {
+          "rows": 29,
+          "unique_raw_smiles": 29,
+          "positive_rows": 27,
+          "negative_rows": 2,
+          "both_classes_present": true
+        },
+        "unexposed_to_other_task_train": {
+          "rows": 29,
+          "unique_raw_smiles": 29,
+          "positive_rows": 21,
+          "negative_rows": 8,
+          "both_classes_present": true
+        }
+      }
+    },
+    "ld50_zhu": {
+      "metric": "MAE",
+      "valid_rows": 1937,
+      "groups": {
+        "exposed_to_other_task_train": {
+          "rows": 458,
+          "unique_raw_smiles": 458
+        },
+        "unexposed_to_other_task_train": {
+          "rows": 1479,
+          "unique_raw_smiles": 1472
+        }
+      }
+    },
+    "lipophilicity_astrazeneca": {
+      "metric": "MAE",
+      "valid_rows": 420,
+      "groups": {
+        "exposed_to_other_task_train": {
+          "rows": 187,
+          "unique_raw_smiles": 187
+        },
+        "unexposed_to_other_task_train": {
+          "rows": 233,
+          "unique_raw_smiles": 233
+        }
+      }
+    },
+    "pgp_broccatelli": {
+      "metric": "AUROC",
+      "valid_rows": 122,
+      "groups": {
+        "exposed_to_other_task_train": {
+          "rows": 40,
+          "unique_raw_smiles": 40,
+          "positive_rows": 14,
+          "negative_rows": 26,
+          "both_classes_present": true
+        },
+        "unexposed_to_other_task_train": {
+          "rows": 82,
+          "unique_raw_smiles": 82,
+          "positive_rows": 47,
+          "negative_rows": 35,
+          "both_classes_present": true
+        }
+      }
+    },
+    "ppbr_az": {
+      "metric": "MAE",
+      "valid_rows": 279,
+      "groups": {
+        "exposed_to_other_task_train": {
+          "rows": 195,
+          "unique_raw_smiles": 119
+        },
+        "unexposed_to_other_task_train": {
+          "rows": 84,
+          "unique_raw_smiles": 53
+        }
+      }
+    },
+    "solubility_aqsoldb": {
+      "metric": "MAE",
+      "valid_rows": 2940,
+      "groups": {
+        "exposed_to_other_task_train": {
+          "rows": 517,
+          "unique_raw_smiles": 517
+        },
+        "unexposed_to_other_task_train": {
+          "rows": 2423,
+          "unique_raw_smiles": 2423
+        }
+      }
+    },
+    "vdss_lombardo": {
+      "metric": "Spearman",
+      "valid_rows": 113,
+      "groups": {
+        "exposed_to_other_task_train": {
+          "rows": 24,
+          "unique_raw_smiles": 24
+        },
+        "unexposed_to_other_task_train": {
+          "rows": 89,
+          "unique_raw_smiles": 86
+        }
+      }
+    }
+  }
+}

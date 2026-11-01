@@ -1,0 +1,85 @@
+"""Fixed-task read-only reconciliation; no candidate deployment or model imports."""
+from pathlib import Path
+import sys,json,base64,hashlib,time,importlib.util
+P=Path(__file__).resolve().parent;OP=P.parent;T=OP.parent;A=OP/'attempt03-main-v1';H=OP/'resource-resume-execution-05'
+sys.path.insert(0,str(OP));import transport
+transport.EVIDENCE=P/'raw';transport.RUN=P
+manifest=json.loads((H/'remote-fetch-manifest.json').read_text());manifest.update({k:{'size':v['size'],'sha256':v['sha256']} for k,v in json.loads((H/'remote-omitted-files.json').read_text()).items()})
+old=json.loads((H/'postcheck-request.json').read_text())['identities'];runs=[x['run_id'] for x in json.loads((H/'RUN_RESULTS.json').read_text())['runs']]
+outputs={x['path']:{'size':x['size'],'sha256':x['sha256']} for x in json.loads((T/'recovery-04/operator/target-reconcile.json').read_text())['files'] if x['path'].startswith('outputs/recovery-02/')}
+request={'protected':manifest,'old_identities':old,'runs':runs,'old_outputs':outputs}
+(P/'precheck-request.json').write_text(json.dumps(request,indent=2)+'\n')
+prefix=(A/'package.py').read_text().split('def receive(')[0]
+source=prefix+'''
+import sys,socket,subprocess,datetime,time
+assert socket.gethostname().split('.')[0]=='project-compute' and os.getuid()==os.getgid()==1012
+BASE=Path('<AUTHORIZED_PROJECT_ROOT>/admet');safe(BASE,BASE);r=json.load(sys.stdin)
+out={'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'hostname':socket.gethostname(),'uid':os.getuid(),'gid':os.getgid(),'canonical_base':str(BASE),'protected':[],'old_identities':[],'runs':[],'new_paths':[],'queries':[],'own_reader':{'pid':os.getpid(),'start_stat':Path('/proc/self/stat').read_text()},'loadavg':os.getloadavg(),'available_disk_bytes':os.statvfs(BASE).f_bavail*os.statvfs(BASE).f_frsize}
+for name,item in r['protected'].items():
+ p=safe(BASE,BASE/name);v=p.read_bytes();h=hashlib.sha256(v).hexdigest();out['protected'].append({'path':name,'size':len(v),'sha256':h,'unchanged':len(v)==item['size'] and h==item['sha256']})
+seen=set()
+for old in r['old_identities']:
+ ticks=str(old.get('start_ticks') or old['start_stat'].rsplit(')',1)[1].split()[19]);key=(old['pid'],ticks)
+ if key in seen:continue
+ seen.add(key);item={'pid':old['pid'],'expected_start_ticks':ticks}
+ try:raw=(Path('/proc')/str(old['pid'])/'stat').read_text()
+ except FileNotFoundError:item['state']='absent_now'
+ except OSError as e:item.update(state='unknown',error=repr(e))
+ else:
+  f=raw.rsplit(')',1)[1].split();item.update(raw_stat=raw,state='pid_reused' if f[19]!=ticks else 'terminal' if f[0] in ('Z','X') else 'matching_live')
+ out['old_identities'].append(item)
+for index,name in enumerate(r['runs']):
+ root=safe(BASE,BASE/name);folder=safe(BASE,root/'outputs/recovery-02');actual={}
+ if folder.exists():
+  paths=list(folder.rglob('*'));assert len(paths)<2000
+  for p in paths:
+   safe(BASE,p)
+   if p.is_file():v=p.read_bytes();actual[str(p.relative_to(root))]={'size':len(v),'sha256':hashlib.sha256(v).hexdigest()}
+ expected=r['old_outputs'] if index==0 else {}
+ learning=root/'state/learning-started.lock'
+ out['runs'].append({'run_id':name,'prior_outputs_exact':actual==expected,'actual_output_files':actual,'global_learning_lock_exists':learning.exists(),'global_learning_lock_sha256':hashlib.sha256(learning.read_bytes()).hexdigest() if learning.exists() else None,'old_complete_exists':any((root/x).exists() for x in ('raw/train-complete.json','outputs/recovery-02/raw/train-complete.json'))})
+for name in r['runs']+['contract-follow-e2e-20261101']:
+ for rel in ('source/production-adapter-v4','inputs/recovery-03','admission/recovery-03','operator/recovery-03','raw/recovery-03','state/recovery-03','outputs/recovery-03'):
+  p=safe(BASE,BASE/name/rel);out['new_paths'].append({'path':str(p.relative_to(BASE)),'exists':p.exists()})
+for command in [['/usr/bin/nvidia-smi','-q','-x'],['/usr/bin/nvidia-smi','--query-compute-apps=gpu_uuid,pid,used_gpu_memory','--format=csv,noheader,nounits'],['/usr/bin/nvidia-smi','pmon','-s','um','-c','1']]:
+ begin=datetime.datetime.now(datetime.timezone.utc).isoformat();record={'argv':command,'started_at':begin,'actual_OS_exit':None}
+ try:
+  p=subprocess.run(command,capture_output=True,timeout=15);record.update(actual_OS_exit=p.returncode,stdout=p.stdout.decode('utf-8','replace'),stderr=p.stderr.decode('utf-8','replace'))
+ except Exception as e:
+  record.update(error=repr(e),stdout=getattr(e,'stdout',None),stderr=getattr(e,'stderr',None))
+  for field in ('stdout','stderr'):
+   if isinstance(record.get(field),bytes):record[field]=record[field].decode('utf-8','replace')
+ record['finished_at']=datetime.datetime.now(datetime.timezone.utc).isoformat();out['queries'].append(record)
+print(json.dumps(out))
+'''
+(P/'precheck-remote.py').write_text(source)
+for attempt in range(1,5):
+ try:raw=transport.remote_once(source,'precheck-r'+str(attempt),payload=json.dumps(request).encode(),timeout=55,readonly=True);break
+ except transport.fixed.QueryError as error:
+  retryable=transport.fixed.retryable_connection_error(error);delay=(2,5,10)[attempt-1] if retryable and attempt<4 else None
+  transport.log({'tag':'precheck','attempt':attempt,'retryable':retryable,'backoff_seconds':delay})
+  if delay is None:raise
+  time.sleep(delay)
+(P/'precheck.json').write_bytes(raw);v=json.loads(raw)
+assert len(v['protected'])==798 and all(x['unchanged'] for x in v['protected'])
+assert all(x['state'] in ('absent_now','pid_reused','terminal') for x in v['old_identities'])
+assert all(x['prior_outputs_exact'] and not x['old_complete_exists'] for x in v['runs'])
+assert v['runs'][0]['global_learning_lock_sha256']=='245f8b4e7a5de566f2f359aff81ea2aba1fdf20e8c5448367f8b01de81a2fa30'
+assert all(not x['global_learning_lock_exists'] for x in v['runs'][1:]) and not any(x['exists'] for x in v['new_paths'])
+assert all(x['actual_OS_exit']==0 for x in v['queries'])
+# Use the admitted resource guard, loaded without ML or remote operations.
+spec=importlib.util.spec_from_file_location('admitted_guard',A/'source/runtime-v2/resource_checks.py');m=importlib.util.module_from_spec(spec)
+sys.path.insert(0,str(A/'source/runtime-v2'));spec.loader.exec_module(m)
+import xml.etree.ElementTree as ET
+xml=ET.fromstring(v['queries'][0]['stdout']);checks=[];qualified=[]
+for gpu in xml.findall('gpu'):
+ candidate={'gpu_index':int(gpu.findtext('minor_number')),'gpu_uuid':gpu.findtext('uuid')};one=ET.Element('nvidia_smi_log');one.append(gpu)
+ try:
+  result=m.validate_idle_gpu(ET.tostring(one,encoding='unicode'),v['queries'][1]['stdout'],candidate['gpu_uuid'],candidate['gpu_index'])
+  rows=[x.split() for x in v['queries'][2]['stdout'].splitlines() if x.strip() and not x.lstrip().startswith('#') and x.split()[0]==str(candidate['gpu_index'])]
+  assert rows and all(len(x)>=2 and x[1]=='-' for x in rows),'pmon occupied or unknown'
+  qualified.append(candidate);checks.append(dict(candidate,status='qualified',result=result))
+ except Exception as error:checks.append(dict(candidate,status='ineligible',reason=str(error)))
+(P/'gpu-checks.json').write_text(json.dumps(checks,indent=2)+'\n')
+if qualified:(P/'gpu-candidate.json').write_text(json.dumps(qualified[0],indent=2)+'\n')
+print(json.dumps({'at':v['at'],'protected':798,'old_identities':len(v['old_identities']),'reconciled':True,'new_namespace_absent':True,'qualified':qualified,'gpu_checks':checks,'setup_seconds':time.time()-1793539480}))

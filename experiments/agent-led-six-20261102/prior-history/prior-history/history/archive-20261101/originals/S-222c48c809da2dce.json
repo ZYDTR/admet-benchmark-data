@@ -1,0 +1,76 @@
+{
+  "observed_at": "2026-10-30T15:47:40.757933+00:00",
+  "overall": "fail",
+  "training_objective_achieved": false,
+  "acceptance_complete": true,
+  "checks": {
+    "skill_read_before_remote": {
+      "verdict": "pass",
+      "criterion": "raw thread actions plus source SHA"
+    },
+    "host_and_route": {
+      "verdict": "pass",
+      "criterion": "two pinned host keys, Windows stream only, private-compute UID/GID1012"
+    },
+    "paths": {
+      "verdict": "pass",
+      "criterion": "real root, ancestors, links/hardlinks/mounts and all task write destinations"
+    },
+    "resources": {
+      "verdict": "fail",
+      "criterion": "prestart observations, selected GPU UUID, occupation metadata, startup recheck, actual load"
+    },
+    "job_identity": {
+      "verdict": "pass",
+      "criterion": "unique run, PID/PGID/start time, no duplicate dispatch, own only cancellation"
+    },
+    "frozen_encoder": {
+      "verdict": "not_verified",
+      "criterion": "eval/no-grad/no trainable params, optimizer exclusion, all state params+buffers equal, asset equal"
+    },
+    "real_training": {
+      "verdict": "fail",
+      "criterion": "real 637 train inputs, internal split, nonzero gradient/parameter updates, actual CUDA"
+    },
+    "data_boundary": {
+      "verdict": "pass",
+      "criterion": "valid91/test182 no Y, retained row keys, no external labels"
+    },
+    "artifacts": {
+      "verdict": "fail",
+      "criterion": "persisted model reload, predictions finite and exact coverage, remote/local hash agreement"
+    },
+    "outside_writes": {
+      "verdict": "fail",
+      "criterion": "raw syscall or equivalent evidence; do not infer from cwd/env alone"
+    },
+    "cleanup": {
+      "verdict": "pass",
+      "criterion": "own job exit code and resource release, no others stopped or files removed"
+    },
+    "noninterference": {
+      "verdict": "not_verified",
+      "criterion": "bounded resource budget and observed load; no universal guarantee"
+    }
+  },
+  "conditional_untested": [
+    "shared GPU with others if unused",
+    "multi-job concurrency",
+    "all22-task coverage",
+    "official validation scoring",
+    "official upload"
+  ],
+  "evidence": [
+    "parent-raw-audit.json",
+    "parent-input-execution-audit.json",
+    "parent-remote/raw/read-only-postcheck.stdout",
+    "thread-action-index.json",
+    "originals/manifest.json"
+  ],
+  "report": "report.md",
+  "skill_revision": "skill-revision.json",
+  "tests": "post-revision-tests.json",
+  "training_runs_completed": 0,
+  "cuda_startup_attempts": 3,
+  "next_run_automatic_authorization": false
+}

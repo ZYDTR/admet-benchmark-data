@@ -1,0 +1,582 @@
+{
+  "schema_version": "admet-research-review/1.0",
+  "request_id": "admet-public-repo-pro-20261031-001",
+  "round_id": "public-repo-round001",
+  "packet_version": 2,
+  "manifest_sha256": "dbdec244caa8ddb106721877cf93625c1957b9184985c07b1cf751eed5d70505",
+  "source_commit": "eaec280cf142839597fe75ce748cd2b9a8a897d4",
+  "authorization": "proposal_only",
+  "ledger_scope": "Current packet only. Preserve visible historical F1 and U01-U05; AR001-* are new local review identifiers pending reconciliation with missing master ledger.",
+  "changes_this_round": {
+    "inherited_still_open": [
+      "F1",
+      "U02"
+    ],
+    "inherited_deferred": [
+      "U01",
+      "U03",
+      "U04",
+      "U05"
+    ],
+    "new_open_or_investigating": [
+      "AR001-01",
+      "AR001-02",
+      "AR001-03",
+      "AR001-04",
+      "AR001-05",
+      "AR001-06",
+      "AR001-07",
+      "AR001-08",
+      "AR001-09",
+      "AR001-10",
+      "AR001-12",
+      "AR001-13",
+      "AR001-14",
+      "AR001-15"
+    ],
+    "verified_resolved_with_scope": [
+      "AR001-11",
+      "AR001-16"
+    ],
+    "no_claim_of_global_closure": true
+  },
+  "issues": [
+    {
+      "issue_id": "F1",
+      "status": "open",
+      "severity": "high",
+      "category": "historical_process_gate",
+      "statement": "历史环境检查255后仍部署/预检；修订仅有本地故障注入，真实Follow未复测。",
+      "affected_run_ids": [
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "F1",
+        "GAPS"
+      ],
+      "hypothesis": "前置失败可能被外层shell成功码掩盖。",
+      "counterevidence": "正式训练前环境已补核；历史验收未发现因此错误身份/越界/解冻。",
+      "impact": "阻止宣布严格流程已全面通过；不自动否定两个正式run的固定预测。",
+      "proposed_resolution": "W01准备逐阶段失败阻断与身份绑定，主控另行授权真实门禁复测。",
+      "verification_criterion": "离线反例及授权后的实际失败路径均阻断后续动作，恢复需新receipt；不改写旧记录。",
+      "related_proposal_ids": []
+    },
+    {
+      "issue_id": "U01",
+      "status": "deferred",
+      "severity": "medium",
+      "category": "target_semantics",
+      "statement": "物理单位/既有标签变换仍未确认；当前目标仅给定numeric Y。",
+      "affected_run_ids": [
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "RULE"
+      ],
+      "hypothesis": "错误再log或物理裁剪会改变目标。",
+      "counterevidence": "现有可逆train-only z及逆变换有证据，不需知道生物单位才能比较MAE。",
+      "impact": "禁止擅自变更Y语义；不阻塞数值目标准备。",
+      "proposed_resolution": "保持原Y；必要时主控补原始标签说明。",
+      "verification_criterion": "明确官方标签文档才允许语义变更；本轮不执行。",
+      "related_proposal_ids": [
+        "P04",
+        "P26"
+      ]
+    },
+    {
+      "issue_id": "U02",
+      "status": "open",
+      "severity": "medium",
+      "category": "asset_admission",
+      "statement": "冻结外部权重子项已由用户确认；其他外部拟合状态未因此自动准入。",
+      "affected_run_ids": [
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "RULE",
+        "ASSETS"
+      ],
+      "hypothesis": "部分辅助CDF/scaler或TFM内部资产可能需要单独边界决定。",
+      "counterevidence": "不可把U02整体未明重解释为禁用已获准CheMeleon。",
+      "impact": "影响KPGT/TFM等条件资产；不阻塞现有合法新头。",
+      "proposed_resolution": "W09逐资产来源/用途/许可/拟合数据登记。",
+      "verification_criterion": "具体资产准入决定及版本SHA闭合，而非模型名层面的许可。",
+      "related_proposal_ids": [
+        "P19",
+        "P20",
+        "P21",
+        "P22",
+        "P23"
+      ]
+    },
+    {
+      "issue_id": "U03",
+      "status": "deferred",
+      "severity": "high",
+      "category": "excluded_test_fitting",
+      "statement": "当前本地控制明确排除test拟合/额外无标签样本学习。",
+      "affected_run_ids": [
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "RULE"
+      ],
+      "hypothesis": "无待执行假设；测试转导问题不在本轮范围。",
+      "counterevidence": "冻结推理本身可处理盲输入，但不等于允许用它fit统计。",
+      "impact": "排除test-fit scaler/PCA/transductive训练。",
+      "proposed_resolution": "只准备inner-fit变换和固定应用。",
+      "verification_criterion": "所有拟合产物登记fit-row hash且不含valid/test。",
+      "related_proposal_ids": []
+    },
+    {
+      "issue_id": "U04",
+      "status": "deferred",
+      "severity": "low",
+      "category": "metric_definition",
+      "statement": "官方总分聚合/AUPRC细则未闭合；当前只审Caco2固定MAE。",
+      "affected_run_ids": [
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "RULE",
+        "SCORE"
+      ],
+      "hypothesis": "多任务排名可能依赖未知聚合。",
+      "counterevidence": "本次MAE定义和已发布两结果明确。",
+      "impact": "不报告官方总分，不阻塞单任务方案。",
+      "proposed_resolution": "主控需要多任务时提供官方口径。",
+      "verification_criterion": "官方原文/评分器定义可核，而不是TDC同名推定。",
+      "related_proposal_ids": []
+    },
+    {
+      "issue_id": "U05",
+      "status": "deferred",
+      "severity": "medium",
+      "category": "reproduction_tolerance",
+      "statement": "官方入围重训材料/容差未全明；已有重载allclose不等于重训复现。",
+      "affected_run_ids": [
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "RULE",
+        "CURVE",
+        "GAPS"
+      ],
+      "hypothesis": "最终交付要求可能超出本轮记录。",
+      "counterevidence": "当前重载与输出身份有证据。",
+      "impact": "不能声称完整重训可复现或赛事最终验收已过。",
+      "proposed_resolution": "W04补未来seed/checkpoint/环境记录契约；主控核官方复现条款。",
+      "verification_criterion": "同配置授权重训及明确容差记录，非本轮重放。",
+      "related_proposal_ids": []
+    },
+    {
+      "issue_id": "AR001-01",
+      "status": "open",
+      "severity": "high",
+      "category": "history_evidence",
+      "statement": "缺完整历史实验/失败/issue/否定假设/既往评分总表；仅有当前两run与历史摘要。",
+      "affected_run_ids": [
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "GAPS",
+        "RESEARCH"
+      ],
+      "hypothesis": "可能重复先前已否定条件或遗漏旧issue ID。",
+      "counterevidence": "当前用户明确无训练在途；current context可说明候选准备状态。",
+      "impact": "无法宣称全历史审完或全局去重；review状态needs_evidence。",
+      "proposed_resolution": "W01请主控补脱敏registry，合并当前局部问题映射。",
+      "verification_criterion": "带已有issue_id、run/config/split/asset/status及否定范围的登记表；不请求私有标签。",
+      "related_proposal_ids": []
+    },
+    {
+      "issue_id": "AR001-02",
+      "status": "open",
+      "severity": "high",
+      "category": "confounded_comparison",
+      "statement": "width/LR/seed/split同时变化；内部64行仅8行重合，无同配置重复。",
+      "affected_run_ids": [
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "IMPL_A",
+        "IMPL_B",
+        "CURVE",
+        "SCORE"
+      ],
+      "hypothesis": "观察差可能由任一因素或交互造成。",
+      "counterevidence": "原始任务、输入及评分器相同，固定分差仍可描述。",
+      "impact": "不能用A/B因果归因或估计seed噪声。",
+      "proposed_resolution": "W02解耦随机性，保留匹配control；分层小因子/共同seed。",
+      "verification_criterion": "同cache/split/预算的完整配对单元和全部失败记录。",
+      "related_proposal_ids": [
+        "P01",
+        "P03",
+        "P05",
+        "P25",
+        "P24"
+      ]
+    },
+    {
+      "issue_id": "AR001-03",
+      "status": "open",
+      "severity": "medium",
+      "category": "internal_split_identity",
+      "statement": "当前两个内部划分各有1个重复raw SMILES组跨fit/stop；原行索引本身互斥。",
+      "affected_run_ids": [
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "DATA",
+        "SCALE"
+      ],
+      "hypothesis": "内部分子未见泛化估计受组重叠影响。",
+      "counterevidence": "官方train/valid/test raw SMILES交集0；每个holdout仅1组，影响大小未知。",
+      "impact": "不能叫内部全molecule-unseen，不能归为官方标签泄漏。",
+      "proposed_resolution": "W02准备G01/OUTER3组划分；保留全部原行及冲突Y，历史索引留作回放。",
+      "verification_criterion": "分组版本/索引/hash/零交集/原行完整性全部登记；不挑表现好的split。",
+      "related_proposal_ids": [
+        "P01",
+        "P24"
+      ]
+    },
+    {
+      "issue_id": "AR001-04",
+      "status": "investigating",
+      "severity": "high",
+      "category": "feature_conditioning_hypothesis",
+      "statement": "已有稀疏特征经fit std缩放，内部holdout最大|z|约871.665/1637.415；尚非已证质量原因。",
+      "affected_run_ids": [
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "SCALE",
+        "IMPL_A",
+        "PRED"
+      ],
+      "hypothesis": "稀有激活放大可能令小样本新头优化/外推不稳定。",
+      "counterevidence": "无对应holdout预测；最大valid预测分歧行max|z|约6.992；clip可能损失有效信息。",
+      "impact": "优先信息价值高的scale消融，而非删行或宣称解决性能瓶颈。",
+      "proposed_resolution": "W03准备legacy/raw/clip6/train-sd-q05，必要时最多2scale×2LR配套。",
+      "verification_criterion": "同cache/split/seed的质量改善及其反证；仅z变小不算成功。",
+      "related_proposal_ids": [
+        "P01",
+        "P25",
+        "P10",
+        "P11"
+      ]
+    },
+    {
+      "issue_id": "AR001-05",
+      "status": "investigating",
+      "severity": "medium",
+      "category": "loss_selection_alignment",
+      "statement": "标准化MSE同时用于训练和选epoch，任务指标为原Y MAE。",
+      "affected_run_ids": [
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "IMPL_A",
+        "IMPL_B",
+        "SCORE"
+      ],
+      "hypothesis": "换monitor或loss可能改善任务MAE。",
+      "counterevidence": "MSE是合法代理，不等于实现错；现有无epoch MAE无法回填最佳MAE epoch。",
+      "impact": "需分别检验monitor、loss和目标数值参数化。",
+      "proposed_resolution": "W04分别配置loss/monitor/逆变换，逐epoch同模式记录。",
+      "verification_criterion": "一次只改声明因素，raw-Y MAE统一；不修改原Y。",
+      "related_proposal_ids": [
+        "P02",
+        "P04",
+        "P09",
+        "P26"
+      ]
+    },
+    {
+      "issue_id": "AR001-06",
+      "status": "open",
+      "severity": "high",
+      "category": "configuration_execution_binding",
+      "statement": "A头宽硬编码512；B入口assert锁定width/LR/seed；实际AdamW而摘要称Adam。",
+      "affected_run_ids": [
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "IMPL_A",
+        "IMPL_B",
+        "GAPS"
+      ],
+      "hypothesis": "只改JSON可能没有运行宣称的候选。",
+      "counterevidence": "两个历史run自身PLAN与实际实现相符，不构成现有错配。",
+      "impact": "当前脚本不能直接作为通用HPO器。",
+      "proposed_resolution": "W02新配置工厂、resolved-config、实际shape/参数数/optimizer groups与source hash。",
+      "verification_criterion": "每个候选静态构造合同匹配，授权动态验收前保持not_run；bias decay固定全头参数。",
+      "related_proposal_ids": [
+        "P03",
+        "P05",
+        "P06",
+        "P07",
+        "P08",
+        "P11"
+      ]
+    },
+    {
+      "issue_id": "AR001-07",
+      "status": "open",
+      "severity": "medium",
+      "category": "training_records",
+      "statement": "缺逐batch日志、同模式fit预测、各epoch/last heads、optimizer moments、RNG状态。",
+      "affected_run_ids": [
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "GAPS",
+        "CURVE"
+      ],
+      "hypothesis": "无法定位batch不稳定/复盘MAE选择或完整续训。",
+      "counterevidence": "已有全部epoch、最佳头、冻结/更新/重载足以支持本轮有限验收。",
+      "impact": "不把缺记录等同未训练；不伪造历史补录。",
+      "proposed_resolution": "W04准备按问题最小记录：epoch eval MAE/MSE、LR/grad摘要、best/last、独立RNG与停止原因。",
+      "verification_criterion": "新授权run产物与代码/config/step/checkpoint绑定，恢复验证单列。",
+      "related_proposal_ids": [
+        "P02",
+        "P04",
+        "P07",
+        "P08",
+        "P09"
+      ]
+    },
+    {
+      "issue_id": "AR001-08",
+      "status": "open",
+      "severity": "medium",
+      "category": "cache_identity",
+      "statement": "同encoder跨run缓存payload hash不同；已有数值差最大约3.58e-7，但不可冒充同一byte cache。",
+      "affected_run_ids": [
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "SCALE",
+        "FREEZE"
+      ],
+      "hypothesis": "GPU归约是可能解释，原因未定。",
+      "counterevidence": "有效预训练张量相同，数值微差不支持不同底座或解冻指控。",
+      "impact": "匹配头实验必须消费同一登记raw cache；fold scaler另存。",
+      "proposed_resolution": "W03绑定row/asset/code/feature/pooling/runtime/cache SHA；先采用主控接受的一套CACHE_A。",
+      "verification_criterion": "一致性核验含全部rowmap、finite/mask及版本；新编码不许无证称bitwise确定。",
+      "related_proposal_ids": [
+        "P01",
+        "P12",
+        "P14",
+        "P15"
+      ]
+    },
+    {
+      "issue_id": "AR001-09",
+      "status": "open",
+      "severity": "medium",
+      "category": "residual_evidence",
+      "statement": "仅有已发布总体诊断，缺逐行残差及合法的分组配对误差聚合。",
+      "affected_run_ids": [
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "SCORE",
+        "PRED"
+      ],
+      "hypothesis": "异常特征/结构距离/规模可能对应误差子群。",
+      "counterevidence": "预测分布/相关性/分歧不是错误，也不能决定集成质量。",
+      "impact": "当前所有化学错误切片与残差互补未验证。",
+      "proposed_resolution": "W10预定义train OOF切片及主控仅聚合接口；不索取私有标签/逐行残差。",
+      "verification_criterion": "主控授权后报告每组n、metric和配对差；不允许用test诊断反复定阈值。",
+      "related_proposal_ids": [
+        "P01",
+        "P17",
+        "P18",
+        "P24"
+      ]
+    },
+    {
+      "issue_id": "AR001-10",
+      "status": "open",
+      "severity": "medium",
+      "category": "candidate_readiness",
+      "statement": "MiniMol/MoLFormer实际idle_incomplete；其他候选仅研究或资产待补。",
+      "affected_run_ids": [
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "RESEARCH",
+        "ASSETS"
+      ],
+      "hypothesis": "不同表示可能有增量，但尚无本地运行支持。",
+      "counterevidence": "论文冻结方法可支持准备价值，不证明本地就绪或质量。",
+      "impact": "并行准备可进行，不能把研究候选登记为已训练/已准入。",
+      "proposed_resolution": "W06/W07/W09逐资产、load、token/覆盖、freeze、资源准备；缺证为blocked。",
+      "verification_criterion": "prepared_static/runtime_validated/authorized分列，所有runtime未测项not_run。",
+      "related_proposal_ids": [
+        "P14",
+        "P15",
+        "P19",
+        "P20",
+        "P21",
+        "P22",
+        "P23"
+      ]
+    },
+    {
+      "issue_id": "AR001-11",
+      "status": "resolved",
+      "severity": "medium",
+      "category": "publication_identity_check",
+      "statement": "本轮已核固定manifest及发布文本；历史JSON正则破坏不再据此否定当前被检数值数组。",
+      "affected_run_ids": [
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "SEMANTIC",
+        "SCALE"
+      ],
+      "hypothesis": "需要排除当前派生数组仍损坏。",
+      "counterevidence": "当前manifest哈希吻合；所有文本payload SHA匹配，12个可读预处理数组struct重建payload匹配，6NPZ实读匹配。",
+      "impact": "关闭仅限当前已检文件/数组身份，不冒充独立重建全部未公开原件。",
+      "proposed_resolution": "保留修复与回执版本，不回写历史原件。",
+      "verification_criterion": "已实际完成字节/数组核查；若源版本变化则重开。",
+      "related_proposal_ids": []
+    },
+    {
+      "issue_id": "AR001-12",
+      "status": "open",
+      "severity": "high",
+      "category": "unseen_evaluation",
+      "statement": "当前official valid已经是模型选择反馈，完整既往评分史未审；没有全新未调参终评证据。",
+      "affected_run_ids": [
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "SCORE",
+        "GAPS",
+        "RESEARCH"
+      ],
+      "hypothesis": "在91行上反复挑模型可能造成选择偏差。",
+      "counterevidence": "本次每run一次固定评分属实；允许valid调参但不使其成为终评。",
+      "impact": "不能宣称已提高真正未参与调参数据的泛化或给虚假CI。",
+      "proposed_resolution": "W10锁候选后做train-only外层确认，明确历史数据已探索；真正终评等待另行授权的受保护数据。",
+      "verification_criterion": "外层不参与当fold选择、全seed/fold报告；新鲜终评无此包可用。",
+      "related_proposal_ids": [
+        "P24",
+        "P18"
+      ]
+    },
+    {
+      "issue_id": "AR001-13",
+      "status": "open",
+      "severity": "medium",
+      "category": "missing_controls",
+      "statement": "当前只有同一冻结底座的两个MLP配置，无简单/从零/其他表示的匹配实测。",
+      "affected_run_ids": [
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "RESEARCH",
+        "SCORE"
+      ],
+      "hypothesis": "当前收益可能来自通用特征或头，不能证明预训练优势。",
+      "counterevidence": "两个完成run证明该方案能运行，但不构成跨方案比较。",
+      "impact": "需要有限同预算经典与新深度对照。",
+      "proposed_resolution": "W05以及W06/W07准备对应接口和控制；容量差公开记录。",
+      "verification_criterion": "相同输入/划分/seed/指标、受限且对称选择预算下比较完整方案。",
+      "related_proposal_ids": [
+        "P05",
+        "P13",
+        "P14",
+        "P15",
+        "P16",
+        "P17"
+      ]
+    },
+    {
+      "issue_id": "AR001-14",
+      "status": "open",
+      "severity": "medium",
+      "category": "reproduction_scope",
+      "statement": "官方完整API原文、原始strace、外部权重本体和训练时完整依赖实现未公开。",
+      "affected_run_ids": [
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "GAPS",
+        "RULE",
+        "ASSETS"
+      ],
+      "hypothesis": "未公开细节可能影响全链路重验证。",
+      "counterevidence": "公开科学代码、状态JSON、源SHA和历史主控验收相互一致；缺原件不是现有违规证据。",
+      "impact": "限制独立全流程及条款逐字核查，不阻断条件性两run分析。",
+      "proposed_resolution": "主控补必要脱敏原文/审计摘要或确认保留限定；未来锁训练时依赖实现。",
+      "verification_criterion": "具体争议所需证据可读且绑定历史版本；不要求公开私有标签/基础设施秘密。",
+      "related_proposal_ids": []
+    },
+    {
+      "issue_id": "AR001-15",
+      "status": "open",
+      "severity": "high",
+      "category": "supervisor_status_interface",
+      "statement": "supervisor写/打印业务rc后未sys.exit(rc)；仅看外层命令码可能漏掉失败。",
+      "affected_run_ids": [
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "EXIT",
+        "F1"
+      ],
+      "hypothesis": "上层若只用shell退出码，可能误放行下一阶段。",
+      "counterevidence": "follow cuda01确有业务rc1，但上层gate原件未公开，不能断言实际再次错误放行。",
+      "impact": "下一批前置门禁必须同时检查进程码、业务receipt及身份，防重复F1机制。",
+      "proposed_resolution": "W01准备显式退出传播、结构化stage依赖、attempt和时间绑定；不修改历史源码。",
+      "verification_criterion": "失败码/异常/旧receipt/错run/hash各反例均阻断；授权运行验证未完成前不close。",
+      "related_proposal_ids": []
+    },
+    {
+      "issue_id": "AR001-16",
+      "status": "resolved",
+      "severity": "medium",
+      "category": "frozen_state_alarm",
+      "statement": "跨run wrapper总SHA不同的疑问已定位：只有未用于fingerprint的随机predictor变化。",
+      "affected_run_ids": [
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "evidence_refs": [
+        "FREEZE",
+        "IMPL_A"
+      ],
+      "hypothesis": "初始怀疑总摘要不同代表外部编码器变化。",
+      "counterevidence": "官方Chemprop2.2.1 fingerprint:125-133不走predictor；4message-passing张量及3persistent buffers相同，各run前后11状态相同。",
+      "impact": "不因这个总SHA差剔除run；仍保留全部named buffer未来检查需求。",
+      "proposed_resolution": "分别记录有效编码器身份与unused wrapper身份，勿弱化每run冻结要求。",
+      "verification_criterion": "已实际逐tensor比对+源码调用链核验；不称读取未发布权重或非persistent内存。",
+      "related_proposal_ids": []
+    }
+  ],
+  "evidence_catalog": "review.json.reference_dictionary; analysis.md section8. All references resolve within this six-file delivery."
+}

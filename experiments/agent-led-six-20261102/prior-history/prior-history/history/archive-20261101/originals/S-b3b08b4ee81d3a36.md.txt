@@ -1,0 +1,24 @@
+# 当前状态：独立验收完成
+
+2026-10-30：两路原件已冻结，388输入一致，73份原件复核一致。模型准备、数据评分准备整体均未通过，具体通过部分与失败反例见 [acceptance/report.md](acceptance/report.md)。主控只运行合成评分与小样本无更新检查；未训练、未读私有标签、未上传赛事。Skill v1保留，v1.1已同步mini但未重新冷启动验证。禁止重复收集覆盖originals、续写会话或自动追加测试。`deepseek-skill`心跳已删除并由App确认，当前授权工作结束，保留全部记录。
+
+以下是启动时记录，保留作审计，不再作为待执行指令。
+
+# DeepSeek 准备 Skill 冷启动实测
+
+2026-10-30 20:15 北京时间，两条新会话已启动。用户要求：复查旧 DeepSeek 两路问题，写短 Skill，再在 Context Infrastructure 下新建两个干净隔离的 DeepSeek Thread 真实测试。没有创建新项目，没有复用旧历史。
+
+- A `<PRIVATE_SESSION_OBJECT>`：模型准备。
+- B `<PRIVATE_SESSION_OBJECT>`：数据、评分、提交准备。
+- 两条 directory 都是 `<PRIVATE_RUNTIME_PATH> `890c641656b89e802d31560be2c399e22eab00ab`。开始前 message_count=0、parentID=null。
+- 任务文件在该项目 `adhoc_jobs/admet_deepseek_skill_coldstart_20261030/{model,data-eval}/`，各自 input/ 与 output/ 独立。输入44个valid/test文件均无Y，未提供旧产物/消息/修复代码。
+- 冻结 Skill 是本目录 `skill-frozen.md`，工作区正式源 `rules/skills/ml-preparation-only/SKILL.md`；SHA见design.json。mini已安装同字节Skill并在原生 /skill 发现。两个会话都已实际读到；launch-audit.json 无children，实际模型均DeepSeek1017。
+- 根目录API和OpenCode桌面都实见两条会话，界面停在mini Context Infrastructure列表；证据root-list-ui.png/.txt。
+
+先读 ACCEPTANCE.md。任务已经派发，禁止重复创建/重发；让两路独立完成，中间不提示修正或替它补代码。用既有 `adhoc_jobs/admet_frozen_baseline_20261030/dispatch.py` 仅import API函数，设置DIRECTORY为项目根，不执行其main。只读检查上述两个ID。其他项目与正在跑的GLM重跑均不属于本测试；GLM另有心跳glm。
+
+两路全部终态后，保存完整消息/session及各自原始output到本目录 originals/，生成摘要并核验 package-receipt.json 的全部输入SHA。主Codex亲自审读执行轨迹、代码，按预登记标准做无训练的独立合成验收。重点检查越权训练、目录外临时写入、评分实际入口完整性和缓存内容绑定。旧DeepSeek证据在 `adhoc_jobs/admet_frozen_baseline_20261030/acceptance/report.md` 与 comparison-originals/deepseek；不要改旧原件。
+
+不访问私有验证标签，不做真实评分，不训练，不上传赛事。必要修复保留独立版本；修改Skill必须先完整读取 rules/skills/bestpractice_skill_writing.md。不得因为两路失败自动再开额外会话，用户本次只要求两条冷启动验证。最终向用户交付有证据的结果与Skill链接，更新索引状态并删除本轮跟进心跳，保留记录。
+
+跟进心跳ID：`deepseek-skill`，每5分钟有界检查；完成验收后删除它。`glm` 是另一项重跑的心跳，不要删除或合并。

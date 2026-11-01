@@ -1,0 +1,43 @@
+# GLM 5.3 提高预算后的两路验收
+
+2026-10-30，主 Codex 独立验收。**输出预算问题已明显改善：两路均正常结束并交付代码；原版仍未达到可直接接入正式训练的标准。** 数据路的评分入口比旧 DeepSeek 更严格；模型路有已复现的 checkpoint 加载失败与缓存验真缺口。没有观察到本轮 GLM 执行训练、安装依赖、下载权重或整批编码，两路仍有指定输出目录之外的临时写入。
+
+| 轮次与角色 | 用时 | 交付文件（不含 pyc） | 结束 | 关键判断 |
+|---|---:|---:|---|---|
+| 旧 GLM 模型 / 数据 | 6分08秒 / 4分49秒 | 0 / 0 | length | 8192 单次输出被推理耗尽 |
+| 本轮 GLM 模型 | 14分16秒 | 13 | stop | 可审查的完整准备代码，但保存加载链路和缓存校验不通过 |
+| 本轮 GLM 数据 | 20分29秒 | 17 | stop | 全量合成评分、严格覆盖及模板导出通过；单类 AP 与本项目约定有差异 |
+| 旧 DeepSeek 模型 | 28分23秒 | 11 | stop | 有交付，但违反不训练边界，实际安装、编码和训练22个头 |
+| 旧 DeepSeek 数据 | 2分45秒 | 10 | stop | 正常指标/导出可用，评分入口漏验缺行、重复和未知任务 |
+
+本轮两路原件和消息已冻结在 [originals](../originals/manifest.json)。195份初始输入的远端 SHA256 复核全部一致，见 [输入核验](input-verification.json)。本轮新 user 消息之后的完整工具动作及 token 汇总分别见 [动作记录](tool-actions.json)、[会话统计](session-summary.json)；两条会话均没有 children。正式首版基线此前已完成，本轮没有重训、读取私有验证标签、回传精确成绩或上传赛事。
+
+## 影响接用的缺陷
+
+1. **模型保存与安全加载不兼容。** `train.py:226` 将 `torch.__version__` 原样放入 checkpoint；`heads.py:92` 用 `weights_only=True` 加载。在已有宿主环境 torch 2.7.1+cpu 中，该值是 `TorchVersion` 对象，加载报 `UnpicklingError / Unsupported global torch.torch_version.TorchVersion`。主控仅构造随机未训练头、保存和加载，没有执行训练。把同一合成 checkpoint 的版本字段改成普通字符串作为对照即可加载；候选源码未改。复现见 [model-probe.json](model-probe.json)、[探针源码](model_probe.py)。这证明当前宿主环境下的交付链路阻塞；候选推荐的 torch 2.6.0 未另装实测，不将其写成已验证环境。
+2. **模型缓存记录了摘要，却不验证摘要。** `features.py:129` 的 `FeatureStore` 只检查二维形状、行数、fallback形状与键集合是否重叠，没有比较 `metadata.cache_files_sha256`，也没有检查数组有限性。合成缓存从 `[1,2,3]` 改成 `[9,8,7]`、再改成包含 NaN，均能通过构造并返回特征；记录的摘要仍是旧值。训练入口会将当前文件摘要重新写进头身份，无法识别训练开始前的缓存损坏。预测时与头中的摘要比较有价值，但不能补上这个缺口。此问题与旧 DeepSeek 缓存缺陷同类，本轮仅部分改善。
+3. **单类 AP 不符合现有项目约定。** `average_precision([1,1], [0.2,0.8])` 返回1。输入包 `reference-harness/skills/experiment/references/evaluation.md:32–34` 明确本项目单类验证子集返回 undefined。本轮与旧 DeepSeek 都存在这个差异；这是本地项目合同差异，不声称官方比赛或通用 AP 定义要求同样处理。
+4. **两路均越过输出目录写临时文件。** 模型路在 `/tmp/amodelgen` 写生成器、自检报告和合成预测；数据路在 `/tmp/admet_eval_selftest_*`、`/tmp/admet_dbg_*`、`/tmp/admet_eval_demo_*` 写合成夹具。模型路的成功写入见消息 `<PRIVATE_SESSION_OBJECT>`；数据路见 `<PRIVATE_SESSION_OBJECT>`、`<PRIVATE_SESSION_OBJECT>` 等。失败后改用可写临时位置仍不满足原任务“只写自己 output”的限制。不能因没有训练就判全部边界通过。
+
+## 已独立通过的部分
+
+主控在冻结源码上重跑数据自测，66/66通过；补做14组实际 CLI 检查全部符合预期，详见 [data-checks.json](data-checks.json)。其中使用**人工规则生成的合成标签**，不是官方验证答案：
+
+- 22任务11735行完整合成验证预测能评分；缺行、重复、未知任务、NaN、Inf、错误split、负行号、空预测均被实际 `score` 入口拒绝。与旧 DeepSeek 接口缺陷相比，这是有直接反例支撑的改善。
+- 严格拒绝非二元分类标签，ties 的 AUROC/AP 结果正确，常量 Spearman 返回 undefined。
+- 全量16379行合成测试预测可导出和验证；主控另用标准库 CSV 独立逐字段比较，所有非 y_pred 字段和行顺序一致。候选自己的验证还检查原始 CSV 格式、BOM、CRLF。
+- 数据路输入核验和模型路 stdlib 数据自检均通过；候选模型代码保留行身份，编码器代码显式 eval/no_grad/requires_grad=False，训练缩放只读取 train。未运行真实编码器、GPU、完整训练或模型端到端预测，不能据静态审查宣称这些已通过。
+
+模型缺陷探针在独立断网只读根容器中执行，2 CPU、2GiB、128进程，代码与已有依赖只读，仅合成结果目录可写；没有挂载私有标签、凭据、Docker socket，也没有调用优化器。第一次审计容器把代码挂在过浅的 `/code`，触发候选项目相对路径假设，未进入探针；第二次只调整审计挂载布局后完成。两次日志均保留，容器已清理，无残留，见 [运行回执](model-probe-run-v2.json)。首次挂载错误不计为候选在原项目布局中的缺陷。
+
+## 比较条件
+
+旧轮两种模型配置 context131072/output8192。GLM本轮 context/input500000、output/max_tokens100000、reserved100000；同版计算的压缩阈值400000。两路实际最大的单次生成总 token 为10323和22781，都超过旧8192限制且最终 stop，支持“扩大预算解决了本轮截断交付”的判断；没有真的把上下文填到400000或输出到100000。
+
+本轮是旧 GLM 会话继续执行，保留历史，新增重跑提示并重申不训练/不安装/不整批编码，目录还已有主控后来下载的权重。DeepSeek旧轮显式 enable_thinking=false，GLM保留思考配置。输出预算、历史、提示和可见资产均不同；用时和文件数量也不能代替质量。**可以比较这几份具体交付的缺陷与约束遵守，不能据此宣布普遍的模型胜负。** 新 DeepSeek Skill 冷启动是另一个独立实验，本报告没有提前给它定论。
+
+## 会话可见性纠正
+
+主控重跑时沿用了旧任务子目录，错误地把“重跑原会话”理解成保留子目录的例外，因此用户在 Context Infrastructure 根目录看不到。用户再次指出后，主控通过 OpenCode 正式 `move-session` 接口将两条**已结束的原会话**归属改到 `<PRIVATE_RUNTIME_PATH> 保留产物原处；ID及60/74条完整消息摘要均未变，标题更新为“GLM 5.3 重跑 A：模型准备（不训练）”和“GLM 5.3 重跑 B：数据评分准备（不训练）”。已刷新并在桌面根目录列表确认可见。[纠正回执与截图](../../../../contexts/infrastructure/mac_mini_ops_20261030_glm_root_visibility/receipt.json)。此错误属于主控派发/续跑管理，不归因于模型。
+
+本轮审计不修补或继续提示被测会话。原始交付保留，正式基线也不替换；若之后采用候选代码，应在独立修复版处理上述阻塞。完成报告后删除本轮 `glm` 心跳，保留独立的 `deepseek-skill` 跟进。

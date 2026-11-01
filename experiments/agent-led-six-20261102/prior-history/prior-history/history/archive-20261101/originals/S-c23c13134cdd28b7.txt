@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+PACKAGE_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd)"
+PYTHON_BIN="${1:-python3}"
+"$PYTHON_BIN" -m venv "$PACKAGE_DIR/.venv"
+if [[ -f "$PACKAGE_DIR/requirements.lock.txt" ]]; then
+  "$PACKAGE_DIR/.venv/bin/python" -m pip install -r "$PACKAGE_DIR/requirements.lock.txt"
+else
+  "$PACKAGE_DIR/.venv/bin/python" -m pip install -r "$PACKAGE_DIR/requirements.txt"
+  "$PACKAGE_DIR/.venv/bin/python" -m pip freeze > "$PACKAGE_DIR/requirements.lock.txt"
+fi

@@ -1,0 +1,275 @@
+[
+  {
+    "proposal_id": "P-GATE",
+    "priority": "P0",
+    "hypothesis": "A task-aware runner and metric fixtures are prerequisites for trustworthy breadth screening.",
+    "control_run_or_config": "H0 shared control in same task/split/model seed",
+    "task": "all_22",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": [
+      "CheMeleon asset SHA must be bound from accepted asset manifest before execution"
+    ],
+    "change_only": {
+      "budget": "Implementation/fixture work only; zero model fits",
+      "runs": 0,
+      "required_contracts": [
+        "task schema",
+        "metric fixtures",
+        "cache identity",
+        "row order",
+        "frozen encoder proof",
+        "checkpoint identity"
+      ]
+    },
+    "hold_fixed": [
+      "CheMeleon weights and buffers frozen",
+      "input rows, labels, task split, metric and scorer",
+      "same split/model seeds for paired control",
+      "no external data, pseudo-labels, relabeling or cleaning"
+    ],
+    "split_id": "none",
+    "seeds": [],
+    "metric": "task-native metric; normalized score reported as derived secondary metric",
+    "direction": "maximize",
+    "minimum_effect_or_decision_rule": "Estimate paired seed/split noise first; no arbitrary significance threshold. Require positive mean gain and no single-seed-only win.",
+    "success_criterion": "Positive paired internal-stop gain, stable across seeds, valid data/cache identity and no regression in task output contract.",
+    "falsification_criterion": "Gain disappears across seeds/split, is below measured control noise, or identity/scorer/freeze fixture fails.",
+    "compute_budget": "Implementation/fixture work only; zero model fits",
+    "dependencies": [
+      "P-GATE accepted task-aware runner",
+      "freeze proof",
+      "metric fixtures",
+      "input/cache identity manifests"
+    ],
+    "within_current_scope": false,
+    "stage": "screen",
+    "exact_config": {
+      "budget": "Implementation/fixture work only; zero model fits",
+      "runs": 0,
+      "required_contracts": [
+        "task schema",
+        "metric fixtures",
+        "cache identity",
+        "row order",
+        "frozen encoder proof",
+        "checkpoint identity"
+      ]
+    },
+    "preparation_mode": "new_code",
+    "reuse_assets": [
+      "CheMeleon frozen embedding only if encoder/input/row/split/cache identity exactly matches"
+    ],
+    "estimated_run_count": 0,
+    "trigger": "Before any new task run",
+    "skip_or_stop_if": "Skip all training until independent acceptance.",
+    "review_checkpoint": "Return full run identities, paired seed deltas, scorer diagnostics and resource accounting; no valid-driven repeated search.",
+    "direction_ids": [
+      "D-HEAD",
+      "D-SEED",
+      "D-METRIC"
+    ]
+  },
+  {
+    "proposal_id": "P-S1",
+    "priority": "P1",
+    "hypothesis": "A common modest head screen will identify task-specific headroom more efficiently than single-task tuning or equal full HPO.",
+    "control_run_or_config": "H0 shared control in same task/split/model seed",
+    "task": "10-task-screen",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": [
+      "CheMeleon asset SHA must be bound from accepted asset manifest before execution"
+    ],
+    "change_only": {
+      "H0": {
+        "hidden_dims": [
+          256
+        ],
+        "dropout": 0.1,
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "optimizer": "AdamW",
+        "epochs": 200,
+        "patience": 20,
+        "budget": "Proposed only; 40 head fits plus up to 10 task encodes; runtime unknown",
+        "runs": 40
+      },
+      "H1": {
+        "hidden_dims": [
+          128
+        ],
+        "dropout": 0.3,
+        "lr": 0.0003,
+        "weight_decay": 0.001,
+        "batch_size": 128,
+        "optimizer": "AdamW",
+        "epochs": 200,
+        "patience": 20,
+        "budget": "Proposed only; paired against H0",
+        "runs": 40
+      },
+      "model_seeds": [
+        44,
+        45
+      ],
+      "split_seed": 43,
+      "budget": "40 head fits; up to 10 task encodes; measured runtime unavailable",
+      "runs": 40
+    },
+    "hold_fixed": [
+      "CheMeleon weights and buffers frozen",
+      "input rows, labels, task split, metric and scorer",
+      "same split/model seeds for paired control",
+      "no external data, pseudo-labels, relabeling or cleaning"
+    ],
+    "split_id": "task-specific-inner-split-seed43",
+    "seeds": [
+      44,
+      45
+    ],
+    "metric": "task-native metric; normalized score reported as derived secondary metric",
+    "direction": "maximize",
+    "minimum_effect_or_decision_rule": "Estimate paired seed/split noise first; no arbitrary significance threshold. Require positive mean gain and no single-seed-only win.",
+    "success_criterion": "Positive paired internal-stop gain, stable across seeds, valid data/cache identity and no regression in task output contract.",
+    "falsification_criterion": "Gain disappears across seeds/split, is below measured control noise, or identity/scorer/freeze fixture fails.",
+    "compute_budget": "40 head fits; up to 10 task encodes; measured runtime unavailable",
+    "dependencies": [
+      "P-GATE accepted task-aware runner",
+      "freeze proof",
+      "metric fixtures",
+      "input/cache identity manifests"
+    ],
+    "within_current_scope": false,
+    "stage": "screen",
+    "exact_config": {
+      "H0": {
+        "hidden_dims": [
+          256
+        ],
+        "dropout": 0.1,
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "optimizer": "AdamW",
+        "epochs": 200,
+        "patience": 20,
+        "budget": "Proposed only; 40 head fits plus up to 10 task encodes; runtime unknown",
+        "runs": 40
+      },
+      "H1": {
+        "hidden_dims": [
+          128
+        ],
+        "dropout": 0.3,
+        "lr": 0.0003,
+        "weight_decay": 0.001,
+        "batch_size": 128,
+        "optimizer": "AdamW",
+        "epochs": 200,
+        "patience": 20,
+        "budget": "Proposed only; paired against H0",
+        "runs": 40
+      },
+      "model_seeds": [
+        44,
+        45
+      ],
+      "split_seed": 43,
+      "budget": "40 head fits; up to 10 task encodes; measured runtime unavailable",
+      "runs": 40
+    },
+    "preparation_mode": "new_code",
+    "reuse_assets": [
+      "CheMeleon frozen embedding only if encoder/input/row/split/cache identity exactly matches"
+    ],
+    "estimated_run_count": 40,
+    "trigger": "Only after P-GATE passes; main analysis names 10 tasks",
+    "skip_or_stop_if": "Skip any task with failed target-scale or identity audit.",
+    "review_checkpoint": "Return full run identities, paired seed deltas, scorer diagnostics and resource accounting; no valid-driven repeated search.",
+    "direction_ids": [
+      "D-HEAD",
+      "D-SEED",
+      "D-METRIC"
+    ]
+  },
+  {
+    "proposal_id": "P-S2",
+    "priority": "P2",
+    "hypothesis": "A matched second split and three seeds can distinguish stable gains from seed noise.",
+    "control_run_or_config": "H0 shared control in same task/split/model seed",
+    "task": "up_to_4_selected_tasks",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": [
+      "CheMeleon asset SHA must be bound from accepted asset manifest before execution"
+    ],
+    "change_only": {
+      "configs": [
+        "H0",
+        "H1"
+      ],
+      "model_seeds": [
+        46,
+        47,
+        48
+      ],
+      "split_seed": 44,
+      "max_tasks": 4,
+      "budget": "Maximum 24 head fits",
+      "runs": 24
+    },
+    "hold_fixed": [
+      "CheMeleon weights and buffers frozen",
+      "input rows, labels, task split, metric and scorer",
+      "same split/model seeds for paired control",
+      "no external data, pseudo-labels, relabeling or cleaning"
+    ],
+    "split_id": "task-specific-inner-split-seed44",
+    "seeds": [
+      46,
+      47,
+      48
+    ],
+    "metric": "task-native metric; normalized score reported as derived secondary metric",
+    "direction": "maximize",
+    "minimum_effect_or_decision_rule": "Estimate paired seed/split noise first; no arbitrary significance threshold. Require positive mean gain and no single-seed-only win.",
+    "success_criterion": "Positive paired internal-stop gain, stable across seeds, valid data/cache identity and no regression in task output contract.",
+    "falsification_criterion": "Gain disappears across seeds/split, is below measured control noise, or identity/scorer/freeze fixture fails.",
+    "compute_budget": "Maximum 24 head fits",
+    "dependencies": [
+      "P-GATE accepted task-aware runner",
+      "freeze proof",
+      "metric fixtures",
+      "input/cache identity manifests"
+    ],
+    "within_current_scope": false,
+    "stage": "confirm",
+    "exact_config": {
+      "configs": [
+        "H0",
+        "H1"
+      ],
+      "model_seeds": [
+        46,
+        47,
+        48
+      ],
+      "split_seed": 44,
+      "max_tasks": 4,
+      "budget": "Maximum 24 head fits",
+      "runs": 24
+    },
+    "preparation_mode": "new_code",
+    "reuse_assets": [
+      "CheMeleon frozen embedding only if encoder/input/row/split/cache identity exactly matches"
+    ],
+    "estimated_run_count": 24,
+    "trigger": "Only up to four S1 tasks with positive paired movement",
+    "skip_or_stop_if": "Skip if S1 has no reproducible positive candidate.",
+    "review_checkpoint": "Return full run identities, paired seed deltas, scorer diagnostics and resource accounting; no valid-driven repeated search.",
+    "direction_ids": [
+      "D-HEAD",
+      "D-SEED",
+      "D-METRIC"
+    ]
+  }
+]

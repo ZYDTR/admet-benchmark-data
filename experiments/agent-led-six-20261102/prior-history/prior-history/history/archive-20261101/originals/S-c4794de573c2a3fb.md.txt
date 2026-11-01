@@ -1,0 +1,18 @@
+# C1：只改变训练内部选轮指标
+
+从mini既有Context Infrastructure根进入。先读任务内input/rules/PREPARATION_SKILL.md及其参考。你是叶子准备者；只读本TASK/input，只写output（含缓存、临时文件和测试输出）。不训练、不模型推理、不整批编码、不安装下载、不访问海南、不派生Agent/session/CLI模型、不联系其他会话。依赖缺失保留未验证，完成可做部分。
+
+主控已审查Pro建议，本次只采纳一个技术变化：冻结CheMeleon/Caco2，内部选择best头及早停的指标由标准化MSE改成原numeric Y尺度的MAE。训练loss仍为MSE，所有其他科学配置保持。input/config.json为新run唯一任务配置；input/reference/是主控修复后已真实训练的源码，只读参考。不要寻找旧分析、分数、标签或其他公开仓库补材料。
+
+输出可供原宿主生产执行器消费的train_remote_v4.py、training_science.py、config.json，encoder.py按原字节复制。保留common_guarded的ROOT/GPU_UUID/environment/now/safe/sha/write_json接口及既有产物。当前新增唯一monitor枚举internal_validation_raw_mae，同时保留旧internal_validation_standardized_mse路径供兼容检查；没有HPO、seed/fold循环。头256、lr0.0005、model seed43和独立raw-group split seed43；其他值见config。不得调整划分、缩放、损失、缓存、精度或数据行。
+
+必须做到：
+
+- validate_config准确接受两种已定义monitor，拒绝未知值。训练每轮仍eval/no_grad计算原有fit/stop指标；实际best比较和早停使用配置选出的值。MAE来自目标逆变换后的原尺度指标；不能拿训练batch loss或标准化MAE替代。
+- min_delta固定1e-7，比较为value < best - min_delta；平局保留更早best，patience保持8。原有MSE和MAE日志都保留。monitor键与monitor_value一致；best/last元信息绑定各自epoch、step、值和权重。不能把MAE值写进名为best_internal_validation_standardized_mse的字段：保留该旧字段的真实MSE语义，新增通用best_monitor_value或等价明确字段。last的best_monitor_value也应指实际已选best，不是last自身。
+- checkpoint_identity等受测生产helper和真实训练调用要同时接通；保存/重载的optimizer真实Tensor、所有实际RNG、head与epoch/step关系保留。必需检查失败不能吞掉后写success。
+- 编码器8参数及3buffer、optimizer排除编码器、CUDA与新头更新证据、全部原行身份和盲273行预测、原始train预测、cache身份、best重载检查保持原实现要求。没有valid/test.Y，不改原文件。
+
+验证仅使用静态检查与固定合成序列/合成身份数据。构造MSE在较晚轮最小而MAE在较早轮最小的序列，直接调用生产选轮/元信息入口；分别验证best/last epoch与累计steps、patience、tie、min_delta及NaN/Inf拒绝。用真实盲输入的无标签身份及空/重复Drug_ID合成行验证现有加载入口不回退到错误限制；重复完整键应拒绝。不得为了测试调用fit/backward/optimizer.step或训练main。不要执行input/reference/test_host_science.py中的未审动作；有依赖的存取检查必须先确认无参数更新，无法执行就如实记录。
+
+交付包含源代码及最小diff说明、实际配置、HANDOFF.md、skill-use.json、输入/输出manifest、实际命令与退出码及检查记录。源文件SHA只在文件实际形成后计算。列明已执行/静态审读/缺依赖未验证；主控负责真实模型与远端执行。完成后停止，等待Terra只读验收，不自行给别人派任务。

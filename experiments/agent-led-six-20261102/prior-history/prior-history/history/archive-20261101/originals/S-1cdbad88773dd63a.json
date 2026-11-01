@@ -1,0 +1,532 @@
+{
+  "auditor": "parent independent offline parser; no child audit code imported",
+  "manifest_files": 143,
+  "manifest_mismatches": [],
+  "traces": [
+    {
+      "path": "raw/compile.strace",
+      "sha256": "ad73017931580081bedb8025d934663711b59fb6ee6982b06e6e45fb98eda503",
+      "counts": {
+        "openat": 10,
+        "inside": 56,
+        "write": 40,
+        "chmod": 1,
+        "unlink": 5
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {},
+      "denied_counts": {},
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    },
+    {
+      "path": "raw/compile03.strace",
+      "sha256": "3d1dcd01d8fcad104555aa9e05e49e1844d37bda1a5da120501116cacf4095e7",
+      "counts": {
+        "openat": 10,
+        "inside": 63,
+        "write": 47,
+        "chmod": 1,
+        "unlink": 5
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {},
+      "denied_counts": {},
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    },
+    {
+      "path": "raw/import-check.strace",
+      "sha256": "9a16a164ebd8390dfeedda29f2e8b0f7d11b2674d2f128698c131d2ebaa3115d",
+      "counts": {
+        "openat": 8,
+        "inside": 36,
+        "write": 28,
+        "unlink": 1,
+        "mkdir": 3,
+        "unlinkat": 1,
+        "rmdir": 1
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {
+        "/dev/null": 4
+      },
+      "denied_counts": {
+        "EEXIST": 2
+      },
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    },
+    {
+      "path": "raw/setup.strace",
+      "sha256": "ebcf4a062b5e2f7495d754b16c43d4e629b6db2fac6aad67154d57b8abac5bcc",
+      "counts": {
+        "write": 322,
+        "inside": 339,
+        "mkdir": 7,
+        "symlink": 1,
+        "openat": 8,
+        "chmod": 7,
+        "ipc_fd": 6
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {},
+      "denied_counts": {},
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    },
+    {
+      "path": "raw/setup02.strace",
+      "sha256": "bc82b0e77d8f6be0a204e61ecd3ace8cac56bbdf8620d2289b0f2cc383888174",
+      "counts": {
+        "write": 1108,
+        "ipc_fd": 37,
+        "openat": 485,
+        "inside": 1657,
+        "unlink": 3,
+        "mkdir": 85,
+        "chmod": 7,
+        "rename": 3,
+        "rmdir": 4
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {
+        "/dev/null": 4
+      },
+      "denied_counts": {},
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    },
+    {
+      "path": "raw/setup03.strace",
+      "sha256": "10d5520f70cccb6a33e890323302f27f0a23347fa870497aefafb5846b57cc9b",
+      "counts": {
+        "write": 124,
+        "inside": 124
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {},
+      "denied_counts": {},
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    },
+    {
+      "path": "raw/setup04.strace",
+      "sha256": "09863d9b0ae5257d8f1cb67e2bd77b8fa011a7ae9db85c86ee7b8d661fcdbb80",
+      "counts": {
+        "write": 1862,
+        "inside": 1849,
+        "mkdir": 4,
+        "openat": 4,
+        "ipc_fd": 19,
+        "unlink": 1
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {
+        "/dev/null": 2
+      },
+      "denied_counts": {
+        "EEXIST": 1
+      },
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    },
+    {
+      "path": "raw/setup05.strace",
+      "sha256": "8ae29dc0c46cab46b7ed53464d7fbf671e1c3a81e03b4343beaccd5af350fd7e",
+      "counts": {
+        "openat": 25409,
+        "inside": 62185,
+        "write": 33908,
+        "ipc_fd": 248,
+        "rename": 231,
+        "unlink": 16,
+        "mkdir": 2125,
+        "chmod": 713,
+        "rmdir": 5,
+        "mmap": 1,
+        "link": 1,
+        "unlinkat": 1
+      },
+      "outside_mutation_evidence": [
+        {
+          "line": 167511,
+          "pid": 2187947,
+          "call": "openat",
+          "path": "/dev/shm/sem.kK3d5M",
+          "raw": "openat(AT_FDCWD<<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030>, \"/dev/shm/sem.kK3d5M\", O_RDWR|O_CREAT|O_EXCL|O_NOFOLLOW|O_CLOEXEC, 0600) = 3</dev/shm/sem.kK3d5M>"
+        },
+        {
+          "line": 167512,
+          "pid": 2187947,
+          "call": "write",
+          "path": "/dev/shm/sem.kK3d5M",
+          "raw": "write(3</dev/shm/sem.kK3d5M>, \"\\0\\0\\0\\0\\0\\0\\0\\0\\200\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\", 32) = 32"
+        },
+        {
+          "line": 167513,
+          "pid": 2187947,
+          "call": "mmap",
+          "path": "/dev/shm/sem.kK3d5M",
+          "raw": "mmap(NULL, 32, PROT_READ|PROT_WRITE, MAP_SHARED, 3</dev/shm/sem.kK3d5M>, 0) = 0x79d24d054000"
+        },
+        {
+          "line": 167514,
+          "pid": 2187947,
+          "call": "link",
+          "path": "/dev/shm/sem.kK3d5M",
+          "raw": "link(\"/dev/shm/sem.kK3d5M\", \"/dev/shm/sem.joblib-2187947-jg6d0uzx\") = 0"
+        },
+        {
+          "line": 167514,
+          "pid": 2187947,
+          "call": "link",
+          "path": "/dev/shm/sem.joblib-2187947-jg6d0uzx",
+          "raw": "link(\"/dev/shm/sem.kK3d5M\", \"/dev/shm/sem.joblib-2187947-jg6d0uzx\") = 0"
+        },
+        {
+          "line": 167515,
+          "pid": 2187947,
+          "call": "unlink",
+          "path": "/dev/shm/sem.kK3d5M",
+          "raw": "unlink(\"/dev/shm/sem.kK3d5M\")   = 0"
+        },
+        {
+          "line": 167517,
+          "pid": 2187947,
+          "call": "unlink",
+          "path": "/dev/shm/sem.joblib-2187947-jg6d0uzx",
+          "raw": "unlink(\"/dev/shm/sem.joblib-2187947-jg6d0uzx\") = 0"
+        }
+      ],
+      "device_operations": {
+        "/dev/null": 6
+      },
+      "denied_counts": {
+        "EEXIST": 196
+      },
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": [
+        {
+          "line": 167511,
+          "pid": 2187947,
+          "raw": "openat(AT_FDCWD<<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030>, \"/dev/shm/sem.kK3d5M\", O_RDWR|O_CREAT|O_EXCL|O_NOFOLLOW|O_CLOEXEC, 0600) = 3</dev/shm/sem.kK3d5M>"
+        },
+        {
+          "line": 167512,
+          "pid": 2187947,
+          "raw": "write(3</dev/shm/sem.kK3d5M>, \"\\0\\0\\0\\0\\0\\0\\0\\0\\200\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\", 32) = 32"
+        },
+        {
+          "line": 167513,
+          "pid": 2187947,
+          "raw": "mmap(NULL, 32, PROT_READ|PROT_WRITE, MAP_SHARED, 3</dev/shm/sem.kK3d5M>, 0) = 0x79d24d054000"
+        },
+        {
+          "line": 167514,
+          "pid": 2187947,
+          "raw": "link(\"/dev/shm/sem.kK3d5M\", \"/dev/shm/sem.joblib-2187947-jg6d0uzx\") = 0"
+        },
+        {
+          "line": 167515,
+          "pid": 2187947,
+          "raw": "unlink(\"/dev/shm/sem.kK3d5M\")   = 0"
+        },
+        {
+          "line": 167517,
+          "pid": 2187947,
+          "raw": "unlink(\"/dev/shm/sem.joblib-2187947-jg6d0uzx\") = 0"
+        }
+      ]
+    },
+    {
+      "path": "raw/train.strace",
+      "sha256": "de2b564ddd08f362e36b2d89fa0f75afcaa1fad16d9b094172026bf8f974e1d9",
+      "counts": {
+        "openat": 35,
+        "inside": 183,
+        "write": 176,
+        "unlink": 30,
+        "mkdir": 5,
+        "symlink": 29,
+        "unlinkat": 1,
+        "rmdir": 1
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {
+        "/dev/null": 4,
+        "/dev/nvidiactl": 1,
+        "/dev/nvidia0": 3,
+        "/dev/nvidia1": 3,
+        "/dev/nvidia2": 3,
+        "/dev/nvidia3": 3,
+        "/dev/nvidia4": 3,
+        "/dev/nvidia5": 3,
+        "/dev/nvidia6": 3,
+        "/dev/nvidia7": 3,
+        "/dev/nvidia-uvm": 2
+      },
+      "denied_counts": {
+        "EEXIST": 33,
+        "EACCES": 30
+      },
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    },
+    {
+      "path": "raw/train02.strace",
+      "sha256": "865aaeddd4faa233d9ccd2561c652f5c27c3139ae3b32031c5afd091d1766f62",
+      "counts": {
+        "openat": 35,
+        "inside": 183,
+        "write": 176,
+        "unlink": 30,
+        "mkdir": 5,
+        "symlink": 29,
+        "unlinkat": 1,
+        "rmdir": 1
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {
+        "/dev/null": 4,
+        "/dev/nvidiactl": 1,
+        "/dev/nvidia0": 3,
+        "/dev/nvidia1": 3,
+        "/dev/nvidia2": 3,
+        "/dev/nvidia3": 3,
+        "/dev/nvidia4": 3,
+        "/dev/nvidia5": 3,
+        "/dev/nvidia6": 3,
+        "/dev/nvidia7": 3,
+        "/dev/nvidia-uvm": 2
+      },
+      "denied_counts": {
+        "EEXIST": 33,
+        "EACCES": 30
+      },
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    },
+    {
+      "path": "raw/train03.strace",
+      "sha256": "e18bae2aa57d29c3e7b5144f7698366ca0034b63f9ce7a0263456394c4f71ef1",
+      "counts": {
+        "openat": 99,
+        "inside": 148,
+        "write": 144,
+        "unlink": 59,
+        "mkdir": 14,
+        "ipc_fd": 3,
+        "symlink": 57,
+        "mmap": 19,
+        "unlinkat": 1,
+        "rmdir": 1
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {
+        "/dev/null": 6,
+        "/dev/nvidiactl": 15,
+        "/dev/nvidia0": 11,
+        "/dev/nvidia1": 11,
+        "/dev/nvidia2": 11,
+        "/dev/nvidia3": 11,
+        "/dev/nvidia4": 13,
+        "/dev/nvidia5": 11,
+        "/dev/nvidia6": 11,
+        "/dev/nvidia7": 11,
+        "/dev/nvidia-uvm": 4
+      },
+      "denied_counts": {
+        "EEXIST": 69,
+        "EACCES": 57,
+        "ENOENT": 2
+      },
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    },
+    {
+      "path": "raw/upload-guard.strace",
+      "sha256": "3635f4ba9394bf5d949c7e8a5c2f7f39001106ec60762a1279e3a317042c5d9f",
+      "counts": {
+        "openat": 4,
+        "inside": 8,
+        "write": 5,
+        "ipc_fd": 1
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {},
+      "denied_counts": {},
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    },
+    {
+      "path": "raw/upload-initial.strace",
+      "sha256": "a8e27cdb158c0d408fabd9164865d90e9802fd1d8004458fbe7e847de1964ae0",
+      "counts": {
+        "mkdir": 11,
+        "inside": 29,
+        "openat": 9,
+        "write": 10,
+        "ipc_fd": 1
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {},
+      "denied_counts": {},
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    },
+    {
+      "path": "raw/upload-setup02.strace",
+      "sha256": "7c0d8bbe7b27b9c3707c13f5f19285c11e4f8e124a3237c5860f460261e4b546",
+      "counts": {
+        "mkdir": 2,
+        "inside": 8,
+        "openat": 3,
+        "write": 4,
+        "ipc_fd": 1
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {},
+      "denied_counts": {},
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    },
+    {
+      "path": "raw/upload-setup03.strace",
+      "sha256": "57e0950879bbffae9177d54bc34babb0f92508b63743105b1971cd13a618a4d2",
+      "counts": {
+        "mkdir": 2,
+        "inside": 6,
+        "openat": 2,
+        "write": 3,
+        "ipc_fd": 1
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {},
+      "denied_counts": {},
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    },
+    {
+      "path": "raw/upload-setup04.strace",
+      "sha256": "531755bcaf826352de0b31483cc9ad7270b14bcbf5602af28ba428b1d794a514",
+      "counts": {
+        "openat": 1,
+        "inside": 2,
+        "write": 2,
+        "ipc_fd": 1
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {},
+      "denied_counts": {},
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    },
+    {
+      "path": "raw/upload-setup05.strace",
+      "sha256": "e45bd4b389b5bb64f05f834127b5d6d9acdd364292eaf6695d7e58440bf749e1",
+      "counts": {
+        "mkdir": 2,
+        "inside": 14,
+        "openat": 6,
+        "write": 7,
+        "ipc_fd": 1
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {},
+      "denied_counts": {},
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    },
+    {
+      "path": "raw/upload-threadname-fix.strace",
+      "sha256": "6b1088927a0e3a6c5f39f0b2e39d2163feeb534e29cc1886016e500741f6893e",
+      "counts": {
+        "openat": 3,
+        "inside": 6,
+        "write": 4,
+        "ipc_fd": 1
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {},
+      "denied_counts": {},
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    },
+    {
+      "path": "raw/upload-threadname-redirect.strace",
+      "sha256": "6f5bf873d7320f61b21e2ca95fb8d6ee7b998d84354dd9394eb16fba08df287c",
+      "counts": {
+        "openat": 3,
+        "inside": 6,
+        "write": 4,
+        "ipc_fd": 1
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {},
+      "denied_counts": {},
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    },
+    {
+      "path": "raw/upload-training.strace",
+      "sha256": "71ec7428a3b44ca813bf8fd239de93005a84a534a501de1f3719d9c6b3a62e72",
+      "counts": {
+        "openat": 2,
+        "inside": 4,
+        "write": 3,
+        "ipc_fd": 1
+      },
+      "outside_mutation_evidence": [],
+      "device_operations": {},
+      "denied_counts": {},
+      "unresolved_count": 0,
+      "unresolved_examples": [],
+      "pending_at_eof": {},
+      "semaphore_mutation_lines": []
+    }
+  ],
+  "limitations": [
+    "Conservative traced filesystem syscall review only; not whole-server proof, ioctl/device partitioning or SSH-daemon audit.",
+    "Relative paths without annotated dirfd and unresolved inherited descriptors are reported, not silently passed.",
+    "Argument parser is narrow; exact positive findings independently checked against original line numbers."
+  ]
+}

@@ -1,0 +1,47 @@
+import datetime,hashlib,json,os,socket,stat,sys,time
+from pathlib import Path
+assert socket.gethostname().split('.')[0]=='project-compute'
+assert os.getuid()==1012 and os.getgid()==1012
+project=Path('<AUTHORIZED_PROJECT_ROOT>')
+assert project.resolve(strict=True)==project and project.stat().st_uid==1012
+roots=['<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mse-s44-20261102', '<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mse-s45-20261102']
+def safe(p):
+ assert p.resolve(strict=True)==p and p.is_relative_to(project), 'path drift'
+ for a in [p,*p.parents]:
+  if a==project:break
+  assert not a.is_symlink(),'symlink ancestor'
+def hashed(p):
+ safe(p);a=p.lstat();assert stat.S_ISREG(a.st_mode)
+ fd=os.open(p,os.O_RDONLY|os.O_NOFOLLOW)
+ with os.fdopen(fd,'rb') as f:
+  q=os.fstat(f.fileno());assert (q.st_dev,q.st_ino)==(a.st_dev,a.st_ino)
+  h=hashlib.sha256()
+  while True:
+   b=f.read(1048576)
+   if not b:break
+   h.update(b)
+  z=os.fstat(f.fileno())
+ assert (a.st_size,a.st_mtime_ns,a.st_ino,a.st_dev)==(z.st_size,z.st_mtime_ns,z.st_ino,z.st_dev),'changed while hash'
+ return {'size':a.st_size,'sha256':h.hexdigest(),'mode':stat.S_IMODE(a.st_mode),'uid':a.st_uid,'gid':a.st_gid,'nlink':a.st_nlink,'mtime_ns':a.st_mtime_ns,'inode':a.st_ino,'device':a.st_dev}
+
+out={'observed_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'hostname':socket.gethostname(),'uid':os.getuid(),'gid':os.getgid(),'workspace':str(project),'mode':'read_only','roots':[],'python':sys.version,'changes':[]}
+total=0
+for raw in roots:
+ root=Path(raw);safe(root);rows=[];rejected=[]
+ for d,ds,fs in os.walk(root,followlinks=False):
+  ds.sort();fs.sort()
+  for n in list(ds):
+   p=Path(d)/n;a=p.lstat()
+   if stat.S_ISLNK(a.st_mode):rejected.append({'path':p.relative_to(root).as_posix(),'type':'symlink_directory'});ds.remove(n)
+   else:rows.append({'path':p.relative_to(root).as_posix(),'type':'directory','mode':stat.S_IMODE(a.st_mode),'device':a.st_dev})
+  for n in fs:
+   p=Path(d)/n;a=p.lstat();rel=p.relative_to(root).as_posix()
+   if not stat.S_ISREG(a.st_mode):rejected.append({'path':rel,'type':'symlink' if stat.S_ISLNK(a.st_mode) else 'special'});continue
+   total+=a.st_size;assert total<=1073741824,'budget'
+   rows.append({'path':rel,'type':'file',**hashed(p)})
+ out['roots'].append({'root':str(root),'rows':rows,'rejected':rejected,'device':root.stat().st_dev})
+# Only approved shared-environment metadata, no framework imports or package execution.
+v=Path('<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/venv');safe(v)
+out['shared_environment']={'root':str(v),'pyvenv_cfg':(v/'pyvenv.cfg').read_text(),'dist_info_names':sorted(p.name for p in v.glob('lib/python*/site-packages/*.dist-info'))}
+out['mounts_for_approved_roots']=[line for line in Path('/proc/self/mountinfo').read_text().splitlines() if len(line.split())>4 and any(Path(r).is_relative_to(Path(line.split()[4])) for r in roots)]
+print(json.dumps(out))

@@ -1,0 +1,41 @@
+# 六项冻结训练：本轮证据与资源等待
+
+截至 2026-11-01T17:02:00.001572+00:00，科学完成2/6，第三项有可重载的中途检查点，后三项未开始；没有活动学习作业。当前状态为 waiting_for_resources，已停止使用无充分无干扰证据的繁忙GPU0。两项模型的科学可用性与共享合规分开：前者通过本执行方的实际核验，后者未通过，最终独立验收与评分由主控/取回方完成。
+
+| 科学项 | 实际学习 | 选模与核验 |
+|---|---|---|
+| MSE seed44，attempt03 | 20轮，100步；best第12轮/第60步 | 冻结8参数张量+3buffer一致；637训练行、91盲valid+182test；CPU实际重载预测最大绝对差3.3381e-6 |
+| MSE seed45，attempt02 | 39轮，195步；best第31轮/第155步 | 同上冻结与行身份通过；CPU最大绝对差4.7730e-7 |
+| MSE seed46，attempt01 | 中途停止；持久化6轮/30步 | progress-state.pt已实际weights_only重载，完整head/optimizer/RNG/history/best_state；未完成、未恢复；额外未持久化步数未知 |
+| MAE seed44/45/46 | 未开始 | 原配置等待安全资源 |
+
+精确远端/本地路径、所有模型/预测/源文件摘要见 [ARTIFACT_INDEX.json](ARTIFACT_INDEX.json)。两项稳定目录分别为远端 <AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mse-s44-20261102/attempt-03 与 <AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mse-s45-20261102/attempt-02；不能从父目录失败raw误认最终完成状态。两项可交取回方在其权限内独立评分；本执行没有接触私有valid真值或执行评分/官方上传。
+
+科学配置保持冻结CheMeleon→2048-256-1头、dropout0.1、AdamW lr0.0005/wd0.0001、batch128、最多50轮/patience8、raw-SMILES grouped split seed43、573fit/64stop；本批只完成MSE选模两个seed。编码器源码与training_science.py逐字匹配科学参考，全部配置与输入SHA匹配；参数requires_grad=False、eval、无梯度、优化器排除及前后摘要实查。实际新头序列化张量变化、AdamW步数/RNG/最后和best状态、仅fit拟合的预处理及CPU预测重建通过。完整证据在 scientific-verification.json、tensor-verification.json、science-source-checks-001.json。
+
+运行适配使用本任务私有最小上下文、现有只读venv与固定Windows SSH路由，未恢复退役固定流程。首次import路径失败、随后CUDA304均保留。CUDA304实际trace指向写自身thread comm被拒绝；窄shim只重定向本进程数字task的comm写到/dev/null，其他文件限制保留，实际编译和运行证据已取回。未安装依赖或修改共享venv。源码差异见 science-metadata-diff-001.patch（只记录实际编码batch）和 science-checkpoint-diff-001.patch（新增原子epoch检查点）。后续缓存逐项绑定原GPU冻结特征的输入/源码/权重/依赖/全行序/形状/parse mask/内容身份；seed45没有新编码forward，学习新头的CUDA证据单独保留。
+
+**共享使用未通过。** 完成seed44有2个已知样本：自身SM12/14、既有任务85/83；完成seed45有6个：自身10–17、既有79–86。停止seed45/46另有7/3个样本。SM是活动代理，不能证明对方实际吞吐/延迟损失多少，但伴随自身负载的下降足以否定此前“通过共享”的判断。原监控要求连续3次才停，完成exit0仅说明未连续触发；还错误地把没有数字的own pmon行汇总成0，N/A应保留未知。完整重算在 shared-impact-audit.json，并引用主控独立readback摘要；不据此宣称共享无干扰。
+
+原始pacing.json中seed44“编码batch8”的预期被late import覆盖，实际batch64，已在科学metadata与本报告更正；不能继续引用原预期为实际。seed45原尝试编码batch8/步间5ms仍触发共享停止；随后缓存头训练步间200ms的完成作业也发生上述6次下降，不能以节流或复用缓存当作安全共享证明。之后seed46被只停止自有身份的监控终止，顺序循环退出，未启动任何MAE。
+
+最新三次只读现场核对 2026-11-01T16:58:22.056645+00:00 至 2026-11-01T16:58:29.274074+00:00：健康GPU0/2/3/5/6均满负载；GPU1计算利用率0但驻留约72.2GiB且突发需求无法充分核实；GPU4/7要求Reset。GPU6早前短暂4MiB快照随后立即出现其他新PID，先升18.4GiB再升79.7GiB/100%，不能当空闲资源。没有显存必须0的附加规则，也不一概禁止共享；本次缺少充分安全依据，故等待。final-resource-summary-001.json与原始final-readonly-check-001.json保留UUID、健康、显存、PID和采样。未读取同事项目正文/私有日志，未发送推理/压测请求，未改动或停止他人任务。
+
+21个实际登记的自有进程生命周期在末次核对均已退出/不存在；原递归收集22条中的另1条是baseline_other_identity，属他人PID4060142，明确排除，自始未发信号。诊断和编译子进程有实际wait返回；不把21项检查扩大成全机无限范围的无残留证明。完整raw身份、信号、实际OS退出和postcheck保存。十条已审阅的文件/写入/mmap trace没有发现成功越界文件修改、未解操作或pending；拒绝记录与device IO分列，这不是全机或ioctl零影响证明。
+
+| 每次尝试 | 实际strace wait | 保守GPU作业秒 | 结果 |
+|---|---:|---:|---|
+| hainan-agentled-mse-s44-20261102 | 1 | 5.288512 | 未完成 |
+| hainan-agentled-mse-s44-20261102 | 1 | 5.309946 | 未完成 |
+| hainan-agentled-mse-s44-20261102 | 0 | 31.801026 | 完成 |
+| hainan-agentled-mse-s45-20261102 | -15 | 54.340081 | 未完成 |
+| hainan-agentled-mse-s45-20261102 | 0 | 68.769973 | 完成 |
+| hainan-agentled-mse-s46-20261102 | -15 | 27.593456 | 未完成 |
+
+总预算5296.074905887725秒，已用193.102994149551秒，剩余5102.971911738175秒；包含失败导入/CUDA检查/编码/学习程序的完整运行时间，精确kernel活跃时间未知。seed45失败原尝试至少105个日志步/21轮且当时没有恢复检查点；不能当已完成或与成功195步合并成单次学习。旧006历史步数仍为null，旧009已封口，未抹去失败。
+
+完整当前原生turn自2026-11-01T16:06:04Z起，截至本等待记录3356.002秒；线程从更早创建起的日历跨度单列，不冒充活跃算力。TIMING.json按准备/学习尝试夹杂排障传输/事后验收/之后资源等待分段，GPU作业秒包含在墙钟阶段内，不重复相加；每条SSH原始起止另列，重叠保留。当前native completedAt尚未产生，回调后可补记当时elapsed，最终结束时间由主控原生读取。没有新墙钟截止或600秒工程cap。
+
+所有下载文件再按远端_fetch-manifest逐字节摘要核对，见snapshot-integrity-001.json。首次失败根下载因包含嵌套attempt耗时超限，实际SSH255/121秒与部分stdout保留；随后作用域明确的只读取回成功，没有凭超时重启训练；该超时只读reader的远端OS退出未捕获，保持unknown，不以SSH退出代填。首次CPU检查因RNG字段结构假设错误而失败，修的是检查代码，模型不变，失败原件保留。两个zip完整快照、中途checkpoint、两个初始故障、停止作业与support/CPU诊断均留档；seed45失败下载包含子attempt02的原始历史如实说明，不覆盖或伪装为单独失败包。
+
+安全资源到达后沿原observer唤醒本执行方，由其现场判断并重新绑定GPU/监控，再从seed46的已核checkpoint恢复；具体接续见CONTINUE.md。前三项不盲目重训。当前阻点为共享证据不足及无合格替代资源，剩余四项未完成，不宣称六项任务或完整闭环通过。

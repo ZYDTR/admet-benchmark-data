@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "entries": [
+    {
+      "id": "baseline-22",
+      "run_ids": [
+        "baseline-22"
+      ],
+      "source": "adhoc_jobs/admet_frozen_baseline_20261030/runs/chemeleon-host-v3-20261030/host-grading-receipt.json",
+      "sha256": "2c8673fb31bec0ebaac4c6a74534f17e93fcad0b503f67a5b9e5bef10f57f895",
+      "successful_task_scores": 22,
+      "truth_file_reads_completed": null,
+      "metric_calls_in_receipt": null,
+      "total_lifetime_truth_accesses": null,
+      "use_and_limit": "首版固定配置，评分后未据此重训；原回执不代表全部后续分析次数"
+    },
+    {
+      "id": "pro-first",
+      "run_ids": [
+        "hainan-frozen-training-20261031",
+        "hainan-skill-follow-20261031"
+      ],
+      "source": "adhoc_jobs/admet_training/exchange/trials/public-repo-20261031/retrieval/private_scoring/scoring-receipt.json",
+      "sha256": "a4f62af5d56f313084fb4405e9edc5f234e5e339c916dda59fcd8b391d879ced",
+      "successful_task_scores": 2,
+      "truth_file_reads_completed": null,
+      "metric_calls_in_receipt": null,
+      "total_lifetime_truth_accesses": null,
+      "use_and_limit": "用于首轮Pro；单次评分前失败及主控复算另有原件，不把其访问次数填0"
+    },
+    {
+      "id": "pro-index",
+      "run_ids": [
+        "hainan-index-cycle-20261031"
+      ],
+      "source": "adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031/retrieval/phase2/private_scoring/scoring-receipt.json",
+      "sha256": "e26a6a97fa26da2c71f64f54f3892f627fb2a2551af2b28d7cea1375f309f1e4",
+      "successful_task_scores": 1,
+      "truth_file_reads_completed": 1,
+      "metric_calls_in_receipt": 1,
+      "total_lifetime_truth_accesses": null,
+      "use_and_limit": "用于后续Pro及MAE选轮研究；非独立最终泛化评估"
+    },
+    {
+      "id": "pro-mae",
+      "run_ids": [
+        "hainan-mae-monitor-20261101"
+      ],
+      "source": "adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/retrieval/private_scoring/scoring-receipt.json",
+      "sha256": "c41d46dc70ad2318045620313ba5ce60f95f97c3950b075d69bf9e508e13d2f7",
+      "successful_task_scores": 1,
+      "truth_file_reads_completed": 1,
+      "metric_calls_in_receipt": 1,
+      "total_lifetime_truth_accesses": null,
+      "use_and_limit": "用于当前Pro；当前指南未直接准入下一批"
+    }
+  ],
+  "coverage": "formal scoring deliveries for all five completed-learning runs; not a complete lifetime access counter",
+  "formal_task_scores": 26,
+  "not_recorded": [
+    "all historical exploratory/independent recomputation truth-read counts",
+    "exact first-view timestamps and causal effect of every aggregate read"
+  ],
+  "rule": "可追溯回执去重；发布副本/独立复核不重复算新训练。未记录不是0，后续每批追加decision影响。"
+}

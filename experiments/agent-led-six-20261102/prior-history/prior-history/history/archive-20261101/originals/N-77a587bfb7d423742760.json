@@ -1,0 +1,48 @@
+{
+  "metadata_trajectory": [
+    {
+      "epoch": 1,
+      "steps": 5,
+      "mse": 4.0,
+      "mae": 1.0
+    },
+    {
+      "epoch": 2,
+      "steps": 10,
+      "mse": 1.0,
+      "mae": 2.0
+    },
+    {
+      "epoch": 3,
+      "steps": 15,
+      "mse": 2.0,
+      "mae": 3.0
+    }
+  ],
+  "expected": {
+    "mse_best_epoch": 2,
+    "mae_best_epoch": 1,
+    "last_epoch": 3,
+    "best_MSE_field": 1.0,
+    "last_steps": 15
+  },
+  "legal_rows": [
+    {
+      "Drug_ID": "same",
+      "Drug": "CC",
+      "Y": "1"
+    },
+    {
+      "Drug_ID": "same",
+      "Drug": "CC",
+      "Y": "1"
+    },
+    {
+      "Drug_ID": "",
+      "Drug": "CCC",
+      "Y": "2"
+    }
+  ],
+  "identity": "task/split/original row_index; repeated attributes legal",
+  "rule": "failure in insufficient-group precondition cannot count as duplicate full-key rejection"
+}

@@ -1,0 +1,171 @@
+# HANDOFF — A：冻结 CheMeleon 编码器 + 小型 MLP 预测头
+
+日期 2026-10-30。准备会话（叶子执行者）交付。**本目录代码已在一份独立 venv 里用真实权重、
+真实数据跑通端到端 smoke；但“正式训练/整批特征/真实验证评分/提交”一律由主 Codex 执行。**
+准备会话未做任何训练之外可混淆的事：下面的 smoke 训练只在 `<PRIVATE_RUNTIME_PATH> 临时目录产生模型，
+没有写入 `output/model/runs`，也没有读取任何验证真标签（盲验证副本本身无 Y）。
+
+---
+
+## 1. 一句话结论
+
+CheMeleon 冻结编码器可以按作者发布方式离线加载（`BondMessagePassing` + `MeanAggregation`，
+输出 2048 维），配每任务一个独立小 MLP 的整条链路已就绪：特征缓存 → 仅用 train 拟合的标准化 +
+回归目标还原 → valid/test 全行预测 → 提交模板全覆盖。一套固定配置，无搜索。唯一需要主 Codex
+做的判断是资源/批次（CPU 或单 GPU），以及最终评分与提交。
+
+## 2. 目录
+
+```
+output/model/
+  DEPENDENCIES.md          精确依赖 + 权重下载/HASH（已核对）
+  HANDOFF.md               本文件
+  .gitignore               忽略 assets/ cache/ runs/ predictions/ *.pt *.npy
+  src/
+    common.py              任务表、分类/回归划分、CSV/哈希工具、填充常量
+    encoder.py             CheMeleonEmbedder：校验权重→加载→eval→禁梯度→抽取 2048 维指纹
+    build_features.py      逐任务/逐 split 生成特征缓存 + 覆盖报告
+    heads.py               torch MLP 构建/优化器/推理；附一个 numpy 参考头（只给自检用）
+    train.py               每任务训练独立 MLP（仅 train 拟合标准化与回归目标统计）
+    predict.py             valid/test 全行预测 + 提交型 JSON + manifest
+    selfcheck.py           无训练静态自检（输入/模板/已知异常/torch 前向）
+    selftest_tiny.py       依赖无关的 numpy 端到端接线自检（不需要 torch/rdkit）
+```
+
+## 3. 运行顺序（主 Codex）
+
+设 `ROOT=<仓库根>`、`CHK=$ROOT/output/model/assets/chemeleon_mp.pt`。
+
+```bash
+# 0) 依赖与权重：见 DEPENDENCIES.md；下载后先校验 md5 = 6a80b54fdb7de37ef0374d302f01e8ce
+
+# 1) 静态自检（秒级，无需权重）
+python $ROOT/output/model/src/selfcheck.py --with-torch    # 装好 torch 时
+
+# 2) 特征缓存（一次性，可复用；整批 CPU 约 7–8 分钟，GPU 更快）
+python $ROOT/output/model/src/build_features.py \
+  --chemeleon $CHK --cache $ROOT/output/model/cache/chemeleon_mp --device cpu --report
+#   -> cache/manifest.json, cache/coverage.json, cache/<task>/__{train,valid,test}.{npy,ok.npy,rows.json}
+
+# 3) 训练 22 个 MLP 头（CPU 约 35 秒；只读 train）
+python $ROOT/output/model/src/train.py \
+  --cache $ROOT/output/model/cache/chemeleon_mp \
+  --out   $ROOT/output/model/runs/chemeleon_mlp_v1 --device cpu
+#   -> runs/<id>/heads/<task>.pt, train_config.json, metrics.json
+
+# 4) valid/test 全行预测
+python $ROOT/output/model/src/predict.py \
+  --ckpt  $ROOT/output/model/runs/chemeleon_mlp_v1 \
+  --cache $ROOT/output/model/cache/chemeleon_mp \
+  --out   $ROOT/output/model/predictions/chemeleon_mlp_v1 --device cpu --run-id chemeleon-mlp-valid1
+#   -> valid_predictions.csv / test_predictions.csv (task,split,row_index,y_pred)
+#   -> test_predictions.json (schema_version=1, run_id, model_artifact_sha256, predictions)
+#   -> manifest.json
+```
+
+GPU 用法：把 `--device cpu` 改成 `--device cuda`；内存/显存受限时调小 `build_features.py
+--batch-size`（默认 64）。`train.py --epochs N` 可缩短做冒烟；正式请保持默认（epochs=50 + 早停）。
+
+## 4. 固定训练配置（第一版，不做搜索）
+
+记录在 `train_config.json` 与每个 `heads/<task>.pt` 的 `train_config` 中：
+
+| 项 | 值 |
+| --- | --- |
+| 输入 | CheMeleon 冻结指纹 2048 维（`MPNN.fingerprint`，无 `X_d` 拼接口） |
+| 标准化 | 逐任务 StandardScaler，**仅**用该任务 train（内部 90% 拟合段）拟合 |
+| 头结构 | Linear(2048→512)+ReLU+Dropout(0.1)→Linear(512→1) |
+| 分类损失 | BCEWithLogits，输出 sigmoid 概率 |
+| 回归损失 | 对标准化目标 MSE，输出 `z*std+mean` 还原到原 Y 尺度 |
+| 优化 | AdamW lr=1e-3, weight_decay=1e-4, batch=128 |
+| 早停 | 用 task train 内部 90/10 划分的 val loss，patience=8，最多 50 epoch |
+| seed | 42（数据内部划分与初始化同一 seed） |
+
+**为什么内部划分而不是官方 valid 选模**：避免和评分流程耦合、避免用官方盲验证集做早停/选模。
+官方 valid 只用于事后评价。若主 Codex 希望改为用 valid 早停，那是另一套配置，需单独记账。
+
+## 5. 冻结状态的保证方式（可审查）
+
+- `encoder.py`：加载后 `model.eval()`；`for p in model.parameters(): p.requires_grad_(False)`；
+  `assert_frozen()` 再查 `model.training is False` 且无 `requires_grad=True` 参数。
+- 训练阶段 `train.py` **根本不加载编码器**——特征来自 cache，头训练只碰 MLP，结构上不可能更新编码器。
+- 抽取在 `torch.no_grad()` 下。输出后**不自带**进一步变换：cache 里就是裸 2048 维指纹。
+
+已实测：`feature_dim=2048`，`trainable=0`；同输入两次编码逐元素相同；批量与单条编码结果一致
+（`MeanAggregation` + `bn=Identity`，无 BatchNorm，故无 batch 依赖）。
+
+## 6. 覆盖与“不可编码行”方案（可审查的完整覆盖）
+
+`build_features.py --report` 生成 `cache/coverage.json`。本会话实测（RDKit 2024.09.6）：
+
+- 全量 22 任务 × train/valid/test 共 **81,809 行**；其中 **仅 2 行** RDKit `MolFromSmiles` 返回 None。
+- 都在 `solubility_aqsoldb/test.csv` 的 **row_index 1159、1160**（`CC1=CC=C[NH+2]([O-])[CH-]1`、
+  `O=C(O)C1=C[NH+2]([O-])[CH-]C=C1`），与 `research/data-profile.md` 记录一致。
+- `solubility_aqsoldb/test.csv` row_index 171（681 字符、多片段）**能**解析，正常编码（单条无截断）。
+- 其余 21 个任务，train/valid/test 均 0 不可编码行。
+
+**处理方案（已实现、可程序化复核）**：不可编码行保留，其 2048 维向量填常量 `0.0`
+（`common.GLOBAL_FILL_VALUE`），随后照常标准化并预测，因此该行仍得到有限预测值。
+- 没有丢行、没有手填数、没有用外部标签；row 身份按 `(task, split, row_index)` 保留。
+- 这是“可交付的完整覆盖”：16379 行 test 全部有预测，含这 2 行。
+- 已实测：full 预测 `test_predictions.csv` 恰好 16379 行、键唯一、含模板全部 `(task,sample_idx)`；
+  solubility 1159/1160 得到有限值（当前配置约 `-3.81`），171 得到有限值。
+- 复核方式：任意读者可对同一 RDKit 版本重跑 `build_features.py` 并对 `coverage.json` 的
+  `unparseable_rows` 断言只有 `[1159,1160]`。`selfcheck.py::known_rows` 已把这三行写死为回归保护。
+
+> 注意：`0.0` 填充会让这两行落入训练分布内部的常数点，预测是“模型对空/异常输入的一个确定输出”，
+> 不等于对这两分子有化学意义的预测。这是无标签情况下最保守、可审计的选择；若主 Codex 想要别的
+> 回退（如“去电荷重试解析”），属于方案改动，要另记账，不要静默改。
+
+## 7. 输入/模板契约（已核对）
+
+- train `Drug_ID,Drug,Y`；valid/test `Drug_ID,Drug`；22 个任务名与 `common.TASKS`/submission 模板块顺序一致。
+- 官方 `submission_template.csv` 16379 行；逐任务 `sample_idx` 为 `0..n-1` 连续，`drug_id`/`smiles`
+  与对应 `test.csv` 同序同值；模板 `y_pred` 全为空。
+- **映射以 task+sample_idx 为准，`sample_idx` 在每任务内等于该任务 test 的 0 基数据行号**（已逐行核对，
+  不是猜）。模板里存在**同 task 同 SMILES 的重复键**（220 组），所以不能拿 SMILES 当键；我们的预测
+  按 `row_index` 保留重复行身份。B 路导出的 `(task,sample_idx)` 与本目录 `row_index` 一一对应。
+- 预测文件给 `task,split,row_index,y_pred`；提交用 `test_predictions.json`（schema 与
+  `reference-harness/skills/submission/references/format.md` 一致），交给 B 路/主 Codex 走
+  `export-submission`。
+
+## 8. 本会话已做检查 / 已获证据
+
+在 `<PRIVATE_RUNTIME_PATH> 临时 venv 里（torch 2.6.0+cpu, chemprop 2.1.2, rdkit 2024.09.6，
+numpy 1.26.4, pandas 2.2.3, sklearn 1.6.1）实测：
+
+1. 权重 MD5/size 与发布方一致；篡改 1 字节、截断文件均被 `verify_checkpoint` 拦截。
+2. 编码器 `feature_dim=2048`，`trainable params=0`；确定性、batch 无关。
+3. `build_features.py` 全量 22 任务三分支：81809 行、2 行不可编码（1159/1160），其余全 2048 维且填后有限；
+   训练特征整批 CPU 约 6 分钟（53695 行），valid 60s，test（已缓存部分）…总缓存约 652MB。
+4. `train.py` 全 22 头 CPU 约 35 秒完成；每任务有 `metrics.json` 记录内部 train/val 拟合指标。
+5. `predict.py` 全量：test 16379 行、valid 11735 行，键唯一、全有限、覆盖模板全部键。
+6. `selfcheck.py --with-torch` 5 段全 PASS；`selftest_tiny.py`（numpy 线）PASS（覆盖/有限/回归还原）。
+7. 2 任务 smoke（ames/caco2_wang）先跑通，再跑全量。
+
+`<PRIVATE_RUNTIME_PATH> 的模型与预测是**冒烟证据，不是交付模型**；交付以主 Codex 自己跑的
+`output/model/{cache,runs,predictions}` 为准。
+
+## 9. 未验证 / 交给主 Codex 判断
+
+- **效果**：本会话没有真实评分，不宣称任何任务优劣。内部 val 指标只是拟合诊断，不是官方分数。
+- **官方 split 代表性问题**：data-profile 已指出 Ames valid 单骨架、LD50/solubility valid 空骨架等；
+  本方案不改划分，评价结论的解释由主 Codex 与 B 路负责。
+- **chemprop 版本**：作者 README 建议 >=2.2，本目录在 2.1.2 实测可用；升级到 2.2.x 需重跑
+  `selfcheck.py --with-torch` 与一次编码一致性抽查。
+- **GPU 未在本会话实测**（无 GPU）；代码路径与 CPU 一致，仅 `--device cuda`。
+- **重复测量冲突标签**：不做去重/平均，按行训练；同 SMILES 不同 Y 会有不可约损失，属预期。
+- **`test_predictions.json` 的 `model_artifact_sha256`**：是 22 个头文件哈希的合并摘要（非单文件）；
+  B 路 `verify-candidate` 若期望单一 checkpoint 哈希，需按 B/TASK 约定调整——本目录在 `manifest.json`
+  里另给了逐头 `head_sha256` 便于核对。
+
+## 10. 主 Codex 的下一条命令
+
+```bash
+cd <仓库根>/output/model && python src/selfcheck.py --with-torch
+# 然后按第 3 节 1→4 顺序跑；全量成功后把 predictions/chemeleon_mlp_v1/test_predictions.json
+# 交给 B 路 export-submission / verify-candidate。
+```
+
+停止/重开条件：若编码器加载或 MD5 不符 → 先修资产，不绕过校验；若某任务某个体量过大导致
+内存问题 → 调 `--batch-size`，不改模型结构；若升级 chemprop 后指纹维度或一致性变化 → 视为方案改动另记账。

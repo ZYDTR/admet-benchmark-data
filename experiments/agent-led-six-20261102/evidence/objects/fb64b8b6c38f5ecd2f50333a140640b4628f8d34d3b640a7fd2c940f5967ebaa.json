@@ -1,0 +1,360 @@
+{
+  "request_id": "admet-agentled-remaining-four-retrieval-20261102-001",
+  "source_controller_thread": "private-role-298cc5edc25e",
+  "created_at": "2026-11-01T17:29:27.588415+00:00",
+  "goal": "独立只读取回新增四项完整模型/预测与各run失败和恢复原件，绑定准确成功attempt；在私有宿主评分四份完整91行valid，合并已有两项形成六项科学比较。保留GPU0失败与GPU1有条件共享限制。",
+  "skills": [
+    "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/skills/hainan-training-retrieval/SKILL.md",
+    "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/skills/admet-evidence-review/SKILL.md"
+  ],
+  "versions": [
+    "1.1.0",
+    "2.0.0"
+  ],
+  "local_write_roots": [
+    "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/retrieval/remaining-four-001"
+  ],
+  "remote_read_only_roots": [
+    "<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mse-s46-20261102",
+    "<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mae-s44-20261102",
+    "<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mae-s45-20261102",
+    "<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mae-s46-20261102"
+  ],
+  "successful_attempts": [
+    {
+      "run_id": "hainan-agentled-mse-s46-20261102",
+      "snapshot": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/operator/gpu1-002/snapshots/hainan-agentled-mse-s46-20261102",
+      "remote_success_root": "<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mse-s46-20261102/attempt-03",
+      "files_checked": 51,
+      "omitted_by_executor_fetch": [
+        {
+          "path": "assets/chemeleon_mp.pt",
+          "size": 34859448,
+          "sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "omitted": true
+        },
+        {
+          "path": "cache/matplotlib/fontlist-v390.json",
+          "size": 30531,
+          "sha256": "18b2793423e53de4bd900b1eb2dd5476b4eaa2fdbb60ae731ef7ad355f8133c7",
+          "omitted": true
+        }
+      ],
+      "prediction_path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/operator/gpu1-002/snapshots/hainan-agentled-mse-s46-20261102/artifacts/predictions.csv",
+      "prediction_sha256": "066634afa2735ef6ca3c8648a17978d810e1b44748c79cafa44520acf7d6b1e6",
+      "rows": 273,
+      "valid_rows": 91,
+      "test_rows": 182,
+      "epochs": 37,
+      "optimizer_steps": 185,
+      "resumed_steps": 30,
+      "best_epoch": 29,
+      "input_config_freeze_row_identity_passed": true,
+      "CPU_reconstruction_reviewed": {
+        "run_id": "hainan-agentled-mse-s46-20261102",
+        "actual_serialized_head_changed": {
+          "0.weight": 0.03156672790646553,
+          "0.bias": 0.015040754340589046,
+          "3.weight": 0.017640914767980576,
+          "3.bias": 0.0011479509994387627
+        },
+        "last_optimizer_tensor_step": 185,
+        "best_step": 145,
+        "checkpoint_identity_verified": true,
+        "optimizer_RNG_payload_loaded_weights_only": true,
+        "CPU_model_architecture": [
+          2048,
+          256,
+          1
+        ],
+        "CPU_recomputed_blind_predictions": {
+          "valid": {
+            "rows": 91,
+            "maximum_abs_difference": 4.773046873296494e-07,
+            "rtol": 1e-05,
+            "atol": 1e-05
+          },
+          "test": {
+            "rows": 182,
+            "maximum_abs_difference": 4.772565915800442e-07,
+            "rtol": 1e-05,
+            "atol": 1e-05
+          }
+        },
+        "preprocessing_fit_only_verified": true
+      },
+      "raw_resource_queries": 552,
+      "resident_framebuffer_range": [
+        72198,
+        72198
+      ],
+      "resident_sm_unknown_samples": 169,
+      "own_framebuffer_peak_mib": 918,
+      "free_memory_min_mib": 7959,
+      "owned_processes_absent": true,
+      "actual_exit": 0,
+      "science_status": "accepted_for_independent_retrieval_and_fixed_scoring",
+      "resource_scope": "conditioned idle-resident GPU1 only; no direct latency/throughput proof; previous GPU0 sharing failure not erased"
+    },
+    {
+      "run_id": "hainan-agentled-mae-s44-20261102",
+      "snapshot": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/operator/gpu1-002/snapshots/hainan-agentled-mae-s44-20261102",
+      "remote_success_root": "<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mae-s44-20261102",
+      "files_checked": 59,
+      "omitted_by_executor_fetch": [
+        {
+          "path": "assets/chemeleon_mp.pt",
+          "size": 34859448,
+          "sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "omitted": true
+        },
+        {
+          "path": "cache/matplotlib/fontlist-v390.json",
+          "size": 30531,
+          "sha256": "030e690eaad5de472f95f3928db9f6102a8b46645e8892a68004a13b2b78aec9",
+          "omitted": true
+        }
+      ],
+      "prediction_path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/operator/gpu1-002/snapshots/hainan-agentled-mae-s44-20261102/artifacts/predictions.csv",
+      "prediction_sha256": "af358cee73072cf89a01adb7eb94bd5d0306a1e5c90b0acd2ce913354de84a81",
+      "rows": 273,
+      "valid_rows": 91,
+      "test_rows": 182,
+      "epochs": 17,
+      "optimizer_steps": 85,
+      "resumed_steps": 0,
+      "best_epoch": 9,
+      "input_config_freeze_row_identity_passed": true,
+      "CPU_reconstruction_reviewed": {
+        "run_id": "hainan-agentled-mae-s44-20261102",
+        "actual_serialized_head_changed": {
+          "0.weight": 0.018782619386911392,
+          "0.bias": 0.011988356709480286,
+          "3.weight": 0.012529045343399048,
+          "3.bias": 0.0005016811192035675
+        },
+        "last_optimizer_tensor_step": 85,
+        "best_step": 45,
+        "checkpoint_identity_verified": true,
+        "optimizer_RNG_payload_loaded_weights_only": true,
+        "CPU_model_architecture": [
+          2048,
+          256,
+          1
+        ],
+        "CPU_recomputed_blind_predictions": {
+          "valid": {
+            "rows": 91,
+            "maximum_abs_difference": 4.773002926228287e-07,
+            "rtol": 1e-05,
+            "atol": 1e-05
+          },
+          "test": {
+            "rows": 182,
+            "maximum_abs_difference": 4.772595216806508e-07,
+            "rtol": 1e-05,
+            "atol": 1e-05
+          }
+        },
+        "preprocessing_fit_only_verified": true
+      },
+      "raw_resource_queries": 363,
+      "resident_framebuffer_range": [
+        72198,
+        72198
+      ],
+      "resident_sm_unknown_samples": 111,
+      "own_framebuffer_peak_mib": 918,
+      "free_memory_min_mib": 7959,
+      "owned_processes_absent": true,
+      "actual_exit": 0,
+      "science_status": "accepted_for_independent_retrieval_and_fixed_scoring",
+      "resource_scope": "conditioned idle-resident GPU1 only; no direct latency/throughput proof; previous GPU0 sharing failure not erased"
+    },
+    {
+      "run_id": "hainan-agentled-mae-s45-20261102",
+      "snapshot": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/operator/gpu1-002/snapshots/hainan-agentled-mae-s45-20261102",
+      "remote_success_root": "<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mae-s45-20261102",
+      "files_checked": 59,
+      "omitted_by_executor_fetch": [
+        {
+          "path": "assets/chemeleon_mp.pt",
+          "size": 34859448,
+          "sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "omitted": true
+        },
+        {
+          "path": "cache/matplotlib/fontlist-v390.json",
+          "size": 30531,
+          "sha256": "4a9f09cb0acb56d2754add7933ba58e262a62acdc87358a29a31c6e506aff10d",
+          "omitted": true
+        }
+      ],
+      "prediction_path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/operator/gpu1-002/snapshots/hainan-agentled-mae-s45-20261102/artifacts/predictions.csv",
+      "prediction_sha256": "074bda77d0ae87839214742d545389d8ae18ebc175f07cfaa2821b0d633f49ed",
+      "rows": 273,
+      "valid_rows": 91,
+      "test_rows": 182,
+      "epochs": 14,
+      "optimizer_steps": 70,
+      "resumed_steps": 0,
+      "best_epoch": 6,
+      "input_config_freeze_row_identity_passed": true,
+      "CPU_reconstruction_reviewed": {
+        "run_id": "hainan-agentled-mae-s45-20261102",
+        "actual_serialized_head_changed": {
+          "0.weight": 0.01677718013525009,
+          "0.bias": 0.010371973738074303,
+          "3.weight": 0.011126864701509476,
+          "3.bias": 0.0013745632022619247
+        },
+        "last_optimizer_tensor_step": 70,
+        "best_step": 30,
+        "checkpoint_identity_verified": true,
+        "optimizer_RNG_payload_loaded_weights_only": true,
+        "CPU_model_architecture": [
+          2048,
+          256,
+          1
+        ],
+        "CPU_recomputed_blind_predictions": {
+          "valid": {
+            "rows": 91,
+            "maximum_abs_difference": 4.773215334097358e-07,
+            "rtol": 1e-05,
+            "atol": 1e-05
+          },
+          "test": {
+            "rows": 182,
+            "maximum_abs_difference": 4.773129882451599e-07,
+            "rtol": 1e-05,
+            "atol": 1e-05
+          }
+        },
+        "preprocessing_fit_only_verified": true
+      },
+      "raw_resource_queries": 318,
+      "resident_framebuffer_range": [
+        72198,
+        72198
+      ],
+      "resident_sm_unknown_samples": 97,
+      "own_framebuffer_peak_mib": 918,
+      "free_memory_min_mib": 7959,
+      "owned_processes_absent": true,
+      "actual_exit": 0,
+      "science_status": "accepted_for_independent_retrieval_and_fixed_scoring",
+      "resource_scope": "conditioned idle-resident GPU1 only; no direct latency/throughput proof; previous GPU0 sharing failure not erased"
+    },
+    {
+      "run_id": "hainan-agentled-mae-s46-20261102",
+      "snapshot": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/operator/gpu1-002/snapshots/hainan-agentled-mae-s46-20261102",
+      "remote_success_root": "<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mae-s46-20261102",
+      "files_checked": 59,
+      "omitted_by_executor_fetch": [
+        {
+          "path": "assets/chemeleon_mp.pt",
+          "size": 34859448,
+          "sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "omitted": true
+        },
+        {
+          "path": "cache/matplotlib/fontlist-v390.json",
+          "size": 30531,
+          "sha256": "600989d2764597a46d61641ae998d41c494e2e66b71f7f18f7a1cfbcddde78cf",
+          "omitted": true
+        }
+      ],
+      "prediction_path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/operator/gpu1-002/snapshots/hainan-agentled-mae-s46-20261102/artifacts/predictions.csv",
+      "prediction_sha256": "5389548336bd9f025e1524b045d40014baaef04a55d85a3b01719a2b1c0031f8",
+      "rows": 273,
+      "valid_rows": 91,
+      "test_rows": 182,
+      "epochs": 23,
+      "optimizer_steps": 115,
+      "resumed_steps": 0,
+      "best_epoch": 15,
+      "input_config_freeze_row_identity_passed": true,
+      "CPU_reconstruction_reviewed": {
+        "run_id": "hainan-agentled-mae-s46-20261102",
+        "actual_serialized_head_changed": {
+          "0.weight": 0.025541525334119797,
+          "0.bias": 0.012940707616508007,
+          "3.weight": 0.013660170137882233,
+          "3.bias": 0.0004898468032479286
+        },
+        "last_optimizer_tensor_step": 115,
+        "best_step": 75,
+        "checkpoint_identity_verified": true,
+        "optimizer_RNG_payload_loaded_weights_only": true,
+        "CPU_model_architecture": [
+          2048,
+          256,
+          1
+        ],
+        "CPU_recomputed_blind_predictions": {
+          "valid": {
+            "rows": 91,
+            "maximum_abs_difference": 9.533076168466437e-07,
+            "rtol": 1e-05,
+            "atol": 1e-05
+          },
+          "test": {
+            "rows": 182,
+            "maximum_abs_difference": 4.773095705346009e-07,
+            "rtol": 1e-05,
+            "atol": 1e-05
+          }
+        },
+        "preprocessing_fit_only_verified": true
+      },
+      "raw_resource_queries": 396,
+      "resident_framebuffer_range": [
+        72198,
+        72198
+      ],
+      "resident_sm_unknown_samples": 121,
+      "own_framebuffer_peak_mib": 918,
+      "free_memory_min_mib": 7959,
+      "owned_processes_absent": true,
+      "actual_exit": 0,
+      "science_status": "accepted_for_independent_retrieval_and_fixed_scoring",
+      "resource_scope": "conditioned idle-resident GPU1 only; no direct latency/throughput proof; previous GPU0 sharing failure not erased"
+    }
+  ],
+  "approved_shared_dependencies": [
+    {
+      "path": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/venv",
+      "scope": "必要环境元数据，只读，不复制整个环境或加载框架"
+    },
+    {
+      "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/assets/chemeleon_mp.pt",
+      "scope": "按确切SHA可复用本机已核验相同权重，不伪称重新下载"
+    }
+  ],
+  "scoring_task": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/retrieval/remaining-four-001/SCORING_TASK.json",
+  "training_source_readonly": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/operator",
+  "prior_independent_review": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/controller/gpu1-four-intake-001/CHECKS.json",
+  "transfer_budget_uncompressed_bytes": 1073741824,
+  "completion": "四份稳定预测与主控SHA一致、来源前后和本机逐字节核验；每份91行固定MAE/汇总诊断仅一次、私有评分回执、取回完整清单与遗漏处置、全线程耗时。六项按seed配对比较，只用已批准汇总评分。",
+  "not_authorized": [
+    "new_training",
+    "new_inference",
+    "execute_returned_python_model_pickle",
+    "remote_write",
+    "modify_old_artifacts",
+    "publish",
+    "send_to_Chat",
+    "score_other_or_incomplete_runs",
+    "new_agents_threads_or_timers"
+  ],
+  "history_context": "history-merge-001底稿已主控接受，但当前导航需更新已修正registry两项终态与186完整数值/187文件更正。本阶段先取回评分，原底稿不改；最终整批公开候选等主控验收后再版本化合并。",
+  "callback": "完成或实质阻点回原主控；不等待再次发消息才消费本任务。现在不发布或送Chat。",
+  "retained_first_two_scores": {
+    "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/retrieval/stable-two-001/scores.json",
+    "sha256": "7e0d8a9ff81657e4de4dd6effe3b5ab5f10302ecc1fdfd71c56b004e929708a3",
+    "do_not_rescore": true
+  },
+  "resource_boundary": "GPU1此次空闲驻留条件性共享有具体原始证据，不宣称任意共享或直接吞吐/延迟无影响；前两项GPU0共享失败保留。",
+  "frozen_skill_manifest": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/retrieval/remaining-four-001/context/MANIFEST.json"
+}

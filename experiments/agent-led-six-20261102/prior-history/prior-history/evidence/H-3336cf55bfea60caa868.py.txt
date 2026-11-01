@@ -1,0 +1,50 @@
+"""Generate disabled candidate. An independently passed main receipt is required to admit."""
+from pathlib import Path
+import json,hashlib,sys,argparse
+P=Path(__file__).resolve().parent;T=P.parents[1];OLD=T/'operator/resource-resume-execution-05';D=OLD/'remote-snapshot';BASE='<AUTHORIZED_PROJECT_ROOT>/admet/'
+def sha(v):return hashlib.sha256(v).hexdigest()
+def encoded(v):return (json.dumps(v,indent=2)+'\n').encode()
+parser=argparse.ArgumentParser();parser.add_argument('--main-execution-receipt',type=Path);parser.add_argument('--output',type=Path,default=P/'candidate');args=parser.parse_args()
+out=args.output.resolve();assert P.resolve() in out.parents and not out.exists();out.mkdir()
+from package import pack,make_receiver,framed_transfer
+prior=json.loads((OLD/'postcheck-request.json').read_text());evidence=json.loads((OLD/'remote-fetch-manifest.json').read_text());evidence.update({k:{'size':v['size'],'sha256':v['sha256']} for k,v in json.loads((OLD/'remote-omitted-files.json').read_text()).items()})
+runids=[x['run_id'] for x in json.loads((OLD/'RUN_RESULTS.json').read_text())['runs']];batch='contract-follow-e2e-20261101';roots=runids+[batch]
+source={str(x.relative_to(P)):x.read_bytes() for x in (P/'source').rglob('*') if x.is_file()};runtime={'cycle_id':batch,'files':[{'path':k,'size':len(v),'sha256':sha(v)} for k,v in sorted(source.items())]};runtime_bytes=encoded(runtime);runtime_sha=sha(runtime_bytes)
+admission={'passed':False,'attempt':'03','main_controller_thread':'private-role-298cc5edc25e','bounded_recovery':True,'runtime_source_manifest_sha256':runtime_sha,'run_ids':runids,'new_starts_per_run_max':1,'allow_first_failed_once_restart':False,'prior_first_learning_lock_sha256':json.loads((T/'recovery-04/operator/six-state.json').read_text())['runs'][0]['paths']['state/learning-started.lock']['sha256'],'prior_first_optimizer_steps':None}
+if args.main_execution_receipt:
+ admission=json.loads(args.main_execution_receipt.read_text())
+ assert admission.get('passed') is True and admission.get('allow_first_failed_once_restart') is True and admission.get('prior_first_optimizer_steps','missing') is None
+ assert admission.get('runtime_source_manifest_sha256')==runtime_sha and admission.get('main_controller_thread')=='private-role-298cc5edc25e' and admission.get('attempt')=='03'
+ assert admission.get('run_ids')==runids and admission.get('new_starts_per_run_max')==1 and admission.get('bounded_recovery') is True
+enabled=admission['passed'];files={};profiles=[]
+def put(root,path,value):files[root+'/'+path]=value if isinstance(value,bytes) else encoded(value)
+for root in roots:
+ for name,value in source.items():put(root,name,value)
+ put(root,'source/production-adapter-v4/source-manifest.json',runtime_bytes)
+ put(root,'admission/recovery-03/MAIN_RUNTIME_ACCEPTANCE.json',admission)
+for i,name in enumerate(runids):
+ oldroot=D/name;profile=json.loads((oldroot/'operator/resource-resume-01/slot-01/profile.json').read_text());binding=json.loads((oldroot/'admission/recovery-02/binding.json').read_text())
+ frozen=[]
+ frozenbase=T/'recovery-05/frozen-workspace';rules=json.loads((T/'recovery-05/frozen-rules-manifest.json').read_text())['files']
+ for n,h in rules.items():
+  value=(frozenbase/n).read_bytes();assert sha(value)==h;path='inputs/recovery-03/workspace/'+n;put(name,path,value);frozen.append({'path':path,'sha256':h})
+ frozen_bytes=encoded(frozen);put(name,'inputs/recovery-03/manifest.json',frozen_bytes)
+ oldoutputs={x['path']:{'size':x['size'],'sha256':x['sha256']} for x in json.loads((T/'recovery-04/operator/target-reconcile.json').read_text())['files'] if x['path'].startswith('outputs/recovery-02/')} if i==0 else {}
+ contract={'attempt':'03','run_id':name,'runtime_admitted':enabled,'checkpoint_resume':False,'action':'restart_failed_once_unknown_steps' if i==0 else 'initial_start','prior_optimizer_steps':None if i==0 else 0,'protected_files':evidence,'old_identities':prior['identities'],'old_output_files':oldoutputs,'main_runtime_acceptance':{'path':'admission/recovery-03/MAIN_RUNTIME_ACCEPTANCE.json','sha256':sha(encoded(admission))}}
+ if i==0:
+  contract.update(prior_learning_lock_sha256=admission['prior_first_learning_lock_sha256'],prior_pipeline_sha256=sha((oldroot/'raw/recovery-02/attempt-02/pipeline-exit.json').read_bytes()))
+ contract_bytes=encoded(contract);put(name,'admission/recovery-03/contract.json',contract_bytes)
+ formal=json.loads((oldroot/binding['formal_dispatch']['path']).read_text());formal.update(message_id='attempt03-main-execution',runtime_source_manifest_sha256=runtime_sha,recovery_contract_sha256=sha(contract_bytes),frozen_inputs_manifest_sha256=sha(frozen_bytes))
+ put(name,'admission/recovery-03/formal-dispatch.json',formal);binding['formal_dispatch']={'path':'admission/recovery-03/formal-dispatch.json','sha256':sha(encoded(formal))};put(name,'admission/recovery-03/binding.json',binding)
+ profile.update(execution_enabled=enabled,stage='attempt03_main_admission_pending' if not enabled else 'attempt03_main_admitted',admission_binding='admission/recovery-03/binding.json',formal_execution_message={'message_id':formal['message_id'],'origin_thread_id':formal['origin_thread_id']},runtime_source_manifest={'path':'source/production-adapter-v4/source-manifest.json','sha256':runtime_sha},frozen_inputs_manifest={'path':'inputs/recovery-03/manifest.json','sha256':sha(frozen_bytes)},recovery_contract={'path':'admission/recovery-03/contract.json','sha256':sha(contract_bytes)})
+ put(name,'operator/recovery-03/profile.json',profile);profiles.append({'run_id':name,'root':BASE+name,'profile':'operator/recovery-03/profile.json','profile_sha256':sha(encoded(profile))})
+dispatch={'execution_enabled':enabled,'cycle_id':batch,'batch_root':BASE+batch,'message_id':'attempt03-main-batch','origin_thread_id':admission['main_controller_thread'],'max_learning_starts':6,'max_concurrent_jobs':1,'remaining_seconds':5296.074905887725,'deadline_epoch_seconds':1793544604.502622,'runtime_source_manifest':{'path':'source/production-adapter-v4/source-manifest.json','sha256':runtime_sha},'runs':profiles}
+binding={'request_id':'admet-contract-follow-attempt03-20261101','execution_enabled':enabled,'remaining_seconds':5296.074905887725,'gpu_uuid':profile['gpu_uuid'],'gpu_index':profile['gpu_index'],'profile_specs':profiles,'batch_template':dispatch,'main_execution':{'path':'admission/recovery-03/MAIN_RUNTIME_ACCEPTANCE.json','sha256':sha(encoded(admission))}}
+put(batch,'operator/recovery-03/binding.json',binding)
+blob,manifest=pack(files);contract={'deployment_enabled':enabled,'main_controller_thread':admission['main_controller_thread'],'roots':roots,'protected_files':evidence,'old_identities':prior['identities']};contract_sha=sha(json.dumps(contract,sort_keys=True,separators=(',',':')).encode())
+(out/'deployment.zip').write_bytes(blob);(out/'deployment-manifest.json').write_bytes(encoded(manifest));(out/'receiver-exact.py').write_text(make_receiver(manifest,len(blob),sha(blob),contract,contract_sha));(out/'deployment-contract.json').write_bytes(encoded(contract));(out/'runtime-manifest.json').write_bytes(runtime_bytes)
+bootstrap,transfer=framed_transfer((out/'receiver-exact.py').read_text(),blob);(out/'bootstrap.py').write_text(bootstrap);(out/'transfer-stdin.bin').write_bytes(transfer);(out/'receiver-command.json').write_bytes(encoded({'argv':['python3','-I','-B','-c',bootstrap],'stdin_path':str(out/'transfer-stdin.bin'),'stdin_sha256':sha(transfer),'remote_operation_performed':False}))
+for name,value in files.items():
+ path=out/'tree'/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(value)
+(out/'summary.json').write_bytes(encoded({'execution_enabled':enabled,'deployment_enabled':enabled,'files':len(files),'bytes':len(blob),'runtime_manifest_sha256':runtime_sha,'receiver_source_bytes':(out/'receiver-exact.py').stat().st_size,'deploy_preserves_prior_files':len(evidence),'main_receipt_required':True,'commands_after_independent_admission':[['python3','-I','-B','-c','<exact receiver source with binary deployment.zip stdin; use file transport if source exceeds argv limit>'],['<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/venv/bin/python3','-I','-B',BASE+batch+'/source/production-adapter-v4/watch.py']]}))
+print((out/'summary.json').read_text())

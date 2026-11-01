@@ -1,0 +1,32 @@
+# 连接基线
+
+2026-10-30 核验。地址与路径是登记基线，不是未来实时在线保证。
+
+| 对象 | 固定身份 / 位置 |
+|---|---|
+| 本机工作区 | `<LOCAL_WORKSPACE>` |
+| Windows 网关 | SSH 别名 `<GATEWAY_ALIAS>`；`<GATEWAY_ADDRESS>:22`，账号 `43`，环境名 `<GATEWAY_HOST>` |
+| Windows SSH 主机公钥 | ED25519 `<PRIVATE_HOST_FINGERPRINT>` |
+| Mac 已有 Windows known_hosts | `<PRIVATE_LOCAL_PATH> |
+| Windows 已有 Python | `<PRIVATE_WINDOWS_PATH> |
+| 目标算力机 | `<COMPUTE_ADDRESS>:22`；主机 `project-compute`，账号 `project-compute`，UID/GID `1012` |
+| 算力机主机公钥 | ED25519 `<PRIVATE_HOST_FINGERPRINT>` |
+| 算力机公钥原记录 | Windows `<PRIVATE_WINDOWS_PATH> 中对应 `<COMPUTE_ADDRESS> ssh-ed25519` 行，只读取得并核对固定指纹 |
+| 凭据唯一来源 | 本机 `adhoc_jobs/key/海南算力密码.rtf`，用 `/usr/bin/textutil -convert txt -stdout` 在进程内解码；文件内容不输出、不另存、不写 Windows |
+| 唯一可授权写入根 | `<AUTHORIZED_PROJECT_ROOT>`，2026-10-30 已创建，`project-compute:project-compute` / `0775` |
+
+实际链路：Mac 既有 Tailscale → Windows 既有 SSH → 固定目的 TCP 流 → `<COMPUTE_ADDRESS>:22`。Windows 只是字节流网关，不接收算力密码，也不落地 SSH 私钥、安装包或代理服务。Mac 本地 `sshpass` 仅以子进程环境传递算力密码；命令参数不含密码，禁止 `env`/调试输出该环境。工具输出和异常必须脱敏。
+
+`scripts/read_only.py` 使用现有 Mac `ssh`、`sshpass` 和 Python3；Windows 用已安装的 Python 建立固定 TCP22 stdio 代理；Linux 用 `python3 -I -B` 读取固定字段。两段 SSH 均严格核验已登记 ED25519 主机密钥，禁代理转发、端口转发和本地命令；不追加 known_hosts。唯一临时文件在 Mac，内容仅为已核验的公开主机密钥，用后删除。临时连接或认证失败按[主Skill恢复规则](../SKILL.md#临时连接失败与自动恢复)重试同一入口，检查成功后继续；身份/密钥不符、凭据文件异常或真实权限问题仍阻断相关操作。不改配置、不装软件、不尝试其他机器或账号，不能以连接重试重复提交训练。
+
+Windows 的标准客户端可能连接 Headscale（历史地址 `10.47.0.6`），我们用其独立 Tailscale 通道；不切换、重置或修复它。Air 经阿里云回环 `42026`，小美是 `42023`，都不是该 Windows 或算力机。上海中继是否参与 Mac→Windows 的链路，不改变 Windows→算力机固定内网 SSH 目的地址，也不需要更改中继。
+
+只读查询不是任意代码的安全沙箱：Mac 仍持有共享账号凭据，必须由读取本 Skill 的宿主操作方使用。脚本没有通用命令参数，不代表共享账号权限被技术降级；禁止把凭据或通用宿主执行权限下放给实验 Agent。
+
+## 证据与当前状态的区别
+
+- `tmp/hainan_compute_readonly_20261030/login-and-directory-inventory.json`：成功身份与目录布局。
+- 同目录 `michael-directory-creation.json`：唯一目录创建，未执行其他远端变更。
+- 同目录 `live-resource-occupation.json`：17:16 资源快照，不可用于未来抢占或分配 GPU。
+- 同目录 `verification.json`：历史只读扫描汇总。早先“目录未创建”的字段是该次扫描状态，之后创建以独立回执为准。
+- 旧 `contexts/infrastructure/windows_tailscale/README.md` 记录模型转发与排障历史，涉及本算力机的后续操作一律受本 Skill 的 project-compute 边界约束。

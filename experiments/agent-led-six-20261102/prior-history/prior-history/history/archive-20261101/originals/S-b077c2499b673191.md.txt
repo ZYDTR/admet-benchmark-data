@@ -1,0 +1,15 @@
+# Qwen：单作业闭环的训练科学代码准备
+
+从 Context Infrastructure 项目根目录执行；本文件目录是唯一任务目录。先读 input/rules/PREPARATION_SKILL.md。你是叶子准备者，所有过程亲自完成，不派生任何Agent/session/CLI模型。只读取本TASK/input，不读取其他任务或验证真值；只写本TASK目录下output，包括临时文件/缓存。允许静态检查、标准库合成数值测试；禁止任何参数更新、整批特征提取、训练、安装、下载权重或远端服务器操作。缺torch等依赖时保留未验证，不安装补齐。
+
+给定已实跑科学参考 input/reference/train_remote_v3.py 和 encoder.py、精确配置 input/config.json、官方train及盲valid/test。已采纳上轮Pro技术建议的有限投影：原代码内部随机划分会让相同原始SMILES同时进入fit/stop，实际配置仍硬编码且过程记录不足。这次只准备一个固定任务（不HPO）：冻结CheMeleon，Caco2，新MLP256、lr0.0005、seed43，其余见config。不要寻找旧评分或改超参。主控/训练Thread负责独立远端run、连接、资源、执行限制和实际训练。
+
+交付能由宿主既有common_guarded运行环境接手的 train_remote_v4.py（保留ROOT/GPU_UUID/environment/now/safe/sha/write_json接口和原产物格式）；如有helper放同目录。encoder.py只读复用不改。实现：
+
+- 独立、显式split seed43，把637官方train按原始Drug字符串分组，不做化学canonicalization/去重/删行/修改Y；分组排序后用固定RNG打乱，选整组接近10%作为internal-stop，保证fit/stop非空、互斥、无同原始Drug跨组、全部原行恰好覆盖。保存split方法/seed/全部原行索引/源hash及分组检查，RNG不依赖模型初始化。使用标准库random.Random也可以，记录算法；同seed必须可复现。
+- 实际hidden_dims/lr/seed/dropout/optimizer等均从显式config读取并校验，不硬编码旧run身份。保留MSE训练、internal标准化MSE早停、train-only特征和Y变换及预测还原。只允许这一登记配置，不附带搜索循环。
+- 每轮额外用eval/no_grad在fit和stop上记录同一模式下的标准化MSE、原尺度MAE/MSE；保留原训练batch-loss。记录学习率、epoch wall time、更新步及梯度有限检查。最优/最后head分别保存，最后optimizer/RNG状态带完整配置和epoch/step身份；CPU/GPU RNG用可安全weights_only读取格式，不塞自定义pickle对象。
+- 保存最佳模型对官方train每行预测及fit/stop标记（独立train-predictions.csv），现有predictions.csv仍只含盲valid/test 273行，字段和原行身份不改。重载一致性、底座参数及buffer前后完整摘要、磁盘hash、CUDA检查、优化器排除底座和头更新证据全部保留。
+- 特征数组不因本轮记录新增而变换；保存features的内容hash、输入hash/行身份、encoder版本、shape/dtype/parse-mask，避免将“存在/行数对”当缓存有效。此轮不复用外部cache，不写其他位置。
+
+准备验收：用合成重复SMILES/空ID/重复ID检查固定分组可复现、互斥/覆盖、seed不受全局random变化影响；坏配置/不合法分组输入应明确失败。只测试纯helper，不import会直接启动训练的脚本。静态解析全部Python，写明执行过什么、未测什么；不能声称真实GPU已测试。交付代码、HANDOFF.md、manifest（输入/源码hash）、离线测试及结果、主控集成方式。让生产代码实际调用受测helper，不能独立造测试替身。保持简洁可审阅，完成后停止。

@@ -1,0 +1,111 @@
+{
+  "request_id": "admet-agent-led-stable-two-retrieval-20261102-001",
+  "source_controller_thread": "private-role-298cc5edc25e",
+  "created_at": "2026-11-01T16:44:50.378803+00:00",
+  "goal": "独立只读取回两项已完成预测/模型及同run失败原件，核对稳定身份，使用本机指定真值和审读固定MAE分别评分；把共享失败与科学结果分开。",
+  "skills": [
+    "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/skills/hainan-training-retrieval/SKILL.md",
+    "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/skills/admet-evidence-review/SKILL.md"
+  ],
+  "versions": [
+    "1.1.0",
+    "2.0.0"
+  ],
+  "local_write_roots": [
+    "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/retrieval/stable-two-001"
+  ],
+  "remote_read_only_roots": [
+    "<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mse-s44-20261102",
+    "<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mse-s45-20261102"
+  ],
+  "successful_attempts": [
+    {
+      "run_id": "hainan-agentled-mse-s44-20261102",
+      "snapshot": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/operator/snapshots/hainan-agentled-mse-s44-20261102",
+      "remote_success_root": "<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mse-s44-20261102/attempt-03",
+      "files_checked": 40,
+      "omitted_by_executor_fetch": [
+        {
+          "path": "assets/chemeleon_mp.pt",
+          "size": 34859448,
+          "sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "omitted": true
+        },
+        {
+          "path": "cache/matplotlib/fontlist-v390.json",
+          "size": 30531,
+          "sha256": "089ccb36d57c46c0ef80d627fae165a630a4583a32c90d91ec3cadd4875f6d56",
+          "omitted": true
+        }
+      ],
+      "prediction_sha256": "37a2d5254c19768da999d3f67b2aeeb4bca7c3dd6a147a5cb872e7e2f83fbe64",
+      "prediction_path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/operator/snapshots/hainan-agentled-mse-s44-20261102/artifacts/predictions.csv",
+      "rows": 273,
+      "valid_rows": 91,
+      "test_rows": 182,
+      "config_matches_task": true,
+      "scientific_helpers_and_encoder_unchanged": true,
+      "registered_input_hashes_match": true,
+      "recorded_postcheck_owned_processes_absent": true,
+      "status": "science_inputs_predictions_and_frozen_evidence_usable_for_local_scoring; not_full_skill_acceptance"
+    },
+    {
+      "run_id": "hainan-agentled-mse-s45-20261102",
+      "snapshot": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/operator/snapshots/hainan-agentled-mse-s45-20261102",
+      "remote_success_root": "<AUTHORIZED_PROJECT_ROOT>/admet/agent-led-resume-20261102/hainan-agentled-mse-s45-20261102/attempt-02",
+      "files_checked": 47,
+      "omitted_by_executor_fetch": [
+        {
+          "path": "assets/chemeleon_mp.pt",
+          "size": 34859448,
+          "sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "omitted": true
+        },
+        {
+          "path": "cache/matplotlib/fontlist-v390.json",
+          "size": 30531,
+          "sha256": "440abdbdf1d0b064e8cab9684fb64852555def89f58aa2ad602e27fc2707e54e",
+          "omitted": true
+        }
+      ],
+      "prediction_sha256": "46a5e3a75a21d99fa51e3d04a2e99ebaebc25b8c2ce657a233a5f3b54597bd28",
+      "prediction_path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/operator/snapshots/hainan-agentled-mse-s45-20261102/artifacts/predictions.csv",
+      "rows": 273,
+      "valid_rows": 91,
+      "test_rows": 182,
+      "config_matches_task": true,
+      "scientific_helpers_and_encoder_unchanged": true,
+      "registered_input_hashes_match": true,
+      "recorded_postcheck_owned_processes_absent": true,
+      "status": "science_inputs_predictions_and_frozen_evidence_usable_for_local_scoring; not_full_skill_acceptance"
+    }
+  ],
+  "approved_shared_dependencies": [
+    {
+      "path": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/venv",
+      "scope": "必要环境元数据，只读，不复制整个环境或加载框架"
+    },
+    {
+      "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_frozen_baseline_20261030/assets/chemeleon_mp.pt",
+      "scope": "按确切SHA可复用本机已核验相同权重，不伪称重新下载"
+    }
+  ],
+  "scoring_task": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/retrieval/stable-two-001/SCORING_TASK.json",
+  "training_source_readonly": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/operator",
+  "prior_independent_review": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/controller/shared-impact-review-001/independent-readback.json",
+  "transfer_budget_uncompressed_bytes": 1073741824,
+  "completion": "原始来源与接收清单一致，预测身份与主控绑定一致；两份完整91行valid MAE和聚合诊断，有完整评分/失败/计时回执；交主控独立复核。",
+  "not_authorized": [
+    "new_training",
+    "new_inference",
+    "execute_returned_python_model_pickle",
+    "remote_write",
+    "modify_old_artifacts",
+    "publish",
+    "send_to_Chat",
+    "score_other_or_incomplete_runs",
+    "new_agents_threads_or_timers"
+  ],
+  "history_context": "先完成并回报正在整理的history-preparation，再接本任务；其本批waiting标记保留截止时间，不覆盖其原件。新增材料在本任务独立目录等待合并。",
+  "callback": "完成或实质阻点回原主控；主控再准入精确发布清单，目前不发新Chat"
+}

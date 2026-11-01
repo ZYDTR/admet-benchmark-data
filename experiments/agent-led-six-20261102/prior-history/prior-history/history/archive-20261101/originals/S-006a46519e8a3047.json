@@ -1,0 +1,28 @@
+{
+  "checked_at": "2026-10-31T05:52:47.944289+00:00",
+  "scope": "Four targeted technical primary-source cross-checks; not Pro capability research.",
+  "checks": [
+    {
+      "url": "https://raw.githubusercontent.com/chemprop/chemprop/v2.2.1/chemprop/models/model.py",
+      "claim": "fingerprint does not call predictor; registered cross-run predictor change does not itself imply encoder update",
+      "result": "supported_by_code_path"
+    },
+    {
+      "url": "https://arxiv.org/html/2404.14986v1",
+      "section": "3.4, A.2",
+      "claim": "Precomputed MiniMol representations feed a new MLP; paper includes parameter sweeps",
+      "result": "supported_no_local_quality_inference"
+    },
+    {
+      "url": "https://huggingface.co/ibm-research/MoLFormer-XL-both-10pct/blob/361063d0ad524ef77cf39b08469f6be770dc550f/config.json",
+      "claim": "Pinned config deterministic_eval=false, hidden_size768, max_position_embeddings202",
+      "result": "supported_raw_endpoint_failed_then_normal_blob_page_read"
+    },
+    {
+      "url": "https://arxiv.org/html/2604.16123v2",
+      "section": "4.3-4.4",
+      "claim": "TabPFN2.6 study uses frozen molecular features, train-fit scaling and clipping to [-6,6]",
+      "result": "supported_as_method_precedent_not_MLP_effect_or_threshold_optimality"
+    }
+  ]
+}

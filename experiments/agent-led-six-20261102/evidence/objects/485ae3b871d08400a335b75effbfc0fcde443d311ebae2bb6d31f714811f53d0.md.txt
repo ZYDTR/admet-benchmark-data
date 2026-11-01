@@ -1,0 +1,9 @@
+# 当前科学接口及实测范围
+
+control/schemas/runner-config.json保存历史Caco2科学字段，不是当前执行引擎或权限门槛。本批 TASK.json、science与operator/gpu1-002实际科学代码，以及主控gpu1-four-intake-001，决定本批实测能力。新代码由执行Agent在范围内判断部署；已退役流程不能恢复作为通用入口。
+
+本批六项：CheMeleon冻结参数与buffer，2048→256→1新头，dropout0.1，AdamW lr0.0005/weight_decay0.0001，batch128，50epochs/patience8；固定raw-SMILES grouped split43，fit573/stop64，model seeds44/45/46。训练目标均为标准化MSE，早停分别标准化MSE与原尺度MAE。valid91/test182全部保留。预处理每split只拟合fit，预测还原原Y尺度。
+
+真实实测：该Caco2分支缓存冻结表示供新头学习；seed46从30步checkpoint恢复为185总步，完整head/optimizer/RNG/历史及缓存身份核对，前六epoch历史保持。这证明本任务具体恢复与缓存消费，不能推广为任意任务/任意checkpoint都支持。其他21任务的新科学接口仍须准备与独立验收；Mini首版22任务是历史既有实现/指标，不能据此声称新版runner全部就绪。
+
+资源与质量分别记录。GPU0高负载共享早期存在竞争信号，保持运行失败结论；GPU1长期闲置驻留、余量及本次小头串行监控支持该条件分支，没有对方吞吐/延迟直接证据。不得宣称全边界/任意共享通过，也不应把显存必须为0当条件。

@@ -1,0 +1,30 @@
+# Next batch guide — proposed work, not execution authorization
+
+## Gate 0: build/accept task-aware runner (`P-GATE`, `new_code`)
+
+**Do not train new tasks until this gate passes.** Current runner evidence is Caco2-specific. Implement task ID/target/metric/direction/transform contract; train/inner-stop separation; task/split/row identity; feature cache identity; deterministic model/split RNG; frozen encoder parameter+buffer proof; original-scale regression output; continuous classification scores; checkpoint provenance; and supervisor/worker result separation.
+
+Independent fixtures: AUROC/AP/Spearman/MAE, ties, one-class, empty, NaN/Inf, inverse transform, row permutation, mismatched task/split/cache, stale checkpoint and frozen-state immutability. Expected: valid inputs produce exact metric fixtures; invalid identity rejects before fitting; output row IDs/order match input; external encoder tensors/buffers unchanged. Preparation must not train, score valid, access row-level truth, operate remote GPU or install unapproved assets.
+
+## S1 screen (`P-S1`, 40 fits, `new_code`)
+
+Tasks: LD50, solubility, PPBR, VDSS, half-life, CYP2D6 Carbonmangels, bioavailability, DILI, AMES, Caco2. H0: MLP `[256]`, dropout .1, lr .0005, weight decay .0001, batch 128, AdamW, 200 epochs, patience 20. H1: MLP `[128]`, dropout .3, lr .0003, weight decay .001, batch 128, AdamW, 200 epochs, patience 20. Model seeds 44/45; split seed 43; matched task splits. 10 tasks × 2 configs × 2 seeds = 40 fits. Regression scaler fitted only on inner-fit labels and inverse-transformed before metrics/output; classification uses logits/continuous score. Fit preprocessing per split. Reuse CheMeleon cache only if all identity hashes match. Up to 10 task encodings; actual time unknown.
+
+For tiny-N classification, ensure stratified/group-aware split with both classes in fit and stop partitions; if impossible, record `not_estimable` and skip rather than alter rows or labels. Solubility/PPBR must pass scale/identity audit before fitting. Caco2 screen comparison must not modify or supersede the independent paired monitor jobs.
+
+## S2 confirm (`P-S2`, maximum 24 fits, `new_code`)
+
+At most four S1 winners, only if positive paired gain and reasonable variability. H0/H1, model seeds 46/47/48, split seed 44: 4 × 2 × 3 = 24 fits. Report every paired delta and failed split. One predeclared candidate per task may receive one official-valid confirmation only under existing approved scoring authorization. No further valid-driven search.
+
+## Stop/fallback
+
+- If Gate 0 fails: stop; no head runs.
+- If S1 no stable positive gain: do not scale HPO; investigate metric/target/split/cache and consider a single controlled representation audit.
+- If gain appears only on one seed: S2 confirm or stop; do not declare winner.
+- If gain is stable but small: compare normalized aggregate gain per GPU-hour; stop if dominated by another task.
+- If a data identity, freeze, scorer or row-order check fails: quarantine run as engineering evidence; exclude from scientific comparison.
+- Alternative encoders remain blocked until asset/version/license/interface acceptance. No automatic expansion.
+
+## Return contract to主控
+
+Return run IDs, task, asset SHA, config, model/split seeds, input/cache identity, metric implementation, fit/stop partition IDs, best epoch/checkpoint identity, raw-scale output confirmation, every seed score/delta, failures, GPU/CPU/memory/walltime, encoding cost, head-fit cost and scorer source. Do not include row-level valid labels, residuals, lookup answers or recoverable per-row information. Report aggregate task/group diagnostics only.

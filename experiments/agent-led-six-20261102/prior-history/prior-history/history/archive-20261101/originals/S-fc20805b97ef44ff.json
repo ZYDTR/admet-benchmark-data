@@ -1,0 +1,57 @@
+{
+  "run_id": "hainan-skill-follow-20261031",
+  "at": "2026-10-30T17:41:18.123058+00:00",
+  "reviewer": "parent independent review",
+  "overall": "partial_pass",
+  "training_delivery": "pass",
+  "strict_skill_follow": "fail",
+  "independent_parent_acceptance": "complete",
+  "training_completed": true,
+  "freeze_verified": true,
+  "write_scope_verified": true,
+  "own_resources_released": true,
+  "scoring_performed": false,
+  "upload_performed": false,
+  "checks": {
+    "skill_read_before_remote": "pass",
+    "host_and_route": "pass",
+    "paths": "pass",
+    "resources": "pass",
+    "job_identity": "pass",
+    "frozen_encoder": "pass",
+    "real_training": "pass",
+    "data_boundary": "pass",
+    "artifacts": "pass",
+    "outside_writes": "pass",
+    "cleanup": "pass",
+    "noninterference": "pass_with_observation_limits",
+    "actual_new_configuration": "pass",
+    "skill_discovery": "pass",
+    "protected_sources": "pass",
+    "connection_failure_stops_dependent_actions": "fail"
+  },
+  "findings": [
+    "F1: auth check failed but dependent deploy/preflight continued in the same shell"
+  ],
+  "not_verified": [
+    "shared GPU with others if unused",
+    "multi-job concurrency",
+    "all22-task coverage",
+    "official validation scoring",
+    "official upload",
+    "cold_start",
+    "revised_skill_real_training_follow"
+  ],
+  "evidence": [
+    "parent-evidence-check.json",
+    "parent-supplemental.json",
+    "parent-audit-final-fetch.json",
+    "parent-postcheck.json",
+    "parent-finding-f1.json",
+    "parent-protected-live-final.json"
+  ],
+  "skill_revision": "parent-skill-revision.json",
+  "automation_status": "deleted",
+  "automation_id": "admet-skill-follow",
+  "automation_deleted_at": "2026-10-30T17:41:45.050226+00:00"
+}

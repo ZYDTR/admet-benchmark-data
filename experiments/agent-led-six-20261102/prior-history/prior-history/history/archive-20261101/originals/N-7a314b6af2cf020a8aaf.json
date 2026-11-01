@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "project": "admet-host-training",
+  "visibility": "team_private",
+  "competition_id": 159,
+  "official_rules_source": "evidence/official-contract-20261029.json",
+  "pretrained_weights": {
+    "admitted": true,
+    "must_remain_frozen": true,
+    "basis": "User reports organizer confirmation; reaffirmed in current chat on 2026-10-30. Not claimed as verbatim public rule.",
+    "runtime_checks": [
+      "requires_grad_false",
+      "eval_mode",
+      "no_grad_encoding",
+      "optimizer_excludes_encoder",
+      "state_dict_including_buffers_sha256_before_after_equal",
+      "checkpoint_file_sha256_before_after_equal",
+      "new_head_parameters_changed"
+    ]
+  },
+  "training_labels": [
+    "official_train_Y"
+  ],
+  "validation_policy": {
+    "training_execution_input": "Drug_ID,Drug only",
+    "official_valid_tuning_allowed": true,
+    "private_host_scoring": true,
+    "pilot_scoring": false,
+    "scoring_executor": "controller_or_designated_retrieval_thread",
+    "designated_retrieval_thread_id": "private-role-45108974a7af",
+    "scoring_location": "local_host_private_evaluation",
+    "scoring_implementation": "reviewed_fixed_host_scorer",
+    "scoring_task_requires_exact_task_and_prediction_identity": true,
+    "analysis_feedback": "scores_and_diagnostics_in_declared_analysis_packet",
+    "feedback_to_preparation_or_training": "exact_task_and_group_aggregate_scores_and_technical_diagnostics_without_row_truth_residuals_or_lookup_answers",
+    "authorization_basis": "User 2026-10-31 explicitly assigns valid scoring to retrieval Thread and asks Chat to analyze problems and return next-batch instructions. User 2026-11-01 Q2 permits exact task/group aggregate feedback and technical diagnostics; Q3 retains valid during selection and defers final combined fitting.",
+    "historical_first_analysis_chat_id": "private-role-162611f9ee94",
+    "analysis_target_source": "per-cycle registered analysis task, exact request and Chat identity",
+    "analysis_truth_access": {
+      "mode": "declared_verified_source_only",
+      "activation_requires": [
+        "exact task/split/source SHA and row mapping",
+        "registered analysis recipient/request",
+        "evaluation_scope passed by controller"
+      ],
+      "training_or_preparation_access": false,
+      "does_not_authorize_new_publication": true,
+      "current_candidate_source": "already-public caco2_wang/valid.csv SHA63328bf307b850a4a0986165d0800bae5aa737c41bd63f1026d16114d8560bb4",
+      "basis": "User requested autonomous judgment of whether Y is useful and accepted dedicated analysis with progressive context; 2026-10-31 authorizes one fresh full cycle. Historical aggregate-only task contracts remain unchanged."
+    },
+    "feedback_scope": {
+      "allowed": [
+        "task_level_exact_scores",
+        "group_level_exact_scores",
+        "technical_diagnostics"
+      ],
+      "excluded": [
+        "row_level_valid_truth",
+        "row_level_valid_residuals",
+        "lookup_answers",
+        "aggregates_that_reveal_individual_answers"
+      ],
+      "provenance_required": [
+        "run",
+        "task",
+        "split",
+        "metric_definition",
+        "group_definition_if_any",
+        "scoring_receipt"
+      ],
+      "scoring_role_unchanged": true,
+      "does_not_authorize_whole_analysis_packet_access": true
+    },
+    "selection_phase": "learn_on_official_train_Y; retain_valid_for_scoring_and_analysis",
+    "final_train_valid_refit": "separate_future_user_decision; not_currently_authorized"
+  },
+  "excluded_current": [
+    "external_samples_or_labels",
+    "external_teacher_outputs",
+    "test_fitting",
+    "new_cleaning",
+    "official_upload"
+  ],
+  "hainan_skill": "rules/skills/hainan-compute-access/SKILL.md",
+  "hainan_write_root": "<AUTHORIZED_PROJECT_ROOT>",
+  "pilot_max_concurrent_jobs": 1,
+  "unresolved": [
+    "other_external_fitted_assets",
+    "teacher_or_test_transduction_permission",
+    "official_aggregate_metric_definition"
+  ],
+  "input_version": "official_raw_plus_label_redacted_validation",
+  "cleaned_archive_adopted": false,
+  "policy_revision": 2,
+  "user_decision_record": "audits/control-plane-20261101/user-decisions-20261101/decisions.json",
+  "preparation_permissions": {
+    "scope": "mini_task_private_directories_registered_in_TASK",
+    "allowed": [
+      "prepare_task_dependencies",
+      "download_approved_base_assets",
+      "lightweight_interface_checks_without_parameter_updates"
+    ],
+    "task_records": [
+      "approved_asset_sources_and_versions",
+      "private_write_directories",
+      "applicable_resource_budget"
+    ],
+    "excluded": [
+      "training",
+      "whole_batch_encoding",
+      "hainan_operations",
+      "shared_environment_changes",
+      "unapproved_model_assets"
+    ],
+    "record_actual_dependencies_asset_hashes_commands_and_check_results": true,
+    "no_repeated_permission_for_already_approved_scope": true
+  },
+  "training_recovery_policy": {
+    "scope": "future_batches_within_original_scientific_configuration_and_approved_total_budget",
+    "decision_owner": "controller",
+    "recoverable_failure_requires_evidence": true,
+    "unknown_launch_or_state": "reconcile_original_job_before_any_start",
+    "no_concurrent_duplicate_job": true,
+    "checkpoint_restore": "verify_checkpoint_input_code_config_optimizer_rng_and_progress_identity",
+    "restart_if_restore_not_possible": "controller_decision_after_original_job_exit_verified_and_remaining_budget_checked",
+    "bounds": "controller_records_attempt_limit_and_remaining_compute_or_time_budget_before_recovery; all_attempts_count",
+    "completed_learning": "collect_and_independently_accept_existing_artifacts; no_automatic_retraining",
+    "current_completed_run_relaunch_authorized": false,
+    "frozen_historical_plans_unchanged": true,
+    "implementation_validation": "generic_checkpoint_recovery_not_yet_runtime_verified"
+  }
+}

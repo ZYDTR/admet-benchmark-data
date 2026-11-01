@@ -1,0 +1,492 @@
+{
+  "schema_version": 1,
+  "run_id": "hainan-skill-follow-20261031",
+  "observed_at": "2026-10-30T17:30:28.888715+00:00",
+  "review_scope": "execution-thread self-validation; parent independent acceptance pending",
+  "request": {
+    "task": "Caco2/CheMeleon frozen backbone + 256 head",
+    "head_config": {
+      "hidden_dims": [
+        256
+      ],
+      "dropout": 0.1,
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "epochs": 50,
+      "patience": 8,
+      "val_fraction_from_train": 0.1,
+      "seed": 43
+    },
+    "same_existing_chat": true,
+    "cold_start": false
+  },
+  "authorization": {
+    "role": "explicitly_authorized_host_operator_leaf",
+    "remote_write_root": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-follow-20261031",
+    "local_write_root": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031",
+    "own_concurrent_jobs": 1,
+    "no_delegation": true
+  },
+  "target": {
+    "host": "private-compute",
+    "uid": 1012,
+    "gid": 1012,
+    "route": "Registered Windows stream, pinned SSH keys",
+    "gpu_index": 3,
+    "gpu_uuid": "<REGISTERED_GPU>",
+    "post_recovery_action": "None"
+  },
+  "training_completed": true,
+  "prediction_completed": true,
+  "freeze_verified": true,
+  "write_scope_verified": true,
+  "own_resources_released": true,
+  "scoring_performed": false,
+  "upload_performed": false,
+  "independent_parent_acceptance": null,
+  "configuration_verified": {
+    "passed": true,
+    "head_shapes_verified": {
+      "0.weight": [
+        256,
+        2048
+      ],
+      "0.bias": [
+        256
+      ],
+      "3.weight": [
+        1,
+        256
+      ],
+      "3.bias": [
+        1
+      ]
+    },
+    "head_storage_sizes_bytes": [
+      4,
+      1024,
+      1024,
+      2097152
+    ],
+    "optimizer_config": [
+      {
+        "lr": 0.0005,
+        "weight_decay": 0.0001
+      }
+    ],
+    "head_config": {
+      "hidden_dims": [
+        256
+      ],
+      "dropout": 0.1,
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "epochs": 50,
+      "patience": 8,
+      "val_fraction_from_train": 0.1,
+      "seed": 43
+    },
+    "environment_metadata_unchanged": true,
+    "packages_checked": 78,
+    "python_binary_unchanged": true,
+    "plan_unchanged": true
+  },
+  "training": {
+    "epochs_run": 19,
+    "best_epoch_1_based": 11,
+    "optimizer_steps": 95,
+    "nonzero_gradient_steps": 95,
+    "fit_rows": 573,
+    "internal_validation_rows": 64,
+    "head_parameters": 524801,
+    "head_parameter_shapes": {
+      "0.weight": [
+        256,
+        2048
+      ],
+      "0.bias": [
+        256
+      ],
+      "3.weight": [
+        1,
+        256
+      ],
+      "3.bias": [
+        1
+      ]
+    },
+    "head_initial_sha256": "ee76b6bfbb7b0b1476f4b9a26c815c14d0c5d08578f2c858a341180d3475d062",
+    "head_final_sha256": "2d032f8a2427e7ec56250b46b27011349c35ada5d471a7f9716848b49115425d",
+    "head_tensor_max_abs_changes": [
+      0.014782390324398875,
+      0.009866665117442608,
+      0.010463228449225426,
+      0.0011578276753425598
+    ],
+    "model_elapsed_seconds": 3.562362622935325
+  },
+  "freeze": {
+    "state_tensors": 11,
+    "tensor_kinds": {
+      "parameter": 8,
+      "buffer": 3
+    },
+    "state_sha256": "3dcc8242cc8b63aa1813cf06cb686ae09056e725a415bf244e7aa32c26cc9c74",
+    "before_equals_after": true,
+    "pretrained_file_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+    "optimizer_encoder_intersection": 0,
+    "forward_batches": 15,
+    "all_forward_events_cuda_eval_no_grad": true
+  },
+  "prediction": {
+    "rows": 273,
+    "valid_rows": 91,
+    "test_rows": 182,
+    "original_identity_order_and_finite_values_verified": true,
+    "reload_checks": {
+      "valid": {
+        "rows": 91,
+        "max_abs_prediction_difference": 9.5367431640625e-07,
+        "allclose_rtol": 1e-05,
+        "allclose_atol": 1e-05
+      },
+      "test": {
+        "rows": 182,
+        "max_abs_prediction_difference": 9.5367431640625e-07,
+        "allclose_rtol": 1e-05,
+        "allclose_atol": 1e-05
+      }
+    },
+    "output_scale": "original numeric Y scale; scaler fit only on internal training 573 rows"
+  },
+  "resource_budget": {
+    "plan": {
+      "gpu_count": 1,
+      "gpu_peak_target_mib": 4096,
+      "cpu_threads": 2,
+      "dataloader_workers": 0,
+      "ram_target_gib": 8,
+      "training_timeout_seconds": 900,
+      "setup_budget_seconds": 2700,
+      "dependency_download_budget_gib": 0,
+      "result_budget_gib": 1,
+      "limits_are_targets_until_enforcement_verified": true
+    },
+    "actual": {
+      "cuda01": {
+        "whole_gpu_sample_peak_mib": 2727,
+        "own_process_sample_peak_mib": null,
+        "own_gpu_pid_matches": [],
+        "exit": {
+          "at": "2026-10-30T17:04:10.969012+00:00",
+          "exit_code": 1,
+          "reason": "Other process appeared; yield own job",
+          "elapsed_seconds": 17.071837878786027,
+          "peak_observed_tree_rss_bytes": 775163904,
+          "pids_last_observed": [
+            1092579,
+            1092584
+          ],
+          "cpu_affinity": [
+            0,
+            1
+          ]
+        }
+      },
+      "cuda02": {
+        "whole_gpu_sample_peak_mib": 39,
+        "own_process_sample_peak_mib": 14,
+        "own_gpu_pid_matches": [
+          [
+            1500668,
+            "<REGISTERED_GPU>"
+          ]
+        ],
+        "exit": {
+          "at": "2026-10-30T17:20:04.433934+00:00",
+          "exit_code": 0,
+          "reason": null,
+          "elapsed_seconds": 25.2439195769839,
+          "peak_observed_tree_rss_bytes": 885178368,
+          "pids_last_observed": [
+            1500663,
+            1500668
+          ],
+          "cpu_affinity": [
+            0,
+            1
+          ]
+        }
+      },
+      "train01": {
+        "whole_gpu_sample_peak_mib": 1167,
+        "own_process_sample_peak_mib": 1156,
+        "own_gpu_pid_matches": [
+          [
+            1527655,
+            "<REGISTERED_GPU>"
+          ]
+        ],
+        "exit": {
+          "at": "2026-10-30T17:21:09.677966+00:00",
+          "exit_code": 0,
+          "reason": null,
+          "elapsed_seconds": 28.076315389946103,
+          "peak_observed_tree_rss_bytes": 1549828096,
+          "pids_last_observed": [
+            1527650,
+            1527655
+          ],
+          "cpu_affinity": [
+            0,
+            1
+          ]
+        }
+      }
+    },
+    "torch_peak_allocated_mib": 423.849609375,
+    "torch_peak_reserved_mib": 482.0,
+    "allocator_cap_configured_bytes": 4294967296,
+    "gpu_cap_limitation": "PyTorch allocator only; not a hard cap on CUDA context or other libraries",
+    "cpu_affinity": [
+      0,
+      1
+    ],
+    "torch_threads": 2,
+    "dataloader_workers": 0,
+    "ram_enforcement": "sampled process-tree RSS guard, not a kernel memory quota",
+    "training_wall_watchdog_seconds": 900,
+    "result_budget_guard_bytes": 1073741824,
+    "dependency_download_bytes": 0
+  },
+  "environment": {
+    "readonly_path": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/venv",
+    "packages": 78,
+    "python_sha256": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f",
+    "before_after_metadata_equal": true,
+    "no_installs": true
+  },
+  "jobs": [
+    {
+      "job_id": "cuda01",
+      "supervisor_pid": 1089642,
+      "strace_pid": 1092579,
+      "pgid": 1092579,
+      "at": "2026-10-30T17:03:53.817759+00:00",
+      "start_stat": "1089642 (python3) R 1089613 1089642 1089642 0 -1 4194304 10 0 0 0 0 0 0 0 20 0 1 0 374257426 8437760 0 18446744073709551615 4325376 7352253 140735083606912 0 0 0 0 0 0 0 0 0 17 118 0 0 0 0 0 10653128 12216448 1039929344 140735083607735 140735083607852 140735083607852 140735083610087 0\n",
+      "exit": {
+        "at": "2026-10-30T17:04:10.969012+00:00",
+        "exit_code": 1,
+        "reason": "Other process appeared; yield own job",
+        "elapsed_seconds": 17.071837878786027,
+        "peak_observed_tree_rss_bytes": 775163904,
+        "pids_last_observed": [
+          1092579,
+          1092584
+        ],
+        "cpu_affinity": [
+          0,
+          1
+        ]
+      },
+      "worker_pids": [],
+      "traces": "raw/final-fetch/raw/cuda01.strace"
+    },
+    {
+      "job_id": "cuda02",
+      "supervisor_pid": 1498497,
+      "strace_pid": 1500663,
+      "pgid": 1500663,
+      "at": "2026-10-30T17:19:39.109223+00:00",
+      "start_stat": "1498497 (python3) R 1498473 1498497 1498497 0 -1 4194304 11 0 0 0 0 0 0 0 20 0 1 0 374351955 8437760 0 18446744073709551615 4325376 7352253 140727351417840 0 0 0 0 0 0 0 0 0 17 1 0 0 0 0 0 10653128 12216448 80732160 140727351424685 140727351424812 140727351424812 140727351427047 0\n",
+      "exit": {
+        "at": "2026-10-30T17:20:04.433934+00:00",
+        "exit_code": 0,
+        "reason": null,
+        "elapsed_seconds": 25.2439195769839,
+        "peak_observed_tree_rss_bytes": 885178368,
+        "pids_last_observed": [
+          1500663,
+          1500668
+        ],
+        "cpu_affinity": [
+          0,
+          1
+        ]
+      },
+      "worker_pids": [
+        [
+          1500668,
+          "<REGISTERED_GPU>"
+        ]
+      ],
+      "traces": "raw/final-fetch/raw/cuda02.strace"
+    },
+    {
+      "job_id": "train01",
+      "supervisor_pid": 1525511,
+      "strace_pid": 1527650,
+      "pgid": 1527650,
+      "at": "2026-10-30T17:20:41.521130+00:00",
+      "start_stat": "1525511 (python3) R 1525487 1525511 1525511 0 -1 4194304 11 0 0 0 0 0 0 0 20 0 1 0 374358196 8437760 0 18446744073709551615 4325376 7352253 140723382149488 0 0 0 0 0 0 0 0 0 17 1 0 0 0 0 0 10653128 12216448 319664128 140723382150828 140723382150956 140723382150956 140723382153191 0\n",
+      "exit": {
+        "at": "2026-10-30T17:21:09.677966+00:00",
+        "exit_code": 0,
+        "reason": null,
+        "elapsed_seconds": 28.076315389946103,
+        "peak_observed_tree_rss_bytes": 1549828096,
+        "pids_last_observed": [
+          1527650,
+          1527655
+        ],
+        "cpu_affinity": [
+          0,
+          1
+        ]
+      },
+      "worker_pids": [
+        [
+          1527655,
+          "<REGISTERED_GPU>"
+        ]
+      ],
+      "traces": "raw/final-fetch/raw/train01.strace"
+    }
+  ],
+  "retired_attempt": {
+    "phase": "cuda01",
+    "reason": "Foreign GPU process appeared after idle prelaunch; own phase yielded before training; foreign process never signalled",
+    "later_waiting": "Read-only observations until GPU3 was healthy and idle again",
+    "source_and_logs_preserved": true
+  },
+  "trace_audit": {
+    "files_fetched": 65,
+    "all_fetched_sha256_verified": true,
+    "trace_files": 3,
+    "outside_mutation_evidence": [],
+    "unresolved_count": 0,
+    "denied_external_attempts_retained": true,
+    "source_upload_manifest": "raw/upload-manifest.json",
+    "audit": "acceptance/audit-final-fetch.json"
+  },
+  "outside_scope_changes": {
+    "successful_task_file_mutation_evidence": [],
+    "special_device_io": "recorded separately",
+    "system_kernel_or_ssh_effects": "not_verified; not a whole-server audit"
+  },
+  "process_release": [
+    {
+      "pid": 1089642,
+      "status": "gone"
+    },
+    {
+      "pid": 1092579,
+      "status": "gone"
+    },
+    {
+      "pid": 1092584,
+      "status": "gone"
+    },
+    {
+      "pid": 1498497,
+      "status": "gone"
+    },
+    {
+      "pid": 1500663,
+      "status": "gone"
+    },
+    {
+      "pid": 1500668,
+      "status": "gone"
+    },
+    {
+      "pid": 1525511,
+      "status": "gone"
+    },
+    {
+      "pid": 1527650,
+      "status": "gone"
+    },
+    {
+      "pid": 1527655,
+      "status": "gone"
+    }
+  ],
+  "resource_observations": [
+    "raw/resources01.stdout",
+    "raw/resources02.stdout",
+    "raw/queue03.stdout",
+    "raw/queue04.stdout",
+    "raw/queue05.stdout",
+    "raw/final-fetch/raw/cuda02-prelaunch.json",
+    "raw/final-fetch/raw/train01-prelaunch.json",
+    "acceptance/postcheck.json"
+  ],
+  "artifacts_manifest": "artifacts.json",
+  "protected_sources_unchanged": [
+    {
+      "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/AGENTS.md",
+      "before_sha256": "fedfdcb9e670dbf777b954b87fd3b13fb8f06b5915acad898383ebd4c5c663aa",
+      "after_sha256": "fedfdcb9e670dbf777b954b87fd3b13fb8f06b5915acad898383ebd4c5c663aa",
+      "unchanged": true
+    },
+    {
+      "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/policy.json",
+      "before_sha256": "38796c896885963c4ed220ed4ee28b7cc78b4ed1f0d08bf30c76b19f4c22d4e5",
+      "after_sha256": "38796c896885963c4ed220ed4ee28b7cc78b4ed1f0d08bf30c76b19f4c22d4e5",
+      "unchanged": true
+    },
+    {
+      "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/docs/source-map.md",
+      "before_sha256": "99c137c689c982c47ba7a9f817e33e933bf971a8af02e8cdd64e15f44247e34a",
+      "after_sha256": "99c137c689c982c47ba7a9f817e33e933bf971a8af02e8cdd64e15f44247e34a",
+      "unchanged": true
+    },
+    {
+      "path": "<LOCAL_WORKSPACE>/rules/skills/admet-frozen-training/SKILL.md",
+      "before_sha256": "deac580a6ab76ca8a39d57e8709aec2a3ea0d21b4e2a37cf7be5be690370191f",
+      "after_sha256": "deac580a6ab76ca8a39d57e8709aec2a3ea0d21b4e2a37cf7be5be690370191f",
+      "unchanged": true
+    },
+    {
+      "path": "<LOCAL_WORKSPACE>/rules/skills/admet-frozen-training/references/validated-run.md",
+      "before_sha256": "9dd174130818bd869cc7c5d78fccfe258b1b1c7ee6b5b0e1259d26fab09c5253",
+      "after_sha256": "9dd174130818bd869cc7c5d78fccfe258b1b1c7ee6b5b0e1259d26fab09c5253",
+      "unchanged": true
+    },
+    {
+      "path": "<LOCAL_WORKSPACE>/rules/skills/admet-frozen-training/scripts/check_evidence.py",
+      "before_sha256": "f18f6e734aa914d4fdc02e91eb9afbbea310d7577fb55d529a55acf2953fc170",
+      "after_sha256": "f18f6e734aa914d4fdc02e91eb9afbbea310d7577fb55d529a55acf2953fc170",
+      "unchanged": true
+    },
+    {
+      "path": "<LOCAL_WORKSPACE>/rules/skills/hainan-compute-access/SKILL.md",
+      "before_sha256": "198ae6ae3155cb5a889464466f495b2c56f2655de2b4bee4ee591d568c53abfb",
+      "after_sha256": "198ae6ae3155cb5a889464466f495b2c56f2655de2b4bee4ee591d568c53abfb",
+      "unchanged": true
+    },
+    {
+      "path": "<LOCAL_WORKSPACE>/rules/skills/hainan-compute-access/references/connection.md",
+      "before_sha256": "878827886e9879e49a59cb7753d9a9ea7d32803e34c9ee793dd9583a06ec0ad0",
+      "after_sha256": "878827886e9879e49a59cb7753d9a9ea7d32803e34c9ee793dd9583a06ec0ad0",
+      "unchanged": true
+    },
+    {
+      "path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031/PLAN.json",
+      "before_sha256": "ba04167c7b47110210ebd1e0fa7aa1a665386bdbd35c009331271c0e372f1323",
+      "after_sha256": "ba04167c7b47110210ebd1e0fa7aa1a665386bdbd35c009331271c0e372f1323",
+      "unchanged": true
+    }
+  ],
+  "checker_adapter": "operator/checker-adapter.json",
+  "limitations": [
+    "Same existing execution chat, not a cold-start agent test.",
+    "The first CUDA preflight yielded to a foreign process. Completed training used a freshly verified healthy idle GPU; intentional shared training and parallel own jobs were not tested.",
+    "Execution self-check does not replace parent independent code/trajectory/source review.",
+    "No private valid labels or official scoring/submission.",
+    "Landlock/strace do not provide full read, ioctl, hardware partition, or whole-system isolation."
+  ]
+}

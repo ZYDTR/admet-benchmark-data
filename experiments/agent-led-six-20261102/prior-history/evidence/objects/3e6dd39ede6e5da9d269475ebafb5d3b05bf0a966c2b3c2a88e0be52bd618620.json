@@ -1,0 +1,100 @@
+{
+  "at": "2026-11-01T17:02:35.749643+00:00",
+  "task": "caco2_wang",
+  "metric": "MAE",
+  "direction": "minimize",
+  "new_runs": [
+    {
+      "task": "caco2_wang",
+      "split": "official_valid",
+      "n": 91,
+      "metric": "MAE",
+      "direction": "minimize",
+      "value": 0.41727108770329663,
+      "status": "ok",
+      "definition": "mean(abs(supplied_numeric_Y - y_pred))",
+      "official_aggregate_score": null,
+      "diagnostic_aggregates": {
+        "rmse": 0.5979445820859518,
+        "signed_mean_error": 0.03543401673626375,
+        "median_absolute_error": 0.29576972200000107,
+        "p90_absolute_error": 0.7290825550000006,
+        "p95_absolute_error": 1.4813995569999996,
+        "absolute_error_bin_counts": {
+          "lt_0.25": 37,
+          "0.25_to_lt_0.5": 27,
+          "0.5_to_lt_1": 19,
+          "ge_1": 8
+        }
+      },
+      "run_id": "hainan-agentled-mse-s44-20261102"
+    },
+    {
+      "task": "caco2_wang",
+      "split": "official_valid",
+      "n": 91,
+      "metric": "MAE",
+      "direction": "minimize",
+      "value": 0.4477993207692307,
+      "status": "ok",
+      "definition": "mean(abs(supplied_numeric_Y - y_pred))",
+      "official_aggregate_score": null,
+      "diagnostic_aggregates": {
+        "rmse": 0.7008818995476085,
+        "signed_mean_error": 0.08926389885714289,
+        "median_absolute_error": 0.2767386669999974,
+        "p90_absolute_error": 0.9215527009999995,
+        "p95_absolute_error": 1.6276660440000006,
+        "absolute_error_bin_counts": {
+          "lt_0.25": 40,
+          "0.25_to_lt_0.5": 27,
+          "0.5_to_lt_1": 16,
+          "ge_1": 8
+        }
+      },
+      "run_id": "hainan-agentled-mse-s45-20261102"
+    }
+  ],
+  "historical_hainan_results": [
+    {
+      "source": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/exchange/trials/public-repo-20261031/retrieval/private_scoring/scores.json",
+      "source_sha256": "9d999c84c76f9f8aaa38bfdfc5c8ab9ff82b1d53cd6458998a15625d233a345a",
+      "run_id": "hainan-frozen-training-20261031",
+      "task": "caco2_wang",
+      "metric": "MAE",
+      "n": 91,
+      "MAE": 0.37862513598901104
+    },
+    {
+      "source": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/exchange/trials/public-repo-20261031/retrieval/private_scoring/scores.json",
+      "source_sha256": "9d999c84c76f9f8aaa38bfdfc5c8ab9ff82b1d53cd6458998a15625d233a345a",
+      "run_id": "hainan-skill-follow-20261031",
+      "task": "caco2_wang",
+      "metric": "MAE",
+      "n": 91,
+      "MAE": 0.3891885939780218
+    },
+    {
+      "source": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031/retrieval/phase2/private_scoring/scores.json",
+      "source_sha256": "cb040a8c8310288da3bdb78a03b39b7afc1f3dc487836217fa4a5c55d4686e4f",
+      "run_id": "hainan-index-cycle-20261031",
+      "task": "caco2_wang",
+      "metric": "MAE",
+      "n": 91,
+      "MAE": 0.42147216141758237
+    },
+    {
+      "source": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/retrieval/private_scoring/scores.json",
+      "source_sha256": "4ff779ab9d7ac8a787743d1e7e537ffda6af810cb546087008678f9e699cb35d",
+      "run_id": "hainan-mae-monitor-20261101",
+      "task": "caco2_wang",
+      "metric": "MAE",
+      "n": 91,
+      "MAE": 0.40302117308791197
+    }
+  ],
+  "best_of_prior_four_hainan": 0.37862513598901104,
+  "mini_baseline_report_rounded_MAE": 0.426065,
+  "mini_source": "<PRIVATE_LOCAL_PATH>",
+  "conclusion": "Neither new run improves the best prior Caco2 validation MAE. No paired MSE-vs-MAE stopping conclusion before remaining four; historical runs differ in configuration/seed/split. Validation is reused for selection, not independent final generalization."
+}

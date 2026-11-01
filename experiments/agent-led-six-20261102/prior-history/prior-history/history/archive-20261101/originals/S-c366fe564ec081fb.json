@@ -1,0 +1,87 @@
+{
+  "observed_at": "2026-10-30T15:17:04.735478+00:00",
+  "thread_id": "private-role-78713649c4c9",
+  "thread_state": "active_inProgress",
+  "cursor": "private-role-5c3f11ea57c6:11",
+  "material_change": true,
+  "scope_violation": {
+    "status": "failed",
+    "phase": "setup05_import",
+    "evidence": [
+      {
+        "trace": "<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030/raw/setup05.strace",
+        "effects": [
+          {
+            "syscall": "openat",
+            "path": "/dev/shm/sem.kK3d5M",
+            "line": "2187947 openat(AT_FDCWD<<AUTHORIZED_PROJECT_ROOT>/admet/hainan-skill-pilot-20261030>, \"/dev/shm/sem.kK3d5M\", O_RDWR|O_CREAT|O_EXCL|O_NOFOLLOW|O_CLOEXEC, 0600) = 3</dev/shm/sem.kK3d5M>"
+          },
+          {
+            "syscall": "write",
+            "path": "/dev/shm/sem.kK3d5M",
+            "line": "2187947 write(3</dev/shm/sem.kK3d5M>, \"\\0\\0\\0\\0\\0\\0\\0\\0\\200\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\", 32) = 32"
+          },
+          {
+            "syscall": "mmap",
+            "path": "/dev/shm/sem.kK3d5M",
+            "line": "2187947 mmap(NULL, 32, PROT_READ|PROT_WRITE, MAP_SHARED, 3</dev/shm/sem.kK3d5M>, 0) = 0x79d24d054000"
+          },
+          {
+            "syscall": "link",
+            "path": "/dev/shm/sem.kK3d5M",
+            "line": "2187947 link(\"/dev/shm/sem.kK3d5M\", \"/dev/shm/sem.joblib-2187947-jg6d0uzx\") = 0"
+          },
+          {
+            "syscall": "link",
+            "path": "/dev/shm/sem.joblib-2187947-jg6d0uzx",
+            "line": "2187947 link(\"/dev/shm/sem.kK3d5M\", \"/dev/shm/sem.joblib-2187947-jg6d0uzx\") = 0"
+          },
+          {
+            "syscall": "unlink",
+            "path": "/dev/shm/sem.kK3d5M",
+            "line": "2187947 unlink(\"/dev/shm/sem.kK3d5M\")   = 0"
+          },
+          {
+            "syscall": "unlink",
+            "path": "/dev/shm/sem.joblib-2187947-jg6d0uzx",
+            "line": "2187947 unlink(\"/dev/shm/sem.joblib-2187947-jg6d0uzx\") = 0"
+          }
+        ]
+      }
+    ],
+    "lifecycle": "Recorded PID2187947 created and wrote32bytes to its semaphore, linked it, then unlinked both names. This violates project-owner-only writes even though temporary.",
+    "independent_review_limit": "Parent reviewed collected syscall excerpts and guard source; full remote strace not yet retrieved, so complete trace audit is pending."
+  },
+  "execution_attempt": {
+    "exit": {
+      "completed_at": "2026-10-30T15:11:27.440958+00:00",
+      "exit_code": 1,
+      "reason": null,
+      "elapsed_seconds": 20.347190691158175,
+      "peak_observed_tree_rss_bytes": 889974784,
+      "pids_last_observed": [
+        2416259,
+        2416264
+      ],
+      "cpu_affinity": [
+        0,
+        1
+      ]
+    },
+    "failure": "CUDA initialization at torch.cuda.set_device(0), cudaGetDeviceCount Error304",
+    "actual_training_completed": false,
+    "encoder_loaded": false,
+    "head_updated": false,
+    "both_recorded_processes_absent": true,
+    "failed_outside_effect_attempts": 59,
+    "guarded_trace_reported_successful_outside_effects": [],
+    "cause_status": "not_yet_established"
+  },
+  "parent_actions": [
+    "Read-only inspection of local evidence and child status",
+    "Preserve interim messages and evidence in acceptance",
+    "No remote action, prompt, restart, new thread, policy or Skill edit"
+  ],
+  "notification": "Material failure; notify once; continue existing child observation",
+  "remaining": "Child terminal collection, raw trace independent audit, runtime and output acceptance; do not erase initial violation if correction succeeds"
+}

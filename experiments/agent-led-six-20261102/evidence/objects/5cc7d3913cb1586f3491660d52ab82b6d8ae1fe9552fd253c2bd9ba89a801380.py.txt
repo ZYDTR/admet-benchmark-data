@@ -1,0 +1,65 @@
+from pathlib import Path
+import json, xml.etree.ElementTree as E
+Q = Path(__file__).resolve().parent
+out = []
+for root in sorted((Q / 'snapshots').iterdir()):
+    if not (root / 'raw/train-complete.json').exists():
+        continue
+    j = json.loads((root / 'raw/job-exit.json').read_text())
+    own = {x['pid'] for x in j['own_identities']}
+    samples = [json.loads(x) for x in (root / 'raw/resource-observations.jsonl').read_text().splitlines()]
+    oldsm = []
+    ownsm = []
+    oldmem = []
+    ownmem = []
+    free = []
+    health = []
+    for x in samples:
+        args = x['argv']
+        s = x['stdout']
+        assert x['actual_exit'] == 0
+        if 'pmon' in args:
+            for line in s.splitlines():
+                v = line.split()
+                if len(v) < 4 or not v[0].isdigit() or (not v[1].isdigit()):
+                    continue
+                sm = int(v[3]) if v[3].isdigit() else None
+                if int(v[1]) == 'process-fb67c9fdc7e9':
+                    oldsm.append(sm)
+                elif int(v[1]) in own:
+                    ownsm.append(sm)
+                else:
+                    raise AssertionError('unexpected GPU1 process in pmon')
+        elif any((a.startswith('--query-compute-apps=') for a in args)):
+            total = 0
+            for line in s.splitlines():
+                v = [a.strip() for a in line.split(',')]
+                if v[0] != 'registered-gpu-5606cf9d8021':
+                    continue
+                pid = int(v[1])
+                mem = int(v[2])
+                if pid == 'process-fb67c9fdc7e9':
+                    oldmem.append(mem)
+                elif pid in own:
+                    total += mem
+                else:
+                    raise AssertionError('unexpected GPU1 allocation')
+            ownmem.append(total)
+        elif any((a.startswith('--query-gpu=memory.free') for a in args)):
+            free.append(int(s.split(',')[0]))
+        elif '-x' in args:
+            g = E.fromstring(s).find('gpu')
+            health.append(g.findtext('gpu_recovery_action'))
+    resident = [json.loads(x) for x in (root / 'raw/resident-observations.jsonl').read_text().splitlines()]
+    ticks = [x['identity']['cpu_ticks'] for x in resident]
+    deltas = [b - a for a, b in zip(ticks, ticks[1:])]
+    assert all((x['identity']['start_ticks'] == '345162673' for x in resident))
+    assert oldmem and min(oldmem) == max(oldmem) == 72198
+    assert not any((x is not None and x > 0 for x in oldsm))
+    assert max(ownmem) <= 2048 and min(free) >= 6144 and (set(health) == {'None'})
+    assert not deltas or max(deltas) <= 3
+    post = json.loads((root / '_postcheck.json').read_text())
+    assert all((x['state'] in ('absent', 'terminal', 'pid_reused') for x in post['processes']))
+    out.append({'run_id': root.name, 'actual_job_exit': j['actual_strace_wait_exit'], 'monitor_rounds': j['monitor_rounds'], 'gpu_uuid': 'registered-gpu-5606cf9d8021', 'resident_PID_start_unchanged': True, 'resident_framebuffer_mib_range': [min(oldmem), max(oldmem)], 'resident_SM_numeric_positive_samples': sum((x is not None and x > 0 for x in oldsm)), 'resident_SM_unknown_samples': sum((x is None for x in oldsm)), 'resident_SM_known_samples': [x for x in oldsm if x is not None], 'resident_CPU_ticks_total_delta': ticks[-1] - ticks[0], 'resident_CPU_max_observation_delta': max(deltas, default=0), 'own_framebuffer_observed_peak_mib': max(ownmem), 'own_SM_numeric_peak': max((x for x in ownsm if x is not None), default=None), 'own_SM_unknown_samples': sum((x is None for x in ownsm)), 'minimum_observed_free_mib': min(free), 'health_recovery_values': sorted(set(health)), 'own_exit_released': True, 'interpretation': 'Current qualification supported long-idle residency and substantial reserve; monitored CPU remained within observed idle background, allocation unchanged, no numeric resident GPU activation or new process observed. N/A remains unknown, actual other throughput/latency was not measured; not absolute zero-interference proof.'})
+(Q / 'resource-verification.json').write_text(json.dumps(out, indent=2) + '\n')
+print(json.dumps(out))

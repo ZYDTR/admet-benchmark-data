@@ -1,0 +1,93 @@
+"""Reviewed task-local wrapper for exactly four once-only fixed MAE calls."""
+import ast, csv, datetime, hashlib, importlib.util, io, json, math, os, shutil, sys, time
+from pathlib import Path
+R = Path('<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/retrieval/remaining-four-001')
+T = json.loads((R / 'SCORING_TASK.json').read_text())
+TASK = json.loads((R / 'RETRIEVAL_TASK.json').read_text())
+PRIVATE = Path(T['private_output_root'])
+PRIVATE.chmod(448)
+os.umask(63)
+start = time.monotonic()
+
+def now():
+    return datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+def sha(b):
+    return hashlib.sha256(b).hexdigest()
+
+def dump(p, x):
+    p.write_text(json.dumps(x, ensure_ascii=False, indent=2, allow_nan=False) + '\n')
+assert json.loads((R / 'verification.json').read_text())['state'] == 'stable_source_and_exact_receive'
+assert not (PRIVATE / 'scoring-receipt.json').exists(), 'Never repeat scoring calls after a receipt exists; inspect it first'
+receipt = {'task_id': T['task_id'], 'started_utc': now(), 'truth_file_read_events': 0, 'truth_manifest_read_events': 0, 'metric_calls_by_run': {x['run_id']: 0 for x in T['runs']}, 'status': 'started', 'shared_compliance': 'GPU1 conditional idle-resident branch; previous GPU0 failure retained', 'official_score': None}
+dump(PRIVATE / 'scoring-receipt.json', receipt)
+try:
+    for key, name in [('fixed_function', 'fixed_mae.py'), ('strict_wrapper', 'strict_caco2_scorer.py')]:
+        p = Path(T[key]['path'])
+        b = p.read_bytes()
+        assert sha(b) == T[key]['sha256']
+        dest = R / 'source' / name
+        with open(dest, 'xb') as f:
+            f.write(b)
+    origin = Path(T['scorer_origin']['source']).read_bytes()
+    assert sha(origin) == T['scorer_origin']['source_sha256']
+    tree = ast.parse(origin.decode())
+    node = next((n for n in tree.body if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name == T['scorer_origin']['function']))
+    seg = ast.get_source_segment(origin.decode(), node)
+    assert sha(seg.encode()) == T['scorer_origin']['function_source_sha256']
+    fixed = ast.parse((R / 'source/fixed_mae.py').read_text())
+    fn = next((n for n in fixed.body if isinstance(n, ast.FunctionDef) and n.name == '_mae'))
+    assert ast.dump(fn, include_attributes=False) == ast.dump(node, include_attributes=False), 'fixed formula AST differs'
+    sys.path.insert(0, str(R / 'source'))
+    import strict_caco2_scorer as scorer
+    selected = []
+    identity = []
+    for taskrun in T['runs']:
+        run = next((x for x in TASK['successful_attempts'] if x['run_id'] == taskrun['run_id']))
+        read_root = next((Path(x) for x in TASK['remote_read_only_roots'] if Path(x).name == run['run_id']))
+        root = R / 'snapshot' / run['run_id'] / Path(run['remote_success_root']).relative_to(read_root)
+        pred = (root / 'artifacts/predictions.csv').read_bytes()
+        assert sha(pred) == taskrun['prediction_identity']['sha256']
+        assert pred == Path(run['prediction_path']).read_bytes(), 'download does not match admitted local prediction'
+        bvalid = (root / 'data/valid.csv').read_bytes()
+        btest = (root / 'data/test.csv').read_bytes()
+        assert sha(bvalid) == T['blind_projection_sha256']
+        fv, valid = scorer.csv_rows(bvalid)
+        ft, test = scorer.csv_rows(btest)
+        assert set(fv) == set(ft) == {'Drug_ID', 'Drug'} and len(valid) == 91 and (len(test) == 182)
+        predictions = scorer.select_valid_from_original_csv(pred, valid, test)
+        assert len(predictions) == 91
+        selected.append((run['run_id'], valid, predictions))
+        identity.append({'run_id': run['run_id'], 'source_prediction_sha256': sha(pred), 'all_prediction_rows': 273, 'valid_rows': 91, 'test_rows': 182, 'blind_projection_sha256': sha(bvalid), 'blind_test_sha256': sha(btest), 'all_row_identities_verified': True, 'prediction_values_finite': True, 'download_equals_main_admitted_prediction': True})
+    manifest = Path(T['truth']['manifest']).read_bytes()
+    receipt['truth_manifest_read_events'] += 1
+    assert sha(manifest) == T['truth']['manifest_sha256']
+    dump(PRIVATE / 'scoring-receipt.json', receipt)
+    truth = Path(T['truth']['path']).read_bytes()
+    receipt['truth_file_read_events'] += 1
+    receipt['truth_sha256'] = sha(truth)
+    dump(PRIVATE / 'scoring-receipt.json', receipt)
+    assert sha(truth) == T['truth']['sha256']
+    fields, original = scorer.csv_rows(truth)
+    assert set(fields) == {'Drug_ID', 'Drug', 'Y'} and len(original) == 91
+    for rid, blind, predictions in selected:
+        scorer.truth_identity(original, blind)
+        scorer.validate_valid(predictions, blind)
+    scores = []
+    for rid, blind, predictions in selected:
+        receipt['metric_calls_by_run'][rid] += 1
+        dump(PRIVATE / 'scoring-receipt.json', receipt)
+        result = scorer.score_once(original, blind, predictions)
+        result['run_id'] = rid
+        scores.append(result)
+        dump(PRIVATE / 'scores.json', {'scores': scores})
+    receipt.update({'status': 'scoring_completed_and_identity_verified', 'completed_utc': now(), 'seconds': time.monotonic() - start, 'fixed_metric_function_sha256': T['fixed_function']['sha256'], 'strict_wrapper_sha256': T['strict_wrapper']['sha256'], 'truth_identity_all_rows': True, 'input_identity': identity, 'no_other_runs_scored': True, 'returned_code_models_pickle_executed': False, 'raw_truth_or_residuals_exported': False, 'scope': 'supplied-scale Caco2 official_valid MAE; not official aggregate score; not independent final generalization', 'sharing_acceptance': 'GPU1 conditionally accepted by main for observed idle-resident small-head use; no direct other throughput/latency proof; GPU0 failure retained'})
+    dump(PRIVATE / 'scoring-receipt.json', receipt)
+    dump(R / 'scores.json', {'task_id': T['task_id'], 'scores': scores, 'scope': receipt['scope'], 'sharing_acceptance': 'GPU1 conditional idle-resident branch; GPU0 historical failure retained', 'publication': 'not authorized this phase'})
+    dump(R / 'scoring-summary-receipt.json', {'task_id': T['task_id'], 'state': receipt['status'], 'metric_calls_by_run': receipt['metric_calls_by_run'], 'truth_file_read_events_this_task': receipt['truth_file_read_events'], 'input_identity': identity, 'fixed_metric_function_sha256': T['fixed_function']['sha256'], 'strict_wrapper_sha256': T['strict_wrapper']['sha256'], 'private_receipt_sha256': sha((PRIVATE / 'scoring-receipt.json').read_bytes()), 'truth_digest_verified_against_task': True, 'sharing_acceptance': 'GPU1 conditional idle-resident branch; GPU0 historical failure retained'})
+    (R / 'validation-report.md').write_text('# 新增四项Caco2固定评分\n\n' + '\n'.join(('- ' + x['run_id'] + '：official_valid 91/91行，MAE=' + repr(x['value']) + '，越小越好。' for x in scores)) + '\n\n下载预测与主控批准SHA一致，全部273行valid/test顺序、原行号、Drug_ID、Drug和有限预测已核对。四次各覆盖完整91行，固定函数AST与原实现相同；原真值只读取一次，评分各一次，已有两份评分仅引用；无重试、其他run或官方总分推断。聚合诊断为固定包装口径；逐行真值/残差未输出。\n\n这是已保存预测的质量评分。GPU1范围限主控有条件接受的闲置驻留小头分支，缺少直接对方吞吐/延迟证明；GPU0旧失败保持原裁定。valid已经用于比较选模，不是独立最终泛化证明。\n')
+    print(json.dumps({'state': receipt['status'], 'metric_calls': receipt['metric_calls_by_run'], 'scores': [{'run_id': x['run_id'], 'MAE': x['value']} for x in scores], 'seconds': receipt['seconds']}))
+except Exception as e:
+    receipt.update({'status': 'failed', 'failed_utc': now(), 'error_type': type(e).__name__, 'error': str(e), 'seconds': time.monotonic() - start})
+    dump(PRIVATE / 'scoring-receipt.json', receipt)
+    raise

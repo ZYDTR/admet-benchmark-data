@@ -1,0 +1,90 @@
+{
+  "at": "2026-11-01T16:50:06.279879+00:00",
+  "source": "adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/operator/verify-tensors-v2-result.json",
+  "actual_process_exit": 0,
+  "source_review": "主控审读实际weights_only map_location=cpu、原头/last/best/optimizer/RNG读取、固定架构重建、no_grad预测重算和fit-only检查代码；不以模型自报代替；主控未再执行一遍该程序。",
+  "completed_checks": [
+    {
+      "run_id": "hainan-agentled-mse-s44-20261102",
+      "actual_serialized_head_changed": {
+        "0.weight": 0.021135251969099045,
+        "0.bias": 0.012467069551348686,
+        "3.weight": 0.012578155845403671,
+        "3.bias": 0.0003581717610359192
+      },
+      "last_optimizer_tensor_step": 100,
+      "best_step": 60,
+      "checkpoint_identity_verified": true,
+      "optimizer_RNG_payload_loaded_weights_only": true,
+      "CPU_model_architecture": [
+        2048,
+        256,
+        1
+      ],
+      "CPU_recomputed_blind_predictions": {
+        "valid": {
+          "rows": 91,
+          "maximum_abs_difference": 2.384259765619845e-06,
+          "rtol": 1e-05,
+          "atol": 1e-05
+        },
+        "test": {
+          "rows": 182,
+          "maximum_abs_difference": 3.3380024415663456e-06,
+          "rtol": 1e-05,
+          "atol": 1e-05
+        }
+      },
+      "preprocessing_fit_only_verified": true
+    },
+    {
+      "run_id": "hainan-agentled-mse-s45-20261102",
+      "actual_serialized_head_changed": {
+        "0.weight": 0.027222435921430588,
+        "0.bias": 0.013426532968878746,
+        "3.weight": 0.014908010140061378,
+        "3.bias": 0.0010609477758407593
+      },
+      "last_optimizer_tensor_step": 195,
+      "best_step": 155,
+      "checkpoint_identity_verified": true,
+      "optimizer_RNG_payload_loaded_weights_only": true,
+      "CPU_model_architecture": [
+        2048,
+        256,
+        1
+      ],
+      "CPU_recomputed_blind_predictions": {
+        "valid": {
+          "rows": 91,
+          "maximum_abs_difference": 4.772495119098608e-07,
+          "rtol": 1e-05,
+          "atol": 1e-05
+        },
+        "test": {
+          "rows": 182,
+          "maximum_abs_difference": 4.772937014507761e-07,
+          "rtol": 1e-05,
+          "atol": 1e-05
+        }
+      },
+      "preprocessing_fit_only_verified": true
+    }
+  ],
+  "partial_checkpoint": [
+    {
+      "run_id": "hainan-agentled-mse-s46-20261102",
+      "checkpoint_available": true,
+      "sha256": "fa5ca2301369646d1f3a4e6d4b5e2260d8becaeebdc392ab43ae143354964d57",
+      "durable_optimizer_steps": 30,
+      "durable_epochs": 6,
+      "best_epoch_zero_based": 5,
+      "head_optimizer_RNG_best_state_present": true,
+      "resume_not_executed": true,
+      "completed_learning": false
+    }
+  ],
+  "scientific_predictions_retained_for_registered_scoring": true,
+  "sharing_acceptance_remains": "not_passed",
+  "cpu_verification_is_not_new_training": true
+}

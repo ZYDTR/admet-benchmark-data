@@ -1,0 +1,12 @@
+{"time": 1793360124.1500483, "event": "encoder_preflight_pass"}
+{"time": 1793360124.1513462, "event": "phase_start", "phase": "verify_reused_features", "source": "host-v2-readonly-cache"}
+{"time": 1793360125.070425, "event": "phase_end", "phase": "verify_reused_features", "exit_code": 0, "rows": 81809}
+{"time": 1793360125.070503, "event": "phase_start", "phase": "train", "args": ["/work/output/model/src/train.py", "--cache", "/cache", "--out", "/work/result/model", "--device", "cpu"]}
+{"time": 1793360145.454813, "event": "phase_end", "phase": "train", "exit_code": 0}
+{"time": 1793360145.4548874, "event": "phase_start", "phase": "predict", "args": ["/work/output/model/src/predict.py", "--cache", "/cache", "--ckpt", "/work/result/model", "--out", "/work/result/predictions", "--device", "cpu", "--run-id", "chemeleon-host-v3-20261030"]}
+{"time": 1793360147.1733222, "event": "phase_end", "phase": "predict", "exit_code": 0}
+{"time": 1793360147.1734283, "event": "phase_start", "phase": "test-coverage", "args": ["/work/output/data-eval/check_coverage.py", "--predictions", "/work/result/predictions/test_predictions.csv", "--template", "/work/data/official/submission_template.csv", "--json", "/work/result/test-coverage.json"]}
+{"time": 1793360147.3162546, "event": "phase_end", "phase": "test-coverage", "exit_code": 0}
+{"time": 1793360147.3163168, "event": "phase_start", "phase": "export", "args": ["/work/output/data-eval/export_submission.py", "--predictions", "/work/result/predictions/test_predictions.csv", "--template", "/work/data/official/submission_template.csv", "--out", "/work/result/submission.csv"]}
+{"time": 1793360147.4479754, "event": "phase_end", "phase": "export", "exit_code": 0}
+{"time": 1793360147.5631535, "event": "completed", "valid_rows": 11735, "test_rows": 16379, "elapsed_seconds": 25.837878704071045}

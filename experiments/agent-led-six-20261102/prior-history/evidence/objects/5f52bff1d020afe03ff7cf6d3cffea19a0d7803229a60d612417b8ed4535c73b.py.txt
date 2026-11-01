@@ -1,0 +1,14 @@
+from pathlib import Path
+import subprocess, sys, json, time
+p = Path(__file__).resolve().parent
+for i in (2, 3, 4, 5):
+    result = subprocess.run([sys.executable, '-B', str(p / 'fit.py'), str(i), '1'])
+    if result.returncode:
+        raise SystemExit(result.returncode)
+    record = json.loads((p / f'fit-{i}-1-result.json').read_text())
+    ledger = json.loads((p / 'compute-ledger.json').read_text())
+    status = json.loads((p / 'status.json').read_text())
+    status.update(completed_runs=sum((bool(x.get('complete')) for x in ledger['attempts'])), compute_seconds_used=sum((x['elapsed_seconds'] for x in ledger['attempts'])), compute_seconds_remaining=ledger['allowance'] - sum((x['elapsed_seconds'] for x in ledger['attempts'])), active_jobs=[], updated_epoch=time.time())
+    (p / 'status.json').write_text(json.dumps(status, indent=2) + '\n')
+    if not record['complete']:
+        raise SystemExit(70)

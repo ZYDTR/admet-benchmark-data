@@ -1,0 +1,61 @@
+"""Host package builder and exact append receiver. No connection API."""
+import hashlib,io,json,os,stat,zipfile,re
+from pathlib import Path
+BASE=Path('<AUTHORIZED_PROJECT_ROOT>/admet')
+def safe(root,path):
+    assert root.resolve(strict=True)==root and (path==root or root in path.parents) and path.resolve(strict=False)==path
+    for p in (path,*path.parents):
+        if p.exists() or p.is_symlink():
+            s=p.lstat();assert not stat.S_ISLNK(s.st_mode)
+            if stat.S_ISREG(s.st_mode):assert s.st_nlink==1
+    if Path('/proc/self/mountinfo').exists():
+        for line in Path('/proc/self/mountinfo').read_text().splitlines():
+            fields=line.split();mount=Path(re.sub(r'\\([0-7]{3})',lambda m:chr(int(m[1],8)),fields[4]))
+            assert not ((mount==root or root in mount.parents) and (mount==path or mount in path.parents))
+    return path
+def allowed(name,names):
+    p=Path(name)
+    if p.is_absolute() or '..' in p.parts or len(p.parts)<3 or p.parts[0] not in names:return False
+    rest='/'.join(p.parts[1:])
+    return any(rest.startswith(x) for x in ('source/production-adapter-v4/','admission/recovery-03/','inputs/recovery-03/','operator/recovery-03/'))
+
+import sys,socket,subprocess,datetime,time
+assert socket.gethostname().split('.')[0]=='project-compute' and os.getuid()==os.getgid()==1012
+BASE=Path('<AUTHORIZED_PROJECT_ROOT>/admet');safe(BASE,BASE);r=json.load(sys.stdin)
+out={'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'hostname':socket.gethostname(),'uid':os.getuid(),'gid':os.getgid(),'canonical_base':str(BASE),'protected':[],'old_identities':[],'runs':[],'new_paths':[],'queries':[],'own_reader':{'pid':os.getpid(),'start_stat':Path('/proc/self/stat').read_text()},'loadavg':os.getloadavg(),'available_disk_bytes':os.statvfs(BASE).f_bavail*os.statvfs(BASE).f_frsize}
+for name,item in r['protected'].items():
+ p=safe(BASE,BASE/name);v=p.read_bytes();h=hashlib.sha256(v).hexdigest();out['protected'].append({'path':name,'size':len(v),'sha256':h,'unchanged':len(v)==item['size'] and h==item['sha256']})
+seen=set()
+for old in r['old_identities']:
+ ticks=str(old.get('start_ticks') or old['start_stat'].rsplit(')',1)[1].split()[19]);key=(old['pid'],ticks)
+ if key in seen:continue
+ seen.add(key);item={'pid':old['pid'],'expected_start_ticks':ticks}
+ try:raw=(Path('/proc')/str(old['pid'])/'stat').read_text()
+ except FileNotFoundError:item['state']='absent_now'
+ except OSError as e:item.update(state='unknown',error=repr(e))
+ else:
+  f=raw.rsplit(')',1)[1].split();item.update(raw_stat=raw,state='pid_reused' if f[19]!=ticks else 'terminal' if f[0] in ('Z','X') else 'matching_live')
+ out['old_identities'].append(item)
+for index,name in enumerate(r['runs']):
+ root=safe(BASE,BASE/name);folder=safe(BASE,root/'outputs/recovery-02');actual={}
+ if folder.exists():
+  paths=list(folder.rglob('*'));assert len(paths)<2000
+  for p in paths:
+   safe(BASE,p)
+   if p.is_file():v=p.read_bytes();actual[str(p.relative_to(root))]={'size':len(v),'sha256':hashlib.sha256(v).hexdigest()}
+ expected=r['old_outputs'] if index==0 else {}
+ learning=root/'state/learning-started.lock'
+ out['runs'].append({'run_id':name,'prior_outputs_exact':actual==expected,'actual_output_files':actual,'global_learning_lock_exists':learning.exists(),'global_learning_lock_sha256':hashlib.sha256(learning.read_bytes()).hexdigest() if learning.exists() else None,'old_complete_exists':any((root/x).exists() for x in ('raw/train-complete.json','outputs/recovery-02/raw/train-complete.json'))})
+for name in r['runs']+['contract-follow-e2e-20261101']:
+ for rel in ('source/production-adapter-v4','inputs/recovery-03','admission/recovery-03','operator/recovery-03','raw/recovery-03','state/recovery-03','outputs/recovery-03'):
+  p=safe(BASE,BASE/name/rel);out['new_paths'].append({'path':str(p.relative_to(BASE)),'exists':p.exists()})
+for command in [['/usr/bin/nvidia-smi','-q','-x'],['/usr/bin/nvidia-smi','--query-compute-apps=gpu_uuid,pid,used_gpu_memory','--format=csv,noheader,nounits'],['/usr/bin/nvidia-smi','pmon','-s','um','-c','1']]:
+ begin=datetime.datetime.now(datetime.timezone.utc).isoformat();record={'argv':command,'started_at':begin,'actual_OS_exit':None}
+ try:
+  p=subprocess.run(command,capture_output=True,timeout=15);record.update(actual_OS_exit=p.returncode,stdout=p.stdout.decode('utf-8','replace'),stderr=p.stderr.decode('utf-8','replace'))
+ except Exception as e:
+  record.update(error=repr(e),stdout=getattr(e,'stdout',None),stderr=getattr(e,'stderr',None))
+  for field in ('stdout','stderr'):
+   if isinstance(record.get(field),bytes):record[field]=record[field].decode('utf-8','replace')
+ record['finished_at']=datetime.datetime.now(datetime.timezone.utc).isoformat();out['queries'].append(record)
+print(json.dumps(out))

@@ -1,0 +1,32 @@
+# CheMeleon 冻结底座首版：本地验证结果
+
+固定单次配置；官方 train 内部90/10早停。未用官方 valid 标签训练或选参。
+宿主固定评分器核对22任务、11735行完整覆盖及原始行身份。AUPRC采用本地AP，官方总分与等价性未确认。
+精确结果只留在宿主私有区，不回传准备会话。
+
+| 任务 | 指标 | 本地结果 | 验证行数 |
+|---|---|---:|---:|
+| ames | AUROC | 0.796606 | 1137 |
+| bbb_martins | AUROC | 0.893674 | 203 |
+| bioavailability_ma | AUROC | 0.744186 | 64 |
+| caco2_wang | MAE | 0.426065 | 91 |
+| clearance_hepatocyte_az | Spearman | 0.357606 | 122 |
+| clearance_microsome_az | Spearman | 0.48733 | 111 |
+| cyp2c9_substrate_carbonmangels | AUPRC | 0.420994 | 67 |
+| cyp2c9_veith | AUPRC | 0.75945 | 1210 |
+| cyp2d6_substrate_carbonmangels | AUPRC | 0.463777 | 67 |
+| cyp2d6_veith | AUPRC | 0.690734 | 1313 |
+| cyp3a4_substrate_carbonmangels | AUROC | 0.729391 | 67 |
+| cyp3a4_veith | AUPRC | 0.877173 | 1233 |
+| dili | AUROC | 0.861538 | 48 |
+| half_life_obach | Spearman | 0.0737001 | 67 |
+| herg | AUROC | 0.896825 | 66 |
+| hia_hou | AUROC | 0.966667 | 58 |
+| ld50_zhu | MAE | 1.04359 | 1937 |
+| lipophilicity_astrazeneca | MAE | 0.539647 | 420 |
+| pgp_broccatelli | AUROC | 0.905402 | 122 |
+| ppbr_az | MAE | 20.8318 | 279 |
+| solubility_aqsoldb | MAE | 11.1134 | 2940 |
+| vdss_lombardo | Spearman | -0.0169274 | 113 |
+
+完整机器可读结果：[scores.json](scores.json)。没有计算官方总分，没有上传比赛。

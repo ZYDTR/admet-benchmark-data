@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+"""按发送时相同合同检查研究方案；不执行返回代码、不评分、不训练。"""
+import argparse
+import json
+from pathlib import Path
+from control_contract import read, require, validate_models, sha, ROOT
+
+
+def check(directory, schema_path, assets_root=ROOT):
+    directory = Path(directory); contract = read(schema_path); documents = {}
+    for name, spec in contract['files'].items():
+        data = read(directory/name); documents[name] = data
+        require(isinstance(data, list if spec['shape'] == 'array' else dict), 'wrong root type: '+name)
+        rows = data if isinstance(data, list) else [data]
+        for row in rows:
+            require(isinstance(row, dict) and set(spec['fields']) <= set(row), 'missing fields: '+name)
+        if spec.get('id'):
+            ids = [row[spec['id']] for row in rows]
+            require(all(isinstance(x, str) and x for x in ids) and len(ids) == len(set(ids)), 'duplicate/invalid id: '+name)
+    require(documents['review.json']['status'] in contract['enums']['review_status'], 'invalid research status')
+    assets = validate_models(assets_root)
+    executors = read(assets_root/'control/roles.json')['execution_models']
+    issues = documents['issues.json']; proposals = documents['next_experiments.json']; spaces = documents['search_space.json']
+    issue_ids = {x['issue_id'] for x in issues}; proposal_ids = {x['proposal_id'] for x in proposals}; direction_ids = {x['direction_id'] for x in spaces}
+    for issue in issues:
+        require(set(issue['related_proposal_ids']) <= proposal_ids, 'dangling proposal reference')
+    for space in spaces:
+        require(set(space['linked_issues']) <= issue_ids, 'dangling issue reference')
+        for candidate in space['candidate_models_or_modules']:
+            name = candidate.get('id', candidate.get('name')) if isinstance(candidate, dict) else candidate
+            require(name not in executors, 'execution model mixed into research model candidates')
+    all_runs = set(); per_proposal = {}
+    # Reference closure is independent of any particular existing runner.
+    # A missing config-only dependency must not hide unrelated proposal errors.
+    for proposal in proposals:
+        require(set(proposal['direction_ids']) <= direction_ids, 'dangling direction reference')
+    runner = None
+    if any(p['preparation_mode'] == 'config_only' for p in proposals):
+        runner_path = assets_root/'control/schemas/runner-config.json'
+        require(runner_path.is_file(), 'missing checker input: control/schemas/runner-config.json')
+        runner = read(runner_path)
+        source = assets_root/runner['source_code']
+        require(source.is_file(), 'missing checker input: admitted runner source')
+        require(sha(source) == runner['source_code_sha256'], 'runner implementation changed; refresh admitted interface')
+    for p in proposals:
+        require(set(p['direction_ids']) <= direction_ids, 'dangling direction reference')
+        asset = p['scientific_asset_id']
+        require(asset not in executors, 'execution model is not a scientific asset')
+        require(p['preparation_mode'] in contract['enums']['preparation_mode'], 'invalid preparation mode')
+        require(p['stage'] in contract['enums']['stage'], 'invalid stage')
+        require(isinstance(p['within_current_scope'], bool), 'scope must be boolean')
+        if p['within_current_scope']:
+            require(asset in assets, 'unregistered scientific asset')
+        if p['preparation_mode'] == 'config_only':
+            require(asset == runner['scientific_asset_id'], 'asset lacks admitted config-only runner')
+            config = p['exact_config']
+            require(isinstance(config, dict) and set(config) == set(runner['configuration_fields']), 'runner config fields mismatch')
+            for group, keys in runner['nested_fields'].items():
+                require(isinstance(config[group], dict) and set(config[group]) == set(keys), 'runner nested fields mismatch: '+group)
+            for field, options in runner['enums'].items():
+                value = config
+                for key in field.split('.'): value = value[key]
+                require(any(type(value) is type(option) and value == option for option in options), 'unsupported runner enum: '+field)
+        require(isinstance(p['seeds'], list) and p['seeds'] and all(type(x) == int for x in p['seeds']), 'invalid model seeds')
+        require(len(set(p['seeds'])) == len(p['seeds']), 'duplicate seeds')
+        configs = []
+        for seed in p['seeds']:
+            config = json.loads(json.dumps(p['exact_config']))
+            if isinstance(config, dict) and isinstance(config.get('head_config'), dict):
+                config['head_config']['seed'] = seed
+            configs.append(json.dumps([asset, p['task'], config, p['split_id'], seed], sort_keys=True))
+        require(p['estimated_run_count'] == len(set(configs)), 'proposal run count mismatch')
+        all_runs.update(configs); per_proposal[p['proposal_id']] = len(set(configs))
+    return {'structure_and_references': 'passed', 'unique_proposed_runs': len(all_runs),
+            'sum_proposal_runs': sum(per_proposal.values()), 'per_proposal': per_proposal,
+            'scientific_acceptance': False, 'execution_authorized': False,
+            'config_only_runner_checked': runner is not None,
+            'limitations': 'Schema, selected known runner fields and identity counts only; independent evidence, numeric validity, controls, scientific logic, feedback projection and budget review remain required.'}
+
+
+if __name__ == '__main__':
+    p = argparse.ArgumentParser(description=__doc__); p.add_argument('--root', type=Path, required=True)
+    p.add_argument('--schema', type=Path, required=True); p.add_argument('--out', type=Path, required=True)
+    a = p.parse_args(); result = check(a.root, a.schema)
+    with a.out.open('x') as f: json.dump(result, f, ensure_ascii=False, indent=2); f.write('\n')
+    print(json.dumps(result, ensure_ascii=False))

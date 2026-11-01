@@ -1,0 +1,41 @@
+{
+  "at_epoch": 1793553141.732716,
+  "decision": "conditional_eligibility_for_serial_cached_head_calculation_on_GPU1",
+  "history_evidence_path": "<LOCAL_WORKSPACE>/adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/controller/resource-reassessment-001/evidence.json",
+  "history_sha256": "00f9591b98fd5cdada0620a1360db74c52f2331ef7a25135fb4c23b63ba8ead2",
+  "source_files_hash_verified": true,
+  "record_count": 187,
+  "complete_numeric_records": 186,
+  "unique_timestamps": 186,
+  "initial_numeric_record_unknown": 1,
+  "history_device_compute_percent_values": [
+    0
+  ],
+  "resident_identity": {
+    "pid": "process-fb67c9fdc7e9",
+    "start_ticks": "process-26b69d599746"
+  },
+  "historical_device_used_mib": 72207,
+  "historical_device_free_mib": 8883,
+  "fresh_three_samples": "../gpu1-resource-summary-002.json",
+  "fresh_at": "2026-11-01T17:07:34.427067+00:00",
+  "equivalent_own_observed_framebuffer_peak_mib": 918,
+  "own_expected_framebuffer_mib": 1200,
+  "torch_allocator_cap_mib": 1024,
+  "own_total_observed_framebuffer_exit_mib": 2048,
+  "minimum_free_memory_during_calculation_mib": 6144,
+  "serial_only": true,
+  "per_step_idle_seconds": 0.5,
+  "sufficient_basis": "Long representative sampled idle residency with stable allocation, fresh healthy/idle matching identity, one small bounded cached-head workload consumes about1GiB of8.7GiB free leaving about7.7GiB; fresh qualification and own-only exit upon any observed resident activation/memory growth protects its resumption. This is a finite controlled job, not a claim of no possible future burst.",
+  "control": "Before every launch repeat three identity/health/idle/memory samples; during job inspect resident CPU ticks, pmon numeric activity, foreign PID/memory changes, free headroom, own total FB/RSS and health. N/A retained unknown. Any resident CPU activity/new foreign/identity/query uncertainty triggers immediate own-only termination.",
+  "limitations": [
+    "Discrete history misses inter-sample activity",
+    "pmon N/A is unknown",
+    "Allocator cap excludes CUDA driver/context",
+    "Monitor has sample/command latency; not a hard GPU partition",
+    "No resident latency/throughput metric is available; observed idle/no activation and reserve constitute current judgment, not absolute zero-impact proof"
+  ],
+  "gpu0_prohibited": true,
+  "new_science": false,
+  "no_probe_of_other_service": true
+}
