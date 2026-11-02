@@ -1,0 +1,302 @@
+--- Qwen_original/cache.py
++++ root_repair/cache.py
+@@ -155,7 +155,7 @@
+ 
+ def load_raw_cache(cache_root: Path, task: str, split: str,
+                    rows: Sequence[Mapping[str, str]], source_sha256: str,
+-                   *, allow_migrated_legacy: bool = False):
++                   *, allow_migrated_legacy: bool = False, cache_trust=None):
+     """Validate-and-load a raw cache entry against live input identity.
+ 
+     Accepts v2 contracts directly. A v1 (legacy) contract is accepted ONLY when
+@@ -169,6 +169,10 @@
+     for p in (arr_p, mask_p, meta_p):
+         if not p.is_file():
+             raise InterfaceError(f"cache missing: {p}")
++    if allow_migrated_legacy or cache_trust is not None:
++        if cache_trust is None:
++            raise InterfaceError("legacy cache requires a controller-anchored trusted manifest")
++        cache_trust.verify(cache_root, task, split)
+     meta = json.loads(meta_p.read_text(encoding="utf-8"))
+     version = meta.get("contract", {}).get("version")
+     if version == 1:
+@@ -178,7 +182,8 @@
+                 "migration verification (migration.verify_legacy_migration); "
+                 "refusing to bypass or silently relax identity checks")
+         from .migration import verify_legacy_migration
+-        verify_legacy_migration(Path(cache_root), task, split, rows, source_sha256)
++        verify_legacy_migration(Path(cache_root), task, split, rows, source_sha256,
++                                cache_trust=cache_trust)
+     elif version == 2:
+         _verify_v2_meta(meta, representation_contract(task, split, source_sha256, rows))
+     else:
+@@ -339,7 +344,7 @@
+             for k in ("denominator_floor", "scaler_config_sha256", "denominators_pre_floor"):
+                 if k not in d:
+                     raise InterfaceError(f"floor scaler payload missing '{k}'")
+-        return FeatureScaler(
++        result = FeatureScaler(
+             mean=np.asarray(d["mean"], dtype=np.float32),
+             std=np.asarray(d["std"], dtype=np.float32),
+             fit_partition=d["fit_partition"],
+@@ -354,6 +359,24 @@
+             denominators_pre_floor=(None if method == LEGACY_METHOD
+                                     else np.asarray(d["denominators_pre_floor"], dtype=np.float32)),
+         )
++
++        if (result.mean.ndim != 1 or result.std.shape != result.mean.shape
++                or not np.isfinite(result.mean).all() or not np.isfinite(result.std).all()
++                or not (result.std > 0).all() or result.epsilon != 1e-8
++                or result.fit_partition != "official_train.fit_subset"
++                or result.fit_n_rows <= 0):
++            raise InterfaceError("invalid saved feature scaler statistics")
++        if method == FLOOR_METHOD:
++            cfg = validate_scaler_config({"method": method,
++                                          "denominator_floor": result.denominator_floor})
++            expected_sha = sha256_hex(canonical_json_bytes(cfg))
++            pre = result.denominators_pre_floor
++            if (result.scaler_config_sha256 != expected_sha or pre.shape != result.std.shape
++                    or not np.isfinite(pre).all() or not (pre > 0).all()
++                    or not np.array_equal(result.std,
++                                          np.maximum(pre, np.float32(result.denominator_floor)))):
++                raise InterfaceError("saved floor scaler policy/denominator mismatch")
++        return result
+ 
+ 
+ def fill_raw(X):
+--- Qwen_original/cache_provenance.py
++++ root_repair/cache_provenance.py
+@@ -0,0 +1,47 @@
++"""Read-only cache provenance anchored outside the mutable cache itself.
++
++The expected manifest SHA must come from the controller's frozen task, never
++from hashing an untrusted manifest and accepting that same value as authority.
++"""
++from __future__ import annotations
++
++import json
++from pathlib import Path
++from types import MappingProxyType
++
++from .common import InterfaceError, sha256_file
++
++
++class CacheTrust:
++    def __init__(self, manifest_path, expected_sha256,
++                 prefix="input/legacy/cache/chemeleon_mp/"):
++        path = Path(manifest_path)
++        if sha256_file(path) != expected_sha256:
++            raise InterfaceError("trusted manifest digest mismatch")
++        manifest = json.loads(path.read_text(encoding="utf-8"))
++        entries = {}
++        for row in manifest["files"]:
++            name = row["path"]
++            if name.startswith(prefix):
++                relative = name[len(prefix):]
++                if relative in entries or ".." in Path(relative).parts:
++                    raise InterfaceError("invalid trusted cache manifest member")
++                entries[relative] = (row["sha256"], row["bytes"])
++        if not entries:
++            raise InterfaceError("trusted cache manifest has no cache entries")
++        self.entries = MappingProxyType(entries)
++        self.manifest_sha256 = expected_sha256
++
++    def verify(self, root, task, split):
++        for name in (f"raw_{split}.npy", f"mask_{split}.npy",
++                     f"raw_{split}.meta.json"):
++            key = f"{task}/{name}"
++            if key not in self.entries:
++                raise InterfaceError(f"trusted cache entry missing: {key}")
++            path = Path(root) / key
++            expected_sha, expected_bytes = self.entries[key]
++            if not path.is_file():
++                raise InterfaceError(f"trusted cache file missing: {key}")
++            if path.stat().st_size != expected_bytes or sha256_file(path) != expected_sha:
++                raise InterfaceError(f"trusted cache digest mismatch: {key}")
++        return self.manifest_sha256
+--- Qwen_original/diagnostics.py
++++ root_repair/diagnostics.py
+@@ -0,0 +1,63 @@
++"""No-label diagnostics; prediction identity is checked before association."""
++from __future__ import annotations
++
++import math
++from .common import InterfaceError
++from .metrics import spearman
++
++
++def checked_predictions(records, rows, task, split, parse_mask=None):
++    if len(records) != len(rows):
++        raise InterfaceError("diagnostic prediction row count mismatch")
++    values = []
++    for index, (pred, row) in enumerate(zip(records, rows)):
++        expected = (task, split, str(index), row["Drug_ID"], row["Drug"])
++        actual = tuple(str(pred.get(key, "")) for key in
++                       ("task", "split", "row_index", "Drug_ID", "Drug"))
++        if actual != expected:
++            raise InterfaceError(f"diagnostic row identity mismatch at {index}")
++        if parse_mask is not None:
++            parsed = str(pred.get("parse_ok", "")).lower()
++            if parsed not in ("true", "false") or (parsed == "true") != bool(parse_mask[index]):
++                raise InterfaceError(f"diagnostic parse mask mismatch at {index}")
++        value = float(pred["y_pred"])
++        if not math.isfinite(value):
++            raise InterfaceError("nonfinite diagnostic prediction")
++        values.append(value)
++    return values
++
++
++def raw_statistics(features):
++    import numpy as np
++    x = np.asarray(features, dtype=np.float32)
++    sd32 = x.std(axis=0, ddof=0)
++    sd64 = x.astype(np.float64).std(axis=0, ddof=0)
++    return {
++        "raw_std32_min": float(sd32.min()),
++        "raw_std64_min": float(sd64.min()),
++        "exact_constant_dimensions": int(np.all(x == x[0], axis=0).sum()),
++        "low_std32_dimensions": int((sd32 < 1e-8).sum()),
++        "low_std64_dimensions": int((sd64 < 1e-8).sum()),
++    }
++
++
++def pearson(a, b):
++    import numpy as np
++    a, b = np.asarray(a, np.float64), np.asarray(b, np.float64)
++    if len(a) != len(b) or len(a) < 2 or not (np.isfinite(a).all() and np.isfinite(b).all()):
++        raise InterfaceError("invalid association inputs")
++    if np.ptp(a) == 0 or np.ptp(b) == 0:
++        return None
++    return float(np.corrcoef(a, b)[0, 1])
++
++
++def association(magnitude, prediction):
++    import numpy as np
++    m = np.asarray(magnitude, np.float64)
++    p = np.asarray(prediction, np.float64)
++    absolute = np.abs(p)
++    deviation = np.abs(p - np.median(p))
++    return {name: {"pearson": pearson(m, value),
++                   "spearman_average_ranks": spearman(m.tolist(), value.tolist())}
++            for name, value in [("prediction", p), ("absolute_prediction", absolute),
++                                ("prediction_deviation_from_median", deviation)]}
+--- Qwen_original/migration.py
++++ root_repair/migration.py
+@@ -12,7 +12,8 @@
+   * current encoder.py module sha256 == v1 implementation_sha256['encoder.py']
+     (the ONLY module hash that is representation identity; a changed encoder
+     invalidates reuse and requires separately authorized re-encoding)
+-  * array/mask file digests and content digests are internally consistent
++  * array/mask/metadata bytes match the controller-anchored manifest, then
++    array/mask file digests and content digests are internally consistent
+   * generation environment recorded verbatim from the v1 meta; consumption
+     environment snapshot recorded alongside — differences are reported, never
+     overwritten onto the original metadata.
+@@ -35,11 +36,14 @@
+ 
+ def verify_legacy_migration(cache_root: Path, task: str, split: str,
+                             rows: Sequence[Mapping[str, str]], source_sha256: str,
+-                            evidence_path: Path | None = None) -> dict[str, Any]:
++                            evidence_path: Path | None = None, *, cache_trust=None) -> dict[str, Any]:
+     """Return an evidence record or raise InterfaceError; never mutate inputs."""
+     import numpy as np
+ 
+     cache_root = Path(cache_root)
++    if cache_trust is None:
++        raise InterfaceError("legacy cache requires a controller-anchored trusted manifest")
++    anchor_sha = cache_trust.verify(cache_root, task, split)
+     arr_p, mask_p, meta_p = cache_paths(cache_root, task, split)
+     for p in (arr_p, mask_p, meta_p):
+         if not p.is_file():
+@@ -88,6 +92,7 @@
+     failed = [name for name, passed in checks if not passed]
+     record = {
+         "format": "admet_breadth_cache_migration_v1_to_v2",
++        "trusted_input_manifest_sha256": anchor_sha,
+         "task": task, "split": split,
+         "legacy_contract": c,
+         "representation_identity": {
+--- Qwen_original/pipeline.py
++++ root_repair/pipeline.py
+@@ -20,6 +20,7 @@
+ from __future__ import annotations
+ 
+ import math
++import copy
+ from pathlib import Path
+ from typing import Any, Mapping, Sequence
+ 
+@@ -40,7 +41,8 @@
+     def __init__(self, task: str, data_root: Path | str, work_root: Path | str,
+                  metrics_contract: Path | str, *,
+                  allow_migrated_legacy_cache: bool = False,
+-                 migration_evidence_dir: Path | str | None = None):
++                 migration_evidence_dir: Path | str | None = None,
++                 cache_trust=None, raw_cache_root: Path | str | None = None):
+         if task not in TASKS:
+             raise InterfaceError(f"unknown task: {task!r}")
+         self.task = task
+@@ -58,6 +60,8 @@
+         self.transform_identity = None
+         self.config: dict[str, Any] | None = None
+         self.scaler_policy: dict[str, Any] | None = None
++        self.cache_trust = cache_trust
++        self.raw_cache_root = Path(raw_cache_root) if raw_cache_root is not None else None
+         self.allow_migrated_legacy_cache = bool(allow_migrated_legacy_cache)
+         self.migration_evidence_dir = (Path(migration_evidence_dir)
+                                         if migration_evidence_dir else
+@@ -68,7 +72,7 @@
+     def configure(self, cfg: Mapping[str, Any]) -> dict[str, Any]:
+         """Validate and bind one run configuration; its feature_scaler field is
+         the policy actually consumed downstream (never an unconsumed key)."""
+-        merged = dict(cfg)
++        merged = copy.deepcopy(dict(cfg))
+         merged.setdefault("task", self.task)
+         merged.setdefault("kind", self.kind)
+         cfgv = validate_config(merged, self.task_metrics)
+@@ -93,8 +97,9 @@
+ 
+     def _require_config(self):
+         if self.config is None:
+-            rec = {"run_id": f"legacy-default:{self.task}", "feature_scaler": None}
+-            self.configure(rec)
++            # Legacy transform-only callers never needed a training config.
++            # Actual training still validates the complete config in fit_head.
++            self.scaler_policy = validate_scaler_config({"method": LEGACY_METHOD})
+ 
+     # ---- data & identity ---------------------------------------------------
+     def load(self) -> dict[str, int]:
+@@ -114,7 +119,7 @@
+ 
+     # ---- raw cache -------------------------------------------------------
+     def cache_dir(self) -> Path:
+-        return self.work_root / "cache" / "chemeleon_mp"
++        return self.raw_cache_root if self.raw_cache_root is not None else self.work_root / "cache" / "chemeleon_mp"
+ 
+     def build_cache(self, embedder) -> dict[str, Any]:
+         out = {}
+@@ -129,13 +134,14 @@
+     def load_cache(self, split: str):
+         X, ok = load_raw_cache(self.cache_dir(), self.task, split,
+                                self.rows[split], self.source_sha[split],
+-                               allow_migrated_legacy=self.allow_migrated_legacy_cache)
++                               allow_migrated_legacy=self.allow_migrated_legacy_cache,
++                               cache_trust=self.cache_trust)
+         if self.allow_migrated_legacy_cache:
+             from .migration import verify_legacy_migration
+             ev_p = self.migration_evidence_dir / f"{self.task}_{split}.json"
+             self.migration_evidence[split] = verify_legacy_migration(
+                 self.cache_dir(), self.task, split, self.rows[split],
+-                self.source_sha[split], evidence_path=ev_p)
++                self.source_sha[split], evidence_path=ev_p, cache_trust=self.cache_trust)
+         return X, ok
+ 
+     # ---- fit-only transforms --------------------------------------------
+@@ -180,6 +186,7 @@
+         train source, split record and configured scaler policy."""
+         if self.scaler is None or self.transform_identity is None:
+             raise InterfaceError("transforms absent: call fit_transforms first")
++        self._checked_split()
+         want = (self.source_sha["train"], self.split_record["split_record_sha256"],
+                 self.scaler_policy["method"], self.scaler_policy["denominator_floor"])
+         if self.transform_identity != want:

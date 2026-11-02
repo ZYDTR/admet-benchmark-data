@@ -1,0 +1,92 @@
+{
+  "at": "2026-11-02T02:36:49.235130+00:00",
+  "root_recomputed_traces_using_personally_reviewed_parser": [
+    {
+      "sha256": "e6360069d3987093889eb98e554ab2b0f5065b72d632deda05a71d68345b737b",
+      "counts": {
+        "openat": 2436,
+        "inside": 17237,
+        "write": 7004,
+        "unlink": 60,
+        "mkdir": 1790,
+        "rename": 1555,
+        "symlink": 57,
+        "mmap": 51,
+        "writev": 4688,
+        "unlinkat": 1,
+        "rmdir": 1
+      },
+      "outside_successful_file_mutations": [],
+      "unknown": [],
+      "pending": {},
+      "denied": {
+        "EEXIST": 1678,
+        "EACCES": 57,
+        "ENOENT": 30
+      },
+      "device_IO_operations": {
+        "/dev/null": 8,
+        "/dev/nvidiactl": 63,
+        "/dev/nvidia0": 11,
+        "/dev/nvidia1": 21,
+        "/dev/nvidia2": 11,
+        "/dev/nvidia3": 11,
+        "/dev/nvidia4": 11,
+        "/dev/nvidia5": 11,
+        "/dev/nvidia6": 11,
+        "/dev/nvidia7": 11,
+        "/dev/nvidia-uvm": 5
+      },
+      "coverage": "narrow file/write/mmap trace; not all ioctls or whole-host audit",
+      "name": "write01.strace"
+    },
+    {
+      "sha256": "daf3069cd43fa1565b13e5f4c479ff0ebaecd2c4932cb4d449e71e1c54388dc0",
+      "counts": {
+        "openat": 1,
+        "inside": 9,
+        "write": 8
+      },
+      "outside_successful_file_mutations": [],
+      "unknown": [],
+      "pending": {},
+      "denied": {},
+      "device_IO_operations": {},
+      "coverage": "narrow file/write/mmap trace; not all ioctls or whole-host audit",
+      "name": "cpu-check.strace"
+    },
+    {
+      "sha256": "acc1dc535e95f1d0cd1b6e023c0fb186712b17f5b51fc518dcdc58f451562794",
+      "counts": {
+        "openat": 7,
+        "inside": 13,
+        "write": 7,
+        "unlink": 1,
+        "mkdir": 1,
+        "rename": 1
+      },
+      "outside_successful_file_mutations": [],
+      "unknown": [],
+      "pending": {},
+      "denied": {
+        "EEXIST": 1
+      },
+      "device_IO_operations": {
+        "/dev/null": 4
+      },
+      "coverage": "narrow file/write/mmap trace; not all ioctls or whole-host audit",
+      "name": "cpu-check02.strace"
+    }
+  ],
+  "identity_raw_verified": true,
+  "released_lifetimes": 9,
+  "cache_postmatch": 54,
+  "environment_metadata_postmatch": 78,
+  "SSH_and_CPU_exit_verified": true,
+  "root_did_not_remotely_operate": true,
+  "limitations": [
+    "trace parser is reused after source review, not an independent implementation",
+    "no all-parent/ioctl/whole-host audit",
+    "transport helper applies credential replacement to binary stdout; no corruption found because all byte hashes match; next retrieval must use untouched binary streams"
+  ]
+}

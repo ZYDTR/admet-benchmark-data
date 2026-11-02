@@ -1,0 +1,878 @@
+[
+  {
+    "direction_id": "D-SCALE",
+    "linked_issues": [
+      "ISS-NUMERIC-15",
+      "ISS-CACHE-16"
+    ],
+    "rationale": "极小但未过1e-8阈值的分母放大罕见维度；需要直接干预对照。",
+    "evidence_refs": [
+      "N18",
+      "N19",
+      "N26",
+      "EXT-STANDARD"
+    ],
+    "counterevidence": "缩放不是已证原因；分母下限不是输出边界；过大下限可丢失信号。",
+    "candidate_models_or_modules": [
+      "chemeleon",
+      "MLP256"
+    ],
+    "parameters": {
+      "legacy_epsilon": 1e-08,
+      "denominator_floor": [
+        0.001,
+        0.01
+      ],
+      "legacy_low_std_replacement": 1.0
+    },
+    "combination_constraints": "先legacy_d再max；常数维保持1；禁止同时改dropout/loss；当前六任务不将1e-5列有信息的LD50候选。",
+    "search_method": "两个幅度共同seed；F001在stress任务预先固定seed46，不根据valid择优。",
+    "configuration_count_or_counting_rule": "6×2×2=24 floors; stress F001 seed46=2; large extra15×1×2=30 floors; shared controls separately counted.",
+    "seeds": [
+      44,
+      45,
+      46
+    ],
+    "estimated_run_count": 56,
+    "cost_assumptions": "共享身份匹配raw缓存；每头成本须实测；新底座编码/资产/授权成本未知；本方向不叠加进入三档预算，除非budget-scenarios明确引用。",
+    "readiness": "new_code",
+    "priority": "high",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D-SEED",
+    "linked_issues": [
+      "ISS-SEED-17",
+      "ISS-VALID-ADAPT-04"
+    ],
+    "rationale": "LD50配对差方向反转，两seed不能稳定估计效果。",
+    "evidence_refs": [
+      "N06",
+      "N07",
+      "CALC-SCORES"
+    ],
+    "counterevidence": "加seed不制造独立分子验证集。",
+    "candidate_models_or_modules": [
+      "chemeleon",
+      "H0",
+      "F001"
+    ],
+    "parameters": {
+      "model_seeds": [
+        44,
+        45,
+        46
+      ],
+      "later_seed": [
+        47
+      ]
+    },
+    "combination_constraints": "seed46支持现有runner，47需扩枚举和fixture；不事后选择最好的seed。",
+    "search_method": "stress两任务H0/F001共同seed46；其它seed确认在conditional中由主控登记。",
+    "configuration_count_or_counting_rule": "2 tasks × 2 configs × seed46=4; 44/45 completed or elsewhere shared, not added again.",
+    "seeds": [
+      46
+    ],
+    "estimated_run_count": 4,
+    "cost_assumptions": "共享身份匹配raw缓存；每头成本须实测；新底座编码/资产/授权成本未知；本方向不叠加进入三档预算，除非budget-scenarios明确引用。",
+    "readiness": "config_only/new_code_by_branch",
+    "priority": "high",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D-BREADTH",
+    "linked_issues": [
+      "ISS-RUNNER-21TASK-02",
+      "ISS-DATA-PROFILE-03"
+    ],
+    "rationale": "不让六任务调参遮蔽全22覆盖；低相关清除/半衰期/VDSS与小正类任务需单独策略。",
+    "evidence_refs": [
+      "H-R17-prior-S-764562710384d47e",
+      "N31",
+      "E-COMMON"
+    ],
+    "counterevidence": "Mini22多因素混杂，不能把不同指标原值排统一分数。",
+    "candidate_models_or_modules": [
+      "chemeleon"
+    ],
+    "parameters": {
+      "tasks": [
+        "ames",
+        "bioavailability_ma",
+        "clearance_microsome_az",
+        "cyp2c9_substrate_carbonmangels",
+        "cyp2c9_veith",
+        "cyp2d6_substrate_carbonmangels",
+        "cyp3a4_substrate_carbonmangels",
+        "cyp3a4_veith",
+        "dili",
+        "half_life_obach",
+        "herg",
+        "hia_hou",
+        "pgp_broccatelli",
+        "ppbr_az",
+        "vdss_lombardo"
+      ],
+      "configs": [
+        "H0",
+        "F001"
+      ],
+      "split_seed": 43
+    },
+    "combination_constraints": "Caco2保留历史六项，不重复投放已有配置；每任务两配置共同seed。",
+    "search_method": "large保留15个完整任务对照，可在medium后主控逐块释放。",
+    "configuration_count_or_counting_rule": "15×2×2=60新增；medium28共88；Caco2零新增。",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 60,
+    "cost_assumptions": "共享身份匹配raw缓存；每头成本须实测；新底座编码/资产/授权成本未知；本方向不叠加进入三档预算，除非budget-scenarios明确引用。",
+    "readiness": "config_only/new_code_by_branch",
+    "priority": "medium",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D-NUMERIC64",
+    "linked_issues": [
+      "ISS-NUMERIC-15"
+    ],
+    "rationale": "区分稀有维度真实分布与float32统计舍入。",
+    "evidence_refs": [
+      "N19",
+      "N26",
+      "CALC-FEATURE"
+    ],
+    "counterevidence": "提高统计精度本身不保证消除真实低方差或外推。",
+    "candidate_models_or_modules": [
+      "scaler"
+    ],
+    "parameters": {
+      "accumulator_dtype": [
+        "float32",
+        "float64"
+      ],
+      "ddof": [
+        0
+      ]
+    },
+    "combination_constraints": "先仅准入盲特征算术，固定raw数组；只变累计精度，不改floor/中心策略。",
+    "search_method": "每维μ/σ相对差和极端维度重现；再决定是否登记训练。",
+    "configuration_count_or_counting_rule": "6 tasks × 4 partitions × 2 arithmetic policies, 0 fits; later 2 tasks ×1 new policy×2 seeds=4 contingent.",
+    "seeds": [],
+    "estimated_run_count": 0,
+    "cost_assumptions": "共享身份匹配raw缓存；每头成本须实测；新底座编码/资产/授权成本未知；本方向不叠加进入三档预算，除非budget-scenarios明确引用。",
+    "readiness": "new_code",
+    "priority": "high",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D-LOWVAR",
+    "linked_issues": [
+      "ISS-NUMERIC-15"
+    ],
+    "rationale": "对罕见维度使用单位分母或置零，可反证极端小分母依赖。",
+    "evidence_refs": [
+      "N18",
+      "N26"
+    ],
+    "counterevidence": "稀有激活可能含有真实信号，置零不等于清洗原行；需新特征身份。",
+    "candidate_models_or_modules": [
+      "scaler"
+    ],
+    "parameters": {
+      "threshold": [
+        0.0001,
+        0.001
+      ],
+      "policy": [
+        "denominator=1 when std<threshold",
+        "mask transformed dimension to zero"
+      ]
+    },
+    "combination_constraints": "每个候选只变低方差policy/threshold组合，作为明确bundle；不删除样本、标签。",
+    "search_method": "LD50和Sol先筛，train-only阈值；与F001同seed比较但明确非一因子对照。",
+    "configuration_count_or_counting_rule": "2 policies×2 thresholds=4候选/任务；2tasks×4×2seeds=16 contingent; not all scheduled.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 16,
+    "cost_assumptions": "共享身份匹配raw缓存；每头成本须实测；新底座编码/资产/授权成本未知；本方向不叠加进入三档预算，除非budget-scenarios明确引用。",
+    "readiness": "new_code",
+    "priority": "medium",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D-ROBUST",
+    "linked_issues": [
+      "ISS-NUMERIC-15"
+    ],
+    "rationale": "提供不依赖均值/标准差的对照，而非预设robust必优。",
+    "evidence_refs": [
+      "EXT-ROBUST",
+      "N18"
+    ],
+    "counterevidence": "稀疏激活的IQR可能为0；中位数缩放也可能放大罕见维度。",
+    "candidate_models_or_modules": [
+      "scaler"
+    ],
+    "parameters": {
+      "quantile_range": [
+        [
+          25,
+          75
+        ],
+        [
+          10,
+          90
+        ]
+      ],
+      "denominator_floor": 0.001,
+      "zero_iqr_replacement": 1.0
+    },
+    "combination_constraints": "fit-only median/IQR；定义linear quantile及zero处理；属于中心+分母bundle。",
+    "search_method": "两stress任务，先算术诊断，再训练候选。",
+    "configuration_count_or_counting_rule": "2 quantile policies×2tasks×2seeds=8 contingent.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 8,
+    "cost_assumptions": "共享身份匹配raw缓存；每头成本须实测；新底座编码/资产/授权成本未知；本方向不叠加进入三档预算，除非budget-scenarios明确引用。",
+    "readiness": "new_code",
+    "priority": "medium",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D-NORMALIZE",
+    "linked_issues": [
+      "ISS-NUMERIC-15"
+    ],
+    "rationale": "检验绝对幅值与方向信息；与fit-wise标准化区别。",
+    "evidence_refs": [
+      "N26",
+      "N27"
+    ],
+    "counterevidence": "rowL2损失幅值信息；只中心化保留量纲差异；不能假定保持所有化学意义。",
+    "candidate_models_or_modules": [
+      "scaler"
+    ],
+    "parameters": {
+      "policies": [
+        "identity raw",
+        "fit mean centering only",
+        "raw row L2 with norm_floor=1e-8",
+        "legacy z then clip features at +/-10",
+        "legacy z then clip features at +/-30"
+      ]
+    },
+    "combination_constraints": "只裁剪表示不是预测/标签；每个policy独立，不联合floor/loss；原行全部保留。",
+    "search_method": "stress两任务先做盲分布/范数，再择预登记分支。",
+    "configuration_count_or_counting_rule": "5新policy×2tasks×2seeds=20 contingent; gate not authorized.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 20,
+    "cost_assumptions": "共享身份匹配raw缓存；每头成本须实测；新底座编码/资产/授权成本未知；本方向不叠加进入三档预算，除非budget-scenarios明确引用。",
+    "readiness": "new_code",
+    "priority": "medium",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D-CAPACITY",
+    "linked_issues": [
+      "ISS-HEAD-18"
+    ],
+    "rationale": "检查2048×256大头在小样本任务的方差/表征需求。",
+    "evidence_refs": [
+      "N26",
+      "E-DATAIO",
+      "CALC-SCORES"
+    ],
+    "counterevidence": "减容量可能欠拟合；改变宽度也改变初始化参数数，比较的是容量策略。",
+    "candidate_models_or_modules": [
+      "MLP",
+      "linear head"
+    ],
+    "parameters": {
+      "hidden_dim": [
+        128,
+        256,
+        512
+      ],
+      "additional": [
+        "linear 2048->1",
+        "2048->256->128->1 ReLU dropout0.1"
+      ]
+    },
+    "combination_constraints": "256为共享已有基线，128/512只变hidden_dim；linear/deep为new_code bundle；不同时改lr。",
+    "search_method": "BBB、hep、CYP先screen；排序后共同seed确认。",
+    "configuration_count_or_counting_rule": "2 widths×3tasks×2seeds=12; 2 new architectures×3×2=12; baseline counted elsewhere.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 24,
+    "cost_assumptions": "共享身份匹配raw缓存；每头成本须实测；新底座编码/资产/授权成本未知；本方向不叠加进入三档预算，除非budget-scenarios明确引用。",
+    "readiness": "config_only_for_width;new_code_for_architecture",
+    "priority": "medium",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D-OPT",
+    "linked_issues": [
+      "ISS-HEAD-18"
+    ],
+    "rationale": "检验优化速度/强度而非把dropout排名当全局答案。",
+    "evidence_refs": [
+      "N23",
+      "E-DATAIO",
+      "EXT-ADAMW"
+    ],
+    "counterevidence": "AdamW一般性证据不证明本任务学习率更优；lr和wd有交互但首轮不做全积。",
+    "candidate_models_or_modules": [
+      "AdamW head"
+    ],
+    "parameters": {
+      "lr": [
+        0.0001,
+        0.0003,
+        0.0005,
+        0.001
+      ],
+      "weight_decay": [
+        1e-05,
+        0.0001,
+        0.001
+      ]
+    },
+    "combination_constraints": "lr单轴3新增+wd单轴2新增，基线共用；β/epsilon固定实际默认。",
+    "search_method": "CYP优先低lr，lipo中lr；只有主效应稳定后做最多2个交互bundle。",
+    "configuration_count_or_counting_rule": "5new configs×2tasks×2seeds=20, not 4×3 Cartesian.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 20,
+    "cost_assumptions": "共享身份匹配raw缓存；每头成本须实测；新底座编码/资产/授权成本未知；本方向不叠加进入三档预算，除非budget-scenarios明确引用。",
+    "readiness": "config_only",
+    "priority": "medium",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D-REG",
+    "linked_issues": [
+      "ISS-SEED-17",
+      "ISS-HEAD-18"
+    ],
+    "rationale": "增加可分辨的正则对照，不普推H1。",
+    "evidence_refs": [
+      "N06",
+      "N26",
+      "E-DATAIO"
+    ],
+    "counterevidence": "H1在CYP/Sol两seed均差；过强正则和LayerNorm可能抹去幅值。",
+    "candidate_models_or_modules": [
+      "MLP"
+    ],
+    "parameters": {
+      "dropout": [
+        0,
+        0.1,
+        0.3,
+        0.5
+      ],
+      "head_layernorm": [
+        false,
+        true
+      ]
+    },
+    "combination_constraints": "0.1/0.3当前六任务已有44/45，不新增计数；0.5/LayerNorm需要新代码且各自独立。",
+    "search_method": "只在分布门槛后选任务，不把未定task放next_experiments。",
+    "configuration_count_or_counting_rule": "for six tasks: drop0=12fits; drop0.5=12; head LN=12 contingent; shared0.1/.3 excluded.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 36,
+    "cost_assumptions": "共享身份匹配raw缓存；每头成本须实测；新底座编码/资产/授权成本未知；本方向不叠加进入三档预算，除非budget-scenarios明确引用。",
+    "readiness": "config_only_for_0;new_code_for_0.5_or_LN",
+    "priority": "medium",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D-LOSS",
+    "linked_issues": [
+      "ISS-HEAD-18",
+      "ISS-TARGET-19"
+    ],
+    "rationale": "比较MSE尾部敏感性与任务损失对齐，不修改原标签。",
+    "evidence_refs": [
+      "N23",
+      "N26",
+      "EXT-HUBER"
+    ],
+    "counterevidence": "Huber/MAE也不能修复输入身份；Spearman非可微不直接伪称loss。",
+    "candidate_models_or_modules": [
+      "regression head"
+    ],
+    "parameters": {
+      "loss": [
+        "MSE",
+        "L1",
+        "Huber"
+      ],
+      "huber_delta": [
+        0.5,
+        1.0,
+        2.0
+      ],
+      "target_scale": "fit-only standardized Y"
+    },
+    "combination_constraints": "Huber3和L1共4新配置，保持原native early stop；delta为标准化Y单位，不是原Y常数。",
+    "search_method": "LD50/Sol/hep各2seed，先delta1，后续非默认全跑。",
+    "configuration_count_or_counting_rule": "4new losses×3tasks×2seeds=24; delta1 subgroup=6.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 24,
+    "cost_assumptions": "共享身份匹配raw缓存；每头成本须实测；新底座编码/资产/授权成本未知；本方向不叠加进入三档预算，除非budget-scenarios明确引用。",
+    "readiness": "new_code",
+    "priority": "medium",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D-CLASSLOSS",
+    "linked_issues": [
+      "ISS-HEAD-18",
+      "ISS-METRIC-PARITY-11"
+    ],
+    "rationale": "在AP任务检验类不平衡优化，但不要改评价定义。",
+    "evidence_refs": [
+      "N23",
+      "H-R17-prior-S-764562710384d47e"
+    ],
+    "counterevidence": "加权BCE/焦点loss可损害概率校准，AP不等于概率校准；小正类验证非常不稳。",
+    "candidate_models_or_modules": [
+      "classification head"
+    ],
+    "parameters": {
+      "pos_weight": [
+        "1",
+        "fit_neg/fit_pos"
+      ],
+      "focal_gamma": [
+        1,
+        2
+      ],
+      "focal_alpha": "0.5"
+    },
+    "combination_constraints": "fit-only类频率；不读valid行Y，不据valid阳性个体加权；加权BCE与focal分开。",
+    "search_method": "CYP2D6 veith优先；substrate待内部group split两类完整。",
+    "configuration_count_or_counting_rule": "3new loss policies×1task×2seeds=6; future extension explicit registration.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 6,
+    "cost_assumptions": "共享身份匹配raw缓存；每头成本须实测；新底座编码/资产/授权成本未知；本方向不叠加进入三档预算，除非budget-scenarios明确引用。",
+    "readiness": "new_code",
+    "priority": "medium",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D-STOP",
+    "linked_issues": [
+      "ISS-CACO2-MONITOR-01",
+      "ISS-SEED-17"
+    ],
+    "rationale": "原生指标早停已实现，但小stop集和maxepochs/耐心可能敏感。",
+    "evidence_refs": [
+      "N23",
+      "E-REPAIR-ISSUES"
+    ],
+    "counterevidence": "改epochs/patience不是历史同一配置；较长训练不能自动计作同一control。",
+    "candidate_models_or_modules": [
+      "trainer"
+    ],
+    "parameters": {
+      "single_axis_changes": [
+        {
+          "patience": 12
+        },
+        {
+          "patience": 16
+        },
+        {
+          "max_epochs": 100
+        },
+        {
+          "min_delta": 1e-06
+        },
+        {
+          "min_delta": 1e-05
+        }
+      ],
+      "monitor_alternative": "train-only stop loss vs current task metric, separate candidate"
+    },
+    "combination_constraints": "每项仅改一字段；loss monitor是第6候选；在样本足够的split上比；不把Caco2三seed推到所有任务。",
+    "search_method": "先CYP/hep用stop轨迹诊断，再controller选择。",
+    "configuration_count_or_counting_rule": "6new policies×2tasks×2seeds=24 potential; not auto authorized.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 24,
+    "cost_assumptions": "共享身份匹配raw缓存；每头成本须实测；新底座编码/资产/授权成本未知；本方向不叠加进入三档预算，除非budget-scenarios明确引用。",
+    "readiness": "new_code",
+    "priority": "medium",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D-SPLIT",
+    "linked_issues": [
+      "ISS-VALID-ADAPT-04",
+      "ISS-DATA-PROFILE-03"
+    ],
+    "rationale": "种子波动和分子抽样波动不是同一不确定性来源。",
+    "evidence_refs": [
+      "E-DATAIO",
+      "EXT-SELECTION"
+    ],
+    "counterevidence": "更多内部split仍受历史模型选择影响，不是全新外部验证；单候选跨split不能比较排名。",
+    "candidate_models_or_modules": [
+      "splitter",
+      "scaler",
+      "trainer"
+    ],
+    "parameters": {
+      "group_split_seeds": [
+        43,
+        53,
+        63
+      ],
+      "stop_fraction": [
+        0.1
+      ],
+      "outer_group_folds": 5,
+      "inner_group_folds": 3
+    },
+    "combination_constraints": "按原Drug分组，不删除重复；可另做canonical/scaffold分组仅改变内部归属的bundle，原官方分区不变；每fold重拟合全部预处理。",
+    "search_method": "先固定两candidate×新增53/63×2modelseeds；更昂贵nestedCV仅预算批准后。",
+    "configuration_count_or_counting_rule": "2configs×2newsplit×2modelseeds=8/task; 5outer×3inner×2configs×2seeds=60inner fits/task +10outer refits (70 total); no inferred independence from reusedvalid.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": {
+      "per_task_split_study": 8,
+      "nested_inner_fits_per_task": 60,
+      "nested_outer_refits_per_task": 10
+    },
+    "cost_assumptions": "共享身份匹配raw缓存；每头成本须实测；新底座编码/资产/授权成本未知；本方向不叠加进入三档预算，除非budget-scenarios明确引用。",
+    "readiness": "new_code",
+    "priority": "medium",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D-ENSEMBLE",
+    "linked_issues": [
+      "ISS-ENSEMBLE-20",
+      "ISS-VALID-ADAPT-04"
+    ],
+    "rationale": "冻结不同seed/底座预测可减少方差，需预定义权重。",
+    "evidence_refs": [
+      "N06",
+      "N08",
+      "EXT-MOLFORMER"
+    ],
+    "counterevidence": "相关错误或同向极值可让平均更差；均值收益不能由单模型分数直接算出。",
+    "candidate_models_or_modules": [
+      "frozen predictions"
+    ],
+    "parameters": {
+      "weights": [
+        [
+          0.5,
+          0.5
+        ],
+        [
+          0.3333333333333333,
+          0.3333333333333333,
+          0.3333333333333333
+        ]
+      ],
+      "learned_weights": "nonnegative simplex from train-only out-of-fold predictions"
+    },
+    "combination_constraints": "只融合同task/row_index/native scale；分类融合概率而非标签；不得用validY拟合权重/clip阈值。",
+    "search_method": "先blind尾部/相关性后请求授权评分；若需要OOF则登记额外fits，不称零成本。",
+    "configuration_count_or_counting_rule": "fixed average=0new model fits but new aggregation/scoring authorization; OOF e.g3components×5fold=15fits/task.",
+    "seeds": [],
+    "estimated_run_count": {
+      "fixed_average_new_fits": 0,
+      "example_oof_fits_per_task": 15
+    },
+    "cost_assumptions": "共享身份匹配raw缓存；每头成本须实测；新底座编码/资产/授权成本未知；本方向不叠加进入三档预算，除非budget-scenarios明确引用。",
+    "readiness": "new_code",
+    "priority": "medium",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D-MINIMOL",
+    "linked_issues": [
+      "ISS-PRETRAIN-SOURCE-14"
+    ],
+    "rationale": "512维不同预训练表示可提供互补性。",
+    "evidence_refs": [
+      "N11",
+      "EXT-MINIMOL"
+    ],
+    "counterevidence": "上游可用不修复本地404/idle准备；预训练来源与checkpoint许可需独立准入。",
+    "candidate_models_or_modules": [
+      "minimol"
+    ],
+    "parameters": {
+      "embedding": "official 512-dimensional output",
+      "head_hidden_dim": [
+        128,
+        256
+      ],
+      "dropout": [
+        0.1
+      ],
+      "model_seeds": [
+        44,
+        45
+      ]
+    },
+    "combination_constraints": "先只冻结，不从公开数据取更多标签；固定commit/checkpoint/token/图接口、invalid处理；不立即列训练矩阵。",
+    "search_method": "资产先行；正式准入后预登记一个stress和一个分类任务，不能执行方自选。",
+    "configuration_count_or_counting_rule": "2head configs×2named-later tasks×2seeds=8 maximum contingent; 0 scheduled.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 8,
+    "cost_assumptions": "共享身份匹配raw缓存；每头成本须实测；新底座编码/资产/授权成本未知；本方向不叠加进入三档预算，除非budget-scenarios明确引用。",
+    "readiness": "blocked_assets",
+    "priority": "medium",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D-MOLFORMER",
+    "linked_issues": [
+      "ISS-PRETRAIN-SOURCE-14"
+    ],
+    "rationale": "SMILES序列表示可与图fingerprint不同。",
+    "evidence_refs": [
+      "N11",
+      "EXT-MOLFORMER"
+    ],
+    "counterevidence": "仅10pct，不能借用fullXL成绩；remote code和transformers兼容需要审计，不自动升级。",
+    "candidate_models_or_modules": [
+      "molformer_10pct"
+    ],
+    "parameters": {
+      "pooling": "official pooler_output",
+      "head_hidden_dim": [
+        128,
+        256
+      ],
+      "dropout": [
+        0.1
+      ],
+      "batch_embedding_candidates": [
+        8,
+        16
+      ]
+    },
+    "combination_constraints": "embedding batch只是无参数更新吞吐校准，不得悄悄截断/删长SMILES；encoder params/buffers全冻。",
+    "search_method": "先静态tokenizer/长度覆盖/版本fixture；后续8fit上限需具体化。",
+    "configuration_count_or_counting_rule": "2heads×2registered-later tasks×2seeds=8; shared encoding once per authorized partition.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 8,
+    "cost_assumptions": "共享身份匹配raw缓存；每头成本须实测；新底座编码/资产/授权成本未知；本方向不叠加进入三档预算，除非budget-scenarios明确引用。",
+    "readiness": "blocked_assets",
+    "priority": "medium",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D-OTHER-ASSETS",
+    "linked_issues": [
+      "ISS-PRETRAIN-SOURCE-14"
+    ],
+    "rationale": "保留已调研不同表示的选择权，不把存在仓库当ready。",
+    "evidence_refs": [
+      "N11",
+      "EXT-KPGT",
+      "EXT-UNIMOL",
+      "EXT-SMITED",
+      "EXT-MOLE"
+    ],
+    "counterevidence": "MolE下载段仍TODO；UniMol构象/裁剪，KPGT额外特征和SMI-TED尺寸成本未闭合。",
+    "candidate_models_or_modules": [
+      "kpgt",
+      "unimol",
+      "smi_ted",
+      "mole"
+    ],
+    "parameters": {
+      "kpgt": "one pinned pretrained base, frozen latent extraction, no downstream pretrained heads",
+      "unimol": "one pinned molecular checkpoint, conformer policy1 then optional3 only after full-row coverage",
+      "smi_ted": "single frozen encoder variant, no generative augmentation",
+      "mole": "checkpoint release chain first; no substitute same-name model"
+    },
+    "combination_constraints": "一次只准入一个资产；模型来源、license、预训练重叠风险独立登记；不访问作者额外下游labels。",
+    "search_method": "零fitasset review后固定2任务×1head×2seeds；另一资产不得自动追加。",
+    "configuration_count_or_counting_rule": "4fits per accepted asset; max4assets=16 only after separate authorizations, not in main matrix.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 16,
+    "cost_assumptions": "共享身份匹配raw缓存；每头成本须实测；新底座编码/资产/授权成本未知；本方向不叠加进入三档预算，除非budget-scenarios明确引用。",
+    "readiness": "blocked_assets",
+    "priority": "low",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D-CLASSICAL",
+    "linked_issues": [
+      "ISS-PRETRAIN-SOURCE-14",
+      "ISS-HEAD-18"
+    ],
+    "rationale": "低成本固定描述符/指纹可测预训练表征是否必要。",
+    "evidence_refs": [
+      "N11",
+      "EXT-RDKIT"
+    ],
+    "counterevidence": "不同特征与头同时变是bundle；无已验收本地包。",
+    "candidate_models_or_modules": [
+      "classical_features"
+    ],
+    "parameters": {
+      "Morgan_radius": [
+        2,
+        3
+      ],
+      "nBits": [
+        2048
+      ],
+      "regression_ridge_alpha": [
+        0.1,
+        1,
+        10
+      ],
+      "classification_logistic_C": [
+        0.1,
+        1,
+        10
+      ]
+    },
+    "combination_constraints": "只从官方原输入算特征；train-onlyfit；固定split；不得外部查答案或数据增强。",
+    "search_method": "先一个任务作预登记轴向筛；任务按medium结论由主控确定。",
+    "configuration_count_or_counting_rule": "2fingerprints×3regularization=6 configs/task; deterministic solver seed44, 6 fits/task; not a blind full22 sweep.",
+    "seeds": [
+      44
+    ],
+    "estimated_run_count": 6,
+    "cost_assumptions": "共享身份匹配raw缓存；每头成本须实测；新底座编码/资产/授权成本未知；本方向不叠加进入三档预算，除非budget-scenarios明确引用。",
+    "readiness": "blocked_assets",
+    "priority": "medium",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D-SCRATCH-TABULAR",
+    "linked_issues": [
+      "ISS-PRETRAIN-SOURCE-14"
+    ],
+    "rationale": "区分非预训练新网络与表格预测器角色，作为不同预算研究。",
+    "evidence_refs": [
+      "N11",
+      "EXT-CHEMPROP",
+      "EXT-TABPFN"
+    ],
+    "counterevidence": "scratch图网络不是冻结encoder比较；TabPFN2.6许可/版本/条件未核验，不能冒充分子资产已准入。",
+    "candidate_models_or_modules": [
+      "small_dmpnn_scratch",
+      "tabpfn26"
+    ],
+    "parameters": {
+      "scratch_hidden_dim": [
+        128,
+        256
+      ],
+      "scratch_depth": [
+        2,
+        3
+      ],
+      "scratch_dropout": [
+        0.1
+      ],
+      "tabpfn26": "no scientific grid until exact version/license/capacity/label access reviewed"
+    },
+    "combination_constraints": "scratch仅train.Y、无外部学习；属于独立bundle且超出当前冻结底座首批；TabPFN不读取valid标签做上下文。",
+    "search_method": "研究储备；先审批角色和预算再登记真实task/config。",
+    "configuration_count_or_counting_rule": "scratch2width×2depth×2seeds=8/task; TabPFN pending, 0 scheduled.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": {
+      "scratch_potential_per_task": 8,
+      "tabpfn_scheduled": 0
+    },
+    "cost_assumptions": "共享身份匹配raw缓存；每头成本须实测；新底座编码/资产/授权成本未知；本方向不叠加进入三档预算，除非budget-scenarios明确引用。",
+    "readiness": "blocked_assets",
+    "priority": "low",
+    "scope_status": "outside_current_execution_scope_research_only"
+  },
+  {
+    "direction_id": "D-BATCH",
+    "linked_issues": [
+      "ISS-HEAD-18",
+      "ISS-TURNAROUND-13"
+    ],
+    "rationale": "batch大小影响每轮更新次数、梯度噪声和内存；在缩放机制后独立研究。",
+    "evidence_refs": [
+      "N23",
+      "N17",
+      "E-TIMING"
+    ],
+    "counterevidence": "现有证据没有证明batch128不佳；等epoch与等更新数不是同一估计目标。",
+    "candidate_models_or_modules": [
+      "CheMeleon frozen features + current MLP"
+    ],
+    "parameters": {
+      "batch_size": [
+        64,
+        128,
+        256
+      ],
+      "model_seeds": [
+        44,
+        45
+      ],
+      "max_epochs": 50,
+      "patience": 8
+    },
+    "combination_constraints": "每次只改batch；不同时缩放lr；若另外等更新数重设计则标bundle并单独控制。",
+    "search_method": "以128共同对照，64/256轴向筛，再决定是否做等更新数反证。",
+    "configuration_count_or_counting_rule": "2new batch values ×2seeds=4new fits/task; existing128 control reused only under exact version equivalence. Task selected and registered after medium; not in primary matrix.",
+    "seeds": [
+      44,
+      45
+    ],
+    "estimated_run_count": 4,
+    "cost_assumptions": "缓存可共享；不同batch的每头时间和内存须实测，不线性假定。",
+    "readiness": "new_code",
+    "priority": "low",
+    "scope_status": "proposal_only"
+  }
+]

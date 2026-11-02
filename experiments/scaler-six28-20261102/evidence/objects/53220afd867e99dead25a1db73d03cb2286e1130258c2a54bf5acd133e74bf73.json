@@ -1,0 +1,107 @@
+[
+  {
+    "gate_id": "G-ID",
+    "title": "输入及缓存身份",
+    "work": "精确核对 task/split/row_index/原Drug/原行数、checkpoint、encoder source、mask、dtype、shape。当前18raw缓存来源N12；禁止加载归档pickle。",
+    "acceptance": "任一行、输入hash、参数或buffer不符即停止；不能把同shape当同内容。",
+    "training_fit_count": 0,
+    "dependencies": [],
+    "evidence_refs": [
+      "N12",
+      "N22",
+      "N31"
+    ],
+    "output_location": "next_batch_guide.md 工作包A–D and independently versioned preparation acceptance report"
+  },
+  {
+    "gate_id": "G-SCALER",
+    "title": "缩放新分支",
+    "work": "保留legacy低std→1，再施加0.001/0.01分母下限；每split只fit内部fit；新增feature_scaler是拟定接口，不是现有枚举。",
+    "acceptance": "独立fixture和CPU无更新检查通过；F001/F010不能声称已有生产实现。",
+    "training_fit_count": 0,
+    "dependencies": [
+      "G-ID"
+    ],
+    "evidence_refs": [
+      "N24",
+      "N26",
+      "N18",
+      "N19"
+    ],
+    "output_location": "next_batch_guide.md 工作包A–D and independently versioned preparation acceptance report"
+  },
+  {
+    "gate_id": "G-CACHE",
+    "title": "缓存迁移",
+    "work": "旧key耦合heads/cache/data_io源码；生成旧→新key的显式等价映射及raw数组hash，不跳过原校验。",
+    "acceptance": "任一raw encoder函数或输入变更则不允许等价迁移；另请主控批准重新编码。",
+    "training_fit_count": 0,
+    "dependencies": [
+      "G-ID"
+    ],
+    "evidence_refs": [
+      "N24",
+      "E-DATAIO",
+      "N27"
+    ],
+    "output_location": "next_batch_guide.md 工作包A–D and independently versioned preparation acceptance report"
+  },
+  {
+    "gate_id": "G-LEGACY",
+    "title": "历史对照等价",
+    "work": "新scaler实现加入后，legacy分支必须与原版具有相同源码行为、统计、初始头、批序和输出；不得无声改变旧控制。",
+    "acceptance": "不等价则停止受控比较；由主控重新登记对照和预算，不自动补训练。",
+    "training_fit_count": 0,
+    "dependencies": [
+      "G-ID"
+    ],
+    "evidence_refs": [
+      "N23",
+      "N24",
+      "N26"
+    ],
+    "output_location": "next_batch_guide.md 工作包A–D and independently versioned preparation acceptance report"
+  },
+  {
+    "gate_id": "G-METRIC",
+    "title": "尺度与早停",
+    "work": "生产监控任务原生指标；回归一次inverse；分类sigmoid连续概率；AP按分组并列阈值定义。",
+    "acceptance": "MAE原Y、Spearman平均秩、AUROC/AP概率；undefined不改0；strict min_delta=1e-7、patience8、reload best验证。",
+    "training_fit_count": 0,
+    "dependencies": [
+      "G-ID"
+    ],
+    "evidence_refs": [
+      "N21",
+      "N23",
+      "N28"
+    ],
+    "output_location": "next_batch_guide.md 工作包A–D and independently versioned preparation acceptance report"
+  },
+  {
+    "gate_id": "G-RESOURCE",
+    "title": "资源与合规",
+    "work": "保持监督与worker返回分离；无未授权海南操作、安装、推理/学习；运行失败如实保存。",
+    "acceptance": "监控unknown不能改pass；资源预算由主控另授。",
+    "training_fit_count": 0,
+    "dependencies": [],
+    "evidence_refs": [
+      "N09",
+      "E-FINAL-ACCEPT"
+    ],
+    "output_location": "next_batch_guide.md 工作包A–D and independently versioned preparation acceptance report"
+  },
+  {
+    "gate_id": "G-AUTH",
+    "title": "授权与范围",
+    "work": "全部proposal_only，训练/推理及追加任务需单独授权；执行端盲valid/test。",
+    "acceptance": "本研究输出不作为执行令；禁止逐行validY/残差。",
+    "training_fit_count": 0,
+    "dependencies": [],
+    "evidence_refs": [
+      "USER-PROMPT",
+      "USER-RECOVERY"
+    ],
+    "output_location": "next_batch_guide.md 工作包A–D and independently versioned preparation acceptance report"
+  }
+]

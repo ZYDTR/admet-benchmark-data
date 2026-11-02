@@ -1,0 +1,102 @@
+[
+  {
+    "sha256": "e6360069d3987093889eb98e554ab2b0f5065b72d632deda05a71d68345b737b",
+    "counts": {
+      "openat": 2436,
+      "inside": 17237,
+      "write": 7004,
+      "unlink": 60,
+      "mkdir": 1790,
+      "rename": 1555,
+      "symlink": 57,
+      "mmap": 51,
+      "writev": 4688,
+      "unlinkat": 1,
+      "rmdir": 1
+    },
+    "outside_successful_file_mutations": [],
+    "unknown": [],
+    "pending": {},
+    "denied": {
+      "EEXIST": 1678,
+      "EACCES": 57,
+      "ENOENT": 30
+    },
+    "device_IO_operations": {
+      "/dev/null": 8,
+      "/dev/nvidiactl": 63,
+      "/dev/nvidia0": 11,
+      "/dev/nvidia1": 21,
+      "/dev/nvidia2": 11,
+      "/dev/nvidia3": 11,
+      "/dev/nvidia4": 11,
+      "/dev/nvidia5": 11,
+      "/dev/nvidia6": 11,
+      "/dev/nvidia7": 11,
+      "/dev/nvidia-uvm": 5
+    },
+    "coverage": "narrow file/write/mmap trace; not all ioctls or whole-host audit",
+    "name": "write01.strace",
+    "raw_tail": [
+      "process-e501309fc65d 1793585869.218054 write(63<task-storage://admet/scaler-six28-20261102/raw/study-complete.json.tmp>, \"{\\n  \\\"at\\\": \\\"2026-11-02T02:17:49.214167+00:00\\\",\\n  \\\"completed\\\": [\\n    \\\"hainan-scaler-lipophilicity_astrazeneca-f001-s44-20261102\\\",\\n    \\\"hainan-scaler-lipophilicity_astrazeneca-f001-s45-20261102\\\",\\n    \\\"hainan-scaler-lipophilicity_astrazeneca-f010-s44-20261102\\\",\\n    \\\"hainan-scaler-lipophilicity_astrazeneca-f010-s45-20261102\\\",\\n    \\\"hainan-scaler-bbb_martins-f001-s44-20261102\\\",\\n    \\\"hainan-scaler-bbb_martins-f001-s45-20261102\\\",\\n    \\\"hainan-scaler-bbb_martins-f010-s44-20261102\\\",\\n    \\\"hainan-scaler-bbb_martins-f010-s45-20261102\\\",\\n    \\\"hainan-scaler-cyp2d6_veith-f001-s44-20261102\\\",\\n    \\\"hainan-scaler-cyp2d6_veith-f001-s45-20261102\\\",\\n    \\\"hainan-scaler-cyp2d6_veith-f010-s44-20261102\\\",\\n    \\\"hainan-scaler-cyp2d6_veith-f010-s45-20261102\\\",\\n    \\\"hainan-scaler-clearance_hepatocyte_az-f001-s44-20261102\\\",\\n    \\\"hainan-scaler-clearance_hepatocyte_az-f001-s45-20261102\\\",\\n    \\\"hainan-scaler-clearance_hepatocyte_az-f010-s44-20261102\\\",\\n    \\\"hainan-scaler-clearance_hepatocyte_az-f010-s45-20261102\\\",\\n    \\\"hainan-scaler-ld50_zhu-f001-s44-\"..., 1880) = 1880",
+      "process-e501309fc65d 1793585869.218283 rename(\"task-storage://admet/scaler-six28-20261102/raw/study-complete.json.tmp\", \"task-storage://admet/scaler-six28-20261102/raw/study-complete.json\") = 0",
+      "process-e501309fc65d 1793585869.219458 newfstatat(AT_FDCWD<task-storage://admet/scaler-six28-20261102>, \"task-storage://admet/scaler-six28-20261102/private/tmp/tmp4hl73bzn\", {st_mode=S_IFDIR|0700, st_size=4096, ...}, AT_SYMLINK_NOFOLLOW) = 0",
+      "process-e501309fc65d 1793585869.219556 openat(AT_FDCWD<task-storage://admet/scaler-six28-20261102>, \"task-storage://admet/scaler-six28-20261102/private/tmp/tmp4hl73bzn\", O_RDONLY|O_NONBLOCK|O_CLOEXEC) = 63<task-storage://admet/scaler-six28-20261102/private/tmp/tmp4hl73bzn>",
+      "process-e501309fc65d 1793585869.219833 unlinkat(63<task-storage://admet/scaler-six28-20261102/private/tmp/tmp4hl73bzn>, \"_remote_module_non_scriptable.py\", 0) = 0",
+      "process-e501309fc65d 1793585869.219952 rmdir(\"task-storage://admet/scaler-six28-20261102/private/tmp/tmp4hl73bzn\") = 0"
+    ]
+  },
+  {
+    "sha256": "daf3069cd43fa1565b13e5f4c479ff0ebaecd2c4932cb4d449e71e1c54388dc0",
+    "counts": {
+      "openat": 1,
+      "inside": 9,
+      "write": 8
+    },
+    "outside_successful_file_mutations": [],
+    "unknown": [],
+    "pending": {},
+    "denied": {},
+    "device_IO_operations": {},
+    "coverage": "narrow file/write/mmap trace; not all ioctls or whole-host audit",
+    "name": "cpu-check.strace",
+    "raw_tail": [
+      "process-3a015fcf851b 1793585912.214903 openat(AT_FDCWD<task-storage://admet/scaler-six28-20261102>, \"task-storage://admet/scaler-six28-20261102/runtime/cpu_guard.py\", O_RDONLY|O_CLOEXEC) = 3<task-storage://admet/scaler-six28-20261102/runtime/cpu_guard.py>",
+      "process-3a015fcf851b 1793585912.215231 write(2<task-storage://admet/scaler-six28-20261102/raw/cpu-check.stderr>, \"    import verify_cpu\\n\", 22) = 22",
+      "process-3a015fcf851b 1793585912.215273 write(2<task-storage://admet/scaler-six28-20261102/raw/cpu-check.stderr>, \"  File \\\"task-storage://admet/scaler-six28-20261102/runtime/verify_cpu.py\\\", line 100\\n\", 97) = 97",
+      "process-3a015fcf851b 1793585912.215299 write(2<task-storage://admet/scaler-six28-20261102/raw/cpu-check.stderr>, \"    print(json.dumps({'verified_runs':28,'paired_groups':14,'prediction_rows':totals,'optimizer_steps':sum(x['steps'] for x in reports),'CPU_seconds':time.monotonic()-began)}),flush=True)\\n\", 188) = 188",
+      "process-3a015fcf851b 1793585912.215351 write(2<task-storage://admet/scaler-six28-20261102/raw/cpu-check.stderr>, \"                                                                                                                                                                            ^\\n\", 174) = 174",
+      "process-3a015fcf851b 1793585912.215389 write(2<task-storage://admet/scaler-six28-20261102/raw/cpu-check.stderr>, \"SyntaxError: closing parenthesis ')' does not match opening parenthesis '{'\\n\", 76) = 76"
+    ]
+  },
+  {
+    "sha256": "acc1dc535e95f1d0cd1b6e023c0fb186712b17f5b51fc518dcdc58f451562794",
+    "counts": {
+      "openat": 7,
+      "inside": 13,
+      "write": 7,
+      "unlink": 1,
+      "mkdir": 1,
+      "rename": 1
+    },
+    "outside_successful_file_mutations": [],
+    "unknown": [],
+    "pending": {},
+    "denied": {
+      "EEXIST": 1
+    },
+    "device_IO_operations": {
+      "/dev/null": 4
+    },
+    "coverage": "narrow file/write/mmap trace; not all ioctls or whole-host audit",
+    "name": "cpu-check02.strace",
+    "raw_tail": [
+      "process-f8a84ce0b174 1793586130.396683 write(3<task-storage://admet/scaler-six28-20261102/raw/independent-CPU-verification.json.tmp>, \"{\\n  \\\"runs\\\": [\\n    {\\n      \\\"run_id\\\": \\\"hainan-scaler-lipophilicity_astrazeneca-f001-s44-20261102\\\",\\n      \\\"epochs\\\": 33,\\n      \\\"steps\\\": 693,\\n      \\\"best_epoch\\\": 25,\\n      \\\"best_steps\\\": 525,\\n      \\\"config_sha256\\\": \\\"b3052d4dc3d3678783405e0351be65d07ad8a931c021fc3202e3cdeac048cc39\\\",\\n      \\\"tensor_optimizer_full_RNG_exact\\\": true,\\n      \\\"scaler_actual_f32_recomputed_exact\\\": true,\\n      \\\"row_identity_parse_and_trainY_exact\\\": true,\\n      \\\"CPU_best_reload\\\": {\\n        \\\"train\\\": {\\n          \\\"rows\\\": 2940,\\n          \\\"max_abs_difference\\\": 2.2909922796632287e-06,\\n          \\\"rtol\\\": 3e-05,\\n          \\\"atol\\\": 6.603419281141997e-05\\n        },\\n        \\\"valid\\\": {\\n          \\\"rows\\\": 420,\\n          \\\"max_abs_difference\\\": 8.591221050124886e-07,\\n          \\\"rtol\\\": 3e-05,\\n          \\\"atol\\\": 6.603419281141997e-05\\n        },\\n        \\\"test\\\": {\\n          \\\"rows\\\": 840,\\n          \\\"max_abs_difference\\\": 1.4318701744286955e-06,\\n          \\\"rtol\\\": 3e-05,\\n          \\\"atol\\\": 6.603419281141997e-05\\n        }\\n      },\\n      \\\"encoder_unchanged\\\": true\\n    },\\n    \"..., 8193) = 8193",
+      "process-f8a84ce0b174 1793586130.397098 write(3<task-storage://admet/scaler-six28-20261102/raw/independent-CPU-verification.json.tmp>, \": true,\\n      \\\"CPU_best_reload\\\": {\\n        \\\"train\\\": {\\n          \\\"rows\\\": 9191,\\n          \\\"max_abs_difference\\\": 5.02485908826511e-07,\\n          \\\"rtol\\\": 3e-05,\\n          \\\"atol\\\": 6e-05\\n        },\\n        \\\"valid\\\": {\\n          \\\"rows\\\": 1313,\\n          \\\"max_abs_difference\\\": 2.7780765737839275e-07,\\n          \\\"rtol\\\": 3e-05,\\n          \\\"atol\\\": 6e-05\\n        },\\n        \\\"test\\\": {\\n          \\\"rows\\\": 2626,\\n          \\\"max_abs_difference\\\": 3.3152515754864e-07,\\n          \\\"rtol\\\": 3e-05,\\n          \\\"atol\\\": 6e-05\\n        }\\n      },\\n      \\\"encoder_unchanged\\\": true\\n    },\\n    {\\n      \\\"run_id\\\": \\\"hainan-scaler-cyp2d6_veith-f001-s45-20261102\\\",\\n      \\\"epochs\\\": 18,\\n      \\\"steps\\\": 1170,\\n      \\\"best_epoch\\\": 10,\\n      \\\"best_steps\\\": 650,\\n      \\\"config_sha256\\\": \\\"ccee9c921ca37f0795cedd7257855fbf8b7f39ca768e3e44235c0a52d065c137\\\",\\n      \\\"tensor_optimizer_full_RNG_exact\\\": true,\\n      \\\"scaler_actual_f32_recomputed_exact\\\": true,\\n      \\\"row_identity_parse_and_trainY_exact\\\": true,\\n      \\\"CPU_best_reload\\\": {\\n        \\\"train\\\": {\\n          \\\"rows\\\": 9191,\\n  \"..., 8200) = 8200",
+      "process-f8a84ce0b174 1793586130.397421 write(3<task-storage://admet/scaler-six28-20261102/raw/independent-CPU-verification.json.tmp>, \"\\\"max_abs_difference\\\": 1.2376155797966248e-06,\\n          \\\"rtol\\\": 3e-05,\\n          \\\"atol\\\": 5.595467987399182e-05\\n        }\\n      },\\n      \\\"encoder_unchanged\\\": true\\n    },\\n    {\\n      \\\"run_id\\\": \\\"hainan-scaler-ld50_zhu-f001-s45-20261102\\\",\\n      \\\"epochs\\\": 13,\\n      \\\"steps\\\": 364,\\n      \\\"best_epoch\\\": 5,\\n      \\\"best_steps\\\": 140,\\n      \\\"config_sha256\\\": \\\"2b3c3bff69682580710dc910d577ba78dfccef5e2fbf0aff5d498d1e07cebd22\\\",\\n      \\\"tensor_optimizer_full_RNG_exact\\\": true,\\n      \\\"scaler_actual_f32_recomputed_exact\\\": true,\\n      \\\"row_identity_parse_and_trainY_exact\\\": true,\\n      \\\"CPU_best_reload\\\": {\\n        \\\"train\\\": {\\n          \\\"rows\\\": 3970,\\n          \\\"max_abs_difference\\\": 2.5783657902067603e-06,\\n          \\\"rtol\\\": 3e-05,\\n          \\\"atol\\\": 5.595467987399182e-05\\n        },\\n        \\\"valid\\\": {\\n          \\\"rows\\\": 1937,\\n          \\\"max_abs_difference\\\": 1.3201232846427047e-05,\\n          \\\"rtol\\\": 3e-05,\\n          \\\"atol\\\": 5.595467987399182e-05\\n        },\\n        \\\"test\\\": {\\n          \\\"rows\\\": 1478,\\n          \\\"max_abs_difference\\\": 3.300308211\"..., 8199) = 8199",
+      "process-f8a84ce0b174 1793586130.397564 write(3<task-storage://admet/scaler-six28-20261102/raw/independent-CPU-verification.json.tmp>, \"\\\"epochs\\\": 21,\\n      \\\"steps\\\": 756,\\n      \\\"best_epoch\\\": 13,\\n      \\\"best_steps\\\": 468,\\n      \\\"config_sha256\\\": \\\"9d25926ecf810cb0fa9a8b40db39637c6838585ab1bb40ff23d37dcb174e0f81\\\",\\n      \\\"tensor_optimizer_full_RNG_exact\\\": true,\\n      \\\"scaler_actual_f32_recomputed_exact\\\": true,\\n      \\\"row_identity_parse_and_trainY_exact\\\": true,\\n      \\\"CPU_best_reload\\\": {\\n        \\\"train\\\": {\\n          \\\"rows\\\": 5045,\\n          \\\"max_abs_difference\\\": 2.6266873587310613e-06,\\n          \\\"rtol\\\": 3e-05,\\n          \\\"atol\\\": 9.61027517718531e-05\\n        },\\n        \\\"valid\\\": {\\n          \\\"rows\\\": 2940,\\n          \\\"max_abs_difference\\\": 8.405399547939396e-06,\\n          \\\"rtol\\\": 3e-05,\\n          \\\"atol\\\": 9.61027517718531e-05\\n        },\\n        \\\"test\\\": {\\n          \\\"rows\\\": 1997,\\n          \\\"max_abs_difference\\\": 2.101349886984849e-06,\\n          \\\"rtol\\\": 3e-05,\\n          \\\"atol\\\": 9.61027517718531e-05\\n        }\\n      },\\n      \\\"encoder_unchanged\\\": true\\n    },\\n    {\\n      \\\"run_id\\\": \\\"hainan-scaler-ld50_zhu-h0-s46-20261102\\\",\\n      \\\"epochs\\\": 16,\\n      \\\"steps\\\": 448,\\n     \"..., 3181) = 3181",
+      "process-f8a84ce0b174 1793586130.397612 rename(\"task-storage://admet/scaler-six28-20261102/raw/independent-CPU-verification.json.tmp\", \"task-storage://admet/scaler-six28-20261102/raw/independent-CPU-verification.json\") = 0",
+      "process-f8a84ce0b174 1793586130.397675 write(1<task-storage://admet/scaler-six28-20261102/raw/cpu-check02.stdout>, \"{\\\"verified_runs\\\": 28, \\\"paired_groups\\\": 14, \\\"prediction_rows\\\": {\\\"train\\\": 111690, \\\"valid\\\": 37494, \\\"test\\\": 37310}, \\\"optimizer_steps\\\": 13842, \\\"CPU_seconds\\\": 15.914342959877104}\\n\", 173) = 173"
+    ]
+  }
+]

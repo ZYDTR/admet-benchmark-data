@@ -1,0 +1,618 @@
+{
+  "request_id": "admet-breadth-six24-pro-20261102-001",
+  "round_id": "six-task-breadth24-review-20261102",
+  "packet_version": "breadth-six24-with-root-review-v1",
+  "research_question": "这轮六任务24项训练/验证揭示了什么？如何在冻结外部编码器、仅train.Y学习的约束下，处理极端特征/预测并推进全22任务的质量提升，形成一批有信息量、可连续执行的具体下一轮方案？",
+  "decision_contract": {
+    "scope": "all22 tasks for strategy/history; current24 fits on six named tasks, proposal_only, no new training authorized by research",
+    "evaluation_scope": "aggregate_only: current scores, blind inputs/predictions, train.Y, features and scientific evidence; no current or historical row valid truth/residual even if an old public file contains it",
+    "questions": [
+      {
+        "question_id": "Q0",
+        "question": "验证这批24项结果可比较性及学到的事实",
+        "completion_criteria": "独立复算全部六任务H0/H1两seed的均值、配对差和SD，与同任务Mini22对照；逐项区分受控dropout对比、历史多因素混杂与2seed局限。核对24配置/27740valid预测/6935原valid行/累计56正式任务分数，勿把逻辑run数当任务头数。"
+      },
+      {
+        "question_id": "Q1",
+        "question": "解释LD50/solubility极端预测及标准化风险",
+        "completion_criteria": "审读实际fit-only标准化、方差floor、raw特征和预测分布，核对主控无标签诊断（LD50 valid最大abs z约85887，solubility约8886）；比较分布偏移、罕见维度、缩放、目标/单位、优化/早停、数据身份与其它解释。区分观察、关联与因果；给不读validY的最小反证诊断及具体训练对照，不能用裁剪test答案或改原标签掩盖。"
+      },
+      {
+        "question_id": "Q2",
+        "question": "选择下一批整体策略与批量大小",
+        "completion_criteria": "比较继续某头调参、六任务稳定性修复、扩到剩余任务、冻结新底座/集成等策略，给有依据的优先级。产出轻/中/大三种proposal_only预算情景，任务/配置/seeds/共享编码/去重fit和完整周转成本均具体；场景数值由证据推导，旧16/24/60或84不是本轮默认目标。推荐一档及批量回Pro节点，预先说明无改善/seed不稳定/前提失败分支。"
+      },
+      {
+        "question_id": "Q3",
+        "question": "形成广泛且可区分的科学改进空间",
+        "completion_criteria": "系统覆盖特征标准化/低方差处理/归一化、头结构容量、优化lr/正则/损失、早停和划分、多seed、已有已调研冻结底座与获准集成，列具体值/组合约束/计数，避免只改dropout和无依据全笛卡尔积。新建议可广泛但必须有原论文/官方来源与冻结边界，GLM/DeepSeek/Qwen不作为分子资产。"
+      },
+      {
+        "question_id": "Q4",
+        "question": "交可直接派准备的具体方案",
+        "completion_criteria": "next_experiments每条恰好一个真实task/config/split，模型seed显式；新头loss、内部stop与外部metric/方向/尺度分别明确。one_factor只改一项，bundle标整体；共享对照去重，已完成配置不再建议当新增，条件任务不塞占位。config_only/new_code/blocked_assets按当前实际代码判断。准备指南包括输入输出、接口、独立fixture与预期、依赖及回退，不要求固定部署监督脚本。"
+      },
+      {
+        "question_id": "Q5",
+        "question": "核对全历史资产、失败和结论演化",
+        "completion_criteria": "读全部逻辑历史与十项科学资产状态，覆盖Mini22、Caco2历史、旧84设计未执行、上一Pro原版错误/补全/主控采纳和本24真实结果。记录新证据支持/缩小/推翻哪些旧命题，保留issue/event链，不能将历史准备代码有文件当成可训练就绪。只声明实际读取层级。"
+      },
+      {
+        "question_id": "Q6",
+        "question": "评价纪律与泛化质量",
+        "completion_criteria": "分析复用valid选模、多seed/多配置选择偏差；提出不依赖更多valid访问的内部验证与独立泛化估计办法。官方允许valid调参但不能把本地策略冒充赛事禁令。不请求未准入逐行真值/残差当默认缺件，不凭公开可达就扩大本轮aggregate_only范围。若对某结论确需新增信息，明确最小信息及影响。"
+      },
+      {
+        "question_id": "Q7",
+        "question": "降低完整循环时延但保留科学与资源边界",
+        "completion_criteria": "据本轮训练4142.849秒原生角色/415.577秒GPU作业、取回2266.713秒原生角色/约367.878秒传输/0.143秒评分和已有Pro历史分析瓶颈。区别训练本身与准备、取证、候选整理/脱敏、发布、Chat；给复用缓存、增大信息批量、增量索引、并行独立准备的方案与可测收益假设，不编kernel或新底座成本，不把监控失败改写通过。"
+      },
+      {
+        "question_id": "Q8",
+        "question": "独立反证与完整交付",
+        "completion_criteria": "复核本轮关键数值与原文引用、全部proposal/issue/direction相互引用、去重矩阵与三场景计数。实际工具可用则用subagents独立交叉检查；不可用如实列出并自行复核，不能冒充。六文件及附加实际原件ZIP完整可取，科学完整性与运输、聊天终态分别记录。"
+      }
+    ],
+    "task_metrics": {
+      "lipophilicity_astrazeneca": "MAE/minimize",
+      "bbb_martins": "AUROC/maximize",
+      "cyp2d6_veith": "AUPRC alias Average Precision/maximize, official equivalence unconfirmed",
+      "clearance_hepatocyte_az": "Spearman/maximize",
+      "ld50_zhu": "MAE/minimize",
+      "solubility_aqsoldb": "MAE/minimize"
+    }
+  },
+  "evaluation_scope": "aggregate_only；允许train.Y、盲valid/test输入预测、冻结raw特征、任务/分组汇总与技术诊断；禁止读取或推断逐行valid真值/残差，历史公开文件若含Y也不在本轮准入内；禁止额外标签来源与test答案拟合。",
+  "approved_budget_or_proposal_only": "全部下一轮方案proposal_only，尚无新增训练或推理授权。轻/中/大三档由证据/成本推导，不套旧示例数量，主控随后决定批次。",
+  "complete_or_partial_and_pending_runs": "本批24/24模型完成且科学产物主控独立通过；24/24固定valid评分主控独立复算一致。两次资源监控超时仍部分通过，BBB H0s44一次同配置重启，原失败步数unknown；无活动或待续学习。本轮累计56正式任务分数/35完成逻辑run，Mini22为1逻辑run/22头。",
+  "batch_execution_context": "完整24模型来自冻结CheMeleon，六任务H0/H1(dropout0.1/0.3)×seed44/45，均256新头/lr0.0005/wd0.0001，split43/internalstop10%，真实CUDA。18raw缓存已经全部取回；科学代码可按范围修订，但当前校验枚举较窄，不把其它参数当现成config_only。主控无标签特征诊断发现LD50/solubility标准化极值，因果未证；主控独立评分另读六份标签仅作复算，没有把它们给本研究。实际训练原生角色4142.849秒，GPU作业累计415.577秒（不等于kernel）；取回角色2266.713秒，传输367.878秒，评分0.143秒。新发布/Chat具体时长以本批回执或后续取回为准；本Prompt不臆测尚未发生阶段。 本批新材料现已固定发布commit adcfdd6074157a80d1ed58e9028927c64139f4d6，966文件/1217324624逻辑字节匿名全读回一致。发布精确准入到封口850.045秒、push/ref76.102秒、匿名全读回37.196秒；revision003与发布共用一原生turn，22:13:33Z至22:50:04.792921Z工作封口2191.793秒，其中修订1227.253秒，不能重复相加或全部叫上传时间。正式Chat研究时长尚未发生。旧原件中pending/未评分是历史采集状态，当前状态以主控入口和本请求为准。历史总账的截止时间保留，其后本批评分/独立验收由当前入口追加，不倒填旧记录。",
+  "run_ids": [
+    "hainan-breadth-lipophilicity_astrazeneca-h0-s44-20261102",
+    "hainan-breadth-lipophilicity_astrazeneca-h0-s45-20261102",
+    "hainan-breadth-lipophilicity_astrazeneca-h1-s44-20261102",
+    "hainan-breadth-lipophilicity_astrazeneca-h1-s45-20261102",
+    "hainan-breadth-bbb_martins-h0-s44-20261102",
+    "hainan-breadth-bbb_martins-h0-s45-20261102",
+    "hainan-breadth-bbb_martins-h1-s44-20261102",
+    "hainan-breadth-bbb_martins-h1-s45-20261102",
+    "hainan-breadth-cyp2d6_veith-h0-s44-20261102",
+    "hainan-breadth-cyp2d6_veith-h0-s45-20261102",
+    "hainan-breadth-cyp2d6_veith-h1-s44-20261102",
+    "hainan-breadth-cyp2d6_veith-h1-s45-20261102",
+    "hainan-breadth-clearance_hepatocyte_az-h0-s44-20261102",
+    "hainan-breadth-clearance_hepatocyte_az-h0-s45-20261102",
+    "hainan-breadth-clearance_hepatocyte_az-h1-s44-20261102",
+    "hainan-breadth-clearance_hepatocyte_az-h1-s45-20261102",
+    "hainan-breadth-ld50_zhu-h0-s44-20261102",
+    "hainan-breadth-ld50_zhu-h0-s45-20261102",
+    "hainan-breadth-ld50_zhu-h1-s44-20261102",
+    "hainan-breadth-ld50_zhu-h1-s45-20261102",
+    "hainan-breadth-solubility_aqsoldb-h0-s44-20261102",
+    "hainan-breadth-solubility_aqsoldb-h0-s45-20261102",
+    "hainan-breadth-solubility_aqsoldb-h1-s44-20261102",
+    "hainan-breadth-solubility_aqsoldb-h1-s45-20261102"
+  ],
+  "independent_read_checks_request": "(1)从24条actual scores逐任务重算H0/H1 mean、sampleSD、paired delta及改善seed数，交机器可读表，不从摘要抄回。(2)核对实际行数6935/27740以及22历史任务baseline统计的来源与混杂。(3)复读cache/scaler/trainer/head实际源码，核对epsilon、fit统计范围、min_delta/patience与预测inverse，独立审核无标签特征诊断公式与来源摘要，列对应极端维度并反证“缩放即原因”的过度结论。(4)新proposal矩阵按(资产/版本/task/fullconfig/split/seed)去重，所有场景共享对照只计一次，已完成不计新增；把详细配置表作为附加原件交付。(5)核对所有问题/issue/proposal/direction引用，逐条关键推断由独立视角复核。无工具执行时如实写未独立数值复算，不能把回显hash当读到。",
+  "manifest_sha256": "d4ce680da124d6f8fbede0fe33d0ade98ab7b7acfb1a87a42fab4581c472ee98",
+  "history_as_of": "2026-11-01T21:31:42.189874+00:00",
+  "chat_accessible_packet_uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/controller-review/START_HERE.md",
+  "scientific_assets_uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/assets/scientific-assets.json",
+  "history_inventory_uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/history/README.md",
+  "runner_contract_uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/controller-review/runner-contract.md",
+  "return_contract_uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/controller-review/review-output.json",
+  "base_context_uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/context/README.md",
+  "base_context_sha256": "5f2367efba1a7353e3279cd78b56e0a26af2464ae6bf450e025565b1d6575e69",
+  "history_snapshot_uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/history/registry.json",
+  "history_snapshot_sha256": "c98c7eaf4f522a5bea30c318df68f7cab3ea179370357b0d53b72d4ce8583e18",
+  "current_batch_uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/current/README.md",
+  "current_batch_sha256": "a7bbaedf6d9e00247649f835a5cf99717b92a7f9ffe86bfdb6b9ea29a46003a5",
+  "delta_index_uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/controller-review/START_HERE.md",
+  "reading_contract": {
+    "state": "actual_fixed_public_URIs_bound",
+    "required_read_count": 38,
+    "requirements": [
+      {
+        "entry_id": "N00",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/controller-review/START_HERE.md",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "09245157bf85b045144a88a31544f35189b563c3cc85e40bb9fdbc28549ceebd"
+        },
+        "bytes": 2644,
+        "required_read_mode": "original",
+        "purpose": "controller-review/START_HERE.md",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N01",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/START_HERE.md",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "45dfbcf4dfb80488c841a7dc68743ba8877f31424553f89985f47e338e0d3c41"
+        },
+        "bytes": 1781,
+        "required_read_mode": "original",
+        "purpose": "START_HERE.md",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N02",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/context/README.md",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "5f2367efba1a7353e3279cd78b56e0a26af2464ae6bf450e025565b1d6575e69"
+        },
+        "bytes": 1788,
+        "required_read_mode": "original",
+        "purpose": "context/README.md",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N03",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/history/README.md",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "552dc3053e923befc41082da1a40b2377d5c2df79253f84d4422b66b1585dd06"
+        },
+        "bytes": 32482,
+        "required_read_mode": "original",
+        "purpose": "history/README.md",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N04",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/history/registry.json",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "c98c7eaf4f522a5bea30c318df68f7cab3ea179370357b0d53b72d4ce8583e18"
+        },
+        "bytes": 75984,
+        "required_read_mode": "original",
+        "purpose": "history/registry.json",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N05",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/current/README.md",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "a7bbaedf6d9e00247649f835a5cf99717b92a7f9ffe86bfdb6b9ea29a46003a5"
+        },
+        "bytes": 1264,
+        "required_read_mode": "original",
+        "purpose": "current/README.md",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N06",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/current/scores.json",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "831ed017886445080a219ffc899346510a7dc6203b879e8d36ee859e2a3200e7"
+        },
+        "bytes": 22183,
+        "required_read_mode": "original",
+        "purpose": "current/scores.json",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N07",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/current/paired-and-history.json",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "c92a47e5f3c35f224338c9938b2e2269465d53b9e70fb0f5c476049e74fc3194"
+        },
+        "bytes": 8652,
+        "required_read_mode": "original",
+        "purpose": "current/paired-and-history.json",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N08",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/current/prediction-distributions.json",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "49fbc61dbaab2a121939290539b8bbe6105822dd182572d2e5101ae06f7a2fe9"
+        },
+        "bytes": 37961,
+        "required_read_mode": "original",
+        "purpose": "current/prediction-distributions.json",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N09",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/current/quality-and-limits.md",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "9694d2bdedad44802bc063760863284b9ec2cf6e684a2cfdb5e8141effcc0b19"
+        },
+        "bytes": 2440,
+        "required_read_mode": "original",
+        "purpose": "current/quality-and-limits.md",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N10",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/current/evaluation-use-ledger.json",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "36a7e8a1d4718e732e4f4aaca78dba8b08168385b7e343927e31e5ef2817ac93"
+        },
+        "bytes": 754,
+        "required_read_mode": "original",
+        "purpose": "current/evaluation-use-ledger.json",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N11",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/assets/scientific-assets.json",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282"
+        },
+        "bytes": 4003,
+        "required_read_mode": "original",
+        "purpose": "assets/scientific-assets.json",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N12",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/assets/cache-index.json",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "f25b35f9bae60f83785c432b41c883b662156a641f73fb0151d7ef42cdc3e986"
+        },
+        "bytes": 29863,
+        "required_read_mode": "original",
+        "purpose": "assets/cache-index.json",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N13",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/research/README.md",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "34380dc78fe5e311f1ed4e7f6f3eb2a4bded87454d08d23e544a1000b83f2398"
+        },
+        "bytes": 3452,
+        "required_read_mode": "original",
+        "purpose": "research/README.md",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N14",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/issues/events.json",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "b868bff1f8f53815dbd5a564065f9957a9fe949fc7a9077ab8aad882925b4e06"
+        },
+        "bytes": 1491,
+        "required_read_mode": "original",
+        "purpose": "issues/events.json",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N15",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/controller-review/decision-contract.json",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "9903dd11fa808c96cb7949c43694bb1cb028d64f60b3ad18c76dcf05469865d9"
+        },
+        "bytes": 5327,
+        "required_read_mode": "original",
+        "purpose": "controller-review/decision-contract.json",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N16",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/controller-review/review-output.json",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "144d41be12a9d39d45e064644289c999facd2e87d0ce76b1b56045c41071ca72"
+        },
+        "bytes": 4072,
+        "required_read_mode": "original",
+        "purpose": "controller-review/review-output.json",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N17",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/controller-review/runner-contract.md",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "718ec1778560d03d7857bffa25ee42ee27887dc56c9e14d7985e573de5226edd"
+        },
+        "bytes": 1740,
+        "required_read_mode": "original",
+        "purpose": "controller-review/runner-contract.md",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N18",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/controller-review/feature-distribution-diagnostic.json",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "bde1e04fae2f77a4ebcb141db8963b2c16854ce5cb27fcecbfe3dfd4dfe8d1d0"
+        },
+        "bytes": 53818,
+        "required_read_mode": "original",
+        "purpose": "controller-review/feature-distribution-diagnostic.json",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N19",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/controller-review/feature-distribution-method.py.txt",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "fd25e5065523dee13482a2a50a34e451d537206824024f7407da4e0a885f9f80"
+        },
+        "bytes": 3505,
+        "required_read_mode": "original",
+        "purpose": "controller-review/feature-distribution-method.py.txt",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N20",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/controller-review/scores-independent.json",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "89f428cc90a1fb030f0ffe5e738203c0669c3c59d5706f96fe090645c81c7941"
+        },
+        "bytes": 8234,
+        "required_read_mode": "original",
+        "purpose": "controller-review/scores-independent.json",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N21",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/host-scoring/fixed_metrics.py.txt",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "10b0357998898bc4c6c02d43d4f3433f0b40b24e7fe77a86d5e70f12ed9e69d3"
+        },
+        "bytes": 5487,
+        "required_read_mode": "original",
+        "purpose": "host-scoring/fixed_metrics.py.txt",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N22",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/context/SCORING_TASK.json",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "a4a52660c9d10d41593e0bd7075a0d8b20fe39dbac2eb0e7f1b264a927670d88"
+        },
+        "bytes": 29963,
+        "required_read_mode": "original",
+        "purpose": "context/SCORING_TASK.json",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N23",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/evidence/objects/90dc2f1474990b131915dbf25bafc13e067cc0a53997c98db929b3564eb9f0ba.py.txt",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "90dc2f1474990b131915dbf25bafc13e067cc0a53997c98db929b3564eb9f0ba"
+        },
+        "bytes": 14897,
+        "required_read_mode": "original",
+        "purpose": "evidence/objects/90dc2f1474990b131915dbf25bafc13e067cc0a53997c98db929b3564eb9f0ba.py.txt",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N24",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/evidence/objects/c0bc8c9520116fa5498c4f36d701797f144df9a48f61ec0916094179f15f5e77.py.txt",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "c0bc8c9520116fa5498c4f36d701797f144df9a48f61ec0916094179f15f5e77"
+        },
+        "bytes": 11723,
+        "required_read_mode": "original",
+        "purpose": "evidence/objects/c0bc8c9520116fa5498c4f36d701797f144df9a48f61ec0916094179f15f5e77.py.txt",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N25",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/evidence/objects/1e8db24dddb8792393d4e7f2287b0fa43d3ed478810828656d34f449c0b3553c.py.txt",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "1e8db24dddb8792393d4e7f2287b0fa43d3ed478810828656d34f449c0b3553c"
+        },
+        "bytes": 8935,
+        "required_read_mode": "original",
+        "purpose": "evidence/objects/1e8db24dddb8792393d4e7f2287b0fa43d3ed478810828656d34f449c0b3553c.py.txt",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N26",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/evidence/objects/650862671076f7b40b5ca776b2a03f3116cb0df5dcb79d62d1a8f5adabfbef64.py.txt",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "650862671076f7b40b5ca776b2a03f3116cb0df5dcb79d62d1a8f5adabfbef64"
+        },
+        "bytes": 6095,
+        "required_read_mode": "original",
+        "purpose": "evidence/objects/650862671076f7b40b5ca776b2a03f3116cb0df5dcb79d62d1a8f5adabfbef64.py.txt",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N27",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/evidence/objects/c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114.py.txt",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114"
+        },
+        "bytes": 6172,
+        "required_read_mode": "original",
+        "purpose": "evidence/objects/c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114.py.txt",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N28",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/evidence/objects/1f961c4c5cf8f9f13181853da391aaf6ce282aaa060d1532d6021e7cc4b08c4b.py.txt",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "1f961c4c5cf8f9f13181853da391aaf6ce282aaa060d1532d6021e7cc4b08c4b"
+        },
+        "bytes": 7708,
+        "required_read_mode": "original",
+        "purpose": "evidence/objects/1f961c4c5cf8f9f13181853da391aaf6ce282aaa060d1532d6021e7cc4b08c4b.py.txt",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N29",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/controller-review/input-manifest.json",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "d4ce680da124d6f8fbede0fe33d0ade98ab7b7acfb1a87a42fab4581c472ee98"
+        },
+        "bytes": 211791,
+        "required_read_mode": "original",
+        "purpose": "controller-review/input-manifest.json",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N30",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/controller-review/revision003-independent.json",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "b449ac3a7c7fcf58556f11f05782b6a5cf6826e9b389c6ca86831a7f56a8a2cc"
+        },
+        "bytes": 1065,
+        "required_read_mode": "original",
+        "purpose": "controller-review/revision003-independent.json",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N31",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/current/runs.json",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "7d72e330907e3e57846b04433178b8b6ffce26485c2d3354425b92ce958ee35d"
+        },
+        "bytes": 260586,
+        "required_read_mode": "original",
+        "purpose": "current/runs.json",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N32",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/evidence/objects/468c803c3dd33133d42c986b6c781321c6139a08511c85235376a88d808d7821.md.txt",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "468c803c3dd33133d42c986b6c781321c6139a08511c85235376a88d808d7821"
+        },
+        "bytes": 13153,
+        "required_read_mode": "original",
+        "purpose": "evidence/objects/468c803c3dd33133d42c986b6c781321c6139a08511c85235376a88d808d7821.md.txt",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "N33",
+        "layer": "mandatory_decision_original",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/evidence/objects/6d69fd898d6e3e4154cf6d6a65550d17f1408722a85d70e20a83cb6ef7d8fab0.json",
+        "source_version": {
+          "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+          "sha256": "6d69fd898d6e3e4154cf6d6a65550d17f1408722a85d70e20a83cb6ef7d8fab0"
+        },
+        "bytes": 6448,
+        "required_read_mode": "original",
+        "purpose": "evidence/objects/6d69fd898d6e3e4154cf6d6a65550d17f1408722a85d70e20a83cb6ef7d8fab0.json",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "H-R17-prior-S-764562710384d47e",
+        "layer": "mandatory_decision_context",
+        "candidate_path": "prior-history/prior-history/history/archive-20261101/originals/S-764562710384d47e.json",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/history/archive-20261101/originals/S-764562710384d47e.json",
+        "bytes": 11258,
+        "source_version": {
+          "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+          "sha256": "ce8375c1c1eb6291eae6439dee77e082486c6e573e844004ce39d43d69890e8c"
+        },
+        "required_read_mode": "original",
+        "purpose": "Mini22完整22任务汇总",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "H-R19-prior-H-2cdcdf014e443ab866c8",
+        "layer": "mandatory_decision_context",
+        "candidate_path": "prior-history/prior-history/evidence/H-2cdcdf014e443ab866c8.json",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/evidence/H-2cdcdf014e443ab866c8.json",
+        "bytes": 670837,
+        "source_version": {
+          "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+          "sha256": "fa5caf201db27daadd0d7dc2fe86e194fd98b55f1745b290e18f5b09e9711d96"
+        },
+        "required_read_mode": "original",
+        "purpose": "前轮84fit完整未执行矩阵",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "H-R20-plus-official-contract-20261029",
+        "layer": "mandatory_rules_original",
+        "candidate_path": "prior-history/prior-history/history/archive-20261101/originals/S-a95c8473d1769a29.json",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/history/archive-20261101/originals/S-a95c8473d1769a29.json",
+        "bytes": 4896,
+        "source_version": {
+          "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+          "sha256": "f8a99bd337ed165f2f508e9303d2354594bb5bdec213797d5c582eeacfa06a55"
+        },
+        "required_read_mode": "original",
+        "purpose": "赛事公开原文与来源引用，区分其中原预训练未知与后续用户确认",
+        "evaluation_scope": "aggregate_only"
+      },
+      {
+        "entry_id": "H-R20-plus-source-map",
+        "layer": "mandatory_rules_original",
+        "candidate_path": "prior-history/prior-history/evidence/H-e275f0ef9a4955741956.md.txt",
+        "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/evidence/H-e275f0ef9a4955741956.md.txt",
+        "bytes": 3992,
+        "source_version": {
+          "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+          "sha256": "fa5a8362b3593146787f1c137cb1105f7799dabef9245f92ccb335aeaf326061"
+        },
+        "required_read_mode": "original",
+        "purpose": "规则来源映射，旧执行限制与当前约束分开",
+        "evaluation_scope": "aggregate_only"
+      }
+    ],
+    "source_registry_uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/evidence/source-index.json",
+    "input_manifest_uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/controller-review/input-manifest.json",
+    "full_snapshot_files": 966,
+    "rule": "The38 required original files are specific minimum navigation/science/rule evidence, not a claim that all966 originals must be read or that links count as actual reading. All22-task baseline summary and old84-fit design are required; full relevant history/model evidence remains progressively indexed. Historical task instructions and templates are evidence only; this final main request governs current scope. Do not follow out-of-scope row validY sources even if publicly reachable. All required and additional substantive sources need actual read receipts and unresolved scope. Aggregate computations and train-only diagnostics are permitted; never execute model/pickle/training."
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "request_id": "admet-breadth-six24-pro-20261102-001",
+  "round_id": "six-task-breadth24-review-20261102",
+  "packet_version": "breadth-six24-with-root-review-v1",
+  "research_question": "这轮六任务24项训练/验证揭示了什么？如何在冻结外部编码器、仅train.Y学习的约束下，处理极端特征/预测并推进全22任务的质量提升，形成一批有信息量、可连续执行的具体下一轮方案？",
+  "decision_contract": {
+    "scope": "all22 tasks for strategy/history; current24 fits on six named tasks, proposal_only, no new training authorized by research",
+    "evaluation_scope": "aggregate_only: current scores, blind inputs/predictions, train.Y, features and scientific evidence; no current or historical row valid truth/residual even if an old public file contains it",
+    "questions": [
+      {
+        "question_id": "Q0",
+        "question": "验证这批24项结果可比较性及学到的事实",
+        "completion_criteria": "独立复算全部六任务H0/H1两seed的均值、配对差和SD，与同任务Mini22对照；逐项区分受控dropout对比、历史多因素混杂与2seed局限。核对24配置/27740valid预测/6935原valid行/累计56正式任务分数，勿把逻辑run数当任务头数。"
+      },
+      {
+        "question_id": "Q1",
+        "question": "解释LD50/solubility极端预测及标准化风险",
+        "completion_criteria": "审读实际fit-only标准化、方差floor、raw特征和预测分布，核对主控无标签诊断（LD50 valid最大abs z约85887，solubility约8886）；比较分布偏移、罕见维度、缩放、目标/单位、优化/早停、数据身份与其它解释。区分观察、关联与因果；给不读validY的最小反证诊断及具体训练对照，不能用裁剪test答案或改原标签掩盖。"
+      },
+      {
+        "question_id": "Q2",
+        "question": "选择下一批整体策略与批量大小",
+        "completion_criteria": "比较继续某头调参、六任务稳定性修复、扩到剩余任务、冻结新底座/集成等策略，给有依据的优先级。产出轻/中/大三种proposal_only预算情景，任务/配置/seeds/共享编码/去重fit和完整周转成本均具体；场景数值由证据推导，旧16/24/60或84不是本轮默认目标。推荐一档及批量回Pro节点，预先说明无改善/seed不稳定/前提失败分支。"
+      },
+      {
+        "question_id": "Q3",
+        "question": "形成广泛且可区分的科学改进空间",
+        "completion_criteria": "系统覆盖特征标准化/低方差处理/归一化、头结构容量、优化lr/正则/损失、早停和划分、多seed、已有已调研冻结底座与获准集成，列具体值/组合约束/计数，避免只改dropout和无依据全笛卡尔积。新建议可广泛但必须有原论文/官方来源与冻结边界，GLM/DeepSeek/Qwen不作为分子资产。"
+      },
+      {
+        "question_id": "Q4",
+        "question": "交可直接派准备的具体方案",
+        "completion_criteria": "next_experiments每条恰好一个真实task/config/split，模型seed显式；新头loss、内部stop与外部metric/方向/尺度分别明确。one_factor只改一项，bundle标整体；共享对照去重，已完成配置不再建议当新增，条件任务不塞占位。config_only/new_code/blocked_assets按当前实际代码判断。准备指南包括输入输出、接口、独立fixture与预期、依赖及回退，不要求固定部署监督脚本。"
+      },
+      {
+        "question_id": "Q5",
+        "question": "核对全历史资产、失败和结论演化",
+        "completion_criteria": "读全部逻辑历史与十项科学资产状态，覆盖Mini22、Caco2历史、旧84设计未执行、上一Pro原版错误/补全/主控采纳和本24真实结果。记录新证据支持/缩小/推翻哪些旧命题，保留issue/event链，不能将历史准备代码有文件当成可训练就绪。只声明实际读取层级。"
+      },
+      {
+        "question_id": "Q6",
+        "question": "评价纪律与泛化质量",
+        "completion_criteria": "分析复用valid选模、多seed/多配置选择偏差；提出不依赖更多valid访问的内部验证与独立泛化估计办法。官方允许valid调参但不能把本地策略冒充赛事禁令。不请求未准入逐行真值/残差当默认缺件，不凭公开可达就扩大本轮aggregate_only范围。若对某结论确需新增信息，明确最小信息及影响。"
+      },
+      {
+        "question_id": "Q7",
+        "question": "降低完整循环时延但保留科学与资源边界",
+        "completion_criteria": "据本轮训练4142.849秒原生角色/415.577秒GPU作业、取回2266.713秒原生角色/约367.878秒传输/0.143秒评分和已有Pro历史分析瓶颈。区别训练本身与准备、取证、候选整理/脱敏、发布、Chat；给复用缓存、增大信息批量、增量索引、并行独立准备的方案与可测收益假设，不编kernel或新底座成本，不把监控失败改写通过。"
+      },
+      {
+        "question_id": "Q8",
+        "question": "独立反证与完整交付",
+        "completion_criteria": "复核本轮关键数值与原文引用、全部proposal/issue/direction相互引用、去重矩阵与三场景计数。实际工具可用则用subagents独立交叉检查；不可用如实列出并自行复核，不能冒充。六文件及附加实际原件ZIP完整可取，科学完整性与运输、聊天终态分别记录。"
+      }
+    ],
+    "task_metrics": {
+      "lipophilicity_astrazeneca": "MAE/minimize",
+      "bbb_martins": "AUROC/maximize",
+      "cyp2d6_veith": "AUPRC alias Average Precision/maximize, official equivalence unconfirmed",
+      "clearance_hepatocyte_az": "Spearman/maximize",
+      "ld50_zhu": "MAE/minimize",
+      "solubility_aqsoldb": "MAE/minimize"
+    }
+  },
+  "evaluation_scope": "aggregate_only；允许train.Y、盲valid/test输入预测、冻结raw特征、任务/分组汇总与技术诊断；禁止读取或推断逐行valid真值/残差，历史公开文件若含Y也不在本轮准入内；禁止额外标签来源与test答案拟合。",
+  "approved_budget_or_proposal_only": "全部下一轮方案proposal_only，尚无新增训练或推理授权。轻/中/大三档由证据/成本推导，不套旧示例数量，主控随后决定批次。",
+  "complete_or_partial_and_pending_runs": "本批24/24模型完成且科学产物主控独立通过；24/24固定valid评分主控独立复算一致。两次资源监控超时仍部分通过，BBB H0s44一次同配置重启，原失败步数unknown；无活动或待续学习。本轮累计56正式任务分数/35完成逻辑run，Mini22为1逻辑run/22头。",
+  "batch_execution_context": "完整24模型来自冻结CheMeleon，六任务H0/H1(dropout0.1/0.3)×seed44/45，均256新头/lr0.0005/wd0.0001，split43/internalstop10%，真实CUDA。18raw缓存已经全部取回；科学代码可按范围修订，但当前校验枚举较窄，不把其它参数当现成config_only。主控无标签特征诊断发现LD50/solubility标准化极值，因果未证；主控独立评分另读六份标签仅作复算，没有把它们给本研究。实际训练原生角色4142.849秒，GPU作业累计415.577秒（不等于kernel）；取回角色2266.713秒，传输367.878秒，评分0.143秒。新发布/Chat具体时长以本批回执或后续取回为准；本Prompt不臆测尚未发生阶段。",
+  "run_ids": [
+    "hainan-breadth-lipophilicity_astrazeneca-h0-s44-20261102",
+    "hainan-breadth-lipophilicity_astrazeneca-h0-s45-20261102",
+    "hainan-breadth-lipophilicity_astrazeneca-h1-s44-20261102",
+    "hainan-breadth-lipophilicity_astrazeneca-h1-s45-20261102",
+    "hainan-breadth-bbb_martins-h0-s44-20261102",
+    "hainan-breadth-bbb_martins-h0-s45-20261102",
+    "hainan-breadth-bbb_martins-h1-s44-20261102",
+    "hainan-breadth-bbb_martins-h1-s45-20261102",
+    "hainan-breadth-cyp2d6_veith-h0-s44-20261102",
+    "hainan-breadth-cyp2d6_veith-h0-s45-20261102",
+    "hainan-breadth-cyp2d6_veith-h1-s44-20261102",
+    "hainan-breadth-cyp2d6_veith-h1-s45-20261102",
+    "hainan-breadth-clearance_hepatocyte_az-h0-s44-20261102",
+    "hainan-breadth-clearance_hepatocyte_az-h0-s45-20261102",
+    "hainan-breadth-clearance_hepatocyte_az-h1-s44-20261102",
+    "hainan-breadth-clearance_hepatocyte_az-h1-s45-20261102",
+    "hainan-breadth-ld50_zhu-h0-s44-20261102",
+    "hainan-breadth-ld50_zhu-h0-s45-20261102",
+    "hainan-breadth-ld50_zhu-h1-s44-20261102",
+    "hainan-breadth-ld50_zhu-h1-s45-20261102",
+    "hainan-breadth-solubility_aqsoldb-h0-s44-20261102",
+    "hainan-breadth-solubility_aqsoldb-h0-s45-20261102",
+    "hainan-breadth-solubility_aqsoldb-h1-s44-20261102",
+    "hainan-breadth-solubility_aqsoldb-h1-s45-20261102"
+  ],
+  "independent_read_checks_request": "(1)从24条actual scores逐任务重算H0/H1 mean、sampleSD、paired delta及改善seed数，交机器可读表，不从摘要抄回。(2)核对实际行数6935/27740以及22历史任务baseline统计的来源与混杂。(3)复读cache/scaler/trainer/head实际源码，核对epsilon、fit统计范围、min_delta/patience与预测inverse，独立审核无标签特征诊断公式与来源摘要，列对应极端维度并反证“缩放即原因”的过度结论。(4)新proposal矩阵按(资产/版本/task/fullconfig/split/seed)去重，所有场景共享对照只计一次，已完成不计新增；把详细配置表作为附加原件交付。(5)核对所有问题/issue/proposal/direction引用，逐条关键推断由独立视角复核。无工具执行时如实写未独立数值复算，不能把回显hash当读到。"
+}

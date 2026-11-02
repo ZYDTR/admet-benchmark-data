@@ -1,0 +1,162 @@
+{
+  "time_unit": "seconds",
+  "observed": [
+    {
+      "stage_id": "train_role",
+      "seconds": 4142.849,
+      "measurement_kind": "native_role",
+      "evidence_ref": "USER-PROMPT",
+      "parent_interval": null,
+      "qualification": "本批角色最终口径；不是纯GPU训练。"
+    },
+    {
+      "stage_id": "gpu_jobs_total",
+      "seconds": 415.57739617000004,
+      "measurement_kind": "job_wall",
+      "evidence_ref": "E-COMPUTE",
+      "parent_interval": "train_role",
+      "qualification": "两次GPU作业含共享工作，不是kernel时间。"
+    },
+    {
+      "stage_id": "gpu_job_1",
+      "seconds": 171.64320986,
+      "measurement_kind": "job_wall",
+      "evidence_ref": "E-TIMING",
+      "parent_interval": "gpu_jobs_total",
+      "qualification": "第一批作业。"
+    },
+    {
+      "stage_id": "gpu_job_2",
+      "seconds": 243.93418631,
+      "measurement_kind": "job_wall",
+      "evidence_ref": "E-TIMING",
+      "parent_interval": "gpu_jobs_total",
+      "qualification": "第二批作业。"
+    },
+    {
+      "stage_id": "pre_delivery_work_seal",
+      "seconds": 3946.373,
+      "measurement_kind": "earlier_cutoff",
+      "evidence_ref": "E-TIMING",
+      "parent_interval": "train_role",
+      "qualification": "早于最终角色口径，不能用较小值覆盖4142.849。"
+    },
+    {
+      "stage_id": "retrieval_role",
+      "seconds": 2266.713,
+      "measurement_kind": "native_role",
+      "evidence_ref": "USER-PROMPT",
+      "parent_interval": null,
+      "qualification": "与传输/评分存在包含关系。"
+    },
+    {
+      "stage_id": "transfer",
+      "seconds": 367.878,
+      "measurement_kind": "transfer_wall",
+      "evidence_ref": "USER-PROMPT",
+      "parent_interval": "retrieval_role",
+      "qualification": "约数；不另加到角色时间。"
+    },
+    {
+      "stage_id": "fixed_scoring",
+      "seconds": 0.143,
+      "measurement_kind": "scorer_wall",
+      "evidence_ref": "USER-PROMPT",
+      "parent_interval": "retrieval_role",
+      "qualification": "主控已有固定评分，不代表本轮重读validY。"
+    },
+    {
+      "stage_id": "revision_and_publish_turn",
+      "seconds": 2191.793,
+      "measurement_kind": "shared_native_turn",
+      "evidence_ref": "USER-PROMPT",
+      "parent_interval": null,
+      "qualification": "revision003与发布共用turn。"
+    },
+    {
+      "stage_id": "revision003",
+      "seconds": 1227.253,
+      "measurement_kind": "revision_wall",
+      "evidence_ref": "USER-PROMPT",
+      "parent_interval": "revision_and_publish_turn",
+      "qualification": "不能与共享turn重复相加。"
+    },
+    {
+      "stage_id": "publish_admission_to_seal",
+      "seconds": 850.045,
+      "measurement_kind": "publish_wall",
+      "evidence_ref": "USER-PROMPT",
+      "parent_interval": "revision_and_publish_turn",
+      "qualification": "发布准入至封口，非全部上传。"
+    },
+    {
+      "stage_id": "push_ref",
+      "seconds": 76.102,
+      "measurement_kind": "push_ref_wall",
+      "evidence_ref": "USER-PROMPT",
+      "parent_interval": "publish_admission_to_seal",
+      "qualification": "子阶段。"
+    },
+    {
+      "stage_id": "anonymous_readback",
+      "seconds": 37.196,
+      "measurement_kind": "verification_wall",
+      "evidence_ref": "USER-PROMPT",
+      "parent_interval": "publish_admission_to_seal",
+      "qualification": "匿名全读回子阶段。"
+    }
+  ],
+  "do_not_sum_all_rows": true,
+  "source_rounding": "Prompt rounds GPU aggregate to415.577; job components sum415.57739617.",
+  "current_chat_elapsed_seconds": null,
+  "historical_pro_completion_interval_seconds": {
+    "lower_exclusive": 223.312,
+    "upper_inclusive": 310.657,
+    "source": "E-REPAIR-ANALYSIS",
+    "not_exact_duration": true
+  },
+  "old_gpu_budget": {
+    "authorized_seconds_in_old_batch": 7200,
+    "remaining_using_prompt_rounded_seconds": 6784.423,
+    "new_batch_authorization": false
+  },
+  "derived_ratios": {
+    "gpu_jobs_over_train_role": 0.10031188681991547,
+    "transfer_over_retrieval_role": 0.16229580012996792
+  },
+  "scenario_formulas": [
+    {
+      "scenario_id": "light",
+      "unique_new_fits": 8,
+      "total_turnaround_seconds": null,
+      "formula": "P_shared + E_new + sum(h_task_config_seed) + I_evidence_sanitization + R_retrieval + S_score + U_publish + C_chat; use nonoverlapping intervals",
+      "known_new_encoding": "0 if current six cache identity/migration passes; large adds up to30 train/valid partition scans only if needed and separately authorized",
+      "illustrative_historical_job_allocation_seconds": 138.52566666666667,
+      "illustrative_role_allocation_seconds": 1380.9496666666666,
+      "warning": "两列仅按历史24fit分摊，不是实测每头成本/预算承诺；跨任务/共享工作使线性外推失真；总周转未知不伪造数字。",
+      "calibration": "主控获批第一批记录prep/encode/head/verification/transfer/score/sanitize/publish/Chat起止，按task和关键路径校准；不按每头回Chat。"
+    },
+    {
+      "scenario_id": "medium",
+      "unique_new_fits": 28,
+      "total_turnaround_seconds": null,
+      "formula": "P_shared + E_new + sum(h_task_config_seed) + I_evidence_sanitization + R_retrieval + S_score + U_publish + C_chat; use nonoverlapping intervals",
+      "known_new_encoding": "0 if current six cache identity/migration passes; large adds up to30 train/valid partition scans only if needed and separately authorized",
+      "illustrative_historical_job_allocation_seconds": 484.8398333333333,
+      "illustrative_role_allocation_seconds": 4833.323833333333,
+      "warning": "两列仅按历史24fit分摊，不是实测每头成本/预算承诺；跨任务/共享工作使线性外推失真；总周转未知不伪造数字。",
+      "calibration": "主控获批第一批记录prep/encode/head/verification/transfer/score/sanitize/publish/Chat起止，按task和关键路径校准；不按每头回Chat。"
+    },
+    {
+      "scenario_id": "large",
+      "unique_new_fits": 88,
+      "total_turnaround_seconds": null,
+      "formula": "P_shared + E_new + sum(h_task_config_seed) + I_evidence_sanitization + R_retrieval + S_score + U_publish + C_chat; use nonoverlapping intervals",
+      "known_new_encoding": "0 if current six cache identity/migration passes; large adds up to30 train/valid partition scans only if needed and separately authorized",
+      "illustrative_historical_job_allocation_seconds": 1523.7823333333333,
+      "illustrative_role_allocation_seconds": 15190.446333333333,
+      "warning": "两列仅按历史24fit分摊，不是实测每头成本/预算承诺；跨任务/共享工作使线性外推失真；总周转未知不伪造数字。",
+      "calibration": "主控获批第一批记录prep/encode/head/verification/transfer/score/sanitize/publish/Chat起止，按task和关键路径校准；不按每头回Chat。"
+    }
+  ]
+}

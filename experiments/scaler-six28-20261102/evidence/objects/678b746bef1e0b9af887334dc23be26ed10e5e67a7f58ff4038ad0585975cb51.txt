@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "<stdin>", line 19, in <module>
+  File "/workspace/context-infrastructure/adhoc_jobs/admet_training/cycles/scaler-six28-20261102/preparation/packet/output/src/admet_breadth/cache.py", line 181, in load_raw_cache
+    verify_legacy_migration(Path(cache_root), task, split, rows, source_sha256)
+  File "/workspace/context-infrastructure/adhoc_jobs/admet_training/cycles/scaler-six28-20261102/preparation/packet/output/src/admet_breadth/migration.py", line 66, in verify_legacy_migration
+    cur_env = current_environment()
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/context-infrastructure/adhoc_jobs/admet_training/cycles/scaler-six28-20261102/preparation/packet/output/src/admet_breadth/cache.py", line 76, in current_environment
+    return {"packages": pkgs, "implementation_sha256": _module_sha256()}
+                                                       ^^^^^^^^^^^^^^^^
+  File "/workspace/context-infrastructure/adhoc_jobs/admet_training/cycles/scaler-six28-20261102/preparation/packet/output/src/admet_breadth/cache.py", line 58, in _module_sha256
+    out[name] = sha256_file(p) if p.is_file() else "absent"
+                ^^^^^^^^^^^^^^
+  File "<stdin>", line 18, in <lambda>
+AttributeError: 'PosixPath' object has no attribute 'key'

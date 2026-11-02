@@ -1,0 +1,522 @@
+[
+  {
+    "followup_id": "C-cyp2d6_veith-hidden_dim-128",
+    "task": "cyp2d6_veith",
+    "exact_config": {
+      "run_id": "conditional-not-authorized-cyp2d6_veith-hidden_dim-128",
+      "task": "cyp2d6_veith",
+      "kind": "classification",
+      "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "head": {
+        "feature_dim": 2048,
+        "hidden_dim": 128,
+        "activation": "relu",
+        "dropout": 0.1,
+        "optimizer": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "seed": 44
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "stop_fraction": 0.1
+      },
+      "monitor_metric": "AUPRC",
+      "monitor_direction": "maximize"
+    },
+    "split_id": "raw_smiles_group_shuffle-s43-stop0.1",
+    "seeds": [
+      44,
+      45
+    ],
+    "control_run_ids": [
+      "hainan-breadth-cyp2d6_veith-h0-s44-20261102",
+      "hainan-breadth-cyp2d6_veith-h0-s45-20261102"
+    ],
+    "direction_ids": [
+      "D-CAPACITY"
+    ],
+    "issue_ids": [
+      "ISS-HEAD-18"
+    ],
+    "design_type": "one_factor",
+    "preparation_mode": "config_only",
+    "new_fit_cap": 2,
+    "trigger": "medium完成且缩放未改善该任务，内部train证据支持该单轴；主控登记后才可执行。",
+    "skip_or_stop_if": "数据/冻结/legacy等价失败，或任务当前控制不同版本；不因valid赢家偏好自动选轴。",
+    "training_objective": {
+      "loss": "BCEWithLogitsLoss(reduction=mean, pos_weight=None)",
+      "loss_scale": "mean natural-log binary cross entropy on logits",
+      "early_stopping_metric": "AUPRC on internal stop; sigmoid probabilities; grouped-tie Average Precision for AUPRC",
+      "early_stopping_direction": "maximize",
+      "prediction_scale": "sigmoid(logits), continuous probability in [0,1], no thresholding"
+    },
+    "authorization": "not_authorized_conditional_only",
+    "review_checkpoint": "selected conditional submatrix complete, maximum16fits across this file; no automatic escalation"
+  },
+  {
+    "followup_id": "C-cyp2d6_veith-lr-0.0001",
+    "task": "cyp2d6_veith",
+    "exact_config": {
+      "run_id": "conditional-not-authorized-cyp2d6_veith-lr-0.0001",
+      "task": "cyp2d6_veith",
+      "kind": "classification",
+      "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "head": {
+        "feature_dim": 2048,
+        "hidden_dim": 256,
+        "activation": "relu",
+        "dropout": 0.1,
+        "optimizer": "AdamW",
+        "lr": 0.0001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "seed": 44
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "stop_fraction": 0.1
+      },
+      "monitor_metric": "AUPRC",
+      "monitor_direction": "maximize"
+    },
+    "split_id": "raw_smiles_group_shuffle-s43-stop0.1",
+    "seeds": [
+      44,
+      45
+    ],
+    "control_run_ids": [
+      "hainan-breadth-cyp2d6_veith-h0-s44-20261102",
+      "hainan-breadth-cyp2d6_veith-h0-s45-20261102"
+    ],
+    "direction_ids": [
+      "D-OPT"
+    ],
+    "issue_ids": [
+      "ISS-HEAD-18"
+    ],
+    "design_type": "one_factor",
+    "preparation_mode": "config_only",
+    "new_fit_cap": 2,
+    "trigger": "medium完成且缩放未改善该任务，内部train证据支持该单轴；主控登记后才可执行。",
+    "skip_or_stop_if": "数据/冻结/legacy等价失败，或任务当前控制不同版本；不因valid赢家偏好自动选轴。",
+    "training_objective": {
+      "loss": "BCEWithLogitsLoss(reduction=mean, pos_weight=None)",
+      "loss_scale": "mean natural-log binary cross entropy on logits",
+      "early_stopping_metric": "AUPRC on internal stop; sigmoid probabilities; grouped-tie Average Precision for AUPRC",
+      "early_stopping_direction": "maximize",
+      "prediction_scale": "sigmoid(logits), continuous probability in [0,1], no thresholding"
+    },
+    "authorization": "not_authorized_conditional_only",
+    "review_checkpoint": "selected conditional submatrix complete, maximum16fits across this file; no automatic escalation"
+  },
+  {
+    "followup_id": "C-cyp2d6_veith-dropout-0.0",
+    "task": "cyp2d6_veith",
+    "exact_config": {
+      "run_id": "conditional-not-authorized-cyp2d6_veith-dropout-0.0",
+      "task": "cyp2d6_veith",
+      "kind": "classification",
+      "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "head": {
+        "feature_dim": 2048,
+        "hidden_dim": 256,
+        "activation": "relu",
+        "dropout": 0.0,
+        "optimizer": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "seed": 44
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "stop_fraction": 0.1
+      },
+      "monitor_metric": "AUPRC",
+      "monitor_direction": "maximize"
+    },
+    "split_id": "raw_smiles_group_shuffle-s43-stop0.1",
+    "seeds": [
+      44,
+      45
+    ],
+    "control_run_ids": [
+      "hainan-breadth-cyp2d6_veith-h0-s44-20261102",
+      "hainan-breadth-cyp2d6_veith-h0-s45-20261102"
+    ],
+    "direction_ids": [
+      "D-REG"
+    ],
+    "issue_ids": [
+      "ISS-HEAD-18"
+    ],
+    "design_type": "one_factor",
+    "preparation_mode": "config_only",
+    "new_fit_cap": 2,
+    "trigger": "medium完成且缩放未改善该任务，内部train证据支持该单轴；主控登记后才可执行。",
+    "skip_or_stop_if": "数据/冻结/legacy等价失败，或任务当前控制不同版本；不因valid赢家偏好自动选轴。",
+    "training_objective": {
+      "loss": "BCEWithLogitsLoss(reduction=mean, pos_weight=None)",
+      "loss_scale": "mean natural-log binary cross entropy on logits",
+      "early_stopping_metric": "AUPRC on internal stop; sigmoid probabilities; grouped-tie Average Precision for AUPRC",
+      "early_stopping_direction": "maximize",
+      "prediction_scale": "sigmoid(logits), continuous probability in [0,1], no thresholding"
+    },
+    "authorization": "not_authorized_conditional_only",
+    "review_checkpoint": "selected conditional submatrix complete, maximum16fits across this file; no automatic escalation"
+  },
+  {
+    "followup_id": "C-lipophilicity_astrazeneca-hidden_dim-512",
+    "task": "lipophilicity_astrazeneca",
+    "exact_config": {
+      "run_id": "conditional-not-authorized-lipophilicity_astrazeneca-hidden_dim-512",
+      "task": "lipophilicity_astrazeneca",
+      "kind": "regression",
+      "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "head": {
+        "feature_dim": 2048,
+        "hidden_dim": 512,
+        "activation": "relu",
+        "dropout": 0.1,
+        "optimizer": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "seed": 44
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "stop_fraction": 0.1
+      },
+      "monitor_metric": "MAE",
+      "monitor_direction": "minimize"
+    },
+    "split_id": "raw_smiles_group_shuffle-s43-stop0.1",
+    "seeds": [
+      44,
+      45
+    ],
+    "control_run_ids": [
+      "hainan-breadth-lipophilicity_astrazeneca-h0-s44-20261102",
+      "hainan-breadth-lipophilicity_astrazeneca-h0-s45-20261102"
+    ],
+    "direction_ids": [
+      "D-CAPACITY"
+    ],
+    "issue_ids": [
+      "ISS-HEAD-18"
+    ],
+    "design_type": "one_factor",
+    "preparation_mode": "config_only",
+    "new_fit_cap": 2,
+    "trigger": "medium完成且缩放未改善该任务，内部train证据支持该单轴；主控登记后才可执行。",
+    "skip_or_stop_if": "数据/冻结/legacy等价失败，或任务当前控制不同版本；不因valid赢家偏好自动选轴。",
+    "training_objective": {
+      "loss": "MSELoss(reduction=mean)",
+      "loss_scale": "dimensionless squared fit-only standardized Y; fit mean/std float64; zero std -> 1",
+      "early_stopping_metric": "MAE on internal stop; predictions inverse-transformed once to original Y scale; average ranks if Spearman",
+      "early_stopping_direction": "minimize",
+      "prediction_scale": "original task Y scale, inverse exactly once; unknown physical unit not invented"
+    },
+    "authorization": "not_authorized_conditional_only",
+    "review_checkpoint": "selected conditional submatrix complete, maximum16fits across this file; no automatic escalation"
+  },
+  {
+    "followup_id": "C-lipophilicity_astrazeneca-lr-0.0003",
+    "task": "lipophilicity_astrazeneca",
+    "exact_config": {
+      "run_id": "conditional-not-authorized-lipophilicity_astrazeneca-lr-0.0003",
+      "task": "lipophilicity_astrazeneca",
+      "kind": "regression",
+      "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "head": {
+        "feature_dim": 2048,
+        "hidden_dim": 256,
+        "activation": "relu",
+        "dropout": 0.1,
+        "optimizer": "AdamW",
+        "lr": 0.0003,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "seed": 44
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "stop_fraction": 0.1
+      },
+      "monitor_metric": "MAE",
+      "monitor_direction": "minimize"
+    },
+    "split_id": "raw_smiles_group_shuffle-s43-stop0.1",
+    "seeds": [
+      44,
+      45
+    ],
+    "control_run_ids": [
+      "hainan-breadth-lipophilicity_astrazeneca-h0-s44-20261102",
+      "hainan-breadth-lipophilicity_astrazeneca-h0-s45-20261102"
+    ],
+    "direction_ids": [
+      "D-OPT"
+    ],
+    "issue_ids": [
+      "ISS-HEAD-18"
+    ],
+    "design_type": "one_factor",
+    "preparation_mode": "config_only",
+    "new_fit_cap": 2,
+    "trigger": "medium完成且缩放未改善该任务，内部train证据支持该单轴；主控登记后才可执行。",
+    "skip_or_stop_if": "数据/冻结/legacy等价失败，或任务当前控制不同版本；不因valid赢家偏好自动选轴。",
+    "training_objective": {
+      "loss": "MSELoss(reduction=mean)",
+      "loss_scale": "dimensionless squared fit-only standardized Y; fit mean/std float64; zero std -> 1",
+      "early_stopping_metric": "MAE on internal stop; predictions inverse-transformed once to original Y scale; average ranks if Spearman",
+      "early_stopping_direction": "minimize",
+      "prediction_scale": "original task Y scale, inverse exactly once; unknown physical unit not invented"
+    },
+    "authorization": "not_authorized_conditional_only",
+    "review_checkpoint": "selected conditional submatrix complete, maximum16fits across this file; no automatic escalation"
+  },
+  {
+    "followup_id": "C-ld50_zhu-huber",
+    "task": "ld50_zhu",
+    "exact_config": {
+      "run_id": "conditional-not-authorized-ld50_zhu-huber",
+      "task": "ld50_zhu",
+      "kind": "regression",
+      "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "head": {
+        "feature_dim": 2048,
+        "hidden_dim": 256,
+        "activation": "relu",
+        "dropout": 0.1,
+        "optimizer": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "seed": 44,
+        "loss": {
+          "name": "HuberLoss",
+          "delta": 1.0,
+          "reduction": "mean"
+        }
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "stop_fraction": 0.1
+      },
+      "monitor_metric": "MAE",
+      "monitor_direction": "minimize",
+      "feature_scaler": {
+        "method": "fit_std_denominator_floor_v1",
+        "denominator_floor": 0.001,
+        "legacy_epsilon": 1e-08,
+        "legacy_low_std_replacement": 1.0,
+        "fit_statistic_dtype": "float32",
+        "ddof": 0,
+        "transform_dtype": "float32",
+        "fit_scope": "internal_fit_only",
+        "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+      }
+    },
+    "split_id": "raw_smiles_group_shuffle-s43-stop0.1",
+    "seeds": [
+      44,
+      45
+    ],
+    "control_proposal_ids": [
+      "P-ld50_zhu-F001"
+    ],
+    "direction_ids": [
+      "D-LOSS"
+    ],
+    "issue_ids": [
+      "ISS-TARGET-19",
+      "ISS-NUMERIC-15"
+    ],
+    "design_type": "one_factor",
+    "preparation_mode": "new_code",
+    "new_fit_cap": 2,
+    "trigger": "medium之后F001前提成立且train内部尾部目标/梯度诊断支持robust loss；由主控登记而非自动运行。",
+    "skip_or_stop_if": "未实现loss/metric分离、尺度fixture未过，或F001尚未完成同seed控制。",
+    "training_objective": {
+      "loss": "HuberLoss(delta=1.0,reduction=mean)",
+      "loss_scale": "dimensionless fit-standardized Y, quadratic for abs error<1 and linear otherwise",
+      "early_stopping_metric": "MAE on internal stop; predictions inverse-transformed once to original Y scale; average ranks if Spearman",
+      "early_stopping_direction": "minimize",
+      "prediction_scale": "original task Y scale, inverse exactly once; unknown physical unit not invented"
+    },
+    "authorization": "not_authorized_conditional_only",
+    "review_checkpoint": "selected conditional submatrix complete; retain all failures, no per-head Chat"
+  },
+  {
+    "followup_id": "C-solubility_aqsoldb-huber",
+    "task": "solubility_aqsoldb",
+    "exact_config": {
+      "run_id": "conditional-not-authorized-solubility_aqsoldb-huber",
+      "task": "solubility_aqsoldb",
+      "kind": "regression",
+      "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "head": {
+        "feature_dim": 2048,
+        "hidden_dim": 256,
+        "activation": "relu",
+        "dropout": 0.1,
+        "optimizer": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "seed": 44,
+        "loss": {
+          "name": "HuberLoss",
+          "delta": 1.0,
+          "reduction": "mean"
+        }
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "stop_fraction": 0.1
+      },
+      "monitor_metric": "MAE",
+      "monitor_direction": "minimize",
+      "feature_scaler": {
+        "method": "fit_std_denominator_floor_v1",
+        "denominator_floor": 0.001,
+        "legacy_epsilon": 1e-08,
+        "legacy_low_std_replacement": 1.0,
+        "fit_statistic_dtype": "float32",
+        "ddof": 0,
+        "transform_dtype": "float32",
+        "fit_scope": "internal_fit_only",
+        "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+      }
+    },
+    "split_id": "raw_smiles_group_shuffle-s43-stop0.1",
+    "seeds": [
+      44,
+      45
+    ],
+    "control_proposal_ids": [
+      "P-solubility_aqsoldb-F001"
+    ],
+    "direction_ids": [
+      "D-LOSS"
+    ],
+    "issue_ids": [
+      "ISS-TARGET-19",
+      "ISS-NUMERIC-15"
+    ],
+    "design_type": "one_factor",
+    "preparation_mode": "new_code",
+    "new_fit_cap": 2,
+    "trigger": "medium之后F001前提成立且train内部尾部目标/梯度诊断支持robust loss；由主控登记而非自动运行。",
+    "skip_or_stop_if": "未实现loss/metric分离、尺度fixture未过，或F001尚未完成同seed控制。",
+    "training_objective": {
+      "loss": "HuberLoss(delta=1.0,reduction=mean)",
+      "loss_scale": "dimensionless fit-standardized Y, quadratic for abs error<1 and linear otherwise",
+      "early_stopping_metric": "MAE on internal stop; predictions inverse-transformed once to original Y scale; average ranks if Spearman",
+      "early_stopping_direction": "minimize",
+      "prediction_scale": "original task Y scale, inverse exactly once; unknown physical unit not invented"
+    },
+    "authorization": "not_authorized_conditional_only",
+    "review_checkpoint": "selected conditional submatrix complete; retain all failures, no per-head Chat"
+  },
+  {
+    "followup_id": "C-clearance_hepatocyte_az-huber",
+    "task": "clearance_hepatocyte_az",
+    "exact_config": {
+      "run_id": "conditional-not-authorized-clearance_hepatocyte_az-huber",
+      "task": "clearance_hepatocyte_az",
+      "kind": "regression",
+      "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+      "head": {
+        "feature_dim": 2048,
+        "hidden_dim": 256,
+        "activation": "relu",
+        "dropout": 0.1,
+        "optimizer": "AdamW",
+        "lr": 0.0005,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "seed": 44,
+        "loss": {
+          "name": "HuberLoss",
+          "delta": 1.0,
+          "reduction": "mean"
+        }
+      },
+      "split": {
+        "method": "raw_smiles_group_shuffle",
+        "seed": 43,
+        "stop_fraction": 0.1
+      },
+      "monitor_metric": "Spearman",
+      "monitor_direction": "maximize",
+      "feature_scaler": {
+        "method": "fit_std_denominator_floor_v1",
+        "denominator_floor": 0.001,
+        "legacy_epsilon": 1e-08,
+        "legacy_low_std_replacement": 1.0,
+        "fit_statistic_dtype": "float32",
+        "ddof": 0,
+        "transform_dtype": "float32",
+        "fit_scope": "internal_fit_only",
+        "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+      }
+    },
+    "split_id": "raw_smiles_group_shuffle-s43-stop0.1",
+    "seeds": [
+      44,
+      45
+    ],
+    "control_proposal_ids": [
+      "P-clearance_hepatocyte_az-F001"
+    ],
+    "direction_ids": [
+      "D-LOSS"
+    ],
+    "issue_ids": [
+      "ISS-TARGET-19",
+      "ISS-NUMERIC-15"
+    ],
+    "design_type": "one_factor",
+    "preparation_mode": "new_code",
+    "new_fit_cap": 2,
+    "trigger": "medium之后F001前提成立且train内部尾部目标/梯度诊断支持robust loss；由主控登记而非自动运行。",
+    "skip_or_stop_if": "未实现loss/metric分离、尺度fixture未过，或F001尚未完成同seed控制。",
+    "training_objective": {
+      "loss": "HuberLoss(delta=1.0,reduction=mean)",
+      "loss_scale": "dimensionless fit-standardized Y, quadratic for abs error<1 and linear otherwise",
+      "early_stopping_metric": "Spearman on internal stop; predictions inverse-transformed once to original Y scale; average ranks if Spearman",
+      "early_stopping_direction": "maximize",
+      "prediction_scale": "original task Y scale, inverse exactly once; unknown physical unit not invented"
+    },
+    "authorization": "not_authorized_conditional_only",
+    "review_checkpoint": "selected conditional submatrix complete; retain all failures, no per-head Chat"
+  }
+]

@@ -1,0 +1,187 @@
+{
+  "execution_kind": "aggregate and synthetic arithmetic only",
+  "archived_code_executed": false,
+  "models_loaded": false,
+  "new_fits": 0,
+  "model_inferences": 0,
+  "valid_truth_reads": 0,
+  "checks": [
+    {
+      "check_id": "FIT_POPULATION_STD",
+      "observed": [
+        0.4330126941204071,
+        0.0
+      ],
+      "expected": [
+        0.4330127018922193,
+        0
+      ],
+      "passed": true,
+      "scope": "synthetic arithmetic, not production execution"
+    },
+    {
+      "check_id": "CONSTANT_DIM_UNIT_DENOMINATOR",
+      "observed": [
+        0.4330126941204071,
+        1.0
+      ],
+      "expected": [
+        0.4330127018922193,
+        1.0
+      ],
+      "passed": true,
+      "scope": "matches audited strict below-epsilon replacement rule"
+    },
+    {
+      "check_id": "STRICT_EPSILON",
+      "observed": [
+        1.0,
+        1.0,
+        1e-08,
+        2e-08,
+        1e-05,
+        0.01
+      ],
+      "expected": [
+        1,
+        1,
+        1e-08,
+        2e-08,
+        1e-05,
+        0.01
+      ],
+      "passed": true,
+      "scope": "independent float64 boundary illustration; production fixture must test float32 representation too"
+    },
+    {
+      "check_id": "F001_PRESERVES_CONSTANT_DIM",
+      "observed": [
+        1.0,
+        1.0,
+        0.001,
+        0.001,
+        0.001,
+        0.01
+      ],
+      "expected": [
+        1,
+        1,
+        0.001,
+        0.001,
+        0.001,
+        0.01
+      ],
+      "passed": true,
+      "scope": "proposed denominator policy; does not clip any input row or prediction"
+    },
+    {
+      "check_id": "RARE_DIM_BOUND",
+      "observed": 9.9498743710662,
+      "expected": 9.9498743710662,
+      "passed": true,
+      "scope": "exact synthetic fit population std; not empirical causality"
+    },
+    {
+      "check_id": "OOD_Z_CAN_EXCEED_FIT_BOUND",
+      "observed": 1004.9373114776862,
+      "expected": "greater than sqrt(99), finite",
+      "passed": true,
+      "scope": "counterexample to inferring raw overflow from a large standardized value"
+    },
+    {
+      "check_id": "FIT_ONLY_SCOPE",
+      "observed": [
+        2.0,
+        0.816496580927726
+      ],
+      "expected": [
+        2.0,
+        0.816496580927726
+      ],
+      "passed": true,
+      "scope": "changing stop must not enter fit-statistics routine"
+    },
+    {
+      "check_id": "ALL_TRAIN_LEAKAGE_COUNTEREXAMPLE",
+      "observed": [
+        26.5,
+        42.44113570582201
+      ],
+      "expected": "different from fit-only statistics",
+      "passed": true,
+      "scope": "demonstrates why production fit indices must be enforced"
+    },
+    {
+      "check_id": "INVERSE_ONCE_MAE",
+      "observed": [
+        0.0,
+        31.0
+      ],
+      "expected": [
+        0.0,
+        31.0
+      ],
+      "passed": true,
+      "scope": "expected result for scale-transmission fixture; no model inference"
+    },
+    {
+      "check_id": "NATIVE_METRIC_PATIENCE",
+      "observed": [
+        2,
+        10
+      ],
+      "expected": [
+        2,
+        10
+      ],
+      "passed": true,
+      "scope": "minimize example: ties retain earlier epoch; patience eight elapsed epochs"
+    },
+    {
+      "check_id": "TIED_AP_AUC",
+      "observed": [
+        0.5833333333333333,
+        0.625
+      ],
+      "expected": [
+        0.5833333333333334,
+        0.625
+      ],
+      "passed": true,
+      "scope": "independent formula oracle for production parity; AP not trapezoid PR area"
+    },
+    {
+      "check_id": "TIE_PERMUTATION_INVARIANCE",
+      "observed": 1,
+      "expected": 1,
+      "passed": true,
+      "scope": "24 permutations; all observations synthetic"
+    },
+    {
+      "check_id": "ONE_CLASS_UNDEFINED",
+      "observed": [
+        null,
+        null
+      ],
+      "expected": [
+        null,
+        null
+      ],
+      "passed": true,
+      "scope": "required comparison policy, not universal sklearn convention"
+    },
+    {
+      "check_id": "BUFFER_MUTATION_DETECTED",
+      "observed": true,
+      "expected": true,
+      "passed": true,
+      "scope": "synthetic digest coverage; actual frozen encoder accepted by controller, not reloaded here"
+    }
+  ],
+  "passed": 14,
+  "failed": 0,
+  "limitations": [
+    "These are independent expected-value fixtures; they do not certify a newly implemented production branch.",
+    "No raw feature NPY was downloaded, no stored model evaluated."
+  ]
+}

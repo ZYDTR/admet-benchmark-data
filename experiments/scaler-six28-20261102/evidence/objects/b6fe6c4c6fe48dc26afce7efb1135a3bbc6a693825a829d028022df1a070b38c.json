@@ -1,0 +1,64 @@
+{
+  "at": "2026-11-02T02:13:35.238579+00:00",
+  "start_epoch": 1793585615.235775,
+  "parent_identity": {
+    "pid": "process-8a05a1a49ab7",
+    "state": "R",
+    "ppid": "process-d990c4ec9862",
+    "start_ticks": 394835505
+  },
+  "strace_identity": {
+    "pid": "process-a414d574b062",
+    "state": "R",
+    "ppid": "process-8a05a1a49ab7",
+    "start_ticks": 394835568
+  },
+  "argv": [
+    "strace",
+    "-f",
+    "-qq",
+    "-ttt",
+    "-s",
+    "1024",
+    "-yy",
+    "-e",
+    "trace=%file,write,writev,pwrite64,ftruncate,mmap,msync",
+    "-o",
+    "task-storage://admet/scaler-six28-20261102/raw/write01.strace",
+    "task-storage://admet/hainan-skill-pilot-20261030/venv/bin/python",
+    "-I",
+    "-B",
+    "task-storage://admet/scaler-six28-20261102/runtime/guard.py"
+  ],
+  "environment_overrides": {
+    "CUDA_VISIBLE_DEVICES": "GPU-b9fbba0f-b366-d145-720a-37b369c234a0",
+    "CUBLAS_WORKSPACE_CONFIG": ":4096:8",
+    "LD_PRELOAD": "task-storage://admet/scaler-six28-20261102/support/thread-names-v2.so",
+    "TMPDIR": "task-storage://admet/scaler-six28-20261102/private/tmp",
+    "XDG_CACHE_HOME": "task-storage://admet/scaler-six28-20261102/private/cache",
+    "JOBLIB_MULTIPROCESSING": "0"
+  },
+  "CPU_affinity": [
+    2,
+    3
+  ],
+  "GPU": {
+    "uuid": "GPU-b9fbba0f-b366-d145-720a-37b369c234a0",
+    "health": {
+      "gpu_recovery_action": "None",
+      "compute_mode": "Default",
+      "ecc_errors/volatile/sram_uncorrectable_parity": "0",
+      "ecc_errors/volatile/sram_uncorrectable_secded": "0",
+      "ecc_errors/volatile/dram_uncorrectable": "0",
+      "remapped_rows/remapped_row_pending": "No",
+      "remapped_rows/remapped_row_failure": "No"
+    },
+    "healthy": true,
+    "used_mib": 0,
+    "free_mib": 81090,
+    "util_percent": 0,
+    "pids": [],
+    "index": 1
+  },
+  "GPU_job_budget_seconds": 7200
+}

@@ -1,0 +1,269 @@
+"""Explicit task loss + early-stop training loop (host-executed; never called here).
+
+This module contains the real learning code path: epoch loop, shuffling, BCE /
+standardized-MSE loss, per-epoch internal-stop monitoring through the configured
+local metric, patience-based early stopping with MIN_DELTA tie semantics, and
+best/last checkpoint capture with optimizer/RNG/progress state.
+
+Preparation-phase contract: importing this module performs no training. The
+preparation session MUST NOT call ``train_head`` (it invokes backward/step);
+only the host during authorized CUDA training runs may call it. Static review,
+head/optimizer construction and serialization checks are exercised separately
+without parameter updates.
+"""
+
+from __future__ import annotations
+
+import math
+from typing import Any, Mapping, Sequence
+
+from .cache import validate_scaler_config
+from .common import CHEMELEON_SHA256, InterfaceError, task_kind
+from .data_io import (ADMITTED_BATCH_SIZE, ADMITTED_DROPOUT, ADMITTED_HIDDEN_DIMS,
+                      ADMITTED_LR, ADMITTED_MAX_EPOCHS, ADMITTED_MODEL_SEEDS,
+                      ADMITTED_PATIENCE, ADMITTED_SPLIT_SEED, ADMITTED_STOP_FRACTION,
+                      ADMITTED_WEIGHT_DECAY)
+from .heads import build_head, make_loss, make_optimizer, postprocess
+from .metrics import EarlyStopMonitor, MIN_DELTA
+
+
+def validate_config(cfg: Any, task_metrics: Mapping[str, Any]) -> dict:
+    """Validate one run configuration against the admitted scientific envelope."""
+    if not isinstance(cfg, dict):
+        raise InterfaceError(f"config must be an object, got {type(cfg).__name__}")
+    for key in ("run_id", "task", "kind", "pretrained_sha256", "head", "split",
+                 "monitor_metric", "monitor_direction"):
+        if key not in cfg:
+            raise InterfaceError(f"config missing '{key}'")
+    if not isinstance(cfg["run_id"], str) or not cfg["run_id"].strip():
+        raise InterfaceError("run_id must be a non-empty string")
+    if cfg["kind"] not in ("classification", "regression"):
+        raise InterfaceError(f"kind invalid: {cfg['kind']!r}")
+    if cfg["kind"] != task_kind(cfg["task"]):
+        raise InterfaceError(f"kind {cfg['kind']} contradicts registered kind for {cfg['task']}")
+    d = cfg["pretrained_sha256"]
+    if not (isinstance(d, str) and len(d) == 64 and all(c in "0123456789abcdef" for c in d)):
+        raise InterfaceError("pretrained_sha256 must be 64-char lowercase hex")
+    if d != CHEMELEON_SHA256:
+        raise InterfaceError("pretrained_sha256 differs from the approved encoder")
+    h = cfg["head"]
+    if not isinstance(h, dict):
+        raise InterfaceError("head must be an object")
+    if h.get("feature_dim") != 2048:
+        raise InterfaceError("only CheMeleon 2048-dim features are admitted")
+    if h.get("hidden_dim") not in ADMITTED_HIDDEN_DIMS:
+        raise InterfaceError(f"hidden_dim must be one of {ADMITTED_HIDDEN_DIMS}, got {h.get('hidden_dim')!r}")
+    if h.get("activation") != "relu":
+        raise InterfaceError("activation must be relu")
+    if h.get("dropout") not in ADMITTED_DROPOUT:
+        raise InterfaceError(f"dropout must be one of {ADMITTED_DROPOUT}, got {h.get('dropout')!r}")
+    if h.get("optimizer") != "AdamW":
+        raise InterfaceError("optimizer must be AdamW")
+    if h.get("lr") not in ADMITTED_LR:
+        raise InterfaceError(f"lr must be one of {ADMITTED_LR}, got {h.get('lr')!r}")
+    if h.get("weight_decay") not in ADMITTED_WEIGHT_DECAY:
+        raise InterfaceError(f"weight_decay must be one of {ADMITTED_WEIGHT_DECAY}, got {h.get('weight_decay')!r}")
+    if h.get("batch_size") != ADMITTED_BATCH_SIZE:
+        raise InterfaceError("batch_size must be 128")
+    if h.get("max_epochs") != ADMITTED_MAX_EPOCHS:
+        raise InterfaceError("max_epochs must be 50")
+    if h.get("patience") != ADMITTED_PATIENCE:
+        raise InterfaceError("patience must be 8")
+    if h.get("seed") not in ADMITTED_MODEL_SEEDS:
+        raise InterfaceError(f"model seed must be one of {ADMITTED_MODEL_SEEDS}, got {h.get('seed')!r}")
+    s = cfg["split"]
+    if not isinstance(s, dict):
+        raise InterfaceError("split must be an object")
+    if s.get("method") != "raw_smiles_group_shuffle":
+        raise InterfaceError(f"unsupported split method: {s.get('method')!r}")
+    if s.get("seed") != ADMITTED_SPLIT_SEED:
+        raise InterfaceError("split seed must be 43")
+    if s.get("stop_fraction") != ADMITTED_STOP_FRACTION:
+        raise InterfaceError("stop fraction must be 0.1")
+    if cfg["monitor_metric"] not in ("AUROC", "AUPRC", "MAE", "Spearman"):
+        raise InterfaceError(f"monitor_metric invalid: {cfg['monitor_metric']!r}")
+    expected_dir = "minimize" if cfg["monitor_metric"] == "MAE" else "maximize"
+    if cfg["monitor_direction"] != expected_dir:
+        raise InterfaceError(f"monitor_direction must be {expected_dir} for {cfg['monitor_metric']}")
+    metric_entry = task_metrics.get(cfg["task"])
+    if not metric_entry or (cfg["monitor_metric"], cfg["monitor_direction"]) != (
+            metric_entry["metric"], metric_entry["direction"]):
+        raise InterfaceError("monitor differs from registered task metric/direction")
+    # feature_scaler: absent == legacy H0 branch; present values are strictly
+    # validated and consumed by the pipeline transform fit (never ignored).
+    validate_scaler_config(cfg.get("feature_scaler"))
+    return cfg
+
+
+class TrainingUnavailableInPreparation(RuntimeError):
+    """Raised by train_head when called inside a preparation-only session."""
+
+
+def evaluate_stop(kind, logits, y_stop_original, monitor, epoch, target_scaler=None):
+    """Actual epoch-monitor boundary; only predictions undergo inverse scaling."""
+    import numpy as np
+    predictions = postprocess(kind, logits, target_scaler)
+    targets = np.asarray(y_stop_original, dtype=np.float64)
+    return monitor.observe(targets.tolist(), predictions.tolist(), epoch)
+
+
+def restore_best_head(model, best_state):
+    """Inference uses the selected head; last optimizer/state remain for recovery."""
+    if best_state is None:
+        raise InterfaceError("no valid best head was selected")
+    model.load_state_dict(best_state, strict=True)
+    model.eval()
+    return model
+
+
+def train_head(*, preparation: bool, X_fit, y_fit, X_stop, y_stop, cfg: Mapping[str, Any],
+               task_metrics: Mapping[str, Any],
+               device: str, monitor: EarlyStopMonitor,
+               target_scaler=None, stop_row_indices: Sequence[int] = (), checkpoint_callback=None):
+    """Run the full head-training loop on cached features. Host-executed only.
+
+    Parameters
+    ----------
+    preparation : must be False to execute; True raises immediately.
+    X_fit/y_fit : scaled features / targets for the official-train fit partition.
+        y_fit must already be in training space: raw 0/1 labels for classification,
+        standardized values for regression (target_scaler.transform).
+    X_stop/y_stop : internal-stop partition (official train rows only); y_stop in
+        ORIGINAL Y scale — the loop inverse-transforms model output to compare.
+    monitor : EarlyStopMonitor bound to the task's local metric + direction.
+    target_scaler : fit-only TargetScaler used to evaluate regression monitors
+        on the ORIGINAL Y scale (inverse-transform before MAE/Spearman).
+
+    Returns (model, result) where result carries history, best/last state dicts,
+    optimizer state, RNG state and progress for checkpointing.
+    """
+    if preparation:
+        raise TrainingUnavailableInPreparation(
+            "train_head performs parameter updates and is forbidden in the preparation "
+            "session; the host runs it during authorized training")
+    import numpy as np
+    import torch
+
+    cfg = validate_config(dict(cfg), task_metrics)
+    if (monitor.metric, monitor.direction) != (cfg["monitor_metric"], cfg["monitor_direction"]):
+        raise InterfaceError("actual monitor differs from configuration")
+    if monitor.best_epoch is not None or monitor.undefined_epochs:
+        raise InterfaceError("each run requires a fresh monitor")
+    kind = cfg["kind"]
+    hc = cfg["head"]
+    for name, X, y in (("fit", X_fit, y_fit), ("stop", X_stop, y_stop)):
+        X, y = np.asarray(X), np.asarray(y)
+        if (X.ndim != 2 or X.shape[1] != hc["feature_dim"] or not len(X)
+                or y.shape != (len(X),) or not np.isfinite(X).all()
+                or not np.isfinite(y).all()):
+            raise InterfaceError(f"{name} features/targets have invalid shape or values")
+        if kind == "classification" and (not np.isin(y, [0., 1.]).all() or set(y.tolist()) != {0.,1.}):
+            raise InterfaceError(f"{name} labels are not binary")
+    if kind == "regression" and target_scaler is None:
+        raise InterfaceError("regression requires fit-only target scaler")
+    import random,hashlib,time
+    random.seed(hc["seed"]);np.random.seed(hc["seed"]);torch.manual_seed(hc["seed"])
+    if str(device).startswith("cuda"):torch.cuda.manual_seed_all(hc["seed"])
+    torch.use_deterministic_algorithms(True)
+    torch.backends.cudnn.benchmark=False;torch.backends.cudnn.deterministic=True
+    torch.backends.cuda.matmul.allow_tf32=False;torch.backends.cudnn.allow_tf32=False
+    model = build_head(int(np.asarray(X_fit).shape[1]), hc["hidden_dim"],
+                      hc["dropout"], hc["seed"]).to(device)
+    initial_state={k:v.detach().cpu().clone() for k,v in model.state_dict().items()}
+    opt = make_optimizer(model, hc["lr"], hc["weight_decay"])
+    assert {id(p) for g in opt.param_groups for p in g["params"]}=={id(p) for p in model.parameters()}
+    def rng_state():
+        st=np.random.get_state()
+        return {"python":random.getstate(),"numpy":{"name":st[0],"keys":torch.tensor(st[1].astype(np.int64)),"pos":st[2],"has_gauss":st[3],"cached_gaussian":st[4]},
+                "torch_cpu":torch.get_rng_state().cpu().clone(),"torch_cuda":[x.cpu().clone() for x in torch.cuda.get_rng_state_all()] if str(device).startswith("cuda") else [],"sampler":gen.get_state().clone()}
+    def cpu_state(value):
+        if isinstance(value,torch.Tensor):return value.detach().cpu().clone()
+        if isinstance(value,dict):return {k:cpu_state(v) for k,v in value.items()}
+        if isinstance(value,list):return [cpu_state(v) for v in value]
+        if isinstance(value,tuple):return tuple(cpu_state(v) for v in value)
+        return value
+
+    loss_fn = make_loss(kind).to(device)
+
+    Xt = torch.as_tensor(np.ascontiguousarray(X_fit, dtype=np.float32), device=device)
+    yt = torch.as_tensor(np.asarray(y_fit, dtype=np.float32).reshape(-1, 1), device=device)
+    Xv = torch.as_tensor(np.ascontiguousarray(X_stop, dtype=np.float32), device=device)
+
+    gen = torch.Generator(device="cpu").manual_seed(hc["seed"])
+    n = Xt.shape[0]
+    history: list[dict[str, Any]] = []
+    best_state = None
+    steps = 0
+    stopped_at = None
+    nonzero_steps=0;grad_max=0.;batch_evidence=[]
+    for epoch in range(1, hc["max_epochs"] + 1):
+        model.train()
+        perm = torch.randperm(n, generator=gen)
+        epoch_start=time.monotonic();weighted_loss=0.;epoch_grad_max=0.;steps_before=steps
+        permutation_sha256=hashlib.sha256(perm.numpy().tobytes()).hexdigest()
+        for start in range(0, n, hc["batch_size"]):
+            sel = perm[start:start + hc["batch_size"]]
+            opt.zero_grad(set_to_none=True)
+            loss = loss_fn(model(Xt[sel]), yt[sel])
+            if not torch.isfinite(loss):
+                raise InterfaceError("non-finite loss; reject this run")
+            assert loss.device.type==torch.device(device).type
+            loss.backward()
+            grad=sum(float(p.grad.detach().abs().sum()) for p in model.parameters() if p.grad is not None)
+            if not math.isfinite(grad) or grad<=0 or not all(p.grad is None or torch.isfinite(p.grad).all() for p in model.parameters()):raise InterfaceError("invalid gradient")
+            nonzero_steps+=1;grad_max=max(grad_max,grad);epoch_grad_max=max(epoch_grad_max,grad)
+            batch_evidence.append({"epoch":epoch,"step":steps+1,"rows":int(len(sel)),"loss":float(loss.detach()),"gradient_l1":grad})
+            weighted_loss+=float(loss.detach())*len(sel)
+            opt.step()
+            steps += 1
+        model.eval()
+        with torch.no_grad():
+            zv = model(Xv).detach().cpu().numpy().reshape(-1)
+        rec = evaluate_stop(kind, zv, y_stop, monitor, epoch, target_scaler)
+        rec.update({"steps":steps,"steps_this_epoch":steps-steps_before,"train_loss":weighted_loss/n,"train_loss_mode":"sample-weighted update batches in train mode with dropout", "maximum_gradient_l1":epoch_grad_max,"permutation_sha256":permutation_sha256,"epoch_seconds":time.monotonic()-epoch_start})
+        history.append(rec)
+        if rec["value"] is not None and rec["improved"]:
+            best_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
+        if checkpoint_callback is not None:
+            checkpoint_callback({"run_id":cfg["run_id"],"config":cfg,"history":history,"last_state_dict":cpu_state(model.state_dict()),"best_state_dict":best_state,"optimizer_state":cpu_state(opt.state_dict()),"rng_state":rng_state(),"initial_state_dict":initial_state,"best_epoch":monitor.best_epoch,"best_value":monitor.best_value,"steps":steps,"nonzero_steps":nonzero_steps,"grad_max":grad_max,"batch_evidence":batch_evidence})
+        if monitor.should_stop(epoch, hc["patience"]):
+            stopped_at = epoch
+            break
+
+    if monitor.best_value is None:
+        raise InterfaceError(
+            f"monitor {monitor.metric} undefined for every epoch of task {cfg['task']}; "
+            "reject this task config — do not silently swap metric or seed")
+    last_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
+    result = {
+        "initial_state_dict":initial_state,"nonzero_steps":nonzero_steps,"maximum_gradient_l1":grad_max,"batch_evidence":batch_evidence,
+        "history": history,
+        "stopped_at_epoch": stopped_at,
+        "best_epoch": monitor.best_epoch,
+        "best_value": monitor.best_value,
+        "undefined_epochs": monitor.undefined_epochs,
+        "best_state_dict": best_state,
+        "last_state_dict": last_state,
+        "optimizer_state": cpu_state(opt.state_dict()),
+        "rng_state": rng_state(),
+        "progress": {"epochs_completed": len(history), "cumulative_steps": steps},
+        "returned_model_state": "best",
+        "optimizer_and_rng_state_at": "last",
+    }
+    return restore_best_head(model, best_state), result
+
+
+def _plain(x):
+    if isinstance(x, tuple):
+        return [_plain(i) for i in x]
+    if isinstance(x, (int, float, str, bool)) or x is None:
+        return x
+    return int(x) if isinstance(x, int) else x
+
+
+def assert_update_free(before, after) -> None:
+    """Compare two state_dict snapshots; raise if any tensor changed."""
+    import torch
+    for key in before:
+        if not torch.equal(before[key].detach().cpu(), after[key].detach().cpu()):
+            raise InterfaceError(f"parameter changed without authorization: {key}")

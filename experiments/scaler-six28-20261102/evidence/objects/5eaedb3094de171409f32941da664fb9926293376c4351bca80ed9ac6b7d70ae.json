@@ -1,0 +1,83 @@
+{
+  "failures": [
+    {
+      "receipt": "raw/cpu-check01.result.json",
+      "started_epoch": 1793585908.921032,
+      "finished_epoch": 1793585912.124655,
+      "actual_SSH_exit": 1,
+      "timed_out": false,
+      "payload_size": 0,
+      "source_sha256": "5216e88ecfc49abb76ecdffe82c2292a3000aa879720ff3d033d4524f3ca27ee",
+      "stdout_bytes": 769,
+      "stderr_bytes": 222
+    },
+    {
+      "receipt": "raw/cpu-check02.result.json",
+      "started_epoch": 1793586041.304451,
+      "finished_epoch": 1793586044.7684858,
+      "actual_SSH_exit": 1,
+      "timed_out": false,
+      "payload_size": 0,
+      "source_sha256": "be11cf48c58d6e4b33728516fd5245f9d52aaa328c02948e53293be38e0a42ec",
+      "stdout_bytes": 0,
+      "stderr_bytes": 351
+    },
+    {
+      "receipt": "raw/fetch-01-r1.result.json",
+      "started_epoch": 1793585745.768683,
+      "finished_epoch": 1793585748.453154,
+      "actual_SSH_exit": 255,
+      "timed_out": false,
+      "payload_size": 0,
+      "source_sha256": "19f5ec4eb7f349586c0c7dd13536203cd8ab6a2659e6c04e5c413ae4ac93f9e7",
+      "stdout_bytes": 0,
+      "stderr_bytes": 283
+    },
+    {
+      "receipt": "raw/fetch-08-r1.result.json",
+      "started_epoch": 1793585938.072835,
+      "finished_epoch": 1793585940.813534,
+      "actual_SSH_exit": 255,
+      "timed_out": false,
+      "payload_size": 0,
+      "source_sha256": "d9cd757adba19401d203c8bbf2f2a87b961931f0f998d6ca4078858719abb547",
+      "stdout_bytes": 0,
+      "stderr_bytes": 283
+    },
+    {
+      "receipt": "raw/read-cpu-error02-r1.result.json",
+      "started_epoch": 1793586078.783191,
+      "finished_epoch": 1793586082.3760462,
+      "actual_SSH_exit": 1,
+      "timed_out": false,
+      "payload_size": 0,
+      "source_sha256": "5f12c55e15044a35de8ba8713075f23e22bf3cd35c796edba676453b92b73666",
+      "stdout_bytes": 0,
+      "stderr_bytes": 870
+    },
+    {
+      "receipt": "raw/train01.result.json",
+      "started_epoch": 1793585550.344654,
+      "finished_epoch": 1793585552.814571,
+      "actual_SSH_exit": 255,
+      "timed_out": false,
+      "payload_size": 0,
+      "source_sha256": "7681bd78f18ca1d96c55d01eeb2638711e463a641aa37a2e86587a22e6a20146",
+      "stdout_bytes": 0,
+      "stderr_bytes": 283
+    }
+  ],
+  "interpretation": {
+    "train01": "Transient registered SSH authentication refusal before code execution; read-only recovery succeeded, then one launch executed; GPU_seconds0.",
+    "fetch-01-r1/fetch-08-r1": "Two transient SSH authentication refusals during read-only retrieval; same-route bounded retries succeeded. No learning replay.",
+    "cpu-check01": "CPU verifier output statement SyntaxError; actual strace exit1 in0.06475086696445942s. No science updates; original source/trace retained.",
+    "cpu-check02": "New CPU helper files staged, then stale old stdout path assertion refused before another CPU worker. Corrected with a fresh explicit launch, not a replay of an unknown live process.",
+    "read-cpu-error02-r1": "Diagnostic read expected files for a worker that had not launched, and returned FileNotFoundError; preserved as failed read, not retried as a connection error.",
+    "cpu-check03": "Corrected independent CPU verification executed once and exited0, all28 models and every row verified."
+  },
+  "new_fit_restarts": 0,
+  "new_fit_checkpoint_continuations": 0,
+  "GPU_failure_seconds": 0,
+  "failed_CPU_program_seconds": 0.06475086696445942,
+  "scientific_learning_failures": 0
+}

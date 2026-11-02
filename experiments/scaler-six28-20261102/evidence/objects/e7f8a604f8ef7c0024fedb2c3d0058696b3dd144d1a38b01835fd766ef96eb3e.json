@@ -1,0 +1,663 @@
+{
+  "run_id": "hainan-scaler-clearance_hepatocyte_az-f001-s44-20261102",
+  "configuration": {
+    "run_id": "hainan-scaler-clearance_hepatocyte_az-f001-s44-20261102",
+    "task": "clearance_hepatocyte_az",
+    "kind": "regression",
+    "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+    "head": {
+      "feature_dim": 2048,
+      "hidden_dim": 256,
+      "activation": "relu",
+      "dropout": 0.1,
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "seed": 44
+    },
+    "split": {
+      "method": "raw_smiles_group_shuffle",
+      "seed": 43,
+      "stop_fraction": 0.1
+    },
+    "monitor_metric": "Spearman",
+    "monitor_direction": "maximize",
+    "feature_scaler": {
+      "method": "fit_std_denominator_floor_v1",
+      "denominator_floor": 0.001,
+      "legacy_epsilon": 1e-08,
+      "legacy_low_std_replacement": 1.0,
+      "fit_statistic_dtype": "float32",
+      "ddof": 0,
+      "transform_dtype": "float32",
+      "fit_scope": "internal_fit_only",
+      "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+    }
+  },
+  "counts": {
+    "train": 848,
+    "valid": 122,
+    "test": 243
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "metric": "Spearman",
+      "value": 0.5452568726385407,
+      "improved": true,
+      "best_value": 0.5452568726385407,
+      "best_epoch": 1,
+      "steps": 6,
+      "steps_this_epoch": 6,
+      "train_loss": 0.919649107249703,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 1545.5628281831741,
+      "permutation_sha256": "4492ddb94c8ceca3c59d5040c317a3421c464ecfe182ef950f8cdc7650ea5950",
+      "epoch_seconds": 0.02213507890701294
+    },
+    {
+      "epoch": 2,
+      "metric": "Spearman",
+      "value": 0.5730603929039076,
+      "improved": true,
+      "best_value": 0.5730603929039076,
+      "best_epoch": 2,
+      "steps": 12,
+      "steps_this_epoch": 6,
+      "train_loss": 0.5535666080597504,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 1257.8881285190582,
+      "permutation_sha256": "413fa5906a25bbded091bfaeab303e6bf132b6c8d5457cc5f7373751b6765b06",
+      "epoch_seconds": 0.01597234094515443
+    },
+    {
+      "epoch": 3,
+      "metric": "Spearman",
+      "value": 0.56155058809218,
+      "improved": false,
+      "best_value": 0.5730603929039076,
+      "best_epoch": 2,
+      "steps": 18,
+      "steps_this_epoch": 6,
+      "train_loss": 0.4137283287492637,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 1003.8210497796535,
+      "permutation_sha256": "6f667a92609b6b17b15c193d2bc01b21ef2334b2296a3e543a74f7b665c5b1a1",
+      "epoch_seconds": 0.011750360019505024
+    },
+    {
+      "epoch": 4,
+      "metric": "Spearman",
+      "value": 0.6433223042525366,
+      "improved": true,
+      "best_value": 0.6433223042525366,
+      "best_epoch": 4,
+      "steps": 24,
+      "steps_this_epoch": 6,
+      "train_loss": 0.32994572282463236,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 762.5497583150864,
+      "permutation_sha256": "e8824df3d9f7120b5428760480f80e6af2ab91a9db9b0ffdbf454f6bc2453fae",
+      "epoch_seconds": 0.01209027599543333
+    },
+    {
+      "epoch": 5,
+      "metric": "Spearman",
+      "value": 0.6135483811881249,
+      "improved": false,
+      "best_value": 0.6433223042525366,
+      "best_epoch": 4,
+      "steps": 30,
+      "steps_this_epoch": 6,
+      "train_loss": 0.28417777921271137,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 725.6642387025058,
+      "permutation_sha256": "31d6164eff2338e232bdf4b404f910a5c55ac1dca0afdd98e86127837cf46f81",
+      "epoch_seconds": 0.012109891977161169
+    },
+    {
+      "epoch": 6,
+      "metric": "Spearman",
+      "value": 0.6426307686547948,
+      "improved": false,
+      "best_value": 0.6433223042525366,
+      "best_epoch": 4,
+      "steps": 36,
+      "steps_this_epoch": 6,
+      "train_loss": 0.2532577748921287,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 623.4282999522984,
+      "permutation_sha256": "3b0b96073bfc2ebe43da16b5252f474a7ef4ba221c174b2bab2b7aa7d685b9e0",
+      "epoch_seconds": 0.009364403318613768
+    },
+    {
+      "epoch": 7,
+      "metric": "Spearman",
+      "value": 0.6501145100550129,
+      "improved": true,
+      "best_value": 0.6501145100550129,
+      "best_epoch": 7,
+      "steps": 42,
+      "steps_this_epoch": 6,
+      "train_loss": 0.22931268967668528,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 717.0704318284988,
+      "permutation_sha256": "26f04886ad279a6634204a7c615a8ff80490b7314687673a49360f7e3d964be6",
+      "epoch_seconds": 0.012967013288289309
+    },
+    {
+      "epoch": 8,
+      "metric": "Spearman",
+      "value": 0.6221594203435656,
+      "improved": false,
+      "best_value": 0.6501145100550129,
+      "best_epoch": 7,
+      "steps": 48,
+      "steps_this_epoch": 6,
+      "train_loss": 0.20931978993059144,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 595.6995280981064,
+      "permutation_sha256": "c30e00814d9b31781b79f6576fd852fffc10454da9ed4d82b12ef706b6886297",
+      "epoch_seconds": 0.014502726960927248
+    },
+    {
+      "epoch": 9,
+      "metric": "Spearman",
+      "value": 0.6507870994719944,
+      "improved": true,
+      "best_value": 0.6507870994719944,
+      "best_epoch": 9,
+      "steps": 54,
+      "steps_this_epoch": 6,
+      "train_loss": 0.19634303364540961,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 592.5532106757164,
+      "permutation_sha256": "d19c82818d6f32ca77f24e73c03cb714b9d6c8a637f68d5f9b28fae4d6b319c8",
+      "epoch_seconds": 0.012938688043504953
+    },
+    {
+      "epoch": 10,
+      "metric": "Spearman",
+      "value": 0.627701178215879,
+      "improved": false,
+      "best_value": 0.6507870994719944,
+      "best_epoch": 9,
+      "steps": 60,
+      "steps_this_epoch": 6,
+      "train_loss": 0.19565711371854846,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 601.1299708336592,
+      "permutation_sha256": "1476ceba4e1b47d4994ccbbf005b2e37c1605b63e6c2c2906f89ef255d758a07",
+      "epoch_seconds": 0.015311246737837791
+    },
+    {
+      "epoch": 11,
+      "metric": "Spearman",
+      "value": 0.6234193413641087,
+      "improved": false,
+      "best_value": 0.6507870994719944,
+      "best_epoch": 9,
+      "steps": 66,
+      "steps_this_epoch": 6,
+      "train_loss": 0.18870695752734587,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 572.9102582018822,
+      "permutation_sha256": "a2f377fee07d92ab33af9d12fa459e158dbc664b6c99329a3626a3ad8be169bb",
+      "epoch_seconds": 0.013844931963831186
+    },
+    {
+      "epoch": 12,
+      "metric": "Spearman",
+      "value": 0.6452453415996812,
+      "improved": false,
+      "best_value": 0.6507870994719944,
+      "best_epoch": 9,
+      "steps": 72,
+      "steps_this_epoch": 6,
+      "train_loss": 0.17502077213266076,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 569.3064693510532,
+      "permutation_sha256": "7981e4998e77d28870bf12f53b99cbfc1b37e14c6fef3fe3712f1b134c0cc85a",
+      "epoch_seconds": 0.013020202051848173
+    },
+    {
+      "epoch": 13,
+      "metric": "Spearman",
+      "value": 0.6334418709861728,
+      "improved": false,
+      "best_value": 0.6507870994719944,
+      "best_epoch": 9,
+      "steps": 78,
+      "steps_this_epoch": 6,
+      "train_loss": 0.17790765454137106,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 541.8650906011462,
+      "permutation_sha256": "733f7a15f75d6707310827703ed614c650faec26efdfdf7b990f0646141cc745",
+      "epoch_seconds": 0.011400429997593164
+    },
+    {
+      "epoch": 14,
+      "metric": "Spearman",
+      "value": 0.6300126122686045,
+      "improved": false,
+      "best_value": 0.6507870994719944,
+      "best_epoch": 9,
+      "steps": 84,
+      "steps_this_epoch": 6,
+      "train_loss": 0.16829342827240001,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 572.8907314091921,
+      "permutation_sha256": "01dc6ff03575ddcfd333491129abeec4ecce416f1bc1e10dbf207e135ae50d7b",
+      "epoch_seconds": 0.014242266770452261
+    },
+    {
+      "epoch": 15,
+      "metric": "Spearman",
+      "value": 0.6394288641063471,
+      "improved": false,
+      "best_value": 0.6507870994719944,
+      "best_epoch": 9,
+      "steps": 90,
+      "steps_this_epoch": 6,
+      "train_loss": 0.17912733386664254,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 587.914818238467,
+      "permutation_sha256": "4c1a5cd709829796f47d964ea0392d380f13a3a8840d6bee750e40a90bd78001",
+      "epoch_seconds": 0.015201577916741371
+    },
+    {
+      "epoch": 16,
+      "metric": "Spearman",
+      "value": 0.643938055127238,
+      "improved": false,
+      "best_value": 0.6507870994719944,
+      "best_epoch": 9,
+      "steps": 96,
+      "steps_this_epoch": 6,
+      "train_loss": 0.17389017499963755,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 714.4687247872353,
+      "permutation_sha256": "43a64ead9405643234f51d641fa21a1751bcd13d5c9122766167b31e891ec610",
+      "epoch_seconds": 0.017233072314411402
+    },
+    {
+      "epoch": 17,
+      "metric": "Spearman",
+      "value": 0.6457474153898224,
+      "improved": false,
+      "best_value": 0.6507870994719944,
+      "best_epoch": 9,
+      "steps": 102,
+      "steps_this_epoch": 6,
+      "train_loss": 0.1732214549043047,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 633.6696421205997,
+      "permutation_sha256": "14c88c6d7d16043662bdeb50a9d492cbc30e23b3f1b8d687013fe957c35e4b93",
+      "epoch_seconds": 0.013811200857162476
+    }
+  ],
+  "best_epoch": 9,
+  "best_steps": 54,
+  "last_steps": 102,
+  "nonzero_gradient_steps": 102,
+  "maximum_gradient_l1": 1545.5628281831741,
+  "parameter_count": 524801,
+  "encoder_parameters_buffers_unchanged": true,
+  "encoder_in_optimizer": false,
+  "encoding_calls": 0,
+  "raw_cache_root": "task-storage://admet/breadth-six24-20261102/cache/chemeleon_mp",
+  "cache_trust_sha256": "44d92d0f6e71f5f6cb35120d31e1ac09503740950d3f70d9f5f48e82122e2a88",
+  "migration_evidence": {
+    "train": {
+      "format": "admet_breadth_cache_migration_v1_to_v2",
+      "trusted_input_manifest_sha256": "44d92d0f6e71f5f6cb35120d31e1ac09503740950d3f70d9f5f48e82122e2a88",
+      "task": "clearance_hepatocyte_az",
+      "split": "train",
+      "legacy_contract": {
+        "version": 1,
+        "task": "clearance_hepatocyte_az",
+        "split": "train",
+        "feature_dim": 2048,
+        "fill_value": 0.0,
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "implementation_sha256": {
+          "encoder.py": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "cache.py": "c0bc8c9520116fa5498c4f36d701797f144df9a48f61ec0916094179f15f5e77",
+          "data_io.py": "f012ec51ee050b413e822fcff321e3ba200adaa25044433b5d713efa37ae9b7e",
+          "heads.py": "650862671076f7b40b5ca776b2a03f3116cb0df5dcb79d62d1a8f5adabfbef64"
+        },
+        "packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2024.9.6",
+          "torch": "2.6.0",
+          "numpy": "1.26.4"
+        },
+        "source_csv_sha256": "5075b6a07d08d50c22a3a434e4708eb34b2d310b612a0a1c523bd153c11ba1f0",
+        "n_rows": 848,
+        "row_identity_sha256": "da5c6a30700ac5345b3c7d40a0c1b0e215da2f115128961a6e87655363f8151e"
+      },
+      "representation_identity": {
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_module_sha256": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+        "source_csv_sha256": "5075b6a07d08d50c22a3a434e4708eb34b2d310b612a0a1c523bd153c11ba1f0",
+        "row_identity_sha256": "da5c6a30700ac5345b3c7d40a0c1b0e215da2f115128961a6e87655363f8151e",
+        "features_sha256": "8c965956a89e953628ffd66f5f0980f6791e5d3627dafa224af222907e87f0da",
+        "mask_sha256": "7c69f3cba2a1bda64f888161430b49e07c0be79e929fd9cc4987d8b9e8a8c926"
+      },
+      "generation_environment": {
+        "packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2024.9.6",
+          "torch": "2.6.0",
+          "numpy": "1.26.4"
+        },
+        "implementation_sha256": {
+          "encoder.py": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "cache.py": "c0bc8c9520116fa5498c4f36d701797f144df9a48f61ec0916094179f15f5e77",
+          "data_io.py": "f012ec51ee050b413e822fcff321e3ba200adaa25044433b5d713efa37ae9b7e",
+          "heads.py": "650862671076f7b40b5ca776b2a03f3116cb0df5dcb79d62d1a8f5adabfbef64"
+        }
+      },
+      "consumption_environment": {
+        "packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2024.9.6",
+          "torch": "2.6.0",
+          "numpy": "1.26.4"
+        },
+        "implementation_sha256": {
+          "encoder.py": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "cache.py": "98497dc52267fcb3b868cba2349232c7f2b3f171416a5f33ef7e991cf04fb929",
+          "data_io.py": "f012ec51ee050b413e822fcff321e3ba200adaa25044433b5d713efa37ae9b7e",
+          "heads.py": "650862671076f7b40b5ca776b2a03f3116cb0df5dcb79d62d1a8f5adabfbef64"
+        }
+      },
+      "checks": {
+        "source_csv_sha256": true,
+        "row_identity": true,
+        "n_rows": true,
+        "feature_dim": true,
+        "fill_value": true,
+        "task_split": true,
+        "encoder_checkpoint": true,
+        "encoder_module_sha256": true,
+        "file_digest_arr": true,
+        "file_digest_mask": true,
+        "array_shape_dtype": true,
+        "mask_shape_dtype": true,
+        "array_content_digest": true,
+        "mask_content_digest": true,
+        "finiteness": true,
+        "zero_fill_consistency": true
+      },
+      "ok": true,
+      "failed_checks": []
+    },
+    "valid": {
+      "format": "admet_breadth_cache_migration_v1_to_v2",
+      "trusted_input_manifest_sha256": "44d92d0f6e71f5f6cb35120d31e1ac09503740950d3f70d9f5f48e82122e2a88",
+      "task": "clearance_hepatocyte_az",
+      "split": "valid",
+      "legacy_contract": {
+        "version": 1,
+        "task": "clearance_hepatocyte_az",
+        "split": "valid",
+        "feature_dim": 2048,
+        "fill_value": 0.0,
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "implementation_sha256": {
+          "encoder.py": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "cache.py": "c0bc8c9520116fa5498c4f36d701797f144df9a48f61ec0916094179f15f5e77",
+          "data_io.py": "f012ec51ee050b413e822fcff321e3ba200adaa25044433b5d713efa37ae9b7e",
+          "heads.py": "650862671076f7b40b5ca776b2a03f3116cb0df5dcb79d62d1a8f5adabfbef64"
+        },
+        "packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2024.9.6",
+          "torch": "2.6.0",
+          "numpy": "1.26.4"
+        },
+        "source_csv_sha256": "c5d813115fa6ca174dcc55fefbac8924bc6ee865e254cd167929eda493a7aea8",
+        "n_rows": 122,
+        "row_identity_sha256": "82c55396623c29a8f75190eae390752d44e9244df0a98931c77538646c30c00d"
+      },
+      "representation_identity": {
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_module_sha256": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+        "source_csv_sha256": "c5d813115fa6ca174dcc55fefbac8924bc6ee865e254cd167929eda493a7aea8",
+        "row_identity_sha256": "82c55396623c29a8f75190eae390752d44e9244df0a98931c77538646c30c00d",
+        "features_sha256": "157f3f2013bedd33f847ccabe77a113049a887829b0852ec3582c97d8f05aa11",
+        "mask_sha256": "3283313de548335aa00ced2abb00ca10d45790cd5b084da0b5ca56f150da21e8"
+      },
+      "generation_environment": {
+        "packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2024.9.6",
+          "torch": "2.6.0",
+          "numpy": "1.26.4"
+        },
+        "implementation_sha256": {
+          "encoder.py": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "cache.py": "c0bc8c9520116fa5498c4f36d701797f144df9a48f61ec0916094179f15f5e77",
+          "data_io.py": "f012ec51ee050b413e822fcff321e3ba200adaa25044433b5d713efa37ae9b7e",
+          "heads.py": "650862671076f7b40b5ca776b2a03f3116cb0df5dcb79d62d1a8f5adabfbef64"
+        }
+      },
+      "consumption_environment": {
+        "packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2024.9.6",
+          "torch": "2.6.0",
+          "numpy": "1.26.4"
+        },
+        "implementation_sha256": {
+          "encoder.py": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "cache.py": "98497dc52267fcb3b868cba2349232c7f2b3f171416a5f33ef7e991cf04fb929",
+          "data_io.py": "f012ec51ee050b413e822fcff321e3ba200adaa25044433b5d713efa37ae9b7e",
+          "heads.py": "650862671076f7b40b5ca776b2a03f3116cb0df5dcb79d62d1a8f5adabfbef64"
+        }
+      },
+      "checks": {
+        "source_csv_sha256": true,
+        "row_identity": true,
+        "n_rows": true,
+        "feature_dim": true,
+        "fill_value": true,
+        "task_split": true,
+        "encoder_checkpoint": true,
+        "encoder_module_sha256": true,
+        "file_digest_arr": true,
+        "file_digest_mask": true,
+        "array_shape_dtype": true,
+        "mask_shape_dtype": true,
+        "array_content_digest": true,
+        "mask_content_digest": true,
+        "finiteness": true,
+        "zero_fill_consistency": true
+      },
+      "ok": true,
+      "failed_checks": []
+    },
+    "test": {
+      "format": "admet_breadth_cache_migration_v1_to_v2",
+      "trusted_input_manifest_sha256": "44d92d0f6e71f5f6cb35120d31e1ac09503740950d3f70d9f5f48e82122e2a88",
+      "task": "clearance_hepatocyte_az",
+      "split": "test",
+      "legacy_contract": {
+        "version": 1,
+        "task": "clearance_hepatocyte_az",
+        "split": "test",
+        "feature_dim": 2048,
+        "fill_value": 0.0,
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "implementation_sha256": {
+          "encoder.py": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "cache.py": "c0bc8c9520116fa5498c4f36d701797f144df9a48f61ec0916094179f15f5e77",
+          "data_io.py": "f012ec51ee050b413e822fcff321e3ba200adaa25044433b5d713efa37ae9b7e",
+          "heads.py": "650862671076f7b40b5ca776b2a03f3116cb0df5dcb79d62d1a8f5adabfbef64"
+        },
+        "packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2024.9.6",
+          "torch": "2.6.0",
+          "numpy": "1.26.4"
+        },
+        "source_csv_sha256": "104ed6e16c206737f97c2e814ae36aa8acce459d94d39df78bbc07eb0ac2ef90",
+        "n_rows": 243,
+        "row_identity_sha256": "7e526a3a6586db366e1115a467496afe7819d96f108399d75a76cb5a508687c6"
+      },
+      "representation_identity": {
+        "encoder_checkpoint_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "encoder_module_sha256": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+        "source_csv_sha256": "104ed6e16c206737f97c2e814ae36aa8acce459d94d39df78bbc07eb0ac2ef90",
+        "row_identity_sha256": "7e526a3a6586db366e1115a467496afe7819d96f108399d75a76cb5a508687c6",
+        "features_sha256": "94cd67b275264328ef02719c7fc6519370ffc07d28d6c286e44793c1c616f671",
+        "mask_sha256": "4ff197c42b2bf162fdb90da3a6461449e8f332b7032015b95939f631668a78e5"
+      },
+      "generation_environment": {
+        "packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2024.9.6",
+          "torch": "2.6.0",
+          "numpy": "1.26.4"
+        },
+        "implementation_sha256": {
+          "encoder.py": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "cache.py": "c0bc8c9520116fa5498c4f36d701797f144df9a48f61ec0916094179f15f5e77",
+          "data_io.py": "f012ec51ee050b413e822fcff321e3ba200adaa25044433b5d713efa37ae9b7e",
+          "heads.py": "650862671076f7b40b5ca776b2a03f3116cb0df5dcb79d62d1a8f5adabfbef64"
+        }
+      },
+      "consumption_environment": {
+        "packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2024.9.6",
+          "torch": "2.6.0",
+          "numpy": "1.26.4"
+        },
+        "implementation_sha256": {
+          "encoder.py": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "cache.py": "98497dc52267fcb3b868cba2349232c7f2b3f171416a5f33ef7e991cf04fb929",
+          "data_io.py": "f012ec51ee050b413e822fcff321e3ba200adaa25044433b5d713efa37ae9b7e",
+          "heads.py": "650862671076f7b40b5ca776b2a03f3116cb0df5dcb79d62d1a8f5adabfbef64"
+        }
+      },
+      "checks": {
+        "source_csv_sha256": true,
+        "row_identity": true,
+        "n_rows": true,
+        "feature_dim": true,
+        "fill_value": true,
+        "task_split": true,
+        "encoder_checkpoint": true,
+        "encoder_module_sha256": true,
+        "file_digest_arr": true,
+        "file_digest_mask": true,
+        "array_shape_dtype": true,
+        "mask_shape_dtype": true,
+        "array_content_digest": true,
+        "mask_content_digest": true,
+        "finiteness": true,
+        "zero_fill_consistency": true
+      },
+      "ok": true,
+      "failed_checks": []
+    }
+  },
+  "CPU_best_reload": {
+    "train": {
+      "rows": 848,
+      "max_abs_difference": 5.3233625884274716e-05,
+      "rtol": 3e-05,
+      "atol": 0.001518520066493528,
+      "independent_CPU_best": true
+    },
+    "valid": {
+      "rows": 122,
+      "max_abs_difference": 2.3659389256636132e-05,
+      "rtol": 3e-05,
+      "atol": 0.001518520066493528,
+      "independent_CPU_best": true
+    },
+    "test": {
+      "rows": 243,
+      "max_abs_difference": 0.00033123144993396636,
+      "rtol": 3e-05,
+      "atol": 0.001518520066493528,
+      "independent_CPU_best": true
+    }
+  },
+  "prediction_summary": {
+    "train": {
+      "rows": 848,
+      "sha256": "6adb861d51a2b3a51cdf6e1392cecfb9b7843c3d1646ea32b7073a1fa0337295",
+      "parse_false_rows": []
+    },
+    "valid": {
+      "rows": 122,
+      "sha256": "85130f5a4fb8d46503649b166acfb0458badcff904ff7cfa5876d1d3e7d517b0",
+      "parse_false_rows": []
+    },
+    "test": {
+      "rows": 243,
+      "sha256": "9e81b8f3db68af921a6e6276c0b038381535e5fa6e061a60ec3d05b64577cb00",
+      "parse_false_rows": []
+    }
+  },
+  "save_summaries": {
+    "initial": {
+      "path": "task-storage://admet/scaler-six28-20261102/hainan-scaler-clearance_hepatocyte_az-f001-s44-20261102/artifacts/head-initial.pt",
+      "sha256": "0b616600e616523a9372a5a96bd66e9e30274afd6c60853e66dc622046c6619e",
+      "state_dict_keys": [
+        "0.bias",
+        "0.weight",
+        "3.bias",
+        "3.weight"
+      ],
+      "has_optimizer_state": false,
+      "has_rng_state": false,
+      "progress": {
+        "epochs_completed": 0,
+        "cumulative_steps": 0
+      }
+    },
+    "best": {
+      "path": "task-storage://admet/scaler-six28-20261102/hainan-scaler-clearance_hepatocyte_az-f001-s44-20261102/artifacts/head-best.pt",
+      "sha256": "46b4fd170fd9879aefc0da0d439581f016c495a2d49f25e0f648f869e5a385f4",
+      "state_dict_keys": [
+        "0.bias",
+        "0.weight",
+        "3.bias",
+        "3.weight"
+      ],
+      "has_optimizer_state": false,
+      "has_rng_state": false,
+      "progress": {
+        "epochs_completed": 9,
+        "cumulative_steps": 54
+      }
+    },
+    "last": {
+      "path": "task-storage://admet/scaler-six28-20261102/hainan-scaler-clearance_hepatocyte_az-f001-s44-20261102/artifacts/head-last.pt",
+      "sha256": "022c3d87e2426d0e181311e3887b35d0761d9c65d69145ad02319637a75b99c5",
+      "state_dict_keys": [
+        "0.bias",
+        "0.weight",
+        "3.bias",
+        "3.weight"
+      ],
+      "has_optimizer_state": true,
+      "has_rng_state": true,
+      "progress": {
+        "epochs_completed": 17,
+        "cumulative_steps": 102
+      }
+    }
+  },
+  "stop_reason": "patience8",
+  "weighted_train_loss_recomputed": true,
+  "at": "2026-11-02T02:16:06.845987+00:00"
+}

@@ -1,0 +1,150 @@
+{
+  "request_id": "admet-scaler-six28-pro-20261102-001",
+  "round_id": "scaler-six28-review-20261102",
+  "research_goal": "把本轮可靠改善转为覆盖全任务的多批可执行实验路线，减少无信息量研究往返，保持深入研究。",
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question": "F010在五任务两个种子均胜旧H0，哪些解释有证据、仍有什么混杂或反例？CYP为何方向不一？与原Mini22和旧24合理比较，区分修复数值问题与一般性泛化提升。",
+      "completion_criteria": [
+        "比较F001/F010与同seed H0及原Mini22，区分已支持的整组效果与未识别的因果机制。",
+        "解释CYP方向不一，保留两seed/反复Valid选模/不同实现历史的限制。",
+        "引用已验分数而非重算，指出真正影响下一决策的证据缺口及验证办法。"
+      ]
+    },
+    {
+      "question_id": "Q2",
+      "question": "如何把已有发现用于完整22任务，选择继续当前冻结底座、已调研其他底座及获准新模块/集成的合理顺序？资产实际准备度须查最新表。",
+      "completion_criteria": [
+        "覆盖22任务给出优先级和当前证据/准备度，研究不局限于已训六任务。",
+        "明确当前冻结CheMeleon与已调研其他底座/新模块/集成的选择依据；未准备不能冒称可立即运行。",
+        "至少给可立即准备的精确首批矩阵和后续条件分支，每项task/config/split/seeds与实际接口明确，已有对照只计一次，不固定或凑实验数。"
+      ]
+    },
+    {
+      "question_id": "Q3",
+      "question": "训练相对准备和研究很快，如何一次研究支撑多批实验而不牺牲质量？",
+      "completion_criteria": [
+        "按实际训练、准备、取回、交接和Pro耗时规划多个有信息量的实验批次，不把GPU秒当全部成本。",
+        "明确改善、无改善、跨seed不稳定时的条件后续与停止/跳过条件；额外科学分支列依赖和预算。",
+        "给首次矩阵的预计成本与不确定性、何时值得下一次Pro研究；本轮仅方案，不授权执行。"
+      ]
+    }
+  ],
+  "task_ids": [
+    "ames",
+    "bbb_martins",
+    "bioavailability_ma",
+    "caco2_wang",
+    "clearance_hepatocyte_az",
+    "clearance_microsome_az",
+    "cyp2c9_substrate_carbonmangels",
+    "cyp2c9_veith",
+    "cyp2d6_substrate_carbonmangels",
+    "cyp2d6_veith",
+    "cyp3a4_substrate_carbonmangels",
+    "cyp3a4_veith",
+    "dili",
+    "half_life_obach",
+    "herg",
+    "hia_hou",
+    "ld50_zhu",
+    "lipophilicity_astrazeneca",
+    "pgp_broccatelli",
+    "ppbr_az",
+    "solubility_aqsoldb",
+    "vdss_lombardo"
+  ],
+  "task_metrics": {
+    "ames": {
+      "metric": "AUROC",
+      "direction": "maximize"
+    },
+    "bbb_martins": {
+      "metric": "AUROC",
+      "direction": "maximize"
+    },
+    "bioavailability_ma": {
+      "metric": "AUROC",
+      "direction": "maximize"
+    },
+    "caco2_wang": {
+      "metric": "MAE",
+      "direction": "minimize"
+    },
+    "clearance_hepatocyte_az": {
+      "metric": "Spearman",
+      "direction": "maximize"
+    },
+    "clearance_microsome_az": {
+      "metric": "Spearman",
+      "direction": "maximize"
+    },
+    "cyp2c9_substrate_carbonmangels": {
+      "metric": "AUPRC",
+      "direction": "maximize"
+    },
+    "cyp2c9_veith": {
+      "metric": "AUPRC",
+      "direction": "maximize"
+    },
+    "cyp2d6_substrate_carbonmangels": {
+      "metric": "AUPRC",
+      "direction": "maximize"
+    },
+    "cyp2d6_veith": {
+      "metric": "AUPRC",
+      "direction": "maximize"
+    },
+    "cyp3a4_substrate_carbonmangels": {
+      "metric": "AUROC",
+      "direction": "maximize"
+    },
+    "cyp3a4_veith": {
+      "metric": "AUPRC",
+      "direction": "maximize"
+    },
+    "dili": {
+      "metric": "AUROC",
+      "direction": "maximize"
+    },
+    "half_life_obach": {
+      "metric": "Spearman",
+      "direction": "maximize"
+    },
+    "herg": {
+      "metric": "AUROC",
+      "direction": "maximize"
+    },
+    "hia_hou": {
+      "metric": "AUROC",
+      "direction": "maximize"
+    },
+    "ld50_zhu": {
+      "metric": "MAE",
+      "direction": "minimize"
+    },
+    "lipophilicity_astrazeneca": {
+      "metric": "MAE",
+      "direction": "minimize"
+    },
+    "pgp_broccatelli": {
+      "metric": "AUROC",
+      "direction": "maximize"
+    },
+    "ppbr_az": {
+      "metric": "MAE",
+      "direction": "minimize"
+    },
+    "solubility_aqsoldb": {
+      "metric": "MAE",
+      "direction": "minimize"
+    },
+    "vdss_lombardo": {
+      "metric": "Spearman",
+      "direction": "maximize"
+    }
+  },
+  "budget": "proposal_only；不限制研究方向数量，不授权无限训练；给可判断的资源假设和预算选择。",
+  "independent_rechecks": "无需重算已验28评分、完整冻结或运输；只核对本轮新的计数/派生结论及实际矛盾。"
+}

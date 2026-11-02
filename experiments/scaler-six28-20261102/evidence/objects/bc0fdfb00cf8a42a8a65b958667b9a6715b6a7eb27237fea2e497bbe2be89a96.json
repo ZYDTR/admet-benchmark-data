@@ -1,0 +1,1015 @@
+{
+  "asset_sha256_observed": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+  "environment": {
+    "implementation_sha256": {
+      "cache.py": "f681efa8db4ea95d8ab616a818b919639392a16817b4cdc8e4762fd51651e2a9",
+      "data_io.py": "f012ec51ee050b413e822fcff321e3ba200adaa25044433b5d713efa37ae9b7e",
+      "encoder.py": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+      "heads.py": "650862671076f7b40b5ca776b2a03f3116cb0df5dcb79d62d1a8f5adabfbef64"
+    },
+    "packages": {
+      "chemprop": "absent",
+      "numpy": "2.4.6",
+      "rdkit": "absent",
+      "torch": "2.6.0+cpu"
+    }
+  },
+  "generated_by": "output/tests/run_validation.py",
+  "parameter_update_count": 0,
+  "request_id": "admet-scaler-six28-prep-20261102-001",
+  "results": {
+    "r10_metric_semantics": {
+      "detail": {
+        "ap_grouped_on_tied_fixture": 0.8333333333333333,
+        "ap_production_on_tied_fixture": 0.8333333333333333,
+        "auroc_mid_ties_half": 0.5,
+        "constant_vector_spearman_none": true,
+        "guide_7_12_over_24_permutation_mean": false,
+        "min_delta_strict_improvement": true,
+        "native_directions_preserved": {
+          "bbb_martins": [
+            "AUROC",
+            "maximize"
+          ],
+          "clearance_hepatocyte_az": [
+            "Spearman",
+            "maximize"
+          ],
+          "cyp2d6_veith": [
+            "AUPRC",
+            "maximize"
+          ],
+          "ld50_zhu": [
+            "MAE",
+            "minimize"
+          ],
+          "lipophilicity_astrazeneca": [
+            "MAE",
+            "minimize"
+          ],
+          "solubility_aqsoldb": [
+            "MAE",
+            "minimize"
+          ]
+        },
+        "one_class_returns_none_not_zero": true,
+        "patience8_stops_at_epoch10": true,
+        "production_matches_grouped_convention": true,
+        "undefined_monitor_raises_and_stays_rejected": [
+          true,
+          true
+        ]
+      },
+      "status": "pass"
+    },
+    "r11_predictions_coverage_export": {
+      "detail": {
+        "all_y_pred_filled": true,
+        "bom_preserved": true,
+        "counterexamples": {
+          "duplicate_record": "rejected: duplicate prediction key ('bbb_martins', '0')",
+          "extra_key": "rejected: prediction key not in template: ('bbb_martins', '99')",
+          "missing_prediction": "rejected: 1 template keys lack predictions (first [('bbb_martins', '4')])",
+          "nonfinite_rejected": "rejected: non-finite y_pred at ('bbb_martins', '0'): nan",
+          "probability_out_of_range": "rejected: probability out of [0,1] at ('bbb_martins', '0'): 1.5",
+          "row_count_guard": "rejected: template data rows 5 != 16379"
+        },
+        "coverage_clean_ok": true,
+        "coverage_dup_missing_detected": true,
+        "crlf_preserved": true,
+        "export_summary": {
+          "bom_preserved": true,
+          "bytes": 235,
+          "crlf_preserved": true,
+          "filled": 5,
+          "fixture": true,
+          "out": "/workspace/context-infrastructure/adhoc_jobs/admet_training/cycles/scaler-six28-20261102/preparation/packet/output/tmp/validation/sub.csv",
+          "rows": 5
+        },
+        "row_order_preserved": true,
+        "smiles_columns_untouched": true,
+        "write_load_roundtrip_exact": true
+      },
+      "status": "pass"
+    },
+    "r12_all_configs_chain": {
+      "detail": {
+        "configs": {
+          "hainan-scaler-bbb_martins-f001-s44-20261102.json": {
+            "fit_rows": 1279,
+            "floor": 0.001,
+            "head_params": 524801,
+            "rows": {
+              "test": 406,
+              "train": 1421,
+              "valid": 203
+            },
+            "scaled_test_shape": [
+              406,
+              2048
+            ],
+            "scaled_valid_shape": [
+              203,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 142
+          },
+          "hainan-scaler-bbb_martins-f001-s45-20261102.json": {
+            "fit_rows": 1279,
+            "floor": 0.001,
+            "head_params": 524801,
+            "rows": {
+              "test": 406,
+              "train": 1421,
+              "valid": 203
+            },
+            "scaled_test_shape": [
+              406,
+              2048
+            ],
+            "scaled_valid_shape": [
+              203,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 142
+          },
+          "hainan-scaler-bbb_martins-f010-s44-20261102.json": {
+            "fit_rows": 1279,
+            "floor": 0.01,
+            "head_params": 524801,
+            "rows": {
+              "test": 406,
+              "train": 1421,
+              "valid": 203
+            },
+            "scaled_test_shape": [
+              406,
+              2048
+            ],
+            "scaled_valid_shape": [
+              203,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 142
+          },
+          "hainan-scaler-bbb_martins-f010-s45-20261102.json": {
+            "fit_rows": 1279,
+            "floor": 0.01,
+            "head_params": 524801,
+            "rows": {
+              "test": 406,
+              "train": 1421,
+              "valid": 203
+            },
+            "scaled_test_shape": [
+              406,
+              2048
+            ],
+            "scaled_valid_shape": [
+              203,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 142
+          },
+          "hainan-scaler-clearance_hepatocyte_az-f001-s44-20261102.json": {
+            "fit_rows": 762,
+            "floor": 0.001,
+            "head_params": 524801,
+            "rows": {
+              "test": 243,
+              "train": 848,
+              "valid": 122
+            },
+            "scaled_test_shape": [
+              243,
+              2048
+            ],
+            "scaled_valid_shape": [
+              122,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 86
+          },
+          "hainan-scaler-clearance_hepatocyte_az-f001-s45-20261102.json": {
+            "fit_rows": 762,
+            "floor": 0.001,
+            "head_params": 524801,
+            "rows": {
+              "test": 243,
+              "train": 848,
+              "valid": 122
+            },
+            "scaled_test_shape": [
+              243,
+              2048
+            ],
+            "scaled_valid_shape": [
+              122,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 86
+          },
+          "hainan-scaler-clearance_hepatocyte_az-f010-s44-20261102.json": {
+            "fit_rows": 762,
+            "floor": 0.01,
+            "head_params": 524801,
+            "rows": {
+              "test": 243,
+              "train": 848,
+              "valid": 122
+            },
+            "scaled_test_shape": [
+              243,
+              2048
+            ],
+            "scaled_valid_shape": [
+              122,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 86
+          },
+          "hainan-scaler-clearance_hepatocyte_az-f010-s45-20261102.json": {
+            "fit_rows": 762,
+            "floor": 0.01,
+            "head_params": 524801,
+            "rows": {
+              "test": 243,
+              "train": 848,
+              "valid": 122
+            },
+            "scaled_test_shape": [
+              243,
+              2048
+            ],
+            "scaled_valid_shape": [
+              122,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 86
+          },
+          "hainan-scaler-cyp2d6_veith-f001-s44-20261102.json": {
+            "fit_rows": 8272,
+            "floor": 0.001,
+            "head_params": 524801,
+            "rows": {
+              "test": 2626,
+              "train": 9191,
+              "valid": 1313
+            },
+            "scaled_test_shape": [
+              2626,
+              2048
+            ],
+            "scaled_valid_shape": [
+              1313,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 919
+          },
+          "hainan-scaler-cyp2d6_veith-f001-s45-20261102.json": {
+            "fit_rows": 8272,
+            "floor": 0.001,
+            "head_params": 524801,
+            "rows": {
+              "test": 2626,
+              "train": 9191,
+              "valid": 1313
+            },
+            "scaled_test_shape": [
+              2626,
+              2048
+            ],
+            "scaled_valid_shape": [
+              1313,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 919
+          },
+          "hainan-scaler-cyp2d6_veith-f010-s44-20261102.json": {
+            "fit_rows": 8272,
+            "floor": 0.01,
+            "head_params": 524801,
+            "rows": {
+              "test": 2626,
+              "train": 9191,
+              "valid": 1313
+            },
+            "scaled_test_shape": [
+              2626,
+              2048
+            ],
+            "scaled_valid_shape": [
+              1313,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 919
+          },
+          "hainan-scaler-cyp2d6_veith-f010-s45-20261102.json": {
+            "fit_rows": 8272,
+            "floor": 0.01,
+            "head_params": 524801,
+            "rows": {
+              "test": 2626,
+              "train": 9191,
+              "valid": 1313
+            },
+            "scaled_test_shape": [
+              2626,
+              2048
+            ],
+            "scaled_valid_shape": [
+              1313,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 919
+          },
+          "hainan-scaler-ld50_zhu-f001-s44-20261102.json": {
+            "fit_rows": 3573,
+            "floor": 0.001,
+            "head_params": 524801,
+            "rows": {
+              "test": 1478,
+              "train": 3970,
+              "valid": 1937
+            },
+            "scaled_test_shape": [
+              1478,
+              2048
+            ],
+            "scaled_valid_shape": [
+              1937,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 397
+          },
+          "hainan-scaler-ld50_zhu-f001-s45-20261102.json": {
+            "fit_rows": 3573,
+            "floor": 0.001,
+            "head_params": 524801,
+            "rows": {
+              "test": 1478,
+              "train": 3970,
+              "valid": 1937
+            },
+            "scaled_test_shape": [
+              1478,
+              2048
+            ],
+            "scaled_valid_shape": [
+              1937,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 397
+          },
+          "hainan-scaler-ld50_zhu-f001-s46-20261102.json": {
+            "fit_rows": 3573,
+            "floor": 0.001,
+            "head_params": 524801,
+            "rows": {
+              "test": 1478,
+              "train": 3970,
+              "valid": 1937
+            },
+            "scaled_test_shape": [
+              1478,
+              2048
+            ],
+            "scaled_valid_shape": [
+              1937,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 397
+          },
+          "hainan-scaler-ld50_zhu-f010-s44-20261102.json": {
+            "fit_rows": 3573,
+            "floor": 0.01,
+            "head_params": 524801,
+            "rows": {
+              "test": 1478,
+              "train": 3970,
+              "valid": 1937
+            },
+            "scaled_test_shape": [
+              1478,
+              2048
+            ],
+            "scaled_valid_shape": [
+              1937,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 397
+          },
+          "hainan-scaler-ld50_zhu-f010-s45-20261102.json": {
+            "fit_rows": 3573,
+            "floor": 0.01,
+            "head_params": 524801,
+            "rows": {
+              "test": 1478,
+              "train": 3970,
+              "valid": 1937
+            },
+            "scaled_test_shape": [
+              1478,
+              2048
+            ],
+            "scaled_valid_shape": [
+              1937,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 397
+          },
+          "hainan-scaler-ld50_zhu-h0-s46-20261102.json": {
+            "fit_rows": 3573,
+            "floor": null,
+            "head_params": 524801,
+            "rows": {
+              "test": 1478,
+              "train": 3970,
+              "valid": 1937
+            },
+            "scaled_test_shape": [
+              1478,
+              2048
+            ],
+            "scaled_valid_shape": [
+              1937,
+              2048
+            ],
+            "scaler_method": "legacy_lowstd_replacement_v0",
+            "stop_rows": 397
+          },
+          "hainan-scaler-lipophilicity_astrazeneca-f001-s44-20261102.json": {
+            "fit_rows": 2646,
+            "floor": 0.001,
+            "head_params": 524801,
+            "rows": {
+              "test": 840,
+              "train": 2940,
+              "valid": 420
+            },
+            "scaled_test_shape": [
+              840,
+              2048
+            ],
+            "scaled_valid_shape": [
+              420,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 294
+          },
+          "hainan-scaler-lipophilicity_astrazeneca-f001-s45-20261102.json": {
+            "fit_rows": 2646,
+            "floor": 0.001,
+            "head_params": 524801,
+            "rows": {
+              "test": 840,
+              "train": 2940,
+              "valid": 420
+            },
+            "scaled_test_shape": [
+              840,
+              2048
+            ],
+            "scaled_valid_shape": [
+              420,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 294
+          },
+          "hainan-scaler-lipophilicity_astrazeneca-f010-s44-20261102.json": {
+            "fit_rows": 2646,
+            "floor": 0.01,
+            "head_params": 524801,
+            "rows": {
+              "test": 840,
+              "train": 2940,
+              "valid": 420
+            },
+            "scaled_test_shape": [
+              840,
+              2048
+            ],
+            "scaled_valid_shape": [
+              420,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 294
+          },
+          "hainan-scaler-lipophilicity_astrazeneca-f010-s45-20261102.json": {
+            "fit_rows": 2646,
+            "floor": 0.01,
+            "head_params": 524801,
+            "rows": {
+              "test": 840,
+              "train": 2940,
+              "valid": 420
+            },
+            "scaled_test_shape": [
+              840,
+              2048
+            ],
+            "scaled_valid_shape": [
+              420,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 294
+          },
+          "hainan-scaler-solubility_aqsoldb-f001-s44-20261102.json": {
+            "fit_rows": 4541,
+            "floor": 0.001,
+            "head_params": 524801,
+            "rows": {
+              "test": 1997,
+              "train": 5045,
+              "valid": 2940
+            },
+            "scaled_test_shape": [
+              1997,
+              2048
+            ],
+            "scaled_valid_shape": [
+              2940,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 504
+          },
+          "hainan-scaler-solubility_aqsoldb-f001-s45-20261102.json": {
+            "fit_rows": 4541,
+            "floor": 0.001,
+            "head_params": 524801,
+            "rows": {
+              "test": 1997,
+              "train": 5045,
+              "valid": 2940
+            },
+            "scaled_test_shape": [
+              1997,
+              2048
+            ],
+            "scaled_valid_shape": [
+              2940,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 504
+          },
+          "hainan-scaler-solubility_aqsoldb-f001-s46-20261102.json": {
+            "fit_rows": 4541,
+            "floor": 0.001,
+            "head_params": 524801,
+            "rows": {
+              "test": 1997,
+              "train": 5045,
+              "valid": 2940
+            },
+            "scaled_test_shape": [
+              1997,
+              2048
+            ],
+            "scaled_valid_shape": [
+              2940,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 504
+          },
+          "hainan-scaler-solubility_aqsoldb-f010-s44-20261102.json": {
+            "fit_rows": 4541,
+            "floor": 0.01,
+            "head_params": 524801,
+            "rows": {
+              "test": 1997,
+              "train": 5045,
+              "valid": 2940
+            },
+            "scaled_test_shape": [
+              1997,
+              2048
+            ],
+            "scaled_valid_shape": [
+              2940,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 504
+          },
+          "hainan-scaler-solubility_aqsoldb-f010-s45-20261102.json": {
+            "fit_rows": 4541,
+            "floor": 0.01,
+            "head_params": 524801,
+            "rows": {
+              "test": 1997,
+              "train": 5045,
+              "valid": 2940
+            },
+            "scaled_test_shape": [
+              1997,
+              2048
+            ],
+            "scaled_valid_shape": [
+              2940,
+              2048
+            ],
+            "scaler_method": "fit_std_denominator_floor_v1",
+            "stop_rows": 504
+          },
+          "hainan-scaler-solubility_aqsoldb-h0-s46-20261102.json": {
+            "fit_rows": 4541,
+            "floor": null,
+            "head_params": 524801,
+            "rows": {
+              "test": 1997,
+              "train": 5045,
+              "valid": 2940
+            },
+            "scaled_test_shape": [
+              1997,
+              2048
+            ],
+            "scaled_valid_shape": [
+              2940,
+              2048
+            ],
+            "scaler_method": "legacy_lowstd_replacement_v0",
+            "stop_rows": 504
+          }
+        },
+        "policy_counts": {
+          "F001": 14,
+          "F010": 12,
+          "H0": 2
+        },
+        "update_counter_total": 0
+      },
+      "status": "pass"
+    },
+    "r1_legacy_equivalence": {
+      "detail": {
+        "bbb_martins/s44": {
+          "fit_denom_bitwise": true,
+          "fit_idx_sha": true,
+          "fit_mean_bitwise": true,
+          "fit_n_rows": true,
+          "rows": {
+            "test": 406,
+            "train": 1421,
+            "valid": 203
+          },
+          "split_record_equal": true,
+          "target_equal": true
+        },
+        "bbb_martins/s45": {
+          "fit_denom_bitwise": true,
+          "fit_idx_sha": true,
+          "fit_mean_bitwise": true,
+          "fit_n_rows": true,
+          "rows": {
+            "test": 406,
+            "train": 1421,
+            "valid": 203
+          },
+          "split_record_equal": true,
+          "target_equal": true
+        },
+        "clearance_hepatocyte_az/s44": {
+          "fit_denom_bitwise": true,
+          "fit_idx_sha": true,
+          "fit_mean_bitwise": true,
+          "fit_n_rows": true,
+          "rows": {
+            "test": 243,
+            "train": 848,
+            "valid": 122
+          },
+          "split_record_equal": true,
+          "target_equal": true
+        },
+        "clearance_hepatocyte_az/s45": {
+          "fit_denom_bitwise": true,
+          "fit_idx_sha": true,
+          "fit_mean_bitwise": true,
+          "fit_n_rows": true,
+          "rows": {
+            "test": 243,
+            "train": 848,
+            "valid": 122
+          },
+          "split_record_equal": true,
+          "target_equal": true
+        },
+        "cyp2d6_veith/s44": {
+          "fit_denom_bitwise": true,
+          "fit_idx_sha": true,
+          "fit_mean_bitwise": true,
+          "fit_n_rows": true,
+          "rows": {
+            "test": 2626,
+            "train": 9191,
+            "valid": 1313
+          },
+          "split_record_equal": true,
+          "target_equal": true
+        },
+        "cyp2d6_veith/s45": {
+          "fit_denom_bitwise": true,
+          "fit_idx_sha": true,
+          "fit_mean_bitwise": true,
+          "fit_n_rows": true,
+          "rows": {
+            "test": 2626,
+            "train": 9191,
+            "valid": 1313
+          },
+          "split_record_equal": true,
+          "target_equal": true
+        },
+        "ld50_zhu/s44": {
+          "fit_denom_bitwise": true,
+          "fit_idx_sha": true,
+          "fit_mean_bitwise": true,
+          "fit_n_rows": true,
+          "rows": {
+            "test": 1478,
+            "train": 3970,
+            "valid": 1937
+          },
+          "split_record_equal": true,
+          "target_equal": true
+        },
+        "ld50_zhu/s45": {
+          "fit_denom_bitwise": true,
+          "fit_idx_sha": true,
+          "fit_mean_bitwise": true,
+          "fit_n_rows": true,
+          "rows": {
+            "test": 1478,
+            "train": 3970,
+            "valid": 1937
+          },
+          "split_record_equal": true,
+          "target_equal": true
+        },
+        "lipophilicity_astrazeneca/s44": {
+          "fit_denom_bitwise": true,
+          "fit_idx_sha": true,
+          "fit_mean_bitwise": true,
+          "fit_n_rows": true,
+          "rows": {
+            "test": 840,
+            "train": 2940,
+            "valid": 420
+          },
+          "split_record_equal": true,
+          "target_equal": true
+        },
+        "lipophilicity_astrazeneca/s45": {
+          "fit_denom_bitwise": true,
+          "fit_idx_sha": true,
+          "fit_mean_bitwise": true,
+          "fit_n_rows": true,
+          "rows": {
+            "test": 840,
+            "train": 2940,
+            "valid": 420
+          },
+          "split_record_equal": true,
+          "target_equal": true
+        },
+        "solubility_aqsoldb/s44": {
+          "fit_denom_bitwise": true,
+          "fit_idx_sha": true,
+          "fit_mean_bitwise": true,
+          "fit_n_rows": true,
+          "rows": {
+            "test": 1997,
+            "train": 5045,
+            "valid": 2940
+          },
+          "split_record_equal": true,
+          "target_equal": true
+        },
+        "solubility_aqsoldb/s45": {
+          "fit_denom_bitwise": true,
+          "fit_idx_sha": true,
+          "fit_mean_bitwise": true,
+          "fit_n_rows": true,
+          "rows": {
+            "test": 1997,
+            "train": 5045,
+            "valid": 2940
+          },
+          "split_record_equal": true,
+          "target_equal": true
+        }
+      },
+      "status": "pass"
+    },
+    "r2_newcode_legacy_branch_same_output": {
+      "detail": {
+        "bbb_martins": "bitwise_equal_and_payload_cross_compatible",
+        "clearance_hepatocyte_az": "bitwise_equal_and_payload_cross_compatible",
+        "cyp2d6_veith": "bitwise_equal_and_payload_cross_compatible",
+        "ld50_zhu": "bitwise_equal_and_payload_cross_compatible",
+        "lipophilicity_astrazeneca": "bitwise_equal_and_payload_cross_compatible",
+        "solubility_aqsoldb": "bitwise_equal_and_payload_cross_compatible"
+      },
+      "status": "pass"
+    },
+    "r3_head_init_and_serialization": {
+      "detail": {
+        "head_sha256": "e224aee3b596ad33987d15d30b9bc7bfa97dfbf5dbac459a4f1032400a630749",
+        "init_bitwise_equal": {
+          "seed44": true,
+          "seed45": true,
+          "seed46": true
+        },
+        "legacy_loader_on_f001_checkpoint": "differs: InterfaceError: stale/corrupt cache contract for lipophilicity_astrazeneca/train: ['packages']",
+        "parameter_updates": 0,
+        "reload_prediction_bitwise_equal": true,
+        "scaler_method_after_roundtrip": "fit_std_denominator_floor_v1"
+      },
+      "status": "pass"
+    },
+    "r4_target_inverse_semantics": {
+      "detail": {
+        "constant_target_zero_std_replaced_by_1": true,
+        "double_inverse_detected_as_nonzero_mae": true,
+        "double_inverse_mae": 22.0,
+        "inverse_once_mae": 0.0,
+        "production_postprocess_single_inverse": true,
+        "std_le_zero_from_dict_rejected": true
+      },
+      "status": "pass"
+    },
+    "r5_floor_math_and_schema": {
+      "detail": {
+        "apply_nonfinite_rejected": true,
+        "apply_shape_rejected": true,
+        "bad_configs_rejected": "8/8",
+        "cross_policy_transform_rejected": true,
+        "f001_seq": [
+          1.0,
+          1.0,
+          0.0010000000474974513,
+          0.0010000000474974513,
+          0.0010000000474974513,
+          0.009999999776482582
+        ],
+        "f010_seq": [
+          1.0,
+          1.0,
+          0.009999999776482582,
+          0.009999999776482582,
+          0.009999999776482582,
+          0.009999999776482582
+        ],
+        "float64_input_documented_f32_cast": true,
+        "legacy_seq": [
+          1.0,
+          1.0,
+          9.99999993922529e-09,
+          1.999999987845058e-08,
+          9.999999747378752e-06,
+          0.009999999776482582
+        ]
+      },
+      "status": "pass"
+    },
+    "r6_cache_counterexamples": {
+      "detail": {
+        "asset_checkpoint_change": "rejected: cache missing: /workspace/context-infrastructure/adhoc_jobs/admet_training/cycles/scaler-s",
+        "byte_flip_array": "rejected: cache missing: /workspace/context-infrastructure/adhoc_jobs/admet_training/cycles/scaler-s",
+        "clean_migration_read": "ok shape=[2940, 2048] mask_true=2940",
+        "dtype_float64": "rejected: cache missing: /workspace/context-infrastructure/adhoc_jobs/admet_training/cycles/scaler-s",
+        "duplicate_extra_row": "rejected: legacy->v2 migration rejected for lipophilicity_astrazeneca/train: ['row_identity', 'n_row",
+        "encoder_hash_forgery_content_mismatch": "rejected: cache missing: /workspace/context-infrastructure/adhoc_jobs/admet_training/cycles/scaler-s",
+        "forged_v2_contract_asset_mismatch": "rejected: stale/corrupt cache representation for: ['encoder_checkpoint_sha256']",
+        "legacy_without_migration_optin": "rejected: legacy v1 cache for lipophilicity_astrazeneca/train: reuse requires explicit migration ver",
+        "mask_population_flip": "rejected: cache missing: /workspace/context-infrastructure/adhoc_jobs/admet_training/cycles/scaler-s",
+        "migration_evidence_fields": [
+          "checks",
+          "consumption_environment",
+          "failed_checks",
+          "format",
+          "generation_environment",
+          "legacy_contract",
+          "ok",
+          "representation_identity",
+          "split",
+          "task"
+        ],
+        "migration_evidence_file_ok": true,
+        "row_swap": "rejected: cache missing: /workspace/context-infrastructure/adhoc_jobs/admet_training/cycles/scaler-s",
+        "selfconsistent_meta_forgery": "rejected: cache missing: /workspace/context-infrastructure/adhoc_jobs/admet_training/cycles/scaler-s",
+        "shape_short_rows": "rejected: cache missing: /workspace/context-infrastructure/adhoc_jobs/admet_training/cycles/scaler-s",
+        "source_identity_differs": "rejected: legacy->v2 migration rejected for lipophilicity_astrazeneca/train: ['row_identity', 'n_row"
+      },
+      "status": "pass"
+    },
+    "r7_blind_no_labels": {
+      "detail": {
+        "blank_id_rows_preserved": 0,
+        "blind_Y_request_rejected": true,
+        "duplicate_drug_ids_preserved": 0,
+        "multi_row_drugs_preserved": 5,
+        "test_loaded": [
+          406,
+          2048
+        ],
+        "valid_loaded": [
+          203,
+          2048
+        ]
+      },
+      "status": "pass"
+    },
+    "r8_fit_scope_guard": {
+      "detail": {
+        "duplicate_indices_rejected": true,
+        "fit_n_less_than_train_n": true,
+        "including_stop_rows_would_change_stats": true,
+        "index_count_mismatch_rejected": true,
+        "nonfinite_fit_matrix_rejected": true,
+        "production_fit_stop_disjoint": true,
+        "stop_rows_cannot_touch_fit_stats": true
+      },
+      "status": "pass"
+    },
+    "r9_training_guards_and_capture": {
+      "detail": {
+        "assert_update_free_passes": true,
+        "capture": {
+          "X_fit_dtype": "float32",
+          "X_fit_shape": [
+            2646,
+            2048
+          ],
+          "X_stop_shape": [
+            294,
+            2048
+          ],
+          "monitor": [
+            "MAE",
+            "minimize"
+          ],
+          "preparation": false,
+          "target_scaler_present": true,
+          "y_fit_dtype": "float32",
+          "y_fit_shape": [
+            2646
+          ],
+          "y_stop_shape": [
+            294
+          ]
+        },
+        "fit_stop_rows_match_evidence": true,
+        "head_trainable_params": 524801,
+        "loss_construction_zero_updates": true,
+        "optimizer_param_binding_exact": true,
+        "prep_guards_raised": [
+          true,
+          true
+        ],
+        "stale_transform_guard_fires": false,
+        "update_counter_total": 0
+      },
+      "status": "pass"
+    }
+  },
+  "summary": {
+    "r10_metric_semantics": "pass",
+    "r11_predictions_coverage_export": "pass",
+    "r12_all_configs_chain": "pass",
+    "r1_legacy_equivalence": "pass",
+    "r2_newcode_legacy_branch_same_output": "pass",
+    "r3_head_init_and_serialization": "pass",
+    "r4_target_inverse_semantics": "pass",
+    "r5_floor_math_and_schema": "pass",
+    "r6_cache_counterexamples": "pass",
+    "r7_blind_no_labels": "pass",
+    "r8_fit_scope_guard": "pass",
+    "r9_training_guards_and_capture": "pass"
+  }
+}

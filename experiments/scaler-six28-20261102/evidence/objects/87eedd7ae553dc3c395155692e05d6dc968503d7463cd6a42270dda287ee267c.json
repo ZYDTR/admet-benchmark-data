@@ -1,0 +1,521 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-02T00:49:01.108238+00:00",
+  "source_roots": [
+    {
+      "path": "adhoc_jobs/admet-agent-harness",
+      "classification": "context_or_excluded",
+      "reason": "原调研/实现镜像，研究来源已登记；不是新增训练run"
+    },
+    {
+      "path": "adhoc_jobs/admet_agent_harness",
+      "classification": "context_or_excluded",
+      "reason": "历史Harness与固定评分源码，当前政策单独映射；不公开私有标签路径"
+    },
+    {
+      "path": "adhoc_jobs/admet_benchmark_public",
+      "classification": "context_or_excluded",
+      "reason": "公开数据仓库镜像，发布包不是独立训练"
+    },
+    {
+      "path": "adhoc_jobs/admet_cleaned_archive_audit_20261030",
+      "classification": "included",
+      "reason": "实际历史记录已纳入下方records"
+    },
+    {
+      "path": "adhoc_jobs/admet_deepseek_skill_coldstart_20261030",
+      "classification": "included",
+      "reason": "实际历史记录已纳入下方records"
+    },
+    {
+      "path": "adhoc_jobs/admet_frozen_baseline_20261030",
+      "classification": "included",
+      "reason": "实际历史记录已纳入下方records"
+    },
+    {
+      "path": "adhoc_jobs/admet_harness_startup_review_20261029",
+      "classification": "included",
+      "reason": "实际历史记录已纳入下方records"
+    },
+    {
+      "path": "adhoc_jobs/admet_preparation_skill_v12_20261031",
+      "classification": "included",
+      "reason": "实际历史记录已纳入下方records"
+    },
+    {
+      "path": "adhoc_jobs/admet_public_candidate_challenge_20261031",
+      "classification": "context_or_excluded",
+      "reason": "另一个公开候选核验项目；来源仅作背景，不作为标签或获准训练证据"
+    },
+    {
+      "path": "adhoc_jobs/admet_qwen_preparation_20261031",
+      "classification": "included",
+      "reason": "实际历史记录已纳入下方records"
+    },
+    {
+      "path": "adhoc_jobs/admet_research_intake_20261030",
+      "classification": "included",
+      "reason": "实际历史记录已纳入下方records"
+    },
+    {
+      "path": "adhoc_jobs/admet_sap_setup_20261029",
+      "classification": "context_or_excluded",
+      "reason": "旧SAP与私有评分边界；不把其中私有文件直接投给Pro/准备方"
+    },
+    {
+      "path": "adhoc_jobs/admet_training",
+      "classification": "context_or_excluded",
+      "reason": "当前项目，runs/cycles以独立发现核对"
+    }
+  ],
+  "records": [
+    {
+      "id": "baseline-22",
+      "kind": "training_run",
+      "root": "adhoc_jobs/admet_frozen_baseline_20261030/runs/chemeleon-host-v3-20261030",
+      "state": "accepted_with_quality_limits",
+      "summary": "Mini CPU冻结CheMeleon，22个任务各1头；v1/v2失败和v3复用缓存；22任务本地评分已完成，非海南。",
+      "sources": [
+        "adhoc_jobs/admet_frozen_baseline_20261030/DELIVERY.md",
+        "adhoc_jobs/admet_frozen_baseline_20261030/runs/chemeleon-host-v3-20261030/result/model/metrics.json",
+        "adhoc_jobs/admet_frozen_baseline_20261030/runs/chemeleon-host-v3-20261030/prediction-range-review.json",
+        "adhoc_jobs/admet_frozen_baseline_20261030/runs/chemeleon-host-v3-20261030/host-artifact-verification.json"
+      ]
+    },
+    {
+      "id": "hainan-skill-pilot-20261030",
+      "kind": "training_run",
+      "root": "adhoc_jobs/admet_training/runs/hainan-skill-pilot-20261030",
+      "state": "failed_before_learning",
+      "summary": "3次启动均失败，无完成训练；环境写入边界有失败。",
+      "sources": [
+        "adhoc_jobs/admet_training/runs/hainan-skill-pilot-20261030/status.json",
+        "adhoc_jobs/admet_training/runs/hainan-skill-pilot-20261030/PLAN.json",
+        "adhoc_jobs/admet_training/runs/hainan-skill-pilot-20261030/acceptance/report.md"
+      ]
+    },
+    {
+      "id": "hainan-frozen-training-20261031",
+      "kind": "training_run",
+      "root": "adhoc_jobs/admet_training/runs/hainan-frozen-training-20261031",
+      "state": "accepted_with_scope_limits",
+      "summary": "首个主控修复后海南Caco2冻结训练；14epoch/70更新。",
+      "sources": [
+        "adhoc_jobs/admet_training/runs/hainan-frozen-training-20261031/status.json",
+        "adhoc_jobs/admet_training/runs/hainan-frozen-training-20261031/PLAN.json",
+        "adhoc_jobs/admet_training/runs/hainan-frozen-training-20261031/acceptance/report.md"
+      ]
+    },
+    {
+      "id": "hainan-skill-follow-20261031",
+      "kind": "training_run",
+      "root": "adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031",
+      "state": "science_pass_skill_follow_partial",
+      "summary": "原Thread续聊，256头/lr0.0005/seed43；19epoch/95更新；前置失败后继续执行不合格。",
+      "sources": [
+        "adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031/status.json",
+        "adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031/PLAN.json",
+        "adhoc_jobs/admet_training/runs/hainan-skill-follow-20261031/acceptance/report.md"
+      ]
+    },
+    {
+      "id": "hainan-index-cycle-20261031",
+      "kind": "training_run",
+      "root": "adhoc_jobs/admet_training/runs/hainan-index-cycle-20261031",
+      "state": "accepted_cycle_completed",
+      "summary": "分组train内573/64；26epoch/130更新；旧run状态落后于周期验收。",
+      "sources": [
+        "adhoc_jobs/admet_training/runs/hainan-index-cycle-20261031/status.json",
+        "adhoc_jobs/admet_training/runs/hainan-index-cycle-20261031/PLAN.json",
+        "adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031/acceptance/training-final/report.md"
+      ]
+    },
+    {
+      "id": "hainan-mae-monitor-20261101",
+      "kind": "training_run",
+      "root": "adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101",
+      "state": "science_accepted_supervisor_failed",
+      "summary": "15epoch/75更新；科学worker0/监督125；已评分及Pro回包，研究指南未全部可执行。",
+      "sources": [
+        "adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101/status.json",
+        "adhoc_jobs/admet_training/runs/hainan-mae-monitor-20261101/PLAN.json",
+        "adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/acceptance/training-final/RUN_ACCEPTED.json"
+      ]
+    },
+    {
+      "id": "prep-glm-deepseek-original",
+      "kind": "preparation",
+      "root": "adhoc_jobs/admet_frozen_baseline_20261030",
+      "state": "both_with_defects",
+      "summary": "四会话同prompt；GLM输出预算8192耗尽未交付；DeepSeek交付但模型路越权本机训练，数据评分合同不严。",
+      "sources": [
+        "adhoc_jobs/admet_frozen_baseline_20261030/acceptance/report.md",
+        "adhoc_jobs/admet_frozen_baseline_20261030/acceptance/session-summary.json",
+        "adhoc_jobs/admet_frozen_baseline_20261030/comparison-setup.json"
+      ]
+    },
+    {
+      "id": "prep-glm-expanded-budget",
+      "kind": "preparation",
+      "root": "adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030",
+      "state": "completed_not_fully_accepted",
+      "summary": "保留旧历史，500k/100k预算重跑；与冷启动或旧预算不可作普遍模型排名。",
+      "sources": [
+        "adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/report.md",
+        "adhoc_jobs/admet_frozen_baseline_20261030/glm-rerun-500k-100k-20261030/acceptance/session-summary.json"
+      ]
+    },
+    {
+      "id": "prep-deepseek-coldstart",
+      "kind": "preparation",
+      "root": "adhoc_jobs/admet_deepseek_skill_coldstart_20261030",
+      "state": "both_failed_overall",
+      "summary": "两个全新上下文；真实接口/缓存/严格评分缺陷；无训练。",
+      "sources": [
+        "adhoc_jobs/admet_deepseek_skill_coldstart_20261030/acceptance/report.md",
+        "adhoc_jobs/admet_deepseek_skill_coldstart_20261030/status.json"
+      ]
+    },
+    {
+      "id": "prep-qwen-two-assets",
+      "kind": "preparation",
+      "root": "adhoc_jobs/admet_qwen_preparation_20261031",
+      "state": "idle_incomplete_not_training_ready",
+      "summary": "MiniMol、MoLFormer各一路；旧状态preparation_running已过时，采用监控终态观察；未验收。",
+      "sources": [
+        "adhoc_jobs/admet_qwen_preparation_20261031/CONTINUE.md",
+        "contexts/infrastructure/opencode_terra_monitor_20261031/status.json"
+      ]
+    },
+    {
+      "id": "prep-contract-regression",
+      "kind": "preparation",
+      "root": "adhoc_jobs/admet_preparation_skill_v12_20261031",
+      "state": "offline_verified_model_behaviour_unverified",
+      "summary": "Qwen旧交付真实缺陷转生产反例，离线通过不等于新版模型通过。",
+      "sources": [
+        "adhoc_jobs/admet_preparation_skill_v12_20261031/receipt.json"
+      ]
+    },
+    {
+      "id": "pro-first",
+      "kind": "review_cycle",
+      "root": "adhoc_jobs/admet_training/exchange/trials/public-repo-20261031",
+      "state": "closed_see_independent_acceptance",
+      "summary": "首轮双向传输和研究；历史问题保持原件。",
+      "sources": [
+        "adhoc_jobs/admet_training/exchange/trials/public-repo-20261031/TRIAL.json",
+        "adhoc_jobs/admet_training/exchange/trials/public-repo-20261031/CONTINUE.md"
+      ]
+    },
+    {
+      "id": "pro-index",
+      "kind": "review_cycle",
+      "root": "adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031",
+      "state": "closed_see_independent_acceptance",
+      "summary": "渐进索引完整周期及下载恢复；存在交接延迟。",
+      "sources": [
+        "adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031/status.json",
+        "adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031/CONTINUE.md"
+      ]
+    },
+    {
+      "id": "pro-mae",
+      "kind": "review_cycle",
+      "root": "adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101",
+      "state": "closed_see_independent_acceptance",
+      "summary": "最后Pro研究包；运输通过，角色/历史/执行方案合同有缺陷。",
+      "sources": [
+        "adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/status.json",
+        "adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/CONTINUE.md",
+        "adhoc_jobs/admet_training/audits/end-to-end-20261101/REPORT.md",
+        "adhoc_jobs/admet_training/audits/end-to-end-20261101/clarifications-20261101.json"
+      ]
+    },
+    {
+      "id": "research-origin",
+      "kind": "research_or_audit",
+      "root": "adhoc_jobs/admet_research_intake_20261030",
+      "state": "evidence_retained",
+      "summary": "原调研包与模型候选依据；研究建议不是已准备或授权训练。",
+      "sources": [
+        "adhoc_jobs/admet_research_intake_20261030/README.md",
+        "adhoc_jobs/admet_research_intake_20261030/receipt.json"
+      ]
+    },
+    {
+      "id": "cleaning-audit",
+      "kind": "research_or_audit",
+      "root": "adhoc_jobs/admet_cleaned_archive_audit_20261030",
+      "state": "evidence_retained",
+      "summary": "清洗zip审计；未采用为正式训练版本。",
+      "sources": [
+        "adhoc_jobs/admet_cleaned_archive_audit_20261030/README.md",
+        "adhoc_jobs/admet_cleaned_archive_audit_20261030/audit.json"
+      ]
+    },
+    {
+      "id": "rules-data-origin",
+      "kind": "research_or_audit",
+      "root": "adhoc_jobs/admet_harness_startup_review_20261029",
+      "state": "evidence_retained",
+      "summary": "旧Harness、规则和数据原始审计；实现约束不能冒充赛事条款。",
+      "sources": [
+        "adhoc_jobs/admet_harness_startup_review_20261029/review-receipt.json",
+        "adhoc_jobs/admet_harness_startup_review_20261029/data-audit/数据完整性与计划调整.md"
+      ]
+    },
+    {
+      "id": "control-audit",
+      "kind": "research_or_audit",
+      "root": "adhoc_jobs/admet_training/audits/control-plane-20261101",
+      "state": "evidence_retained",
+      "summary": "用户意图、授权与控制面逐条复核。",
+      "sources": [
+        "adhoc_jobs/admet_training/audits/control-plane-20261101/REPORT.md"
+      ]
+    },
+    {
+      "id": "pipeline-audit",
+      "kind": "research_or_audit",
+      "root": "adhoc_jobs/admet_training/audits/end-to-end-20261101",
+      "state": "evidence_retained",
+      "summary": "原始工具/产物独立复核与证据措辞更正。",
+      "sources": [
+        "adhoc_jobs/admet_training/audits/end-to-end-20261101/REPORT.md",
+        "adhoc_jobs/admet_training/audits/end-to-end-20261101/findings.json",
+        "adhoc_jobs/admet_training/audits/end-to-end-20261101/clarifications-20261101.json"
+      ]
+    },
+    {
+      "id": "issue-decisions",
+      "kind": "research_or_audit",
+      "root": "adhoc_jobs/admet_training/exchange/issues",
+      "state": "evidence_retained",
+      "summary": "历史问题采纳与否决，不能用新回包覆盖旧账。",
+      "sources": [
+        "adhoc_jobs/admet_training/exchange/issues/INDEX.json"
+      ]
+    },
+    {
+      "id": "catalog-events",
+      "kind": "research_or_audit",
+      "root": "adhoc_jobs/admet_training/exchange/catalog",
+      "state": "evidence_retained",
+      "summary": "已验证/推翻事件链和旧快照。",
+      "sources": [
+        "adhoc_jobs/admet_training/exchange/catalog/inputs/20261031-v1.json"
+      ]
+    },
+    {
+      "id": "evaluation-use",
+      "kind": "research_or_audit",
+      "root": "adhoc_jobs/admet_training/control",
+      "state": "formal_deliveries_reconciled_lifetime_reads_unknown",
+      "summary": "五个已完成学习run的26个任务评分交付；旧失败访问和探索复算总次数未全部记录，不能冒充无valid适应。",
+      "sources": [
+        "adhoc_jobs/admet_training/control/evaluation-use-ledger.json",
+        "adhoc_jobs/admet_frozen_baseline_20261030/runs/chemeleon-host-v3-20261030/host-grading-receipt.json",
+        "adhoc_jobs/admet_training/exchange/trials/public-repo-20261031/retrieval/private_scoring/scoring-receipt.json",
+        "adhoc_jobs/admet_training/cycles/progressive-index-e2e-20261031/retrieval/phase2/private_scoring/scoring-receipt.json",
+        "adhoc_jobs/admet_training/cycles/monitor-mae-e2e-20261101/retrieval/private_scoring/scoring-receipt.json"
+      ]
+    },
+    {
+      "id": "contract-follow-e2e-20261101",
+      "kind": "review_cycle",
+      "root": "adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101",
+      "state": "closed_deadline_expired_science_incomplete",
+      "summary": "旧六项窗口已于原截止关闭，完成0/6；首项旧尝试学习步数未知，旧009无部署/启动。不得再因资源通知复活旧请求。",
+      "sources": [
+        "adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/CYCLE.json",
+        "adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/status.json",
+        "adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/training/operator/REPORT.md",
+        "adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/training/recovery-01/main-fault-acceptance.json",
+        "adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/training/recovery-01/TASK.json",
+        "adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/training/deadline-closure-20261101/status.json"
+      ]
+    },
+    {
+      "id": "hainan-paired-mse-s44-20261101",
+      "kind": "training_run",
+      "root": "adhoc_jobs/admet_training/runs/hainan-paired-mse-s44-20261101",
+      "state": "closed_deadline_prior_failed_attempt_learning_unverified",
+      "summary": "本批执行窗口到期，新增完成0/6。首项曾启动但优化步未知；最新009无部署/启动，原件保留。",
+      "sources": [
+        "adhoc_jobs/admet_training/runs/hainan-paired-mse-s44-20261101/PLAN.json",
+        "adhoc_jobs/admet_training/runs/hainan-paired-mse-s44-20261101/status.json",
+        "adhoc_jobs/admet_training/runs/hainan-paired-mse-s44-20261101/admission/MAIN_ACCEPTANCE.json",
+        "adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/training/deadline-closure-20261101/status.json"
+      ]
+    },
+    {
+      "id": "hainan-paired-mae-s44-20261101",
+      "kind": "training_run",
+      "root": "adhoc_jobs/admet_training/runs/hainan-paired-mae-s44-20261101",
+      "state": "closed_deadline_not_started",
+      "summary": "本批执行窗口到期，该项未启动；最新009等待资源终止，原件保留。",
+      "sources": [
+        "adhoc_jobs/admet_training/runs/hainan-paired-mae-s44-20261101/PLAN.json",
+        "adhoc_jobs/admet_training/runs/hainan-paired-mae-s44-20261101/status.json",
+        "adhoc_jobs/admet_training/runs/hainan-paired-mae-s44-20261101/admission/MAIN_ACCEPTANCE.json",
+        "adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/training/deadline-closure-20261101/status.json"
+      ]
+    },
+    {
+      "id": "hainan-paired-mse-s45-20261101",
+      "kind": "training_run",
+      "root": "adhoc_jobs/admet_training/runs/hainan-paired-mse-s45-20261101",
+      "state": "closed_deadline_not_started",
+      "summary": "本批执行窗口到期，该项未启动；最新009等待资源终止，原件保留。",
+      "sources": [
+        "adhoc_jobs/admet_training/runs/hainan-paired-mse-s45-20261101/PLAN.json",
+        "adhoc_jobs/admet_training/runs/hainan-paired-mse-s45-20261101/status.json",
+        "adhoc_jobs/admet_training/runs/hainan-paired-mse-s45-20261101/admission/MAIN_ACCEPTANCE.json",
+        "adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/training/deadline-closure-20261101/status.json"
+      ]
+    },
+    {
+      "id": "hainan-paired-mae-s45-20261101",
+      "kind": "training_run",
+      "root": "adhoc_jobs/admet_training/runs/hainan-paired-mae-s45-20261101",
+      "state": "closed_deadline_not_started",
+      "summary": "本批执行窗口到期，该项未启动；最新009等待资源终止，原件保留。",
+      "sources": [
+        "adhoc_jobs/admet_training/runs/hainan-paired-mae-s45-20261101/PLAN.json",
+        "adhoc_jobs/admet_training/runs/hainan-paired-mae-s45-20261101/status.json",
+        "adhoc_jobs/admet_training/runs/hainan-paired-mae-s45-20261101/admission/MAIN_ACCEPTANCE.json",
+        "adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/training/deadline-closure-20261101/status.json"
+      ]
+    },
+    {
+      "id": "hainan-paired-mse-s46-20261101",
+      "kind": "training_run",
+      "root": "adhoc_jobs/admet_training/runs/hainan-paired-mse-s46-20261101",
+      "state": "closed_deadline_not_started",
+      "summary": "本批执行窗口到期，该项未启动；最新009等待资源终止，原件保留。",
+      "sources": [
+        "adhoc_jobs/admet_training/runs/hainan-paired-mse-s46-20261101/PLAN.json",
+        "adhoc_jobs/admet_training/runs/hainan-paired-mse-s46-20261101/status.json",
+        "adhoc_jobs/admet_training/runs/hainan-paired-mse-s46-20261101/admission/MAIN_ACCEPTANCE.json",
+        "adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/training/deadline-closure-20261101/status.json"
+      ]
+    },
+    {
+      "id": "hainan-paired-mae-s46-20261101",
+      "kind": "training_run",
+      "root": "adhoc_jobs/admet_training/runs/hainan-paired-mae-s46-20261101",
+      "state": "closed_deadline_not_started",
+      "summary": "本批执行窗口到期，该项未启动；最新009等待资源终止，原件保留。",
+      "sources": [
+        "adhoc_jobs/admet_training/runs/hainan-paired-mae-s46-20261101/PLAN.json",
+        "adhoc_jobs/admet_training/runs/hainan-paired-mae-s46-20261101/status.json",
+        "adhoc_jobs/admet_training/runs/hainan-paired-mae-s46-20261101/admission/MAIN_ACCEPTANCE.json",
+        "adhoc_jobs/admet_training/cycles/contract-follow-e2e-20261101/training/deadline-closure-20261101/status.json"
+      ]
+    },
+    {
+      "id": "leaderboard-score-mapping-20261101",
+      "kind": "research_or_audit",
+      "root": "adhoc_jobs/admet_training/audits/leaderboard-score-mapping-20261101",
+      "state": "official_UI_read_and_inferred_conversion_crosschecked_not_official_formula",
+      "summary": "主控内置Browser核对前十53.688644/本队46.418；22项归一化及均值推导逐项吻合，理论满分吻合。Valid可本地估算但非官方test预报；仅Caco2提升不足以冲前十。",
+      "sources": [
+        "adhoc_jobs/admet_training/audits/leaderboard-score-mapping-20261101/REPORT.md",
+        "adhoc_jobs/admet_training/audits/leaderboard-score-mapping-20261101/current-official-observation.json",
+        "adhoc_jobs/admet_training/audits/leaderboard-score-mapping-20261101/valid-score-estimate.json"
+      ]
+    },
+    {
+      "id": "training-breadth-strategy-20261101",
+      "kind": "research_or_audit",
+      "root": "adhoc_jobs/admet_training/audits/training-breadth-strategy-20261101",
+      "state": "research_repair_received_main_reviewed_candidate_design_not_training_admitted",
+      "summary": "广度Pro原版与补全已完整收回，主控独立复核接受有局限的研究设计；42proposal/84fit未执行，21任务runner待实现/验收，不构成新增训练授权。",
+      "sources": [
+        "adhoc_jobs/admet_training/audits/training-breadth-strategy-20261101/RESEARCH_BRIEF.md",
+        "adhoc_jobs/admet_training/audits/training-breadth-strategy-20261101/AUTHORIZATION.json",
+        "adhoc_jobs/admet_training/audits/training-breadth-strategy-20261101/SOURCE_ANCHORS.json",
+        "adhoc_jobs/admet_training/audits/training-breadth-strategy-20261101/gateway/repair-001/main-review-002/REPORT.md"
+      ]
+    },
+    {
+      "id": "agent-led-execution-20261101",
+      "kind": "research_or_audit",
+      "root": "adhoc_jobs/admet_training/audits/agent-led-execution-20261101",
+      "state": "current_workflow_code_deleted_skills_rewritten_runtime_behavior_not_tested",
+      "summary": "用户要求结果确定性优于过程确定性；主控重写五项项目Skill及入口/Prompt，删除351文件（227源码、1缓存及配套）；原件留证。未新增训练或恢复旧009；科学与权限边界保持。",
+      "sources": [
+        "adhoc_jobs/admet_training/audits/agent-led-execution-20261101/REPORT.md",
+        "adhoc_jobs/admet_training/audits/agent-led-execution-20261101/RESULT.json",
+        "adhoc_jobs/admet_training/audits/agent-led-execution-20261101/DELETION_MANIFEST.json",
+        "adhoc_jobs/admet_training/audits/agent-led-execution-20261101/DELETION_RECEIPT.json"
+      ]
+    },
+    {
+      "id": "agent-led-resume-20261102",
+      "kind": "training_cycle",
+      "root": "adhoc_jobs/admet_training/cycles/agent-led-resume-20261102",
+      "state": "six_runs_scored_published_Pro_repair_returned_main_consumed_next24_dispatched",
+      "summary": "六个Caco2完成学习/评分及主控独立验收，4228文件公开材料与Pro原版/补全收回，主控独立研究验收并实际派下一批六任务24fit。GPU0共享失败、Qwen准备失败与主控CPU代码修订保留，非所有环节无缺陷。32正式任务评分/11完成逻辑run口径未因新派发改变。",
+      "sources": [
+        "adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/TASK.json",
+        "adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/CONTINUE.md",
+        "adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/status.json",
+        "adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/dispatch.json",
+        "adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/controller/history-intake-001/REPORT.md",
+        "adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/controller/shared-impact-review-001/REPORT.md",
+        "adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/controller/stable-two-intake-001/REPORT.md",
+        "adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/retrieval/stable-two-001/REPORT.md",
+        "adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/controller/gpu1-four-intake-001/REPORT.md",
+        "adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/controller/remaining-four-intake-001/REPORT.md",
+        "adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/controller/pro-repair-intake-001/REPORT.md",
+        "adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/controller/breadth-interface-repair-001/REPORT.md",
+        "adhoc_jobs/admet_training/cycles/agent-led-resume-20261102/gateway/pro-six-001/repair-001/execution/REPORT.md"
+      ]
+    },
+    {
+      "id": "breadth-six24-20261102",
+      "kind": "training_cycle",
+      "root": "adhoc_jobs/admet_training/cycles/breadth-six24-20261102",
+      "state": "24_scores_published_Pro_recovery_accepted_next28_preparation_dispatched",
+      "summary": "24模型/24分数独立验收、966材料发布、Pro完整155文件回收。主控独立来源/算术/配置366检查通过并亲审科学建议，采纳中档28项，实际派发mini根Qwen准备并交原Terra。Pro初始语法失败、网关读取限流/一次页面加载恢复和训练故障保留；初始准备skill错命中旧v1.1单列待验，未把运行中当完成。",
+      "sources": [
+        "adhoc_jobs/admet_training/cycles/breadth-six24-20261102/TASK.json",
+        "adhoc_jobs/admet_training/cycles/breadth-six24-20261102/CONTINUE.md",
+        "adhoc_jobs/admet_training/cycles/breadth-six24-20261102/IMPLEMENTATION_NOTES.md",
+        "adhoc_jobs/admet_training/cycles/breadth-six24-20261102/dispatch.json",
+        "adhoc_jobs/admet_training/cycles/breadth-six24-20261102/status.json",
+        "adhoc_jobs/admet_training/cycles/breadth-six24-20261102/controller/resource-fault-intake-001/REPORT.md",
+        "adhoc_jobs/admet_training/cycles/breadth-six24-20261102/controller/final-training-intake-001/REPORT.md",
+        "adhoc_jobs/admet_training/cycles/breadth-six24-20261102/operator/REPORT.md",
+        "adhoc_jobs/admet_training/cycles/breadth-six24-20261102/controller/retrieval-score-intake-001/REPORT.md",
+        "adhoc_jobs/admet_training/cycles/breadth-six24-20261102/controller/retrieval-score-intake-001/scores-independent.json",
+        "adhoc_jobs/admet_training/cycles/breadth-six24-20261102/controller/retrieval-score-intake-001/feature-distribution-diagnostic.json",
+        "adhoc_jobs/admet_training/cycles/breadth-six24-20261102/controller/pro-recovery-intake-001/REPORT.md",
+        "adhoc_jobs/admet_training/cycles/breadth-six24-20261102/controller/pro-recovery-intake-001/scientific-independent.json",
+        "adhoc_jobs/admet_training/cycles/breadth-six24-20261102/controller/pro-recovery-intake-001/gateway-native-terminal.json"
+      ]
+    },
+    {
+      "id": "scaler-six28-20261102",
+      "kind": "preparation_and_training_cycle",
+      "root": "adhoc_jobs/admet_training/cycles/scaler-six28-20261102",
+      "state": "original_preparation_rejected_root_repair_cpu_accepted_28fit_training_dispatched",
+      "summary": "主控采纳Pro medium28：6task×F001/F010×2seed+2stress×H0/F001×seed46。28新增拟合尚未训练，复用12历史H0控制。mini根Qwen3.8 session ses_e6646edeaffe2lKrR3STB7J577 已实际工作，原Terra接手；冻结3.0.1技能与旧注册v1.1差异单列验收。",
+      "sources": [
+        "adhoc_jobs/admet_training/cycles/scaler-six28-20261102/CONTINUE.md",
+        "adhoc_jobs/admet_training/cycles/scaler-six28-20261102/status.json",
+        "adhoc_jobs/admet_training/cycles/scaler-six28-20261102/preparation/dispatch.json",
+        "adhoc_jobs/admet_training/cycles/scaler-six28-20261102/preparation/packet/TASK.json",
+        "adhoc_jobs/admet_training/cycles/scaler-six28-20261102/preparation/packet/SCIENTIFIC_TASK.md"
+      ]
+    }
+  ],
+  "limitations": [
+    "登记范围内实体齐全不等于全部原件已搬运/发布。",
+    "逐行私有valid不进入此本地索引输出；评分使用完整次数需从已有回执导入，未知不填0。",
+    "新增研究根、run或cycle出现时，由主控按实际来源核对后再声明完整；不以旧固定数量或检查器替代核查。"
+  ],
+  "updated_at": "2026-11-02T02:05:26.641756+00:00"
+}

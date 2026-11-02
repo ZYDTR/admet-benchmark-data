@@ -1,0 +1,41 @@
+{
+  "implementation_state": "28 runs actually trained and independently accepted; historical preparation text saying scaler unimplemented is superseded by final training/code evidence",
+  "frozen_base": "CheMeleon approved original weights/buffers unchanged; cached 2048 features",
+  "head": "2048→256→1,ReLU,dropout0.1",
+  "optimizer": "AdamW lr0.0005 weight_decay0.0001 batch128 max_epochs50 patience8 min_delta1e-7",
+  "split": "original Drug groups, seed43, internal stop10%; fit statistics only on fit",
+  "features": "float32 ddof0; d0=where(fit_std<1e-8,1,fit_std); H0 uses d0; F001 max(d0,0.001); F010 max(d0,0.01); constant dimensions retain denominator1; mean/std serialized and prediction reused",
+  "targets": "regression fit-only target mean/std float64; training MSE standardized target; inverse once to original Y; classification BCE logits→probability; early-stop MAE/AUROC/tied AP/Spearman by task direction",
+  "actual_config_and_row_identity": "../runs/index.json links exact configurations and predictions; proposed fields must follow actual code/config, unsupported additions are new_code",
+  "scientific_code": [
+    {
+      "source_key": "operator/global-evidence/src/admet_breadth/cache.py",
+      "candidate_path": "evidence/objects/98497dc52267fcb3b868cba2349232c7f2b3f171416a5f33ef7e991cf04fb929.py",
+      "uri": null,
+      "view_sha256": "98497dc52267fcb3b868cba2349232c7f2b3f171416a5f33ef7e991cf04fb929",
+      "view_bytes": 23007
+    },
+    {
+      "source_key": "operator/global-evidence/src/admet_breadth/pipeline.py",
+      "candidate_path": "evidence/objects/8b9e8acee0854e2e6114be69d330e656299c54ace9996f02b2f396071884f09c.py",
+      "uri": null,
+      "view_sha256": "8b9e8acee0854e2e6114be69d330e656299c54ace9996f02b2f396071884f09c",
+      "view_bytes": 13692
+    },
+    {
+      "source_key": "operator/global-evidence/src/admet_breadth/heads.py",
+      "candidate_path": null,
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/evidence/objects/650862671076f7b40b5ca776b2a03f3116cb0df5dcb79d62d1a8f5adabfbef64.py.txt",
+      "view_sha256": "650862671076f7b40b5ca776b2a03f3116cb0df5dcb79d62d1a8f5adabfbef64",
+      "view_bytes": null
+    },
+    {
+      "source_key": "operator/global-evidence/src/admet_breadth/trainer.py",
+      "candidate_path": "evidence/objects/aa3fbc1a9b29a043f4bac3631cfb3244e4efbcab71636087ad679134edd9d4e5.py",
+      "uri": null,
+      "view_sha256": "aa3fbc1a9b29a043f4bac3631cfb3244e4efbcab71636087ad679134edd9d4e5",
+      "view_bytes": 15147
+    }
+  ],
+  "limits": "Restoration of stored optimizer/RNG is not a tested long resumed trajectory; no inference that unprepared bases or all-task scaler are already validated."
+}
