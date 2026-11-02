@@ -1,0 +1,582 @@
+{
+  "run_id": "hainan-breadth22-pgp_broccatelli-f010-s47-20261102",
+  "configuration": {
+    "run_id": "hainan-breadth22-pgp_broccatelli-f010-s47-20261102",
+    "task": "pgp_broccatelli",
+    "kind": "classification",
+    "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+    "head": {
+      "feature_dim": 2048,
+      "hidden_dim": 256,
+      "activation": "relu",
+      "dropout": 0.1,
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "seed": 47
+    },
+    "split": {
+      "method": "raw_smiles_group_shuffle",
+      "seed": 43,
+      "stop_fraction": 0.1
+    },
+    "monitor_metric": "AUROC",
+    "monitor_direction": "maximize",
+    "feature_scaler": {
+      "method": "fit_std_denominator_floor_v1",
+      "denominator_floor": 0.01,
+      "legacy_epsilon": 1e-08,
+      "legacy_low_std_replacement": 1.0,
+      "fit_statistic_dtype": "float32",
+      "ddof": 0,
+      "transform_dtype": "float32",
+      "fit_scope": "internal_fit_only",
+      "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+    }
+  },
+  "counts": {
+    "train": 851,
+    "valid": 122,
+    "test": 245
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "metric": "AUROC",
+      "value": 0.9420289855072463,
+      "improved": true,
+      "best_value": 0.9420289855072463,
+      "best_epoch": 1,
+      "steps": 6,
+      "steps_this_epoch": 6,
+      "train_loss": 0.4807304647354793,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 598.5100286733359,
+      "permutation_sha256": "9b37cbc00f89aa71b296095a22a37600b31a3c268bdc5287d5313544a368d193",
+      "epoch_seconds": 0.029907818010542542
+    },
+    {
+      "epoch": 2,
+      "metric": "AUROC",
+      "value": 0.9509476031215162,
+      "improved": true,
+      "best_value": 0.9509476031215162,
+      "best_epoch": 2,
+      "steps": 12,
+      "steps_this_epoch": 6,
+      "train_loss": 0.2767157474479227,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 225.325024144724,
+      "permutation_sha256": "bdaf47c0419fc8f2951395e3810408f006af31c1305636e0ef8439654ffd2497",
+      "epoch_seconds": 0.04961810598615557
+    },
+    {
+      "epoch": 3,
+      "metric": "AUROC",
+      "value": 0.9464882943143813,
+      "improved": false,
+      "best_value": 0.9509476031215162,
+      "best_epoch": 2,
+      "steps": 18,
+      "steps_this_epoch": 6,
+      "train_loss": 0.21565759069147683,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 186.84222192317247,
+      "permutation_sha256": "364cc63c544fab0b21d44a557e43f6d1bef4a1cec918a243d47c5ba99fcade6c",
+      "epoch_seconds": 0.05559200799325481
+    },
+    {
+      "epoch": 4,
+      "metric": "AUROC",
+      "value": 0.9409141583054627,
+      "improved": false,
+      "best_value": 0.9509476031215162,
+      "best_epoch": 2,
+      "steps": 24,
+      "steps_this_epoch": 6,
+      "train_loss": 0.17257299307276625,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 159.01633902313188,
+      "permutation_sha256": "6a20bd378ccf01377d84da5a2fff7b3cb41c10e88cebdd87af03dffb8c5114b7",
+      "epoch_seconds": 0.05209887202363461
+    },
+    {
+      "epoch": 5,
+      "metric": "AUROC",
+      "value": 0.9392419175027871,
+      "improved": false,
+      "best_value": 0.9509476031215162,
+      "best_epoch": 2,
+      "steps": 30,
+      "steps_this_epoch": 6,
+      "train_loss": 0.14074338124408423,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 145.53461091406643,
+      "permutation_sha256": "a6c4c08e35e8ef8c2f49c0cd07796ec98328b49f277225db2d6de8e22c2a63a4",
+      "epoch_seconds": 0.04831536998972297
+    },
+    {
+      "epoch": 6,
+      "metric": "AUROC",
+      "value": 0.9364548494983278,
+      "improved": false,
+      "best_value": 0.9509476031215162,
+      "best_epoch": 2,
+      "steps": 36,
+      "steps_this_epoch": 6,
+      "train_loss": 0.1164232736390191,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 127.4041714835912,
+      "permutation_sha256": "c1f616c247cd7553166ee2d6a4688da1eb9f2b7b866f34022ad6cb37f3f0f430",
+      "epoch_seconds": 0.0553253130055964
+    },
+    {
+      "epoch": 7,
+      "metric": "AUROC",
+      "value": 0.9364548494983278,
+      "improved": false,
+      "best_value": 0.9509476031215162,
+      "best_epoch": 2,
+      "steps": 42,
+      "steps_this_epoch": 6,
+      "train_loss": 0.09464222482617157,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 107.32433898374438,
+      "permutation_sha256": "e702082e8dcf53368c609cff4b00621bf5d4f2823818e1f12df8a901d7972363",
+      "epoch_seconds": 0.055092625960242
+    },
+    {
+      "epoch": 8,
+      "metric": "AUROC",
+      "value": 0.9342251950947603,
+      "improved": false,
+      "best_value": 0.9509476031215162,
+      "best_epoch": 2,
+      "steps": 48,
+      "steps_this_epoch": 6,
+      "train_loss": 0.07976150307463915,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 107.00211234763265,
+      "permutation_sha256": "d186eb473ba8c5d680bccb90de67f5dfea4973d6b82f0179fb92c94c4e1deee4",
+      "epoch_seconds": 0.033202210965100676
+    },
+    {
+      "epoch": 9,
+      "metric": "AUROC",
+      "value": 0.9336677814938684,
+      "improved": false,
+      "best_value": 0.9509476031215162,
+      "best_epoch": 2,
+      "steps": 54,
+      "steps_this_epoch": 6,
+      "train_loss": 0.0658998725250091,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 84.66429695114493,
+      "permutation_sha256": "3f8d3d78e6eb0d597ca32a76888ab060f5992f0448bffae53efbe350daaffa5d",
+      "epoch_seconds": 0.050913288025185466
+    },
+    {
+      "epoch": 10,
+      "metric": "AUROC",
+      "value": 0.9331103678929766,
+      "improved": false,
+      "best_value": 0.9509476031215162,
+      "best_epoch": 2,
+      "steps": 60,
+      "steps_this_epoch": 6,
+      "train_loss": 0.05395054803582458,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 87.29150355886668,
+      "permutation_sha256": "e905ffe530adf0f06051df0b92d334d72715ac1c0c9bc57fda7a9a41c1883990",
+      "epoch_seconds": 0.05531601299298927
+    }
+  ],
+  "best_epoch": 2,
+  "best_steps": 12,
+  "last_steps": 60,
+  "nonzero_gradient_steps": 60,
+  "maximum_gradient_l1": 598.5100286733359,
+  "parameter_count": 524801,
+  "encoder_parameters_buffers_unchanged": true,
+  "encoder_in_optimizer": false,
+  "encoding_calls": 0,
+  "raw_cache_root": "compute-data://breadth22-confirm86-20261102/shared/cache-mini22",
+  "cache_trust_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+  "mini22_evidence": {
+    "train": {
+      "format": "mini22_frozen_cache_v1",
+      "task": "pgp_broccatelli",
+      "split": "train",
+      "trust": {
+        "manifest_path": "compute-data://breadth22-confirm86-20261102/remaining64-001/input/MINI22_CACHE_MANIFEST.json",
+        "manifest_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+        "verified_files": {
+          "pgp_broccatelli/__train.npy": {
+            "bytes": 6971520,
+            "sha256": "ba5fb09b3b0478fc27da71cabe6d687b0f4d5018b36c12652229a46631b8b9b8"
+          },
+          "pgp_broccatelli/__train.ok.npy": {
+            "bytes": 979,
+            "sha256": "cf7efc00946de2eb9a51000d79d718ed8a89a76a68b3e9d43c4e9cbe4c86a1cb"
+          },
+          "pgp_broccatelli/__train.rows.json": {
+            "bytes": 158767,
+            "sha256": "43f9e2870ecd136488d519ea64ee428899ff1ef507337630c513803de75ea0b5"
+          },
+          "pgp_broccatelli/__train.meta.json": {
+            "bytes": 712,
+            "sha256": "ddf673dfc232af011dd48bbcbfd6122c70f621b7203550d7e299961222a6996a"
+          }
+        }
+      },
+      "source_provenance": {
+        "meta_contract_verbatim": {
+          "source_sha256": "6eb86ba5d8cfa87b8d0950d55e8054586994ea21c8b59e461743117ffe8a9a46",
+          "encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "encoder_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6",
+          "feature_dim": 2048,
+          "task": "pgp_broccatelli",
+          "split": "train"
+        },
+        "generation_packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6"
+        },
+        "encoder_identity": {
+          "mini22_encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "current_encoder_module_sha256": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "implementations_equal": false,
+          "note": "Mini22 partitions were produced by the historical mini22-encoder.py under chemprop 2.2.1 / RDKit 2025.9.6. The current accepted-src encoder.py is a different implementation of the same frozen CheMeleon checkpoint. No re-encoding was performed and no bit-level equality between the two implementations is claimed."
+        },
+        "original_source_csv_sha256": "6eb86ba5d8cfa87b8d0950d55e8054586994ea21c8b59e461743117ffe8a9a46",
+        "reencoded": false,
+        "encoder_forward_calls": 0
+      },
+      "consumption_identity": {
+        "source_csv_sha256": "6eb86ba5d8cfa87b8d0950d55e8054586994ea21c8b59e461743117ffe8a9a46",
+        "csv_bytes_equal_historical_source": true,
+        "row_identity_sha256": "f29f2ed5bc50604527cf8fded0d02dea0ebb82ae2d70b661f87e3fd0fee669fb",
+        "n_rows": 851,
+        "mapping": {
+          "mapping": "positional row_index / Drug_ID / Drug exact match",
+          "n_rows": 851,
+          "duplicate_or_blank_drug_id_preserved": true
+        }
+      },
+      "partition": {
+        "n_rows": 851,
+        "parsed_true_count": 851,
+        "unparsed_row_indices": [],
+        "array_content_digest": {
+          "shape": [
+            851,
+            2048
+          ],
+          "dtype": "float32",
+          "c_contiguous": true,
+          "bytes": 6971392,
+          "sha256": "1447fbde1469461b99ec5e06cfcdf17da8658f4df893f42e9bd5ebdbe7461f5c",
+          "crc32": "8d1089a9",
+          "nan_count": 0,
+          "inf_count": 0
+        },
+        "mask_content_digest": {
+          "shape": [
+            851
+          ],
+          "dtype": "bool",
+          "c_contiguous": true,
+          "bytes": 851,
+          "sha256": "dfe2ea8c83c1ae0a19df9065a944fa4bfbb2e196a5ac31377827e54958010794",
+          "crc32": "bdbf8c7e",
+          "nan_count": 0,
+          "inf_count": 0
+        }
+      }
+    },
+    "valid": {
+      "format": "mini22_frozen_cache_v1",
+      "task": "pgp_broccatelli",
+      "split": "valid",
+      "trust": {
+        "manifest_path": "compute-data://breadth22-confirm86-20261102/remaining64-001/input/MINI22_CACHE_MANIFEST.json",
+        "manifest_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+        "verified_files": {
+          "pgp_broccatelli/__valid.npy": {
+            "bytes": 999552,
+            "sha256": "27445f84ce20fd4532dd36da1f44aefc1fcf7bfe2834c4df280c0415548b3f96"
+          },
+          "pgp_broccatelli/__valid.ok.npy": {
+            "bytes": 250,
+            "sha256": "92a1bbd10284f4cd4ba5bc51f0b05d51115a72acd56da87c5f401d31290c0931"
+          },
+          "pgp_broccatelli/__valid.rows.json": {
+            "bytes": 21447,
+            "sha256": "fd98272ac5a20a6f8de1decdfab881221cb745640c4b3bf6c18e1539e43c4e98"
+          },
+          "pgp_broccatelli/__valid.meta.json": {
+            "bytes": 712,
+            "sha256": "b24a6f1c07c436c708ada971f8b3536adf7e6901bcf5f72e20f2563d44391f0e"
+          }
+        }
+      },
+      "source_provenance": {
+        "meta_contract_verbatim": {
+          "source_sha256": "7694cb88b3cad391b70971dcc66055a36eef28bd6ad566293bf3793ef8c1b9b5",
+          "encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "encoder_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6",
+          "feature_dim": 2048,
+          "task": "pgp_broccatelli",
+          "split": "valid"
+        },
+        "generation_packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6"
+        },
+        "encoder_identity": {
+          "mini22_encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "current_encoder_module_sha256": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "implementations_equal": false,
+          "note": "Mini22 partitions were produced by the historical mini22-encoder.py under chemprop 2.2.1 / RDKit 2025.9.6. The current accepted-src encoder.py is a different implementation of the same frozen CheMeleon checkpoint. No re-encoding was performed and no bit-level equality between the two implementations is claimed."
+        },
+        "original_source_csv_sha256": "7694cb88b3cad391b70971dcc66055a36eef28bd6ad566293bf3793ef8c1b9b5",
+        "reencoded": false,
+        "encoder_forward_calls": 0
+      },
+      "consumption_identity": {
+        "source_csv_sha256": "7694cb88b3cad391b70971dcc66055a36eef28bd6ad566293bf3793ef8c1b9b5",
+        "csv_bytes_equal_historical_source": true,
+        "row_identity_sha256": "798b682f21dca359b7ad16fd0e9b01386e139c1627b4dc9c98c128b16c4ce7cb",
+        "n_rows": 122,
+        "mapping": {
+          "mapping": "positional row_index / Drug_ID / Drug exact match",
+          "n_rows": 122,
+          "duplicate_or_blank_drug_id_preserved": true
+        }
+      },
+      "partition": {
+        "n_rows": 122,
+        "parsed_true_count": 122,
+        "unparsed_row_indices": [],
+        "array_content_digest": {
+          "shape": [
+            122,
+            2048
+          ],
+          "dtype": "float32",
+          "c_contiguous": true,
+          "bytes": 999424,
+          "sha256": "aa27dc1dd15881637c4bbd55422c8317702541de7670d82b4a6668728a8ec269",
+          "crc32": "915347d7",
+          "nan_count": 0,
+          "inf_count": 0
+        },
+        "mask_content_digest": {
+          "shape": [
+            122
+          ],
+          "dtype": "bool",
+          "c_contiguous": true,
+          "bytes": 122,
+          "sha256": "3283313de548335aa00ced2abb00ca10d45790cd5b084da0b5ca56f150da21e8",
+          "crc32": "011ca961",
+          "nan_count": 0,
+          "inf_count": 0
+        }
+      }
+    },
+    "test": {
+      "format": "mini22_frozen_cache_v1",
+      "task": "pgp_broccatelli",
+      "split": "test",
+      "trust": {
+        "manifest_path": "compute-data://breadth22-confirm86-20261102/remaining64-001/input/MINI22_CACHE_MANIFEST.json",
+        "manifest_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+        "verified_files": {
+          "pgp_broccatelli/__test.npy": {
+            "bytes": 2007168,
+            "sha256": "d0ae28dab87bec72bcd01ac72bcc2c49859655238f9d1254f23c67f08319590f"
+          },
+          "pgp_broccatelli/__test.ok.npy": {
+            "bytes": 373,
+            "sha256": "e384b96d6591cd1e8f2d72ae7b503c6cdc6aedd0b12ed66bb7d2e92bf1118895"
+          },
+          "pgp_broccatelli/__test.rows.json": {
+            "bytes": 43503,
+            "sha256": "d9b1e466d6164f4bcfa087820600790f52ff03d3c30886c9519dbdbf9510cce6"
+          },
+          "pgp_broccatelli/__test.meta.json": {
+            "bytes": 708,
+            "sha256": "5108971f523989ed35173449d63a9875f09f06e873d7dfaac0a12f4c8eb3d274"
+          }
+        }
+      },
+      "source_provenance": {
+        "meta_contract_verbatim": {
+          "source_sha256": "4c831f1af48c75b931954ef2c1462e48000c53dcba9e501edf58856a50bd67fe",
+          "encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "encoder_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6",
+          "feature_dim": 2048,
+          "task": "pgp_broccatelli",
+          "split": "test"
+        },
+        "generation_packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6"
+        },
+        "encoder_identity": {
+          "mini22_encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "current_encoder_module_sha256": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "implementations_equal": false,
+          "note": "Mini22 partitions were produced by the historical mini22-encoder.py under chemprop 2.2.1 / RDKit 2025.9.6. The current accepted-src encoder.py is a different implementation of the same frozen CheMeleon checkpoint. No re-encoding was performed and no bit-level equality between the two implementations is claimed."
+        },
+        "original_source_csv_sha256": "4c831f1af48c75b931954ef2c1462e48000c53dcba9e501edf58856a50bd67fe",
+        "reencoded": false,
+        "encoder_forward_calls": 0
+      },
+      "consumption_identity": {
+        "source_csv_sha256": "4c831f1af48c75b931954ef2c1462e48000c53dcba9e501edf58856a50bd67fe",
+        "csv_bytes_equal_historical_source": true,
+        "row_identity_sha256": "d5c7e3400eba2936595906dd9d64651e49592fc2b0e9242c066ac9f944afeed5",
+        "n_rows": 245,
+        "mapping": {
+          "mapping": "positional row_index / Drug_ID / Drug exact match",
+          "n_rows": 245,
+          "duplicate_or_blank_drug_id_preserved": true
+        }
+      },
+      "partition": {
+        "n_rows": 245,
+        "parsed_true_count": 245,
+        "unparsed_row_indices": [],
+        "array_content_digest": {
+          "shape": [
+            245,
+            2048
+          ],
+          "dtype": "float32",
+          "c_contiguous": true,
+          "bytes": 2007040,
+          "sha256": "782d1a47d4695f7c5822c36a5b75d0d526f2726f77c225dcbb83a4f1513031d1",
+          "crc32": "6d32c6ed",
+          "nan_count": 0,
+          "inf_count": 0
+        },
+        "mask_content_digest": {
+          "shape": [
+            245
+          ],
+          "dtype": "bool",
+          "c_contiguous": true,
+          "bytes": 245,
+          "sha256": "34f46be7938534f560a5897c9a4b152d4097e181e36ad421b11db97bec3d0b61",
+          "crc32": "6c671a25",
+          "nan_count": 0,
+          "inf_count": 0
+        }
+      }
+    }
+  },
+  "CPU_best_reload": {
+    "train": {
+      "rows": 851,
+      "max_abs_difference": 5.816440890038521e-08,
+      "rtol": 3e-05,
+      "atol": 6e-05,
+      "independent_CPU_best": true
+    },
+    "valid": {
+      "rows": 122,
+      "max_abs_difference": 3.592029979015976e-08,
+      "rtol": 3e-05,
+      "atol": 6e-05,
+      "independent_CPU_best": true
+    },
+    "test": {
+      "rows": 245,
+      "max_abs_difference": 4.365576497522561e-08,
+      "rtol": 3e-05,
+      "atol": 6e-05,
+      "independent_CPU_best": true
+    }
+  },
+  "prediction_summary": {
+    "train": {
+      "rows": 851,
+      "sha256": "f84d22a99513fde966a1b21cd95d3bcde9dfee78d9ab5d4aa25962bbc295db0b",
+      "parse_false_rows": []
+    },
+    "valid": {
+      "rows": 122,
+      "sha256": "b5838d6a1d7aaeb751f86cbea22b2ffb5b1bac37ee69ca7f65c264f39a6c8939",
+      "parse_false_rows": []
+    },
+    "test": {
+      "rows": 245,
+      "sha256": "9615059f54c7efa8ad8665b8d5270cdfb7912ba18f6763955648ec95f452c3d1",
+      "parse_false_rows": []
+    }
+  },
+  "save_summaries": {
+    "initial": {
+      "path": "compute-data://breadth22-confirm86-20261102/remaining64-001/hainan-breadth22-pgp_broccatelli-f010-s47-20261102/artifacts/head-initial.pt",
+      "sha256": "0784c1ee63252c4bc742b19e3b4888cd2440a7ede5543e31e573464391f20945",
+      "state_dict_keys": [
+        "0.bias",
+        "0.weight",
+        "3.bias",
+        "3.weight"
+      ],
+      "has_optimizer_state": false,
+      "has_rng_state": false,
+      "progress": {
+        "epochs_completed": 0,
+        "cumulative_steps": 0
+      }
+    },
+    "best": {
+      "path": "compute-data://breadth22-confirm86-20261102/remaining64-001/hainan-breadth22-pgp_broccatelli-f010-s47-20261102/artifacts/head-best.pt",
+      "sha256": "8624d7d20835cb3941ccf793214bee0e3cfb14e9af4353f7acfbc28c75964b63",
+      "state_dict_keys": [
+        "0.bias",
+        "0.weight",
+        "3.bias",
+        "3.weight"
+      ],
+      "has_optimizer_state": false,
+      "has_rng_state": false,
+      "progress": {
+        "epochs_completed": 2,
+        "cumulative_steps": 12
+      }
+    },
+    "last": {
+      "path": "compute-data://breadth22-confirm86-20261102/remaining64-001/hainan-breadth22-pgp_broccatelli-f010-s47-20261102/artifacts/head-last.pt",
+      "sha256": "4b7ed0fe922656972256a8f7e336bdc2dafac8e7e0b9f257dfc735de37f20fdd",
+      "state_dict_keys": [
+        "0.bias",
+        "0.weight",
+        "3.bias",
+        "3.weight"
+      ],
+      "has_optimizer_state": true,
+      "has_rng_state": true,
+      "progress": {
+        "epochs_completed": 10,
+        "cumulative_steps": 60
+      }
+    }
+  },
+  "stop_reason": "patience8",
+  "weighted_train_loss_recomputed": true,
+  "at": "2026-11-02T07:13:24.950350+00:00"
+}

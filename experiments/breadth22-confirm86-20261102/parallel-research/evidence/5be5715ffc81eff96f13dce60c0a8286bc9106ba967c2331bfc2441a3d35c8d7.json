@@ -1,0 +1,661 @@
+{
+  "run_id": "hainan-breadth22-cyp2c9_veith-h0-s46-20261102",
+  "configuration": {
+    "run_id": "hainan-breadth22-cyp2c9_veith-h0-s46-20261102",
+    "task": "cyp2c9_veith",
+    "kind": "classification",
+    "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+    "head": {
+      "feature_dim": 2048,
+      "hidden_dim": 256,
+      "activation": "relu",
+      "dropout": 0.1,
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "seed": 46
+    },
+    "split": {
+      "method": "raw_smiles_group_shuffle",
+      "seed": 43,
+      "stop_fraction": 0.1
+    },
+    "monitor_metric": "AUPRC",
+    "monitor_direction": "maximize"
+  },
+  "counts": {
+    "train": 8463,
+    "valid": 1210,
+    "test": 2419
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "metric": "AUPRC",
+      "value": 0.7952527686045167,
+      "improved": true,
+      "best_value": 0.7952527686045167,
+      "best_epoch": 1,
+      "steps": 60,
+      "steps_this_epoch": 60,
+      "train_loss": 0.4485728326542759,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 564.9016364887357,
+      "permutation_sha256": "544af8ffb245bf21a60a6223ae6909ab6674509caa39e9aaccd69ceab2394383",
+      "epoch_seconds": 0.23991553799714893
+    },
+    {
+      "epoch": 2,
+      "metric": "AUPRC",
+      "value": 0.81539480965745,
+      "improved": true,
+      "best_value": 0.81539480965745,
+      "best_epoch": 2,
+      "steps": 120,
+      "steps_this_epoch": 60,
+      "train_loss": 0.3523592539302818,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 294.8367466442287,
+      "permutation_sha256": "4ad484015501c3c1e97a457ecc703f8824eae4d382a963afc626cfa0f6fb83a7",
+      "epoch_seconds": 0.3359937689965591
+    },
+    {
+      "epoch": 3,
+      "metric": "AUPRC",
+      "value": 0.825798561129748,
+      "improved": true,
+      "best_value": 0.825798561129748,
+      "best_epoch": 3,
+      "steps": 180,
+      "steps_this_epoch": 60,
+      "train_loss": 0.3058624947315222,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 405.57076571136713,
+      "permutation_sha256": "4cb334c969115a057a5d16a047e2728b9e041497a9e540c91ee587945f5d406b",
+      "epoch_seconds": 0.3421145010506734
+    },
+    {
+      "epoch": 4,
+      "metric": "AUPRC",
+      "value": 0.8181741404583729,
+      "improved": false,
+      "best_value": 0.825798561129748,
+      "best_epoch": 3,
+      "steps": 240,
+      "steps_this_epoch": 60,
+      "train_loss": 0.2668484200407893,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 315.38010159507394,
+      "permutation_sha256": "60edec57b43b16cf93aa6ad94793c3a47f3c2dec2f542f1eb75d44716f2fd34d",
+      "epoch_seconds": 0.29104533401550725
+    },
+    {
+      "epoch": 5,
+      "metric": "AUPRC",
+      "value": 0.8245715713948143,
+      "improved": false,
+      "best_value": 0.825798561129748,
+      "best_epoch": 3,
+      "steps": 300,
+      "steps_this_epoch": 60,
+      "train_loss": 0.2372086273296715,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 437.44973266869783,
+      "permutation_sha256": "cfc0ba3680d69afdbface675e03c71874dc6d2128423e4e8524ef5e46eeddcd1",
+      "epoch_seconds": 0.34012588899349794
+    },
+    {
+      "epoch": 6,
+      "metric": "AUPRC",
+      "value": 0.8218426009823896,
+      "improved": false,
+      "best_value": 0.825798561129748,
+      "best_epoch": 3,
+      "steps": 360,
+      "steps_this_epoch": 60,
+      "train_loss": 0.2061608512405963,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 401.3279411252588,
+      "permutation_sha256": "bd349d8c3da1bf27a2503d61c02470596862affc83cef5973d57b5e247bd9739",
+      "epoch_seconds": 0.3443240590277128
+    },
+    {
+      "epoch": 7,
+      "metric": "AUPRC",
+      "value": 0.8164238303877168,
+      "improved": false,
+      "best_value": 0.825798561129748,
+      "best_epoch": 3,
+      "steps": 420,
+      "steps_this_epoch": 60,
+      "train_loss": 0.1785124311774081,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 363.0889915972948,
+      "permutation_sha256": "f199138587b64bc694703c0949113be373c569e90acf04c35c68a36369aa6788",
+      "epoch_seconds": 0.30998259398620576
+    },
+    {
+      "epoch": 8,
+      "metric": "AUPRC",
+      "value": 0.8336186533870892,
+      "improved": true,
+      "best_value": 0.8336186533870892,
+      "best_epoch": 8,
+      "steps": 480,
+      "steps_this_epoch": 60,
+      "train_loss": 0.14950446777844878,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 418.9065326936543,
+      "permutation_sha256": "a5b64d884e4f941b16da4d13e3f42f9ebfb0ff52118e82f1941d07c02463b500",
+      "epoch_seconds": 0.305779047019314
+    },
+    {
+      "epoch": 9,
+      "metric": "AUPRC",
+      "value": 0.8052253792080712,
+      "improved": false,
+      "best_value": 0.8336186533870892,
+      "best_epoch": 8,
+      "steps": 540,
+      "steps_this_epoch": 60,
+      "train_loss": 0.13590351596730924,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 393.7149849589914,
+      "permutation_sha256": "16be3e934ed9a99c4644c598580006d7bcea8d9550f42b4b2081924363a6dc6d",
+      "epoch_seconds": 0.33168812101939693
+    },
+    {
+      "epoch": 10,
+      "metric": "AUPRC",
+      "value": 0.8139463333869177,
+      "improved": false,
+      "best_value": 0.8336186533870892,
+      "best_epoch": 8,
+      "steps": 600,
+      "steps_this_epoch": 60,
+      "train_loss": 0.11958816461680802,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 339.9289956651628,
+      "permutation_sha256": "73f0ef0e065f4744904f44fa2839df906bcff84f0d43a629e26ac36d27244cff",
+      "epoch_seconds": 0.3438577289925888
+    },
+    {
+      "epoch": 11,
+      "metric": "AUPRC",
+      "value": 0.8211218453455654,
+      "improved": false,
+      "best_value": 0.8336186533870892,
+      "best_epoch": 8,
+      "steps": 660,
+      "steps_this_epoch": 60,
+      "train_loss": 0.10690428704136827,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 365.9569313758984,
+      "permutation_sha256": "8a284213fa007f689ac445f3db8be6ac2d6ba87dad889b10e856c432c4b5cad8",
+      "epoch_seconds": 0.33140414202352986
+    },
+    {
+      "epoch": 12,
+      "metric": "AUPRC",
+      "value": 0.8254911737199162,
+      "improved": false,
+      "best_value": 0.8336186533870892,
+      "best_epoch": 8,
+      "steps": 720,
+      "steps_this_epoch": 60,
+      "train_loss": 0.09269676419815961,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 455.1284782020375,
+      "permutation_sha256": "79874f7600fd19a5bc1fd52e4b2ff56cb6896b0a40656faacf4cb6cea07e89d2",
+      "epoch_seconds": 0.3005202060448937
+    },
+    {
+      "epoch": 13,
+      "metric": "AUPRC",
+      "value": 0.8301905387855227,
+      "improved": false,
+      "best_value": 0.8336186533870892,
+      "best_epoch": 8,
+      "steps": 780,
+      "steps_this_epoch": 60,
+      "train_loss": 0.08752157332348012,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 354.7491365787573,
+      "permutation_sha256": "7e47247d552b5b3ff20d09d9229c2c605ff23d94deff80882775b741ab082a4c",
+      "epoch_seconds": 0.3447039379971102
+    },
+    {
+      "epoch": 14,
+      "metric": "AUPRC",
+      "value": 0.8213916389653523,
+      "improved": false,
+      "best_value": 0.8336186533870892,
+      "best_epoch": 8,
+      "steps": 840,
+      "steps_this_epoch": 60,
+      "train_loss": 0.07427446255713478,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 391.65816633496433,
+      "permutation_sha256": "3fbce11a43c5fec53884b0308f77742fe040685b3613680f6c479fec23739bbb",
+      "epoch_seconds": 0.3467713809804991
+    },
+    {
+      "epoch": 15,
+      "metric": "AUPRC",
+      "value": 0.8220300885513268,
+      "improved": false,
+      "best_value": 0.8336186533870892,
+      "best_epoch": 8,
+      "steps": 900,
+      "steps_this_epoch": 60,
+      "train_loss": 0.06812958889667156,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 355.14175816299394,
+      "permutation_sha256": "9a085d8f354d96ec9891d09f52a2d7754f9a8262880ee7dfd413eee858393f6d",
+      "epoch_seconds": 0.3530221880064346
+    },
+    {
+      "epoch": 16,
+      "metric": "AUPRC",
+      "value": 0.8312191227809776,
+      "improved": false,
+      "best_value": 0.8336186533870892,
+      "best_epoch": 8,
+      "steps": 960,
+      "steps_this_epoch": 60,
+      "train_loss": 0.061889635776795,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 308.1642778981477,
+      "permutation_sha256": "07b4eb5df75a7562309c31e98c29e2c150e3d63f241bdad31654b0d7970194c1",
+      "epoch_seconds": 0.3167742730001919
+    }
+  ],
+  "best_epoch": 8,
+  "best_steps": 480,
+  "last_steps": 960,
+  "nonzero_gradient_steps": 960,
+  "maximum_gradient_l1": 564.9016364887357,
+  "parameter_count": 524801,
+  "encoder_parameters_buffers_unchanged": true,
+  "encoder_in_optimizer": false,
+  "encoding_calls": 0,
+  "raw_cache_root": "compute-data://breadth22-confirm86-20261102/shared/cache-mini22",
+  "cache_trust_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+  "mini22_evidence": {
+    "train": {
+      "format": "mini22_frozen_cache_v1",
+      "task": "cyp2c9_veith",
+      "split": "train",
+      "trust": {
+        "manifest_path": "compute-data://breadth22-confirm86-20261102/remaining64-001/input/MINI22_CACHE_MANIFEST.json",
+        "manifest_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+        "verified_files": {
+          "cyp2c9_veith/__train.npy": {
+            "bytes": 69329024,
+            "sha256": "0cf0618ed3f535e11fee2f015d8770e2605267b306ba1d538a6f64608dad54fa"
+          },
+          "cyp2c9_veith/__train.ok.npy": {
+            "bytes": 8591,
+            "sha256": "eba0041828619cb95b5d49dba1ae21f1525ee53625be9607ebd09263f95d6f24"
+          },
+          "cyp2c9_veith/__train.rows.json": {
+            "bytes": 1232166,
+            "sha256": "88a2d42651abd57cd5e96da84df7dbb367240f900bc6b744446afe91a3adcdd2"
+          },
+          "cyp2c9_veith/__train.meta.json": {
+            "bytes": 709,
+            "sha256": "ef9fbe6620b7bb230681e38a3e0a1622ec06d1c79a96b3e9bbe1b68ee99af8f0"
+          }
+        }
+      },
+      "source_provenance": {
+        "meta_contract_verbatim": {
+          "source_sha256": "4414aaa7ce7ac6d588c55d09292a47dd74b4c70bb78338affff655fbe715ebf2",
+          "encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "encoder_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6",
+          "feature_dim": 2048,
+          "task": "cyp2c9_veith",
+          "split": "train"
+        },
+        "generation_packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6"
+        },
+        "encoder_identity": {
+          "mini22_encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "current_encoder_module_sha256": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "implementations_equal": false,
+          "note": "Mini22 partitions were produced by the historical mini22-encoder.py under chemprop 2.2.1 / RDKit 2025.9.6. The current accepted-src encoder.py is a different implementation of the same frozen CheMeleon checkpoint. No re-encoding was performed and no bit-level equality between the two implementations is claimed."
+        },
+        "original_source_csv_sha256": "4414aaa7ce7ac6d588c55d09292a47dd74b4c70bb78338affff655fbe715ebf2",
+        "reencoded": false,
+        "encoder_forward_calls": 0
+      },
+      "consumption_identity": {
+        "source_csv_sha256": "4414aaa7ce7ac6d588c55d09292a47dd74b4c70bb78338affff655fbe715ebf2",
+        "csv_bytes_equal_historical_source": true,
+        "row_identity_sha256": "8b42fd230ab85f94fb53abe21513c7e8cca06380bfce5302de8f2a7d126ab3d5",
+        "n_rows": 8463,
+        "mapping": {
+          "mapping": "positional row_index / Drug_ID / Drug exact match",
+          "n_rows": 8463,
+          "duplicate_or_blank_drug_id_preserved": true
+        }
+      },
+      "partition": {
+        "n_rows": 8463,
+        "parsed_true_count": 8463,
+        "unparsed_row_indices": [],
+        "array_content_digest": {
+          "shape": [
+            8463,
+            2048
+          ],
+          "dtype": "float32",
+          "c_contiguous": true,
+          "bytes": 69328896,
+          "sha256": "fcd58a2a0c117ee522baacfbe679a60201ac0d65ea1c0da29fc3033c0b28827c",
+          "crc32": "02bca012",
+          "nan_count": 0,
+          "inf_count": 0
+        },
+        "mask_content_digest": {
+          "shape": [
+            8463
+          ],
+          "dtype": "bool",
+          "c_contiguous": true,
+          "bytes": 8463,
+          "sha256": "3c6c194690ee99d0d50ef43937be58cfbd3053ec45530c8a6e99295e02064df9",
+          "crc32": "9ba0fc2b",
+          "nan_count": 0,
+          "inf_count": 0
+        }
+      }
+    },
+    "valid": {
+      "format": "mini22_frozen_cache_v1",
+      "task": "cyp2c9_veith",
+      "split": "valid",
+      "trust": {
+        "manifest_path": "compute-data://breadth22-confirm86-20261102/remaining64-001/input/MINI22_CACHE_MANIFEST.json",
+        "manifest_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+        "verified_files": {
+          "cyp2c9_veith/__valid.npy": {
+            "bytes": 9912448,
+            "sha256": "b5331e8402cf9ef74a13f77fc520179bb9dce1587d65ba20af5921725b4633c5"
+          },
+          "cyp2c9_veith/__valid.ok.npy": {
+            "bytes": 1338,
+            "sha256": "20dcc21a1711950f47b9354d909312ed94f7d20c1980539a8fcff2879c18a0a9"
+          },
+          "cyp2c9_veith/__valid.rows.json": {
+            "bytes": 174381,
+            "sha256": "a63455ecf8c0cbaf992abc09b1c49e5aa9ac0f2c5702ac7e58c55fcbf0c6be6a"
+          },
+          "cyp2c9_veith/__valid.meta.json": {
+            "bytes": 709,
+            "sha256": "8a7ab47b71d1d2154e8ad27a7cb12cdc26321f75cece710a7030e22b11afd8da"
+          }
+        }
+      },
+      "source_provenance": {
+        "meta_contract_verbatim": {
+          "source_sha256": "7df841fda6ad457893a5230000b61d4b6362b739fc56091992d0554c83910ea3",
+          "encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "encoder_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6",
+          "feature_dim": 2048,
+          "task": "cyp2c9_veith",
+          "split": "valid"
+        },
+        "generation_packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6"
+        },
+        "encoder_identity": {
+          "mini22_encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "current_encoder_module_sha256": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "implementations_equal": false,
+          "note": "Mini22 partitions were produced by the historical mini22-encoder.py under chemprop 2.2.1 / RDKit 2025.9.6. The current accepted-src encoder.py is a different implementation of the same frozen CheMeleon checkpoint. No re-encoding was performed and no bit-level equality between the two implementations is claimed."
+        },
+        "original_source_csv_sha256": "7df841fda6ad457893a5230000b61d4b6362b739fc56091992d0554c83910ea3",
+        "reencoded": false,
+        "encoder_forward_calls": 0
+      },
+      "consumption_identity": {
+        "source_csv_sha256": "7df841fda6ad457893a5230000b61d4b6362b739fc56091992d0554c83910ea3",
+        "csv_bytes_equal_historical_source": true,
+        "row_identity_sha256": "4e215a263e1288d3a3d35c97b6b4267cd949889ec907615dd6a1ec366053c258",
+        "n_rows": 1210,
+        "mapping": {
+          "mapping": "positional row_index / Drug_ID / Drug exact match",
+          "n_rows": 1210,
+          "duplicate_or_blank_drug_id_preserved": true
+        }
+      },
+      "partition": {
+        "n_rows": 1210,
+        "parsed_true_count": 1210,
+        "unparsed_row_indices": [],
+        "array_content_digest": {
+          "shape": [
+            1210,
+            2048
+          ],
+          "dtype": "float32",
+          "c_contiguous": true,
+          "bytes": 9912320,
+          "sha256": "a43c9e05e7aaf461222625fce8febb405ce48feef8cf0bfcf96201370891fcfc",
+          "crc32": "5664a04d",
+          "nan_count": 0,
+          "inf_count": 0
+        },
+        "mask_content_digest": {
+          "shape": [
+            1210
+          ],
+          "dtype": "bool",
+          "c_contiguous": true,
+          "bytes": 1210,
+          "sha256": "8bf76643d4fb0ddb53839d0134cab8bd13765552801eb6b559882a85be316ba6",
+          "crc32": "67d8ae33",
+          "nan_count": 0,
+          "inf_count": 0
+        }
+      }
+    },
+    "test": {
+      "format": "mini22_frozen_cache_v1",
+      "task": "cyp2c9_veith",
+      "split": "test",
+      "trust": {
+        "manifest_path": "compute-data://breadth22-confirm86-20261102/remaining64-001/input/MINI22_CACHE_MANIFEST.json",
+        "manifest_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+        "verified_files": {
+          "cyp2c9_veith/__test.npy": {
+            "bytes": 19816576,
+            "sha256": "a633c19b3b525b525b05c829b51bfc538a5118f05f865baa1d5f6d31f9db6c52"
+          },
+          "cyp2c9_veith/__test.ok.npy": {
+            "bytes": 2547,
+            "sha256": "682dc8e368425b6623758dbfedd1d22dcc9af0963b2c40d1cab703d765d74dba"
+          },
+          "cyp2c9_veith/__test.rows.json": {
+            "bytes": 346500,
+            "sha256": "5f5b4cdf357de66bacec4f4aee32a70e45a8d0c5961b6b1c95ab2806ac09a5fe"
+          },
+          "cyp2c9_veith/__test.meta.json": {
+            "bytes": 705,
+            "sha256": "61c4113dbe11b62d0ec6000429781c1077aa5a774af52a20c992fa811785f72a"
+          }
+        }
+      },
+      "source_provenance": {
+        "meta_contract_verbatim": {
+          "source_sha256": "10a2feb061bf63c48da7ad74b94991693e382d7fa0d56acb37fc4a306ae727d2",
+          "encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "encoder_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6",
+          "feature_dim": 2048,
+          "task": "cyp2c9_veith",
+          "split": "test"
+        },
+        "generation_packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6"
+        },
+        "encoder_identity": {
+          "mini22_encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "current_encoder_module_sha256": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "implementations_equal": false,
+          "note": "Mini22 partitions were produced by the historical mini22-encoder.py under chemprop 2.2.1 / RDKit 2025.9.6. The current accepted-src encoder.py is a different implementation of the same frozen CheMeleon checkpoint. No re-encoding was performed and no bit-level equality between the two implementations is claimed."
+        },
+        "original_source_csv_sha256": "10a2feb061bf63c48da7ad74b94991693e382d7fa0d56acb37fc4a306ae727d2",
+        "reencoded": false,
+        "encoder_forward_calls": 0
+      },
+      "consumption_identity": {
+        "source_csv_sha256": "10a2feb061bf63c48da7ad74b94991693e382d7fa0d56acb37fc4a306ae727d2",
+        "csv_bytes_equal_historical_source": true,
+        "row_identity_sha256": "df357d90c27adb29662226f7e06c8878296989e9954281ded6d317c5e57ffbdd",
+        "n_rows": 2419,
+        "mapping": {
+          "mapping": "positional row_index / Drug_ID / Drug exact match",
+          "n_rows": 2419,
+          "duplicate_or_blank_drug_id_preserved": true
+        }
+      },
+      "partition": {
+        "n_rows": 2419,
+        "parsed_true_count": 2419,
+        "unparsed_row_indices": [],
+        "array_content_digest": {
+          "shape": [
+            2419,
+            2048
+          ],
+          "dtype": "float32",
+          "c_contiguous": true,
+          "bytes": 19816448,
+          "sha256": "656494d17e91c913d1f3e07081c5fef82ab2e36daaa7b713f56366f8dda7cd61",
+          "crc32": "9339fa82",
+          "nan_count": 0,
+          "inf_count": 0
+        },
+        "mask_content_digest": {
+          "shape": [
+            2419
+          ],
+          "dtype": "bool",
+          "c_contiguous": true,
+          "bytes": 2419,
+          "sha256": "b236a67fcaee312b463b63e757028a64817b4e4e3e8556041d03ce8d34a84904",
+          "crc32": "879e1c7f",
+          "nan_count": 0,
+          "inf_count": 0
+        }
+      }
+    }
+  },
+  "CPU_best_reload": {
+    "train": {
+      "rows": 8463,
+      "max_abs_difference": 4.259451592547592e-07,
+      "rtol": 3e-05,
+      "atol": 6e-05,
+      "independent_CPU_best": true
+    },
+    "valid": {
+      "rows": 1210,
+      "max_abs_difference": 1.669601250586794e-07,
+      "rtol": 3e-05,
+      "atol": 6e-05,
+      "independent_CPU_best": true
+    },
+    "test": {
+      "rows": 2419,
+      "max_abs_difference": 2.56063150239072e-07,
+      "rtol": 3e-05,
+      "atol": 6e-05,
+      "independent_CPU_best": true
+    }
+  },
+  "prediction_summary": {
+    "train": {
+      "rows": 8463,
+      "sha256": "adb5b3fd13bb8dd593f4d87a8657f45cc61bbc0095e0d80e6d1a155bf38fdc87",
+      "parse_false_rows": []
+    },
+    "valid": {
+      "rows": 1210,
+      "sha256": "ab2cf55f561f000f8246ef824ed821538b6d5485e5a935f660beee52ecc53989",
+      "parse_false_rows": []
+    },
+    "test": {
+      "rows": 2419,
+      "sha256": "4a591dd55163cfbd86db61c48c6a711b946b770efd6952606e8240e087c1adb2",
+      "parse_false_rows": []
+    }
+  },
+  "save_summaries": {
+    "initial": {
+      "path": "compute-data://breadth22-confirm86-20261102/remaining64-001/hainan-breadth22-cyp2c9_veith-h0-s46-20261102/artifacts/head-initial.pt",
+      "sha256": "12a7a94626adcff29c1d999809cc1b7acfe508e36b9b21ad386e9e1a40866f0d",
+      "state_dict_keys": [
+        "0.bias",
+        "0.weight",
+        "3.bias",
+        "3.weight"
+      ],
+      "has_optimizer_state": false,
+      "has_rng_state": false,
+      "progress": {
+        "epochs_completed": 0,
+        "cumulative_steps": 0
+      }
+    },
+    "best": {
+      "path": "compute-data://breadth22-confirm86-20261102/remaining64-001/hainan-breadth22-cyp2c9_veith-h0-s46-20261102/artifacts/head-best.pt",
+      "sha256": "4527a638a9e7e72894e88131e674e80800ba3c3a97a1f4b0dec845efc4e1d16f",
+      "state_dict_keys": [
+        "0.bias",
+        "0.weight",
+        "3.bias",
+        "3.weight"
+      ],
+      "has_optimizer_state": false,
+      "has_rng_state": false,
+      "progress": {
+        "epochs_completed": 8,
+        "cumulative_steps": 480
+      }
+    },
+    "last": {
+      "path": "compute-data://breadth22-confirm86-20261102/remaining64-001/hainan-breadth22-cyp2c9_veith-h0-s46-20261102/artifacts/head-last.pt",
+      "sha256": "58cc327d5ce04a0a62312ebcab1870eeda33a50ce983986b9d3e5e244cdd1365",
+      "state_dict_keys": [
+        "0.bias",
+        "0.weight",
+        "3.bias",
+        "3.weight"
+      ],
+      "has_optimizer_state": true,
+      "has_rng_state": true,
+      "progress": {
+        "epochs_completed": 16,
+        "cumulative_steps": 960
+      }
+    }
+  },
+  "stop_reason": "patience8",
+  "weighted_train_loss_recomputed": true,
+  "at": "2026-11-02T07:07:26.977208+00:00"
+}

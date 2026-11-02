@@ -1,0 +1,2131 @@
+首版八个文本原件的完整传输体，不是摘要。
+每段CONTENT之后紧接声明的utf8_bytes个原始字节；之后的换行和END_FILE属于传输分隔符。
+
+BEGIN_FILE path=analysis.md utf8_bytes=10949 sha256=ad94deba7ee7260e22a4e52694a1af9b38e4ca0929b2a464114c2a4e2a2c9bb8
+CONTENT
+# ADMET Scaler Six28 review
+
+Identity: `admet-scaler-six28-pro-20261102-001` / `scaler-six28-review-20261102`  
+Input manifest SHA256: `85b80e24018b59e8ecdb57cc0b084591dfd0fc86c19df4d28bd19f1e0ca20ce7`  
+Mode: `proposal_only`; no training, asset mutation, or competition upload.  
+Scientific status: `needs_evidence`.
+
+## Executive finding
+The accepted 28 task-valid scores are inherited from controller acceptance, not recalculated here. `current/README.md` records 28/28 complete-row scores and independent controller recheck. `evaluation-use.json` records 28 new deliveries, 84 cumulative formal task-metric deliveries, 63 logical runs, and maximum independent score difference 8.881784197001252e-16.
+
+F010 improves over prior H0 on both seeds for five tasks: lipophilicity, BBB, hepatocyte clearance, LD50, AqSolDB. This supports a local *bundle effect* on those five tasks/two observed seeds, not a 22-task generalization claim or identified causal mechanism. CYP2D6 Veith is a counterexample: F010 s44 AUPRC=0.694632 vs H0=0.698514 (Δ=-0.003882), while s45=0.709817 vs 0.702341 (Δ=+0.007476). F001 also flips direction across seeds. Do not average away this instability.
+
+Most defensible mechanism hypothesis: a standard-deviation floor enters the actual feature pipeline; F010 caps amplification of near-constant dimensions more strongly than F001, changing numerical conditioning and head optimization. Which dimensions cause gains, and whether this is chemistry-relevant rather than numerical repair, remain unidentified. Need controlled floor-dose experiments and fit-only feature-distribution diagnostics.
+
+## A. Trustworthiness and limits
+`current-interface.json` records: frozen CheMeleon weights/buffers; cached 2048-d features; head 2048→256→1, ReLU, dropout .1; AdamW lr .0005, weight_decay .0001, batch 128, max_epochs 50, patience 8, min_delta 1e-7; original Drug-group split, seed43, internal stop 10%; fit-only statistics. Features float32/ddof0; d0=where(fit_std<1e-8,1,fit_std); H0=d0, F001=max(d0,.001), F010=max(d0,.01); constant dims denominator 1; serialized mean/std reused at prediction. Regression: fit-only float64 target mean/std, MSE on standardized Y, inverse transform to original Y. Classification: BCE logits→probability. Early stopping uses task metric/direction.
+
+Scores file reports n/records, missing=0 and prediction/truth/blind hashes. Official aggregate is null. Local AUPRC is `average_precision`; official equivalence remains unconfirmed. Some regression label units are not fully confirmed. Existing controller validation of freeze, row identity, reload and score equality is reused; this session did not re-open all 28 prediction binaries or recalculate them. Any new encoder/buffer mutation, optimizer inclusion of encoder, wrong inverse transform, split or row_index mismatch invalidates that run's quality comparison.
+
+The current analysis scope is aggregate-only: no private row-level valid Y or residuals. This session read aggregate scores/comparisons, run index, interface, asset index; task/split/row_index alignment is inherited from controller receipt, not independently recomputed here. No usable subagent-delegation tool was available; no role-played subagent findings are claimed.
+
+## Q1. Five-task evidence and CYP reversal
+Paired comparison values below are already-verified values; positive improvement means metric-direction improvement.
+
+| task | metric | F010 s44 / H0 / gain | F010 s45 / H0 / gain |
+|---|---|---|---|
+| lipophilicity_astrazeneca | MAE↓ | .537130 / .575065 / +.037935 | .538007 / .566580 / +.028573 |
+| bbb_martins | AUROC↑ | .898521 / .896905 / +.001616 | .909955 / .892307 / +.017649 |
+| clearance_hepatocyte_az | Spearman↑ | .362314 / .324564 / +.037750 | .368231 / .334062 / +.034168 |
+| ld50_zhu | MAE↓ | .676218 / .881456 / +.205238 | .600211 / 2.275706 / +1.675495 |
+| solubility_aqsoldb | MAE↓ | 1.409417 / 7.639729 / +6.230312 | 1.524624 / 8.777309 / +7.252685 |
+
+LD50 seed45 prior H0 MAE=2.2757 is an outlier-scale gap; inspect old target/prediction scale and training variance before attributing it to F010. H0 is sourced from prior24, not a fully identical same-batch rerun. CYP2D6 Veith F010 s44 delta=-.003882, s45 delta=+.007476; F001 s44 delta=+.001087, s45 delta=-.038367. Head initialization, batch order, early-stop epoch and AP sensitivity to top-ranked positives are plausible alternatives, not proven causes.
+
+The five-task result supports the F010 *configuration bundle*, not a single causal factor. Counterevidence: CYP seed flip, F001 non-universal gain, LD50 F001 s44 slight regression, only two F010 seeds, repeated Valid model selection, implementation-history differences, and possible target-scale effects. Mini22 is an accepted-with-quality-limits 22-task local baseline with different history; prior24 supplies H0 comparisons; current28 is six-task F001/F010 plus limited seed46 controls. These are not one comparable leaderboard. The 22-task values 45.382550059/45.480340688 replace six task values and retain Mini22 for 16 tasks: a mixed projection, not a fresh 22-task model or hidden-test estimate.
+
+## Q2. Full 22 tasks and asset readiness
+Metric coverage from decision contract:
+- AUROC↑: ames, bbb_martins, bioavailability_ma, cyp3a4_substrate_carbonmangels, dili, herg, hia_hou, pgp_broccatelli.
+- AUPRC↑: cyp2c9_substrate_carbonmangels, cyp2c9_veith, cyp2d6_substrate_carbonmangels, cyp2d6_veith, cyp3a4_veith.
+- Spearman↑: clearance_hepatocyte_az, clearance_microsome_az, half_life_obach, vdss_lombardo.
+- MAE↓: caco2_wang, ld50_zhu, lipophilicity_astrazeneca, ppbr_az, solubility_aqsoldb.
+
+Six tasks already entered current scaler runner: lipophilicity_astrazeneca, bbb_martins, cyp2d6_veith, clearance_hepatocyte_az, ld50_zhu, solubility_aqsoldb. Other 16 have Mini22 history but their current task-specific feature cache and runner identity are not certified by current-interface. They remain blocked pending per-task cache/input/split/row-index fixture.
+
+CheMeleon is the only trained and production-interface-accepted molecular encoder. MiniMol and MoLFormer 10pct are preparation-incomplete; KPGT, Uni-Mol, SMI-TED, MolE deferred; classical features and scratch D-MPNN researched but not prepared; TabPFN2.6 is a predictor, not molecular encoder, with license/runtime applicability unresolved. GLM/DeepSeek/Qwen/Pro/Sol/Terra are execution/research roles, not scientific assets. Continue CheMeleon first; do not switch base until asset, license, freeze, input coverage and prediction interface independently pass.
+
+## Q3. Multi-batch plan and cost
+**Batch A**: six current-runner tasks × {H0,F010} × seeds {46,47}, current original Drug-group split. 12 task/config proposals, 24 seed-fits. Existing H0 seed46 for LD50 and AqSolDB are reused once, so 22 unique new fits. Do not count prior24 H0 as current runner controls. Change only scaler tag; hold head, optimizer, batch, epoch/patience, data, internal stop fixed.
+
+**Batch B**: after per-task cache and identity fixture passes, remaining 16 tasks × {H0,F010} × {46,47}=64 fits, one task/config/split per proposal. If only a subset passes, run only that exact subset; no placeholder task.
+
+**Batch C**: if A is stable and authorized, test floor {0.003,0.01,0.03} on a small predeclared panel including one CYP task and representative regression tasks, seeds48/49, holding everything else fixed. This may require new_code if runner does not expose floor as config. No 22-task Cartesian sweep.
+
+Branches: if A improves consistently, proceed to B for assets that pass; if no improvement, stop F010 rollout and inspect H0 implementation/scale/feature variance before a floor-dose decomposition; if seeds flip, retain task and seek two more seeds only with controller budget approval; if freeze/label/row identity fails, stop affected task immediately; if assets fail, zero-fit preparation only.
+
+Observed timings: GPU program 255s; training-role time 1733s; preparation-to-retrieval-start 6815s; retrieval-to-candidate 1905s; transfer 492s; prior Pro UI 4169s. Main controller separately reports 10h reconciliation: active 3h42m46s overlapping other roles; prior window omitted 3h34m15s. GPU process lifetime ~13m54s includes loading/inference/failure, not pure kernel. Do not sum overlapping durations. Batch A training-role estimate ≈22/28×1733s=22.7m, not end-to-end; reserve a roughly 1.9h preparation/retrieval window based on recent observed cycle, plus scoring/transfer/handoff and uncertainty. Pro UI 69.5m is historical, not fixed per batch. Calibrate on next cycle.
+
+## Search space
+1. Floor: {0.001,0.003,0.01,0.03}, H0 separate; panel only, shared controls.
+2. Head hidden {128,256,512}, dropout {0,.1,.2}; 3×3 on one classification and one regression representative, then confirm top two.
+3. AdamW lr {1e-4,3e-4,5e-4,1e-3}; wd {1e-5,1e-4,1e-3}; sequentially tune lr at fixed wd, then wd at selected lr.
+4. Dropout, weight decay, max_epochs {50,80}, patience {8,12} are separate factors; new epoch budget is not historical control.
+5. Regression Huber on fit-only original/standardized scale is new_code; classification retains BCE logits. Focal loss is exploratory and not presumed superior for AUPRC.
+6. Keep internal stop 10% and task-native early-stop metric/direction; report each task score. Valid tuning remains allowed, not a one-look hard rule.
+7. Any pooling/representation/cache change is a new asset requiring frozen SHA, feature schema, input row mapping and fixture.
+8. Other frozen encoders require license, version, full input coverage, freeze and output fixture; no external data or pseudo-labels.
+9. Ensemble only after at least two independently validated frozen representations; seed averaging alone is not independent representation gain.
+10. Private error slices may use structure clusters, label-source/range, prediction quantiles, low-variance dims and class strata; only safe aggregate projections may leave private evaluation.
+
+## Decision coverage
+- Q1: `partial` — evidence and counterexamples answered; causal mechanism, extra seeds, official AP/AUPRC definition remain unresolved. Location: §§1–2.
+- Q2: `partial` — all 22 tasks/metrics and readiness categories covered; 16-task cache/runner fixtures remain unverified. Location: §3 and guide.
+- Q3: `answered` at proposal level — exact conditional batches, deduplicated counts, branches, stop rules and cost assumptions supplied. Actual cost remains uncertain pending next cycle. Location: §4 and guide.
+
+## Historical decision event (append-only)
+New event `E-six28-f010-scope-narrowing`: prior claim “scaler floor likely general improvement” is narrowed to “F010 local bundle improvement on five named tasks and two seeds”; CYP2D6 reversal and limited seed count are counterevidence. Affected future decision: do not promote F010 across all 22 until Batch A/B confirmation. Previous event identifiers are not rewritten.
+
+END_FILE path=analysis.md
+
+BEGIN_FILE path=review.json utf8_bytes=20862 sha256=24065a34dbfc70fa701d0ca6b6da582fa81a5ad85953ff0e7a001b096cfb7c53
+CONTENT
+{
+  "schema_version": 2,
+  "request_id": "admet-scaler-six28-pro-20261102-001",
+  "round_id": "scaler-six28-review-20261102",
+  "manifest_sha256": "85b80e24018b59e8ecdb57cc0b084591dfd0fc86c19df4d28bd19f1e0ca20ce7",
+  "status": "needs_evidence",
+  "read_receipt": [
+    {
+      "entry_id": "B00",
+      "layer": "mandatory",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/controller-review/START_HERE.md",
+      "source_version": {
+        "commit": "f172e864efbfcb33837bbdd28768b0b4f7ca03a7",
+        "sha256": "c3933503b7936cf19aea5cbea14369c4fb459738f46e7b7a61c522cc22bcd7aa"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web opened; 11 lines; 1599 bytes per contract",
+      "observed_fact": "controller-review/START_HERE.md",
+      "limitation": "SHA/bytes inherited from reading contract, not independently rehashed"
+    },
+    {
+      "entry_id": "B01",
+      "layer": "mandatory",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/controller-review/context-references.json",
+      "source_version": {
+        "commit": "f172e864efbfcb33837bbdd28768b0b4f7ca03a7",
+        "sha256": "fd940ddb08641e1390cc8259329dbfc225232eb2a9dafa9482674161b8c1aad7"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web opened; 92 lines; 5073 bytes per contract",
+      "observed_fact": "controller-review/context-references.json",
+      "limitation": "SHA/bytes inherited from reading contract, not independently rehashed"
+    },
+    {
+      "entry_id": "B02",
+      "layer": "mandatory",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/controller-review/decision-contract.json",
+      "source_version": {
+        "commit": "f172e864efbfcb33837bbdd28768b0b4f7ca03a7",
+        "sha256": "b0ca3f615aec4d0818055efcabcb2258e0c34ca0510e1de63fa456e1b1360389"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web opened; 150 lines; 4949 bytes per contract",
+      "observed_fact": "controller-review/decision-contract.json",
+      "limitation": "SHA/bytes inherited from reading contract, not independently rehashed"
+    },
+    {
+      "entry_id": "B03",
+      "layer": "mandatory",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/controller-review/current-interface.json",
+      "source_version": {
+        "commit": "f172e864efbfcb33837bbdd28768b0b4f7ca03a7",
+        "sha256": "d4168dd5e6e405ea045c1c430923fd441a4164c400360dc3e9cd7f475a4df05d"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web opened; 41 lines; 2796 bytes per contract",
+      "observed_fact": "controller-review/current-interface.json",
+      "limitation": "SHA/bytes inherited from reading contract, not independently rehashed"
+    },
+    {
+      "entry_id": "B04",
+      "layer": "mandatory",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/controller-review/timing-evidence.json",
+      "source_version": {
+        "commit": "f172e864efbfcb33837bbdd28768b0b4f7ca03a7",
+        "sha256": "2e6a8002cfd63201643e32a2ecb6815f16fe850ce0662be84d9092fd063803c3"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web opened; 17 lines; 941 bytes per contract",
+      "observed_fact": "controller-review/timing-evidence.json",
+      "limitation": "SHA/bytes inherited from reading contract, not independently rehashed"
+    },
+    {
+      "entry_id": "B05",
+      "layer": "mandatory",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/controller-review/input-manifest.json",
+      "source_version": {
+        "commit": "f172e864efbfcb33837bbdd28768b0b4f7ca03a7",
+        "sha256": "85b80e24018b59e8ecdb57cc0b084591dfd0fc86c19df4d28bd19f1e0ca20ce7"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web opened; 124 lines; 5978 bytes per contract",
+      "observed_fact": "controller-review/input-manifest.json",
+      "limitation": "SHA/bytes inherited from reading contract, not independently rehashed"
+    },
+    {
+      "entry_id": "B06",
+      "layer": "mandatory",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/history/README.md",
+      "source_version": {
+        "commit": "f172e864efbfcb33837bbdd28768b0b4f7ca03a7",
+        "sha256": "e8a605eb731286cd92244dbbb419a3b77e0d0e2019d880fb7fc3c309f9359dc5"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web opened; 317 lines; 47813 bytes per contract",
+      "observed_fact": "history/README.md",
+      "limitation": "SHA/bytes inherited from reading contract, not independently rehashed"
+    },
+    {
+      "entry_id": "B07",
+      "layer": "mandatory",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/issues/validated-and-open.json",
+      "source_version": {
+        "commit": "f172e864efbfcb33837bbdd28768b0b4f7ca03a7",
+        "sha256": "810aea37fb60e20afb91b3a154921abb309a2c2aa23d862993414008811a89ff"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web opened; 469 lines; 26549 bytes per contract",
+      "observed_fact": "issues/validated-and-open.json",
+      "limitation": "SHA/bytes inherited from reading contract, not independently rehashed"
+    },
+    {
+      "entry_id": "B08",
+      "layer": "mandatory",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/current/README.md",
+      "source_version": {
+        "commit": "f172e864efbfcb33837bbdd28768b0b4f7ca03a7",
+        "sha256": "439f73e376d764971dff28b59a1ca644c5e28a57e1322a913e6a92abbaf774ca"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web opened; 7 lines; 861 bytes per contract",
+      "observed_fact": "current/README.md",
+      "limitation": "SHA/bytes inherited from reading contract, not independently rehashed"
+    },
+    {
+      "entry_id": "B09",
+      "layer": "mandatory",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/current/scores.json",
+      "source_version": {
+        "commit": "f172e864efbfcb33837bbdd28768b0b4f7ca03a7",
+        "sha256": "82026933beec42562619263a904551be59eca703a1b0095b8c223cd503990f3a"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web opened; 651 lines; 25716 bytes per contract",
+      "observed_fact": "current/scores.json",
+      "limitation": "SHA/bytes inherited from reading contract, not independently rehashed"
+    },
+    {
+      "entry_id": "B10",
+      "layer": "mandatory",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/current/comparisons.json",
+      "source_version": {
+        "commit": "f172e864efbfcb33837bbdd28768b0b4f7ca03a7",
+        "sha256": "b60fd25535236390d8e801296eca3d05af3717175b62ca6a423174c9c3eb5a5f"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web opened; 1442 lines; 49646 bytes per contract",
+      "observed_fact": "current/comparisons.json",
+      "limitation": "SHA/bytes inherited from reading contract, not independently rehashed"
+    },
+    {
+      "entry_id": "B11",
+      "layer": "mandatory",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/current/evaluation-use.json",
+      "source_version": {
+        "commit": "f172e864efbfcb33837bbdd28768b0b4f7ca03a7",
+        "sha256": "3fa28cd0fab3d5e2bd557fa6c3a70f5daa11c7d9d94eafbc19068e45e3fa03cb"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web opened; 32 lines; 1354 bytes per contract",
+      "observed_fact": "current/evaluation-use.json",
+      "limitation": "SHA/bytes inherited from reading contract, not independently rehashed"
+    },
+    {
+      "entry_id": "B12",
+      "layer": "mandatory",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/assets/README.md",
+      "source_version": {
+        "commit": "f172e864efbfcb33837bbdd28768b0b4f7ca03a7",
+        "sha256": "fbf4a3f742c699ab36d06ba76f0e3b54222bc47fceaced3a4f532740fe3e9bb2"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web opened; 1 lines; 352 bytes per contract",
+      "observed_fact": "assets/README.md",
+      "limitation": "SHA/bytes inherited from reading contract, not independently rehashed"
+    },
+    {
+      "entry_id": "B13",
+      "layer": "mandatory",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/assets/index.json",
+      "source_version": {
+        "commit": "f172e864efbfcb33837bbdd28768b0b4f7ca03a7",
+        "sha256": "461d0dbe5d5a0f20e56f0ec8908acef52aa959e3a076deb126a9f58d001dee14"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web opened; 455 lines; 33040 bytes per contract",
+      "observed_fact": "assets/index.json",
+      "limitation": "SHA/bytes inherited from reading contract, not independently rehashed"
+    },
+    {
+      "entry_id": "B14",
+      "layer": "mandatory",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/runs/index.json",
+      "source_version": {
+        "commit": "f172e864efbfcb33837bbdd28768b0b4f7ca03a7",
+        "sha256": "20e4d94726506c5c0f4a2db6dbd04ef4a2ffc0ec2615e51659224ae240914c71"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web opened; 310 lines; 8487 bytes per contract",
+      "observed_fact": "runs/index.json",
+      "limitation": "SHA/bytes inherited from reading contract, not independently rehashed"
+    },
+    {
+      "entry_id": "B15",
+      "layer": "mandatory",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/research/README.md",
+      "source_version": {
+        "commit": "f172e864efbfcb33837bbdd28768b0b4f7ca03a7",
+        "sha256": "7f70e1ca6c141626c32e6a07ec963340d37779237d85bf37160297a31333973a"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web opened; 6 lines; 1180 bytes per contract",
+      "observed_fact": "research/README.md",
+      "limitation": "SHA/bytes inherited from reading contract, not independently rehashed"
+    },
+    {
+      "entry_id": "B16",
+      "layer": "mandatory",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/preparation/README.md",
+      "source_version": {
+        "commit": "f172e864efbfcb33837bbdd28768b0b4f7ca03a7",
+        "sha256": "d81b2613c9ff85f25a527b0929ef43de8604e71983ac280911ea6c4f7018e1d8"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web opened; 1 lines; 250 bytes per contract",
+      "observed_fact": "preparation/README.md",
+      "limitation": "SHA/bytes inherited from reading contract, not independently rehashed"
+    },
+    {
+      "entry_id": "H-R20-plus-official-contract-20261029",
+      "layer": "mandatory",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/history/archive-20261101/originals/S-a95c8473d1769a29.json",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "f8a99bd337ed165f2f508e9303d2354594bb5bdec213797d5c582eeacfa06a55"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web opened; 142 lines; 4896 bytes per contract",
+      "observed_fact": "prior-history/prior-history/history/archive-20261101/originals/S-a95c8473d1769a29.json",
+      "limitation": "SHA/bytes inherited from reading contract, not independently rehashed"
+    },
+    {
+      "entry_id": "H-R20-plus-source-map",
+      "layer": "mandatory",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/evidence/H-e275f0ef9a4955741956.md.txt",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "fa5a8362b3593146787f1c137cb1105f7799dabef9245f92ccb335aeaf326061"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web opened; 26 lines; 3992 bytes per contract",
+      "observed_fact": "prior-history/prior-history/evidence/H-e275f0ef9a4955741956.md.txt",
+      "limitation": "SHA/bytes inherited from reading contract, not independently rehashed"
+    },
+    {
+      "entry_id": "N33",
+      "layer": "mandatory",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/evidence/objects/6d69fd898d6e3e4154cf6d6a65550d17f1408722a85d70e20a83cb6ef7d8fab0.json",
+      "source_version": {
+        "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+        "sha256": "6d69fd898d6e3e4154cf6d6a65550d17f1408722a85d70e20a83cb6ef7d8fab0"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web opened; 140 lines; 6448 bytes per contract",
+      "observed_fact": "evidence/objects/6d69fd898d6e3e4154cf6d6a65550d17f1408722a85d70e20a83cb6ef7d8fab0.json",
+      "limitation": "SHA/bytes inherited from reading contract, not independently rehashed"
+    },
+    {
+      "entry_id": "H-R17-prior-S-764562710384d47e",
+      "layer": "mandatory",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/history/archive-20261101/originals/S-764562710384d47e.json",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "ce8375c1c1eb6291eae6439dee77e082486c6e573e844004ce39d43d69890e8c"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web opened; 382 lines; 11258 bytes per contract",
+      "observed_fact": "prior-history/prior-history/history/archive-20261101/originals/S-764562710384d47e.json",
+      "limitation": "SHA/bytes inherited from reading contract, not independently rehashed"
+    },
+    {
+      "entry_id": "N16",
+      "layer": "mandatory",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/controller-review/review-output.json",
+      "source_version": {
+        "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+        "sha256": "144d41be12a9d39d45e064644289c999facd2e87d0ce76b1b56045c41071ca72"
+      },
+      "read_mode": "original",
+      "evidence_locator": "web opened; 157 lines; 4072 bytes per contract",
+      "observed_fact": "controller-review/review-output.json",
+      "limitation": "SHA/bytes inherited from reading contract, not independently rehashed"
+    }
+  ],
+  "read_checks": [
+    {
+      "check_id": "RC1",
+      "method": "Compared accepted score/comparison records; no metric recomputation.",
+      "result": "inherited_controller_acceptance",
+      "source_refs": [
+        "B08",
+        "B09",
+        "B10",
+        "B11"
+      ]
+    },
+    {
+      "check_id": "RC2",
+      "method": "Compared scaler definitions, paired deltas and research summary; metric sign checked.",
+      "result": "five-task local bundle effect plus CYP counterexample",
+      "source_refs": [
+        "B03",
+        "B10",
+        "B15"
+      ]
+    },
+    {
+      "check_id": "RC3",
+      "method": "Read official rule snapshot/source map and separated public rules from user-confirmed freeze and local controls.",
+      "result": "scope distinguished; scorer implementation incomplete",
+      "source_refs": [
+        "H-R20-plus-official-contract-20261029",
+        "H-R20-plus-source-map",
+        "N33"
+      ]
+    },
+    {
+      "check_id": "RC4",
+      "method": "Unique fit count: 12 task/config proposals × 2 seeds = 24 gross; subtract 2 existing current H0 seed46 fits for LD50 and AqSolDB.",
+      "result": "22 new unique fits",
+      "source_refs": [
+        "B14",
+        "B10"
+      ]
+    },
+    {
+      "check_id": "RC5",
+      "method": "1733.201s × 22/28 = 1361.94s ≈22.7min role-time estimate; stages overlap, not summed.",
+      "result": "estimate only",
+      "source_refs": [
+        "B04"
+      ]
+    },
+    {
+      "check_id": "RC6",
+      "method": "Checked task metric families against the 22 task contract.",
+      "result": "22 task IDs covered",
+      "source_refs": [
+        "B02"
+      ]
+    },
+    {
+      "check_id": "RC7",
+      "method": "Alignment assessed only at aggregate acceptance level; no row-level prediction replay.",
+      "result": "row identity inherited, not recomputed",
+      "source_refs": [
+        "B09",
+        "B11",
+        "B14"
+      ]
+    }
+  ],
+  "findings": [
+    "F010 five-task/two-seed local bundle effect",
+    "CYP2D6 seed reversal",
+    "CheMeleon only accepted current encoder",
+    "16-task cache readiness unverified",
+    "no actual subagent delegation tool available"
+  ],
+  "missing_evidence": [
+    {
+      "entry_id": "official scorer implementation",
+      "status": "not_read",
+      "impact": "official AP/AUPRC equivalence and official aggregate"
+    },
+    {
+      "entry_id": "remaining 16 task cache identity",
+      "status": "not_established",
+      "impact": "Batch B readiness"
+    },
+    {
+      "entry_id": "row-level valid prediction diagnostics",
+      "status": "not_accessed_by_scope",
+      "impact": "error-slice mechanism analysis"
+    }
+  ],
+  "not_assessed": [
+    "independent recomputation of 28 scores",
+    "full binary feature/prediction identity replay",
+    "row-level residual analysis",
+    "subagent reports",
+    "full official scorer source audit"
+  ],
+  "comparison_groups": [
+    {
+      "id": "F010-vs-prior24-H0",
+      "scope": "five tasks, seeds44/45; prior24 H0 implementation caveat"
+    },
+    {
+      "id": "Mini22-vs-mixed-projection",
+      "scope": "six new tasks plus 16 fixed Mini22 tasks; not same-model full22 run"
+    }
+  ],
+  "stop_reasons": [
+    "proposal_only; no training authorized",
+    "do not unlock 16 tasks before per-task fixtures",
+    "do not claim official score equivalence"
+  ],
+  "decision_coverage": [
+    {
+      "question_id": "Q1",
+      "status": "partial",
+      "answer_summary": "Five-task F010 two-seed gains and CYP2D6 seed reversal quantified; causal mechanism and official AP/AUPRC semantics unresolved.",
+      "answer_location": "analysis.md §2",
+      "evidence_refs": [
+        "B03",
+        "B09",
+        "B10",
+        "B15"
+      ],
+      "unresolved": [
+        "more seeds",
+        "floor-dose decomposition",
+        "official AP/AUPRC semantics",
+        "valid-selection multiplicity"
+      ],
+      "affected_decisions": [
+        "global F010 promotion"
+      ]
+    },
+    {
+      "question_id": "Q2",
+      "status": "partial",
+      "answer_summary": "All 22 tasks/metrics and base readiness categories covered; 16-task cache/runner fixtures remain unverified.",
+      "answer_location": "analysis.md §3; next_batch_guide.md P1",
+      "evidence_refs": [
+        "B02",
+        "B12",
+        "B13",
+        "B14",
+        "N33"
+      ],
+      "unresolved": [
+        "16 task cache SHA/row identity",
+        "alternative base version/license/freeze fixtures"
+      ],
+      "affected_decisions": [
+        "Batch B unlock"
+      ]
+    },
+    {
+      "question_id": "Q3",
+      "status": "answered",
+      "answer_summary": "Exact conditional batches, seeds, shared controls, deduplicated fit count, stop branches and observed timing assumptions supplied; no execution authorized.",
+      "answer_location": "analysis.md §4; next_batch_guide.md",
+      "evidence_refs": [
+        "B04",
+        "B10",
+        "B14"
+      ],
+      "unresolved": [
+        "next-cycle end-to-end cost calibration"
+      ],
+      "affected_decisions": [
+        "controller budget/review trigger"
+      ]
+    }
+  ]
+}
+END_FILE path=review.json
+
+BEGIN_FILE path=issues.json utf8_bytes=4843 sha256=683fd2246feb1de50249b08b6d36f239d6807ed6d99f532bffeb3f971e74cac2
+CONTENT
+[
+  {
+    "issue_id": "I-F010-CAUSAL-SCOPE",
+    "status": "open",
+    "severity": "high",
+    "category": "mechanism_identification",
+    "statement": "F010五任务双seed改善支持整组效果，但不足以识别单一机制或全22泛化。",
+    "affected_run_ids": [
+      "hainan-scaler-lipophilicity_astrazeneca-f010-s44-20261102",
+      "hainan-scaler-lipophilicity_astrazeneca-f010-s45-20261102",
+      "hainan-scaler-bbb_martins-f010-s44-20261102",
+      "hainan-scaler-bbb_martins-f010-s45-20261102",
+      "hainan-scaler-clearance_hepatocyte_az-f010-s44-20261102",
+      "hainan-scaler-clearance_hepatocyte_az-f010-s45-20261102",
+      "hainan-scaler-ld50_zhu-f010-s44-20261102",
+      "hainan-scaler-ld50_zhu-f010-s45-20261102",
+      "hainan-scaler-solubility_aqsoldb-f010-s44-20261102",
+      "hainan-scaler-solubility_aqsoldb-f010-s45-20261102"
+    ],
+    "evidence_refs": [
+      "turn496576view7",
+      "turn496576view8",
+      "turn496576view9",
+      "turn604151view3"
+    ],
+    "hypothesis": "提高低标准差维度的分母下限改善数值条件，减少病态放大。",
+    "counterevidence": "CYP2D6方向翻转；F001并非普遍获益；LD50 seed45 H0异常差；仅两seed且H0来自prior24。",
+    "impact": "不能将F010无条件推广到22任务。",
+    "proposed_resolution": "批次A共同seed H0/F010确认；批次C在固定其余条件下做floor剂量实验。",
+    "verification_criterion": "同task/split新seed配对结果、冻结与row identity验收通过；剂量结果能区分分母单因子与其他因素。",
+    "related_proposal_ids": [
+      "P0-lipophilicity_astrazeneca-f010",
+      "P0-bbb_martins-f010",
+      "P0-clearance_hepatocyte_az-f010",
+      "P0-ld50_zhu-f010",
+      "P0-solubility_aqsoldb-f010"
+    ]
+  },
+  {
+    "issue_id": "I-CYP-SEED-HETEROGENEITY",
+    "status": "open",
+    "severity": "high",
+    "category": "generalization",
+    "statement": "CYP2D6 Veith F010两seed相对H0方向相反，F001也翻转。",
+    "affected_run_ids": [
+      "hainan-scaler-cyp2d6_veith-f001-s44-20261102",
+      "hainan-scaler-cyp2d6_veith-f001-s45-20261102",
+      "hainan-scaler-cyp2d6_veith-f010-s44-20261102",
+      "hainan-scaler-cyp2d6_veith-f010-s45-20261102"
+    ],
+    "evidence_refs": [
+      "turn664424view5",
+      "turn496576view9"
+    ],
+    "hypothesis": "头初始化/批次顺序/早停和AUPRC对排序前端敏感造成seed异质性。",
+    "counterevidence": "没有逐行残差或重复seed足以确认原因；可能有真实任务结构差异。",
+    "impact": "不以跨seed均值作为唯一推广准则。",
+    "proposed_resolution": "批次A新seed46/47；若继续翻转，控制器授权后再做48/49并检查官方AP定义。",
+    "verification_criterion": "至少两组新增seed方向与方差可见；metric定义和冻结/行身份通过。",
+    "related_proposal_ids": [
+      "P0-cyp2d6_veith-h0",
+      "P0-cyp2d6_veith-f010"
+    ]
+  },
+  {
+    "issue_id": "I-16TASK-CACHE-READINESS",
+    "status": "open",
+    "severity": "critical",
+    "category": "asset_readiness",
+    "statement": "其余16任务虽有Mini22历史，但本轮资产索引未提供其当前scaler runner逐任务cache/row identity就绪证据。",
+    "affected_run_ids": [],
+    "evidence_refs": [
+      "turn604151view1",
+      "turn213441view0",
+      "turn604151view2"
+    ],
+    "hypothesis": "可复用历史CheMeleon特征缓存。",
+    "counterevidence": "缓存版本、feature schema、task/split/row_index与当前runner兼容尚未证明；Mini22本地基线不能自动证明。",
+    "impact": "阻断批次B训练proposal解锁。",
+    "proposed_resolution": "零fit逐任务cache manifest、row identity、feature schema、freeze和预测reload fixture。",
+    "verification_criterion": "每个task有明确source URI/SHA、split ID、row count、row_index映射和fixture报告。",
+    "related_proposal_ids": []
+  },
+  {
+    "issue_id": "I-OFFICIAL-METRIC-SEMANTICS",
+    "status": "open",
+    "severity": "high",
+    "category": "metric_definition",
+    "statement": "本地AUPRC=average_precision及其他本地metric与官方评分器的精确等价尚未确认。",
+    "affected_run_ids": [],
+    "evidence_refs": [
+      "turn496576view8",
+      "turn596208view0",
+      "turn604151view7"
+    ],
+    "hypothesis": "本地metric可能与官方实现一致。",
+    "counterevidence": "scores明确official_equivalence=unconfirmed，official aggregate=null。",
+    "impact": "不能把本地任务分数映射为官方赛分。",
+    "proposed_resolution": "从source-index登记的官方规则/评分器原件核对PR-AUC/AP定义、tie处理、缺失与聚合公式。",
+    "verification_criterion": "规则原文、官方评分器实现和本地实现逐条映射并经主控接受。",
+    "related_proposal_ids": []
+  }
+]
+END_FILE path=issues.json
+
+BEGIN_FILE path=next_batch_guide.md utf8_bytes=6021 sha256=98cb9c913b9299568d038b800836b149e5cb017ab1ec31de5371b1b28372a105
+CONTENT
+# Next batch guide — controller-only dispatch
+
+**Proposal only.** The controller must authorize and register every training matrix. Preparation workers may only inspect approved private dependencies, validate asset/cache identities, run independent fixtures, and perform no-parameter-update checks. They must not train, access row-level Valid truth, operate the Hainan training environment, upload competition entries, or expand scope.
+
+## Work item P0 — six-task paired confirmation (config_only)
+- Goal: test whether the local F010 advantage survives new seeds and a contemporaneous H0 control.
+- Asset: `chemeleon`, frozen approved weights/buffers, cached 2048-d features; use the exact accepted current runner/cache version from the asset and run registries.
+- Tasks: `lipophilicity_astrazeneca`, `bbb_martins`, `cyp2d6_veith`, `clearance_hepatocyte_az`, `ld50_zhu`, `solubility_aqsoldb`.
+- Split: current original Drug-group split; seeds 46 and 47.
+- Matrix: per task H0 and F010. Twelve task/config/split proposals, 24 seed fits gross; reuse H0 seed46 already present for LD50 and AqSolDB once each, leaving 22 unique new fits. No old prior24 score is counted as a new fit.
+- Change: scaler tag only. Hold encoder, features, head 2048→256→1/ReLU/dropout .1, AdamW .0005/.0001, batch128, max_epochs50, patience8, min_delta1e-7, internal stop 10%, target transforms, split and row identity fixed.
+- Training objective: regression MSE on fit-only standardized Y; classification BCE-with-logits. Early stopping on exact task metric/direction. Regression predictions inverse-transformed to original Y; classification logits converted to positive-class probabilities.
+- Inputs/outputs: approved per-task feature cache, official train.Y only; output checkpoint, serialized fit-only scaler/target transforms, train/stop history, prediction file and row identity manifest, hashes, freeze audit, run config.
+- Independent acceptance fixture: (1) cache row count and ordered row_index equal official split manifest; (2) no duplicates/missing; (3) encoder weight+buffer SHA unchanged; (4) optimizer excludes encoder; (5) scaler stats fit-only and serialized; (6) prediction reload reproduces exact output; (7) regression inverse transform / classification probability range; (8) fixed scorer returns expected task/metric/split/n/missing and prediction SHA. Any failure blocks score interpretation.
+- Budget: 22 new fits, one shared feature cache per task; observed role-time estimate ≈22.7 min by scaling 1733s×22/28, not a kernel-time promise. Reserve a preparation/retrieval window comparable to 6815s plus retrieval/transfer/score/handoff. Stop on identity/freeze failure.
+- Fallback: if task cache is not identity-compatible, mark `blocked_assets`; no substitute data, no regenerated labels.
+
+## Work item P1 — other 16 tasks (blocked_assets until fixture)
+- Tasks: ames, bioavailability_ma, caco2_wang, clearance_microsome_az, cyp2c9_substrate_carbonmangels, cyp2c9_veith, cyp2d6_substrate_carbonmangels, cyp3a4_substrate_carbonmangels, cyp3a4_veith, dili, half_life_obach, herg, hia_hou, pgp_broccatelli, ppbr_az, vdss_lombardo.
+- Zero-fit preparation: resolve exact cache objects from source registry; confirm current split, task, row_index and feature schema; check 2048-d float32; compare source SHA and cache provenance; prove the same CheMeleon weights/buffers and frozen interface; produce independent task fixture and actual runner support report. No training in this work item.
+- If every listed task passes, controller may register per-task H0/F010, seed46/47: 16×2×2=64 fits. Each task/config/split must be an explicit proposal; partial readiness means only that exact passed subset proceeds.
+- If cache or raw inputs absent, stale, or ambiguous, keep task blocked. Do not claim the Mini22 feature artifact is current-runner compatible without row identity and feature schema proof.
+
+## Work item P2 — mechanism decomposition (new_code or config_only after interface check)
+- Trigger: P0 gives directionally stable results and controller approves a new controlled study.
+- Candidate floor values: 0.003 and 0.03 in addition to H0/F010; use a small predeclared panel (one CYP classification task, one other classification task, one regression task) and seeds48/49.
+- One factor only: change the denominator floor; hold all other config fixed. If floor cannot be selected through an existing registered config field, classify as `new_code`; no guessed runner field.
+- Fixture: synthetic feature matrix with constant, near-constant, and ordinary dimensions; verify exact denominator and inverse transform; ensure fit-only statistics. This is a fixture, not a model-quality claim.
+- Stop if no stable signal, if floor values collapse to identical transforms, or if any data/freeze boundary fails.
+
+## Conditional decisions
+- P0 stable gain across seeds: unlock P1 only for tasks whose zero-fit fixture passes.
+- P0 no gain: pause global F010 rollout; compare current H0 vs historical prior24 implementation, inspect fit-only std histogram and prediction scale, then decide whether P2 is warranted.
+- P0 seed reversal: retain task as unstable; consider two additional seeds only under new controller authorization; do not promote by mean alone.
+- Any freeze/label/split/row identity failure: stop affected branch immediately; preserve operational failure separately from scientific score.
+- A new encoder or ensemble requires its own scientific asset ID, provenance/version, license review, freeze audit, full input coverage, prediction interface and budget. Never treat execution LLMs as encoders.
+
+## Review cadence
+Deep review after the agreed batch returns complete score/acceptance packets. Return immediately for a material freeze/label/identity failure or decisive counterevidence. Request another Pro research cycle when the current planned branches are completed, a new scientific branch becomes necessary, or evidence materially changes a decision—not after every head or a fixed timer.
+
+END_FILE path=next_batch_guide.md
+
+BEGIN_FILE path=next_experiments.json utf8_bytes=50292 sha256=4d116b01533681fccd0ef0c48dd4f8a1ed0d8c73dd0d09bf5184011f938a9f4c
+CONTENT
+[
+  {
+    "proposal_id": "P0-lipophilicity_astrazeneca-h0",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "lipophilicity_astrazeneca",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "MAE",
+    "direction": "minimize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "H0",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "mean_squared_error",
+      "loss_scale": "fit-only standardized Y (float64 target mean/std)",
+      "early_stopping_metric": "MAE",
+      "early_stopping_direction": "minimize",
+      "prediction_scale": "inverse-transform standardized prediction once to original task Y scale"
+    },
+    "design_type": "control"
+  },
+  {
+    "proposal_id": "P0-lipophilicity_astrazeneca-f010",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "lipophilicity_astrazeneca",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "MAE",
+    "direction": "minimize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "F010",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "mean_squared_error",
+      "loss_scale": "fit-only standardized Y (float64 target mean/std)",
+      "early_stopping_metric": "MAE",
+      "early_stopping_direction": "minimize",
+      "prediction_scale": "inverse-transform standardized prediction once to original task Y scale"
+    },
+    "design_type": "one_factor"
+  },
+  {
+    "proposal_id": "P0-bbb_martins-h0",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "bbb_martins",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "AUROC",
+    "direction": "maximize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "H0",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "binary_cross_entropy_with_logits",
+      "loss_scale": "raw classification logits",
+      "early_stopping_metric": "AUROC",
+      "early_stopping_direction": "maximize",
+      "prediction_scale": "sigmoid(logit), positive-class probability"
+    },
+    "design_type": "control"
+  },
+  {
+    "proposal_id": "P0-bbb_martins-f010",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "bbb_martins",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "AUROC",
+    "direction": "maximize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "F010",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "binary_cross_entropy_with_logits",
+      "loss_scale": "raw classification logits",
+      "early_stopping_metric": "AUROC",
+      "early_stopping_direction": "maximize",
+      "prediction_scale": "sigmoid(logit), positive-class probability"
+    },
+    "design_type": "one_factor"
+  },
+  {
+    "proposal_id": "P0-cyp2d6_veith-h0",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "cyp2d6_veith",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "AUPRC",
+    "direction": "maximize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "H0",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "binary_cross_entropy_with_logits",
+      "loss_scale": "raw classification logits",
+      "early_stopping_metric": "AUPRC",
+      "early_stopping_direction": "maximize",
+      "prediction_scale": "sigmoid(logit), positive-class probability"
+    },
+    "design_type": "control"
+  },
+  {
+    "proposal_id": "P0-cyp2d6_veith-f010",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "cyp2d6_veith",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "AUPRC",
+    "direction": "maximize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "F010",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "binary_cross_entropy_with_logits",
+      "loss_scale": "raw classification logits",
+      "early_stopping_metric": "AUPRC",
+      "early_stopping_direction": "maximize",
+      "prediction_scale": "sigmoid(logit), positive-class probability"
+    },
+    "design_type": "one_factor"
+  },
+  {
+    "proposal_id": "P0-clearance_hepatocyte_az-h0",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "clearance_hepatocyte_az",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "Spearman",
+    "direction": "maximize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "H0",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "mean_squared_error",
+      "loss_scale": "fit-only standardized Y (float64 target mean/std)",
+      "early_stopping_metric": "Spearman",
+      "early_stopping_direction": "maximize",
+      "prediction_scale": "inverse-transform standardized prediction once to original task Y scale"
+    },
+    "design_type": "control"
+  },
+  {
+    "proposal_id": "P0-clearance_hepatocyte_az-f010",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "clearance_hepatocyte_az",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "Spearman",
+    "direction": "maximize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "F010",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "mean_squared_error",
+      "loss_scale": "fit-only standardized Y (float64 target mean/std)",
+      "early_stopping_metric": "Spearman",
+      "early_stopping_direction": "maximize",
+      "prediction_scale": "inverse-transform standardized prediction once to original task Y scale"
+    },
+    "design_type": "one_factor"
+  },
+  {
+    "proposal_id": "P0-ld50_zhu-h0",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "ld50_zhu",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "MAE",
+    "direction": "minimize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "H0",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 1,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "mean_squared_error",
+      "loss_scale": "fit-only standardized Y (float64 target mean/std)",
+      "early_stopping_metric": "MAE",
+      "early_stopping_direction": "minimize",
+      "prediction_scale": "inverse-transform standardized prediction once to original task Y scale"
+    },
+    "design_type": "control"
+  },
+  {
+    "proposal_id": "P0-ld50_zhu-f010",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "ld50_zhu",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "MAE",
+    "direction": "minimize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "F010",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "mean_squared_error",
+      "loss_scale": "fit-only standardized Y (float64 target mean/std)",
+      "early_stopping_metric": "MAE",
+      "early_stopping_direction": "minimize",
+      "prediction_scale": "inverse-transform standardized prediction once to original task Y scale"
+    },
+    "design_type": "one_factor"
+  },
+  {
+    "proposal_id": "P0-solubility_aqsoldb-h0",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "solubility_aqsoldb",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "MAE",
+    "direction": "minimize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "H0",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 1,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "mean_squared_error",
+      "loss_scale": "fit-only standardized Y (float64 target mean/std)",
+      "early_stopping_metric": "MAE",
+      "early_stopping_direction": "minimize",
+      "prediction_scale": "inverse-transform standardized prediction once to original task Y scale"
+    },
+    "design_type": "control"
+  },
+  {
+    "proposal_id": "P0-solubility_aqsoldb-f010",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "solubility_aqsoldb",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "MAE",
+    "direction": "minimize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "F010",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "mean_squared_error",
+      "loss_scale": "fit-only standardized Y (float64 target mean/std)",
+      "early_stopping_metric": "MAE",
+      "early_stopping_direction": "minimize",
+      "prediction_scale": "inverse-transform standardized prediction once to original task Y scale"
+    },
+    "design_type": "one_factor"
+  }
+]
+END_FILE path=next_experiments.json
+
+BEGIN_FILE path=search_space.json utf8_bytes=6963 sha256=745e8f9229727d14a8e51fdebabb1f64ee9e5e33ea1825af40010ec076988587
+CONTENT
+[
+  {
+    "direction_id": "D1",
+    "linked_issues": [
+      "I-F010-CAUSAL-SCOPE"
+    ],
+    "rationale": "分母floor是当前唯一明确改变的数值路径，适合受控剂量验证。",
+    "evidence_refs": [
+      "turn496576view2",
+      "turn604151view3",
+      "turn496576view9"
+    ],
+    "counterevidence": "CYP方向翻转、seed数少、H0历史实现不同。",
+    "candidate_models_or_modules": [
+      "CheMeleon frozen 2048-d features + current scalar head"
+    ],
+    "parameters": {
+      "floor": [
+        0.001,
+        0.003,
+        0.01,
+        0.03
+      ],
+      "control": "H0=d0",
+      "seeds": [
+        48,
+        49
+      ],
+      "panel": "预先指定代表性分类/回归任务"
+    },
+    "combination_constraints": "只改floor；头、优化器、split、目标变换和早停固定；H0对照共享计一次。",
+    "search_method": "sequential dose-response on small panel; then confirm selected floor",
+    "configuration_count_or_counting_rule": "4个floor候选+H0；不扩展为22任务全因子",
+    "seeds": [
+      48,
+      49
+    ],
+    "estimated_run_count": "panel_task_count × floor_config_count × 2 seeds; controller sets panel size after P0",
+    "cost_assumptions": "复用缓存；新floor如runner无字段则new_code；按本轮角色耗时校准",
+    "readiness": "待确认runner可配置floor；当前H0/F001/F010路径已实现",
+    "priority": "P0",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D2",
+    "linked_issues": [
+      "I-CYP-SEED-HETEROGENEITY"
+    ],
+    "rationale": "CYP2D6为现有反例，应先增加共同seed确认而非宣称机制。",
+    "evidence_refs": [
+      "turn664424view5",
+      "turn496576view9"
+    ],
+    "counterevidence": "无逐行Valid残差；仅两seed；AUPRC官方定义未确认。",
+    "candidate_models_or_modules": [
+      "CheMeleon frozen 2048-d features + BCE-logit head"
+    ],
+    "parameters": {
+      "seeds": [
+        46,
+        47
+      ],
+      "configs": [
+        "H0",
+        "F010"
+      ],
+      "metric": "AUPRC average_precision local"
+    },
+    "combination_constraints": "保持同task/split/feature cache/head/optimizer，仅scaler tag变化。",
+    "search_method": "paired seed confirmation; conditional two more seeds only if direction flips",
+    "configuration_count_or_counting_rule": "1 task × 2 configs × 2 seeds = 4 gross fits; existing seed46 H0 not present for CYP, so 4 new",
+    "seeds": [
+      46,
+      47
+    ],
+    "estimated_run_count": 4,
+    "cost_assumptions": "复用当前CYP2D6特征cache，需确认SHA/row identity",
+    "readiness": "config_only after cache identity confirmation",
+    "priority": "P0",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D3",
+    "linked_issues": [
+      "I-16TASK-CACHE-READINESS"
+    ],
+    "rationale": "把Mini22历史扩展到剩余16任务，关键瓶颈是当前runner可复用的身份匹配cache，而不是先换模型。",
+    "evidence_refs": [
+      "turn604151view1",
+      "turn213441view0",
+      "turn604151view2"
+    ],
+    "counterevidence": "缓存与runner兼容未证实；部分底座旧准备失败或deferred。",
+    "candidate_models_or_modules": [
+      "CheMeleon frozen encoder; no new scientific base"
+    ],
+    "parameters": {
+      "tasks": "exact remaining 16 task IDs in next_batch_guide.md",
+      "configs": [
+        "H0",
+        "F010"
+      ],
+      "seeds": [
+        46,
+        47
+      ]
+    },
+    "combination_constraints": "逐任务通过cache/row identity fixture后才注册；不允许占位符proposal。",
+    "search_method": "zero-fit readiness gate, then per-task paired screen",
+    "configuration_count_or_counting_rule": "16 tasks × 2 configs × 2 seeds = 64 fits only if all 16 pass; partial readiness scales exactly",
+    "seeds": [
+      46,
+      47
+    ],
+    "estimated_run_count": 64,
+    "cost_assumptions": "cache preparation shared per task; 1733s/28 role-time scaling only rough calibration",
+    "readiness": "blocked_assets",
+    "priority": "P1",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D4",
+    "linked_issues": [
+      "I-F010-CAUSAL-SCOPE"
+    ],
+    "rationale": "头容量/正则与优化几何可能与floor存在交互，应采用分阶段而非全因子搜索。",
+    "evidence_refs": [
+      "turn496576view2",
+      "turn604151view3"
+    ],
+    "counterevidence": "当前仅有单一头容量和AdamW设置，无证据证明加宽或改lr会提升。",
+    "candidate_models_or_modules": [
+      "CheMeleon frozen features; MLP head"
+    ],
+    "parameters": {
+      "hidden_dim": [
+        128,
+        256,
+        512
+      ],
+      "dropout": [
+        0,
+        0.1,
+        0.2
+      ],
+      "lr": [
+        0.0001,
+        0.0003,
+        0.0005,
+        0.001
+      ],
+      "weight_decay": [
+        1e-05,
+        0.0001,
+        0.001
+      ]
+    },
+    "combination_constraints": "先3×3头筛选，再固定胜出头筛lr，最后固定lr筛wd；每步one_factor或明确bundle。",
+    "search_method": "sequential screening with shared H0/F010 controls",
+    "configuration_count_or_counting_rule": "9 head combos per representative task; 4 lr candidates at fixed wd; 3 wd candidates at selected lr; no full Cartesian product",
+    "seeds": [
+      48,
+      49
+    ],
+    "estimated_run_count": "only after P0/P1; budget by selected representative tasks",
+    "cost_assumptions": "new config fields require code/interface acceptance; training time measured per config",
+    "readiness": "partly config_only only if runner supports fields; otherwise new_code",
+    "priority": "P2",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D5",
+    "linked_issues": [
+      "I-OFFICIAL-METRIC-SEMANTICS"
+    ],
+    "rationale": "Metric semantics and private aggregate diagnostics affect whether improvements are meaningful and comparable.",
+    "evidence_refs": [
+      "turn496576view8",
+      "turn496576view10",
+      "turn596208view0"
+    ],
+    "counterevidence": "官方评分器原件未在本轮亲读；Valid适配和多重比较风险存在。",
+    "candidate_models_or_modules": [
+      "fixed host scorer; no model change"
+    ],
+    "parameters": {
+      "checks": [
+        "official AP/AUPRC/tie semantics",
+        "aggregation formula",
+        "label units",
+        "missing policy",
+        "safe subgroup threshold"
+      ]
+    },
+    "combination_constraints": "zero-fit; no row-level truth/residual leaves private scoring; no scorer execution by training agent.",
+    "search_method": "source-level metric audit plus controller scorer fixture",
+    "configuration_count_or_counting_rule": "0 fits",
+    "seeds": [],
+    "estimated_run_count": 0,
+    "cost_assumptions": "source retrieval/review and controller fixture only",
+    "readiness": "blocked_pending_original_scorer_evidence",
+    "priority": "P0",
+    "scope_status": "proposal_only"
+  }
+]
+END_FILE path=search_space.json
+
+BEGIN_FILE path=reading-cross-check.json utf8_bytes=3425 sha256=87bb196695cd9fe94b11c8398240c57ee0dbdf7618e04781c2ca40565fe2b7ee
+CONTENT
+{
+  "request_id": "admet-scaler-six28-pro-20261102-001",
+  "round_id": "scaler-six28-review-20261102",
+  "input_manifest_sha256": "85b80e24018b59e8ecdb57cc0b084591dfd0fc86c19df4d28bd19f1e0ca20ce7",
+  "web_reads": [
+    {
+      "ref": "turn331542view0",
+      "entry": "B00",
+      "locator": "START_HERE.md, 11 lines"
+    },
+    {
+      "ref": "turn496576view0",
+      "entry": "B01",
+      "locator": "context-references.json, 92 lines"
+    },
+    {
+      "ref": "turn496576view1",
+      "entry": "B02",
+      "locator": "decision-contract.json, 150 lines"
+    },
+    {
+      "ref": "turn496576view2",
+      "entry": "B03",
+      "locator": "current-interface.json, 41 lines"
+    },
+    {
+      "ref": "turn496576view3",
+      "entry": "B04",
+      "locator": "timing-evidence.json, 17 lines"
+    },
+    {
+      "ref": "turn496576view4",
+      "entry": "B05",
+      "locator": "input-manifest.json, 124 lines"
+    },
+    {
+      "ref": "turn496576view5",
+      "entry": "B06",
+      "locator": "history/README.md, 317 lines"
+    },
+    {
+      "ref": "turn496576view6",
+      "entry": "B07",
+      "locator": "issues/validated-and-open.json, 469 lines"
+    },
+    {
+      "ref": "turn496576view7",
+      "entry": "B08",
+      "locator": "current/README.md, 7 lines"
+    },
+    {
+      "ref": "turn496576view8",
+      "entry": "B09",
+      "locator": "current/scores.json, 651 lines"
+    },
+    {
+      "ref": "turn496576view9",
+      "entry": "B10",
+      "locator": "current/comparisons.json, 1442 lines"
+    },
+    {
+      "ref": "turn496576view10",
+      "entry": "B11",
+      "locator": "current/evaluation-use.json, 32 lines"
+    },
+    {
+      "ref": "turn604151view0",
+      "entry": "B12",
+      "locator": "assets/README.md, 1 line"
+    },
+    {
+      "ref": "turn604151view1",
+      "entry": "B13",
+      "locator": "assets/index.json, 455 lines"
+    },
+    {
+      "ref": "turn604151view2",
+      "entry": "B14",
+      "locator": "runs/index.json, 310 lines"
+    },
+    {
+      "ref": "turn604151view3",
+      "entry": "B15",
+      "locator": "research/README.md, 6 lines"
+    },
+    {
+      "ref": "turn604151view4",
+      "entry": "B16",
+      "locator": "preparation/README.md, 1 line"
+    },
+    {
+      "ref": "turn596208view0",
+      "entry": "H-R20-plus-official-contract-20261029",
+      "locator": "official rules snapshot, 142 lines"
+    },
+    {
+      "ref": "turn596208view1",
+      "entry": "H-R20-plus-source-map",
+      "locator": "rules source map, 26 lines"
+    },
+    {
+      "ref": "turn604151view7",
+      "entry": "N33",
+      "locator": "prior constraint/validation original, 140 lines"
+    },
+    {
+      "ref": "turn596208view2",
+      "entry": "H-R17-prior-S-764562710384d47e",
+      "locator": "Mini22 task summary, 382 lines"
+    },
+    {
+      "ref": "turn604151view9",
+      "entry": "N16",
+      "locator": "review-output schema, 157 lines"
+    }
+  ],
+  "not_read_or_not_recomputed": [
+    "36,662-line source-index.json was used as navigation, not read line by line.",
+    "Not all individual raw evidence objects or prediction binaries were opened; aggregate-only scope was preserved.",
+    "No row-level Valid Y or residuals were accessed.",
+    "No subagent tool was available in this session."
+  ],
+  "read_integrity_note": "The web refs document actual reads; SHA256 and bytes in review.read_receipt are inherited from the fixed reading contract, not independently rehashed."
+}
+END_FILE path=reading-cross-check.json
+
+BEGIN_FILE path=delivery-manifest.json utf8_bytes=1318 sha256=f0e0ecd57c9327d3d1fbaa8367ee379d8e224cc9cada640583dd5b11520d2999
+CONTENT
+{
+  "request_id": "admet-scaler-six28-pro-20261102-001",
+  "round_id": "scaler-six28-review-20261102",
+  "input_manifest_sha256": "85b80e24018b59e8ecdb57cc0b084591dfd0fc86c19df4d28bd19f1e0ca20ce7",
+  "files": [
+    {
+      "path": "analysis.md",
+      "bytes": 10949,
+      "sha256": "ad94deba7ee7260e22a4e52694a1af9b38e4ca0929b2a464114c2a4e2a2c9bb8"
+    },
+    {
+      "path": "review.json",
+      "bytes": 20862,
+      "sha256": "24065a34dbfc70fa701d0ca6b6da582fa81a5ad85953ff0e7a001b096cfb7c53"
+    },
+    {
+      "path": "issues.json",
+      "bytes": 4843,
+      "sha256": "683fd2246feb1de50249b08b6d36f239d6807ed6d99f532bffeb3f971e74cac2"
+    },
+    {
+      "path": "next_batch_guide.md",
+      "bytes": 6021,
+      "sha256": "98cb9c913b9299568d038b800836b149e5cb017ab1ec31de5371b1b28372a105"
+    },
+    {
+      "path": "next_experiments.json",
+      "bytes": 50292,
+      "sha256": "4d116b01533681fccd0ef0c48dd4f8a1ed0d8c73dd0d09bf5184011f938a9f4c"
+    },
+    {
+      "path": "search_space.json",
+      "bytes": 6963,
+      "sha256": "745e8f9229727d14a8e51fdebabb1f64ee9e5e33ea1825af40010ec076988587"
+    },
+    {
+      "path": "reading-cross-check.json",
+      "bytes": 3425,
+      "sha256": "87bb196695cd9fe94b11c8398240c57ee0dbdf7618e04781c2ca40565fe2b7ee"
+    }
+  ],
+  "scientific_status": "needs_evidence"
+}
+END_FILE path=delivery-manifest.json
+

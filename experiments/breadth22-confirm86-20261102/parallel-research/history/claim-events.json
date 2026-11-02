@@ -1,0 +1,59 @@
+[
+  {
+    "id": "E-PRO28",
+    "prior_claim": "六任务F010在lipo/BBB/hep/LD50/Sol两个旧seed均改善，CYP不一致",
+    "status": "historical_fact_retained",
+    "evidence": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/current/comparisons.json"
+  },
+  {
+    "id": "E-86-LIPO-HEP-STRESS",
+    "predecessor": "E-PRO28",
+    "claim": "新seed46/47继续支持lipo/hep/LD50/Sol的局部改善，保留跨主机/旧控制限制",
+    "status": "supported_descriptively",
+    "evidence": "../current/all22-comparisons.json"
+  },
+  {
+    "id": "E-86-BBB",
+    "predecessor": "E-PRO28",
+    "claim": "BBB seed47同平台略退化，seed46虽改善却缺控制after且跨平台；普遍稳定改善说法缩小",
+    "status": "claim_narrowed",
+    "evidence": "../current/all22-comparisons.json"
+  },
+  {
+    "id": "E-86-CYP",
+    "predecessor": "E-PRO28",
+    "claim": "CYP2D6新两seed均改善，但不能抹去旧seed不一致",
+    "status": "new_evidence_with_prior_counterexample",
+    "evidence": "../current/all22-comparisons.json"
+  },
+  {
+    "id": "E-F010-UNIVERSAL",
+    "predecessor": "E-PRO28",
+    "claim": "全22推广F010不被支持；五任务双退化，七任务不稳定",
+    "status": "blanket_claim_refuted",
+    "evidence": "../current/results.md"
+  },
+  {
+    "id": "E-MECHANISM",
+    "predecessor": "E-PRO28",
+    "claim": "极端标准化与总体均分改善不单独证明泛化因果，需竞争机制与反证",
+    "status": "mechanism_open"
+  },
+  {
+    "id": "E-GLM",
+    "claim": "新增16任务桥接已采纳且64fit已真实执行；旧仅准备中状态过期，保持原始报告截点",
+    "status": "implementation_and_execution_completed",
+    "source": {
+      "source_key": "controller/glm-first-observation-001/REPORT.md",
+      "source_sha256": "7d827044a58c5f8a1829aff70e37385dc7c0aa63374dcbf575a44ff2906aaba5",
+      "candidate_path": "evidence/7d827044a58c5f8a1829aff70e37385dc7c0aa63374dcbf575a44ff2906aaba5.md",
+      "disposition": "new_semantic_view"
+    }
+  },
+  {
+    "id": "E-DINO",
+    "claim": "外部DINO方法仅为研究假设，当前线性头等接口缺口按实际代码判断，不能当竞赛规则",
+    "status": "proposed_not_executed",
+    "source": "../research/DINO_REUSE_ADDENDUM.json"
+  }
+]

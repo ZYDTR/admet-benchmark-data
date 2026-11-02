@@ -1,0 +1,77 @@
+{
+  "created_at": "2026-11-02T07:45:37.564634+00:00",
+  "scope": "User-requested pinned DINO Skill transferability review for the ongoing Pro research packet. Research reference only; not executing DINO workflow and not authorizing new fits, private-label access, publication scope or rule changes.",
+  "source_commit": "45f5bb6336470ebd534b2e81f1684366b63fd8b2",
+  "source_links": {
+    "skills/skill.md": "https://github.com/grapeot/dinov3-classifier-skill/blob/45f5bb6336470ebd534b2e81f1684366b63fd8b2/skills/skill.md",
+    "docs/rfc.md": "https://github.com/grapeot/dinov3-classifier-skill/blob/45f5bb6336470ebd534b2e81f1684366b63fd8b2/docs/rfc.md",
+    "docs/case-study-garage.md": "https://github.com/grapeot/dinov3-classifier-skill/blob/45f5bb6336470ebd534b2e81f1684366b63fd8b2/docs/case-study-garage.md",
+    "README.md": "https://github.com/grapeot/dinov3-classifier-skill/blob/45f5bb6336470ebd534b2e81f1684366b63fd8b2/README.md"
+  },
+  "related_questions": [
+    "Q2",
+    "Q3",
+    "Q4",
+    "Q6"
+  ],
+  "already_present": [
+    "frozen pretrained backbone and cache reuse",
+    "fit-only transforms and full prediction identity",
+    "paired controls and multiple model seeds",
+    "artifact/environment/provenance and adopted-evidence reuse"
+  ],
+  "gaps_and_hypotheses": [
+    {
+      "id": "D1",
+      "idea": "Cheap simple head comparator on identical frozen embeddings",
+      "our_observation": "Current build_head always has hidden Linear/ReLU/Dropout/Linear; admitted hidden dimensions128/256/512. No linear-only branch in this production runner.",
+      "research_request": "Evaluate whether linear/logistic or regularized regression heads are useful matched low-cost controls; distinguish needing new interface from config-only and do not promise they beat MLP.",
+      "evidence": "workspace://adhoc_jobs/admet_training/cycles/breadth22-confirm86-20261102/training/remaining64-001/source/admet_breadth/heads.py"
+    },
+    {
+      "id": "D2",
+      "idea": "Task-conditioned loss and class imbalance comparisons",
+      "our_observation": "make_loss classification uses BCEWithLogitsLoss(pos_weight=[1.0]); regression uses MSE.",
+      "research_request": "Compare no weighting with train-fit-only class weighting where justified; consider MAE/Huber vsMSE only for suitable regression tasks. Separate objective, stopping and external metric. Class-weighting not universally beneficial; current F010 improvement not evidence for weighted loss.",
+      "evidence": "workspace://adhoc_jobs/admet_training/cycles/breadth22-confirm86-20261102/training/remaining64-001/source/admet_breadth/heads.py"
+    },
+    {
+      "id": "D3",
+      "idea": "Leakage-resistant stress tests within official train",
+      "our_observation": "Current split groups exact raw Drug strings; fixed split seed43 and0.1 internal-stop. Model seeds vary; scaffold or canonical molecule grouping is not implemented here.",
+      "research_request": "Assess train-only scaffold/similarity/canonical-identity grouped validation as additional robustness evidence. Keep official train/valid/test and raw rows/labels untouched; no retrospective independent-holdout claim for data already used. Do not assume original official splits are leaking.",
+      "evidence": "workspace://adhoc_jobs/admet_training/cycles/breadth22-confirm86-20261102/training/remaining64-001/source/admet_breadth/data_io.py",
+      "primary_reference": "https://tdcommons.ai/functions/data_split/"
+    },
+    {
+      "id": "D4",
+      "idea": "Model disagreement and representative difficult-case diagnostics",
+      "our_observation": "Current diagnostics cover feature variance and prediction association; current comparison reports task/seed aggregates. No integrated task-aware cross-model disagreement review in this runner.",
+      "research_request": "Propose no-label rank/prediction-disagreement, nearest-train similarity/scaffold/size and prediction-extreme slices with adequate group size; use existing outputs first. Any truth-based residual diagnostics remain designated-host scope and require explicit analysis admission; do not expose rowtruth to preparation/train or modify labels. Disagreement is not proof either model is wrong.",
+      "evidence": "workspace://adhoc_jobs/admet_training/cycles/breadth22-confirm86-20261102/training/remaining64-001/source/admet_breadth/diagnostics.py"
+    },
+    {
+      "id": "D5",
+      "idea": "Budgeted staged ablations and fixed comparisons",
+      "our_observation": "Paired H0/F010, two model seeds, cached encodings and prior controls already implemented. Broader objective/head/representation designs are not yet systematically executed.",
+      "research_request": "Reuse those foundations; propose cheap screening then shared-seed confirmation, fixed data-selection/split within each comparison, one-factor vsbundle clarity and full turnaround costing. Benchmark only genuinely new workload whose cost is unknown, not another pilot for every head.",
+      "evidence": "workspace://adhoc_jobs/admet_training/cycles/breadth22-confirm86-20261102/retrieval/remaining64-001/derived/all22-comparisons.json"
+    },
+    {
+      "id": "D6",
+      "idea": "Treat representation settings as scientific choices",
+      "our_observation": "Raw frozen features and fit-only preprocessing exist; F010 is already a representation-preprocessing experiment. Current production backbone is CheMeleon; alternative asset readiness remains separate.",
+      "research_request": "Map the principle of explicit input-resolution comparison to molecular representation/preprocessing/approved frozen assets, not literal image resizing. Recommend candidate-specific cache provenance; avoid claiming greater model size necessarily improves generalization.",
+      "evidence": "workspace://adhoc_jobs/admet_training/control/scientific-assets.json"
+    }
+  ],
+  "nontransferable_or_low_priority": [
+    "Do not generate teacher labels for test/valid, import external unlabeled samples or overwrite official labels; original DINO human visual-label authority does not apply to measured ADMET outcomes.",
+    "Threshold/F1 optimization is not a direct improvement route for continuous-score AUROC/AP; no hard thresholding of submission predictions.",
+    "DINO distillation is an optional edge-deployment compression phase; current priority is predictive quality and no such permission is granted.",
+    "Its sealed-reference and mandatory owner-review gates are task-specific, not ADMET competition rules or an instruction to inspect every molecule manually.",
+    "No transplant of CLI workflow as a universal fixed deployment engine; preserve agent judgment with explicit scientific outcomes."
+  ],
+  "assurance": "Current-code checks identify missing branches in this production runner, not proof no historical idea or experiment ever existed. Consult actual history before marking novel. DINO case-study results are not evidence of ADMET gains.",
+  "handoff": "Include as externally sourced methods discussion in candidate index and ProQ2-Q4/Q6; existing candidate work unchanged, no repeated scoring/archive/prep audit."
+}

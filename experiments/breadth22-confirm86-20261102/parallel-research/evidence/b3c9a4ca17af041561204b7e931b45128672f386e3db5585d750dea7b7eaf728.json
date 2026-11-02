@@ -1,0 +1,37 @@
+{
+  "run_id": "hainan-breadth22-hia_hou-f010-s47-20261102",
+  "task": "hia_hou",
+  "kind": "classification",
+  "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+  "head": {
+    "feature_dim": 2048,
+    "hidden_dim": 256,
+    "activation": "relu",
+    "dropout": 0.1,
+    "optimizer": "AdamW",
+    "lr": 0.0005,
+    "weight_decay": 0.0001,
+    "batch_size": 128,
+    "max_epochs": 50,
+    "patience": 8,
+    "seed": 47
+  },
+  "split": {
+    "method": "raw_smiles_group_shuffle",
+    "seed": 43,
+    "stop_fraction": 0.1
+  },
+  "monitor_metric": "AUROC",
+  "monitor_direction": "maximize",
+  "feature_scaler": {
+    "method": "fit_std_denominator_floor_v1",
+    "denominator_floor": 0.01,
+    "legacy_epsilon": 1e-08,
+    "legacy_low_std_replacement": 1.0,
+    "fit_statistic_dtype": "float32",
+    "ddof": 0,
+    "transform_dtype": "float32",
+    "fit_scope": "internal_fit_only",
+    "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+  }
+}

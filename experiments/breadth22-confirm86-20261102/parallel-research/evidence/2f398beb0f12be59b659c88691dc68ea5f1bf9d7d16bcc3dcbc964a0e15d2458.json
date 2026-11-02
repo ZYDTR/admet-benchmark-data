@@ -1,0 +1,382 @@
+{
+  "request_id": "admet-scaler-six28-pro-20261102-001",
+  "round_id": "scaler-six28-review-20261102",
+  "input_manifest_sha256": "85b80e24018b59e8ecdb57cc0b084591dfd0fc86c19df4d28bd19f1e0ca20ce7",
+  "recovery_version": "same-scope-original-recovery-v1",
+  "scope": "仅首版Q1–Q3的unresolved和与其直接相关的证据来源/派发前提；不替代六主体文件",
+  "scientific_status": "needs_evidence",
+  "decision_coverage_in_original_unchanged": [
+    {
+      "question_id": "Q1",
+      "status": "partial",
+      "answer_summary": "Five-task F010 two-seed gains and CYP2D6 seed reversal quantified; causal mechanism and official AP/AUPRC semantics unresolved.",
+      "answer_location": "analysis.md §2",
+      "evidence_refs": [
+        "B03",
+        "B09",
+        "B10",
+        "B15"
+      ],
+      "unresolved": [
+        "more seeds",
+        "floor-dose decomposition",
+        "official AP/AUPRC semantics",
+        "valid-selection multiplicity"
+      ],
+      "affected_decisions": [
+        "global F010 promotion"
+      ]
+    },
+    {
+      "question_id": "Q2",
+      "status": "partial",
+      "answer_summary": "All 22 tasks/metrics and base readiness categories covered; 16-task cache/runner fixtures remain unverified.",
+      "answer_location": "analysis.md §3; next_batch_guide.md P1",
+      "evidence_refs": [
+        "B02",
+        "B12",
+        "B13",
+        "B14",
+        "N33"
+      ],
+      "unresolved": [
+        "16 task cache SHA/row identity",
+        "alternative base version/license/freeze fixtures"
+      ],
+      "affected_decisions": [
+        "Batch B unlock"
+      ]
+    },
+    {
+      "question_id": "Q3",
+      "status": "answered",
+      "answer_summary": "Exact conditional batches, seeds, shared controls, deduplicated fit count, stop branches and observed timing assumptions supplied; no execution authorized.",
+      "answer_location": "analysis.md §4; next_batch_guide.md",
+      "evidence_refs": [
+        "B04",
+        "B10",
+        "B14"
+      ],
+      "unresolved": [
+        "next-cycle end-to-end cost calibration"
+      ],
+      "affected_decisions": [
+        "controller budget/review trigger"
+      ]
+    }
+  ],
+  "classification_note": "记录缺口与未来科学实验不同；未尝试不标不可达；仅在有明确源字段时标未完整记录；不依据索引未命中推断全库不存在。",
+  "gaps": [
+    {
+      "gap_id": "G-Q1-01",
+      "question_ids": [
+        "Q1"
+      ],
+      "original_unresolved": [
+        "more seeds"
+      ],
+      "classification": [
+        "requires_future_experiment"
+      ],
+      "evidence_refs": [
+        "R-B14",
+        "R-B15",
+        "R-B03"
+      ],
+      "actual_findings": "当前run索引中F010仍是44/45；LD50和AqSolDB有F001/H0 seed46，不能据此宣称已获得F010新seed。",
+      "specific_blocker": "固定快照不能给出未训练模型的质量。",
+      "affected_decisions": [
+        "是否推广F010",
+        "CYP跨seed不一致是稳定异质性还是随机波动"
+      ],
+      "verification_plan": {
+        "authorization": "proposal_only；主控另行授权",
+        "tasks": [
+          "lipophilicity_astrazeneca",
+          "bbb_martins",
+          "cyp2d6_veith",
+          "clearance_hepatocyte_az",
+          "ld50_zhu",
+          "solubility_aqsoldb"
+        ],
+        "configs": [
+          "H0",
+          "F010"
+        ],
+        "model_seeds": [
+          46,
+          47
+        ],
+        "split": "绑定当前原Drug-group seed43内部fit/stop身份；真实split_id需从准入run配置落定，不把恢复前自写ID视为已验",
+        "hold_fixed": "冻结CheMeleon2048特征、256头、AdamW lr0.0005/wd0.0001、batch128、max_epochs50/patience8、fit-only预处理；loss及早停按B03登记",
+        "gross_fits": 24,
+        "reuse_candidates": [
+          "hainan-scaler-ld50_zhu-h0-s46-20261102",
+          "hainan-scaler-solubility_aqsoldb-h0-s46-20261102"
+        ],
+        "new_fits_if_full_identity_matches": 22,
+        "stop": "冻结/标签/行身份或配置不一致则停止受影响比较；不得为了复用改写对照身份"
+      },
+      "limitation": "更多seed只检验训练随机性，不把已多次使用Valid恢复为未参与调参数据。"
+    },
+    {
+      "gap_id": "G-Q1-02",
+      "question_ids": [
+        "Q1"
+      ],
+      "original_unresolved": [
+        "floor-dose decomposition"
+      ],
+      "classification": [
+        "published_registered_original_not_read",
+        "computable_from_permitted_label_free_data",
+        "requires_future_experiment"
+      ],
+      "evidence_refs": [
+        "R-B03",
+        "R-B15",
+        "R-FEATURE-DIAG-UNREAD"
+      ],
+      "actual_findings": "分母定义和局部反例已有登记；历史特征分布诊断原件已在source-index精确定位，但此恢复只读了登记项，未读其53818字节正文。",
+      "specific_blocker": "不能凭摘要认定具体低方差维度解释全部收益；无标签分布诊断只能验证暴露/缩放程度，不能单独识别因果。",
+      "affected_decisions": [
+        "数值修复还是可迁移泛化收益",
+        "是否值得追加floor剂量分支"
+      ],
+      "verification_plan": {
+        "zero_fit_first": "先按已登记对象读无标签特征诊断；仅在该诊断缺少决定性统计时，由主控允许的fit特征计算std区间计数/缩放幅度/常数维处理，不读Valid Y。",
+        "conditional_design": "在原指南P2范围内预登记小面板和共同seed48/49，仅改变分母floor；floor0.003/0.03须先核实当前runner是否可配置，否则new_code。保持H0/F010共同对照、同split及fit-only统计，不能用同时改变头/学习率/epoch的结果推断floor单因子。",
+        "falsification": "若分母变换无实际差异或剂量结果跨seed不稳定，停止把数值病态作为唯一解释；保留CYP反例。",
+        "budget": "原P2是条件研究，不是此次新增授权；精确面板和字段未登记前不得发训练单。"
+      },
+      "accessibility": "diagnostic正文未尝试，非不可达"
+    },
+    {
+      "gap_id": "G-Q1-03",
+      "question_ids": [
+        "Q1"
+      ],
+      "original_unresolved": [
+        "official AP/AUPRC semantics"
+      ],
+      "also_covers": [
+        "review.missing_evidence: official scorer implementation"
+      ],
+      "classification": [
+        "published_original_read_in_recovery",
+        "official_confirmation_not_established_in_fixed_sources"
+      ],
+      "evidence_refs": [
+        "R-B01",
+        "R-N21",
+        "R-H-R20-plus-official-contract-20261029",
+        "R-B08"
+      ],
+      "actual_findings": "N21本地函数已亲读：按相同预测分数组处理的average precision；代码显式official_equivalence=unconfirmed。规则快照U04和当前README仍标官方精确定义未确认。",
+      "specific_blocker": "本地函数可达不等于官方实现已确认；此恢复没有找到已登记官方可执行评分器的确证，不能说其确定存在但取不到，也不能说全库从未记录。",
+      "affected_decisions": [
+        "是否将本地AUPRC视作官网等价",
+        "是否将推导总分当官方总分"
+      ],
+      "verification_plan": {
+        "no_fit": true,
+        "next_evidence": "由主控提供/定位赛方精确定义或已登记确认，逐项核对AP vs梯形PR-AUC、tie、单类别、缺失、聚合；用合成fixture而非私有标签做必要验证。",
+        "boundaries": "不执行归档评分代码、不重算28分数；不因本缺口禁止同一已验本地指标的任务内比较。"
+      },
+      "resolution": "本地实现的未读子项已消除；官方等价子项保留不确定"
+    },
+    {
+      "gap_id": "G-Q1-04",
+      "question_ids": [
+        "Q1"
+      ],
+      "original_unresolved": [
+        "valid-selection multiplicity"
+      ],
+      "classification": [
+        "partly_recorded",
+        "explicitly_incompletely_recorded",
+        "requires_future_preregistered_evaluation"
+      ],
+      "evidence_refs": [
+        "R-B11",
+        "R-H-R20-plus-source-map"
+      ],
+      "actual_findings": "固定登记有84累计正式任务指标交付、63逻辑run；lifetime_private_truth_reads明确not fully recorded。正式交付数不等于选择次数或独立验证次数。",
+      "specific_blocker": "历史未完整记录的读取/选择轨迹无法从84或63反推出；没有诚实依据给校正后的统计置信度。",
+      "affected_decisions": [
+        "能否声称未参与调参数据上的泛化提升",
+        "如何安排后续确认"
+      ],
+      "verification_plan": {
+        "no_new_permission": "从今后候选预登记、每次聚合反馈和选模事件开始记录，不倒填未知历史次数。",
+        "generalization": "更多seed继续看相同Valid不消除适配偏差。严格未参与选择的评估需主控证明保留集此前未进入选择反馈；仅重新划分已使用数据最多检验拆分稳健性。训练内方案仍限官方train.Y、每split重拟合预处理；任何新的评估使用须另行登记。",
+        "no_fabrication": "历史精确次数保留unknown；不将建议的评价频率写成官方硬规则。"
+      }
+    },
+    {
+      "gap_id": "G-Q2-01",
+      "question_ids": [
+        "Q2"
+      ],
+      "original_unresolved": [
+        "16 task cache SHA/row identity"
+      ],
+      "also_covers": [
+        "review.missing_evidence: remaining 16 task cache identity"
+      ],
+      "classification": [
+        "published_historical_evidence_available",
+        "current_interface_compatibility_not_fully_read_or_established",
+        "zero_fit_check_needed_not_training"
+      ],
+      "evidence_refs": [
+        "R-B13",
+        "R-ASSET-TABLE",
+        "R-BASELINE-DELIVERY",
+        "R-B03",
+        "R-HISTORY-REGISTRY"
+      ],
+      "actual_findings": "Mini22原交付明确22头、66缓存核验并复用，不能说其余16任务从来没有缓存。当前scaler接口同时明确不能推断所有任务已验证；历史缓存存在与当前生产字段/行映射兼容是两件事。",
+      "specific_blocker": "此次未打开其余16任务逐份cache manifest、映射和当前run配置；不能据此判定缓存缺失，也不能承诺立即ready。",
+      "affected_decisions": [
+        "其余16任务的config_only/blocked_assets分类",
+        "是否重编码及批次B成本"
+      ],
+      "verification_plan": {
+        "tasks": [
+          "ames",
+          "bioavailability_ma",
+          "caco2_wang",
+          "clearance_microsome_az",
+          "cyp2c9_substrate_carbonmangels",
+          "cyp2c9_veith",
+          "cyp2d6_substrate_carbonmangels",
+          "cyp3a4_substrate_carbonmangels",
+          "cyp3a4_veith",
+          "dili",
+          "half_life_obach",
+          "herg",
+          "hia_hou",
+          "pgp_broccatelli",
+          "ppbr_az",
+          "vdss_lombardo"
+        ],
+        "zero_fit": "先从登记的历史缓存元数据和当前接口逐任务绑定task/split/row_index、encoder checkpoint、2048特征schema、mask语义和fit统计；已验且版本未变的行身份回执继承，只有接口变动/疑点补定向fixture。",
+        "reuse": "兼容者优先复用，别为填补阅读缺口重做66份cache或全库审计；不兼容者明确记录具体差异，再申请必要准备。",
+        "training_gate": "通过后主控再登记H0/F010共同seed的确定矩阵；恢复操作没有新增16任务训练授权。"
+      },
+      "accessibility": "已读入口均通过web取回；未请求的逐任务原件归尚未读取，非不可达"
+    },
+    {
+      "gap_id": "G-Q2-02",
+      "question_ids": [
+        "Q2"
+      ],
+      "original_unresolved": [
+        "alternative base version/license/freeze fixtures"
+      ],
+      "classification": [
+        "published_readiness_record_read",
+        "detailed_assets_versions_and_original_research_not_fully_read",
+        "requires_zero_fit_preparation_and_authorization"
+      ],
+      "evidence_refs": [
+        "R-B13",
+        "R-ASSET-TABLE",
+        "R-H-R20-plus-source-map"
+      ],
+      "actual_findings": "本轮固定资产索引引用的科学表可读，记录MiniMol/MoLFormer10pct准备未完，其他候选分别未准备/暂缓。表的状态不是当前远端实时查询；其中历史setup.py404属于旧准备事件，不是本次取回失败。",
+      "specific_blocker": "表不是每个候选完整checkpoint版本、许可证、加载/冻结/覆盖fixture的替代物。其所列research-report.md路径尚未在本恢复追到原文，不能假称已验证原论文或实现。",
+      "affected_decisions": [
+        "是否切换冻结底座",
+        "是否把新模块/集成列为可立即运行"
+      ],
+      "verification_plan": {
+        "no_fit": "逐个候选先定位登记研究原文与已批准资产、锁定版本/许可/输入覆盖、加载shape和冻结buffer检查；不做梯度更新，不把执行LLM列为编码器。",
+        "budget": "准备与特征编码成本另列；没有完整准入和接口证据就不进入直接运行表。"
+      },
+      "accessibility": "已读资产表可达；未请求的研究原件/权重不能写不可达"
+    },
+    {
+      "gap_id": "G-Q3-01",
+      "question_ids": [
+        "Q3"
+      ],
+      "original_unresolved": [
+        "next-cycle end-to-end cost calibration"
+      ],
+      "classification": [
+        "historical_timings_recorded",
+        "new_arithmetic_computable",
+        "future_process_measurement_required"
+      ],
+      "evidence_refs": [
+        "R-B04",
+        "R-B14"
+      ],
+      "actual_findings": "已登记阶段时长可用，但重叠，且没有纯kernel测量；政策改变后的下一完整周期节约尚未建立。",
+      "specific_blocker": "未发生的下一周转无法凭旧28项GPU秒数算出确定时长。",
+      "affected_decisions": [
+        "多批预算档位",
+        "准备/取回/交接资源",
+        "何时值得下一次研究"
+      ],
+      "verification_plan": {
+        "process_only": "主控在未来获授权批次分别记准备起止、角色活跃区间、训练进程寿命、编码复用次数、取回/评分/交接、失败恢复和研究消耗；以时间区间并集/关键路径计算墙钟，不相加重叠角色。",
+        "arithmetic_correction": {
+          "original_review_RC5_seconds": "1361.94",
+          "correct_expression": "1733.201 * 22 / 28",
+          "correct_seconds": "1361.8007857142857",
+          "correct_minutes": "22.69667976190476",
+          "interpretation": "约22.7分钟角色时间的粗估仍不变；不代表端到端成本，原文件不回写。"
+        },
+        "ten_hour_audit": "原用户补充的10小时审计仅继承主控来源：01:21:48–11:21:48北京时间，主控活跃3:42:46、作业进程约13:54、主要角色无活跃已知间隔8:16；本次不伪称独立复算，不覆盖旧时长。",
+        "stop": "若准备失败则不消耗拟议fit预算；重大边界故障即提前回主控，不因单个头完工调用新研究。"
+      }
+    }
+  ],
+  "additional_clarifications": [
+    {
+      "clarification_id": "X-ROW-DIAGNOSTICS",
+      "covers": "review.missing_evidence row-level valid prediction diagnostics",
+      "classification": "out_of_scope_access_not_missing_file",
+      "evidence_refs": [
+        "R-B01",
+        "R-B08",
+        "R-B11",
+        "R-H-R20-plus-source-map"
+      ],
+      "statement": "不访问逐行Valid Y/残差是权限边界，不是取回失败；未请求这些文件。需标签的误差切片由已授权主控在私有区做，只返回不可还原个体的任务/分组汇总。无标签分布诊断可在准入范围内分析，但不能冒充质量分数。"
+    },
+    {
+      "clarification_id": "X-PROVENANCE",
+      "covers": "首版read_receipt与reading-cross-check的证据地位",
+      "classification": "old_tool_reference_not_resolved_in_this_recovery",
+      "evidence_refs": [
+        "R-N21"
+      ],
+      "statement": "首版原件及旧Web ref按原字节保留；本次代表性旧ref打开返回invalid ref_id。不能用旧回执自述证明当时全部22项实际已读，也不能因此断言原件从未生成。此次新实读以recovery-source-register.json逐项记录，不补写首版历史。"
+    },
+    {
+      "clarification_id": "X-RUNNER-BINDING",
+      "covers": "首版next_experiments.json的真实接口与split绑定缺口",
+      "classification": "configuration_registration_not_independently_validated",
+      "evidence_refs": [
+        "R-B03",
+        "R-B14"
+      ],
+      "statement": "首版split_id含official-valid-20261029-v6文字；此次已读B03仅证实原Drug-group seed43/stop10%，没有证实该字符串是runner的真实split标识。exact_config中的字段也尚未逐一对源代码枚举。配置设计可留作提案，但本恢复不把它们重新认证成可直接派发，主控须先完成真实字段、版本、split身份绑定。原文件不暗改。"
+    },
+    {
+      "clarification_id": "X-INHERITED-ACCEPTANCE",
+      "covers": "review.not_assessed前三类和subagent项",
+      "classification": "inherited_acceptance_or_method_limit_not_new_scientific_evidence",
+      "evidence_refs": [
+        "R-B08",
+        "R-B11"
+      ],
+      "statement": "不重算28评分、不重放完整冻结/行身份审计是复用验收，不是新必补缺口；本次没有新增subagent报告或多agent独立事实。仅对恢复文件的字节、ZIP与新算术进行直接计算。"
+    }
+  ]
+}

@@ -1,0 +1,156 @@
+{
+  "request_id": "admet-breadth22-pro-20261102-001",
+  "round_id": "breadth22-confirm86-20261102",
+  "created_at": "2026-11-02T07:39:03.009569+00:00",
+  "task_ids": [
+    "ames",
+    "bbb_martins",
+    "bioavailability_ma",
+    "caco2_wang",
+    "clearance_hepatocyte_az",
+    "clearance_microsome_az",
+    "cyp2c9_substrate_carbonmangels",
+    "cyp2c9_veith",
+    "cyp2d6_substrate_carbonmangels",
+    "cyp2d6_veith",
+    "cyp3a4_substrate_carbonmangels",
+    "cyp3a4_veith",
+    "dili",
+    "half_life_obach",
+    "herg",
+    "hia_hou",
+    "ld50_zhu",
+    "lipophilicity_astrazeneca",
+    "pgp_broccatelli",
+    "ppbr_az",
+    "solubility_aqsoldb",
+    "vdss_lombardo"
+  ],
+  "task_metrics": {
+    "ames": {
+      "metric": "AUROC",
+      "direction": "maximize"
+    },
+    "bioavailability_ma": {
+      "metric": "AUROC",
+      "direction": "maximize"
+    },
+    "caco2_wang": {
+      "metric": "MAE",
+      "direction": "minimize"
+    },
+    "clearance_microsome_az": {
+      "metric": "Spearman",
+      "direction": "maximize"
+    },
+    "cyp2c9_substrate_carbonmangels": {
+      "metric": "AUPRC",
+      "direction": "maximize"
+    },
+    "cyp2c9_veith": {
+      "metric": "AUPRC",
+      "direction": "maximize"
+    },
+    "cyp2d6_substrate_carbonmangels": {
+      "metric": "AUPRC",
+      "direction": "maximize"
+    },
+    "cyp3a4_substrate_carbonmangels": {
+      "metric": "AUROC",
+      "direction": "maximize"
+    },
+    "cyp3a4_veith": {
+      "metric": "AUPRC",
+      "direction": "maximize"
+    },
+    "dili": {
+      "metric": "AUROC",
+      "direction": "maximize"
+    },
+    "half_life_obach": {
+      "metric": "Spearman",
+      "direction": "maximize"
+    },
+    "herg": {
+      "metric": "AUROC",
+      "direction": "maximize"
+    },
+    "hia_hou": {
+      "metric": "AUROC",
+      "direction": "maximize"
+    },
+    "pgp_broccatelli": {
+      "metric": "AUROC",
+      "direction": "maximize"
+    },
+    "ppbr_az": {
+      "metric": "MAE",
+      "direction": "minimize"
+    },
+    "vdss_lombardo": {
+      "metric": "Spearman",
+      "direction": "maximize"
+    },
+    "lipophilicity_astrazeneca": {
+      "metric": "MAE",
+      "direction": "minimize"
+    },
+    "bbb_martins": {
+      "metric": "AUROC",
+      "direction": "maximize"
+    },
+    "cyp2d6_veith": {
+      "metric": "AUPRC",
+      "direction": "maximize"
+    },
+    "clearance_hepatocyte_az": {
+      "metric": "Spearman",
+      "direction": "maximize"
+    },
+    "ld50_zhu": {
+      "metric": "MAE",
+      "direction": "minimize"
+    },
+    "solubility_aqsoldb": {
+      "metric": "MAE",
+      "direction": "minimize"
+    }
+  },
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question": "完整22任务的H0与F010对照说明了什么，哪些改善、退化和机制解释可信？",
+      "completion": "逐任务结合两个seed和历史24/28/原Mini22对照，解释10双改善、5双退化、7不一致；区分描述性证据、选择偏差、跨主机/缓存环境和BBB证据限制；提出支持与反证，不能把约46的推断Valid值当官网分。"
+    },
+    {
+      "question_id": "Q2",
+      "question": "下一步如何在22任务范围提高泛化质量，避免只围绕单任务或把F010全量推广？",
+      "completion": "对所有22任务给下一步类别与理由，优先覆盖5个双退化任务和7个不稳定任务，同时保留可靠获益；比较任务自适应预处理、floor/尺度机制、头容量/优化/损失/早停等竞争解释，能复用已有结果就不重复训练。"
+    },
+    {
+      "question_id": "Q3",
+      "question": "现有CheMeleon改进与已调研其他冻结底座、经典特征或组合方案应该如何分配探索？",
+      "completion": "以真实资产准备度和官方研究来源比较候选，明确已支持配置、需要新接口/资产、超出当前范围；GLM/DeepSeek/Qwen只属执行角色。给广泛但有依据的参数与方向，不以未接入为由省略研究设计，也不把尚未准备的模型当现成。"
+    },
+    {
+      "question_id": "Q4",
+      "question": "一次研究给出哪些具体实验与条件分支，足以连续执行多个有信息量的批次？",
+      "completion": "给小/中/大三档建议成本与推荐档，首批及可事先确定的后续矩阵展开到task/config/split/seeds、明确loss/早停/输出尺度、变化因素、对照、去重唯一fit与共享编码次数；结果依赖分支另列触发/停止/跳过条件，预算仅建议不授权无限搜索。按信息量与总周转成本推导规模，不机械照抄86项。"
+    },
+    {
+      "question_id": "Q5",
+      "question": "新结果验证、推翻或缩小了哪些历史结论，后续如何避免重复旧探索或无依据探索？",
+      "completion": "每个建议关联历史claim/issue、已有结果与未解决缺口；新增结论事件保留前一事件/反例/影响方案。区分已尝试、已否定、未实施建议、仍有条件价值，明确下一次需要Pro的新证据触发点。"
+    },
+    {
+      "question_id": "Q6",
+      "question": "还缺哪些会改变决策的已有信息，怎样在不重复核验的前提下补齐并缩短端到端周期？",
+      "completion": "先沿精确索引查现有原件，再区分未读、不可达、未记录与需新实验；对可能改变建议的缺口给最小诊断方案与影响，不把后台模型二进制归档自动视为科研阻塞。复用固定评分和既有验收，不重新审全系统；量化已有耗时及未测项。"
+    }
+  ],
+  "evaluation_scope": "task-level aggregate Valid metrics and approved non-label diagnostics; no new private per-row valid truth/residual publication or analysis access in this request",
+  "execution_scope": "research proposals only; no training, inference, installation or official upload",
+  "budget": "Pro proposes small/medium/large resource scenarios using actual costs; controller registers later execution separately",
+  "source_result": "workspace://adhoc_jobs/admet_training/cycles/breadth22-confirm86-20261102/retrieval/remaining64-001/derived/all22-comparisons.json",
+  "source_result_sha256": "fd3cbb7f1adf2c0e9df85deb43cdabb1f24666c2aa54dd9652d85cd671c27adc"
+}

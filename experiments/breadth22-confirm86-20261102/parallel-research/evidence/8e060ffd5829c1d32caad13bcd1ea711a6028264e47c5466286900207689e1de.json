@@ -1,0 +1,657 @@
+{
+  "run_id": "hainan-breadth22-half_life_obach-f010-s46-20261102",
+  "configuration": {
+    "run_id": "hainan-breadth22-half_life_obach-f010-s46-20261102",
+    "task": "half_life_obach",
+    "kind": "regression",
+    "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+    "head": {
+      "feature_dim": 2048,
+      "hidden_dim": 256,
+      "activation": "relu",
+      "dropout": 0.1,
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "seed": 46
+    },
+    "split": {
+      "method": "raw_smiles_group_shuffle",
+      "seed": 43,
+      "stop_fraction": 0.1
+    },
+    "monitor_metric": "Spearman",
+    "monitor_direction": "maximize",
+    "feature_scaler": {
+      "method": "fit_std_denominator_floor_v1",
+      "denominator_floor": 0.01,
+      "legacy_epsilon": 1e-08,
+      "legacy_low_std_replacement": 1.0,
+      "fit_statistic_dtype": "float32",
+      "ddof": 0,
+      "transform_dtype": "float32",
+      "fit_scope": "internal_fit_only",
+      "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+    }
+  },
+  "counts": {
+    "train": 465,
+    "valid": 67,
+    "test": 135
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "metric": "Spearman",
+      "value": 0.505768434922137,
+      "improved": true,
+      "best_value": 0.505768434922137,
+      "best_epoch": 1,
+      "steps": 4,
+      "steps_this_epoch": 4,
+      "train_loss": 1.1054521162676356,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 1954.3548068404198,
+      "permutation_sha256": "0a512d77a189a0d3a7e2e90388e4a62656e7d220e10be71be24f14ccee9a5e60",
+      "epoch_seconds": 0.016429640003480017
+    },
+    {
+      "epoch": 2,
+      "metric": "Spearman",
+      "value": 0.4751681490327273,
+      "improved": false,
+      "best_value": 0.505768434922137,
+      "best_epoch": 1,
+      "steps": 8,
+      "steps_this_epoch": 4,
+      "train_loss": 0.8428897348394826,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 1686.2767304182053,
+      "permutation_sha256": "e12adcb25fe9c1620cf733dc57c250ea8c7989b94c842f637489e472bba794cc",
+      "epoch_seconds": 0.03568731399718672
+    },
+    {
+      "epoch": 3,
+      "metric": "Spearman",
+      "value": 0.3590598062023465,
+      "improved": false,
+      "best_value": 0.505768434922137,
+      "best_epoch": 1,
+      "steps": 12,
+      "steps_this_epoch": 4,
+      "train_loss": 0.656684898711332,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 1081.2697719708085,
+      "permutation_sha256": "c8e968df51a80478c12f2354c4e7d4aeb5a9d9137568424db076ae34a5557613",
+      "epoch_seconds": 0.036056092008948326
+    },
+    {
+      "epoch": 4,
+      "metric": "Spearman",
+      "value": 0.5062619879203533,
+      "improved": true,
+      "best_value": 0.5062619879203533,
+      "best_epoch": 4,
+      "steps": 16,
+      "steps_this_epoch": 4,
+      "train_loss": 0.4916139614361567,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 1026.816341727972,
+      "permutation_sha256": "5c6ddad95ce260ad96445526ec0edc1a7e7f9b9ad5d62355cf8efccb43c62a26",
+      "epoch_seconds": 0.03432914399309084
+    },
+    {
+      "epoch": 5,
+      "metric": "Spearman",
+      "value": 0.4883089976102359,
+      "improved": false,
+      "best_value": 0.5062619879203533,
+      "best_epoch": 4,
+      "steps": 20,
+      "steps_this_epoch": 4,
+      "train_loss": 0.3640585826056385,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 949.1642131656408,
+      "permutation_sha256": "5c85699de35b80706340fdd94d3b1cc9eb3dedc05aeb5f982383463430bf8da4",
+      "epoch_seconds": 0.03620121203130111
+    },
+    {
+      "epoch": 6,
+      "metric": "Spearman",
+      "value": 0.5200814718704092,
+      "improved": true,
+      "best_value": 0.5200814718704092,
+      "best_epoch": 6,
+      "steps": 24,
+      "steps_this_epoch": 4,
+      "train_loss": 0.3043430585743135,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 825.1407608538866,
+      "permutation_sha256": "9188b5723805d6649dd8cfec51a314bea28b8a40241980c8b2a8292892d95811",
+      "epoch_seconds": 0.03700037399539724
+    },
+    {
+      "epoch": 7,
+      "metric": "Spearman",
+      "value": 0.5796779964050255,
+      "improved": true,
+      "best_value": 0.5796779964050255,
+      "best_epoch": 7,
+      "steps": 28,
+      "steps_this_epoch": 4,
+      "train_loss": 0.2279948982319001,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 619.8866277784109,
+      "permutation_sha256": "4f82c6e558b93cb4e86305f931ab562ffb51f1b3174d2f700d3387b099015faf",
+      "epoch_seconds": 0.03420695598470047
+    },
+    {
+      "epoch": 8,
+      "metric": "Spearman",
+      "value": 0.5606762059736985,
+      "improved": false,
+      "best_value": 0.5796779964050255,
+      "best_epoch": 7,
+      "steps": 32,
+      "steps_this_epoch": 4,
+      "train_loss": 0.17462389462745276,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 1016.013281211257,
+      "permutation_sha256": "57eebcf0c69ccbb4897ae8279a75bbc9dcfd49cd31c9e196c91f561ee818af6e",
+      "epoch_seconds": 0.036618334997911006
+    },
+    {
+      "epoch": 9,
+      "metric": "Spearman",
+      "value": 0.5796163022802484,
+      "improved": false,
+      "best_value": 0.5796779964050255,
+      "best_epoch": 7,
+      "steps": 36,
+      "steps_this_epoch": 4,
+      "train_loss": 0.13248398057174,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 801.3929777145386,
+      "permutation_sha256": "1fa0d08e46734fda2d04c1b41473555748dea8e42e168f23010d8f5d7b563894",
+      "epoch_seconds": 0.03544430696638301
+    },
+    {
+      "epoch": 10,
+      "metric": "Spearman",
+      "value": 0.5051514936743666,
+      "improved": false,
+      "best_value": 0.5796779964050255,
+      "best_epoch": 7,
+      "steps": 40,
+      "steps_this_epoch": 4,
+      "train_loss": 0.14613012046617654,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 654.9892763867974,
+      "permutation_sha256": "38d3a9c795a10fd78c25ceb37e4a3ece0aa0a14bcc95b2c79dfa47f91a983d98",
+      "epoch_seconds": 0.02803926501655951
+    },
+    {
+      "epoch": 11,
+      "metric": "Spearman",
+      "value": 0.4191498837351791,
+      "improved": false,
+      "best_value": 0.5796779964050255,
+      "best_epoch": 7,
+      "steps": 44,
+      "steps_this_epoch": 4,
+      "train_loss": 0.1265693060466953,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 675.2004698552191,
+      "permutation_sha256": "160a09c48d1716152a93f9803bd9c64462da5a6677d74423dafbab8bd7e8eed8",
+      "epoch_seconds": 0.03719476604601368
+    },
+    {
+      "epoch": 12,
+      "metric": "Spearman",
+      "value": 0.4662841950648342,
+      "improved": false,
+      "best_value": 0.5796779964050255,
+      "best_epoch": 7,
+      "steps": 48,
+      "steps_this_epoch": 4,
+      "train_loss": 0.09441856766977572,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 584.7752339243889,
+      "permutation_sha256": "d1c270e1d6838975b509a8c8b6c35b1d8986a573c96cfd583dfa3bd855ce9cde",
+      "epoch_seconds": 0.03694490803172812
+    },
+    {
+      "epoch": 13,
+      "metric": "Spearman",
+      "value": 0.4412363804053578,
+      "improved": false,
+      "best_value": 0.5796779964050255,
+      "best_epoch": 7,
+      "steps": 52,
+      "steps_this_epoch": 4,
+      "train_loss": 0.08812739899235295,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 585.0076213628054,
+      "permutation_sha256": "81413814483f833565ec8ffa5f3a53b2dcb0da6b2e739c8c32daa62dc417ab08",
+      "epoch_seconds": 0.03754546894924715
+    },
+    {
+      "epoch": 14,
+      "metric": "Spearman",
+      "value": 0.5223024603623825,
+      "improved": false,
+      "best_value": 0.5796779964050255,
+      "best_epoch": 7,
+      "steps": 56,
+      "steps_this_epoch": 4,
+      "train_loss": 0.07142991312114891,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 634.731961954385,
+      "permutation_sha256": "ce0ca4d53e4b911954db5ec76e3e1bb696503b70a0a1aeb4b9b843ff363503a9",
+      "epoch_seconds": 0.03636251902207732
+    },
+    {
+      "epoch": 15,
+      "metric": "Spearman",
+      "value": 0.4939848570897232,
+      "improved": false,
+      "best_value": 0.5796779964050255,
+      "best_epoch": 7,
+      "steps": 60,
+      "steps_this_epoch": 4,
+      "train_loss": 0.10395613178913092,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 572.12058480829,
+      "permutation_sha256": "573dc7cda2f52837bae7e58a1bfc98cf0b30d02d1b7b22a3570656e534912d34",
+      "epoch_seconds": 0.03619161999085918
+    }
+  ],
+  "best_epoch": 7,
+  "best_steps": 28,
+  "last_steps": 60,
+  "nonzero_gradient_steps": 60,
+  "maximum_gradient_l1": 1954.3548068404198,
+  "parameter_count": 524801,
+  "encoder_parameters_buffers_unchanged": true,
+  "encoder_in_optimizer": false,
+  "encoding_calls": 0,
+  "raw_cache_root": "compute-data://breadth22-confirm86-20261102/shared/cache-mini22",
+  "cache_trust_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+  "mini22_evidence": {
+    "train": {
+      "format": "mini22_frozen_cache_v1",
+      "task": "half_life_obach",
+      "split": "train",
+      "trust": {
+        "manifest_path": "compute-data://breadth22-confirm86-20261102/remaining64-001/input/MINI22_CACHE_MANIFEST.json",
+        "manifest_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+        "verified_files": {
+          "half_life_obach/__train.npy": {
+            "bytes": 3809408,
+            "sha256": "166e1db597a2c16f80df7ad6239887eefc090c59cd3f860a39f1f504e4093b67"
+          },
+          "half_life_obach/__train.ok.npy": {
+            "bytes": 593,
+            "sha256": "8e62e517cd2b08d4971e8fa6ab4c93a4fdc8693e79229252f0703d8b7bc8a32b"
+          },
+          "half_life_obach/__train.rows.json": {
+            "bytes": 73520,
+            "sha256": "c4b675c156cef8ae75513d2b84eba9f221cb28c6b02830beb4a71c6b9ca0c852"
+          },
+          "half_life_obach/__train.meta.json": {
+            "bytes": 712,
+            "sha256": "9aefb2d843c987e00c512e349036dc5bd10216c08ceebd68377d525dc39d1192"
+          }
+        }
+      },
+      "source_provenance": {
+        "meta_contract_verbatim": {
+          "source_sha256": "61774bf5dfc29bee0768038dcbf16319e9fc19e2bee63659f2cfed687477e2f9",
+          "encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "encoder_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6",
+          "feature_dim": 2048,
+          "task": "half_life_obach",
+          "split": "train"
+        },
+        "generation_packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6"
+        },
+        "encoder_identity": {
+          "mini22_encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "current_encoder_module_sha256": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "implementations_equal": false,
+          "note": "Mini22 partitions were produced by the historical mini22-encoder.py under chemprop 2.2.1 / RDKit 2025.9.6. The current accepted-src encoder.py is a different implementation of the same frozen CheMeleon checkpoint. No re-encoding was performed and no bit-level equality between the two implementations is claimed."
+        },
+        "original_source_csv_sha256": "61774bf5dfc29bee0768038dcbf16319e9fc19e2bee63659f2cfed687477e2f9",
+        "reencoded": false,
+        "encoder_forward_calls": 0
+      },
+      "consumption_identity": {
+        "source_csv_sha256": "61774bf5dfc29bee0768038dcbf16319e9fc19e2bee63659f2cfed687477e2f9",
+        "csv_bytes_equal_historical_source": true,
+        "row_identity_sha256": "d9c012182c84a5b73ad989678e9b9ca8dffe3e290da08b85f7f4df8b232984bf",
+        "n_rows": 465,
+        "mapping": {
+          "mapping": "positional row_index / Drug_ID / Drug exact match",
+          "n_rows": 465,
+          "duplicate_or_blank_drug_id_preserved": true
+        }
+      },
+      "partition": {
+        "n_rows": 465,
+        "parsed_true_count": 465,
+        "unparsed_row_indices": [],
+        "array_content_digest": {
+          "shape": [
+            465,
+            2048
+          ],
+          "dtype": "float32",
+          "c_contiguous": true,
+          "bytes": 3809280,
+          "sha256": "60edf75ae2ac462a189bd93678ffc73ad45604c228017ace410774554ca8714c",
+          "crc32": "b9b74d48",
+          "nan_count": 0,
+          "inf_count": 0
+        },
+        "mask_content_digest": {
+          "shape": [
+            465
+          ],
+          "dtype": "bool",
+          "c_contiguous": true,
+          "bytes": 465,
+          "sha256": "4cfc66f6c0fe1e96eda083976a50afa39f7ff4c7b077735f9cf75bcd241c9ca6",
+          "crc32": "ccf36424",
+          "nan_count": 0,
+          "inf_count": 0
+        }
+      }
+    },
+    "valid": {
+      "format": "mini22_frozen_cache_v1",
+      "task": "half_life_obach",
+      "split": "valid",
+      "trust": {
+        "manifest_path": "compute-data://breadth22-confirm86-20261102/remaining64-001/input/MINI22_CACHE_MANIFEST.json",
+        "manifest_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+        "verified_files": {
+          "half_life_obach/__valid.npy": {
+            "bytes": 548992,
+            "sha256": "e43f05382f8017d21c8ca71608699a081d7463bf7be7e61530dea79eb0ec0d68"
+          },
+          "half_life_obach/__valid.ok.npy": {
+            "bytes": 195,
+            "sha256": "411152fc1db88439c984d944a23d703f388452e742419f3bf745030728840ac7"
+          },
+          "half_life_obach/__valid.rows.json": {
+            "bytes": 10679,
+            "sha256": "dd01c419b345e844eafde4692ffce07ab4dfd897ec8f58a5f0db458e207aa2ca"
+          },
+          "half_life_obach/__valid.meta.json": {
+            "bytes": 712,
+            "sha256": "291d0b29b5a13d378d471a97dd4c99e870bec167ae957884d2db34f9eed04bfa"
+          }
+        }
+      },
+      "source_provenance": {
+        "meta_contract_verbatim": {
+          "source_sha256": "6c61afd0585906bf7bd2c5d6656c347f9af05009c369c001040d8b9ff4dd8217",
+          "encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "encoder_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6",
+          "feature_dim": 2048,
+          "task": "half_life_obach",
+          "split": "valid"
+        },
+        "generation_packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6"
+        },
+        "encoder_identity": {
+          "mini22_encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "current_encoder_module_sha256": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "implementations_equal": false,
+          "note": "Mini22 partitions were produced by the historical mini22-encoder.py under chemprop 2.2.1 / RDKit 2025.9.6. The current accepted-src encoder.py is a different implementation of the same frozen CheMeleon checkpoint. No re-encoding was performed and no bit-level equality between the two implementations is claimed."
+        },
+        "original_source_csv_sha256": "6c61afd0585906bf7bd2c5d6656c347f9af05009c369c001040d8b9ff4dd8217",
+        "reencoded": false,
+        "encoder_forward_calls": 0
+      },
+      "consumption_identity": {
+        "source_csv_sha256": "6c61afd0585906bf7bd2c5d6656c347f9af05009c369c001040d8b9ff4dd8217",
+        "csv_bytes_equal_historical_source": true,
+        "row_identity_sha256": "c234f702779f82ff79c80e2bb8e228410712dcab32272bfd92d7f6598ca6b492",
+        "n_rows": 67,
+        "mapping": {
+          "mapping": "positional row_index / Drug_ID / Drug exact match",
+          "n_rows": 67,
+          "duplicate_or_blank_drug_id_preserved": true
+        }
+      },
+      "partition": {
+        "n_rows": 67,
+        "parsed_true_count": 67,
+        "unparsed_row_indices": [],
+        "array_content_digest": {
+          "shape": [
+            67,
+            2048
+          ],
+          "dtype": "float32",
+          "c_contiguous": true,
+          "bytes": 548864,
+          "sha256": "8418f5750580805373a16367ab8669ac05402726890388412c0ade2ecb1701d3",
+          "crc32": "7167c85e",
+          "nan_count": 0,
+          "inf_count": 0
+        },
+        "mask_content_digest": {
+          "shape": [
+            67
+          ],
+          "dtype": "bool",
+          "c_contiguous": true,
+          "bytes": 67,
+          "sha256": "8e1bc4b6253c93705e7935f7116fba1bda3383997ca588db079d1eab68bd7c0b",
+          "crc32": "387c9584",
+          "nan_count": 0,
+          "inf_count": 0
+        }
+      }
+    },
+    "test": {
+      "format": "mini22_frozen_cache_v1",
+      "task": "half_life_obach",
+      "split": "test",
+      "trust": {
+        "manifest_path": "compute-data://breadth22-confirm86-20261102/remaining64-001/input/MINI22_CACHE_MANIFEST.json",
+        "manifest_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+        "verified_files": {
+          "half_life_obach/__test.npy": {
+            "bytes": 1106048,
+            "sha256": "08734b00c13aeb5e1a73413619dcd77674e0565dc97454dfad7f77b752cff5cd"
+          },
+          "half_life_obach/__test.ok.npy": {
+            "bytes": 263,
+            "sha256": "31d04f9a05fd10327d7ef6d2cf874cf3dd6df0418d4a7f897a7930111ceb0e59"
+          },
+          "half_life_obach/__test.rows.json": {
+            "bytes": 21570,
+            "sha256": "a528867708614823c898cf04ed2f9ab3ed1fa88a12f7275099f89ca0adb1919c"
+          },
+          "half_life_obach/__test.meta.json": {
+            "bytes": 708,
+            "sha256": "721fc9b5535d022c8f8cb83c97dd04a74c899f279dff878f4d3c7ca2c4ca8025"
+          }
+        }
+      },
+      "source_provenance": {
+        "meta_contract_verbatim": {
+          "source_sha256": "c6fbbab02b52618c35661a350d3c3aec700b835ad0bdc9f820fc6b3145ff985d",
+          "encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "encoder_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6",
+          "feature_dim": 2048,
+          "task": "half_life_obach",
+          "split": "test"
+        },
+        "generation_packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6"
+        },
+        "encoder_identity": {
+          "mini22_encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "current_encoder_module_sha256": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "implementations_equal": false,
+          "note": "Mini22 partitions were produced by the historical mini22-encoder.py under chemprop 2.2.1 / RDKit 2025.9.6. The current accepted-src encoder.py is a different implementation of the same frozen CheMeleon checkpoint. No re-encoding was performed and no bit-level equality between the two implementations is claimed."
+        },
+        "original_source_csv_sha256": "c6fbbab02b52618c35661a350d3c3aec700b835ad0bdc9f820fc6b3145ff985d",
+        "reencoded": false,
+        "encoder_forward_calls": 0
+      },
+      "consumption_identity": {
+        "source_csv_sha256": "c6fbbab02b52618c35661a350d3c3aec700b835ad0bdc9f820fc6b3145ff985d",
+        "csv_bytes_equal_historical_source": true,
+        "row_identity_sha256": "a99ac5c145f4c875049412806a7cbd6865e89b2caf23a0d640a03f72ecdfd948",
+        "n_rows": 135,
+        "mapping": {
+          "mapping": "positional row_index / Drug_ID / Drug exact match",
+          "n_rows": 135,
+          "duplicate_or_blank_drug_id_preserved": true
+        }
+      },
+      "partition": {
+        "n_rows": 135,
+        "parsed_true_count": 135,
+        "unparsed_row_indices": [],
+        "array_content_digest": {
+          "shape": [
+            135,
+            2048
+          ],
+          "dtype": "float32",
+          "c_contiguous": true,
+          "bytes": 1105920,
+          "sha256": "7be76638dd7ed1a08fd298e5e23e0c82513ed85ba8e0986040a20a65e060cbfe",
+          "crc32": "edbcf891",
+          "nan_count": 0,
+          "inf_count": 0
+        },
+        "mask_content_digest": {
+          "shape": [
+            135
+          ],
+          "dtype": "bool",
+          "c_contiguous": true,
+          "bytes": 135,
+          "sha256": "532047fbf33e652fbed73fb51222a758f258bcbacabb6bfc8c5e3fa1d4bdcf24",
+          "crc32": "46e73e0f",
+          "nan_count": 0,
+          "inf_count": 0
+        }
+      }
+    }
+  },
+  "CPU_best_reload": {
+    "train": {
+      "rows": 465,
+      "max_abs_difference": 3.086829190124263e-05,
+      "rtol": 3e-05,
+      "atol": 0.001972065003714685,
+      "independent_CPU_best": true
+    },
+    "valid": {
+      "rows": 67,
+      "max_abs_difference": 2.3151218940142826e-05,
+      "rtol": 3e-05,
+      "atol": 0.001972065003714685,
+      "independent_CPU_best": true
+    },
+    "test": {
+      "rows": 135,
+      "max_abs_difference": 1.7363414201554406e-05,
+      "rtol": 3e-05,
+      "atol": 0.001972065003714685,
+      "independent_CPU_best": true
+    }
+  },
+  "prediction_summary": {
+    "train": {
+      "rows": 465,
+      "sha256": "c4cf9ab811c07de3c08455b74cac193c7a5bcaeaefe6f229a76532402c3e4b2d",
+      "parse_false_rows": []
+    },
+    "valid": {
+      "rows": 67,
+      "sha256": "97bf6eeda3e39122871c2d60651542f67bb3618147ee9f298f5aefa35cd1f4ae",
+      "parse_false_rows": []
+    },
+    "test": {
+      "rows": 135,
+      "sha256": "0d79f02cecdc813ccaf15a9a10076e876ff39b371652da723f19a149ddb088c3",
+      "parse_false_rows": []
+    }
+  },
+  "save_summaries": {
+    "initial": {
+      "path": "compute-data://breadth22-confirm86-20261102/remaining64-001/hainan-breadth22-half_life_obach-f010-s46-20261102/artifacts/head-initial.pt",
+      "sha256": "270d20878689b0c823311117e0461a18c76a08db5d26f72b950086b53af3c09f",
+      "state_dict_keys": [
+        "0.bias",
+        "0.weight",
+        "3.bias",
+        "3.weight"
+      ],
+      "has_optimizer_state": false,
+      "has_rng_state": false,
+      "progress": {
+        "epochs_completed": 0,
+        "cumulative_steps": 0
+      }
+    },
+    "best": {
+      "path": "compute-data://breadth22-confirm86-20261102/remaining64-001/hainan-breadth22-half_life_obach-f010-s46-20261102/artifacts/head-best.pt",
+      "sha256": "c436ed902b908a96941a2e74bca3cb40dc976ed83474ef9340300e510bc22b10",
+      "state_dict_keys": [
+        "0.bias",
+        "0.weight",
+        "3.bias",
+        "3.weight"
+      ],
+      "has_optimizer_state": false,
+      "has_rng_state": false,
+      "progress": {
+        "epochs_completed": 7,
+        "cumulative_steps": 28
+      }
+    },
+    "last": {
+      "path": "compute-data://breadth22-confirm86-20261102/remaining64-001/hainan-breadth22-half_life_obach-f010-s46-20261102/artifacts/head-last.pt",
+      "sha256": "236674c01e123e7b8e011a89cd4f42b26bd35d74dd0af21af8199e1b1ec97f67",
+      "state_dict_keys": [
+        "0.bias",
+        "0.weight",
+        "3.bias",
+        "3.weight"
+      ],
+      "has_optimizer_state": true,
+      "has_rng_state": true,
+      "progress": {
+        "epochs_completed": 15,
+        "cumulative_steps": 60
+      }
+    }
+  },
+  "stop_reason": "patience8",
+  "weighted_train_loss_recomputed": true,
+  "at": "2026-11-02T07:12:16.691865+00:00"
+}

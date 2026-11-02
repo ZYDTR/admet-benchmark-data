@@ -1,0 +1,961 @@
+{
+  "run_id": "hainan-breadth22-clearance_microsome_az-h0-s47-20261102",
+  "configuration": {
+    "run_id": "hainan-breadth22-clearance_microsome_az-h0-s47-20261102",
+    "task": "clearance_microsome_az",
+    "kind": "regression",
+    "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+    "head": {
+      "feature_dim": 2048,
+      "hidden_dim": 256,
+      "activation": "relu",
+      "dropout": 0.1,
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "seed": 47
+    },
+    "split": {
+      "method": "raw_smiles_group_shuffle",
+      "seed": 43,
+      "stop_fraction": 0.1
+    },
+    "monitor_metric": "Spearman",
+    "monitor_direction": "maximize"
+  },
+  "counts": {
+    "train": 770,
+    "valid": 111,
+    "test": 221
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "metric": "Spearman",
+      "value": 0.3351838672795332,
+      "improved": true,
+      "best_value": 0.3351838672795332,
+      "best_epoch": 1,
+      "steps": 6,
+      "steps_this_epoch": 6,
+      "train_loss": 1.002933939297994,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 2357.3383208587766,
+      "permutation_sha256": "a44191ea5cb18d842085b69332b00cc1103f009f9f7e6d9430e9d9d83fe1bb12",
+      "epoch_seconds": 0.025551277969498187
+    },
+    {
+      "epoch": 2,
+      "metric": "Spearman",
+      "value": 0.5072596230928055,
+      "improved": true,
+      "best_value": 0.5072596230928055,
+      "best_epoch": 2,
+      "steps": 12,
+      "steps_this_epoch": 6,
+      "train_loss": 0.5340679222113126,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 1355.8891864418983,
+      "permutation_sha256": "28473fa2dc751f8cdb6c2a2a0db6f77610fa68cb0f1d6d8b462f0f7e676b6a74",
+      "epoch_seconds": 0.05043671798193827
+    },
+    {
+      "epoch": 3,
+      "metric": "Spearman",
+      "value": 0.46577601352879533,
+      "improved": false,
+      "best_value": 0.5072596230928055,
+      "best_epoch": 2,
+      "steps": 18,
+      "steps_this_epoch": 6,
+      "train_loss": 0.3675000189788758,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 1140.619240693748,
+      "permutation_sha256": "19a05f10388eb465023fe9ba30fa8d4ab17fc775cd5fe461e685552714337fb4",
+      "epoch_seconds": 0.05293036898365244
+    },
+    {
+      "epoch": 4,
+      "metric": "Spearman",
+      "value": 0.5232006344725445,
+      "improved": true,
+      "best_value": 0.5232006344725445,
+      "best_epoch": 4,
+      "steps": 24,
+      "steps_this_epoch": 6,
+      "train_loss": 0.2705188137284261,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 976.9900102354586,
+      "permutation_sha256": "85b4873d7ff1c9808ec8b79f9133f92660ffa2432b334e7768c3de6501931d93",
+      "epoch_seconds": 0.03211077500600368
+    },
+    {
+      "epoch": 5,
+      "metric": "Spearman",
+      "value": 0.4988202641270613,
+      "improved": false,
+      "best_value": 0.5232006344725445,
+      "best_epoch": 4,
+      "steps": 30,
+      "steps_this_epoch": 6,
+      "train_loss": 0.1956744079422985,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 728.3614020049572,
+      "permutation_sha256": "b58a84954554d04067a69e3dc4fc7b4f1582bc52722c54a8a8c204aeb22e69ca",
+      "epoch_seconds": 0.053028339985758066
+    },
+    {
+      "epoch": 6,
+      "metric": "Spearman",
+      "value": 0.5337003064252309,
+      "improved": true,
+      "best_value": 0.5337003064252309,
+      "best_epoch": 6,
+      "steps": 36,
+      "steps_this_epoch": 6,
+      "train_loss": 0.15061252631924368,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 607.8505687713623,
+      "permutation_sha256": "491581acd73969590636d4b05802cc2aeb3ac6af8875a032cc84bbff4b3a2816",
+      "epoch_seconds": 0.041419323009904474
+    },
+    {
+      "epoch": 7,
+      "metric": "Spearman",
+      "value": 0.5256043329573105,
+      "improved": false,
+      "best_value": 0.5337003064252309,
+      "best_epoch": 6,
+      "steps": 42,
+      "steps_this_epoch": 6,
+      "train_loss": 0.13038014089433317,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 571.345820358023,
+      "permutation_sha256": "40f95482164e0b280fe02e9fc792519f6063fc62aec895033f6d5ecae1b296bb",
+      "epoch_seconds": 0.05313521402422339
+    },
+    {
+      "epoch": 8,
+      "metric": "Spearman",
+      "value": 0.4996919350061523,
+      "improved": false,
+      "best_value": 0.5337003064252309,
+      "best_epoch": 6,
+      "steps": 48,
+      "steps_this_epoch": 6,
+      "train_loss": 0.10336624096654366,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 695.592342376709,
+      "permutation_sha256": "de6cc7c14b1e9a37fb600ac0a5d6d39f47a0b322b7acff4884b17910b1c4f276",
+      "epoch_seconds": 0.053082396974787116
+    },
+    {
+      "epoch": 9,
+      "metric": "Spearman",
+      "value": 0.5496016964013749,
+      "improved": true,
+      "best_value": 0.5496016964013749,
+      "best_epoch": 9,
+      "steps": 54,
+      "steps_this_epoch": 6,
+      "train_loss": 0.08491973424650202,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 547.4202691093087,
+      "permutation_sha256": "f79d90597dffe5b1047ae4408f71feae02efd22f5e78b9d8928d0b33e792c55b",
+      "epoch_seconds": 0.04798672196920961
+    },
+    {
+      "epoch": 10,
+      "metric": "Spearman",
+      "value": 0.5459301130015676,
+      "improved": false,
+      "best_value": 0.5496016964013749,
+      "best_epoch": 9,
+      "steps": 60,
+      "steps_this_epoch": 6,
+      "train_loss": 0.07813229789745069,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 490.05985790491104,
+      "permutation_sha256": "f5e78784da87be9b79804f9c0440bfcdc725ef81edb8f87ab7ae14b4430e522a",
+      "epoch_seconds": 0.05293429002631456
+    },
+    {
+      "epoch": 11,
+      "metric": "Spearman",
+      "value": 0.5664011715256733,
+      "improved": true,
+      "best_value": 0.5664011715256733,
+      "best_epoch": 11,
+      "steps": 66,
+      "steps_this_epoch": 6,
+      "train_loss": 0.06454000598381436,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 545.9730658642948,
+      "permutation_sha256": "8dfe8b6159c27cf8e3e3977b40e1e20375b6088ad3557c3c8204eea53251d2f7",
+      "epoch_seconds": 0.05277948296861723
+    },
+    {
+      "epoch": 12,
+      "metric": "Spearman",
+      "value": 0.5574995628513202,
+      "improved": false,
+      "best_value": 0.5664011715256733,
+      "best_epoch": 11,
+      "steps": 72,
+      "steps_this_epoch": 6,
+      "train_loss": 0.05989960206922514,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 682.4452016204596,
+      "permutation_sha256": "3eded0488627992efbaa471705e466115903d71e307d6b04975d444fd51b7341",
+      "epoch_seconds": 0.04266035195905715
+    },
+    {
+      "epoch": 13,
+      "metric": "Spearman",
+      "value": 0.5626371381841441,
+      "improved": false,
+      "best_value": 0.5664011715256733,
+      "best_epoch": 11,
+      "steps": 78,
+      "steps_this_epoch": 6,
+      "train_loss": 0.057076083880568305,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 434.3305087685585,
+      "permutation_sha256": "0d778102e8233ce7b3a9288f84ff729e8be5c87e55b09052c5a9b083236f430f",
+      "epoch_seconds": 0.05341245804447681
+    },
+    {
+      "epoch": 14,
+      "metric": "Spearman",
+      "value": 0.5734801956346542,
+      "improved": true,
+      "best_value": 0.5734801956346542,
+      "best_epoch": 14,
+      "steps": 84,
+      "steps_this_epoch": 6,
+      "train_loss": 0.05385885087163073,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 553.3875993797556,
+      "permutation_sha256": "642a80d018cea6e1b7631841cc200604197bd5a38008b7567c08123e729ef83d",
+      "epoch_seconds": 0.05305673199472949
+    },
+    {
+      "epoch": 15,
+      "metric": "Spearman",
+      "value": 0.5873608940274511,
+      "improved": true,
+      "best_value": 0.5873608940274511,
+      "best_epoch": 15,
+      "steps": 90,
+      "steps_this_epoch": 6,
+      "train_loss": 0.045775737280152405,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 425.8295211195946,
+      "permutation_sha256": "97975abfbef4b06bdab19b6b88acd00db6d945f344ddc0ed99bc777ea359d892",
+      "epoch_seconds": 0.04289999004686251
+    },
+    {
+      "epoch": 16,
+      "metric": "Spearman",
+      "value": 0.5789083279271752,
+      "improved": false,
+      "best_value": 0.5873608940274511,
+      "best_epoch": 15,
+      "steps": 96,
+      "steps_this_epoch": 6,
+      "train_loss": 0.05432372013158011,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 528.7168979067355,
+      "permutation_sha256": "1f3f60b48c7463e23bd5d70c63b8cbe4e40660f333fb1dbb347e3dde27264b5a",
+      "epoch_seconds": 0.05181544803781435
+    },
+    {
+      "epoch": 17,
+      "metric": "Spearman",
+      "value": 0.5894212070143933,
+      "improved": true,
+      "best_value": 0.5894212070143933,
+      "best_epoch": 17,
+      "steps": 102,
+      "steps_this_epoch": 6,
+      "train_loss": 0.04496387121352283,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 618.8745399713516,
+      "permutation_sha256": "f246dfa0fa1af55b243f6e1e0410e33156619d2d2fe61ef3d196ee7687677b8f",
+      "epoch_seconds": 0.05346847895998508
+    },
+    {
+      "epoch": 18,
+      "metric": "Spearman",
+      "value": 0.5715915753966239,
+      "improved": false,
+      "best_value": 0.5894212070143933,
+      "best_epoch": 17,
+      "steps": 108,
+      "steps_this_epoch": 6,
+      "train_loss": 0.040717523604158375,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 567.1882508918643,
+      "permutation_sha256": "d17df8192722788d3e0072212aba107c4bb26fa8368c9f3182a8a1a8e3df92b5",
+      "epoch_seconds": 0.04279853805201128
+    },
+    {
+      "epoch": 19,
+      "metric": "Spearman",
+      "value": 0.5843364602196961,
+      "improved": false,
+      "best_value": 0.5894212070143933,
+      "best_epoch": 17,
+      "steps": 114,
+      "steps_this_epoch": 6,
+      "train_loss": 0.046483288627940336,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 473.4251094907522,
+      "permutation_sha256": "efad61eb055285aa6e6cb8c4a62a9caebda4f5e658deff993996a864ed308cd1",
+      "epoch_seconds": 0.052806377003435045
+    },
+    {
+      "epoch": 20,
+      "metric": "Spearman",
+      "value": 0.5597579828562377,
+      "improved": false,
+      "best_value": 0.5894212070143933,
+      "best_epoch": 17,
+      "steps": 120,
+      "steps_this_epoch": 6,
+      "train_loss": 0.04159644949498545,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 404.4025288298726,
+      "permutation_sha256": "e2b1b69d704c9502e7b3938d05d024acad5b3bb7403cf9e2829c0f5cca9a9b64",
+      "epoch_seconds": 0.052738653030246496
+    },
+    {
+      "epoch": 21,
+      "metric": "Spearman",
+      "value": 0.5959455314730437,
+      "improved": true,
+      "best_value": 0.5959455314730437,
+      "best_epoch": 21,
+      "steps": 126,
+      "steps_this_epoch": 6,
+      "train_loss": 0.039775533840855824,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 596.010968118906,
+      "permutation_sha256": "eca88414ce29e5d5bb845d2d970075548b969e590c4c50b62f6c5d1a4284b023",
+      "epoch_seconds": 0.04667034896556288
+    },
+    {
+      "epoch": 22,
+      "metric": "Spearman",
+      "value": 0.6110016648391601,
+      "improved": true,
+      "best_value": 0.6110016648391601,
+      "best_epoch": 22,
+      "steps": 132,
+      "steps_this_epoch": 6,
+      "train_loss": 0.03311951182417109,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 365.27025862783194,
+      "permutation_sha256": "298e37823520a4fcd748231a4a7abae9cc91dc30e20bd50b22232d952d5132c5",
+      "epoch_seconds": 0.052421333035454154
+    },
+    {
+      "epoch": 23,
+      "metric": "Spearman",
+      "value": 0.5942153968493935,
+      "improved": false,
+      "best_value": 0.6110016648391601,
+      "best_epoch": 22,
+      "steps": 138,
+      "steps_this_epoch": 6,
+      "train_loss": 0.03883238751199338,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 527.0557730346918,
+      "permutation_sha256": "ceb313a2cad7517ef90eeb12ab07efc67b3a2e06e9c271f39cabfaaeecea2810",
+      "epoch_seconds": 0.05311427195556462
+    },
+    {
+      "epoch": 24,
+      "metric": "Spearman",
+      "value": 0.6063131320804134,
+      "improved": false,
+      "best_value": 0.6110016648391601,
+      "best_epoch": 22,
+      "steps": 144,
+      "steps_this_epoch": 6,
+      "train_loss": 0.036515125996751704,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 497.26281340420246,
+      "permutation_sha256": "9fc73b404b9fb0ff964f88543ee68cbd39a87d16e082bc6c8d85a623dc2ebc27",
+      "epoch_seconds": 0.040826949989423156
+    },
+    {
+      "epoch": 25,
+      "metric": "Spearman",
+      "value": 0.5759895511956736,
+      "improved": false,
+      "best_value": 0.6110016648391601,
+      "best_epoch": 22,
+      "steps": 150,
+      "steps_this_epoch": 6,
+      "train_loss": 0.042041338184609214,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 424.40262347459793,
+      "permutation_sha256": "c44f666629eade3b33ee917de6fd7380cac9dcbebd76db9ab36dde807ba6639a",
+      "epoch_seconds": 0.05289750802330673
+    },
+    {
+      "epoch": 26,
+      "metric": "Spearman",
+      "value": 0.6053093898560056,
+      "improved": false,
+      "best_value": 0.6110016648391601,
+      "best_epoch": 22,
+      "steps": 156,
+      "steps_this_epoch": 6,
+      "train_loss": 0.0391879870595268,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 435.75312047824264,
+      "permutation_sha256": "13a64351ce1de0e460f7f92c39fcdceae31a560144642106e0f0ef73265ba2cc",
+      "epoch_seconds": 0.049580754013732076
+    },
+    {
+      "epoch": 27,
+      "metric": "Spearman",
+      "value": 0.5993133507786224,
+      "improved": false,
+      "best_value": 0.6110016648391601,
+      "best_epoch": 22,
+      "steps": 162,
+      "steps_this_epoch": 6,
+      "train_loss": 0.0345181499380742,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 460.758000575006,
+      "permutation_sha256": "f357ed94e9a1103ad573ce9db7c8ae620436fe57ba0ed422480099bbf526c969",
+      "epoch_seconds": 0.053228821023367345
+    },
+    {
+      "epoch": 28,
+      "metric": "Spearman",
+      "value": 0.6309972665201252,
+      "improved": true,
+      "best_value": 0.6309972665201252,
+      "best_epoch": 28,
+      "steps": 168,
+      "steps_this_epoch": 6,
+      "train_loss": 0.03296756946507298,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 469.5137400329113,
+      "permutation_sha256": "f7240836c67ecd9193fbcee5e937badef9b45427bb48b67697540f79485fc18a",
+      "epoch_seconds": 0.05311108101159334
+    },
+    {
+      "epoch": 29,
+      "metric": "Spearman",
+      "value": 0.5973322805988702,
+      "improved": false,
+      "best_value": 0.6309972665201252,
+      "best_epoch": 28,
+      "steps": 174,
+      "steps_this_epoch": 6,
+      "train_loss": 0.031054611921224416,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 389.9083709195256,
+      "permutation_sha256": "1ddfd26dbfbfb23857e2c4d9dd2b849d40799126cfdf364110c67a8f35c53bc9",
+      "epoch_seconds": 0.05440502701094374
+    },
+    {
+      "epoch": 30,
+      "metric": "Spearman",
+      "value": 0.5734273670965275,
+      "improved": false,
+      "best_value": 0.6309972665201252,
+      "best_epoch": 28,
+      "steps": 180,
+      "steps_this_epoch": 6,
+      "train_loss": 0.03357403508749015,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 416.7293520346284,
+      "permutation_sha256": "1d256bf8c585c0b914c61a58f8b6a48fce81eae6e01810cbd222730c45b8b2b8",
+      "epoch_seconds": 0.05272467603208497
+    },
+    {
+      "epoch": 31,
+      "metric": "Spearman",
+      "value": 0.6146600411044357,
+      "improved": false,
+      "best_value": 0.6309972665201252,
+      "best_epoch": 28,
+      "steps": 186,
+      "steps_this_epoch": 6,
+      "train_loss": 0.03441819111033091,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 447.6012400314212,
+      "permutation_sha256": "47a2befa2b03e37763abdaf89d1463fa7bdbbc4641bae0e4f9f480ffeeb23d96",
+      "epoch_seconds": 0.04814157297369093
+    },
+    {
+      "epoch": 32,
+      "metric": "Spearman",
+      "value": 0.6007661355771072,
+      "improved": false,
+      "best_value": 0.6309972665201252,
+      "best_epoch": 28,
+      "steps": 192,
+      "steps_this_epoch": 6,
+      "train_loss": 0.03148437662300093,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 411.59481762349606,
+      "permutation_sha256": "123cc747f94c532d7536f789dbac0473c7f782ad98b4c13080ef918d104aec4d",
+      "epoch_seconds": 0.052423838002141565
+    },
+    {
+      "epoch": 33,
+      "metric": "Spearman",
+      "value": 0.6232710928190918,
+      "improved": false,
+      "best_value": 0.6309972665201252,
+      "best_epoch": 28,
+      "steps": 198,
+      "steps_this_epoch": 6,
+      "train_loss": 0.028717558771844894,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 421.87700971215963,
+      "permutation_sha256": "f03eb164fdda9dc7e4966e93f6688a2032d04691eb40a4bb66f488874b6a11e9",
+      "epoch_seconds": 0.053167451987974346
+    },
+    {
+      "epoch": 34,
+      "metric": "Spearman",
+      "value": 0.6082017523184438,
+      "improved": false,
+      "best_value": 0.6309972665201252,
+      "best_epoch": 28,
+      "steps": 204,
+      "steps_this_epoch": 6,
+      "train_loss": 0.02577720567433521,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 486.0145125091076,
+      "permutation_sha256": "d3f1457514e6da0e4155cae3a97dc16fbfc32bdbf4c65ad97419552f811a2a0f",
+      "epoch_seconds": 0.04679292201763019
+    },
+    {
+      "epoch": 35,
+      "metric": "Spearman",
+      "value": 0.6231126072047116,
+      "improved": false,
+      "best_value": 0.6309972665201252,
+      "best_epoch": 28,
+      "steps": 210,
+      "steps_this_epoch": 6,
+      "train_loss": 0.023089989087131804,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 325.40864384174347,
+      "permutation_sha256": "b84befaf27a4b51ebe9ffab6bb69b5bcae3b492637b9cbd1968dcb509e86d8a5",
+      "epoch_seconds": 0.05317659297725186
+    },
+    {
+      "epoch": 36,
+      "metric": "Spearman",
+      "value": 0.6159807545576038,
+      "improved": false,
+      "best_value": 0.6309972665201252,
+      "best_epoch": 28,
+      "steps": 216,
+      "steps_this_epoch": 6,
+      "train_loss": 0.028055614715208222,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 339.1895046811551,
+      "permutation_sha256": "0488f3a7961bb1717c95c1e38067f49419d4de04077d4b3a8671aea71703f01a",
+      "epoch_seconds": 0.049661083961836994
+    }
+  ],
+  "best_epoch": 28,
+  "best_steps": 168,
+  "last_steps": 216,
+  "nonzero_gradient_steps": 216,
+  "maximum_gradient_l1": 2357.3383208587766,
+  "parameter_count": 524801,
+  "encoder_parameters_buffers_unchanged": true,
+  "encoder_in_optimizer": false,
+  "encoding_calls": 0,
+  "raw_cache_root": "compute-data://breadth22-confirm86-20261102/shared/cache-mini22",
+  "cache_trust_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+  "mini22_evidence": {
+    "train": {
+      "format": "mini22_frozen_cache_v1",
+      "task": "clearance_microsome_az",
+      "split": "train",
+      "trust": {
+        "manifest_path": "compute-data://breadth22-confirm86-20261102/remaining64-001/input/MINI22_CACHE_MANIFEST.json",
+        "manifest_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+        "verified_files": {
+          "clearance_microsome_az/__train.npy": {
+            "bytes": 6307968,
+            "sha256": "26d3ef544a1830ec1ea47845ef66994086ccfad603166cb9354398d3108ed5ca"
+          },
+          "clearance_microsome_az/__train.ok.npy": {
+            "bytes": 898,
+            "sha256": "89976d93faaf94e61165dda83a29a0c10d19404cae9c71e2cd765f454c1efb31"
+          },
+          "clearance_microsome_az/__train.rows.json": {
+            "bytes": 116842,
+            "sha256": "53cf3740977700d590ede10be443486de0d921891d2b4c98e387b2f2e4d2bc7f"
+          },
+          "clearance_microsome_az/__train.meta.json": {
+            "bytes": 719,
+            "sha256": "e64280e3599024e3d22d9d0258977053b840b42cfc1ef3448ebecca1562b1638"
+          }
+        }
+      },
+      "source_provenance": {
+        "meta_contract_verbatim": {
+          "source_sha256": "4a0844973f3b059417c1214becff7ed7be69d457661c3ebb96a26099cc2e0038",
+          "encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "encoder_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6",
+          "feature_dim": 2048,
+          "task": "clearance_microsome_az",
+          "split": "train"
+        },
+        "generation_packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6"
+        },
+        "encoder_identity": {
+          "mini22_encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "current_encoder_module_sha256": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "implementations_equal": false,
+          "note": "Mini22 partitions were produced by the historical mini22-encoder.py under chemprop 2.2.1 / RDKit 2025.9.6. The current accepted-src encoder.py is a different implementation of the same frozen CheMeleon checkpoint. No re-encoding was performed and no bit-level equality between the two implementations is claimed."
+        },
+        "original_source_csv_sha256": "4a0844973f3b059417c1214becff7ed7be69d457661c3ebb96a26099cc2e0038",
+        "reencoded": false,
+        "encoder_forward_calls": 0
+      },
+      "consumption_identity": {
+        "source_csv_sha256": "4a0844973f3b059417c1214becff7ed7be69d457661c3ebb96a26099cc2e0038",
+        "csv_bytes_equal_historical_source": true,
+        "row_identity_sha256": "7736e457789a9d05f32fa5f3d6000de16429a4bb9c2ba699715e9638b848a4b6",
+        "n_rows": 770,
+        "mapping": {
+          "mapping": "positional row_index / Drug_ID / Drug exact match",
+          "n_rows": 770,
+          "duplicate_or_blank_drug_id_preserved": true
+        }
+      },
+      "partition": {
+        "n_rows": 770,
+        "parsed_true_count": 770,
+        "unparsed_row_indices": [],
+        "array_content_digest": {
+          "shape": [
+            770,
+            2048
+          ],
+          "dtype": "float32",
+          "c_contiguous": true,
+          "bytes": 6307840,
+          "sha256": "957bd85124196f7f0350ab3e8523743fc12addb37e4d44d151333d63200141b8",
+          "crc32": "9d264d07",
+          "nan_count": 0,
+          "inf_count": 0
+        },
+        "mask_content_digest": {
+          "shape": [
+            770
+          ],
+          "dtype": "bool",
+          "c_contiguous": true,
+          "bytes": 770,
+          "sha256": "9fc4d312695809cd7c26981616d7dc6f8206efc4ec93da22501188e3ab7ed53a",
+          "crc32": "0e67b496",
+          "nan_count": 0,
+          "inf_count": 0
+        }
+      }
+    },
+    "valid": {
+      "format": "mini22_frozen_cache_v1",
+      "task": "clearance_microsome_az",
+      "split": "valid",
+      "trust": {
+        "manifest_path": "compute-data://breadth22-confirm86-20261102/remaining64-001/input/MINI22_CACHE_MANIFEST.json",
+        "manifest_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+        "verified_files": {
+          "clearance_microsome_az/__valid.npy": {
+            "bytes": 909440,
+            "sha256": "2af005a9f99657583995b761330ae1ed143e79f6a59aee50e464e3ec96d66c3e"
+          },
+          "clearance_microsome_az/__valid.ok.npy": {
+            "bytes": 239,
+            "sha256": "f1724a2dbdc32361e9c18ad0cd6eeac66d9e8baac4c1f0b2288160074f6cf09b"
+          },
+          "clearance_microsome_az/__valid.rows.json": {
+            "bytes": 16992,
+            "sha256": "51cc15043e26dcd569962c2cc9b983a5b746ed32f88b90a4bdd89005d5aaa526"
+          },
+          "clearance_microsome_az/__valid.meta.json": {
+            "bytes": 719,
+            "sha256": "7b4c3904e12408cc0d88104ac2bd6621cd84f94f86734900473bda0e25a19e20"
+          }
+        }
+      },
+      "source_provenance": {
+        "meta_contract_verbatim": {
+          "source_sha256": "f804cf64e80a6aa3ee4866e7bd151904187ab8a5fc657694dc645f0dea209c48",
+          "encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "encoder_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6",
+          "feature_dim": 2048,
+          "task": "clearance_microsome_az",
+          "split": "valid"
+        },
+        "generation_packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6"
+        },
+        "encoder_identity": {
+          "mini22_encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "current_encoder_module_sha256": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "implementations_equal": false,
+          "note": "Mini22 partitions were produced by the historical mini22-encoder.py under chemprop 2.2.1 / RDKit 2025.9.6. The current accepted-src encoder.py is a different implementation of the same frozen CheMeleon checkpoint. No re-encoding was performed and no bit-level equality between the two implementations is claimed."
+        },
+        "original_source_csv_sha256": "f804cf64e80a6aa3ee4866e7bd151904187ab8a5fc657694dc645f0dea209c48",
+        "reencoded": false,
+        "encoder_forward_calls": 0
+      },
+      "consumption_identity": {
+        "source_csv_sha256": "f804cf64e80a6aa3ee4866e7bd151904187ab8a5fc657694dc645f0dea209c48",
+        "csv_bytes_equal_historical_source": true,
+        "row_identity_sha256": "9d3734524160046c078ca733fa84f878de4f915152f45c13e1f3d0f70484df41",
+        "n_rows": 111,
+        "mapping": {
+          "mapping": "positional row_index / Drug_ID / Drug exact match",
+          "n_rows": 111,
+          "duplicate_or_blank_drug_id_preserved": true
+        }
+      },
+      "partition": {
+        "n_rows": 111,
+        "parsed_true_count": 111,
+        "unparsed_row_indices": [],
+        "array_content_digest": {
+          "shape": [
+            111,
+            2048
+          ],
+          "dtype": "float32",
+          "c_contiguous": true,
+          "bytes": 909312,
+          "sha256": "8a4e7f741c0d43994c4128f2de74272931ed4c25ba75ee6a9db8eac279f49b0e",
+          "crc32": "26443a03",
+          "nan_count": 0,
+          "inf_count": 0
+        },
+        "mask_content_digest": {
+          "shape": [
+            111
+          ],
+          "dtype": "bool",
+          "c_contiguous": true,
+          "bytes": 111,
+          "sha256": "bcaaf19d6513ff0ff8698f6161d914be3f5546ed2b6107fda8b48447657d33ea",
+          "crc32": "3f1eea00",
+          "nan_count": 0,
+          "inf_count": 0
+        }
+      }
+    },
+    "test": {
+      "format": "mini22_frozen_cache_v1",
+      "task": "clearance_microsome_az",
+      "split": "test",
+      "trust": {
+        "manifest_path": "compute-data://breadth22-confirm86-20261102/remaining64-001/input/MINI22_CACHE_MANIFEST.json",
+        "manifest_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+        "verified_files": {
+          "clearance_microsome_az/__test.npy": {
+            "bytes": 1810560,
+            "sha256": "a329271d65de48a0bfd8faa3cfb352bf6915d64cadd22fd2b26affa128983053"
+          },
+          "clearance_microsome_az/__test.ok.npy": {
+            "bytes": 349,
+            "sha256": "2bab799b272a1ced329af2b36f3a43a093be68a75cb33302461cebf14f74ab46"
+          },
+          "clearance_microsome_az/__test.rows.json": {
+            "bytes": 33570,
+            "sha256": "3dc94c4a60c95a071c9c87e11c8845bdd09bb15bb1adcfae4a7f437baaf0f1ce"
+          },
+          "clearance_microsome_az/__test.meta.json": {
+            "bytes": 715,
+            "sha256": "48493fd605583a8f6e59c41ec8f1e92fbfdfe6ff272ffa693e580caa876965b2"
+          }
+        }
+      },
+      "source_provenance": {
+        "meta_contract_verbatim": {
+          "source_sha256": "fbd5934690e000e1fba8ea5aa0fdf5cd8977fdff91a0abbd06f78c62085fb39a",
+          "encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "encoder_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6",
+          "feature_dim": 2048,
+          "task": "clearance_microsome_az",
+          "split": "test"
+        },
+        "generation_packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6"
+        },
+        "encoder_identity": {
+          "mini22_encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "current_encoder_module_sha256": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "implementations_equal": false,
+          "note": "Mini22 partitions were produced by the historical mini22-encoder.py under chemprop 2.2.1 / RDKit 2025.9.6. The current accepted-src encoder.py is a different implementation of the same frozen CheMeleon checkpoint. No re-encoding was performed and no bit-level equality between the two implementations is claimed."
+        },
+        "original_source_csv_sha256": "fbd5934690e000e1fba8ea5aa0fdf5cd8977fdff91a0abbd06f78c62085fb39a",
+        "reencoded": false,
+        "encoder_forward_calls": 0
+      },
+      "consumption_identity": {
+        "source_csv_sha256": "fbd5934690e000e1fba8ea5aa0fdf5cd8977fdff91a0abbd06f78c62085fb39a",
+        "csv_bytes_equal_historical_source": true,
+        "row_identity_sha256": "6e820a3e391d2622232ddd92b6bde6aa01ca20c4e358ce02afc6618e918f6580",
+        "n_rows": 221,
+        "mapping": {
+          "mapping": "positional row_index / Drug_ID / Drug exact match",
+          "n_rows": 221,
+          "duplicate_or_blank_drug_id_preserved": true
+        }
+      },
+      "partition": {
+        "n_rows": 221,
+        "parsed_true_count": 221,
+        "unparsed_row_indices": [],
+        "array_content_digest": {
+          "shape": [
+            221,
+            2048
+          ],
+          "dtype": "float32",
+          "c_contiguous": true,
+          "bytes": 1810432,
+          "sha256": "f9d34a09c8b37c94d26aa4daba5d0c07c7b20617c4241ef2b96d62d04e098c70",
+          "crc32": "d54a9d38",
+          "nan_count": 0,
+          "inf_count": 0
+        },
+        "mask_content_digest": {
+          "shape": [
+            221
+          ],
+          "dtype": "bool",
+          "c_contiguous": true,
+          "bytes": 221,
+          "sha256": "bf5365a4dacee8ace2aad75bba96548937fc11dfdcc2d07398752e002baa9b3e",
+          "crc32": "cc9142ae",
+          "nan_count": 0,
+          "inf_count": 0
+        }
+      }
+    }
+  },
+  "CPU_best_reload": {
+    "train": {
+      "rows": 770,
+      "max_abs_difference": 4.6526043700367836e-05,
+      "rtol": 3e-05,
+      "atol": 0.0014074896790581123,
+      "independent_CPU_best": true
+    },
+    "valid": {
+      "rows": 111,
+      "max_abs_difference": 4.378921767056454e-05,
+      "rtol": 3e-05,
+      "atol": 0.0014074896790581123,
+      "independent_CPU_best": true
+    },
+    "test": {
+      "rows": 221,
+      "max_abs_difference": 0.0003503137404550216,
+      "rtol": 3e-05,
+      "atol": 0.0014074896790581123,
+      "independent_CPU_best": true
+    }
+  },
+  "prediction_summary": {
+    "train": {
+      "rows": 770,
+      "sha256": "16df1d5e23754c8c0d380b640c9b085d64aeac9969a405168c5f86e1787d150b",
+      "parse_false_rows": []
+    },
+    "valid": {
+      "rows": 111,
+      "sha256": "f72784d4ea48b7e8f663ce63d833c2dac2e7afec6ed1e76ac5b0b1bc2afd831f",
+      "parse_false_rows": []
+    },
+    "test": {
+      "rows": 221,
+      "sha256": "a1db28a9756a30e1f9ef5114712741eff085121e0945ab791dfb96e6080eeee0",
+      "parse_false_rows": []
+    }
+  },
+  "save_summaries": {
+    "initial": {
+      "path": "compute-data://breadth22-confirm86-20261102/remaining64-001/hainan-breadth22-clearance_microsome_az-h0-s47-20261102/artifacts/head-initial.pt",
+      "sha256": "294ffa02776dbe7f29848f9a2d534eb2644fea7ddbc561ded5c2cff52f68e94e",
+      "state_dict_keys": [
+        "0.bias",
+        "0.weight",
+        "3.bias",
+        "3.weight"
+      ],
+      "has_optimizer_state": false,
+      "has_rng_state": false,
+      "progress": {
+        "epochs_completed": 0,
+        "cumulative_steps": 0
+      }
+    },
+    "best": {
+      "path": "compute-data://breadth22-confirm86-20261102/remaining64-001/hainan-breadth22-clearance_microsome_az-h0-s47-20261102/artifacts/head-best.pt",
+      "sha256": "24c60c94d057ba9878b7e5c319019bae67f60135115c4e68b825ecc212cec149",
+      "state_dict_keys": [
+        "0.bias",
+        "0.weight",
+        "3.bias",
+        "3.weight"
+      ],
+      "has_optimizer_state": false,
+      "has_rng_state": false,
+      "progress": {
+        "epochs_completed": 28,
+        "cumulative_steps": 168
+      }
+    },
+    "last": {
+      "path": "compute-data://breadth22-confirm86-20261102/remaining64-001/hainan-breadth22-clearance_microsome_az-h0-s47-20261102/artifacts/head-last.pt",
+      "sha256": "4b3e952ea44eccc30dce21d1727aa4723dc29927cbf6fce241d654fbf52bcfa6",
+      "state_dict_keys": [
+        "0.bias",
+        "0.weight",
+        "3.bias",
+        "3.weight"
+      ],
+      "has_optimizer_state": true,
+      "has_rng_state": true,
+      "progress": {
+        "epochs_completed": 36,
+        "cumulative_steps": 216
+      }
+    }
+  },
+  "stop_reason": "patience8",
+  "weighted_train_loss_recomputed": true,
+  "at": "2026-11-02T07:06:27.069801+00:00"
+}

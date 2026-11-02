@@ -1,0 +1,747 @@
+{
+  "run_id": "hainan-breadth22-cyp2c9_veith-f010-s47-20261102",
+  "configuration": {
+    "run_id": "hainan-breadth22-cyp2c9_veith-f010-s47-20261102",
+    "task": "cyp2c9_veith",
+    "kind": "classification",
+    "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+    "head": {
+      "feature_dim": 2048,
+      "hidden_dim": 256,
+      "activation": "relu",
+      "dropout": 0.1,
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "seed": 47
+    },
+    "split": {
+      "method": "raw_smiles_group_shuffle",
+      "seed": 43,
+      "stop_fraction": 0.1
+    },
+    "monitor_metric": "AUPRC",
+    "monitor_direction": "maximize",
+    "feature_scaler": {
+      "method": "fit_std_denominator_floor_v1",
+      "denominator_floor": 0.01,
+      "legacy_epsilon": 1e-08,
+      "legacy_low_std_replacement": 1.0,
+      "fit_statistic_dtype": "float32",
+      "ddof": 0,
+      "transform_dtype": "float32",
+      "fit_scope": "internal_fit_only",
+      "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+    }
+  },
+  "counts": {
+    "train": 8463,
+    "valid": 1210,
+    "test": 2419
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "metric": "AUPRC",
+      "value": 0.7942858402391979,
+      "improved": true,
+      "best_value": 0.7942858402391979,
+      "best_epoch": 1,
+      "steps": 60,
+      "steps_this_epoch": 60,
+      "train_loss": 0.44528188268562713,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 437.1326536536217,
+      "permutation_sha256": "453beda393cf0496cc4ded94dab207d016f6c6f173c390665fe30282e4c53eda",
+      "epoch_seconds": 0.24730868596816435
+    },
+    {
+      "epoch": 2,
+      "metric": "AUPRC",
+      "value": 0.8166950670886689,
+      "improved": true,
+      "best_value": 0.8166950670886689,
+      "best_epoch": 2,
+      "steps": 120,
+      "steps_this_epoch": 60,
+      "train_loss": 0.3559031069936035,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 298.9698215685785,
+      "permutation_sha256": "02ce488e018e6be47393d6a110ec42cebd6ff849c7e98a30fc0e87d315a3a46b",
+      "epoch_seconds": 0.30483960499987006
+    },
+    {
+      "epoch": 3,
+      "metric": "AUPRC",
+      "value": 0.8250634271317755,
+      "improved": true,
+      "best_value": 0.8250634271317755,
+      "best_epoch": 3,
+      "steps": 180,
+      "steps_this_epoch": 60,
+      "train_loss": 0.3108199339487647,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 354.5133409835398,
+      "permutation_sha256": "2d5407850d20227f4c70d1d509dab2d3871a35fbbd534928c735ece4a8fd04df",
+      "epoch_seconds": 0.3317023480194621
+    },
+    {
+      "epoch": 4,
+      "metric": "AUPRC",
+      "value": 0.808274414748584,
+      "improved": false,
+      "best_value": 0.8250634271317755,
+      "best_epoch": 3,
+      "steps": 240,
+      "steps_this_epoch": 60,
+      "train_loss": 0.2727980729286887,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 335.1095512136817,
+      "permutation_sha256": "a5cab5859bc2090bfe9b937a5638ecef74dee2d995bbca7cae5b53c39d0eac6e",
+      "epoch_seconds": 0.36319841898512095
+    },
+    {
+      "epoch": 5,
+      "metric": "AUPRC",
+      "value": 0.8213321112769071,
+      "improved": false,
+      "best_value": 0.8250634271317755,
+      "best_epoch": 3,
+      "steps": 300,
+      "steps_this_epoch": 60,
+      "train_loss": 0.24063906398316576,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 369.17516865953803,
+      "permutation_sha256": "796aba7e5f3c15201067877024ae20a51c3e6e2af7d3082cfab5260a16514d3b",
+      "epoch_seconds": 0.36143962800269946
+    },
+    {
+      "epoch": 6,
+      "metric": "AUPRC",
+      "value": 0.8261663953307306,
+      "improved": true,
+      "best_value": 0.8261663953307306,
+      "best_epoch": 6,
+      "steps": 360,
+      "steps_this_epoch": 60,
+      "train_loss": 0.20655023368133935,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 344.85212229192257,
+      "permutation_sha256": "c520ce3f005d401d37415e332542bd6d8a1906c4d60bb3abae61299b22a6c467",
+      "epoch_seconds": 0.29359129996737465
+    },
+    {
+      "epoch": 7,
+      "metric": "AUPRC",
+      "value": 0.8237721990766276,
+      "improved": false,
+      "best_value": 0.8261663953307306,
+      "best_epoch": 6,
+      "steps": 420,
+      "steps_this_epoch": 60,
+      "train_loss": 0.18218009222484222,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 332.54420686978847,
+      "permutation_sha256": "a6950ff5ad08953b3e257c65664646773f0f84006be8d144f6ce4469e7330e2a",
+      "epoch_seconds": 0.33177140000043437
+    },
+    {
+      "epoch": 8,
+      "metric": "AUPRC",
+      "value": 0.8310062772998308,
+      "improved": true,
+      "best_value": 0.8310062772998308,
+      "best_epoch": 8,
+      "steps": 480,
+      "steps_this_epoch": 60,
+      "train_loss": 0.151308488093431,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 345.4419030174613,
+      "permutation_sha256": "ad8e8ec4d3165ce636464bd1a45e4f0ec1527a7eebb47f08b5dd4b1851be937c",
+      "epoch_seconds": 0.3623506150324829
+    },
+    {
+      "epoch": 9,
+      "metric": "AUPRC",
+      "value": 0.8418059354677673,
+      "improved": true,
+      "best_value": 0.8418059354677673,
+      "best_epoch": 9,
+      "steps": 540,
+      "steps_this_epoch": 60,
+      "train_loss": 0.13563887538525068,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 382.88505168259144,
+      "permutation_sha256": "f5f4609fff619596ab16d9a2cd274c4a0b4fb4cba09b270e89ef66120d2a5e7c",
+      "epoch_seconds": 0.3424869690206833
+    },
+    {
+      "epoch": 10,
+      "metric": "AUPRC",
+      "value": 0.8264885172489489,
+      "improved": false,
+      "best_value": 0.8418059354677673,
+      "best_epoch": 9,
+      "steps": 600,
+      "steps_this_epoch": 60,
+      "train_loss": 0.12055677659511253,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 356.867751063779,
+      "permutation_sha256": "5c149709035d73768acf5358fb1a89f8309104702be186a8478cd36d53e65081",
+      "epoch_seconds": 0.3131553750135936
+    },
+    {
+      "epoch": 11,
+      "metric": "AUPRC",
+      "value": 0.8206242971944744,
+      "improved": false,
+      "best_value": 0.8418059354677673,
+      "best_epoch": 9,
+      "steps": 660,
+      "steps_this_epoch": 60,
+      "train_loss": 0.09896755819677822,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 305.6782228127122,
+      "permutation_sha256": "03c26dbf1bb4cbbf9529a86c6b57238ee6da0fe03514ab919c86de056d2462c5",
+      "epoch_seconds": 0.32374912698287517
+    },
+    {
+      "epoch": 12,
+      "metric": "AUPRC",
+      "value": 0.8250905594633035,
+      "improved": false,
+      "best_value": 0.8418059354677673,
+      "best_epoch": 9,
+      "steps": 720,
+      "steps_this_epoch": 60,
+      "train_loss": 0.08744647860472263,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 383.8094495125115,
+      "permutation_sha256": "146f77574a20ac54360b37a2899f1aa59f39d9c5de2e419adce42d5b90655046",
+      "epoch_seconds": 0.357911676983349
+    },
+    {
+      "epoch": 13,
+      "metric": "AUPRC",
+      "value": 0.8427794419312928,
+      "improved": true,
+      "best_value": 0.8427794419312928,
+      "best_epoch": 13,
+      "steps": 780,
+      "steps_this_epoch": 60,
+      "train_loss": 0.08196056873639206,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 348.6914756251499,
+      "permutation_sha256": "c5d1a1019838847864d70818a0ade8875b3ba6f4b37011f3c9204f56b2f5111d",
+      "epoch_seconds": 0.34634854295291007
+    },
+    {
+      "epoch": 14,
+      "metric": "AUPRC",
+      "value": 0.8212053749515026,
+      "improved": false,
+      "best_value": 0.8427794419312928,
+      "best_epoch": 13,
+      "steps": 840,
+      "steps_this_epoch": 60,
+      "train_loss": 0.07061713566550969,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 340.87274946365505,
+      "permutation_sha256": "2f0ce58f60d227f20176fd7190584b3263d5ceac6588287c648cba7ca23bd10f",
+      "epoch_seconds": 0.3226519940071739
+    },
+    {
+      "epoch": 15,
+      "metric": "AUPRC",
+      "value": 0.8257718382246018,
+      "improved": false,
+      "best_value": 0.8427794419312928,
+      "best_epoch": 13,
+      "steps": 900,
+      "steps_this_epoch": 60,
+      "train_loss": 0.06589989204415032,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 406.44367895275354,
+      "permutation_sha256": "c6c9f643da531fbd51547ae15c100b9540ab4628b0f8e5f3ad90afb13587201e",
+      "epoch_seconds": 0.31985605601221323
+    },
+    {
+      "epoch": 16,
+      "metric": "AUPRC",
+      "value": 0.8357207399555983,
+      "improved": false,
+      "best_value": 0.8427794419312928,
+      "best_epoch": 13,
+      "steps": 960,
+      "steps_this_epoch": 60,
+      "train_loss": 0.06045640443091131,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 301.753944309894,
+      "permutation_sha256": "8517ad11b985fe859df55f02d1e6a758762e1b7e1eb360c8f42ad45533879fe7",
+      "epoch_seconds": 0.3437549149966799
+    },
+    {
+      "epoch": 17,
+      "metric": "AUPRC",
+      "value": 0.833698887350564,
+      "improved": false,
+      "best_value": 0.8427794419312928,
+      "best_epoch": 13,
+      "steps": 1020,
+      "steps_this_epoch": 60,
+      "train_loss": 0.05489284853961182,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 338.78121247701347,
+      "permutation_sha256": "8c2431f85af605076ba6dec3827a84771589a7bd214928391eb5641139a77dd9",
+      "epoch_seconds": 0.334762068989221
+    },
+    {
+      "epoch": 18,
+      "metric": "AUPRC",
+      "value": 0.8303791641799332,
+      "improved": false,
+      "best_value": 0.8427794419312928,
+      "best_epoch": 13,
+      "steps": 1080,
+      "steps_this_epoch": 60,
+      "train_loss": 0.04669786007037795,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 399.20827699266374,
+      "permutation_sha256": "896471b3a70f1413c6d8fee2a422968652e91d8268b9ec2bf97985e8adbec16c",
+      "epoch_seconds": 0.35771474201465026
+    },
+    {
+      "epoch": 19,
+      "metric": "AUPRC",
+      "value": 0.8285034146186893,
+      "improved": false,
+      "best_value": 0.8427794419312928,
+      "best_epoch": 13,
+      "steps": 1140,
+      "steps_this_epoch": 60,
+      "train_loss": 0.04839303293110732,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 268.6642963187769,
+      "permutation_sha256": "fea331451c94642b01e2f2e79bf3856715ba13e57d1f5ac2bb4fe258bdf1a6d7",
+      "epoch_seconds": 0.3014610229874961
+    },
+    {
+      "epoch": 20,
+      "metric": "AUPRC",
+      "value": 0.8403319198797643,
+      "improved": false,
+      "best_value": 0.8427794419312928,
+      "best_epoch": 13,
+      "steps": 1200,
+      "steps_this_epoch": 60,
+      "train_loss": 0.042947199006351064,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 402.64846548903733,
+      "permutation_sha256": "680df1b4af9d4ecd71dd5b438df722c199c106c965450832100862a7565f488c",
+      "epoch_seconds": 0.3297976359608583
+    },
+    {
+      "epoch": 21,
+      "metric": "AUPRC",
+      "value": 0.8248274352160795,
+      "improved": false,
+      "best_value": 0.8427794419312928,
+      "best_epoch": 13,
+      "steps": 1260,
+      "steps_this_epoch": 60,
+      "train_loss": 0.04056243816442231,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 345.51468415465206,
+      "permutation_sha256": "4a760380e7f82d7126d6a22b650df6835817de07f894b8ac19026c1782c045a9",
+      "epoch_seconds": 0.3485699470038526
+    }
+  ],
+  "best_epoch": 13,
+  "best_steps": 780,
+  "last_steps": 1260,
+  "nonzero_gradient_steps": 1260,
+  "maximum_gradient_l1": 437.1326536536217,
+  "parameter_count": 524801,
+  "encoder_parameters_buffers_unchanged": true,
+  "encoder_in_optimizer": false,
+  "encoding_calls": 0,
+  "raw_cache_root": "compute-data://breadth22-confirm86-20261102/shared/cache-mini22",
+  "cache_trust_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+  "mini22_evidence": {
+    "train": {
+      "format": "mini22_frozen_cache_v1",
+      "task": "cyp2c9_veith",
+      "split": "train",
+      "trust": {
+        "manifest_path": "compute-data://breadth22-confirm86-20261102/remaining64-001/input/MINI22_CACHE_MANIFEST.json",
+        "manifest_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+        "verified_files": {
+          "cyp2c9_veith/__train.npy": {
+            "bytes": 69329024,
+            "sha256": "0cf0618ed3f535e11fee2f015d8770e2605267b306ba1d538a6f64608dad54fa"
+          },
+          "cyp2c9_veith/__train.ok.npy": {
+            "bytes": 8591,
+            "sha256": "eba0041828619cb95b5d49dba1ae21f1525ee53625be9607ebd09263f95d6f24"
+          },
+          "cyp2c9_veith/__train.rows.json": {
+            "bytes": 1232166,
+            "sha256": "88a2d42651abd57cd5e96da84df7dbb367240f900bc6b744446afe91a3adcdd2"
+          },
+          "cyp2c9_veith/__train.meta.json": {
+            "bytes": 709,
+            "sha256": "ef9fbe6620b7bb230681e38a3e0a1622ec06d1c79a96b3e9bbe1b68ee99af8f0"
+          }
+        }
+      },
+      "source_provenance": {
+        "meta_contract_verbatim": {
+          "source_sha256": "4414aaa7ce7ac6d588c55d09292a47dd74b4c70bb78338affff655fbe715ebf2",
+          "encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "encoder_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6",
+          "feature_dim": 2048,
+          "task": "cyp2c9_veith",
+          "split": "train"
+        },
+        "generation_packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6"
+        },
+        "encoder_identity": {
+          "mini22_encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "current_encoder_module_sha256": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "implementations_equal": false,
+          "note": "Mini22 partitions were produced by the historical mini22-encoder.py under chemprop 2.2.1 / RDKit 2025.9.6. The current accepted-src encoder.py is a different implementation of the same frozen CheMeleon checkpoint. No re-encoding was performed and no bit-level equality between the two implementations is claimed."
+        },
+        "original_source_csv_sha256": "4414aaa7ce7ac6d588c55d09292a47dd74b4c70bb78338affff655fbe715ebf2",
+        "reencoded": false,
+        "encoder_forward_calls": 0
+      },
+      "consumption_identity": {
+        "source_csv_sha256": "4414aaa7ce7ac6d588c55d09292a47dd74b4c70bb78338affff655fbe715ebf2",
+        "csv_bytes_equal_historical_source": true,
+        "row_identity_sha256": "8b42fd230ab85f94fb53abe21513c7e8cca06380bfce5302de8f2a7d126ab3d5",
+        "n_rows": 8463,
+        "mapping": {
+          "mapping": "positional row_index / Drug_ID / Drug exact match",
+          "n_rows": 8463,
+          "duplicate_or_blank_drug_id_preserved": true
+        }
+      },
+      "partition": {
+        "n_rows": 8463,
+        "parsed_true_count": 8463,
+        "unparsed_row_indices": [],
+        "array_content_digest": {
+          "shape": [
+            8463,
+            2048
+          ],
+          "dtype": "float32",
+          "c_contiguous": true,
+          "bytes": 69328896,
+          "sha256": "fcd58a2a0c117ee522baacfbe679a60201ac0d65ea1c0da29fc3033c0b28827c",
+          "crc32": "02bca012",
+          "nan_count": 0,
+          "inf_count": 0
+        },
+        "mask_content_digest": {
+          "shape": [
+            8463
+          ],
+          "dtype": "bool",
+          "c_contiguous": true,
+          "bytes": 8463,
+          "sha256": "3c6c194690ee99d0d50ef43937be58cfbd3053ec45530c8a6e99295e02064df9",
+          "crc32": "9ba0fc2b",
+          "nan_count": 0,
+          "inf_count": 0
+        }
+      }
+    },
+    "valid": {
+      "format": "mini22_frozen_cache_v1",
+      "task": "cyp2c9_veith",
+      "split": "valid",
+      "trust": {
+        "manifest_path": "compute-data://breadth22-confirm86-20261102/remaining64-001/input/MINI22_CACHE_MANIFEST.json",
+        "manifest_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+        "verified_files": {
+          "cyp2c9_veith/__valid.npy": {
+            "bytes": 9912448,
+            "sha256": "b5331e8402cf9ef74a13f77fc520179bb9dce1587d65ba20af5921725b4633c5"
+          },
+          "cyp2c9_veith/__valid.ok.npy": {
+            "bytes": 1338,
+            "sha256": "20dcc21a1711950f47b9354d909312ed94f7d20c1980539a8fcff2879c18a0a9"
+          },
+          "cyp2c9_veith/__valid.rows.json": {
+            "bytes": 174381,
+            "sha256": "a63455ecf8c0cbaf992abc09b1c49e5aa9ac0f2c5702ac7e58c55fcbf0c6be6a"
+          },
+          "cyp2c9_veith/__valid.meta.json": {
+            "bytes": 709,
+            "sha256": "8a7ab47b71d1d2154e8ad27a7cb12cdc26321f75cece710a7030e22b11afd8da"
+          }
+        }
+      },
+      "source_provenance": {
+        "meta_contract_verbatim": {
+          "source_sha256": "7df841fda6ad457893a5230000b61d4b6362b739fc56091992d0554c83910ea3",
+          "encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "encoder_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6",
+          "feature_dim": 2048,
+          "task": "cyp2c9_veith",
+          "split": "valid"
+        },
+        "generation_packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6"
+        },
+        "encoder_identity": {
+          "mini22_encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "current_encoder_module_sha256": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "implementations_equal": false,
+          "note": "Mini22 partitions were produced by the historical mini22-encoder.py under chemprop 2.2.1 / RDKit 2025.9.6. The current accepted-src encoder.py is a different implementation of the same frozen CheMeleon checkpoint. No re-encoding was performed and no bit-level equality between the two implementations is claimed."
+        },
+        "original_source_csv_sha256": "7df841fda6ad457893a5230000b61d4b6362b739fc56091992d0554c83910ea3",
+        "reencoded": false,
+        "encoder_forward_calls": 0
+      },
+      "consumption_identity": {
+        "source_csv_sha256": "7df841fda6ad457893a5230000b61d4b6362b739fc56091992d0554c83910ea3",
+        "csv_bytes_equal_historical_source": true,
+        "row_identity_sha256": "4e215a263e1288d3a3d35c97b6b4267cd949889ec907615dd6a1ec366053c258",
+        "n_rows": 1210,
+        "mapping": {
+          "mapping": "positional row_index / Drug_ID / Drug exact match",
+          "n_rows": 1210,
+          "duplicate_or_blank_drug_id_preserved": true
+        }
+      },
+      "partition": {
+        "n_rows": 1210,
+        "parsed_true_count": 1210,
+        "unparsed_row_indices": [],
+        "array_content_digest": {
+          "shape": [
+            1210,
+            2048
+          ],
+          "dtype": "float32",
+          "c_contiguous": true,
+          "bytes": 9912320,
+          "sha256": "a43c9e05e7aaf461222625fce8febb405ce48feef8cf0bfcf96201370891fcfc",
+          "crc32": "5664a04d",
+          "nan_count": 0,
+          "inf_count": 0
+        },
+        "mask_content_digest": {
+          "shape": [
+            1210
+          ],
+          "dtype": "bool",
+          "c_contiguous": true,
+          "bytes": 1210,
+          "sha256": "8bf76643d4fb0ddb53839d0134cab8bd13765552801eb6b559882a85be316ba6",
+          "crc32": "67d8ae33",
+          "nan_count": 0,
+          "inf_count": 0
+        }
+      }
+    },
+    "test": {
+      "format": "mini22_frozen_cache_v1",
+      "task": "cyp2c9_veith",
+      "split": "test",
+      "trust": {
+        "manifest_path": "compute-data://breadth22-confirm86-20261102/remaining64-001/input/MINI22_CACHE_MANIFEST.json",
+        "manifest_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+        "verified_files": {
+          "cyp2c9_veith/__test.npy": {
+            "bytes": 19816576,
+            "sha256": "a633c19b3b525b525b05c829b51bfc538a5118f05f865baa1d5f6d31f9db6c52"
+          },
+          "cyp2c9_veith/__test.ok.npy": {
+            "bytes": 2547,
+            "sha256": "682dc8e368425b6623758dbfedd1d22dcc9af0963b2c40d1cab703d765d74dba"
+          },
+          "cyp2c9_veith/__test.rows.json": {
+            "bytes": 346500,
+            "sha256": "5f5b4cdf357de66bacec4f4aee32a70e45a8d0c5961b6b1c95ab2806ac09a5fe"
+          },
+          "cyp2c9_veith/__test.meta.json": {
+            "bytes": 705,
+            "sha256": "61c4113dbe11b62d0ec6000429781c1077aa5a774af52a20c992fa811785f72a"
+          }
+        }
+      },
+      "source_provenance": {
+        "meta_contract_verbatim": {
+          "source_sha256": "10a2feb061bf63c48da7ad74b94991693e382d7fa0d56acb37fc4a306ae727d2",
+          "encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "encoder_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6",
+          "feature_dim": 2048,
+          "task": "cyp2c9_veith",
+          "split": "test"
+        },
+        "generation_packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6"
+        },
+        "encoder_identity": {
+          "mini22_encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "current_encoder_module_sha256": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "implementations_equal": false,
+          "note": "Mini22 partitions were produced by the historical mini22-encoder.py under chemprop 2.2.1 / RDKit 2025.9.6. The current accepted-src encoder.py is a different implementation of the same frozen CheMeleon checkpoint. No re-encoding was performed and no bit-level equality between the two implementations is claimed."
+        },
+        "original_source_csv_sha256": "10a2feb061bf63c48da7ad74b94991693e382d7fa0d56acb37fc4a306ae727d2",
+        "reencoded": false,
+        "encoder_forward_calls": 0
+      },
+      "consumption_identity": {
+        "source_csv_sha256": "10a2feb061bf63c48da7ad74b94991693e382d7fa0d56acb37fc4a306ae727d2",
+        "csv_bytes_equal_historical_source": true,
+        "row_identity_sha256": "df357d90c27adb29662226f7e06c8878296989e9954281ded6d317c5e57ffbdd",
+        "n_rows": 2419,
+        "mapping": {
+          "mapping": "positional row_index / Drug_ID / Drug exact match",
+          "n_rows": 2419,
+          "duplicate_or_blank_drug_id_preserved": true
+        }
+      },
+      "partition": {
+        "n_rows": 2419,
+        "parsed_true_count": 2419,
+        "unparsed_row_indices": [],
+        "array_content_digest": {
+          "shape": [
+            2419,
+            2048
+          ],
+          "dtype": "float32",
+          "c_contiguous": true,
+          "bytes": 19816448,
+          "sha256": "656494d17e91c913d1f3e07081c5fef82ab2e36daaa7b713f56366f8dda7cd61",
+          "crc32": "9339fa82",
+          "nan_count": 0,
+          "inf_count": 0
+        },
+        "mask_content_digest": {
+          "shape": [
+            2419
+          ],
+          "dtype": "bool",
+          "c_contiguous": true,
+          "bytes": 2419,
+          "sha256": "b236a67fcaee312b463b63e757028a64817b4e4e3e8556041d03ce8d34a84904",
+          "crc32": "879e1c7f",
+          "nan_count": 0,
+          "inf_count": 0
+        }
+      }
+    }
+  },
+  "CPU_best_reload": {
+    "train": {
+      "rows": 8463,
+      "max_abs_difference": 5.577296474101878e-07,
+      "rtol": 3e-05,
+      "atol": 6e-05,
+      "independent_CPU_best": true
+    },
+    "valid": {
+      "rows": 1210,
+      "max_abs_difference": 2.7320737433500497e-07,
+      "rtol": 3e-05,
+      "atol": 6e-05,
+      "independent_CPU_best": true
+    },
+    "test": {
+      "rows": 2419,
+      "max_abs_difference": 6.231095006636878e-07,
+      "rtol": 3e-05,
+      "atol": 6e-05,
+      "independent_CPU_best": true
+    }
+  },
+  "prediction_summary": {
+    "train": {
+      "rows": 8463,
+      "sha256": "d47de4752e8529c89268f248abd1ea14a0ded0aa6d038dfcc1374e6d3060e5bd",
+      "parse_false_rows": []
+    },
+    "valid": {
+      "rows": 1210,
+      "sha256": "d7208766afb968c7ee9a3c91a8c226fbd5f6d495e696c64a7a952f05398f0bf7",
+      "parse_false_rows": []
+    },
+    "test": {
+      "rows": 2419,
+      "sha256": "70c400d82720a0ab95ff4a556ce07241a2ee46e09cc9970cfb9447fc7d2c5cd5",
+      "parse_false_rows": []
+    }
+  },
+  "save_summaries": {
+    "initial": {
+      "path": "compute-data://breadth22-confirm86-20261102/remaining64-001/hainan-breadth22-cyp2c9_veith-f010-s47-20261102/artifacts/head-initial.pt",
+      "sha256": "679b63e6e04b6e8f708e09c1b16664b08f59d5af55e7e201bd4b4eac4c7306e7",
+      "state_dict_keys": [
+        "0.bias",
+        "0.weight",
+        "3.bias",
+        "3.weight"
+      ],
+      "has_optimizer_state": false,
+      "has_rng_state": false,
+      "progress": {
+        "epochs_completed": 0,
+        "cumulative_steps": 0
+      }
+    },
+    "best": {
+      "path": "compute-data://breadth22-confirm86-20261102/remaining64-001/hainan-breadth22-cyp2c9_veith-f010-s47-20261102/artifacts/head-best.pt",
+      "sha256": "13f99959c6a3c0f76b603fbf0f84dabb0253b13b19dd947b5a80b46a0949884d",
+      "state_dict_keys": [
+        "0.bias",
+        "0.weight",
+        "3.bias",
+        "3.weight"
+      ],
+      "has_optimizer_state": false,
+      "has_rng_state": false,
+      "progress": {
+        "epochs_completed": 13,
+        "cumulative_steps": 780
+      }
+    },
+    "last": {
+      "path": "compute-data://breadth22-confirm86-20261102/remaining64-001/hainan-breadth22-cyp2c9_veith-f010-s47-20261102/artifacts/head-last.pt",
+      "sha256": "9820eb68b7f1f27b4e3e71ecc1b8f2439c4ea5570b030477999183343901bd7b",
+      "state_dict_keys": [
+        "0.bias",
+        "0.weight",
+        "3.bias",
+        "3.weight"
+      ],
+      "has_optimizer_state": true,
+      "has_rng_state": true,
+      "progress": {
+        "epochs_completed": 21,
+        "cumulative_steps": 1260
+      }
+    }
+  },
+  "stop_reason": "patience8",
+  "weighted_train_loss_recomputed": true,
+  "at": "2026-11-02T07:08:49.604402+00:00"
+}

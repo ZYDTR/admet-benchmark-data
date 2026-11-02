@@ -1,0 +1,49 @@
+{
+  "executed_training": false,
+  "encoder_loaded": false,
+  "checks": [
+    {
+      "name": "dili_real_train_load",
+      "result": "pass",
+      "rows": 331,
+      "original_provenance_kept": {
+        "chemprop": "2.2.1",
+        "rdkit": "2025.9.6"
+      }
+    },
+    {
+      "name": "changed_live_row",
+      "result": "rejected_as_expected",
+      "message": "mini22 row mapping mismatch at dili/train row 0: cache (drug_id='30322.0', smiles='CC1OC(OC2C(O)CC(OC3C(O)CC(OC4CCC5(C)C(CCC6C5CC(O)C5(C)C(C7=CC(=O)OC7)CCC65O)C4)OC3C)OC2C)CC(O)C1O') != live (Drug_ID='30322.0', Drug='changed-by-root-check')"
+    },
+    {
+      "name": "caco2_wang_real_train_load",
+      "result": "pass",
+      "rows": 637,
+      "original_provenance_kept": {
+        "chemprop": "2.2.1",
+        "rdkit": "2025.9.6"
+      }
+    },
+    {
+      "name": "wrong_trusted_anchor",
+      "result": "rejected_as_expected",
+      "message": "mini22 trusted manifest digest mismatch: c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d != controller anchor 0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "name": "duplicate_blank_invalid_row_preserved",
+      "result": "pass"
+    },
+    {
+      "name": "reordered_row_identity",
+      "result": "rejected_as_expected",
+      "message": "mini22 row order mismatch at position 0: row_index 1 != 0 (row position is authoritative)"
+    },
+    {
+      "name": "invalid_row_nonzero_feature",
+      "result": "rejected_as_expected",
+      "message": "mini22 zero-fill violation on unparseable rows: [2]"
+    }
+  ],
+  "bridge_sha256": "7a4afd41ebdd08ad42533a7570a9a3daf8bf792391d88be9388645fb8f472f59"
+}

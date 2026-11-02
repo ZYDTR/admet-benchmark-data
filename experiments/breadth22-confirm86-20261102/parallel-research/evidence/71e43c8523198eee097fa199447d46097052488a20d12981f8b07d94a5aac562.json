@@ -1,0 +1,205 @@
+[
+  {
+    "direction_id": "D1",
+    "linked_issues": [
+      "I-F010-CAUSAL-SCOPE"
+    ],
+    "rationale": "分母floor是当前唯一明确改变的数值路径，适合受控剂量验证。",
+    "evidence_refs": [
+      "turn496576view2",
+      "turn604151view3",
+      "turn496576view9"
+    ],
+    "counterevidence": "CYP方向翻转、seed数少、H0历史实现不同。",
+    "candidate_models_or_modules": [
+      "CheMeleon frozen 2048-d features + current scalar head"
+    ],
+    "parameters": {
+      "floor": [
+        0.001,
+        0.003,
+        0.01,
+        0.03
+      ],
+      "control": "H0=d0",
+      "seeds": [
+        48,
+        49
+      ],
+      "panel": "预先指定代表性分类/回归任务"
+    },
+    "combination_constraints": "只改floor；头、优化器、split、目标变换和早停固定；H0对照共享计一次。",
+    "search_method": "sequential dose-response on small panel; then confirm selected floor",
+    "configuration_count_or_counting_rule": "4个floor候选+H0；不扩展为22任务全因子",
+    "seeds": [
+      48,
+      49
+    ],
+    "estimated_run_count": "panel_task_count × floor_config_count × 2 seeds; controller sets panel size after P0",
+    "cost_assumptions": "复用缓存；新floor如runner无字段则new_code；按本轮角色耗时校准",
+    "readiness": "待确认runner可配置floor；当前H0/F001/F010路径已实现",
+    "priority": "P0",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D2",
+    "linked_issues": [
+      "I-CYP-SEED-HETEROGENEITY"
+    ],
+    "rationale": "CYP2D6为现有反例，应先增加共同seed确认而非宣称机制。",
+    "evidence_refs": [
+      "turn664424view5",
+      "turn496576view9"
+    ],
+    "counterevidence": "无逐行Valid残差；仅两seed；AUPRC官方定义未确认。",
+    "candidate_models_or_modules": [
+      "CheMeleon frozen 2048-d features + BCE-logit head"
+    ],
+    "parameters": {
+      "seeds": [
+        46,
+        47
+      ],
+      "configs": [
+        "H0",
+        "F010"
+      ],
+      "metric": "AUPRC average_precision local"
+    },
+    "combination_constraints": "保持同task/split/feature cache/head/optimizer，仅scaler tag变化。",
+    "search_method": "paired seed confirmation; conditional two more seeds only if direction flips",
+    "configuration_count_or_counting_rule": "1 task × 2 configs × 2 seeds = 4 gross fits; existing seed46 H0 not present for CYP, so 4 new",
+    "seeds": [
+      46,
+      47
+    ],
+    "estimated_run_count": 4,
+    "cost_assumptions": "复用当前CYP2D6特征cache，需确认SHA/row identity",
+    "readiness": "config_only after cache identity confirmation",
+    "priority": "P0",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D3",
+    "linked_issues": [
+      "I-16TASK-CACHE-READINESS"
+    ],
+    "rationale": "把Mini22历史扩展到剩余16任务，关键瓶颈是当前runner可复用的身份匹配cache，而不是先换模型。",
+    "evidence_refs": [
+      "turn604151view1",
+      "turn213441view0",
+      "turn604151view2"
+    ],
+    "counterevidence": "缓存与runner兼容未证实；部分底座旧准备失败或deferred。",
+    "candidate_models_or_modules": [
+      "CheMeleon frozen encoder; no new scientific base"
+    ],
+    "parameters": {
+      "tasks": "exact remaining 16 task IDs in next_batch_guide.md",
+      "configs": [
+        "H0",
+        "F010"
+      ],
+      "seeds": [
+        46,
+        47
+      ]
+    },
+    "combination_constraints": "逐任务通过cache/row identity fixture后才注册；不允许占位符proposal。",
+    "search_method": "zero-fit readiness gate, then per-task paired screen",
+    "configuration_count_or_counting_rule": "16 tasks × 2 configs × 2 seeds = 64 fits only if all 16 pass; partial readiness scales exactly",
+    "seeds": [
+      46,
+      47
+    ],
+    "estimated_run_count": 64,
+    "cost_assumptions": "cache preparation shared per task; 1733s/28 role-time scaling only rough calibration",
+    "readiness": "blocked_assets",
+    "priority": "P1",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D4",
+    "linked_issues": [
+      "I-F010-CAUSAL-SCOPE"
+    ],
+    "rationale": "头容量/正则与优化几何可能与floor存在交互，应采用分阶段而非全因子搜索。",
+    "evidence_refs": [
+      "turn496576view2",
+      "turn604151view3"
+    ],
+    "counterevidence": "当前仅有单一头容量和AdamW设置，无证据证明加宽或改lr会提升。",
+    "candidate_models_or_modules": [
+      "CheMeleon frozen features; MLP head"
+    ],
+    "parameters": {
+      "hidden_dim": [
+        128,
+        256,
+        512
+      ],
+      "dropout": [
+        0,
+        0.1,
+        0.2
+      ],
+      "lr": [
+        0.0001,
+        0.0003,
+        0.0005,
+        0.001
+      ],
+      "weight_decay": [
+        1e-05,
+        0.0001,
+        0.001
+      ]
+    },
+    "combination_constraints": "先3×3头筛选，再固定胜出头筛lr，最后固定lr筛wd；每步one_factor或明确bundle。",
+    "search_method": "sequential screening with shared H0/F010 controls",
+    "configuration_count_or_counting_rule": "9 head combos per representative task; 4 lr candidates at fixed wd; 3 wd candidates at selected lr; no full Cartesian product",
+    "seeds": [
+      48,
+      49
+    ],
+    "estimated_run_count": "only after P0/P1; budget by selected representative tasks",
+    "cost_assumptions": "new config fields require code/interface acceptance; training time measured per config",
+    "readiness": "partly config_only only if runner supports fields; otherwise new_code",
+    "priority": "P2",
+    "scope_status": "proposal_only"
+  },
+  {
+    "direction_id": "D5",
+    "linked_issues": [
+      "I-OFFICIAL-METRIC-SEMANTICS"
+    ],
+    "rationale": "Metric semantics and private aggregate diagnostics affect whether improvements are meaningful and comparable.",
+    "evidence_refs": [
+      "turn496576view8",
+      "turn496576view10",
+      "turn596208view0"
+    ],
+    "counterevidence": "官方评分器原件未在本轮亲读；Valid适配和多重比较风险存在。",
+    "candidate_models_or_modules": [
+      "fixed host scorer; no model change"
+    ],
+    "parameters": {
+      "checks": [
+        "official AP/AUPRC/tie semantics",
+        "aggregation formula",
+        "label units",
+        "missing policy",
+        "safe subgroup threshold"
+      ]
+    },
+    "combination_constraints": "zero-fit; no row-level truth/residual leaves private scoring; no scorer execution by training agent.",
+    "search_method": "source-level metric audit plus controller scorer fixture",
+    "configuration_count_or_counting_rule": "0 fits",
+    "seeds": [],
+    "estimated_run_count": 0,
+    "cost_assumptions": "source retrieval/review and controller fixture only",
+    "readiness": "blocked_pending_original_scorer_evidence",
+    "priority": "P0",
+    "scope_status": "proposal_only"
+  }
+]

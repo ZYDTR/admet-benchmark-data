@@ -1,0 +1,616 @@
+{
+  "run_id": "hainan-breadth22-clearance_microsome_az-h0-s46-20261102",
+  "configuration": {
+    "run_id": "hainan-breadth22-clearance_microsome_az-h0-s46-20261102",
+    "task": "clearance_microsome_az",
+    "kind": "regression",
+    "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+    "head": {
+      "feature_dim": 2048,
+      "hidden_dim": 256,
+      "activation": "relu",
+      "dropout": 0.1,
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "seed": 46
+    },
+    "split": {
+      "method": "raw_smiles_group_shuffle",
+      "seed": 43,
+      "stop_fraction": 0.1
+    },
+    "monitor_metric": "Spearman",
+    "monitor_direction": "maximize"
+  },
+  "counts": {
+    "train": 770,
+    "valid": 111,
+    "test": 221
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "metric": "Spearman",
+      "value": 0.46576280639426365,
+      "improved": true,
+      "best_value": 0.46576280639426365,
+      "best_epoch": 1,
+      "steps": 6,
+      "steps_this_epoch": 6,
+      "train_loss": 0.9533628987371492,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 2331.4301752746105,
+      "permutation_sha256": "c8339f146655cbade42a09ecc6ba18bda1e70db5f2692d9d5c6dc7d5a3871b90",
+      "epoch_seconds": 0.026158960012253374
+    },
+    {
+      "epoch": 2,
+      "metric": "Spearman",
+      "value": 0.5817478618514866,
+      "improved": true,
+      "best_value": 0.5817478618514866,
+      "best_epoch": 2,
+      "steps": 12,
+      "steps_this_epoch": 6,
+      "train_loss": 0.5653022138071266,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 2154.9026140868664,
+      "permutation_sha256": "3e8c5008be9cdfaea8cc91e7d70177ba0db5f3a380d4d159941a154f17f665c7",
+      "epoch_seconds": 0.05010627902811393
+    },
+    {
+      "epoch": 3,
+      "metric": "Spearman",
+      "value": 0.5304909727340325,
+      "improved": false,
+      "best_value": 0.5817478618514866,
+      "best_epoch": 2,
+      "steps": 18,
+      "steps_this_epoch": 6,
+      "train_loss": 0.38792756165432896,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 1397.6944251954556,
+      "permutation_sha256": "b7b82a4c52a0fb697f4658b4b57df70fe821f25f4299fdd5c988c214980946c7",
+      "epoch_seconds": 0.04699638998135924
+    },
+    {
+      "epoch": 4,
+      "metric": "Spearman",
+      "value": 0.5355360981251346,
+      "improved": false,
+      "best_value": 0.5817478618514866,
+      "best_epoch": 2,
+      "steps": 24,
+      "steps_this_epoch": 6,
+      "train_loss": 0.3146367402475806,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 1211.9766405820847,
+      "permutation_sha256": "fcaaea5317ad880959e4b355d1b0f9d09eae99ddf12b9f2a98125f536036e1ef",
+      "epoch_seconds": 0.053316848003305495
+    },
+    {
+      "epoch": 5,
+      "metric": "Spearman",
+      "value": 0.6003699215411569,
+      "improved": true,
+      "best_value": 0.6003699215411569,
+      "best_epoch": 5,
+      "steps": 30,
+      "steps_this_epoch": 6,
+      "train_loss": 0.23022719632839572,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 1043.7764270231128,
+      "permutation_sha256": "d5d2d199b50f54e4d2942065b5056ef486d8a146aa36b5a1aaa2e58dab22d6cd",
+      "epoch_seconds": 0.043346620979718864
+    },
+    {
+      "epoch": 6,
+      "metric": "Spearman",
+      "value": 0.5445433638757411,
+      "improved": false,
+      "best_value": 0.6003699215411569,
+      "best_epoch": 5,
+      "steps": 36,
+      "steps_this_epoch": 6,
+      "train_loss": 0.17935009892024692,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 1007.1884604394436,
+      "permutation_sha256": "4ab775539a40d40beb9ae07a67038dd82e0da153aad7efb860ad929dd86d15ca",
+      "epoch_seconds": 0.05352098197909072
+    },
+    {
+      "epoch": 7,
+      "metric": "Spearman",
+      "value": 0.596183259894614,
+      "improved": false,
+      "best_value": 0.6003699215411569,
+      "best_epoch": 5,
+      "steps": 42,
+      "steps_this_epoch": 6,
+      "train_loss": 0.13853537006381614,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 887.7448681816459,
+      "permutation_sha256": "9c7474435f3f3be6989b6f0b3ae8bb92a26b8ab999ba9e6fdecbf116dd45fa78",
+      "epoch_seconds": 0.052064985036849976
+    },
+    {
+      "epoch": 8,
+      "metric": "Spearman",
+      "value": 0.5684746916471471,
+      "improved": false,
+      "best_value": 0.6003699215411569,
+      "best_epoch": 5,
+      "steps": 48,
+      "steps_this_epoch": 6,
+      "train_loss": 0.1173713170368262,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 643.7877550423145,
+      "permutation_sha256": "f64349dff6f0bcb2c4a557d19614e15c86a7cd7d945e83725da3fe1b88cd5a80",
+      "epoch_seconds": 0.05348583700833842
+    },
+    {
+      "epoch": 9,
+      "metric": "Spearman",
+      "value": 0.5422849438708236,
+      "improved": false,
+      "best_value": 0.6003699215411569,
+      "best_epoch": 5,
+      "steps": 54,
+      "steps_this_epoch": 6,
+      "train_loss": 0.09571246899567641,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 619.5062583759427,
+      "permutation_sha256": "2fadc3ebb359a0cf2cdc6d58cdaea56a24006407efd8bf15d82eaff580ae23b5",
+      "epoch_seconds": 0.05300629901466891
+    },
+    {
+      "epoch": 10,
+      "metric": "Spearman",
+      "value": 0.5641691657898191,
+      "improved": false,
+      "best_value": 0.6003699215411569,
+      "best_epoch": 5,
+      "steps": 60,
+      "steps_this_epoch": 6,
+      "train_loss": 0.09337143774156446,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 769.6092147417367,
+      "permutation_sha256": "ac752622f48f9eef24f7adc5d493bc7f849751900bb48869e7bc3978a9776e59",
+      "epoch_seconds": 0.03304701903834939
+    },
+    {
+      "epoch": 11,
+      "metric": "Spearman",
+      "value": 0.5766102865186626,
+      "improved": false,
+      "best_value": 0.6003699215411569,
+      "best_epoch": 5,
+      "steps": 66,
+      "steps_this_epoch": 6,
+      "train_loss": 0.06644356724890796,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 581.4755650572479,
+      "permutation_sha256": "a20e40c5e4fc9c703545d5919b22ed3b309af18906f1f3a2ae879df2a6b66414",
+      "epoch_seconds": 0.03289511700859293
+    },
+    {
+      "epoch": 12,
+      "metric": "Spearman",
+      "value": 0.5599032613360861,
+      "improved": false,
+      "best_value": 0.6003699215411569,
+      "best_epoch": 5,
+      "steps": 72,
+      "steps_this_epoch": 6,
+      "train_loss": 0.058225419904504506,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 447.01963809132576,
+      "permutation_sha256": "57c663591b36fe506078774351a910cf6ee0635ef77bc5cbee28c715fdff1db1",
+      "epoch_seconds": 0.05314794898731634
+    },
+    {
+      "epoch": 13,
+      "metric": "Spearman",
+      "value": 0.5743914879173403,
+      "improved": false,
+      "best_value": 0.6003699215411569,
+      "best_epoch": 5,
+      "steps": 78,
+      "steps_this_epoch": 6,
+      "train_loss": 0.05531201187472839,
+      "train_loss_mode": "sample-weighted update batches in train mode with dropout",
+      "maximum_gradient_l1": 479.7826390340924,
+      "permutation_sha256": "d8d004f42641dc7052c90c5c87dc56e10458d728ba97e53f478abd57b2d7f1ea",
+      "epoch_seconds": 0.0535793179878965
+    }
+  ],
+  "best_epoch": 5,
+  "best_steps": 30,
+  "last_steps": 78,
+  "nonzero_gradient_steps": 78,
+  "maximum_gradient_l1": 2331.4301752746105,
+  "parameter_count": 524801,
+  "encoder_parameters_buffers_unchanged": true,
+  "encoder_in_optimizer": false,
+  "encoding_calls": 0,
+  "raw_cache_root": "compute-data://breadth22-confirm86-20261102/shared/cache-mini22",
+  "cache_trust_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+  "mini22_evidence": {
+    "train": {
+      "format": "mini22_frozen_cache_v1",
+      "task": "clearance_microsome_az",
+      "split": "train",
+      "trust": {
+        "manifest_path": "compute-data://breadth22-confirm86-20261102/remaining64-001/input/MINI22_CACHE_MANIFEST.json",
+        "manifest_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+        "verified_files": {
+          "clearance_microsome_az/__train.npy": {
+            "bytes": 6307968,
+            "sha256": "26d3ef544a1830ec1ea47845ef66994086ccfad603166cb9354398d3108ed5ca"
+          },
+          "clearance_microsome_az/__train.ok.npy": {
+            "bytes": 898,
+            "sha256": "89976d93faaf94e61165dda83a29a0c10d19404cae9c71e2cd765f454c1efb31"
+          },
+          "clearance_microsome_az/__train.rows.json": {
+            "bytes": 116842,
+            "sha256": "53cf3740977700d590ede10be443486de0d921891d2b4c98e387b2f2e4d2bc7f"
+          },
+          "clearance_microsome_az/__train.meta.json": {
+            "bytes": 719,
+            "sha256": "e64280e3599024e3d22d9d0258977053b840b42cfc1ef3448ebecca1562b1638"
+          }
+        }
+      },
+      "source_provenance": {
+        "meta_contract_verbatim": {
+          "source_sha256": "4a0844973f3b059417c1214becff7ed7be69d457661c3ebb96a26099cc2e0038",
+          "encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "encoder_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6",
+          "feature_dim": 2048,
+          "task": "clearance_microsome_az",
+          "split": "train"
+        },
+        "generation_packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6"
+        },
+        "encoder_identity": {
+          "mini22_encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "current_encoder_module_sha256": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "implementations_equal": false,
+          "note": "Mini22 partitions were produced by the historical mini22-encoder.py under chemprop 2.2.1 / RDKit 2025.9.6. The current accepted-src encoder.py is a different implementation of the same frozen CheMeleon checkpoint. No re-encoding was performed and no bit-level equality between the two implementations is claimed."
+        },
+        "original_source_csv_sha256": "4a0844973f3b059417c1214becff7ed7be69d457661c3ebb96a26099cc2e0038",
+        "reencoded": false,
+        "encoder_forward_calls": 0
+      },
+      "consumption_identity": {
+        "source_csv_sha256": "4a0844973f3b059417c1214becff7ed7be69d457661c3ebb96a26099cc2e0038",
+        "csv_bytes_equal_historical_source": true,
+        "row_identity_sha256": "7736e457789a9d05f32fa5f3d6000de16429a4bb9c2ba699715e9638b848a4b6",
+        "n_rows": 770,
+        "mapping": {
+          "mapping": "positional row_index / Drug_ID / Drug exact match",
+          "n_rows": 770,
+          "duplicate_or_blank_drug_id_preserved": true
+        }
+      },
+      "partition": {
+        "n_rows": 770,
+        "parsed_true_count": 770,
+        "unparsed_row_indices": [],
+        "array_content_digest": {
+          "shape": [
+            770,
+            2048
+          ],
+          "dtype": "float32",
+          "c_contiguous": true,
+          "bytes": 6307840,
+          "sha256": "957bd85124196f7f0350ab3e8523743fc12addb37e4d44d151333d63200141b8",
+          "crc32": "9d264d07",
+          "nan_count": 0,
+          "inf_count": 0
+        },
+        "mask_content_digest": {
+          "shape": [
+            770
+          ],
+          "dtype": "bool",
+          "c_contiguous": true,
+          "bytes": 770,
+          "sha256": "9fc4d312695809cd7c26981616d7dc6f8206efc4ec93da22501188e3ab7ed53a",
+          "crc32": "0e67b496",
+          "nan_count": 0,
+          "inf_count": 0
+        }
+      }
+    },
+    "valid": {
+      "format": "mini22_frozen_cache_v1",
+      "task": "clearance_microsome_az",
+      "split": "valid",
+      "trust": {
+        "manifest_path": "compute-data://breadth22-confirm86-20261102/remaining64-001/input/MINI22_CACHE_MANIFEST.json",
+        "manifest_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+        "verified_files": {
+          "clearance_microsome_az/__valid.npy": {
+            "bytes": 909440,
+            "sha256": "2af005a9f99657583995b761330ae1ed143e79f6a59aee50e464e3ec96d66c3e"
+          },
+          "clearance_microsome_az/__valid.ok.npy": {
+            "bytes": 239,
+            "sha256": "f1724a2dbdc32361e9c18ad0cd6eeac66d9e8baac4c1f0b2288160074f6cf09b"
+          },
+          "clearance_microsome_az/__valid.rows.json": {
+            "bytes": 16992,
+            "sha256": "51cc15043e26dcd569962c2cc9b983a5b746ed32f88b90a4bdd89005d5aaa526"
+          },
+          "clearance_microsome_az/__valid.meta.json": {
+            "bytes": 719,
+            "sha256": "7b4c3904e12408cc0d88104ac2bd6621cd84f94f86734900473bda0e25a19e20"
+          }
+        }
+      },
+      "source_provenance": {
+        "meta_contract_verbatim": {
+          "source_sha256": "f804cf64e80a6aa3ee4866e7bd151904187ab8a5fc657694dc645f0dea209c48",
+          "encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "encoder_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6",
+          "feature_dim": 2048,
+          "task": "clearance_microsome_az",
+          "split": "valid"
+        },
+        "generation_packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6"
+        },
+        "encoder_identity": {
+          "mini22_encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "current_encoder_module_sha256": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "implementations_equal": false,
+          "note": "Mini22 partitions were produced by the historical mini22-encoder.py under chemprop 2.2.1 / RDKit 2025.9.6. The current accepted-src encoder.py is a different implementation of the same frozen CheMeleon checkpoint. No re-encoding was performed and no bit-level equality between the two implementations is claimed."
+        },
+        "original_source_csv_sha256": "f804cf64e80a6aa3ee4866e7bd151904187ab8a5fc657694dc645f0dea209c48",
+        "reencoded": false,
+        "encoder_forward_calls": 0
+      },
+      "consumption_identity": {
+        "source_csv_sha256": "f804cf64e80a6aa3ee4866e7bd151904187ab8a5fc657694dc645f0dea209c48",
+        "csv_bytes_equal_historical_source": true,
+        "row_identity_sha256": "9d3734524160046c078ca733fa84f878de4f915152f45c13e1f3d0f70484df41",
+        "n_rows": 111,
+        "mapping": {
+          "mapping": "positional row_index / Drug_ID / Drug exact match",
+          "n_rows": 111,
+          "duplicate_or_blank_drug_id_preserved": true
+        }
+      },
+      "partition": {
+        "n_rows": 111,
+        "parsed_true_count": 111,
+        "unparsed_row_indices": [],
+        "array_content_digest": {
+          "shape": [
+            111,
+            2048
+          ],
+          "dtype": "float32",
+          "c_contiguous": true,
+          "bytes": 909312,
+          "sha256": "8a4e7f741c0d43994c4128f2de74272931ed4c25ba75ee6a9db8eac279f49b0e",
+          "crc32": "26443a03",
+          "nan_count": 0,
+          "inf_count": 0
+        },
+        "mask_content_digest": {
+          "shape": [
+            111
+          ],
+          "dtype": "bool",
+          "c_contiguous": true,
+          "bytes": 111,
+          "sha256": "bcaaf19d6513ff0ff8698f6161d914be3f5546ed2b6107fda8b48447657d33ea",
+          "crc32": "3f1eea00",
+          "nan_count": 0,
+          "inf_count": 0
+        }
+      }
+    },
+    "test": {
+      "format": "mini22_frozen_cache_v1",
+      "task": "clearance_microsome_az",
+      "split": "test",
+      "trust": {
+        "manifest_path": "compute-data://breadth22-confirm86-20261102/remaining64-001/input/MINI22_CACHE_MANIFEST.json",
+        "manifest_sha256": "c7635260b2a10accf68ea536ac2eb8fe32c3225f74c9a49d097120f16f65411d",
+        "verified_files": {
+          "clearance_microsome_az/__test.npy": {
+            "bytes": 1810560,
+            "sha256": "a329271d65de48a0bfd8faa3cfb352bf6915d64cadd22fd2b26affa128983053"
+          },
+          "clearance_microsome_az/__test.ok.npy": {
+            "bytes": 349,
+            "sha256": "2bab799b272a1ced329af2b36f3a43a093be68a75cb33302461cebf14f74ab46"
+          },
+          "clearance_microsome_az/__test.rows.json": {
+            "bytes": 33570,
+            "sha256": "3dc94c4a60c95a071c9c87e11c8845bdd09bb15bb1adcfae4a7f437baaf0f1ce"
+          },
+          "clearance_microsome_az/__test.meta.json": {
+            "bytes": 715,
+            "sha256": "48493fd605583a8f6e59c41ec8f1e92fbfdfe6ff272ffa693e580caa876965b2"
+          }
+        }
+      },
+      "source_provenance": {
+        "meta_contract_verbatim": {
+          "source_sha256": "fbd5934690e000e1fba8ea5aa0fdf5cd8977fdff91a0abbd06f78c62085fb39a",
+          "encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "encoder_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6",
+          "feature_dim": 2048,
+          "task": "clearance_microsome_az",
+          "split": "test"
+        },
+        "generation_packages": {
+          "chemprop": "2.2.1",
+          "rdkit": "2025.9.6"
+        },
+        "encoder_identity": {
+          "mini22_encoder_code_sha256": "1c8821a2d3343d34806657c6df45127b53ee2d924b889f20da70167cc233ce2f",
+          "current_encoder_module_sha256": "c05497e505fc3d73811a8c563f7eaa6e50a15ed6830043fefe61aa69994be114",
+          "implementations_equal": false,
+          "note": "Mini22 partitions were produced by the historical mini22-encoder.py under chemprop 2.2.1 / RDKit 2025.9.6. The current accepted-src encoder.py is a different implementation of the same frozen CheMeleon checkpoint. No re-encoding was performed and no bit-level equality between the two implementations is claimed."
+        },
+        "original_source_csv_sha256": "fbd5934690e000e1fba8ea5aa0fdf5cd8977fdff91a0abbd06f78c62085fb39a",
+        "reencoded": false,
+        "encoder_forward_calls": 0
+      },
+      "consumption_identity": {
+        "source_csv_sha256": "fbd5934690e000e1fba8ea5aa0fdf5cd8977fdff91a0abbd06f78c62085fb39a",
+        "csv_bytes_equal_historical_source": true,
+        "row_identity_sha256": "6e820a3e391d2622232ddd92b6bde6aa01ca20c4e358ce02afc6618e918f6580",
+        "n_rows": 221,
+        "mapping": {
+          "mapping": "positional row_index / Drug_ID / Drug exact match",
+          "n_rows": 221,
+          "duplicate_or_blank_drug_id_preserved": true
+        }
+      },
+      "partition": {
+        "n_rows": 221,
+        "parsed_true_count": 221,
+        "unparsed_row_indices": [],
+        "array_content_digest": {
+          "shape": [
+            221,
+            2048
+          ],
+          "dtype": "float32",
+          "c_contiguous": true,
+          "bytes": 1810432,
+          "sha256": "f9d34a09c8b37c94d26aa4daba5d0c07c7b20617c4241ef2b96d62d04e098c70",
+          "crc32": "d54a9d38",
+          "nan_count": 0,
+          "inf_count": 0
+        },
+        "mask_content_digest": {
+          "shape": [
+            221
+          ],
+          "dtype": "bool",
+          "c_contiguous": true,
+          "bytes": 221,
+          "sha256": "bf5365a4dacee8ace2aad75bba96548937fc11dfdcc2d07398752e002baa9b3e",
+          "crc32": "cc9142ae",
+          "nan_count": 0,
+          "inf_count": 0
+        }
+      }
+    }
+  },
+  "CPU_best_reload": {
+    "train": {
+      "rows": 770,
+      "max_abs_difference": 4.378921758529941e-05,
+      "rtol": 3e-05,
+      "atol": 0.0014074896790581123,
+      "independent_CPU_best": true
+    },
+    "valid": {
+      "rows": 111,
+      "max_abs_difference": 0.00013136765278431994,
+      "rtol": 3e-05,
+      "atol": 0.0014074896790581123,
+      "independent_CPU_best": true
+    },
+    "test": {
+      "rows": 221,
+      "max_abs_difference": 0.0005254706115920271,
+      "rtol": 3e-05,
+      "atol": 0.0014074896790581123,
+      "independent_CPU_best": true
+    }
+  },
+  "prediction_summary": {
+    "train": {
+      "rows": 770,
+      "sha256": "d6ea2d9f2a0954119998ba55b6a3c9e8ce49fa7ee1783737e2299985908d1e18",
+      "parse_false_rows": []
+    },
+    "valid": {
+      "rows": 111,
+      "sha256": "6b36134510e4d34c4c033596e731a2e9da6a9fd85d5ada3a986267258d7991fc",
+      "parse_false_rows": []
+    },
+    "test": {
+      "rows": 221,
+      "sha256": "6a8c01d86552d2c6c917211f3aa15457223860ed3e4b56a3b175771fc8b9d49f",
+      "parse_false_rows": []
+    }
+  },
+  "save_summaries": {
+    "initial": {
+      "path": "compute-data://breadth22-confirm86-20261102/remaining64-001/hainan-breadth22-clearance_microsome_az-h0-s46-20261102/artifacts/head-initial.pt",
+      "sha256": "e38e8b3b9073054e84509e4952fd8f0e321cc94affc2a9327c6db255ebb63a3b",
+      "state_dict_keys": [
+        "0.bias",
+        "0.weight",
+        "3.bias",
+        "3.weight"
+      ],
+      "has_optimizer_state": false,
+      "has_rng_state": false,
+      "progress": {
+        "epochs_completed": 0,
+        "cumulative_steps": 0
+      }
+    },
+    "best": {
+      "path": "compute-data://breadth22-confirm86-20261102/remaining64-001/hainan-breadth22-clearance_microsome_az-h0-s46-20261102/artifacts/head-best.pt",
+      "sha256": "80c1e8d90667dbe786a51e8037ad8391b883b16e900403f64c8b8092be628cc7",
+      "state_dict_keys": [
+        "0.bias",
+        "0.weight",
+        "3.bias",
+        "3.weight"
+      ],
+      "has_optimizer_state": false,
+      "has_rng_state": false,
+      "progress": {
+        "epochs_completed": 5,
+        "cumulative_steps": 30
+      }
+    },
+    "last": {
+      "path": "compute-data://breadth22-confirm86-20261102/remaining64-001/hainan-breadth22-clearance_microsome_az-h0-s46-20261102/artifacts/head-last.pt",
+      "sha256": "3e3b423db5148bcb12a18a2257c02019d3943a800773e1d38a1fa25206c9845d",
+      "state_dict_keys": [
+        "0.bias",
+        "0.weight",
+        "3.bias",
+        "3.weight"
+      ],
+      "has_optimizer_state": true,
+      "has_rng_state": true,
+      "progress": {
+        "epochs_completed": 13,
+        "cumulative_steps": 78
+      }
+    }
+  },
+  "stop_reason": "patience8",
+  "weighted_train_loss_recomputed": true,
+  "at": "2026-11-02T07:06:16.422467+00:00"
+}

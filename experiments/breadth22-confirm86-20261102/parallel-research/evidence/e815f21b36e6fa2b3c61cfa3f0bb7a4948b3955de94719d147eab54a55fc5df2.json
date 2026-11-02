@@ -1,0 +1,1034 @@
+[
+  {
+    "proposal_id": "P0-lipophilicity_astrazeneca-h0",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "lipophilicity_astrazeneca",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "MAE",
+    "direction": "minimize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "H0",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "mean_squared_error",
+      "loss_scale": "fit-only standardized Y (float64 target mean/std)",
+      "early_stopping_metric": "MAE",
+      "early_stopping_direction": "minimize",
+      "prediction_scale": "inverse-transform standardized prediction once to original task Y scale"
+    },
+    "design_type": "control"
+  },
+  {
+    "proposal_id": "P0-lipophilicity_astrazeneca-f010",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "lipophilicity_astrazeneca",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "MAE",
+    "direction": "minimize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "F010",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "mean_squared_error",
+      "loss_scale": "fit-only standardized Y (float64 target mean/std)",
+      "early_stopping_metric": "MAE",
+      "early_stopping_direction": "minimize",
+      "prediction_scale": "inverse-transform standardized prediction once to original task Y scale"
+    },
+    "design_type": "one_factor"
+  },
+  {
+    "proposal_id": "P0-bbb_martins-h0",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "bbb_martins",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "AUROC",
+    "direction": "maximize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "H0",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "binary_cross_entropy_with_logits",
+      "loss_scale": "raw classification logits",
+      "early_stopping_metric": "AUROC",
+      "early_stopping_direction": "maximize",
+      "prediction_scale": "sigmoid(logit), positive-class probability"
+    },
+    "design_type": "control"
+  },
+  {
+    "proposal_id": "P0-bbb_martins-f010",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "bbb_martins",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "AUROC",
+    "direction": "maximize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "F010",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "binary_cross_entropy_with_logits",
+      "loss_scale": "raw classification logits",
+      "early_stopping_metric": "AUROC",
+      "early_stopping_direction": "maximize",
+      "prediction_scale": "sigmoid(logit), positive-class probability"
+    },
+    "design_type": "one_factor"
+  },
+  {
+    "proposal_id": "P0-cyp2d6_veith-h0",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "cyp2d6_veith",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "AUPRC",
+    "direction": "maximize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "H0",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "binary_cross_entropy_with_logits",
+      "loss_scale": "raw classification logits",
+      "early_stopping_metric": "AUPRC",
+      "early_stopping_direction": "maximize",
+      "prediction_scale": "sigmoid(logit), positive-class probability"
+    },
+    "design_type": "control"
+  },
+  {
+    "proposal_id": "P0-cyp2d6_veith-f010",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "cyp2d6_veith",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "AUPRC",
+    "direction": "maximize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "F010",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "binary_cross_entropy_with_logits",
+      "loss_scale": "raw classification logits",
+      "early_stopping_metric": "AUPRC",
+      "early_stopping_direction": "maximize",
+      "prediction_scale": "sigmoid(logit), positive-class probability"
+    },
+    "design_type": "one_factor"
+  },
+  {
+    "proposal_id": "P0-clearance_hepatocyte_az-h0",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "clearance_hepatocyte_az",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "Spearman",
+    "direction": "maximize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "H0",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "mean_squared_error",
+      "loss_scale": "fit-only standardized Y (float64 target mean/std)",
+      "early_stopping_metric": "Spearman",
+      "early_stopping_direction": "maximize",
+      "prediction_scale": "inverse-transform standardized prediction once to original task Y scale"
+    },
+    "design_type": "control"
+  },
+  {
+    "proposal_id": "P0-clearance_hepatocyte_az-f010",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "clearance_hepatocyte_az",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "Spearman",
+    "direction": "maximize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "F010",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "mean_squared_error",
+      "loss_scale": "fit-only standardized Y (float64 target mean/std)",
+      "early_stopping_metric": "Spearman",
+      "early_stopping_direction": "maximize",
+      "prediction_scale": "inverse-transform standardized prediction once to original task Y scale"
+    },
+    "design_type": "one_factor"
+  },
+  {
+    "proposal_id": "P0-ld50_zhu-h0",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "ld50_zhu",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "MAE",
+    "direction": "minimize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "H0",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 1,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "mean_squared_error",
+      "loss_scale": "fit-only standardized Y (float64 target mean/std)",
+      "early_stopping_metric": "MAE",
+      "early_stopping_direction": "minimize",
+      "prediction_scale": "inverse-transform standardized prediction once to original task Y scale"
+    },
+    "design_type": "control"
+  },
+  {
+    "proposal_id": "P0-ld50_zhu-f010",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "ld50_zhu",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "MAE",
+    "direction": "minimize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "F010",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "mean_squared_error",
+      "loss_scale": "fit-only standardized Y (float64 target mean/std)",
+      "early_stopping_metric": "MAE",
+      "early_stopping_direction": "minimize",
+      "prediction_scale": "inverse-transform standardized prediction once to original task Y scale"
+    },
+    "design_type": "one_factor"
+  },
+  {
+    "proposal_id": "P0-solubility_aqsoldb-h0",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "solubility_aqsoldb",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "MAE",
+    "direction": "minimize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "H0",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 1,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "mean_squared_error",
+      "loss_scale": "fit-only standardized Y (float64 target mean/std)",
+      "early_stopping_metric": "MAE",
+      "early_stopping_direction": "minimize",
+      "prediction_scale": "inverse-transform standardized prediction once to original task Y scale"
+    },
+    "design_type": "control"
+  },
+  {
+    "proposal_id": "P0-solubility_aqsoldb-f010",
+    "priority": "P0",
+    "hypothesis": "F010's local gain will persist against a contemporaneous H0 control on a new seed; H0 anchors the current runner implementation.",
+    "control_run_or_config": "H0 current-runner denominator d0; shared once per task/seed",
+    "task": "solubility_aqsoldb",
+    "scientific_asset_id": "chemeleon",
+    "asset_versions": {
+      "asset_registry_source_sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282",
+      "feature_schema": "2048-d float32 CheMeleon cached representation; exact cache object SHA must be bound from asset registry before dispatch",
+      "runner": "current-interface.json at commit f172e864efbfcb33837bbdd28768b0b4f7ca03a7"
+    },
+    "change_only": "H0 vs F010 scaler denominator tag only; no other hyperparameter change",
+    "hold_fixed": [
+      "frozen CheMeleon weights and buffers",
+      "2048-d feature cache and row order",
+      "head 2048→256→1, ReLU, dropout 0.1",
+      "AdamW lr 0.0005, weight_decay 0.0001",
+      "batch 128, max_epochs 50, patience 8, min_delta 1e-7",
+      "original Drug-group split, internal stop 10%, fit-only transforms",
+      "official train.Y only; valid blind input at training time"
+    ],
+    "split_id": "official-valid-20261029-v6; original Drug-group train/stop split as registered for this benchmark",
+    "seeds": [
+      46,
+      47
+    ],
+    "metric": "MAE",
+    "direction": "minimize",
+    "minimum_effect_or_decision_rule": "No numeric threshold invented; compare paired seed-wise direction and magnitude to H0; controller sets practical threshold from existing noise/business criterion.",
+    "success_criterion": "Both new seeds improve in metric direction or controller explicitly classifies task as seed-unstable; no aggregation may hide a sign reversal.",
+    "falsification_criterion": "Both seeds fail to improve, or one/both violate freeze, label, split, row identity, prediction scale or scoring acceptance.",
+    "compute_budget": "2 fits per task/config gross; shared task/seed H0 controls; P0 total 24 gross seed-fits, 2 existing H0 seed46 reused once (LD50 and solubility), 22 unique new fits.",
+    "dependencies": [
+      "approved CheMeleon asset",
+      "identity-matched task cache",
+      "controller authorization",
+      "current runner freeze/row identity fixture"
+    ],
+    "within_current_scope": true,
+    "stage": "confirm",
+    "exact_config": {
+      "config_tag": "F010",
+      "head": {
+        "input_dim": 2048,
+        "hidden_dim": 256,
+        "output_dim": 1,
+        "activation": "ReLU",
+        "dropout": 0.1
+      },
+      "optimizer": "AdamW",
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "batch_size": 128,
+      "max_epochs": 50,
+      "patience": 8,
+      "min_delta": 1e-07,
+      "feature_dtype": "float32",
+      "feature_ddof": 0,
+      "denominator_floor": "H0=d0; F010=max(d0,0.01)",
+      "target_transform": "regression fit-only float64 mean/std; classification none",
+      "internal_stop_fraction": 0.1
+    },
+    "preparation_mode": "config_only",
+    "reuse_assets": [
+      "accepted CheMeleon frozen weights/buffers",
+      "identity-matched 2048-d cache",
+      "current scaler runner"
+    ],
+    "estimated_run_count": 2,
+    "trigger": "P0 dispatch only after controller confirms exact split ID/cache SHA and current runner config tag support.",
+    "skip_or_stop_if": "Any cache identity, row_index, freeze, target transform, reload or scorer fixture fails; reuse existing H0 seed46 LD50/AqSolDB instead of refitting.; for H0 seed46 on LD50/AqSolDB, reuse existing accepted current-runner run exactly once",
+    "review_checkpoint": "After all P0 task/config/seed outputs and independent acceptance packets return.",
+    "direction_ids": [
+      "D1",
+      "D2"
+    ],
+    "training_objective": {
+      "loss": "mean_squared_error",
+      "loss_scale": "fit-only standardized Y (float64 target mean/std)",
+      "early_stopping_metric": "MAE",
+      "early_stopping_direction": "minimize",
+      "prediction_scale": "inverse-transform standardized prediction once to original task Y scale"
+    },
+    "design_type": "one_factor"
+  }
+]

@@ -1,0 +1,104 @@
+{
+  "at_utc": "2026-11-02T07:33:27.916875+00:00",
+  "decision": "adopt_fixed_score_milestone_for_research_comparison",
+  "scored_new_runs": 64,
+  "cycle_new_scored_runs": 86,
+  "comparison_slots": 88,
+  "comparison_pairs": 44,
+  "source_digests": [
+    {
+      "role": "same_cycle_six22",
+      "path": "workspace://adhoc_jobs/admet_training/cycles/breadth22-confirm86-20261102/retrieval/six22-001/private-scoring/scores.json",
+      "sha256": "d205a3091a180a03fb4936a83a43e874361d3dc3ec7d51f5628d212c6fef6ec6"
+    },
+    {
+      "role": "previous28",
+      "path": "workspace://adhoc_jobs/admet_training/cycles/scaler-six28-20261102/retrieval/batch28-001/private-scoring/scores.json",
+      "sha256": "82026933beec42562619263a904551be59eca703a1b0095b8c223cd503990f3a"
+    },
+    {
+      "role": "original_Mini22_and_normalization",
+      "path": "workspace://adhoc_jobs/admet_training/audits/leaderboard-score-mapping-20261101/valid-score-estimate.json",
+      "sha256": "0ac0500d26bd3ff9b39c35b212ca880b6905f22b4fa32e2d849f2d535ce75a01"
+    },
+    {
+      "role": "official_formula_evidence",
+      "path": "workspace://adhoc_jobs/admet_training/audits/leaderboard-score-mapping-20261101/current-official-observation.json",
+      "sha256": "0672da4a5553b19b1ed248845ab6653842b54b6761987ed940a1039055b46778"
+    },
+    {
+      "role": "new64",
+      "path": "workspace://adhoc_jobs/admet_training/cycles/breadth22-confirm86-20261102/retrieval/remaining64-001/private-scoring/scores.json",
+      "sha256": "7e0802d764b8a606e7f80519ec58d5de700432a543319b91881b4f593bdf8228"
+    }
+  ],
+  "checks": [
+    "64 score run IDs equal authorized scoring task",
+    "88 unique task/config/seed slots; 22 per group",
+    "aggregate values match existing scored sources",
+    "scoring receipt and task identity match; 64 calls and 96 passed bound reads recorded"
+  ],
+  "verification_scope": "Controller checked report and aggregate handoff; reused accepted fixed scorer and retrieval input-validation evidence. No private truth reads, metric reruns, model execution, remote checks or preparation review.",
+  "groups": [
+    {
+      "config": "H0",
+      "seed": 46,
+      "full22_formula_derived_Valid": 42.74779047733278,
+      "common21_exclude_BBB_formula_derived_Valid": 42.44752504895133,
+      "common19_exclude_3_cross_host_task_pairs_formula_derived_Valid": 45.145891626450705,
+      "full22_contains_missing_freeze_after": true,
+      "all_members_scored_individually_no_ensemble": true
+    },
+    {
+      "config": "H0",
+      "seed": 47,
+      "full22_formula_derived_Valid": 43.225989414708586,
+      "common21_exclude_BBB_formula_derived_Valid": 42.952641741357176,
+      "common19_exclude_3_cross_host_task_pairs_formula_derived_Valid": 45.63776765512832,
+      "full22_contains_missing_freeze_after": false,
+      "all_members_scored_individually_no_ensemble": true
+    },
+    {
+      "config": "F010",
+      "seed": 46,
+      "full22_formula_derived_Valid": 46.00160127747437,
+      "common21_exclude_BBB_formula_derived_Valid": 45.8325065202985,
+      "common19_exclude_3_cross_host_task_pairs_formula_derived_Valid": 46.39430576655782,
+      "full22_contains_missing_freeze_after": false,
+      "all_members_scored_individually_no_ensemble": true
+    },
+    {
+      "config": "F010",
+      "seed": 47,
+      "full22_formula_derived_Valid": 46.04659533232346,
+      "common21_exclude_BBB_formula_derived_Valid": 45.90806074436668,
+      "common19_exclude_3_cross_host_task_pairs_formula_derived_Valid": 46.50991043921212,
+      "full22_contains_missing_freeze_after": false,
+      "all_members_scored_individually_no_ensemble": true
+    }
+  ],
+  "pair_counts": {
+    "total": 44,
+    "F010_better": 27,
+    "F010_worse": 17,
+    "equal": 0,
+    "excluding_missing_after_F010_better": 26,
+    "excluding_missing_after_total": 43
+  },
+  "limits": [
+    "Formula inferred from retained website22 tuples, not published official formula; local Valid only, no hidden-test/leaderboard forecast.",
+    "AP is tied-group average precision; exact official AUPRC equivalence unknown.",
+    "BBB H0seed46 missing original encoder-after remains research-only. Full22 H0s46 is explicitly evidence-limited; common21 excludes BBB from every group.",
+    "Three seed46 pairs cross hosts; LD50/Sol reuse old-batch H0. Common19 additionally removes all three affected tasks, not a replacement official aggregate.",
+    "Mini22 cached representation producer vs current consumer environment retained; no new encoding or equivalence test.",
+    "Descriptive results only two seeds; reused Valid and prior selection, no significance test or posthoc mixed winner group.",
+    "22+64 new metrics computed once; two old H0 aggregates reused, no old metric reruns; no row truth/residual output."
+  ],
+  "metadata_correction": {
+    "file": "workspace://adhoc_jobs/admet_training/cycles/breadth22-confirm86-20261102/retrieval/remaining64-001/private-scoring/scoring-receipt.json",
+    "field": "lifetime_private_truth_read_count",
+    "issue": "Copied narrative says this batch6 sources; structured private_truth_sources_read and actual task are16. Lifetime count remains unknown; this is not a new truth read or metric discrepancy. Original preserved."
+  },
+  "archive_state": "Retriever continues original110 plus new320 model archives and failure evidence; no extra dispatch",
+  "next_research": "No publication or Pro dispatch until current index discussion is resolved; no new training authorized here."
+}
