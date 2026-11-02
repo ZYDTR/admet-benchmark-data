@@ -1,0 +1,1146 @@
+[
+  {
+    "direction_id": "D-FLOOR",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "title": "任务自适应分母下限与局部剂量曲线",
+    "priority": "P0",
+    "maturity": "config_only",
+    "within_current_research_scope": true,
+    "execution_authorized": false,
+    "issue_ids": [
+      "I-TASK-HETEROGENEITY",
+      "I-SCALE-MECHANISM"
+    ],
+    "evidence_refs": [
+      "E-SCORES",
+      "E-SCALER",
+      "E-OLD28"
+    ],
+    "historical_context": [
+      {
+        "source_id": "E-CLAIMS",
+        "event_id": "E-F010-UNIVERSAL"
+      },
+      {
+        "source_id": "E-CLAIMS",
+        "event_id": "E-MECHANISM"
+      }
+    ],
+    "scientific_hypothesis": "F001是否能在当前5双退化/7混合任务保留H0有效尺度，同时避免H0极端放大；不预设floor越大越好。",
+    "counterevidence_and_alternatives": "F001旧CYP seed45退化、LD50 seed44微退化，说明剂量未必单调；所有floor仍是可逆缩放，非自动去噪。",
+    "parameter_space": {
+      "implemented": [
+        "H0: omit feature_scaler",
+        "F001: floor0.001",
+        "F010: floor0.01"
+      ],
+      "first_batch_tasks": [
+        "ames",
+        "bbb_martins",
+        "clearance_microsome_az",
+        "cyp2c9_substrate_carbonmangels",
+        "cyp3a4_substrate_carbonmangels",
+        "cyp3a4_veith",
+        "dili",
+        "half_life_obach",
+        "herg",
+        "hia_hou",
+        "pgp_broccatelli",
+        "vdss_lombardo"
+      ],
+      "model_seeds": [
+        46,
+        47
+      ],
+      "conditional_new_code_floors": [
+        0.003,
+        0.03
+      ],
+      "conditional_exact_panel": [
+        "dili",
+        "cyp3a4_veith",
+        "ppbr_az",
+        "caco2_wang"
+      ]
+    },
+    "combination_and_counting_rule": "首批12×1个新F001×2seed=24新fit；12任务H0/F010共有48个既有槽位，其中BBB H046缺after，由1个单列前瞻控制替代，既有槽位均不计新增fit。储备4任务×2新floor×2seed=16新fit，不在197主预算内。",
+    "search_strategy": "先现成F001补三点H0/.001/.01曲线；只有两端差异不能被head/lr替代解释且控制器批准时，才增加.003/.03。每次只改变floor。",
+    "proposal_ids": [
+      "P-A-ames",
+      "P-A-bbb_martins",
+      "P-A-clearance_microsome_az",
+      "P-A-cyp2c9_substrate_carbonmangels",
+      "P-A-cyp3a4_substrate_carbonmangels",
+      "P-A-cyp3a4_veith",
+      "P-A-dili",
+      "P-A-half_life_obach",
+      "P-A-herg",
+      "P-A-hia_hou",
+      "P-A-pgp_broccatelli",
+      "P-A-vdss_lombardo"
+    ],
+    "cost_model": "Cache/head jobs and all end-to-end stages separate; see budget_scenarios.json. Unmeasured new interface/encoding is not assigned fake GPU hours. No full Cartesian product authorized.",
+    "stop_or_skip": "若F001两个seed不改善则不密集扫中间数；若未改变任何denominator维度，跳过重复等价变换；边界失败无效而非机制被反证。",
+    "next_research_trigger": "planned branch completed, decisive counterevidence, genuine new asset/objective question, or exhausted predeclared budget; not every head or a fixed timer"
+  },
+  {
+    "direction_id": "D-BBB",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "title": "BBB缺after的前瞻性对照",
+    "priority": "P0",
+    "maturity": "config_only",
+    "within_current_research_scope": true,
+    "execution_authorized": false,
+    "issue_ids": [
+      "I-BBB-AFTER"
+    ],
+    "evidence_refs": [
+      "E-AUDIT22",
+      "E-LIMITS",
+      "E-SCORES"
+    ],
+    "historical_context": [
+      {
+        "source_id": "E-CLAIMS",
+        "event_id": "E-86-BBB"
+      }
+    ],
+    "scientific_hypothesis": "建立一个完整前后冻结证据、同RTX4090的H0 seed46对照，使未来BBB候选比较不依赖缺失记录。",
+    "counterevidence_and_alternatives": "这不能证明原run当时冻结，也不证明原分数错误。新结果差异可能来自主机/数值。",
+    "parameter_space": {
+      "task": "bbb_martins",
+      "config": "H0 current accepted full config",
+      "model_seed": 46,
+      "new_host": "compute-RTX4090",
+      "historical_record_action": "retain, never overwrite"
+    },
+    "combination_and_counting_rule": "1个明确非冗余技术复现fit；其比较对照F01046复用一次。",
+    "search_strategy": "新run独立ID；提前保存before、after和优化器排除信息；与已验F01046比较。",
+    "proposal_ids": [
+      "P-A-BBB46-REPAIR"
+    ],
+    "cost_model": "Cache/head jobs and all end-to-end stages separate; see budget_scenarios.json. Unmeasured new interface/encoding is not assigned fake GPU hours. No full Cartesian product authorized.",
+    "stop_or_skip": "缺after仍失败就不反复补训；停止BBB相关晋级，其他21任务继续。",
+    "next_research_trigger": "planned branch completed, decisive counterevidence, genuine new asset/objective question, or exhausted predeclared budget; not every head or a fixed timer"
+  },
+  {
+    "direction_id": "D-DROPOUT",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "title": "先拆dropout再比架构，避免线性头对照混杂",
+    "priority": "P1",
+    "maturity": "config_only",
+    "within_current_research_scope": true,
+    "execution_authorized": false,
+    "issue_ids": [
+      "I-HEAD-OBJECTIVE"
+    ],
+    "evidence_refs": [
+      "E-HEADS",
+      "E-DATAIO",
+      "E-SCORES"
+    ],
+    "historical_context": [
+      {
+        "source_id": "E-CLAIMS",
+        "event_id": "E-DINO"
+      }
+    ],
+    "scientific_hypothesis": "无dropout MLP可以回答正则本身是否解释floor的任务异质性，并成为线性头同dropout控制。",
+    "counterevidence_and_alternatives": "高维小数据无dropout可能更过拟合；DILI内部AUROC改善并不保证Valid改善。",
+    "parameter_space": {
+      "panel8": [
+        "dili",
+        "hia_hou",
+        "half_life_obach",
+        "cyp3a4_veith",
+        "cyp2c9_substrate_carbonmangels",
+        "vdss_lombardo",
+        "ppbr_az",
+        "caco2_wang"
+      ],
+      "floor": [
+        "H0",
+        "F010"
+      ],
+      "dropout": [
+        0.0
+      ],
+      "shared_existing_dropout": 0.1,
+      "seeds": [
+        46,
+        47
+      ],
+      "conditional_reserve_dropout": [
+        0.3
+      ]
+    },
+    "combination_and_counting_rule": "8×2floor×1新增dropout×2seed=32新fit，历史dropout0.1不重训；0.3只作后续独立因素。",
+    "search_strategy": "保留5退化/7混合覆盖基础上的代表面板，并含PPBR/Caco2两个获益警戒任务；不把dropout0默认作为最佳。",
+    "proposal_ids": [
+      "P-B1-dili-H0",
+      "P-B1-dili-F010",
+      "P-B1-hia_hou-H0",
+      "P-B1-hia_hou-F010",
+      "P-B1-half_life_obach-H0",
+      "P-B1-half_life_obach-F010",
+      "P-B1-cyp3a4_veith-H0",
+      "P-B1-cyp3a4_veith-F010",
+      "P-B1-cyp2c9_substrate_carbonmangels-H0",
+      "P-B1-cyp2c9_substrate_carbonmangels-F010",
+      "P-B1-vdss_lombardo-H0",
+      "P-B1-vdss_lombardo-F010",
+      "P-B1-ppbr_az-H0",
+      "P-B1-ppbr_az-F010",
+      "P-B1-caco2_wang-H0",
+      "P-B1-caco2_wang-F010"
+    ],
+    "cost_model": "Cache/head jobs and all end-to-end stages separate; see budget_scenarios.json. Unmeasured new interface/encoding is not assigned fake GPU hours. No full Cartesian product authorized.",
+    "stop_or_skip": "即使dropout0变差也仍可作为预登记B2架构对照；不因粗筛输就删除对照；缺合法损失/重载验收才跳过。",
+    "next_research_trigger": "planned branch completed, decisive counterevidence, genuine new asset/objective question, or exhausted predeclared budget; not every head or a fixed timer"
+  },
+  {
+    "direction_id": "D-LINEAR",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "title": "冻结表示的线性/逻辑与正则回归对照",
+    "priority": "P1",
+    "maturity": "new_code",
+    "within_current_research_scope": true,
+    "execution_authorized": false,
+    "issue_ids": [
+      "I-HEAD-OBJECTIVE",
+      "I-SCALE-MECHANISM"
+    ],
+    "evidence_refs": [
+      "E-DINO",
+      "E-INTERFACE",
+      "E-HEADS",
+      "X-DINO"
+    ],
+    "historical_context": [
+      {
+        "source_id": "E-CLAIMS",
+        "event_id": "E-DINO"
+      }
+    ],
+    "scientific_hypothesis": "以同loss/AdamW/尺度/早停的Linear(2048,1)检验复杂非线性头的实际预算价值；若线性稳定胜出，优先简化而非加宽。",
+    "counterevidence_and_alternatives": "固定50epoch AdamW线性头不等于收敛最优线性解；与MLP初始化和参数量不同；弱结果不能证明表示线性不可用。",
+    "parameter_space": {
+      "architecture": "biased Linear2048-to1, no hidden/ReLU/dropout",
+      "dropout": 0.0,
+      "panel": "same exact8 B1",
+      "floor": [
+        "H0",
+        "F010"
+      ],
+      "optimizer": "AdamW lr0.0005 weight_decay0.0001",
+      "seeds": [
+        46,
+        47
+      ],
+      "reserve_solvers": {
+        "regression": "ridge intercept unpenalized",
+        "classification": "L2 logistic intercept unpenalized",
+        "lambda": [
+          0.01,
+          1,
+          100
+        ],
+        "tol": 1e-08,
+        "max_iter": 10000
+      }
+    },
+    "combination_and_counting_rule": "主预算8×2×2=32，B1控制已计一次。另8任务×2floor×3lambda=48个确定性solver fit储备，不乘2随机seed；单独批准且不算主197。",
+    "search_strategy": "B1/B2先解耦dropout与架构。若线性优势/训练未收敛，再以明确solver诊断；纯经典模型的研究价值与正式参赛资格分开。",
+    "proposal_ids": [
+      "P-B1-dili-H0",
+      "P-B2-dili-H0",
+      "P-B1-dili-F010",
+      "P-B2-dili-F010",
+      "P-B1-hia_hou-H0",
+      "P-B2-hia_hou-H0",
+      "P-B1-hia_hou-F010",
+      "P-B2-hia_hou-F010",
+      "P-B1-half_life_obach-H0",
+      "P-B2-half_life_obach-H0",
+      "P-B1-half_life_obach-F010",
+      "P-B2-half_life_obach-F010",
+      "P-B1-cyp3a4_veith-H0",
+      "P-B2-cyp3a4_veith-H0",
+      "P-B1-cyp3a4_veith-F010",
+      "P-B2-cyp3a4_veith-F010",
+      "P-B1-cyp2c9_substrate_carbonmangels-H0",
+      "P-B2-cyp2c9_substrate_carbonmangels-H0",
+      "P-B1-cyp2c9_substrate_carbonmangels-F010",
+      "P-B2-cyp2c9_substrate_carbonmangels-F010",
+      "P-B1-vdss_lombardo-H0",
+      "P-B2-vdss_lombardo-H0",
+      "P-B1-vdss_lombardo-F010",
+      "P-B2-vdss_lombardo-F010",
+      "P-B1-ppbr_az-H0",
+      "P-B2-ppbr_az-H0",
+      "P-B1-ppbr_az-F010",
+      "P-B2-ppbr_az-F010",
+      "P-B1-caco2_wang-H0",
+      "P-B2-caco2_wang-H0",
+      "P-B1-caco2_wang-F010",
+      "P-B2-caco2_wang-F010"
+    ],
+    "cost_model": "Cache/head jobs and all end-to-end stages separate; see budget_scenarios.json. Unmeasured new interface/encoding is not assigned fake GPU hours. No full Cartesian product authorized.",
+    "stop_or_skip": "不同架构必须分别保存真实初值、梯度更新与最优重载；不能把closed-form/ICL伪造为SGD更新记录。",
+    "next_research_trigger": "planned branch completed, decisive counterevidence, genuine new asset/objective question, or exhausted predeclared budget; not every head or a fixed timer"
+  },
+  {
+    "direction_id": "D-OPTIMIZER",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "title": "学习率/正则/容量的序贯交互检验",
+    "priority": "P2",
+    "maturity": "config_only",
+    "within_current_research_scope": true,
+    "execution_authorized": false,
+    "issue_ids": [
+      "I-SCALE-MECHANISM",
+      "I-HEAD-OBJECTIVE"
+    ],
+    "evidence_refs": [
+      "E-DATAIO",
+      "E-TRAINER",
+      "E-SCALER",
+      "E-DILI-F",
+      "E-PPBR-F"
+    ],
+    "historical_context": [
+      {
+        "source_id": "E-CLAIMS",
+        "event_id": "E-MECHANISM"
+      }
+    ],
+    "scientific_hypothesis": "减小lr可能在H0下缓解病态几何；若H0低lr追平F010，支持优化条件而非不可恢复的信息变化。",
+    "counterevidence_and_alternatives": "AdamW自适应并不保证输入缩放不变；有限预算下低lr可能只欠拟合；参数正则与floor交互不能仅用最高Valid解释。",
+    "parameter_space": {
+      "main_lr": [
+        0.0001
+      ],
+      "existing_lr": 0.0005,
+      "floor": [
+        "H0",
+        "F010"
+      ],
+      "panel8": "same B panel",
+      "seeds": [
+        46,
+        47
+      ],
+      "reserve_real_enums": {
+        "hidden_dim": [
+          128,
+          256,
+          512
+        ],
+        "dropout": [
+          0.0,
+          0.1,
+          0.3
+        ],
+        "lr": [
+          0.0001,
+          0.0003,
+          0.0005,
+          0.001
+        ],
+        "weight_decay": [
+          1e-05,
+          0.0001,
+          0.001
+        ]
+      }
+    },
+    "combination_and_counting_rule": "主新增8×2floor×2seed=32；基准lr0.0005复用。完整合法头网格3×3×4×3=108配置/任务，明确不执行。储备仅DILI/PPBR，先固定其余筛lr，再wd，再hidden，每轮最多2个新设置×2任务×2seed=8。",
+    "search_strategy": "C批保留历史dropout0.1，避免同时更改；不复用B1(dropout0)冒充同对照。以train曲线与两个seed共同方向筛选，而非单头最高分。",
+    "proposal_ids": [
+      "P-C-dili-H0",
+      "P-C-dili-F010",
+      "P-C-hia_hou-H0",
+      "P-C-hia_hou-F010",
+      "P-C-half_life_obach-H0",
+      "P-C-half_life_obach-F010",
+      "P-C-cyp3a4_veith-H0",
+      "P-C-cyp3a4_veith-F010",
+      "P-C-cyp2c9_substrate_carbonmangels-H0",
+      "P-C-cyp2c9_substrate_carbonmangels-F010",
+      "P-C-vdss_lombardo-H0",
+      "P-C-vdss_lombardo-F010",
+      "P-C-ppbr_az-H0",
+      "P-C-ppbr_az-F010",
+      "P-C-caco2_wang-H0",
+      "P-C-caco2_wang-F010"
+    ],
+    "cost_model": "Cache/head jobs and all end-to-end stages separate; see budget_scenarios.json. Unmeasured new interface/encoding is not assigned fake GPU hours. No full Cartesian product authorized.",
+    "stop_or_skip": "若loss无收敛迹象则先明确训练预算因素，不无限加lr网格；梯度非有限是实现失败，不作低质量标签。",
+    "next_research_trigger": "planned branch completed, decisive counterevidence, genuine new asset/objective question, or exhausted predeclared budget; not every head or a fixed timer"
+  },
+  {
+    "direction_id": "D-LOSS",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "title": "五个MAE任务的尾部稳健损失",
+    "priority": "P2",
+    "maturity": "new_code",
+    "within_current_research_scope": true,
+    "execution_authorized": false,
+    "issue_ids": [
+      "I-HEAD-OBJECTIVE"
+    ],
+    "evidence_refs": [
+      "E-SCORES",
+      "E-TRAINER",
+      "E-HEADS",
+      "E-PROGRESS"
+    ],
+    "historical_context": [
+      {
+        "source_id": "E-CLAIMS",
+        "event_id": "E-DINO"
+      }
+    ],
+    "scientific_hypothesis": "所有五个MAE任务双改善提示幅度/尾部机制有价值；twice-Huber可减少极端训练残差影响，保持小残差MSE曲率。",
+    "counterevidence_and_alternatives": "无逐行Valid残差不能断言异常值驱动；L1与MSE曾在Caco2历史试验出现，不能把整类方向称全新；Huber也可能损害真实尾部。",
+    "parameter_space": {
+      "tasks": [
+        "caco2_wang",
+        "ld50_zhu",
+        "lipophilicity_astrazeneca",
+        "ppbr_az",
+        "solubility_aqsoldb"
+      ],
+      "floor": "F010",
+      "loss": "2*Huber(delta=1 on fit standardized Y)",
+      "definition": "r² if abs(r)<=1; 2abs(r)-1 otherwise",
+      "seeds": [
+        46,
+        47
+      ],
+      "reserve_delta": [
+        0.5,
+        2.0
+      ],
+      "prediction": "one inverse transform, no clipping"
+    },
+    "combination_and_counting_rule": "5×1loss×2seed=10新增；原F010 MSE10控制复用。若粗筛无信号，不扫delta。",
+    "search_strategy": "改变一个损失因素；标签原尺度和任务MAE外部比较不变。检查train-fit目标方差/分布只用允许train信息。",
+    "proposal_ids": [
+      "P-L-HUBER-caco2_wang",
+      "P-L-HUBER-ld50_zhu",
+      "P-L-HUBER-lipophilicity_astrazeneca",
+      "P-L-HUBER-ppbr_az",
+      "P-L-HUBER-solubility_aqsoldb"
+    ],
+    "cost_model": "Cache/head jobs and all end-to-end stages separate; see budget_scenarios.json. Unmeasured new interface/encoding is not assigned fake GPU hours. No full Cartesian product authorized.",
+    "stop_or_skip": "任何log变换/PPBR截断/LD50单位猜测均不纳入；delta按标准化尺度定义，不拿Valid最优调delta。",
+    "next_research_trigger": "planned branch completed, decisive counterevidence, genuine new asset/objective question, or exhausted predeclared budget; not every head or a fixed timer"
+  },
+  {
+    "direction_id": "D-CLASSWEIGHT",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "title": "训练fit内类别权重与AP目标的有限样本检验",
+    "priority": "P2",
+    "maturity": "new_code",
+    "within_current_research_scope": true,
+    "execution_authorized": false,
+    "issue_ids": [
+      "I-HEAD-OBJECTIVE",
+      "I-METRIC"
+    ],
+    "evidence_refs": [
+      "E-DINO",
+      "E-HEADS",
+      "E-SCORES",
+      "E-MINI22"
+    ],
+    "historical_context": [
+      {
+        "source_id": "E-CLAIMS",
+        "event_id": "E-DINO"
+      }
+    ],
+    "scientific_hypothesis": "sqrt类别比例权重可能改善有限容量模型的少数类估计；用归一化权重消除平均梯度尺度大变。",
+    "counterevidence_and_alternatives": "理想总体加权BCE只是后验的单调变换，理论排序不必改善；CYP不同行为不能只归因不平衡；Valid类别比例不得用于设权重。",
+    "parameter_space": {
+      "tasks": [
+        "cyp2c9_substrate_carbonmangels",
+        "cyp2d6_substrate_carbonmangels",
+        "cyp2d6_veith"
+      ],
+      "floor": "F010",
+      "positive_weight": "clip(sqrt(nneg_fit/npos_fit),0.25,4)",
+      "negative_weight": 1,
+      "normalizer": "fit平均样本权重",
+      "seeds": [
+        46,
+        47
+      ],
+      "reserve": [
+        "unweighted control",
+        "sqrt weight main",
+        "full inverse ratio only if first contrast supports; cap/normalize fixed before fit"
+      ],
+      "focal_gamma_reserve": [
+        0.5,
+        1.0,
+        2.0
+      ]
+    },
+    "combination_and_counting_rule": "3×1weight×2seed=6新fit；不同时加focal或换earlystop；focal为之后不同loss分支，非自动全网格。",
+    "search_strategy": "保存每split fit计数与权重来源；输出连续概率，早停与外部均本地AP。不以threshold/F1替代。",
+    "proposal_ids": [
+      "P-L-WBCE-cyp2c9_substrate_carbonmangels",
+      "P-L-WBCE-cyp2d6_substrate_carbonmangels",
+      "P-L-WBCE-cyp2d6_veith"
+    ],
+    "cost_model": "Cache/head jobs and all end-to-end stages separate; see budget_scenarios.json. Unmeasured new interface/encoding is not assigned fake GPU hours. No full Cartesian product authorized.",
+    "stop_or_skip": "任何fit/stop只有一类先报该split不可用于此对比，不能改标签/借Valid/重新抽seed直到两类。",
+    "next_research_trigger": "planned branch completed, decisive counterevidence, genuine new asset/objective question, or exhausted predeclared budget; not every head or a fixed timer"
+  },
+  {
+    "direction_id": "D-SPLIT",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "title": "官方train内部嵌套结构分组压力测试",
+    "priority": "P1",
+    "maturity": "new_code",
+    "within_current_research_scope": true,
+    "execution_authorized": false,
+    "issue_ids": [
+      "I-RAW-SPLIT",
+      "I-VALID-SELECTION"
+    ],
+    "evidence_refs": [
+      "E-DATAIO",
+      "E-DINO",
+      "X-TDC-SPLIT"
+    ],
+    "historical_context": [
+      {
+        "source_id": "E-CLAIMS",
+        "event_id": "E-DINO"
+      }
+    ],
+    "scientific_hypothesis": "当前raw Drug分组并不隔离等价分子写法/骨架；在train内部预登记结构分组，检验F010排序是否随结构外推变化。",
+    "counterevidence_and_alternatives": "不能据raw分组认定官方泄漏；当前研究已受到历史整个train信息影响，新outer不是全局从未碰过的数据；小task一类holdout可能不可估。",
+    "parameter_space": {
+      "tasks": [
+        "dili",
+        "cyp2c9_substrate_carbonmangels",
+        "ppbr_az"
+      ],
+      "outer_seeds": [
+        101,
+        102
+      ],
+      "outer_fraction": 0.2,
+      "inner_seed": 43,
+      "inner_stop_fraction_of_development": 0.1,
+      "model_seeds": [
+        46,
+        47
+      ],
+      "configs": [
+        "H0",
+        "F010"
+      ],
+      "grouping": "chirality-preserving Murcko scaffold; acyclic fallback canonical isomeric SMILES; parse failure exact raw Drug group; original rows/partitions retained"
+    },
+    "combination_and_counting_rule": "3×2outer×2config×2modelseed=24fit，含12个新的H0控制；旧split43fit不可抵扣。组大小使实际行比例偏离72/8/20，记录实际值不改分组追比例。",
+    "search_strategy": "每个outer重新fit预处理；inner早停，outer仅评估。固定H0/F010在同一outer上比较；默认不新看官方Valid。任何候选选择用inner而不是反复outer。",
+    "proposal_ids": [
+      "P-S-dili-H0-o101",
+      "P-S-dili-F010-o101",
+      "P-S-dili-H0-o102",
+      "P-S-dili-F010-o102",
+      "P-S-cyp2c9_substrate_carbonmangels-H0-o101",
+      "P-S-cyp2c9_substrate_carbonmangels-F010-o101",
+      "P-S-cyp2c9_substrate_carbonmangels-H0-o102",
+      "P-S-cyp2c9_substrate_carbonmangels-F010-o102",
+      "P-S-ppbr_az-H0-o101",
+      "P-S-ppbr_az-F010-o101",
+      "P-S-ppbr_az-H0-o102",
+      "P-S-ppbr_az-F010-o102"
+    ],
+    "cost_model": "Cache/head jobs and all end-to-end stages separate; see budget_scenarios.json. Unmeasured new interface/encoding is not assigned fake GPU hours. No full Cartesian product authorized.",
+    "stop_or_skip": "一类或无可用组时跳过并记录，不搜索seed；前提失败退回raw分组结果不强行声称结构稳健。",
+    "next_research_trigger": "planned branch completed, decisive counterevidence, genuine new asset/objective question, or exhausted predeclared budget; not every head or a fixed timer"
+  },
+  {
+    "direction_id": "D-STOP",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "title": "早停噪声、训练预算与最佳重载",
+    "priority": "P2",
+    "maturity": "new_code",
+    "within_current_research_scope": true,
+    "execution_authorized": false,
+    "issue_ids": [
+      "I-STOP",
+      "I-VALID-SELECTION"
+    ],
+    "evidence_refs": [
+      "E-DILI-F",
+      "E-DILI-H",
+      "E-PPBR-F",
+      "E-PPBR-H",
+      "E-TRAINER"
+    ],
+    "historical_context": [
+      {
+        "source_id": "E-CLAIMS",
+        "event_id": "E-MECHANISM"
+      }
+    ],
+    "scientific_hypothesis": "DILI stop指标大幅提高而Valid下降，可能源于内部划分/早停选择；PPBR best11→42说明floor改变优化轨迹。",
+    "counterevidence_and_alternatives": "PPBR best42+patience8正好50，不能证明被epoch上限截断；DILI反例也不唯一证明过拟合。",
+    "parameter_space": {
+      "reserve_tasks": [
+        "dili",
+        "ppbr_az"
+      ],
+      "scaler": "F010",
+      "budget_configs": [
+        {
+          "max_epochs": 80,
+          "patience": 8
+        },
+        {
+          "max_epochs": 80,
+          "patience": 12
+        }
+      ],
+      "control": {
+        "max_epochs": 50,
+        "patience": 8
+      },
+      "model_seeds": [
+        46,
+        47
+      ],
+      "classification_monitor_reserve": {
+        "tasks": [
+          "dili",
+          "hia_hou",
+          "herg"
+        ],
+        "monitor": "unweighted internal-stop BCE minimize",
+        "external": "AUROC maximize, unchanged"
+      }
+    },
+    "combination_and_counting_rule": "2任务×2新budgetconfig×2seed=8fit储备；先80/8对50/8，再80/12对80/8，避免bundle。monitor替换另3×2=6fit，不并在前项。",
+    "search_strategy": "先读已有曲线/best/last，不因一个epoch=50就扩预算；需要new_code扩枚举。metric与loss监控分别定义，不能写task-native。",
+    "proposal_ids": [],
+    "cost_model": "Cache/head jobs and all end-to-end stages separate; see budget_scenarios.json. Unmeasured new interface/encoding is not assigned fake GPU hours. No full Cartesian product authorized.",
+    "stop_or_skip": "若已有曲线已稳定或明确没有预算截断证据，则跳过延长；不以“继续训总会更好”为理由追加。",
+    "next_research_trigger": "planned branch completed, decisive counterevidence, genuine new asset/objective question, or exhausted predeclared budget; not every head or a fixed timer"
+  },
+  {
+    "direction_id": "D-PRECISION",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "title": "标准差精度与legacy阈值边界诊断",
+    "priority": "P2",
+    "maturity": "new_code",
+    "within_current_research_scope": true,
+    "execution_authorized": false,
+    "issue_ids": [
+      "I-SCALE-MECHANISM",
+      "I-CACHE-HOST"
+    ],
+    "evidence_refs": [
+      "E-SCALER",
+      "E-DINO"
+    ],
+    "historical_context": [
+      {
+        "source_id": "E-CLAIMS",
+        "event_id": "E-MECHANISM"
+      }
+    ],
+    "scientific_hypothesis": "float32统计与sd<1e-8的离散分支可能让近常数维度进入极端放大；float64统计是可检验的另一解释。",
+    "counterevidence_and_alternatives": "原cache本身float32，提升统计精度不能恢复丢失的编码信息；既有有限值也不证明数值误差是主要原因。",
+    "parameter_space": {
+      "tasks": [
+        "dili",
+        "ppbr_az",
+        "ld50_zhu",
+        "solubility_aqsoldb"
+      ],
+      "floor": [
+        "H0",
+        "F010"
+      ],
+      "statistic_dtype": [
+        "float64 proposed"
+      ],
+      "transform_dtype": "float32 held fixed",
+      "ddof": 0,
+      "seeds": [
+        46,
+        47
+      ],
+      "zero_fit_first": "read existing serialized scalers/std histograms, count dimensions changed by floor and threshold; no new model execution"
+    },
+    "combination_and_counting_rule": "4×2floor×2seed=16fit储备；原float32控制复用。只在已存统计显示边界问题或floor/head对照无法解释时启用。",
+    "search_strategy": "先无标签、无模型执行的存量诊断；生产统计重拟合留给批准训练阶段，且只用该split fit rows。",
+    "proposal_ids": [],
+    "cost_model": "Cache/head jobs and all end-to-end stages separate; see budget_scenarios.json. Unmeasured new interface/encoding is not assigned fake GPU hours. No full Cartesian product authorized.",
+    "stop_or_skip": "不得把“f64统计”伪装现成字段；若阈值维度极少且变换差异为零，跳过后续学习。",
+    "next_research_trigger": "planned branch completed, decisive counterevidence, genuine new asset/objective question, or exhausted predeclared budget; not every head or a fixed timer"
+  },
+  {
+    "direction_id": "D-REPARAM",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "title": "等函数首层重参数化，区分表示信息与优化路径",
+    "priority": "P2",
+    "maturity": "new_code",
+    "within_current_research_scope": true,
+    "execution_authorized": false,
+    "issue_ids": [
+      "I-SCALE-MECHANISM"
+    ],
+    "evidence_refs": [
+      "E-SCALER",
+      "E-HEADS",
+      "E-TRAINER"
+    ],
+    "historical_context": [
+      {
+        "source_id": "E-CLAIMS",
+        "event_id": "E-MECHANISM"
+      }
+    ],
+    "scientific_hypothesis": "d_f>0时z_f=A z_H0；W_f=W_H0 A^-1有相同初始函数。用等函数初始化而不是同seed数值相同权重来检验初始预测尺度贡献。",
+    "counterevidence_and_alternatives": "等函数初始化并不使AdamW后续轨迹等价；不能推断输入缩放下AdamW自动不变或效果纯为L2正则。",
+    "parameter_space": {
+      "tasks": [
+        "dili",
+        "ppbr_az"
+      ],
+      "configs": [
+        "H0 matched base initialization",
+        "F010 first-layer columns multiplied by d_f/d0; biases unchanged"
+      ],
+      "seeds": [
+        46,
+        47
+      ],
+      "loss/optimizer/stop": "unchanged current native settings",
+      "first_fixture": "synthetic fixed vectors verify algebra before any learning; no current-round model execution"
+    },
+    "combination_and_counting_rule": "2任务×1新增matched-init-F010×2seed=4fit；基准H0可复用其已存initial state，前提存在且独立接受；若不存在不得编造，两个配置都新fit则8。",
+    "search_strategy": "先读取initial state记录是否齐全；fixture验证函数而不是用未准入模型推理。本方向为机制储备，不属于197。",
+    "proposal_ids": [],
+    "cost_model": "Cache/head jobs and all end-to-end stages separate; see budget_scenarios.json. Unmeasured new interface/encoding is not assigned fake GPU hours. No full Cartesian product authorized.",
+    "stop_or_skip": "无法绑定initial state或极端数值导致fixture不满足误差界则先停止；未授权不得加载归档pickle。",
+    "next_research_trigger": "planned branch completed, decisive counterevidence, genuine new asset/objective question, or exhausted predeclared budget; not every head or a fixed timer"
+  },
+  {
+    "direction_id": "D-DISAGREE",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "title": "存量盲预测分歧与特征外推诊断",
+    "priority": "P0",
+    "maturity": "diagnostic_only",
+    "within_current_research_scope": true,
+    "execution_authorized": false,
+    "issue_ids": [
+      "I-DIAGNOSTICS"
+    ],
+    "evidence_refs": [
+      "E-PREDINDEX",
+      "E-RUNINDEX",
+      "E-DINO",
+      "E-LIMITS"
+    ],
+    "historical_context": [
+      {
+        "source_id": "E-CLAIMS",
+        "event_id": "E-DINO"
+      }
+    ],
+    "scientific_hypothesis": "无需新fit，通过seed/scaler间预测关联、极值和分歧范围挑出机制面板，减少盲调参。",
+    "counterevidence_and_alternatives": "分歧并非谁错；无Valid Y不可能计算残差、校准误差、误分类样本或切片质量；少数分组可能泄漏。",
+    "parameter_space": {
+      "scope": "all22 existing blank-Y predictions after row identity matching",
+      "statistics": [
+        "Pearson/Spearman between continuous predictions",
+        "classification probability saturation count and quantiles",
+        "regression original-scale finite/min/median/p99/max",
+        "same task fixed coarse molecular groups and train-nearest-similarity buckets if approved raw structures accessible"
+      ],
+      "minimum_group_size_proposal": 30,
+      "small_tasks": "only task-level distributions; no truth-based groups"
+    },
+    "combination_and_counting_rule": "0fit、0encoder calls。新的汇总由主控批准后计算；本轮只完成聚合分数算术，未下载88prediction CSV，不称已做分歧诊断。",
+    "search_strategy": "复用既有source SHA/row audit；只取盲列，与train输入结构形成无标签诊断。30是防侧漏工程建议而非用户已批准规则或统计阈值。",
+    "proposal_ids": [],
+    "cost_model": "Cache/head jobs and all end-to-end stages separate; see budget_scenarios.json. Unmeasured new interface/encoding is not assigned fake GPU hours. No full Cartesian product authorized.",
+    "stop_or_skip": "发现truth列即拒绝；不输出可逆小组差分，不根据分歧直接写错误样本结论。",
+    "next_research_trigger": "planned branch completed, decisive counterevidence, genuine new asset/objective question, or exhausted predeclared budget; not every head or a fixed timer"
+  },
+  {
+    "direction_id": "D-ENSEMBLE",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "title": "固定权重的同表示多seed集成",
+    "priority": "P1",
+    "maturity": "new_code",
+    "within_current_research_scope": true,
+    "execution_authorized": false,
+    "issue_ids": [
+      "I-VALID-SELECTION",
+      "I-DIAGNOSTICS"
+    ],
+    "evidence_refs": [
+      "E-ROOT-REVIEW",
+      "E-PREDINDEX",
+      "E-SCORES"
+    ],
+    "historical_context": [
+      {
+        "source_id": "E-CLAIMS",
+        "event_id": "E-DINO"
+      }
+    ],
+    "scientific_hypothesis": "先复用同encoder不同seed预测平均降低头随机性；不要求先有两个不同表示。",
+    "counterevidence_and_alternatives": "平均可能损害AP排序/回归尾部；少数低质头可能拖累；weights经Valid搜索会新增适配偏差。",
+    "parameter_space": {
+      "first_tasks": [
+        "ames",
+        "bbb_martins",
+        "clearance_microsome_az",
+        "cyp2c9_substrate_carbonmangels",
+        "cyp3a4_substrate_carbonmangels",
+        "cyp3a4_veith",
+        "dili",
+        "half_life_obach",
+        "herg",
+        "hia_hou",
+        "pgp_broccatelli",
+        "vdss_lombardo"
+      ],
+      "families": [
+        "H0",
+        "F010"
+      ],
+      "seeds": [
+        46,
+        47
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "classification": "mean probabilities, not hard labels",
+      "regression": "mean original-scale predictions after each member inverse transform",
+      "later_reserve": "cross-scaler0.5/0.5 only separately preregistered; no Valid-fitted weights"
+    },
+    "combination_and_counting_rule": "训练0fit/0encoder；12×2=24新聚合候选评分，BBB-H0须先用完整新控制替代缺after成员。全22扩展再加20次评分，不重复算已有44head分数。",
+    "search_strategy": "主控授权才固定评分；与每个成员分数共同报告。不将0fit等同0选择成本；不要强制改判所有任务到ensemble。",
+    "proposal_ids": [],
+    "cost_model": "Cache/head jobs and all end-to-end stages separate; see budget_scenarios.json. Unmeasured new interface/encoding is not assigned fake GPU hours. No full Cartesian product authorized.",
+    "stop_or_skip": "row identity不等或任一成员缺必要冻结证据就停止该组合；无收益不立即扫权重。",
+    "next_research_trigger": "planned branch completed, decisive counterevidence, genuine new asset/objective question, or exhausted predeclared budget; not every head or a fixed timer"
+  },
+  {
+    "direction_id": "D-MINIMOL",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "title": "MiniMol512冻结表示的有限迁移对照",
+    "priority": "P2",
+    "maturity": "blocked_assets",
+    "within_current_research_scope": true,
+    "execution_authorized": false,
+    "issue_ids": [
+      "I-ALT-ASSETS"
+    ],
+    "evidence_refs": [
+      "E-ASSETS",
+      "E-ORIGINAL-ASSETS",
+      "X-MINIMOL"
+    ],
+    "historical_context": [],
+    "scientific_hypothesis": "较紧凑512维表示有机会减少头容量与优化病态，并提供不同预训练信息。",
+    "counterevidence_and_alternatives": "官方任务结果并非当前split/freeze条件下的证据；维度变化也改变head参数量；旧setup.py404是准备路径问题而非模型质量失败。",
+    "parameter_space": {
+      "tasks": [
+        "ames",
+        "bioavailability_ma",
+        "clearance_hepatocyte_az",
+        "cyp2c9_veith",
+        "lipophilicity_astrazeneca",
+        "solubility_aqsoldb"
+      ],
+      "representation": "official Minimol512 per molecule",
+      "head": "512→256→1 ReLU/dropout0.1",
+      "feature_scaler": "same numerical floor0.01 rule as predeclared starting point, not assumed optimal across representations",
+      "seeds": [
+        46,
+        47
+      ],
+      "local_checkpoint_digest": null
+    },
+    "combination_and_counting_rule": "6×1config×2seed=12fit；每task3原分区一次编码=18逻辑cache分区，全seed/heads共享；资产/版本未绑定前不运行。",
+    "search_strategy": "先固定代码/权重版本、许可证、full-row coverage与frozen no-update接口；然后按矩阵做bundle比较；不要求全22编码才能小面板验证。",
+    "proposal_ids": [
+      "P-N-minimol-ames",
+      "P-N-minimol-bioavailability_ma",
+      "P-N-minimol-clearance_hepatocyte_az",
+      "P-N-minimol-cyp2c9_veith",
+      "P-N-minimol-lipophilicity_astrazeneca",
+      "P-N-minimol-solubility_aqsoldb"
+    ],
+    "cost_model": "Cache/head jobs and all end-to-end stages separate; see budget_scenarios.json. Unmeasured new interface/encoding is not assigned fake GPU hours. No full Cartesian product authorized.",
+    "stop_or_skip": "任何无法覆盖的原行阻断该task，不清洗/丢行。若无准入权重版本则保留blocked，而非将执行LLM替代。",
+    "next_research_trigger": "planned branch completed, decisive counterevidence, genuine new asset/objective question, or exhausted predeclared budget; not every head or a fixed timer"
+  },
+  {
+    "direction_id": "D-MOLFORMER",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "title": "MoLFormer10pct语言表示互补性",
+    "priority": "P2",
+    "maturity": "blocked_assets",
+    "within_current_research_scope": true,
+    "execution_authorized": false,
+    "issue_ids": [
+      "I-ALT-ASSETS"
+    ],
+    "evidence_refs": [
+      "E-ASSETS",
+      "X-MOLFORMER",
+      "X-MOLF-CONFIG",
+      "X-MOLF-REV"
+    ],
+    "historical_context": [],
+    "scientific_hypothesis": "SMILES语言预训练与图/描述符预训练可能提供互补表征；先检验单头，再考虑固定融合。",
+    "counterevidence_and_alternatives": "10pct不是full-XL；官方finetune结果不能迁移为冻结收益；202token预训练限制及原始非canonical输入可能影响覆盖；当前main/tokenizer版本变化。",
+    "parameter_space": {
+      "tasks": [
+        "ames",
+        "bioavailability_ma",
+        "clearance_hepatocyte_az",
+        "cyp2c9_veith",
+        "lipophilicity_astrazeneca",
+        "solubility_aqsoldb"
+      ],
+      "model": "ibm-research/MoLFormer-XL-both-10pct",
+      "proposed_upstream_revision": "361063d0ad524ef77cf39b08469f6be770dc550f",
+      "pooling": "pooler_output",
+      "dimension": 768,
+      "deterministic_eval": true,
+      "head": "768→256→1",
+      "seeds": [
+        46,
+        47
+      ],
+      "local_checkpoint_sha256": null
+    },
+    "combination_and_counting_rule": "6×1×2=12fit；18逻辑编码分区，非12次重复编码；custom code需静态审核，严格full-row覆盖。",
+    "search_strategy": "与MiniMol并列独立面板，不把已有准备off-root拒绝当科学反例。先版本/tokenizer/覆盖验收，权限只到获批私有依赖。",
+    "proposal_ids": [
+      "P-N-molformer_10pct-ames",
+      "P-N-molformer_10pct-bioavailability_ma",
+      "P-N-molformer_10pct-clearance_hepatocyte_az",
+      "P-N-molformer_10pct-cyp2c9_veith",
+      "P-N-molformer_10pct-lipophilicity_astrazeneca",
+      "P-N-molformer_10pct-solubility_aqsoldb"
+    ],
+    "cost_model": "Cache/head jobs and all end-to-end stages separate; see budget_scenarios.json. Unmeasured new interface/encoding is not assigned fake GPU hours. No full Cartesian product authorized.",
+    "stop_or_skip": "不为通过接口默认truncate或删去>202token行；不能覆盖则阻断而不是默默构造不同数据集。",
+    "next_research_trigger": "planned branch completed, decisive counterevidence, genuine new asset/objective question, or exhausted predeclared budget; not every head or a fixed timer"
+  },
+  {
+    "direction_id": "D-FUSION",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "title": "CheMeleon加Morgan位指纹的新头融合",
+    "priority": "P2",
+    "maturity": "blocked_assets",
+    "within_current_research_scope": true,
+    "execution_authorized": false,
+    "issue_ids": [
+      "I-ALT-ASSETS"
+    ],
+    "evidence_refs": [
+      "E-ASSETS",
+      "E-DINO",
+      "E-RULE"
+    ],
+    "historical_context": [],
+    "scientific_hypothesis": "显式局部子结构特征可作为冻结表征的低成本互补；深度新头保留而不直接宣称纯经典参赛资格。",
+    "counterevidence_and_alternatives": "输入维度4096扩大参数量，提升未必来自化学互补；hash碰撞和稀疏比例可能造成新尺度问题。",
+    "parameter_space": {
+      "tasks": [
+        "ames",
+        "bioavailability_ma",
+        "clearance_hepatocyte_az",
+        "cyp2c9_veith",
+        "lipophilicity_astrazeneca",
+        "solubility_aqsoldb"
+      ],
+      "Morgan": {
+        "radius": 2,
+        "fpSize": 2048,
+        "includeChirality": true,
+        "countSimulation": false,
+        "normalization": "bits/sqrt2048"
+      },
+      "fusion": "concat CheMeleonF0102048 + Morgan2048; MLP4096→256→1",
+      "seeds": [
+        46,
+        47
+      ],
+      "reserve": [
+        "descriptor-only linear/regression research baseline",
+        "late equal-weight fusion after independent scores"
+      ]
+    },
+    "combination_and_counting_rule": "6×1×2=12fit；CheMeleon0新编码，Morgan18任务分区的确定性特征计算一次并共享，不是预训练模型推理。",
+    "search_strategy": "先实现fixed feature schema/version/row mapping；额外容量混杂标bundle，必要时另做parameter-matched projection对照。",
+    "proposal_ids": [
+      "P-N-classical_features-ames",
+      "P-N-classical_features-bioavailability_ma",
+      "P-N-classical_features-clearance_hepatocyte_az",
+      "P-N-classical_features-cyp2c9_veith",
+      "P-N-classical_features-lipophilicity_astrazeneca",
+      "P-N-classical_features-solubility_aqsoldb"
+    ],
+    "cost_model": "Cache/head jobs and all end-to-end stages separate; see budget_scenarios.json. Unmeasured new interface/encoding is not assigned fake GPU hours. No full Cartesian product authorized.",
+    "stop_or_skip": "不得用标签选择fingerprint位或按Valid挑descriptor；规范化解析只是表示输入处理，不改原数据行/标签。",
+    "next_research_trigger": "planned branch completed, decisive counterevidence, genuine new asset/objective question, or exhausted predeclared budget; not every head or a fixed timer"
+  },
+  {
+    "direction_id": "D-OTHER-ENCODERS",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "title": "KPGT、Uni-Mol、SMI-TED、MolE分层储备",
+    "priority": "P3",
+    "maturity": "blocked_assets",
+    "within_current_research_scope": true,
+    "execution_authorized": false,
+    "issue_ids": [
+      "I-ALT-ASSETS"
+    ],
+    "evidence_refs": [
+      "E-ASSETS",
+      "X-KPGT",
+      "X-UNIMOL",
+      "X-SMITED",
+      "X-MOLE"
+    ],
+    "historical_context": [],
+    "scientific_hypothesis": "若CheMeleon头/scaler瓶颈验证后仍不足，不同2D知识、3D构象、SMILES语言预训练值得独立验证。",
+    "counterevidence_and_alternatives": "更大不自动更好；KPGT需描述符/指纹链，Uni-Mol需构象完整覆盖，SMI-TED需encoder资产/长度处理，MolE官方README checkpoint仍TODO；本地mole别名原调研报告尚未解析到唯一lineage。",
+    "parameter_space": {
+      "panel": [
+        "bioavailability_ma",
+        "clearance_hepatocyte_az",
+        "cyp3a4_veith",
+        "ppbr_az"
+      ],
+      "kpgt": {
+        "candidate": "official LiGhT pretrained model",
+        "fixed_features": "graph+official descriptors/fingerprint preprocessing",
+        "pool": "official molecular embedding",
+        "local_weights_sha": null
+      },
+      "unimol": {
+        "candidate": "UniMolRepr unimolv1 molecule CLS remove_hs=False",
+        "conformer_variants": [
+          {
+            "count": 1,
+            "seed": 43
+          },
+          {
+            "count": 3,
+            "seeds": [
+              43,
+              44,
+              45
+            ],
+            "aggregate": "mean frozen CLS for the same original row"
+          }
+        ]
+      },
+      "smi_ted": {
+        "candidate": "official light encoder, model.encode(...,return_torch=True)",
+        "exclude": "decoder/generation; no finetuning"
+      },
+      "mole": {
+        "candidate_explicit": "recursionpharma/mole_public",
+        "public_checkpoint_link_status": "README download section TODO; do not substitute a similarly named antimicrobial MolE repo"
+      },
+      "head": "256 ReLU/dropout0.1 new head, same local objective",
+      "seeds": [
+        46,
+        47
+      ]
+    },
+    "combination_and_counting_rule": "每个单表示候选4×1×2=8fit；Uni-Mol两构象池化16fit。全做8+16+8+8=40储备fits及各自编码成本，明确不叠加到197且需新批准。",
+    "search_strategy": "先MiniMol/MoLFormer得到低成本互补证据，后择一通过资产门槛的储备；不按论文排行榜把未准入模型放入现成runner。",
+    "proposal_ids": [],
+    "cost_model": "Cache/head jobs and all end-to-end stages separate; see budget_scenarios.json. Unmeasured new interface/encoding is not assigned fake GPU hours. No full Cartesian product authorized.",
+    "stop_or_skip": "不能覆盖所有原行、缺官方checkpoint、许可不清、buffers变化、需要额外样本/标签均阻断该资产；其他主线照常。",
+    "next_research_trigger": "planned branch completed, decisive counterevidence, genuine new asset/objective question, or exhausted predeclared budget; not every head or a fixed timer"
+  },
+  {
+    "direction_id": "D-SCRATCH-TABPFN",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "title": "从零D-MPNN与TabPFN预测器的单列研究",
+    "priority": "P3",
+    "maturity": "blocked_assets",
+    "within_current_research_scope": true,
+    "execution_authorized": false,
+    "issue_ids": [
+      "I-ALT-ASSETS",
+      "I-RULE-BOUNDARY"
+    ],
+    "evidence_refs": [
+      "E-ASSETS",
+      "E-ORIGINAL-ASSETS",
+      "X-TABPFN",
+      "X-TABLICENSE",
+      "E-RULE"
+    ],
+    "historical_context": [],
+    "scientific_hypothesis": "随机初始化小图网络可测试预训练表示依赖；冻结TabPFN可测试不同表格预测归纳偏置。",
+    "counterevidence_and_alternatives": "scratch网络不是获准encoder微调的替代漏洞，需新模型准入；TabPFN不是分子编码器，ICL使用train标签上下文也非“零监督成本”，非商业许可/资源限制待正式核对。",
+    "parameter_space": {
+      "tasks": [
+        "ames",
+        "caco2_wang",
+        "cyp2c9_substrate_carbonmangels",
+        "ppbr_az"
+      ],
+      "scratch": {
+        "hidden_dim": [
+          128,
+          256
+        ],
+        "depth": 3,
+        "message_passing": "directed bonds",
+        "pool": "mean",
+        "new_head_hidden": 128,
+        "dropout": 0.1,
+        "optimizer": "AdamW lr0.0005 wd0.0001",
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "seeds": [
+          46,
+          47
+        ]
+      },
+      "tabpfn": {
+        "version": "2.6 only, local assets absent",
+        "preprocessing": "fit-only PCA dimension32 or128 on frozen CheMeleon features",
+        "label_context": "only train inner-fit",
+        "configurations": 2,
+        "no_weight_update": true,
+        "local_api_limit": "unknown; check official pinned version before issuing run spec"
+      }
+    },
+    "combination_and_counting_rule": "scratch4×2width×2seed=16fit储备。TabPFN4×2PCA=8 ICL configurations plus preprocessing fits/inference—not8 SGD fits；不计入197。",
+    "search_strategy": "按研究基线与正式参赛资格分别验收；未准入不安装/训练；D-MPNN从零训练只可能在后续明确批准的新模块范围内。",
+    "proposal_ids": [],
+    "cost_model": "Cache/head jobs and all end-to-end stages separate; see budget_scenarios.json. Unmeasured new interface/encoding is not assigned fake GPU hours. No full Cartesian product authorized.",
+    "stop_or_skip": "不能通过向TabPFN提供Valid标签或test拟合补齐能力；许可未核清不得运行商业/赛事用途。",
+    "next_research_trigger": "planned branch completed, decisive counterevidence, genuine new asset/objective question, or exhausted predeclared budget; not every head or a fixed timer"
+  }
+]

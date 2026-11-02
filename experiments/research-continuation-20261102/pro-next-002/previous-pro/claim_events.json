@@ -1,0 +1,189 @@
+[
+  {
+    "event_id": "PRO86-E-HETEROGENEITY",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "event_time": null,
+    "predecessor_event_id": "E-F010-UNIVERSAL",
+    "predecessor_source": "E-CLAIMS",
+    "original_claim": "完整22任务不支持统一F010",
+    "new_claim": "在五MAE全部双改善、Spearman混合、分类多反例的基础上，下一步应做任务族/机制分解；不只看平均分",
+    "status": "supported_and_refined",
+    "supporting_evidence_refs": [
+      "E-SCORES"
+    ],
+    "counterevidence_or_uncertainty": "只有两新seed，task families相关，不构成显著性或生物学机制证明",
+    "affected_direction_ids": [
+      "D-FLOOR",
+      "D-LOSS",
+      "D-CLASSWEIGHT"
+    ],
+    "old_record_action": "retain unchanged; append this event only"
+  },
+  {
+    "event_id": "PRO86-E-CONCENTRATION",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "event_time": null,
+    "predecessor_event_id": "E-F010-UNIVERSAL",
+    "predecessor_source": "E-CLAIMS",
+    "original_claim": "五双退化/七混合已反证全量推广",
+    "new_claim": "新推导：LD50+PPBR+Sol贡献seed46约85.75%、seed47约100.98%的本地推断均分净增益；去三项剩余19任务seed47略负",
+    "status": "new_derived_evidence",
+    "supporting_evidence_refs": [
+      "E-SCORES",
+      "E-CONTROLLER"
+    ],
+    "counterevidence_or_uncertainty": "依赖未确认的本地归一化公式；并非官方分或三个任务唯一因果机制",
+    "affected_direction_ids": [
+      "D-FLOOR",
+      "D-SPLIT"
+    ],
+    "old_record_action": "retain unchanged; append this event only"
+  },
+  {
+    "event_id": "PRO86-E-INVERTIBLE",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "event_time": null,
+    "predecessor_event_id": "E-MECHANISM",
+    "predecessor_source": "E-CLAIMS",
+    "original_claim": "极端标准化与总体改善不单独证明泛化因果",
+    "new_claim": "正对角分母缩放保持数学信息；可能改变优化/初始化/正则，而非自动移除噪声",
+    "status": "mechanism_scope_narrowed",
+    "supporting_evidence_refs": [
+      "E-SCALER",
+      "E-HEADS"
+    ],
+    "counterevidence_or_uncertainty": "有限浮点可能损失精度；等函数存在不意味训练轨迹相同",
+    "affected_direction_ids": [
+      "D-LINEAR",
+      "D-OPTIMIZER",
+      "D-REPARAM",
+      "D-PRECISION"
+    ],
+    "old_record_action": "retain unchanged; append this event only"
+  },
+  {
+    "event_id": "PRO86-E-STOP-COUNTEREXAMPLE",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "event_time": null,
+    "predecessor_event_id": "E-MECHANISM",
+    "predecessor_source": "E-CLAIMS",
+    "original_claim": "机制仍开放",
+    "new_claim": "DILI同seed同split F010 stop AUROC更高而Valid更低；PPBR轨迹best11→42；早停收益不能作Valid代理",
+    "status": "new_counterexample",
+    "supporting_evidence_refs": [
+      "E-DILI-F",
+      "E-DILI-H",
+      "E-PPBR-H",
+      "E-PPBR-F",
+      "E-SCORES"
+    ],
+    "counterevidence_or_uncertainty": "两任务定向原件不能概括全22；PPBR正好50不证明预算截断",
+    "affected_direction_ids": [
+      "D-SPLIT",
+      "D-STOP"
+    ],
+    "old_record_action": "retain unchanged; append this event only"
+  },
+  {
+    "event_id": "PRO86-E-BBB-REPAIR",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "event_time": null,
+    "predecessor_event_id": "E-86-BBB",
+    "predecessor_source": "E-CLAIMS",
+    "original_claim": "BBB旧稳定改善缩小且原H046缺after",
+    "new_claim": "仅建议新完整RTX4090 H046作为未来对照，历史缺after不因新训练消失",
+    "status": "future_validation_only",
+    "supporting_evidence_refs": [
+      "E-AUDIT22",
+      "E-LIMITS"
+    ],
+    "counterevidence_or_uncertainty": "此轮尚未执行；不能预言新score或retroactive freeze",
+    "affected_direction_ids": [
+      "D-BBB"
+    ],
+    "old_record_action": "retain unchanged; append this event only"
+  },
+  {
+    "event_id": "PRO86-E-CYP",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "event_time": null,
+    "predecessor_event_id": "E-86-CYP",
+    "predecessor_source": "E-CLAIMS",
+    "original_claim": "CYP2D6新两seed改善但旧不一致保留",
+    "new_claim": "CYP2C9/2D6/3A4及substrate/Veith应分别处理；3A4两任务双退化反证统一CYP响应",
+    "status": "scope_refined",
+    "supporting_evidence_refs": [
+      "E-SCORES",
+      "E-OLD28"
+    ],
+    "counterevidence_or_uncertainty": "任务、标签定义和指标不同，不能作同一机制的直接生物学因果比较",
+    "affected_direction_ids": [
+      "D-CLASSWEIGHT",
+      "D-FLOOR"
+    ],
+    "old_record_action": "retain unchanged; append this event only"
+  },
+  {
+    "event_id": "PRO86-E-READINESS",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "event_time": null,
+    "predecessor_event_id": "E-GLM",
+    "predecessor_source": "E-CLAIMS",
+    "original_claim": "16任务桥接和64fit已完成",
+    "new_claim": "当前22任务H0/F010齐全；没有剩余16任务接入阻塞，config_only无需重做整桥接",
+    "status": "implementation_fact_reused",
+    "supporting_evidence_refs": [
+      "E-INTERFACE",
+      "E-AUDIT64"
+    ],
+    "counterevidence_or_uncertainty": "新表示/linear/loss接口仍未准备，不随原bridge自动通过",
+    "affected_direction_ids": [
+      "D-FLOOR",
+      "D-DROPOUT"
+    ],
+    "old_record_action": "retain unchanged; append this event only"
+  },
+  {
+    "event_id": "PRO86-E-DINO",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "event_time": null,
+    "predecessor_event_id": "E-DINO",
+    "predecessor_source": "E-CLAIMS",
+    "original_claim": "DINO仅方法假设，线性等接口未实现",
+    "new_claim": "将线性头、loss、train-only structure、disagreement纳入有界可证伪路线；不迁移视觉改标签/伪标签/F1阈值流程",
+    "status": "proposal_operationalized",
+    "supporting_evidence_refs": [
+      "E-METHOD",
+      "E-DINO",
+      "E-DATAIO"
+    ],
+    "counterevidence_or_uncertainty": "候选方案不是已执行或已证明提升",
+    "affected_direction_ids": [
+      "D-LINEAR",
+      "D-LOSS",
+      "D-CLASSWEIGHT",
+      "D-SPLIT",
+      "D-DISAGREE"
+    ],
+    "old_record_action": "retain unchanged; append this event only"
+  },
+  {
+    "event_id": "PRO86-E-ROOT-CORRECTIONS",
+    "origin_request_id": "admet-pro-parallel-20261102-001",
+    "event_time": null,
+    "predecessor_event_id": null,
+    "predecessor_source": "E-ROOT-REVIEW",
+    "original_claim": "旧Pro对cross-batch H0、16任务门槛和ensemble存在过度限制",
+    "new_claim": "采纳当前主控有证据的范围修订：已验同身份控制可跨批复用；16任务不等六任务全胜；同表示seed ensemble可以研究",
+    "status": "inherited_correction_retained",
+    "supporting_evidence_refs": [
+      "E-ROOT-REVIEW"
+    ],
+    "counterevidence_or_uncertainty": "仍保留真实跨主机/缺after/Valid适配限制，不能扩大为全无混杂",
+    "affected_direction_ids": [
+      "D-ENSEMBLE",
+      "D-FLOOR"
+    ],
+    "old_record_action": "retain unchanged; append this event only"
+  }
+]

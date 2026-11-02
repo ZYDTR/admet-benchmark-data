@@ -1,0 +1,336 @@
+{
+  "request_id": "admet-astra-research-20261102-001",
+  "directions": [
+    {
+      "direction_id": "DIR-FLOOR-LOCAL",
+      "readiness": "config_only",
+      "scheduled_batch": "A",
+      "parameters": {
+        "floor": [
+          0.001,
+          0.01
+        ],
+        "legacy": "H0"
+      },
+      "decision_rule": "Existing lower floor tests whether attenuation is excessive in12 adverse/mixed tasks; controls reused.",
+      "status": "candidate_not_adopted"
+    },
+    {
+      "direction_id": "DIR-FLOOR-DOSE",
+      "readiness": "new_code",
+      "scheduled_batch": "conditional",
+      "parameters": {
+        "task_panel": [
+          "ld50_zhu",
+          "solubility_aqsoldb",
+          "ppbr_az"
+        ],
+        "floor": [
+          0.003,
+          0.03
+        ],
+        "seeds": [
+          46,
+          47
+        ]
+      },
+      "decision_rule": "12 further fits only if F010 remains best among registered controls and tails matter; reuse F010, no H0 rerun. Stop dose sweep if both values regress.",
+      "status": "candidate_not_adopted"
+    },
+    {
+      "direction_id": "DIR-SIMPLE",
+      "readiness": "new_code",
+      "scheduled_batch": "B",
+      "parameters": {
+        "head": "affine2048→1",
+        "optimizer": "same AdamW",
+        "seeds": [
+          46,
+          47
+        ]
+      },
+      "decision_rule": "Tests whether nonlinear capacity is needed; failure at50epochs may be optimization-limited, not proof all linear methods fail.",
+      "status": "candidate_not_adopted"
+    },
+    {
+      "direction_id": "DIR-CAPACITY",
+      "readiness": "config_only",
+      "scheduled_batch": "B",
+      "parameters": {
+        "hidden": [
+          128,
+          256,
+          512
+        ],
+        "fixed_other_fields": true
+      },
+      "decision_rule": "B uses128 against existing256.512 is conditional on128 underfitting in both train loss and task metric; never full width×dropout×lr grid.",
+      "status": "candidate_not_adopted"
+    },
+    {
+      "direction_id": "DIR-ROBUST-LOSS",
+      "readiness": "new_code",
+      "scheduled_batch": "C",
+      "parameters": {
+        "loss": [
+          "Huber(delta=1 standardized)",
+          "L1 standardized"
+        ],
+        "Huber_followup_delta": [
+          0.5,
+          2
+        ]
+      },
+      "decision_rule": "C usesHuber1 on5 MAE tasks; if both seeds benefit, choose at most one of L1 or delta branch before fresh split stress. No log/label changes.",
+      "status": "candidate_not_adopted"
+    },
+    {
+      "direction_id": "DIR-CLASS-WEIGHT",
+      "readiness": "new_code",
+      "scheduled_batch": "C",
+      "parameters": {
+        "positive_weight": "sqrt fit-negative/fit-positive clipped1..5",
+        "future_full_ratio": "fit_negative/fit_positive clipped1..10"
+      },
+      "decision_rule": "First six fits compare weighting policy; full-ratio branch only if first helps both seeds; weighting need not improve AUROC/AP and may change calibration.",
+      "status": "candidate_not_adopted"
+    },
+    {
+      "direction_id": "DIR-GROUP-STRESS",
+      "readiness": "new_code",
+      "scheduled_batch": "D",
+      "parameters": {
+        "grouping": [
+          "canonical",
+          "Murcko_nonempty_with_canonical_acyclic_fallback"
+        ],
+        "fractions": [
+          0.7,
+          0.1,
+          0.2
+        ],
+        "split_seed": 43,
+        "model_seed": 47
+      },
+      "decision_rule": "Train-only stress separated from early stopping. No untouched-holdout claim, no split chosen by favorable metric.",
+      "status": "candidate_not_adopted"
+    },
+    {
+      "direction_id": "DIR-CLASSICAL",
+      "readiness": "new_code",
+      "scheduled_batch": "E",
+      "parameters": {
+        "ECFP": {
+          "radius": 2,
+          "bits": 2048,
+          "chirality": true
+        },
+        "next": [
+          "radius3 at fixed bit count",
+          "eight physicochemical descriptors alone and concatenation"
+        ]
+      },
+      "decision_rule": "ECFP+MLP first; descriptor list: MolWt,MolLogP,TPSA,NumHDonors,NumHAcceptors,NumRotatableBonds,RingCount,FractionCSP3; fit-only standardization with constant dims1, finite-value policy; 8 additional features need own contract.",
+      "status": "candidate_not_adopted"
+    },
+    {
+      "direction_id": "DIR-MINIMOL",
+      "readiness": "blocked_assets",
+      "scheduled_batch": "F",
+      "parameters": {
+        "code_commit": "41642328affbb35e4950b7b7a9020aa95919b503",
+        "model": "minimol_v1",
+        "pooling": "gnn15 max512"
+      },
+      "decision_rule": "Frozen direct precedent; keep current graph path. Check pretrained exposure separately from no new external labels; no benchmark script execution.",
+      "status": "candidate_not_adopted"
+    },
+    {
+      "direction_id": "DIR-MOLFORMER",
+      "readiness": "blocked_assets",
+      "scheduled_batch": "conditional",
+      "parameters": {
+        "asset": "ibm-research/MoLFormer-XL-both-10pct",
+        "revision": null,
+        "pooling": "published pooler_output",
+        "head": "hidden256 dropout.1 AdamW5e-4 wd1e-4",
+        "split": "raw-group43 90/10",
+        "seeds": [
+          46,
+          47
+        ],
+        "tasks": [
+          "ames",
+          "bioavailability_ma",
+          "caco2_wang",
+          "cyp2c9_substrate_carbonmangels",
+          "dili",
+          "half_life_obach",
+          "ppbr_az",
+          "solubility_aqsoldb"
+        ],
+        "fits": 16
+      },
+      "decision_rule": "Separate16-fit candidate after revision/checkpoint/license/token coverage fixed; not full-XL. Deterministic eval, no truncation without explicit recorded policy. Does not silently substitute F batch.",
+      "status": "candidate_not_adopted"
+    },
+    {
+      "direction_id": "DIR-OPTIMIZER",
+      "readiness": "config_only",
+      "scheduled_batch": "conditional",
+      "parameters": {
+        "lr": [
+          0.0001,
+          0.0003,
+          0.0005,
+          0.001
+        ],
+        "weight_decay": [
+          1e-05,
+          0.0001,
+          0.001
+        ],
+        "dropout": [
+          0,
+          0.1,
+          0.3
+        ]
+      },
+      "decision_rule": "At most four predeclared tasks × one changed value × two seeds=8 first fits; preferred lr3e-4 on bioavailability,cyp2c9_substrate,vdss,ppbr with anchors from task_actions. Dropout.3 already tried on six old tasks, not novel or universal.",
+      "status": "candidate_not_adopted"
+    },
+    {
+      "direction_id": "DIR-EARLY-STOP",
+      "readiness": "new_code",
+      "scheduled_batch": "conditional",
+      "parameters": {
+        "tasks": [
+          "bioavailability_ma",
+          "cyp2c9_substrate_carbonmangels"
+        ],
+        "monitor": "unweighted stop BCE minimize",
+        "external": "AUROC or AP maximize",
+        "seeds": [
+          46,
+          47
+        ],
+        "fits": 4
+      },
+      "decision_rule": "Exact matched head/data/target, only monitor changes; motivated by early epoch1 selection and stop-to-Valid reversal; current monitor enum disallows BCE. Historic Caco2 is different task and metric.",
+      "status": "candidate_not_adopted"
+    },
+    {
+      "direction_id": "DIR-RANKING",
+      "readiness": "new_code",
+      "scheduled_batch": "conditional",
+      "parameters": {
+        "tasks": [
+          "half_life_obach",
+          "vdss_lombardo",
+          "clearance_microsome_az"
+        ],
+        "seeds": [
+          46,
+          47
+        ],
+        "pair_loss": "0.5*MSE(z_pred,zY)+0.5*mean softplus(-sign(y_i-y_j)*(z_pred_i-z_pred_j))",
+        "pairs": "all unequal-target unordered pairs within each existing batch128; no pairs gives zero pair term",
+        "external": "Spearman maximize",
+        "fits": 6
+      },
+      "decision_rule": "Ranking bundle competes with target-scale MSE; no unit/log assumptions. Use anchor H0, fixed existing split/head. Not guaranteed better and not equivalent to direct Spearman optimization.",
+      "status": "candidate_not_adopted"
+    },
+    {
+      "direction_id": "DIR-ENSEMBLE",
+      "readiness": "new_code",
+      "scheduled_batch": "conditional",
+      "parameters": {
+        "classification": "arithmetic mean of two probabilities",
+        "MAE_regression": "arithmetic mean on originalY",
+        "Spearman": "arithmetic mean of within-task fractional ranks for research scoring only",
+        "weights": [
+          0.5,
+          0.5
+        ],
+        "new_fits": 0
+      },
+      "decision_rule": "Only after two independently accepted components exist. Average predicted rows then designated role scores once, not average old metrics; no weight search on Valid. Final submission output policy separately decided.",
+      "status": "candidate_not_adopted"
+    },
+    {
+      "direction_id": "DIR-MTL",
+      "readiness": "new_code",
+      "scheduled_batch": "deferred",
+      "parameters": {
+        "tasks": [
+          "cyp2c9_veith",
+          "cyp2d6_veith",
+          "cyp3a4_veith"
+        ],
+        "shared_head": "2048→256 ReLU dropout.1 +3 independent logits",
+        "training": "uniform task sampling, per-task mean BCE; only own official train labels and mask",
+        "seeds": [
+          46,
+          47
+        ],
+        "lr": 0.0005,
+        "max_epochs": 50
+      },
+      "decision_rule": "New shared module; frozen encoder. Cross-task molecular exposure changes interpretation; preserve row weights and missing-label masks. Not in112-fit plan; needs per-task stop and total-budget definition before dispatch.",
+      "status": "candidate_not_adopted"
+    },
+    {
+      "direction_id": "DIR-SCRATCH",
+      "readiness": "new_code",
+      "scheduled_batch": "deferred",
+      "parameters": {
+        "model": "random-init D-MPNN depth3 hidden300 mean aggregation +MLP256",
+        "dropout": 0.1,
+        "lr": 0.0005,
+        "batch_size": 128,
+        "max_epochs": 50,
+        "patience": 8,
+        "tasks": [
+          "dili",
+          "caco2_wang",
+          "cyp2c9_substrate_carbonmangels",
+          "solubility_aqsoldb"
+        ],
+        "seeds": [
+          46,
+          47
+        ],
+        "fits": 8
+      },
+      "decision_rule": "Independent model learning from official train only; not frozen-backbone fine-tuning. Resource cost unknown and separate authorization.",
+      "status": "candidate_not_adopted"
+    },
+    {
+      "direction_id": "DIR-OTHER-ASSETS",
+      "readiness": "blocked_assets",
+      "scheduled_batch": "deferred",
+      "parameters": {
+        "assets": [
+          "KPGT",
+          "Uni-Mol",
+          "SMI-TED",
+          "MolE",
+          "TabPFN2.6"
+        ]
+      },
+      "decision_rule": "Retain researched candidates with specific blockers from assets/readiness; no invented exact checkpoint readiness. Reopen on grounded asset closure or failure of diverse lower-cost paths.",
+      "status": "candidate_not_adopted"
+    }
+  ],
+  "pro_merge": "pending controller-provided original Pro delivery; same scientific identity dedup, conflicts retained as competing hypotheses",
+  "forbidden_expansions": [
+    "no full Cartesian product",
+    "no pretrained finetuning",
+    "no external samples/labels/teachers",
+    "no test fitting",
+    "no inference/fit by Astra",
+    "no row-valid truth or residual access",
+    "no unlabeled count treated as new-fit budget"
+  ]
+}

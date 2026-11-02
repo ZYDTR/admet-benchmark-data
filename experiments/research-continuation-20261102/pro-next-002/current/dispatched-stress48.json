@@ -1,0 +1,3044 @@
+{
+  "request_id": "admet-representation-stress48-training-20261102-001",
+  "state": "sent_to_original_trainer_not_yet_completed",
+  "scientific_comparison": {
+    "recipes": [
+      {
+        "task": "ames",
+        "representation": "chemeleon",
+        "head": "mlp",
+        "source_config": "evidence-ref:ref-65074b5ccd83238a",
+        "source_config_sha256": "bff74a4681e764819a63f999f6431afb781f07941d2201725e2aa6abf3579845"
+      },
+      {
+        "task": "ames",
+        "representation": "morgan",
+        "head": "mlp",
+        "source_config": "evidence-ref:ref-ee664fc124ad9174",
+        "source_config_sha256": "1cb3095b62e3b80ee600617005e983faa194e479908cd9785f8b730342610a69"
+      },
+      {
+        "task": "ppbr_az",
+        "representation": "chemeleon",
+        "head": "mlp",
+        "source_config": "evidence-ref:ref-c85d6d68cce5dc29",
+        "source_config_sha256": "fd2877dcbede512709d27b8310edb4208a8f7008e51929e3d9c339a3bc734734"
+      },
+      {
+        "task": "ppbr_az",
+        "representation": "minimol",
+        "head": "mlp",
+        "source_config": "evidence-ref:ref-80b2653542b252a5",
+        "source_config_sha256": "26bf97cad95a3d12200871d73733031879313297d8d7c40c288b08e787aa2d4b"
+      },
+      {
+        "task": "solubility_aqsoldb",
+        "representation": "chemeleon",
+        "head": "mlp",
+        "source_config": "evidence-ref:ref-de894ed3a7721d93",
+        "source_config_sha256": "775297049dc7af0253d9dde4654b113151c64a4217974111e0bd072afb644b90"
+      },
+      {
+        "task": "solubility_aqsoldb",
+        "representation": "minimol",
+        "head": "mlp",
+        "source_config": "evidence-ref:ref-f543fdc32f982fb2",
+        "source_config_sha256": "ac8670cda6eb0c5f3148f224fbbebff98c8f8caa78097cc55b07d67bc1c8144b"
+      },
+      {
+        "task": "clearance_microsome_az",
+        "representation": "chemeleon",
+        "head": "mlp",
+        "source_config": "evidence-ref:ref-c746a2fd11252997",
+        "source_config_sha256": "f938a15191d542e3525e2368eda0c962e04e63acf630dfe4055b83523f27545d"
+      },
+      {
+        "task": "clearance_microsome_az",
+        "representation": "minimol",
+        "head": "mlp",
+        "source_config": "evidence-ref:ref-3cb61d8100f19295",
+        "source_config_sha256": "487e1397cb8f936a46b6f208ca684885fb172bd80a15ef3b9d9b7bb6c3bb3200"
+      },
+      {
+        "task": "cyp2d6_veith",
+        "representation": "chemeleon",
+        "head": "tabm",
+        "source_config": "evidence-ref:ref-2ee821135e779230",
+        "source_config_sha256": "f2fa23fdc562f4538d26f7773cc0a0acf8947b1cc720d5179f3753b0e404cbb6"
+      },
+      {
+        "task": "cyp2d6_veith",
+        "representation": "minimol",
+        "head": "tabm",
+        "source_config": "evidence-ref:ref-7afc61e219ce11ed",
+        "source_config_sha256": "e503f64d5561efd95ce428cc6c70bbd13a37591759afa67be669180a091ad666"
+      },
+      {
+        "task": "dili",
+        "representation": "chemeleon",
+        "head": "tabm",
+        "source_config": "evidence-ref:ref-503b3abc628a2a93",
+        "source_config_sha256": "01668dd5c610ce5e2514813272de90c41722a99740fea63e631cd6db457a3fd6"
+      },
+      {
+        "task": "dili",
+        "representation": "minimol",
+        "head": "tabm",
+        "source_config": "evidence-ref:ref-a1bd0a6f20ad56f9",
+        "source_config_sha256": "198750db7fc1ad4038fdf03d0fbc489f3dc6e69417bfc258455d6b65052c2dd0"
+      }
+    ],
+    "primary": "24 paired native train.stress comparisons =6tasks ×2grouping schemes ×2modelseeds; task-native metric, no aggregate heterogeneous metric.",
+    "secondary": "Best stop rank and subsequent official Valid rank from specified scorer; Valid never trains/stops/selects this batch.",
+    "decision_before_results": "For each task, both seeds positive in both eligible schemes supports group-stress robustness of the full recipe; a scheme with two negative pairs is a split-dependent reversal; mixed seeds remain uncertain. Record magnitudes and all cells. A result in DILI can falsify the expected non-transfer pattern. Ineligible scheme is missing evidence, never a win.",
+    "limits": "Retrospective reuse of historically seen officialtrain; not pristine holdout or independentdataset. Canonical/scaffold alter membership and effective fit size; comparison between schemes is descriptive. Representation+scaling+dimension+headcapacity stay bundled. Model seeds are replicates on the same split, not independent datasets.",
+    "same_device": "Allpaired recipes within task/scheme/seed must run same GPU UUID and exact H140 head environment; preferred allbatch GPU2 if safe. Executor may choose another Hainan GPU before first fit; record and hold perpair. No mixing hosts."
+  },
+  "runs": [
+    {
+      "run_id": "rs48-ames-chemeleon-mlp-canonical-s44",
+      "configuration": {
+        "run_id": "rs48-ames-chemeleon-mlp-canonical-s44",
+        "task": "ames",
+        "kind": "classification",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUROC",
+        "monitor_direction": "maximize",
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean",
+          "pos_weight": 1.0
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "legacy_h0"
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-65074b5ccd83238a"
+    },
+    {
+      "run_id": "rs48-ames-chemeleon-mlp-canonical-s45",
+      "configuration": {
+        "run_id": "rs48-ames-chemeleon-mlp-canonical-s45",
+        "task": "ames",
+        "kind": "classification",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUROC",
+        "monitor_direction": "maximize",
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean",
+          "pos_weight": 1.0
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "legacy_h0"
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-65074b5ccd83238a"
+    },
+    {
+      "run_id": "rs48-ames-chemeleon-mlp-scaffold-s44",
+      "configuration": {
+        "run_id": "rs48-ames-chemeleon-mlp-scaffold-s44",
+        "task": "ames",
+        "kind": "classification",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUROC",
+        "monitor_direction": "maximize",
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean",
+          "pos_weight": 1.0
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "legacy_h0"
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-65074b5ccd83238a"
+    },
+    {
+      "run_id": "rs48-ames-chemeleon-mlp-scaffold-s45",
+      "configuration": {
+        "run_id": "rs48-ames-chemeleon-mlp-scaffold-s45",
+        "task": "ames",
+        "kind": "classification",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUROC",
+        "monitor_direction": "maximize",
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean",
+          "pos_weight": 1.0
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "legacy_h0"
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-65074b5ccd83238a"
+    },
+    {
+      "run_id": "rs48-ames-morgan-mlp-canonical-s44",
+      "configuration": {
+        "run_id": "rs48-ames-morgan-mlp-canonical-s44",
+        "task": "ames",
+        "kind": "classification",
+        "pretrained_sha256": null,
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUROC",
+        "monitor_direction": "maximize",
+        "representation": {
+          "id": "morgan_ecfp4_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": null,
+          "scaler": "identity_no_fit",
+          "software_version": null
+        },
+        "feature_scaler": {
+          "method": "identity_no_fit"
+        },
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean",
+          "pos_weight": 1.0
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-ee664fc124ad9174"
+    },
+    {
+      "run_id": "rs48-ames-morgan-mlp-canonical-s45",
+      "configuration": {
+        "run_id": "rs48-ames-morgan-mlp-canonical-s45",
+        "task": "ames",
+        "kind": "classification",
+        "pretrained_sha256": null,
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUROC",
+        "monitor_direction": "maximize",
+        "representation": {
+          "id": "morgan_ecfp4_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": null,
+          "scaler": "identity_no_fit",
+          "software_version": null
+        },
+        "feature_scaler": {
+          "method": "identity_no_fit"
+        },
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean",
+          "pos_weight": 1.0
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-ee664fc124ad9174"
+    },
+    {
+      "run_id": "rs48-ames-morgan-mlp-scaffold-s44",
+      "configuration": {
+        "run_id": "rs48-ames-morgan-mlp-scaffold-s44",
+        "task": "ames",
+        "kind": "classification",
+        "pretrained_sha256": null,
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUROC",
+        "monitor_direction": "maximize",
+        "representation": {
+          "id": "morgan_ecfp4_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": null,
+          "scaler": "identity_no_fit",
+          "software_version": null
+        },
+        "feature_scaler": {
+          "method": "identity_no_fit"
+        },
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean",
+          "pos_weight": 1.0
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-ee664fc124ad9174"
+    },
+    {
+      "run_id": "rs48-ames-morgan-mlp-scaffold-s45",
+      "configuration": {
+        "run_id": "rs48-ames-morgan-mlp-scaffold-s45",
+        "task": "ames",
+        "kind": "classification",
+        "pretrained_sha256": null,
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUROC",
+        "monitor_direction": "maximize",
+        "representation": {
+          "id": "morgan_ecfp4_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": null,
+          "scaler": "identity_no_fit",
+          "software_version": null
+        },
+        "feature_scaler": {
+          "method": "identity_no_fit"
+        },
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean",
+          "pos_weight": 1.0
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-ee664fc124ad9174"
+    },
+    {
+      "run_id": "rs48-ppbr_az-chemeleon-mlp-canonical-s44",
+      "configuration": {
+        "run_id": "rs48-ppbr_az-chemeleon-mlp-canonical-s44",
+        "task": "ppbr_az",
+        "kind": "regression",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "MAE",
+        "monitor_direction": "minimize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.01,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "fit_std_denominator_floor_v1"
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-c85d6d68cce5dc29"
+    },
+    {
+      "run_id": "rs48-ppbr_az-chemeleon-mlp-canonical-s45",
+      "configuration": {
+        "run_id": "rs48-ppbr_az-chemeleon-mlp-canonical-s45",
+        "task": "ppbr_az",
+        "kind": "regression",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "MAE",
+        "monitor_direction": "minimize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.01,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "fit_std_denominator_floor_v1"
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-c85d6d68cce5dc29"
+    },
+    {
+      "run_id": "rs48-ppbr_az-chemeleon-mlp-scaffold-s44",
+      "configuration": {
+        "run_id": "rs48-ppbr_az-chemeleon-mlp-scaffold-s44",
+        "task": "ppbr_az",
+        "kind": "regression",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "MAE",
+        "monitor_direction": "minimize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.01,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "fit_std_denominator_floor_v1"
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-c85d6d68cce5dc29"
+    },
+    {
+      "run_id": "rs48-ppbr_az-chemeleon-mlp-scaffold-s45",
+      "configuration": {
+        "run_id": "rs48-ppbr_az-chemeleon-mlp-scaffold-s45",
+        "task": "ppbr_az",
+        "kind": "regression",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "MAE",
+        "monitor_direction": "minimize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.01,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "fit_std_denominator_floor_v1"
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-c85d6d68cce5dc29"
+    },
+    {
+      "run_id": "rs48-ppbr_az-minimol-mlp-canonical-s44",
+      "configuration": {
+        "run_id": "rs48-ppbr_az-minimol-mlp-canonical-s44",
+        "task": "ppbr_az",
+        "kind": "regression",
+        "pretrained_sha256": null,
+        "head": {
+          "feature_dim": 512,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "MAE",
+        "monitor_direction": "minimize",
+        "representation": {
+          "id": "minimol_512",
+          "feature_dim": 512,
+          "frozen_source_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+          "scaler": "legacy_h0"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-80b2653542b252a5"
+    },
+    {
+      "run_id": "rs48-ppbr_az-minimol-mlp-canonical-s45",
+      "configuration": {
+        "run_id": "rs48-ppbr_az-minimol-mlp-canonical-s45",
+        "task": "ppbr_az",
+        "kind": "regression",
+        "pretrained_sha256": null,
+        "head": {
+          "feature_dim": 512,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "MAE",
+        "monitor_direction": "minimize",
+        "representation": {
+          "id": "minimol_512",
+          "feature_dim": 512,
+          "frozen_source_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+          "scaler": "legacy_h0"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-80b2653542b252a5"
+    },
+    {
+      "run_id": "rs48-ppbr_az-minimol-mlp-scaffold-s44",
+      "configuration": {
+        "run_id": "rs48-ppbr_az-minimol-mlp-scaffold-s44",
+        "task": "ppbr_az",
+        "kind": "regression",
+        "pretrained_sha256": null,
+        "head": {
+          "feature_dim": 512,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "MAE",
+        "monitor_direction": "minimize",
+        "representation": {
+          "id": "minimol_512",
+          "feature_dim": 512,
+          "frozen_source_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+          "scaler": "legacy_h0"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-80b2653542b252a5"
+    },
+    {
+      "run_id": "rs48-ppbr_az-minimol-mlp-scaffold-s45",
+      "configuration": {
+        "run_id": "rs48-ppbr_az-minimol-mlp-scaffold-s45",
+        "task": "ppbr_az",
+        "kind": "regression",
+        "pretrained_sha256": null,
+        "head": {
+          "feature_dim": 512,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "MAE",
+        "monitor_direction": "minimize",
+        "representation": {
+          "id": "minimol_512",
+          "feature_dim": 512,
+          "frozen_source_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+          "scaler": "legacy_h0"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-80b2653542b252a5"
+    },
+    {
+      "run_id": "rs48-solubility_aqsoldb-chemeleon-mlp-canonical-s44",
+      "configuration": {
+        "run_id": "rs48-solubility_aqsoldb-chemeleon-mlp-canonical-s44",
+        "task": "solubility_aqsoldb",
+        "kind": "regression",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "MAE",
+        "monitor_direction": "minimize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.01,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "fit_std_denominator_floor_v1"
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-de894ed3a7721d93"
+    },
+    {
+      "run_id": "rs48-solubility_aqsoldb-chemeleon-mlp-canonical-s45",
+      "configuration": {
+        "run_id": "rs48-solubility_aqsoldb-chemeleon-mlp-canonical-s45",
+        "task": "solubility_aqsoldb",
+        "kind": "regression",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "MAE",
+        "monitor_direction": "minimize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.01,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "fit_std_denominator_floor_v1"
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-de894ed3a7721d93"
+    },
+    {
+      "run_id": "rs48-solubility_aqsoldb-chemeleon-mlp-scaffold-s44",
+      "configuration": {
+        "run_id": "rs48-solubility_aqsoldb-chemeleon-mlp-scaffold-s44",
+        "task": "solubility_aqsoldb",
+        "kind": "regression",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "MAE",
+        "monitor_direction": "minimize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.01,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "fit_std_denominator_floor_v1"
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-de894ed3a7721d93"
+    },
+    {
+      "run_id": "rs48-solubility_aqsoldb-chemeleon-mlp-scaffold-s45",
+      "configuration": {
+        "run_id": "rs48-solubility_aqsoldb-chemeleon-mlp-scaffold-s45",
+        "task": "solubility_aqsoldb",
+        "kind": "regression",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "MAE",
+        "monitor_direction": "minimize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.01,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "fit_std_denominator_floor_v1"
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-de894ed3a7721d93"
+    },
+    {
+      "run_id": "rs48-solubility_aqsoldb-minimol-mlp-canonical-s44",
+      "configuration": {
+        "run_id": "rs48-solubility_aqsoldb-minimol-mlp-canonical-s44",
+        "task": "solubility_aqsoldb",
+        "kind": "regression",
+        "pretrained_sha256": null,
+        "head": {
+          "feature_dim": 512,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "MAE",
+        "monitor_direction": "minimize",
+        "representation": {
+          "id": "minimol_512",
+          "feature_dim": 512,
+          "frozen_source_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+          "scaler": "legacy_h0"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-f543fdc32f982fb2"
+    },
+    {
+      "run_id": "rs48-solubility_aqsoldb-minimol-mlp-canonical-s45",
+      "configuration": {
+        "run_id": "rs48-solubility_aqsoldb-minimol-mlp-canonical-s45",
+        "task": "solubility_aqsoldb",
+        "kind": "regression",
+        "pretrained_sha256": null,
+        "head": {
+          "feature_dim": 512,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "MAE",
+        "monitor_direction": "minimize",
+        "representation": {
+          "id": "minimol_512",
+          "feature_dim": 512,
+          "frozen_source_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+          "scaler": "legacy_h0"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-f543fdc32f982fb2"
+    },
+    {
+      "run_id": "rs48-solubility_aqsoldb-minimol-mlp-scaffold-s44",
+      "configuration": {
+        "run_id": "rs48-solubility_aqsoldb-minimol-mlp-scaffold-s44",
+        "task": "solubility_aqsoldb",
+        "kind": "regression",
+        "pretrained_sha256": null,
+        "head": {
+          "feature_dim": 512,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "MAE",
+        "monitor_direction": "minimize",
+        "representation": {
+          "id": "minimol_512",
+          "feature_dim": 512,
+          "frozen_source_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+          "scaler": "legacy_h0"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-f543fdc32f982fb2"
+    },
+    {
+      "run_id": "rs48-solubility_aqsoldb-minimol-mlp-scaffold-s45",
+      "configuration": {
+        "run_id": "rs48-solubility_aqsoldb-minimol-mlp-scaffold-s45",
+        "task": "solubility_aqsoldb",
+        "kind": "regression",
+        "pretrained_sha256": null,
+        "head": {
+          "feature_dim": 512,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "MAE",
+        "monitor_direction": "minimize",
+        "representation": {
+          "id": "minimol_512",
+          "feature_dim": 512,
+          "frozen_source_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+          "scaler": "legacy_h0"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-f543fdc32f982fb2"
+    },
+    {
+      "run_id": "rs48-clearance_microsome_az-chemeleon-mlp-canonical-s44",
+      "configuration": {
+        "run_id": "rs48-clearance_microsome_az-chemeleon-mlp-canonical-s44",
+        "task": "clearance_microsome_az",
+        "kind": "regression",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "Spearman",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.01,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "fit_std_denominator_floor_v1"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "original_given_Y",
+          "member_reduction": "single output",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-c746a2fd11252997"
+    },
+    {
+      "run_id": "rs48-clearance_microsome_az-chemeleon-mlp-canonical-s45",
+      "configuration": {
+        "run_id": "rs48-clearance_microsome_az-chemeleon-mlp-canonical-s45",
+        "task": "clearance_microsome_az",
+        "kind": "regression",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "Spearman",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.01,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "fit_std_denominator_floor_v1"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "original_given_Y",
+          "member_reduction": "single output",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-c746a2fd11252997"
+    },
+    {
+      "run_id": "rs48-clearance_microsome_az-chemeleon-mlp-scaffold-s44",
+      "configuration": {
+        "run_id": "rs48-clearance_microsome_az-chemeleon-mlp-scaffold-s44",
+        "task": "clearance_microsome_az",
+        "kind": "regression",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "Spearman",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.01,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "fit_std_denominator_floor_v1"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "original_given_Y",
+          "member_reduction": "single output",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-c746a2fd11252997"
+    },
+    {
+      "run_id": "rs48-clearance_microsome_az-chemeleon-mlp-scaffold-s45",
+      "configuration": {
+        "run_id": "rs48-clearance_microsome_az-chemeleon-mlp-scaffold-s45",
+        "task": "clearance_microsome_az",
+        "kind": "regression",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "Spearman",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.01,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "fit_std_denominator_floor_v1"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "original_given_Y",
+          "member_reduction": "single output",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-c746a2fd11252997"
+    },
+    {
+      "run_id": "rs48-clearance_microsome_az-minimol-mlp-canonical-s44",
+      "configuration": {
+        "run_id": "rs48-clearance_microsome_az-minimol-mlp-canonical-s44",
+        "task": "clearance_microsome_az",
+        "kind": "regression",
+        "pretrained_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+        "head": {
+          "feature_dim": 512,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "Spearman",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "legacy_fit_standardization",
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "d=1 if fit_std<1e-8 else fit_std; z=(x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        },
+        "representation": {
+          "id": "minimol_512",
+          "feature_dim": 512,
+          "frozen_source_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+          "scaler": "legacy_h0"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "original_given_Y",
+          "member_reduction": "single output",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-3cb61d8100f19295"
+    },
+    {
+      "run_id": "rs48-clearance_microsome_az-minimol-mlp-canonical-s45",
+      "configuration": {
+        "run_id": "rs48-clearance_microsome_az-minimol-mlp-canonical-s45",
+        "task": "clearance_microsome_az",
+        "kind": "regression",
+        "pretrained_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+        "head": {
+          "feature_dim": 512,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "Spearman",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "legacy_fit_standardization",
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "d=1 if fit_std<1e-8 else fit_std; z=(x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        },
+        "representation": {
+          "id": "minimol_512",
+          "feature_dim": 512,
+          "frozen_source_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+          "scaler": "legacy_h0"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "original_given_Y",
+          "member_reduction": "single output",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-3cb61d8100f19295"
+    },
+    {
+      "run_id": "rs48-clearance_microsome_az-minimol-mlp-scaffold-s44",
+      "configuration": {
+        "run_id": "rs48-clearance_microsome_az-minimol-mlp-scaffold-s44",
+        "task": "clearance_microsome_az",
+        "kind": "regression",
+        "pretrained_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+        "head": {
+          "feature_dim": 512,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "Spearman",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "legacy_fit_standardization",
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "d=1 if fit_std<1e-8 else fit_std; z=(x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        },
+        "representation": {
+          "id": "minimol_512",
+          "feature_dim": 512,
+          "frozen_source_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+          "scaler": "legacy_h0"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "original_given_Y",
+          "member_reduction": "single output",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-3cb61d8100f19295"
+    },
+    {
+      "run_id": "rs48-clearance_microsome_az-minimol-mlp-scaffold-s45",
+      "configuration": {
+        "run_id": "rs48-clearance_microsome_az-minimol-mlp-scaffold-s45",
+        "task": "clearance_microsome_az",
+        "kind": "regression",
+        "pretrained_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+        "head": {
+          "feature_dim": 512,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "mlp"
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "Spearman",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "legacy_fit_standardization",
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "d=1 if fit_std<1e-8 else fit_std; z=(x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "MSELoss",
+          "scale": "fit_only_standardized_Y",
+          "reduction": "mean"
+        },
+        "representation": {
+          "id": "minimol_512",
+          "feature_dim": 512,
+          "frozen_source_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+          "scaler": "legacy_h0"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "original_given_Y",
+          "member_reduction": "single output",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-3cb61d8100f19295"
+    },
+    {
+      "run_id": "rs48-cyp2d6_veith-chemeleon-tabm-canonical-s44",
+      "configuration": {
+        "run_id": "rs48-cyp2d6_veith-chemeleon-tabm-canonical-s44",
+        "task": "cyp2d6_veith",
+        "kind": "classification",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "activation": "ReLU",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "tabm",
+          "n_blocks": 3,
+          "d_block": 512,
+          "k": 32,
+          "arch_type": "tabm",
+          "start_scaling_init": "random-signs",
+          "num_embeddings": null,
+          "cat_cardinalities": null,
+          "d_out": 1,
+          "source_commit": "28e47ae301c92ec37787dde1ce923a0793f405b4",
+          "hidden_dim": null
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUPRC",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.01,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean_over_samples_and_members",
+          "pos_weight": 1.0
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "fit_std_denominator_floor_v1"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "continuous_probability",
+          "member_reduction": "arithmetic_mean_of_sigmoid_probabilities",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-2ee821135e779230"
+    },
+    {
+      "run_id": "rs48-cyp2d6_veith-chemeleon-tabm-canonical-s45",
+      "configuration": {
+        "run_id": "rs48-cyp2d6_veith-chemeleon-tabm-canonical-s45",
+        "task": "cyp2d6_veith",
+        "kind": "classification",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "activation": "ReLU",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "tabm",
+          "n_blocks": 3,
+          "d_block": 512,
+          "k": 32,
+          "arch_type": "tabm",
+          "start_scaling_init": "random-signs",
+          "num_embeddings": null,
+          "cat_cardinalities": null,
+          "d_out": 1,
+          "source_commit": "28e47ae301c92ec37787dde1ce923a0793f405b4",
+          "hidden_dim": null
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUPRC",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.01,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean_over_samples_and_members",
+          "pos_weight": 1.0
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "fit_std_denominator_floor_v1"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "continuous_probability",
+          "member_reduction": "arithmetic_mean_of_sigmoid_probabilities",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-2ee821135e779230"
+    },
+    {
+      "run_id": "rs48-cyp2d6_veith-chemeleon-tabm-scaffold-s44",
+      "configuration": {
+        "run_id": "rs48-cyp2d6_veith-chemeleon-tabm-scaffold-s44",
+        "task": "cyp2d6_veith",
+        "kind": "classification",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "activation": "ReLU",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "tabm",
+          "n_blocks": 3,
+          "d_block": 512,
+          "k": 32,
+          "arch_type": "tabm",
+          "start_scaling_init": "random-signs",
+          "num_embeddings": null,
+          "cat_cardinalities": null,
+          "d_out": 1,
+          "source_commit": "28e47ae301c92ec37787dde1ce923a0793f405b4",
+          "hidden_dim": null
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUPRC",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.01,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean_over_samples_and_members",
+          "pos_weight": 1.0
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "fit_std_denominator_floor_v1"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "continuous_probability",
+          "member_reduction": "arithmetic_mean_of_sigmoid_probabilities",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-2ee821135e779230"
+    },
+    {
+      "run_id": "rs48-cyp2d6_veith-chemeleon-tabm-scaffold-s45",
+      "configuration": {
+        "run_id": "rs48-cyp2d6_veith-chemeleon-tabm-scaffold-s45",
+        "task": "cyp2d6_veith",
+        "kind": "classification",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "activation": "ReLU",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "tabm",
+          "n_blocks": 3,
+          "d_block": 512,
+          "k": 32,
+          "arch_type": "tabm",
+          "start_scaling_init": "random-signs",
+          "num_embeddings": null,
+          "cat_cardinalities": null,
+          "d_out": 1,
+          "source_commit": "28e47ae301c92ec37787dde1ce923a0793f405b4",
+          "hidden_dim": null
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUPRC",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.01,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean_over_samples_and_members",
+          "pos_weight": 1.0
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "fit_std_denominator_floor_v1"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "continuous_probability",
+          "member_reduction": "arithmetic_mean_of_sigmoid_probabilities",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-2ee821135e779230"
+    },
+    {
+      "run_id": "rs48-cyp2d6_veith-minimol-tabm-canonical-s44",
+      "configuration": {
+        "run_id": "rs48-cyp2d6_veith-minimol-tabm-canonical-s44",
+        "task": "cyp2d6_veith",
+        "kind": "classification",
+        "pretrained_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+        "head": {
+          "feature_dim": 512,
+          "activation": "ReLU",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "tabm",
+          "n_blocks": 3,
+          "d_block": 512,
+          "k": 32,
+          "arch_type": "tabm",
+          "start_scaling_init": "random-signs",
+          "num_embeddings": null,
+          "cat_cardinalities": null,
+          "d_out": 1,
+          "source_commit": "28e47ae301c92ec37787dde1ce923a0793f405b4",
+          "hidden_dim": null
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUPRC",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "legacy_fit_standardization",
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "d=1 if fit_std<1e-8 else fit_std; z=(x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean_over_samples_and_members",
+          "pos_weight": 1.0
+        },
+        "representation": {
+          "id": "minimol_512",
+          "feature_dim": 512,
+          "frozen_source_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+          "scaler": "legacy_h0"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "continuous_probability",
+          "member_reduction": "arithmetic_mean_of_sigmoid_probabilities",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-7afc61e219ce11ed"
+    },
+    {
+      "run_id": "rs48-cyp2d6_veith-minimol-tabm-canonical-s45",
+      "configuration": {
+        "run_id": "rs48-cyp2d6_veith-minimol-tabm-canonical-s45",
+        "task": "cyp2d6_veith",
+        "kind": "classification",
+        "pretrained_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+        "head": {
+          "feature_dim": 512,
+          "activation": "ReLU",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "tabm",
+          "n_blocks": 3,
+          "d_block": 512,
+          "k": 32,
+          "arch_type": "tabm",
+          "start_scaling_init": "random-signs",
+          "num_embeddings": null,
+          "cat_cardinalities": null,
+          "d_out": 1,
+          "source_commit": "28e47ae301c92ec37787dde1ce923a0793f405b4",
+          "hidden_dim": null
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUPRC",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "legacy_fit_standardization",
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "d=1 if fit_std<1e-8 else fit_std; z=(x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean_over_samples_and_members",
+          "pos_weight": 1.0
+        },
+        "representation": {
+          "id": "minimol_512",
+          "feature_dim": 512,
+          "frozen_source_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+          "scaler": "legacy_h0"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "continuous_probability",
+          "member_reduction": "arithmetic_mean_of_sigmoid_probabilities",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-7afc61e219ce11ed"
+    },
+    {
+      "run_id": "rs48-cyp2d6_veith-minimol-tabm-scaffold-s44",
+      "configuration": {
+        "run_id": "rs48-cyp2d6_veith-minimol-tabm-scaffold-s44",
+        "task": "cyp2d6_veith",
+        "kind": "classification",
+        "pretrained_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+        "head": {
+          "feature_dim": 512,
+          "activation": "ReLU",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "tabm",
+          "n_blocks": 3,
+          "d_block": 512,
+          "k": 32,
+          "arch_type": "tabm",
+          "start_scaling_init": "random-signs",
+          "num_embeddings": null,
+          "cat_cardinalities": null,
+          "d_out": 1,
+          "source_commit": "28e47ae301c92ec37787dde1ce923a0793f405b4",
+          "hidden_dim": null
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUPRC",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "legacy_fit_standardization",
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "d=1 if fit_std<1e-8 else fit_std; z=(x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean_over_samples_and_members",
+          "pos_weight": 1.0
+        },
+        "representation": {
+          "id": "minimol_512",
+          "feature_dim": 512,
+          "frozen_source_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+          "scaler": "legacy_h0"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "continuous_probability",
+          "member_reduction": "arithmetic_mean_of_sigmoid_probabilities",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-7afc61e219ce11ed"
+    },
+    {
+      "run_id": "rs48-cyp2d6_veith-minimol-tabm-scaffold-s45",
+      "configuration": {
+        "run_id": "rs48-cyp2d6_veith-minimol-tabm-scaffold-s45",
+        "task": "cyp2d6_veith",
+        "kind": "classification",
+        "pretrained_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+        "head": {
+          "feature_dim": 512,
+          "activation": "ReLU",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "tabm",
+          "n_blocks": 3,
+          "d_block": 512,
+          "k": 32,
+          "arch_type": "tabm",
+          "start_scaling_init": "random-signs",
+          "num_embeddings": null,
+          "cat_cardinalities": null,
+          "d_out": 1,
+          "source_commit": "28e47ae301c92ec37787dde1ce923a0793f405b4",
+          "hidden_dim": null
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUPRC",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "legacy_fit_standardization",
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "d=1 if fit_std<1e-8 else fit_std; z=(x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean_over_samples_and_members",
+          "pos_weight": 1.0
+        },
+        "representation": {
+          "id": "minimol_512",
+          "feature_dim": 512,
+          "frozen_source_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+          "scaler": "legacy_h0"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "continuous_probability",
+          "member_reduction": "arithmetic_mean_of_sigmoid_probabilities",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-7afc61e219ce11ed"
+    },
+    {
+      "run_id": "rs48-dili-chemeleon-tabm-canonical-s44",
+      "configuration": {
+        "run_id": "rs48-dili-chemeleon-tabm-canonical-s44",
+        "task": "dili",
+        "kind": "classification",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "activation": "ReLU",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "tabm",
+          "n_blocks": 3,
+          "d_block": 512,
+          "k": 32,
+          "arch_type": "tabm",
+          "start_scaling_init": "random-signs",
+          "num_embeddings": null,
+          "cat_cardinalities": null,
+          "d_out": 1,
+          "source_commit": "28e47ae301c92ec37787dde1ce923a0793f405b4",
+          "hidden_dim": null
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUROC",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.01,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean_over_samples_and_members",
+          "pos_weight": 1.0
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "fit_std_denominator_floor_v1"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "continuous_probability",
+          "member_reduction": "arithmetic_mean_of_sigmoid_probabilities",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-503b3abc628a2a93"
+    },
+    {
+      "run_id": "rs48-dili-chemeleon-tabm-canonical-s45",
+      "configuration": {
+        "run_id": "rs48-dili-chemeleon-tabm-canonical-s45",
+        "task": "dili",
+        "kind": "classification",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "activation": "ReLU",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "tabm",
+          "n_blocks": 3,
+          "d_block": 512,
+          "k": 32,
+          "arch_type": "tabm",
+          "start_scaling_init": "random-signs",
+          "num_embeddings": null,
+          "cat_cardinalities": null,
+          "d_out": 1,
+          "source_commit": "28e47ae301c92ec37787dde1ce923a0793f405b4",
+          "hidden_dim": null
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUROC",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.01,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean_over_samples_and_members",
+          "pos_weight": 1.0
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "fit_std_denominator_floor_v1"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "continuous_probability",
+          "member_reduction": "arithmetic_mean_of_sigmoid_probabilities",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-503b3abc628a2a93"
+    },
+    {
+      "run_id": "rs48-dili-chemeleon-tabm-scaffold-s44",
+      "configuration": {
+        "run_id": "rs48-dili-chemeleon-tabm-scaffold-s44",
+        "task": "dili",
+        "kind": "classification",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "activation": "ReLU",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "tabm",
+          "n_blocks": 3,
+          "d_block": 512,
+          "k": 32,
+          "arch_type": "tabm",
+          "start_scaling_init": "random-signs",
+          "num_embeddings": null,
+          "cat_cardinalities": null,
+          "d_out": 1,
+          "source_commit": "28e47ae301c92ec37787dde1ce923a0793f405b4",
+          "hidden_dim": null
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUROC",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.01,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean_over_samples_and_members",
+          "pos_weight": 1.0
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "fit_std_denominator_floor_v1"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "continuous_probability",
+          "member_reduction": "arithmetic_mean_of_sigmoid_probabilities",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-503b3abc628a2a93"
+    },
+    {
+      "run_id": "rs48-dili-chemeleon-tabm-scaffold-s45",
+      "configuration": {
+        "run_id": "rs48-dili-chemeleon-tabm-scaffold-s45",
+        "task": "dili",
+        "kind": "classification",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "activation": "ReLU",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "tabm",
+          "n_blocks": 3,
+          "d_block": 512,
+          "k": 32,
+          "arch_type": "tabm",
+          "start_scaling_init": "random-signs",
+          "num_embeddings": null,
+          "cat_cardinalities": null,
+          "d_out": 1,
+          "source_commit": "28e47ae301c92ec37787dde1ce923a0793f405b4",
+          "hidden_dim": null
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUROC",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.01,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean_over_samples_and_members",
+          "pos_weight": 1.0
+        },
+        "representation": {
+          "id": "chemeleon_2048",
+          "feature_dim": 2048,
+          "frozen_source_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+          "scaler": "fit_std_denominator_floor_v1"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "continuous_probability",
+          "member_reduction": "arithmetic_mean_of_sigmoid_probabilities",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-503b3abc628a2a93"
+    },
+    {
+      "run_id": "rs48-dili-minimol-tabm-canonical-s44",
+      "configuration": {
+        "run_id": "rs48-dili-minimol-tabm-canonical-s44",
+        "task": "dili",
+        "kind": "classification",
+        "pretrained_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+        "head": {
+          "feature_dim": 512,
+          "activation": "ReLU",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "tabm",
+          "n_blocks": 3,
+          "d_block": 512,
+          "k": 32,
+          "arch_type": "tabm",
+          "start_scaling_init": "random-signs",
+          "num_embeddings": null,
+          "cat_cardinalities": null,
+          "d_out": 1,
+          "source_commit": "28e47ae301c92ec37787dde1ce923a0793f405b4",
+          "hidden_dim": null
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUROC",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "legacy_fit_standardization",
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "d=1 if fit_std<1e-8 else fit_std; z=(x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean_over_samples_and_members",
+          "pos_weight": 1.0
+        },
+        "representation": {
+          "id": "minimol_512",
+          "feature_dim": 512,
+          "frozen_source_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+          "scaler": "legacy_h0"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "continuous_probability",
+          "member_reduction": "arithmetic_mean_of_sigmoid_probabilities",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-a1bd0a6f20ad56f9"
+    },
+    {
+      "run_id": "rs48-dili-minimol-tabm-canonical-s45",
+      "configuration": {
+        "run_id": "rs48-dili-minimol-tabm-canonical-s45",
+        "task": "dili",
+        "kind": "classification",
+        "pretrained_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+        "head": {
+          "feature_dim": 512,
+          "activation": "ReLU",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "tabm",
+          "n_blocks": 3,
+          "d_block": 512,
+          "k": 32,
+          "arch_type": "tabm",
+          "start_scaling_init": "random-signs",
+          "num_embeddings": null,
+          "cat_cardinalities": null,
+          "d_out": 1,
+          "source_commit": "28e47ae301c92ec37787dde1ce923a0793f405b4",
+          "hidden_dim": null
+        },
+        "split": {
+          "method": "canonical_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUROC",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "legacy_fit_standardization",
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "d=1 if fit_std<1e-8 else fit_std; z=(x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean_over_samples_and_members",
+          "pos_weight": 1.0
+        },
+        "representation": {
+          "id": "minimol_512",
+          "feature_dim": 512,
+          "frozen_source_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+          "scaler": "legacy_h0"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "continuous_probability",
+          "member_reduction": "arithmetic_mean_of_sigmoid_probabilities",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "canonical",
+      "source_recipe": "evidence-ref:ref-a1bd0a6f20ad56f9"
+    },
+    {
+      "run_id": "rs48-dili-minimol-tabm-scaffold-s44",
+      "configuration": {
+        "run_id": "rs48-dili-minimol-tabm-scaffold-s44",
+        "task": "dili",
+        "kind": "classification",
+        "pretrained_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+        "head": {
+          "feature_dim": 512,
+          "activation": "ReLU",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44,
+          "architecture": "tabm",
+          "n_blocks": 3,
+          "d_block": 512,
+          "k": 32,
+          "arch_type": "tabm",
+          "start_scaling_init": "random-signs",
+          "num_embeddings": null,
+          "cat_cardinalities": null,
+          "d_out": 1,
+          "source_commit": "28e47ae301c92ec37787dde1ce923a0793f405b4",
+          "hidden_dim": null
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUROC",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "legacy_fit_standardization",
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "d=1 if fit_std<1e-8 else fit_std; z=(x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean_over_samples_and_members",
+          "pos_weight": 1.0
+        },
+        "representation": {
+          "id": "minimol_512",
+          "feature_dim": 512,
+          "frozen_source_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+          "scaler": "legacy_h0"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "continuous_probability",
+          "member_reduction": "arithmetic_mean_of_sigmoid_probabilities",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-a1bd0a6f20ad56f9"
+    },
+    {
+      "run_id": "rs48-dili-minimol-tabm-scaffold-s45",
+      "configuration": {
+        "run_id": "rs48-dili-minimol-tabm-scaffold-s45",
+        "task": "dili",
+        "kind": "classification",
+        "pretrained_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+        "head": {
+          "feature_dim": 512,
+          "activation": "ReLU",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45,
+          "architecture": "tabm",
+          "n_blocks": 3,
+          "d_block": 512,
+          "k": 32,
+          "arch_type": "tabm",
+          "start_scaling_init": "random-signs",
+          "num_embeddings": null,
+          "cat_cardinalities": null,
+          "d_out": 1,
+          "source_commit": "28e47ae301c92ec37787dde1ce923a0793f405b4",
+          "hidden_dim": null
+        },
+        "split": {
+          "method": "scaffold_threeway_hash_v1",
+          "seed": 43,
+          "fit_fraction_target": 0.7,
+          "stop_fraction_target": 0.1,
+          "stress_fraction_target": 0.2
+        },
+        "monitor_metric": "AUROC",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "legacy_fit_standardization",
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "d=1 if fit_std<1e-8 else fit_std; z=(x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "BCEWithLogitsLoss",
+          "scale": "raw_binary_0_1",
+          "reduction": "mean_over_samples_and_members",
+          "pos_weight": 1.0
+        },
+        "representation": {
+          "id": "minimol_512",
+          "feature_dim": 512,
+          "frozen_source_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+          "scaler": "legacy_h0"
+        },
+        "early_stopping": {
+          "patience": 8,
+          "min_delta": 1e-07,
+          "tie": "keep earlier best"
+        },
+        "prediction": {
+          "output": "continuous_probability",
+          "member_reduction": "arithmetic_mean_of_sigmoid_probabilities",
+          "stop_uses_same_aggregation": true
+        }
+      },
+      "scheme": "scaffold",
+      "source_recipe": "evidence-ref:ref-a1bd0a6f20ad56f9"
+    }
+  ],
+  "partition_rule": {
+    "sha256": "d341e0b296fa2c2a38528e7b35ceb6368c14d30eb070aa7566224594080e83ad",
+    "function": "build_three_way_split",
+    "scheme": [
+      "canonical",
+      "scaffold"
+    ],
+    "seed": 43,
+    "namespace": "astra001",
+    "stress_fraction": 0.2,
+    "stop_fraction": 0.1,
+    "fit_fraction_target": 0.7,
+    "generate_before_any_fit": true,
+    "full_membership_required": true,
+    "binding": "Generate and freeze12records under operator/partitions and corresponding bound-configs; attach original train file hash, actualRDKit version and identical row indices across representations/seeds. This deterministic data binding is authorized, no science/config search.",
+    "eligibility": "Existing check_eligibility:fit>=50%N;stop>=20;stress>=20;bothclasses each classificationpartition;nonconstant regression each. Ineligible task/scheme skips all4fits; no redrawnseed/relaxedthreshold/alternatefraction.",
+    "compatibility": "Existing documented sequential-sum diagnostic compatibility allowed if needed; membership and eligibility unchanged, retain original.",
+    "reuse_existing_records": "Exact existing D20 DILI/Sol records may be reused if input, RDKit grouping,method and hashes match. This reuses split only; D20 modelseed47 is different from new44/45."
+  },
+  "allowed_new_fits": 48,
+  "new_encoder_passes": 0
+}

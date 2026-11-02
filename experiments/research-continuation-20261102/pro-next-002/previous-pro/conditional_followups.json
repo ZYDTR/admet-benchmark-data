@@ -1,0 +1,70 @@
+[
+  {
+    "branch_id": "BR-BASE",
+    "trigger": "所有主控必需的冻结/标签/行身份/接口输入前提有效",
+    "actions": "按已选预算派发A；B1可与linear-only接口准备并行，B2在B1比较控制齐备后收齐；不要求A全12任务改善才允许B。",
+    "depends_on": [
+      "I-BBB-AFTER",
+      "I-CACHE-HOST"
+    ],
+    "stop": "任何前提失败仅停依赖任务，报告operational failure，不污染质量比较",
+    "budget_ceiling": "chosen tier 25/89/197 unique fits; no automatic increase",
+    "new_review": "completed chosen registered stage or decisive failure"
+  },
+  {
+    "branch_id": "BR-GAIN",
+    "trigger": "某候选对同task两个共同seed均改善；幅度与历史seed范围同报，非统计显著性",
+    "actions": "保留候选及原控制；先完成预登记B/结构压力测试（若获预算），不要立刻对22任务推广或追加密集搜索。",
+    "depends_on": [
+      "I-VALID-SELECTION"
+    ],
+    "stop": "结构压力测试反转则限定适用域，不转而选最有利split",
+    "budget_ceiling": "no fits beyond selected scenario",
+    "new_review": "mechanism/structural-split contrast contradicts current preferred explanation"
+  },
+  {
+    "branch_id": "BR-NOGAIN",
+    "trigger": "F001两seed均不胜H0且不改善F010退化，或变换与已验分母完全等价",
+    "actions": "不扫更多floor；B1/B2或C用于判别头/优化解释；已获益10任务保持，不把无改善当任务无解。",
+    "depends_on": [
+      "I-SCALE-MECHANISM"
+    ],
+    "stop": "若B/C也无可复现改进，停止当前scaler/MLP网格，才考虑已准入新表示。",
+    "budget_ceiling": "89 medium or197 large; reserves need new controller registration",
+    "new_review": "all predeclared head/optimizer contrasts exhausted"
+  },
+  {
+    "branch_id": "BR-MIXED",
+    "trigger": "共同seed差值符号继续翻转，或一个种子的极端值主导均分",
+    "actions": "按不稳定记录；先已有盲预测分歧+固定0.5 seed平均候选。仅在控制器授权且新seed白名单已扩展时追加seed48/49，候选与同seed控制各一个。",
+    "depends_on": [
+      "I-VALID-SELECTION",
+      "I-DIAGNOSTICS"
+    ],
+    "stop": "不按Valid最好seed淘汰其他seed，不无限追加直至显著",
+    "budget_ceiling": "conditional <=4 tasks ×2 configs ×2 newseeds=16 new fits; task selection rule: largest absolute delta sign reversal among currently unresolved tasks, ties lexicographic; expanded exact matrix must be registered before execution; outside197",
+    "new_review": "extra-seed sign still unstable or beyond predeclared candidate cap"
+  },
+  {
+    "branch_id": "BR-ASSET",
+    "trigger": "新底座的version/license/full-row coverage/freeze interface通过，且大预算被批准",
+    "actions": "只运行N面板明确6task×2seed，不顺手扩全22或更大checkpoint。新资产成本首个真实科学批次测量，不另造model-quality pilot。",
+    "depends_on": [
+      "I-ALT-ASSETS"
+    ],
+    "stop": "长SMILES/解析/构象覆盖不能保证则停该资产或task，不删行、截断冒充完整输入",
+    "budget_ceiling": "12fits per MiniMol/MoLFormer/Morgan main branch; fixed encoding groups",
+    "new_review": "new representation yields different error/disagreement structure or asset requires changed scientific preprocessing"
+  },
+  {
+    "branch_id": "BR-SPLIT",
+    "trigger": "嵌套outer无同类覆盖或过少可估组",
+    "actions": "报告不可估/跳过该split；不重新随机直到获得有利结果。原始rawgroup results保留但不称结构泛化。",
+    "depends_on": [
+      "I-RAW-SPLIT"
+    ],
+    "stop": "没有有效结构比较不追加任意split",
+    "budget_ceiling": "24 maximum stress fits; skipped fits not repurposed automatically",
+    "new_review": "group topology makes proposed stress design scientifically uninformative"
+  }
+]

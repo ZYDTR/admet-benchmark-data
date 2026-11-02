@@ -1,0 +1,15 @@
+# H140 results and confirmation54 adoption
+
+H140 completed140 actual new fits:54 treatments and86 H100 controls. All140 fixed Valid metrics are now available; full checkpoint archive continues separately. Scoring used final source amendment after an initial stale-seal rejection before any CSV/truth/metric access. The original task is preserved; final source binding and scoring receipts are linked in the intake.
+
+Affine heads beat default MLP in7/38 paired runs and lost31/38. Only HIA improved at both seeds on both H0/F010; against dropout-free MLP only F010 won both (H0 one win/one tie). This refutes a general simplification claim in the tested recipe, while retaining HIA as a candidate.
+
+Huber improved8/10 paired runs. Caco2, LD50 and lipophilicity improved both seeds; PPBR and solubility each split directions. Caco2 Huber is not clearly better than drop0: seed46 marginally better,47 worse. posBCE improved3/6; CYP2D6 substrate won both, CYP2C9 substrate lost both, CYP2D6 Veith split. Dropout removal itself was18 better/18 worse/2 tied across H140 controls. Keep task-specific controls and do not generalize a recipe to all endpoints.
+
+54 new fits are adopted: prior optimization28 plus head/loss28, deduplicating two Caco default controls. HIA H0/F010 × base/drop0/affine × seeds44/45 =12; Caco2/LD50/lipophilicity F010 × base/Huber ×44/45 =12; CYP2D6 substrate F010 ×base/posBCE×44/45 =4. The optimizer28 is fully specified in the original proposal. Eight lower-LR46/47 host replications reuse H140 matched controls. No new encoder pass or hidden extra fit is authorized.
+
+Before seeing54 results, decision rule: report every paired seed; a two-new-seed direction reversal rejects broad stability, mixed directions retain uncertainty, same-direction gains support extending the candidate but not a mechanism or independent generalization claim. Preserve all46/47 evidence and contradictions. Absolute per-task metrics and paired differences remain separate; no cross-task average of unlike metrics or posthoc winning-seed selection.
+
+Research standard3.4.0 is adopted from this increment. For the Huber sensitivity question AR001-05, six fixed full-member cohorts now identify the highest and lowest prediction-disagreement deciles of the original Valid rows in three endpoints. These are exploratory unlabelled risk groups, selected after H140 and before54, not known errors. Alternative explanations are robust-loss influence reduction versus optimization/calibration change. New seeds test recipe stability; group error change remains untested without separately admitted aggregate evidence. Overall improvement cannot close the cohort issue. No new Valid labels or subgroup metrics were read/requested here.
+
+TabM remains the newly adopted architecture from the user's material. The original MiniMol52 preparation ended and TabM32 preparation was actually dispatched2026-11-02T11:33:56Z to the same GLM coordinator and three registered children. Neither preparation completion nor these H140 scores are TabM training results.

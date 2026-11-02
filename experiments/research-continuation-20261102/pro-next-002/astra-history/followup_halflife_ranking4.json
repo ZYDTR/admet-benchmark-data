@@ -1,0 +1,300 @@
+{
+  "at": "2026-11-02T09:43:37.523744+00:00",
+  "source": "A003-HALF-ABSOLUTE",
+  "unique_new_fits": 4,
+  "proposals": [
+    {
+      "proposal_id": "astra003-ranking-half_life_obach-f001-s44",
+      "task": "half_life_obach",
+      "seed": 44,
+      "controls_reuse": [
+        "astra002-confirm-half_life_obach-f001-s44"
+      ],
+      "exact_science_config": {
+        "run_id": "astra003-ranking-half_life_obach-f001-s44",
+        "task": "half_life_obach",
+        "kind": "regression",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 44
+        },
+        "split": {
+          "method": "raw_smiles_group_shuffle",
+          "seed": 43,
+          "stop_fraction": 0.1
+        },
+        "monitor_metric": "Spearman",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.001,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "MSE_pairwise_softplus",
+          "scale": "fit-only standardizedY andprediction",
+          "formula": "0.5*mean((zpred-zY)^2) +0.5*mean(softplus(-sign(zYi-zYj)*(zpredi-zpredj)))",
+          "pairs": "all unordered unequal-target pairs within existingbatch128; no validpair=>pairterm0; no pairsubsampling",
+          "reduction": "MSEmean andpairmean beforeweighted sum"
+        }
+      },
+      "training_objective": {
+        "name": "MSE_pairwise_softplus",
+        "scale": "fit-only standardizedY andprediction",
+        "formula": "0.5*mean((zpred-zY)^2) +0.5*mean(softplus(-sign(zYi-zYj)*(zpredi-zpredj)))",
+        "pairs": "all unordered unequal-target pairs within existingbatch128; no validpair=>pairterm0; no pairsubsampling",
+        "reduction": "MSEmean andpairmean beforeweighted sum"
+      },
+      "stop": "Spearman maximize originaltrain.stop, samepatience8/max50/min_delta1e-7",
+      "external_metric": "Spearman ondesignatedvalid only, originalpolicy",
+      "prediction_scale": "originalgivenY inverseonce",
+      "input_identity": "unchangedacceptedCheMeleon cache andraw-group43split fromcontrol",
+      "new_fit_count": 1,
+      "new_encoder_passes": 0,
+      "readiness": "new_code_not_in_current76scope",
+      "status": "planned_notdispatched",
+      "question": "Does target-ranking objective improve absolute stability beyond4seed-positive floor without merely searchingseeds?",
+      "history_links": [
+        "DIR-RANKING",
+        "A003-FOUR-SEED",
+        "A003-HALF-ABSOLUTE"
+      ]
+    },
+    {
+      "proposal_id": "astra003-ranking-half_life_obach-f001-s45",
+      "task": "half_life_obach",
+      "seed": 45,
+      "controls_reuse": [
+        "astra002-confirm-half_life_obach-f001-s45"
+      ],
+      "exact_science_config": {
+        "run_id": "astra003-ranking-half_life_obach-f001-s45",
+        "task": "half_life_obach",
+        "kind": "regression",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 45
+        },
+        "split": {
+          "method": "raw_smiles_group_shuffle",
+          "seed": 43,
+          "stop_fraction": 0.1
+        },
+        "monitor_metric": "Spearman",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.001,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "MSE_pairwise_softplus",
+          "scale": "fit-only standardizedY andprediction",
+          "formula": "0.5*mean((zpred-zY)^2) +0.5*mean(softplus(-sign(zYi-zYj)*(zpredi-zpredj)))",
+          "pairs": "all unordered unequal-target pairs within existingbatch128; no validpair=>pairterm0; no pairsubsampling",
+          "reduction": "MSEmean andpairmean beforeweighted sum"
+        }
+      },
+      "training_objective": {
+        "name": "MSE_pairwise_softplus",
+        "scale": "fit-only standardizedY andprediction",
+        "formula": "0.5*mean((zpred-zY)^2) +0.5*mean(softplus(-sign(zYi-zYj)*(zpredi-zpredj)))",
+        "pairs": "all unordered unequal-target pairs within existingbatch128; no validpair=>pairterm0; no pairsubsampling",
+        "reduction": "MSEmean andpairmean beforeweighted sum"
+      },
+      "stop": "Spearman maximize originaltrain.stop, samepatience8/max50/min_delta1e-7",
+      "external_metric": "Spearman ondesignatedvalid only, originalpolicy",
+      "prediction_scale": "originalgivenY inverseonce",
+      "input_identity": "unchangedacceptedCheMeleon cache andraw-group43split fromcontrol",
+      "new_fit_count": 1,
+      "new_encoder_passes": 0,
+      "readiness": "new_code_not_in_current76scope",
+      "status": "planned_notdispatched",
+      "question": "Does target-ranking objective improve absolute stability beyond4seed-positive floor without merely searchingseeds?",
+      "history_links": [
+        "DIR-RANKING",
+        "A003-FOUR-SEED",
+        "A003-HALF-ABSOLUTE"
+      ]
+    },
+    {
+      "proposal_id": "astra003-ranking-half_life_obach-f001-s46",
+      "task": "half_life_obach",
+      "seed": 46,
+      "controls_reuse": [
+        "astra001-floor001-half_life_obach-s46"
+      ],
+      "exact_science_config": {
+        "run_id": "astra003-ranking-half_life_obach-f001-s46",
+        "task": "half_life_obach",
+        "kind": "regression",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 46
+        },
+        "split": {
+          "method": "raw_smiles_group_shuffle",
+          "seed": 43,
+          "stop_fraction": 0.1
+        },
+        "monitor_metric": "Spearman",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.001,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "MSE_pairwise_softplus",
+          "scale": "fit-only standardizedY andprediction",
+          "formula": "0.5*mean((zpred-zY)^2) +0.5*mean(softplus(-sign(zYi-zYj)*(zpredi-zpredj)))",
+          "pairs": "all unordered unequal-target pairs within existingbatch128; no validpair=>pairterm0; no pairsubsampling",
+          "reduction": "MSEmean andpairmean beforeweighted sum"
+        }
+      },
+      "training_objective": {
+        "name": "MSE_pairwise_softplus",
+        "scale": "fit-only standardizedY andprediction",
+        "formula": "0.5*mean((zpred-zY)^2) +0.5*mean(softplus(-sign(zYi-zYj)*(zpredi-zpredj)))",
+        "pairs": "all unordered unequal-target pairs within existingbatch128; no validpair=>pairterm0; no pairsubsampling",
+        "reduction": "MSEmean andpairmean beforeweighted sum"
+      },
+      "stop": "Spearman maximize originaltrain.stop, samepatience8/max50/min_delta1e-7",
+      "external_metric": "Spearman ondesignatedvalid only, originalpolicy",
+      "prediction_scale": "originalgivenY inverseonce",
+      "input_identity": "unchangedacceptedCheMeleon cache andraw-group43split fromcontrol",
+      "new_fit_count": 1,
+      "new_encoder_passes": 0,
+      "readiness": "new_code_not_in_current76scope",
+      "status": "planned_notdispatched",
+      "question": "Does target-ranking objective improve absolute stability beyond4seed-positive floor without merely searchingseeds?",
+      "history_links": [
+        "DIR-RANKING",
+        "A003-FOUR-SEED",
+        "A003-HALF-ABSOLUTE"
+      ]
+    },
+    {
+      "proposal_id": "astra003-ranking-half_life_obach-f001-s47",
+      "task": "half_life_obach",
+      "seed": 47,
+      "controls_reuse": [
+        "astra001-floor001-half_life_obach-s47"
+      ],
+      "exact_science_config": {
+        "run_id": "astra003-ranking-half_life_obach-f001-s47",
+        "task": "half_life_obach",
+        "kind": "regression",
+        "pretrained_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+        "head": {
+          "feature_dim": 2048,
+          "hidden_dim": 256,
+          "activation": "relu",
+          "dropout": 0.1,
+          "optimizer": "AdamW",
+          "lr": 0.0005,
+          "weight_decay": 0.0001,
+          "batch_size": 128,
+          "max_epochs": 50,
+          "patience": 8,
+          "seed": 47
+        },
+        "split": {
+          "method": "raw_smiles_group_shuffle",
+          "seed": 43,
+          "stop_fraction": 0.1
+        },
+        "monitor_metric": "Spearman",
+        "monitor_direction": "maximize",
+        "feature_scaler": {
+          "method": "fit_std_denominator_floor_v1",
+          "denominator_floor": 0.001,
+          "legacy_epsilon": 1e-08,
+          "legacy_low_std_replacement": 1.0,
+          "fit_statistic_dtype": "float32",
+          "ddof": 0,
+          "transform_dtype": "float32",
+          "fit_scope": "internal_fit_only",
+          "formula": "legacy_d = 1 if fit_std < 1e-8 else fit_std; d = max(legacy_d, denominator_floor); z = (x-fit_mean)/d"
+        },
+        "training_objective": {
+          "name": "MSE_pairwise_softplus",
+          "scale": "fit-only standardizedY andprediction",
+          "formula": "0.5*mean((zpred-zY)^2) +0.5*mean(softplus(-sign(zYi-zYj)*(zpredi-zpredj)))",
+          "pairs": "all unordered unequal-target pairs within existingbatch128; no validpair=>pairterm0; no pairsubsampling",
+          "reduction": "MSEmean andpairmean beforeweighted sum"
+        }
+      },
+      "training_objective": {
+        "name": "MSE_pairwise_softplus",
+        "scale": "fit-only standardizedY andprediction",
+        "formula": "0.5*mean((zpred-zY)^2) +0.5*mean(softplus(-sign(zYi-zYj)*(zpredi-zpredj)))",
+        "pairs": "all unordered unequal-target pairs within existingbatch128; no validpair=>pairterm0; no pairsubsampling",
+        "reduction": "MSEmean andpairmean beforeweighted sum"
+      },
+      "stop": "Spearman maximize originaltrain.stop, samepatience8/max50/min_delta1e-7",
+      "external_metric": "Spearman ondesignatedvalid only, originalpolicy",
+      "prediction_scale": "originalgivenY inverseonce",
+      "input_identity": "unchangedacceptedCheMeleon cache andraw-group43split fromcontrol",
+      "new_fit_count": 1,
+      "new_encoder_passes": 0,
+      "readiness": "new_code_not_in_current76scope",
+      "status": "planned_notdispatched",
+      "question": "Does target-ranking objective improve absolute stability beyond4seed-positive floor without merely searchingseeds?",
+      "history_links": [
+        "DIR-RANKING",
+        "A003-FOUR-SEED",
+        "A003-HALF-ABSOLUTE"
+      ]
+    }
+  ],
+  "constraint": "Do not injectintoalreadyrunning76prep; parentlossinterface readiness determines laterfocusedextension. No parameterupdates byresearcher."
+}

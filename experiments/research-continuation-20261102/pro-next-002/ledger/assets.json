@@ -1,0 +1,193 @@
+{
+  "as_of": "2026-11-02T14:05:34.882034+00:00",
+  "source": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/assets/readiness.json",
+  "assets": {
+    "registered_original_assets": {
+      "schema_version": 1,
+      "as_of": "2026-11-01",
+      "scope": "原调研候选及实际准备/训练状态；不包含执行LLM，不代表全部已批准训练",
+      "assets": [
+        {
+          "id": "chemeleon",
+          "name": "CheMeleon",
+          "kind": "molecular_encoder",
+          "readiness": "trained_22_tasks_and_caco2_refinements",
+          "blockers": [],
+          "sources": [
+            "evidence-ref:ref-11894d9bf5619913",
+            "evidence-ref:ref-e261ce95795bc3f7"
+          ]
+        },
+        {
+          "id": "minimol",
+          "name": "MiniMol",
+          "kind": "molecular_encoder",
+          "readiness": "preparation_incomplete_not_training_ready",
+          "blockers": [
+            "原准备idle_incomplete，上游setup.py 404；资产加载/生产接口未验收"
+          ],
+          "sources": [
+            "evidence-ref:ref-11894d9bf5619913",
+            "evidence-ref:ref-6c8c7e2c68e1a057"
+          ]
+        },
+        {
+          "id": "molformer_10pct",
+          "name": "MoLFormer公开10pct资产",
+          "kind": "molecular_encoder",
+          "readiness": "preparation_incomplete_not_training_ready",
+          "blockers": [
+            "原准备idle_incomplete，目录外写入拒绝；资产/接口未验收；不得冒充full-XL"
+          ],
+          "sources": [
+            "evidence-ref:ref-11894d9bf5619913",
+            "evidence-ref:ref-6c8c7e2c68e1a057"
+          ]
+        },
+        {
+          "id": "classical_features",
+          "name": "经典分子特征",
+          "kind": "feature_baseline",
+          "readiness": "researched_not_prepared",
+          "blockers": [
+            "尚无本项目已验收运行包"
+          ],
+          "sources": [
+            "evidence-ref:ref-11894d9bf5619913"
+          ]
+        },
+        {
+          "id": "small_dmpnn_scratch",
+          "name": "从零小D-MPNN",
+          "kind": "from_scratch_model",
+          "readiness": "researched_not_prepared",
+          "blockers": [
+            "需独立科学配置、预算和准入；不是预训练微调"
+          ],
+          "sources": [
+            "evidence-ref:ref-11894d9bf5619913"
+          ]
+        },
+        {
+          "id": "tabpfn26",
+          "name": "TabPFN 2.6",
+          "kind": "predictor",
+          "readiness": "researched_not_prepared",
+          "blockers": [
+            "许可/版本/资源/赛制适用性待核验；不是分子encoder"
+          ],
+          "sources": [
+            "evidence-ref:ref-11894d9bf5619913"
+          ]
+        },
+        {
+          "id": "kpgt",
+          "name": "KPGT",
+          "kind": "molecular_encoder",
+          "readiness": "researched_deferred",
+          "blockers": [
+            "额外信息与接入成本未闭合"
+          ],
+          "sources": [
+            "evidence-ref:ref-11894d9bf5619913"
+          ]
+        },
+        {
+          "id": "unimol",
+          "name": "Uni-Mol",
+          "kind": "molecular_encoder",
+          "readiness": "researched_deferred",
+          "blockers": [
+            "构象/裁剪及完整输入覆盖未核验"
+          ],
+          "sources": [
+            "evidence-ref:ref-11894d9bf5619913"
+          ]
+        },
+        {
+          "id": "smi_ted",
+          "name": "SMI-TED",
+          "kind": "molecular_encoder",
+          "readiness": "researched_deferred",
+          "blockers": [
+            "资产条件与接入尚未闭合"
+          ],
+          "sources": [
+            "evidence-ref:ref-11894d9bf5619913"
+          ]
+        },
+        {
+          "id": "mole",
+          "name": "MolE",
+          "kind": "molecular_encoder",
+          "readiness": "researched_deferred",
+          "blockers": [
+            "官方checkpoint发布链未闭合"
+          ],
+          "sources": [
+            "evidence-ref:ref-11894d9bf5619913"
+          ]
+        }
+      ]
+    },
+    "current_CheMeleon_update": {
+      "frozen_features": "all22tasks supported",
+      "runner": "same scientific pipeline13modules plus Mini22 bridge; actual86 fits completed",
+      "other_assets": "No new asset readiness claim from this packet"
+    },
+    "execution_roles": [
+      "GLM5.3 preparation",
+      "Terra status observation",
+      "Sol training/retrieval",
+      "ChatGPT Pro research"
+    ],
+    "next_preparation_only_when_needed": "One GLM5.3 primary conversation with3 direct parallel subagents; Terra observes state. This is future task context, not delegation by this packet.",
+    "history_sources": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/assets/index.json"
+  },
+  "this_research_change": "New user material consumed, TabM adopted; current asset progress replaces stale404 readiness without rewriting original snapshot.",
+  "current_updates": {
+    "minimol": {
+      "state": "actual24CPUencodedpartitions_16heads_complete_16Validscoring_dispatched",
+      "asset_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+      "old404_current_blocker": false,
+      "evidence": "evidence-ref:ref-30c7c600bc705140",
+      "intake": "evidence-ref:ref-d9b10fb11ea32845"
+    },
+    "morgan_ecfp4": {
+      "state": "16realheads_andValidmetrics_complete_consumed_Ames6confirmation_dispatched",
+      "training_completed": true,
+      "score_evidence": "evidence-ref:ref-1cd60aba7e1e563c"
+    },
+    "tabm": {
+      "state": "realCheMphase1_8TabM2MLP_completed_10Validscoring_dispatched_Mini12pending",
+      "source_receipt": "evidence-ref:ref-adf0bb7a80f442cb",
+      "task": "evidence-ref:ref-8c3522981d1c719a",
+      "intake": "evidence-ref:ref-1ca6882072783054"
+    },
+    "monroe": {
+      "state": "source_config_LFS_pointer_read_no_weight_payload_or_runtime",
+      "source_receipt": "evidence-ref:ref-dc0f7537b2ccca37"
+    },
+    "tabicl_v2": {
+      "state": "v2.2.0_code_and_license_pinned_no_weights_or_runtime",
+      "source_receipt": "evidence-ref:ref-ce8b351c43774531"
+    },
+    "interpretation": "registered_original_assets retains historical snapshot; current_updates supersedes old readiness where stated",
+    "MiniMol_actual32": {
+      "at": "2026-11-02T14:05:34.882034+00:00",
+      "asset": "MiniMol_v1_gnn15_max512",
+      "state": "actualfrozenencoding_andcompleted32slotrecipeevaluation",
+      "proof": "evidence-ref:ref-82a71222be9825d8",
+      "F16_complete_archive": "evidence-ref:ref-a3ea9286b05aa0be",
+      "phase2_original_archive": "pendingoriginalSol",
+      "scope": "No universalreplacement;Sol/Clearance/CYP task-specificcandidates,following26newconfirmations; backbone frozen."
+    }
+  },
+  "current_preparation52_and_tabm": {
+    "at": "2026-11-02T13:29:18.416328+00:00",
+    "MiniMol": "Production52F16learning complete, actualCPUencoding24partitions,16Validscoring dispatched;noCUDAencoderclaim",
+    "Morgan": "24partitions/72files actual anchored cache accepted;16heads dispatched",
+    "TabM": "Phase1real10learning complete incl8TabM;10newValidscoringdispatched. Phase2Mini12pending,6newpartitionsencoded/6oldreused.",
+    "intake": "evidence-ref:ref-30c7c600bc705140"
+  }
+}

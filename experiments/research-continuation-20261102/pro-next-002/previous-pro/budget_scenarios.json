@@ -1,0 +1,463 @@
+{
+  "request_id": "admet-pro-parallel-20261102-001",
+  "scenarios": [
+    {
+      "scenario": "small",
+      "recommend": false,
+      "proposed_only": true,
+      "proposal_ids": [
+        "P-A-BBB46-REPAIR",
+        "P-A-ames",
+        "P-A-bbb_martins",
+        "P-A-clearance_microsome_az",
+        "P-A-cyp2c9_substrate_carbonmangels",
+        "P-A-cyp3a4_substrate_carbonmangels",
+        "P-A-cyp3a4_veith",
+        "P-A-dili",
+        "P-A-half_life_obach",
+        "P-A-herg",
+        "P-A-hia_hou",
+        "P-A-pgp_broccatelli",
+        "P-A-vdss_lombardo"
+      ],
+      "exact_new_fit_count": 25,
+      "fit_count_by_readiness": {
+        "config_only": 25,
+        "new_code": 0,
+        "blocked_assets": 0
+      },
+      "phase_fit_counts": {
+        "A": 24,
+        "R": 1,
+        "B": 0,
+        "C": 0,
+        "L": 0,
+        "S": 0,
+        "N": 0,
+        "M": 0
+      },
+      "tasks_with_new_training": [
+        "ames",
+        "bbb_martins",
+        "clearance_microsome_az",
+        "cyp2c9_substrate_carbonmangels",
+        "cyp3a4_substrate_carbonmangels",
+        "cyp3a4_veith",
+        "dili",
+        "half_life_obach",
+        "herg",
+        "hia_hou",
+        "pgp_broccatelli",
+        "vdss_lombardo"
+      ],
+      "new_training_task_count": 12,
+      "all22_review_and_carryforward": true,
+      "existing_unique_control_slots_referenced": 47,
+      "additional_prospective_BBB_control_count": 1,
+      "baseline_inventory_count": 88,
+      "baseline_inventory_qualified_slots": 87,
+      "baseline_missing_after_slots": 1,
+      "existing_baselines_never_added_to_new_fit_total": true,
+      "chemi_new_encoding_calls": 0,
+      "new_encoding_logical_partitions": {},
+      "shared_encoding_definition": "one immutable representation per asset×task×official partition; train/valid/test cache rows preserve originals; reused across every model seed/head/split; physical batches/unique SMILES count unknown and not equated to these logical partition counts",
+      "cost_basis_refs": [
+        "E-COST22",
+        "E-COST64",
+        "E-RETRIEVE22",
+        "E-RETRIEVE64",
+        "E-OPS"
+      ],
+      "observed_reference_job_seconds_per_fit": [
+        9.911243781562916,
+        18.58861598317691
+      ],
+      "planning_allocations_hours_NOT_measurements": {
+        "warm_configuration_preparation_hours": [
+          0.25,
+          0.75
+        ],
+        "head_job_span_proxy_hours": [
+          0.06882808181640915,
+          0.12908761099428412
+        ],
+        "retrieval_scoring_handoff_hours": [
+          0.25,
+          0.75
+        ],
+        "new_interface_engineering_hours": [
+          0,
+          0
+        ]
+      },
+      "conservative_nonoverlap_planning_sum_hours_excluding_unknowns": [
+        0.5688280818164091,
+        1.6290876109942842
+      ],
+      "unknown_additions": [
+        "resource queue Q",
+        "new research UI/model call R (zero within predeclared branch until review gate)"
+      ],
+      "cost_formula": "T_turnaround = P_existing + P_new_interface + Q + E_new_representation + J_heads + T_retrieve/score/handoff + R - measured_overlap; shared-role windows counted once, not per batch",
+      "uncertainty": "Observed J is whole job process lifespan incl load/inference, not kernel time. Per-fit scaling is a rough planning envelope; linear/Huber/scaffold/new representations unmeasured. Engineering ranges are explicit proposed resource allocations, not historical facts or completion promises.",
+      "shared_stage_overlap": "P_new_interface may overlap A jobs/retrieval; use actual timestamps to subtract overlap. Full checkpoints incremental transport only, do not send historical430 again.",
+      "stopping_budget": "Do not auto-spend skipped fits on another branch; reserves outside these totals need controller registration."
+    },
+    {
+      "scenario": "medium",
+      "recommend": true,
+      "proposed_only": true,
+      "proposal_ids": [
+        "P-A-BBB46-REPAIR",
+        "P-A-ames",
+        "P-A-bbb_martins",
+        "P-A-clearance_microsome_az",
+        "P-A-cyp2c9_substrate_carbonmangels",
+        "P-A-cyp3a4_substrate_carbonmangels",
+        "P-A-cyp3a4_veith",
+        "P-A-dili",
+        "P-A-half_life_obach",
+        "P-A-herg",
+        "P-A-hia_hou",
+        "P-A-pgp_broccatelli",
+        "P-A-vdss_lombardo",
+        "P-B1-dili-H0",
+        "P-B2-dili-H0",
+        "P-B1-dili-F010",
+        "P-B2-dili-F010",
+        "P-B1-hia_hou-H0",
+        "P-B2-hia_hou-H0",
+        "P-B1-hia_hou-F010",
+        "P-B2-hia_hou-F010",
+        "P-B1-half_life_obach-H0",
+        "P-B2-half_life_obach-H0",
+        "P-B1-half_life_obach-F010",
+        "P-B2-half_life_obach-F010",
+        "P-B1-cyp3a4_veith-H0",
+        "P-B2-cyp3a4_veith-H0",
+        "P-B1-cyp3a4_veith-F010",
+        "P-B2-cyp3a4_veith-F010",
+        "P-B1-cyp2c9_substrate_carbonmangels-H0",
+        "P-B2-cyp2c9_substrate_carbonmangels-H0",
+        "P-B1-cyp2c9_substrate_carbonmangels-F010",
+        "P-B2-cyp2c9_substrate_carbonmangels-F010",
+        "P-B1-vdss_lombardo-H0",
+        "P-B2-vdss_lombardo-H0",
+        "P-B1-vdss_lombardo-F010",
+        "P-B2-vdss_lombardo-F010",
+        "P-B1-ppbr_az-H0",
+        "P-B2-ppbr_az-H0",
+        "P-B1-ppbr_az-F010",
+        "P-B2-ppbr_az-F010",
+        "P-B1-caco2_wang-H0",
+        "P-B2-caco2_wang-H0",
+        "P-B1-caco2_wang-F010",
+        "P-B2-caco2_wang-F010"
+      ],
+      "exact_new_fit_count": 89,
+      "fit_count_by_readiness": {
+        "config_only": 57,
+        "new_code": 32,
+        "blocked_assets": 0
+      },
+      "phase_fit_counts": {
+        "A": 24,
+        "R": 1,
+        "B": 64,
+        "C": 0,
+        "L": 0,
+        "S": 0,
+        "N": 0,
+        "M": 0
+      },
+      "tasks_with_new_training": [
+        "ames",
+        "bbb_martins",
+        "caco2_wang",
+        "clearance_microsome_az",
+        "cyp2c9_substrate_carbonmangels",
+        "cyp3a4_substrate_carbonmangels",
+        "cyp3a4_veith",
+        "dili",
+        "half_life_obach",
+        "herg",
+        "hia_hou",
+        "pgp_broccatelli",
+        "ppbr_az",
+        "vdss_lombardo"
+      ],
+      "new_training_task_count": 14,
+      "all22_review_and_carryforward": true,
+      "existing_unique_control_slots_referenced": 55,
+      "additional_prospective_BBB_control_count": 1,
+      "baseline_inventory_count": 88,
+      "baseline_inventory_qualified_slots": 87,
+      "baseline_missing_after_slots": 1,
+      "existing_baselines_never_added_to_new_fit_total": true,
+      "chemi_new_encoding_calls": 0,
+      "new_encoding_logical_partitions": {},
+      "shared_encoding_definition": "one immutable representation per asset×task×official partition; train/valid/test cache rows preserve originals; reused across every model seed/head/split; physical batches/unique SMILES count unknown and not equated to these logical partition counts",
+      "cost_basis_refs": [
+        "E-COST22",
+        "E-COST64",
+        "E-RETRIEVE22",
+        "E-RETRIEVE64",
+        "E-OPS"
+      ],
+      "observed_reference_job_seconds_per_fit": [
+        9.911243781562916,
+        18.58861598317691
+      ],
+      "planning_allocations_hours_NOT_measurements": {
+        "warm_configuration_preparation_hours": [
+          0.25,
+          0.75
+        ],
+        "head_job_span_proxy_hours": [
+          0.24502797126641654,
+          0.45955189513965145
+        ],
+        "retrieval_scoring_handoff_hours": [
+          0.5,
+          1.25
+        ],
+        "new_interface_engineering_hours": [
+          1,
+          3
+        ]
+      },
+      "conservative_nonoverlap_planning_sum_hours_excluding_unknowns": [
+        1.9950279712664165,
+        5.459551895139652
+      ],
+      "unknown_additions": [
+        "resource queue Q",
+        "new research UI/model call R (zero within predeclared branch until review gate)"
+      ],
+      "cost_formula": "T_turnaround = P_existing + P_new_interface + Q + E_new_representation + J_heads + T_retrieve/score/handoff + R - measured_overlap; shared-role windows counted once, not per batch",
+      "uncertainty": "Observed J is whole job process lifespan incl load/inference, not kernel time. Per-fit scaling is a rough planning envelope; linear/Huber/scaffold/new representations unmeasured. Engineering ranges are explicit proposed resource allocations, not historical facts or completion promises.",
+      "shared_stage_overlap": "P_new_interface may overlap A jobs/retrieval; use actual timestamps to subtract overlap. Full checkpoints incremental transport only, do not send historical430 again.",
+      "stopping_budget": "Do not auto-spend skipped fits on another branch; reserves outside these totals need controller registration."
+    },
+    {
+      "scenario": "large",
+      "recommend": false,
+      "proposed_only": true,
+      "proposal_ids": [
+        "P-A-BBB46-REPAIR",
+        "P-A-ames",
+        "P-A-bbb_martins",
+        "P-A-clearance_microsome_az",
+        "P-A-cyp2c9_substrate_carbonmangels",
+        "P-A-cyp3a4_substrate_carbonmangels",
+        "P-A-cyp3a4_veith",
+        "P-A-dili",
+        "P-A-half_life_obach",
+        "P-A-herg",
+        "P-A-hia_hou",
+        "P-A-pgp_broccatelli",
+        "P-A-vdss_lombardo",
+        "P-B1-dili-H0",
+        "P-B2-dili-H0",
+        "P-B1-dili-F010",
+        "P-B2-dili-F010",
+        "P-B1-hia_hou-H0",
+        "P-B2-hia_hou-H0",
+        "P-B1-hia_hou-F010",
+        "P-B2-hia_hou-F010",
+        "P-B1-half_life_obach-H0",
+        "P-B2-half_life_obach-H0",
+        "P-B1-half_life_obach-F010",
+        "P-B2-half_life_obach-F010",
+        "P-B1-cyp3a4_veith-H0",
+        "P-B2-cyp3a4_veith-H0",
+        "P-B1-cyp3a4_veith-F010",
+        "P-B2-cyp3a4_veith-F010",
+        "P-B1-cyp2c9_substrate_carbonmangels-H0",
+        "P-B2-cyp2c9_substrate_carbonmangels-H0",
+        "P-B1-cyp2c9_substrate_carbonmangels-F010",
+        "P-B2-cyp2c9_substrate_carbonmangels-F010",
+        "P-B1-vdss_lombardo-H0",
+        "P-B2-vdss_lombardo-H0",
+        "P-B1-vdss_lombardo-F010",
+        "P-B2-vdss_lombardo-F010",
+        "P-B1-ppbr_az-H0",
+        "P-B2-ppbr_az-H0",
+        "P-B1-ppbr_az-F010",
+        "P-B2-ppbr_az-F010",
+        "P-B1-caco2_wang-H0",
+        "P-B2-caco2_wang-H0",
+        "P-B1-caco2_wang-F010",
+        "P-B2-caco2_wang-F010",
+        "P-C-dili-H0",
+        "P-C-dili-F010",
+        "P-C-hia_hou-H0",
+        "P-C-hia_hou-F010",
+        "P-C-half_life_obach-H0",
+        "P-C-half_life_obach-F010",
+        "P-C-cyp3a4_veith-H0",
+        "P-C-cyp3a4_veith-F010",
+        "P-C-cyp2c9_substrate_carbonmangels-H0",
+        "P-C-cyp2c9_substrate_carbonmangels-F010",
+        "P-C-vdss_lombardo-H0",
+        "P-C-vdss_lombardo-F010",
+        "P-C-ppbr_az-H0",
+        "P-C-ppbr_az-F010",
+        "P-C-caco2_wang-H0",
+        "P-C-caco2_wang-F010",
+        "P-L-HUBER-caco2_wang",
+        "P-L-HUBER-ld50_zhu",
+        "P-L-HUBER-lipophilicity_astrazeneca",
+        "P-L-HUBER-ppbr_az",
+        "P-L-HUBER-solubility_aqsoldb",
+        "P-L-WBCE-cyp2c9_substrate_carbonmangels",
+        "P-L-WBCE-cyp2d6_substrate_carbonmangels",
+        "P-L-WBCE-cyp2d6_veith",
+        "P-S-dili-H0-o101",
+        "P-S-dili-F010-o101",
+        "P-S-dili-H0-o102",
+        "P-S-dili-F010-o102",
+        "P-S-cyp2c9_substrate_carbonmangels-H0-o101",
+        "P-S-cyp2c9_substrate_carbonmangels-F010-o101",
+        "P-S-cyp2c9_substrate_carbonmangels-H0-o102",
+        "P-S-cyp2c9_substrate_carbonmangels-F010-o102",
+        "P-S-ppbr_az-H0-o101",
+        "P-S-ppbr_az-F010-o101",
+        "P-S-ppbr_az-H0-o102",
+        "P-S-ppbr_az-F010-o102",
+        "P-N-minimol-ames",
+        "P-N-minimol-bioavailability_ma",
+        "P-N-minimol-clearance_hepatocyte_az",
+        "P-N-minimol-cyp2c9_veith",
+        "P-N-minimol-lipophilicity_astrazeneca",
+        "P-N-minimol-solubility_aqsoldb",
+        "P-N-molformer_10pct-ames",
+        "P-N-molformer_10pct-bioavailability_ma",
+        "P-N-molformer_10pct-clearance_hepatocyte_az",
+        "P-N-molformer_10pct-cyp2c9_veith",
+        "P-N-molformer_10pct-lipophilicity_astrazeneca",
+        "P-N-molformer_10pct-solubility_aqsoldb",
+        "P-N-classical_features-ames",
+        "P-N-classical_features-bioavailability_ma",
+        "P-N-classical_features-clearance_hepatocyte_az",
+        "P-N-classical_features-cyp2c9_veith",
+        "P-N-classical_features-lipophilicity_astrazeneca",
+        "P-N-classical_features-solubility_aqsoldb"
+      ],
+      "exact_new_fit_count": 197,
+      "fit_count_by_readiness": {
+        "config_only": 89,
+        "new_code": 72,
+        "blocked_assets": 36
+      },
+      "phase_fit_counts": {
+        "A": 24,
+        "R": 1,
+        "B": 64,
+        "C": 32,
+        "L": 16,
+        "S": 24,
+        "N": 24,
+        "M": 12
+      },
+      "tasks_with_new_training": [
+        "ames",
+        "bbb_martins",
+        "bioavailability_ma",
+        "caco2_wang",
+        "clearance_hepatocyte_az",
+        "clearance_microsome_az",
+        "cyp2c9_substrate_carbonmangels",
+        "cyp2c9_veith",
+        "cyp2d6_substrate_carbonmangels",
+        "cyp2d6_veith",
+        "cyp3a4_substrate_carbonmangels",
+        "cyp3a4_veith",
+        "dili",
+        "half_life_obach",
+        "herg",
+        "hia_hou",
+        "ld50_zhu",
+        "lipophilicity_astrazeneca",
+        "pgp_broccatelli",
+        "ppbr_az",
+        "solubility_aqsoldb",
+        "vdss_lombardo"
+      ],
+      "new_training_task_count": 22,
+      "all22_review_and_carryforward": true,
+      "existing_unique_control_slots_referenced": 71,
+      "additional_prospective_BBB_control_count": 1,
+      "baseline_inventory_count": 88,
+      "baseline_inventory_qualified_slots": 87,
+      "baseline_missing_after_slots": 1,
+      "existing_baselines_never_added_to_new_fit_total": true,
+      "chemi_new_encoding_calls": 0,
+      "new_encoding_logical_partitions": {
+        "minimol": 18,
+        "molformer_10pct": 18,
+        "Morgan_deterministic_features": 18
+      },
+      "shared_encoding_definition": "one immutable representation per asset×task×official partition; train/valid/test cache rows preserve originals; reused across every model seed/head/split; physical batches/unique SMILES count unknown and not equated to these logical partition counts",
+      "cost_basis_refs": [
+        "E-COST22",
+        "E-COST64",
+        "E-RETRIEVE22",
+        "E-RETRIEVE64",
+        "E-OPS"
+      ],
+      "observed_reference_job_seconds_per_fit": [
+        9.911243781562916,
+        18.58861598317691
+      ],
+      "planning_allocations_hours_NOT_measurements": {
+        "warm_configuration_preparation_hours": [
+          0.5,
+          1.0
+        ],
+        "head_job_span_proxy_hours": [
+          0.542365284713304,
+          1.0172103746349588
+        ],
+        "retrieval_scoring_handoff_hours": [
+          0.75,
+          2.0
+        ],
+        "new_interface_engineering_hours": [
+          3,
+          8
+        ]
+      },
+      "conservative_nonoverlap_planning_sum_hours_excluding_unknowns": [
+        4.792365284713304,
+        12.01721037463496
+      ],
+      "unknown_additions": [
+        "resource queue Q",
+        "new research UI/model call R (zero within predeclared branch until review gate)",
+        "approved new asset extraction E_MiniMol + E_MoLFormer + C_Morgan; no measured value",
+        "additional external approval/license/coverage engineering W beyond the allocated caps requires re-registration"
+      ],
+      "cost_formula": "T_turnaround = P_existing + P_new_interface + Q + E_new_representation + J_heads + T_retrieve/score/handoff + R - measured_overlap; shared-role windows counted once, not per batch",
+      "uncertainty": "Observed J is whole job process lifespan incl load/inference, not kernel time. Per-fit scaling is a rough planning envelope; linear/Huber/scaffold/new representations unmeasured. Engineering ranges are explicit proposed resource allocations, not historical facts or completion promises.",
+      "shared_stage_overlap": "P_new_interface may overlap A jobs/retrieval; use actual timestamps to subtract overlap. Full checkpoints incremental transport only, do not send historical430 again.",
+      "stopping_budget": "Do not auto-spend skipped fits on another branch; reserves outside these totals need controller registration."
+    }
+  ],
+  "alternative_no_new_training": {
+    "fit_count": 0,
+    "plan": "保留既有10获益/5退化/7不稳定判断，批准后仅盲预测诊断/固定seed均值评估；不足以分解机制或验证新数据泛化。",
+    "extra_metric_deliveries_max_first_stage": 24
+  },
+  "recommendation": "中档89：25现成首批+32dropout0控制+32linear-only。覆盖所有12问题任务且有两个获益警戒任务，不重做全22基准，新增实现仅线性头；大档197增加有条件损失/结构/表示面板而非一口气全库。",
+  "observed_job_span_totals_seconds": {
+    "six22": 408.9495516298921,
+    "bridge64": 634.3196020200267,
+    "combined1043": 1043.2691536499187
+  },
+  "shared_retrieval_window_seconds": 1171.2555809020996,
+  "six22_native_active_as_of_seconds": 3680.845,
+  "bridge64_contract_to_scientific_complete_seconds": 6454.647777557373,
+  "original3600_gpu_job_seconds_budget": "historical authorization only; does not authorize these proposals",
+  "zero_fit_preparation_policy": "no training/encoding/inference/install in this research session; later preparation only under separately authorized private dependency/interface fixture permission"
+}

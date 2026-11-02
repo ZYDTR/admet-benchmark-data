@@ -1,0 +1,1611 @@
+{
+  "request_id": "admet-pro-parallel-20261102-001",
+  "round_id": "breadth22-confirm86-20261102",
+  "input_manifest_sha256": "25ba8a81a13e070f9d8f7f6336e5f0b97f06ae5c6097257361205ca1f2e2a213",
+  "manifest_sha256": "25ba8a81a13e070f9d8f7f6336e5f0b97f06ae5c6097257361205ca1f2e2a213",
+  "input_snapshot_commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+  "shared_methodology_version": "3.0.0",
+  "shared_methodology_sha256": "a31f5ca08e81d69c559054c80840fabe24c2d25e352f1fb0463de78d8d44c1b3",
+  "status": "needs_evidence",
+  "scientific_status": "needs_evidence",
+  "execution_status": "proposal_only_not_authorized",
+  "delivery_status": "complete_files_created_integrity_checked",
+  "status_explanation": "Q1/Q2/Q4/Q5/Q6在描述与可证伪方案层有据作答；Q3部分原调研/local版本及许可仍未闭环，保留partial。任何新机制/未调参数据增益都未被本轮证明。",
+  "decision_coverage": [
+    {
+      "question_id": "Q1",
+      "status": "answered",
+      "answer_summary": "已按22任务、两seed、Mini22及旧24/28分开比较；10双改善/5双退化/7混合，所有MAE双改善但总体收益集中，不能把约46当官网分。可逆缩放与DILI stop反例支持竞争解释而非单因果。",
+      "answer_location": [
+        "analysis.md#Q1",
+        "derived_checks.json"
+      ],
+      "evidence_refs": [
+        "E-SCORES",
+        "E-MINI22",
+        "E-OLD28",
+        "E-DILI-F",
+        "E-DILI-H",
+        "E-SCALER",
+        "E-CONTROLLER"
+      ],
+      "opposing_evidence_and_limitations": [
+        "2seed、重复Valid选择",
+        "BBB H046缺after",
+        "跨主机/缓存环境",
+        "贡献集中依赖本地未确认归一化公式"
+      ],
+      "applicability_conditions": [
+        "继承主控准入，指标定义一致；未证明未调参数据泛化"
+      ],
+      "unresolved": [
+        "G-MECHANISM",
+        "G-BBB",
+        "G-AP",
+        "G-VALID",
+        "G-CACHE"
+      ],
+      "affected_decisions": [
+        "否定F010统一推广；按任务/机制分支"
+      ]
+    },
+    {
+      "question_id": "Q2",
+      "status": "answered",
+      "answer_summary": "全22任务逐项给保留/修复/机制/表示类别；首批覆盖全部12退化或不稳定任务，既有10获益产物保留；具体比较floor、dropout/linear、lr、loss、stop及结构压力。",
+      "answer_location": [
+        "analysis.md#Q2",
+        "search_space.json",
+        "next_experiments.json"
+      ],
+      "evidence_refs": [
+        "E-SCORES",
+        "E-DATAIO",
+        "E-TRAINER",
+        "E-HEADS",
+        "E-METHOD",
+        "E-DINO"
+      ],
+      "opposing_evidence_and_limitations": [
+        "F001也有旧反例",
+        "小样本/类别比例不能单独解释响应",
+        "新loss与更多参数不保证更好"
+      ],
+      "applicability_conditions": [
+        "不同因素保持匹配控制，原任务/行/标签不变",
+        "只是可证伪方案，不声称已经提升"
+      ],
+      "unresolved": [
+        "G-MECHANISM",
+        "G-FEATURE-DIAG",
+        "G-TRAINCOUNTS"
+      ],
+      "affected_decisions": [
+        "首批任务优先级；停止单任务循环"
+      ]
+    },
+    {
+      "question_id": "Q3",
+      "status": "partial",
+      "answer_summary": "已比较CheMeleon及全部9个其他科学资产类别并查官方研究/接口，给blocked但具体N/M矩阵和储备方向；MolE身份/可用权重、部分旧调研原件及local pins/许可仍未闭环。",
+      "answer_location": [
+        "analysis.md#Q3",
+        "search_space.json",
+        "evidence_gaps.json#G-ASSETS"
+      ],
+      "evidence_refs": [
+        "E-ASSETS",
+        "E-ORIGINAL-ASSETS",
+        "X-CHEMELEON",
+        "X-MINIMOL",
+        "X-MOLFORMER",
+        "X-MOLF-REV",
+        "X-KPGT",
+        "X-UNIMOL",
+        "X-SMITED",
+        "X-MOLE",
+        "X-TABPFN",
+        "X-TABLICENSE"
+      ],
+      "opposing_evidence_and_limitations": [
+        "上游fine-tuned收益非本协议冻结收益",
+        "官方来源不是当地资产准入",
+        "旧失败不等于质量失败",
+        "TabPFN不是分子encoder"
+      ],
+      "applicability_conditions": [
+        "全部外部参数/buffer冻结；执行LLM不是科学底座",
+        "只有准备门槛通过才解锁对应资产"
+      ],
+      "unresolved": [
+        "G-ASSETS"
+      ],
+      "affected_decisions": [
+        "现底座优化优先；新表示探索何时准入"
+      ]
+    },
+    {
+      "question_id": "Q4",
+      "status": "answered",
+      "answer_summary": "小25/中89推荐/大197为互相嵌套的99个确定proposal，逐task/config/split/seed/目标/输出展开。已有控制、B1共享、S新split控制、编码分区和端到端未知项分别核算；结果依赖储备有上限不混入主预算。",
+      "answer_location": [
+        "analysis.md#Q4",
+        "next_batch_guide.md",
+        "next_experiments.json",
+        "budget_scenarios.json",
+        "conditional_followups.json"
+      ],
+      "evidence_refs": [
+        "E-DATAIO",
+        "E-INTERFACE",
+        "E-COST22",
+        "E-COST64",
+        "E-RETRIEVE22",
+        "E-RETRIEVE64"
+      ],
+      "opposing_evidence_and_limitations": [
+        "新接口/编码未测",
+        "89/197不是已获授权或全部ready",
+        "两seed方向规则不是统计显著性"
+      ],
+      "applicability_conditions": [
+        "主控选择档位登记后才执行",
+        "每split独立fit预处理，现成字段按真实validator"
+      ],
+      "unresolved": [
+        "G-COST",
+        "G-ASSETS",
+        "G-TRAINCOUNTS"
+      ],
+      "affected_decisions": [
+        "推荐中档；新增工程预算；不重复基线"
+      ]
+    },
+    {
+      "question_id": "Q5",
+      "status": "answered",
+      "answer_summary": "追加9个来源可定位事件并保留历史前项；区分已试、反证、计划未实施与有条件价值。纠正旧16任务阻塞、跨批控制不可比和同encoder不可集成等过度限制；历史运行失败不删除。",
+      "answer_location": [
+        "analysis.md#Q5",
+        "claim_events.json",
+        "issues.json"
+      ],
+      "evidence_refs": [
+        "E-CLAIMS",
+        "E-PROGRESS",
+        "E-HISTREG",
+        "E-ADOPTION",
+        "E-ROOT-REVIEW"
+      ],
+      "opposing_evidence_and_limitations": [
+        "旧Pro阅读声明不是独立证据",
+        "未知事件时间不能用归档时间填",
+        "本轮增量issues不替代全账本"
+      ],
+      "applicability_conditions": [
+        "按真实执行增量由主控/Astra归并，不修改其他研究者会话或本地账本"
+      ],
+      "unresolved": [
+        "G-VALID"
+      ],
+      "affected_decisions": [
+        "避免重复已完成bridge/控制；明确新研究触发"
+      ]
+    },
+    {
+      "question_id": "Q6",
+      "status": "answered",
+      "answer_summary": "69项来源按实际范围登记，继承评分/冻结/运输与本轮新算术分开；11类缺口标未读/未记录/可计算/未来实验。已有诊断未读不冒称不存在，BBB缺after不伪补；以共享取回和阶段成本缩短周转。",
+      "answer_location": [
+        "analysis.md#Q6",
+        "evidence_registry.json",
+        "evidence_gaps.json",
+        "budget_scenarios.json"
+      ],
+      "evidence_refs": [
+        "E-GAPS",
+        "E-RUNINDEX",
+        "E-SOURCEINDEX",
+        "E-CONTROLLER",
+        "E-COST22",
+        "E-COST64",
+        "E-RETRIEVE22",
+        "E-RETRIEVE64"
+      ],
+      "opposing_evidence_and_limitations": [
+        "没有全部原件逐份读",
+        "未独立取到input manifest字节",
+        "无原始盲预测分歧实算",
+        "无真正subagent调用"
+      ],
+      "applicability_conditions": [
+        "只补会改变决策的原件与算术，不审全库、不读逐行Valid真值、不重新评分"
+      ],
+      "unresolved": [
+        "G-BBB",
+        "G-MECHANISM",
+        "G-FEATURE-DIAG",
+        "G-BLIND",
+        "G-AP",
+        "G-VALID",
+        "G-ASSETS",
+        "G-CACHE",
+        "G-TRAINCOUNTS",
+        "G-COST",
+        "G-MANIFEST"
+      ],
+      "affected_decisions": [
+        "最小补件与未测成本；不阻断无关已ready路线"
+      ]
+    }
+  ],
+  "read_receipt": [
+    {
+      "source_id": "E-START",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/START_HERE.md",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 15,
+      "tool_evidence_refs": [
+        "turn979425view0"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-METHOD",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/methodology/EXPERIMENT_DESIGN.md",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": "a31f5ca08e81d69c559054c80840fabe24c2d25e352f1fb0463de78d8d44c1b3"
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 30,
+      "tool_evidence_refs": [
+        "turn668610view3"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA登记值，不是本会话字节重算。"
+    },
+    {
+      "source_id": "E-RULE",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/common/rules.md",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 13,
+      "tool_evidence_refs": [
+        "turn405881view0"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-SUMMARY",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/common/results-summary.md",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 12,
+      "tool_evidence_refs": [
+        "turn405881view1"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-HISTORY",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/common/history.md",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 6,
+      "tool_evidence_refs": [
+        "turn405881view2"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-LIMITS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/common/limits.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 51,
+      "tool_evidence_refs": [
+        "turn405881view3"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-DECISION",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/research/decision-contract.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 156,
+      "tool_evidence_refs": [
+        "turn216951view0",
+        "turn959933view0"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-RETURN",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/research/return-contract.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 28,
+      "tool_evidence_refs": [
+        "turn216951view1",
+        "turn959933view1"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-BRIEF",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/research/RESEARCH_BRIEF.md",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 14,
+      "tool_evidence_refs": [
+        "turn405881view4"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-ASSETS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/assets/readiness.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 144,
+      "tool_evidence_refs": [
+        "turn585870view1"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-INTERFACE",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/assets/current-interface.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 39,
+      "tool_evidence_refs": [
+        "turn875236view0"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-RESULTS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/current/results.md",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 45,
+      "tool_evidence_refs": [
+        "turn549738view0"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-SCORES",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/current/all22-comparisons.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "paired_comparisons L2303-L3052 full; aggregate and selected score/per_task sections; NOT all 88 run objects",
+      "rendered_total_lines": 3460,
+      "tool_evidence_refs": [
+        "turn549738view1"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-PREDINDEX",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/current/blind-predictions.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "index entry/schema, first 54 lines; no prediction CSV contents read",
+      "rendered_total_lines": 972,
+      "tool_evidence_refs": [
+        "turn135878view1"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-RUNINDEX",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/runs/index.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "task/run navigation including selected DILI/PPBR/half-life objects; not every run original",
+      "rendered_total_lines": 690,
+      "tool_evidence_refs": [
+        "turn830588view0"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-PROGRESS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/history/progressive-index.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 239,
+      "tool_evidence_refs": [
+        "turn585870view3"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-CLAIMS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/history/claim-events.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 59,
+      "tool_evidence_refs": [
+        "turn549738view2"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-ADOPTION",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/history/proposal-adoption.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "proposal adoption and current-matrix sections; not full historical objects",
+      "rendered_total_lines": 392,
+      "tool_evidence_refs": [
+        "turn830588view3"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-PREVPRO",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/research/previous-Pro-index.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 119,
+      "tool_evidence_refs": [
+        "turn830588view2"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-DINO",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/research/DINO_REUSE_ADDENDUM.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 77,
+      "tool_evidence_refs": [
+        "turn347185view0"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-OPS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/operations/cost-and-failures.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 50,
+      "tool_evidence_refs": [
+        "turn549738view3"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-GAPS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/gaps.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 28,
+      "tool_evidence_refs": [
+        "turn549738view4"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-RULEMAP",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/common/rule-originals.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 83,
+      "tool_evidence_refs": [
+        "turn585870view2"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-SOURCEINDEX",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/source-manifest.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "targeted registered source/view entries only; find reading-contract/feature-distribution names did not resolve exact entry; not a full 22718-line read",
+      "rendered_total_lines": 22718,
+      "tool_evidence_refs": [
+        "turn875236view1"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-Q1",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/questions/Q1.md",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": null,
+      "tool_evidence_refs": [
+        "turn802482view0"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-Q2",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/questions/Q2.md",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": null,
+      "tool_evidence_refs": [
+        "turn802482view1"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-Q3",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/questions/Q3.md",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": null,
+      "tool_evidence_refs": [
+        "turn802482view2"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-Q4",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/questions/Q4.md",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": null,
+      "tool_evidence_refs": [
+        "turn802482view3"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-Q5",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/questions/Q5.md",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": null,
+      "tool_evidence_refs": [
+        "turn802482view4"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-Q6",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/questions/Q6.md",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": null
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": null,
+      "tool_evidence_refs": [
+        "turn802482view5"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "固定URI版本明确；未从原件登记提取到该包装文件SHA，保留null，不以其他对象hash代替。"
+    },
+    {
+      "source_id": "E-CONTROLLER",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/0479d220edcb14d608d302e85e387c0b0a48f50ef69e83d2ea43786c575ec3f3.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": "0479d220edcb14d608d302e85e387c0b0a48f50ef69e83d2ea43786c575ec3f3"
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "L0-L89 result acceptance, exact normalized aggregates, counts",
+      "rendered_total_lines": 104,
+      "tool_evidence_refs": [
+        "turn441085view1"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA是source-manifest登记的公开semantic view身份，未在本会话重哈希；可能不同于原始source_sha。"
+    },
+    {
+      "source_id": "E-AUDIT64",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/426d5850ddba29a4a60fa9b9160ebd8cb73ea894d4a72283e4fb33213db33002.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": "426d5850ddba29a4a60fa9b9160ebd8cb73ea894d4a72283e4fb33213db33002"
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 23,
+      "tool_evidence_refs": [
+        "turn111605view0"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA是source-manifest登记的公开semantic view身份，未在本会话重哈希；可能不同于原始source_sha。"
+    },
+    {
+      "source_id": "E-AUDIT22",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/446e738d16fbbfb20043d23b2912aa90c36fdbc29fdc79cc757a8688e46eeeca.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": "446e738d16fbbfb20043d23b2912aa90c36fdbc29fdc79cc757a8688e46eeeca"
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 26,
+      "tool_evidence_refs": [
+        "turn111605view1"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA是source-manifest登记的公开semantic view身份，未在本会话重哈希；可能不同于原始source_sha。"
+    },
+    {
+      "source_id": "E-ROOT-REVIEW",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/efd428ad5395a506a7b019ef51d8ec3cfce037ac9917af14b24c752927b075d9.md",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": "efd428ad5395a506a7b019ef51d8ec3cfce037ac9917af14b24c752927b075d9"
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 23,
+      "tool_evidence_refs": [
+        "turn370952view2"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA是source-manifest登记的公开semantic view身份，未在本会话重哈希；可能不同于原始source_sha。"
+    },
+    {
+      "source_id": "E-HISTREG",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/263d3b905953bc18c17956babb180ecb71f3d8e3a22ff528b40bc362b60caa6c.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": "263d3b905953bc18c17956babb180ecb71f3d8e3a22ff528b40bc362b60caa6c"
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "records/navigation covering major experiments/failures; L0-L331,L368-L535; gap L332-L367 and end not claimed read",
+      "rendered_total_lines": 548,
+      "tool_evidence_refs": [
+        "turn839282view0"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA是source-manifest登记的公开semantic view身份，未在本会话重哈希；可能不同于原始source_sha。"
+    },
+    {
+      "source_id": "E-COST22",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/93df7d1bacfcd0e5e8e15977152a7bccbb6e188268d2adcc3d7893fe23b72ae8.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": "93df7d1bacfcd0e5e8e15977152a7bccbb6e188268d2adcc3d7893fe23b72ae8"
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 54,
+      "tool_evidence_refs": [
+        "turn441085view0"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA是source-manifest登记的公开semantic view身份，未在本会话重哈希；可能不同于原始source_sha。"
+    },
+    {
+      "source_id": "E-COST64",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/dbd898d865603496ddfb0dde45acc7ada8a0b3d05f35da1624d51d49c3c6c4c1.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": "dbd898d865603496ddfb0dde45acc7ada8a0b3d05f35da1624d51d49c3c6c4c1"
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 47,
+      "tool_evidence_refs": [
+        "turn347185view2"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA是source-manifest登记的公开semantic view身份，未在本会话重哈希；可能不同于原始source_sha。"
+    },
+    {
+      "source_id": "E-RETRIEVE22",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/7efcb63f22cb4feec72df0af21bc518a2ed36c4cef58e630c4be582a81c845d8.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": "7efcb63f22cb4feec72df0af21bc518a2ed36c4cef58e630c4be582a81c845d8"
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 99,
+      "tool_evidence_refs": [
+        "turn450924view3"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA是source-manifest登记的公开semantic view身份，未在本会话重哈希；可能不同于原始source_sha。"
+    },
+    {
+      "source_id": "E-RETRIEVE64",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/cc85de8a688015c5e51473e2efbdac46f0597f77665236b909a22a6063b30bdb.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": "cc85de8a688015c5e51473e2efbdac46f0597f77665236b909a22a6063b30bdb"
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 87,
+      "tool_evidence_refs": [
+        "turn450924view4"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA是source-manifest登记的公开semantic view身份，未在本会话重哈希；可能不同于原始source_sha。"
+    },
+    {
+      "source_id": "E-DATAIO",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/9a7a4410a215f0eaf040252cef6b3d3aa8c0eef57a799508d88757bfe5d0a9db.py",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": "9a7a4410a215f0eaf040252cef6b3d3aa8c0eef57a799508d88757bfe5d0a9db"
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 198,
+      "tool_evidence_refs": [
+        "turn788948view0"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA是source-manifest登记的公开semantic view身份，未在本会话重哈希；可能不同于原始source_sha。"
+    },
+    {
+      "source_id": "E-BRIDGE",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/7a4afd41ebdd08ad42533a7570a9a3daf8bf792391d88be9388645fb8f472f59.py",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": "7a4afd41ebdd08ad42533a7570a9a3daf8bf792391d88be9388645fb8f472f59"
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "header/source trust/environment requirements L0-L62; acceptance from separate E-AUDIT64",
+      "rendered_total_lines": 298,
+      "tool_evidence_refs": [
+        "turn447353view4"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA是source-manifest登记的公开semantic view身份，未在本会话重哈希；可能不同于原始source_sha。"
+    },
+    {
+      "source_id": "E-POLICY",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/eaa891c243aa95bc77d5e7958d59ba9adcfd1ad7d3aa075d7ea2131dcb2971ea.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": "eaa891c243aa95bc77d5e7958d59ba9adcfd1ad7d3aa075d7ea2131dcb2971ea"
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "policy L0-L88; narrower current evaluation scope takes precedence",
+      "rendered_total_lines": 154,
+      "tool_evidence_refs": [
+        "turn447353view0"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA是source-manifest登记的公开semantic view身份，未在本会话重哈希；可能不同于原始source_sha。"
+    },
+    {
+      "source_id": "E-DILI-F",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/b7b53d508497cfac90ef4772c20f07d4cccb32565ed1f9a862f6bcce39c0e721.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": "b7b53d508497cfac90ef4772c20f07d4cccb32565ed1f9a862f6bcce39c0e721"
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "training config/history/best reload L0-L423; row/cache summary L541-L625; acceptance L665-L706; no per-row labels",
+      "rendered_total_lines": 777,
+      "tool_evidence_refs": [
+        "turn783672view4"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA是source-manifest登记的公开semantic view身份，未在本会话重哈希；可能不同于原始source_sha。"
+    },
+    {
+      "source_id": "E-DILI-H",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/ad55f831e0d25e18022fef143b0bbbcd8c116809d722eb86f69d0949d5354abd.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": "ad55f831e0d25e18022fef143b0bbbcd8c116809d722eb86f69d0949d5354abd"
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "best/last/internal-stop/optimizer aggregate L455-L587",
+      "rendered_total_lines": 886,
+      "tool_evidence_refs": [
+        "turn441085view2"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA是source-manifest登记的公开semantic view身份，未在本会话重哈希；可能不同于原始source_sha。"
+    },
+    {
+      "source_id": "E-PPBR-H",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/7d42d99e46e60a565fee83634e3768e9932f095aee949db9ef0b92bae4cd9aa6.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": "7d42d99e46e60a565fee83634e3768e9932f095aee949db9ef0b92bae4cd9aa6"
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "best/last/internal-stop L296-L322",
+      "rendered_total_lines": 706,
+      "tool_evidence_refs": [
+        "turn713849view1"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA是source-manifest登记的公开semantic view身份，未在本会话重哈希；可能不同于原始source_sha。"
+    },
+    {
+      "source_id": "E-PPBR-F",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/8a6af03ed4067356b3b76e36a7cb3f2b5b7062c9b6f3464eb8cc489f9304d200.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": "8a6af03ed4067356b3b76e36a7cb3f2b5b7062c9b6f3464eb8cc489f9304d200"
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "best/last/internal-stop/training L728-L855",
+      "rendered_total_lines": 1182,
+      "tool_evidence_refs": [
+        "turn441085view3"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA是source-manifest登记的公开semantic view身份，未在本会话重哈希；可能不同于原始source_sha。"
+    },
+    {
+      "source_id": "E-HALFLIFE-F",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/8e060ffd5829c1d32caad13bcd1ea711a6028264e47c5466286900207689e1de.json",
+      "source_version": {
+        "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+        "sha256": "8e060ffd5829c1d32caad13bcd1ea711a6028264e47c5466286900207689e1de"
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "best/last/internal-stop L226-L265",
+      "rendered_total_lines": 657,
+      "tool_evidence_refs": [
+        "turn713849view3"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA是source-manifest登记的公开semantic view身份，未在本会话重哈希；可能不同于原始source_sha。"
+    },
+    {
+      "source_id": "E-TRAINER",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/evidence/objects/aa3fbc1a9b29a043f4bac3631cfb3244e4efbcab71636087ad679134edd9d4e5.py",
+      "source_version": {
+        "commit": "f172e864efbfcb33837bbdd28768b0b4f7ca03a7",
+        "sha256": "aa3fbc1a9b29a043f4bac3631cfb3244e4efbcab71636087ad679134edd9d4e5"
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "L0-L239 validator, optimizer, learning/early-stop/reload source; not executed",
+      "rendered_total_lines": 254,
+      "tool_evidence_refs": [
+        "turn269856view0"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA登记值，不是本会话字节重算。"
+    },
+    {
+      "source_id": "E-SCALER",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/evidence/objects/98497dc52267fcb3b868cba2349232c7f2b3f171416a5f33ef7e991cf04fb929.py",
+      "source_version": {
+        "commit": "f172e864efbfcb33837bbdd28768b0b4f7ca03a7",
+        "sha256": "98497dc52267fcb3b868cba2349232c7f2b3f171416a5f33ef7e991cf04fb929"
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "raw cache contract; L175-L423 scaling/statistics/target logic; not executed",
+      "rendered_total_lines": 441,
+      "tool_evidence_refs": [
+        "turn269856view1"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA登记值，不是本会话字节重算。"
+    },
+    {
+      "source_id": "E-HEADS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/evidence/objects/650862671076f7b40b5ca776b2a03f3116cb0df5dcb79d62d1a8f5adabfbef64.py.txt",
+      "source_version": {
+        "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+        "sha256": "650862671076f7b40b5ca776b2a03f3116cb0df5dcb79d62d1a8f5adabfbef64"
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "L0-L83 MLP/loss/AdamW/postprocess source",
+      "rendered_total_lines": 141,
+      "tool_evidence_refs": [
+        "turn447353view3"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA登记值，不是本会话字节重算。"
+    },
+    {
+      "source_id": "E-FIXED-SCORER",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/host-scoring/fixed_metrics.py.txt",
+      "source_version": {
+        "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+        "sha256": "10b0357998898bc4c6c02d43d4f3433f0b40b24e7fe77a86d5e70f12ed9e69d3"
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "L0-L65 local MAE/AUROC/tie-group AP/Spearman source; not executed",
+      "rendered_total_lines": 99,
+      "tool_evidence_refs": [
+        "turn447353view2"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA登记值，不是本会话字节重算。"
+    },
+    {
+      "source_id": "E-OLD28",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/current/comparisons.json",
+      "source_version": {
+        "commit": "f172e864efbfcb33837bbdd28768b0b4f7ca03a7",
+        "sha256": "b60fd25535236390d8e801296eca3d05af3717175b62ca6a423174c9c3eb5a5f"
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "metadata/old normalized mapping and paired section L703-L1041; selected groups; not every object",
+      "rendered_total_lines": 1442,
+      "tool_evidence_refs": [
+        "turn735116view3"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA登记值，不是本会话字节重算。"
+    },
+    {
+      "source_id": "E-MINI22",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/history/archive-20261101/originals/S-764562710384d47e.json",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "ce8375c1c1eb6291eae6439dee77e082486c6e573e844004ce39d43d69890e8c"
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "all 22 task score/count summaries L0-L351; not binary predictions",
+      "rendered_total_lines": 382,
+      "tool_evidence_refs": [
+        "turn111605view2"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA登记值，不是本会话字节重算。"
+    },
+    {
+      "source_id": "E-ORIGINAL-RULE",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/history/archive-20261101/originals/S-a95c8473d1769a29.json",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "f8a99bd337ed165f2f508e9303d2354594bb5bdec213797d5c582eeacfa06a55"
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "public rules snapshot L0-L98; user-confirmed freeze sourced separately",
+      "rendered_total_lines": 142,
+      "tool_evidence_refs": [
+        "turn215228view4"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA登记值，不是本会话字节重算。"
+    },
+    {
+      "source_id": "E-ORIGINAL-MAP",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/evidence/H-e275f0ef9a4955741956.md.txt",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "fa5a8362b3593146787f1c137cb1105f7799dabef9245f92ccb335aeaf326061"
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 26,
+      "tool_evidence_refs": [
+        "turn215228view5"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA登记值，不是本会话字节重算。"
+    },
+    {
+      "source_id": "E-ORIGINAL-ASSETS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/history/archive-20261101/originals/N-3d003c99381806758257.json",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282"
+      },
+      "read_status": "read_full_text",
+      "read_scope": "full",
+      "rendered_total_lines": 128,
+      "tool_evidence_refs": [
+        "turn839282view1"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "SHA登记值，不是本会话字节重算。"
+    },
+    {
+      "source_id": "X-DINO",
+      "uri": "https://github.com/grapeot/dinov3-classifier-skill/blob/45f5bb6336470ebd534b2e81f1684366b63fd8b2/skills/skill.md",
+      "source_version": {
+        "commit": "45f5bb6336470ebd534b2e81f1684366b63fd8b2",
+        "sha256": null
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "frozen probes/grouping/representation sections L170-L371; project adaptation fully read E-METHOD",
+      "rendered_total_lines": null,
+      "tool_evidence_refs": [
+        "turn912565view0"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "外部官方研究/接口启发；并非本地资产准入或已验证ADMET收益。动态网页除另记commit外未固定版本；本轮没有下载/执行权重。"
+    },
+    {
+      "source_id": "X-CHEMELEON",
+      "uri": "https://github.com/JacksonBurns/chemeleon",
+      "source_version": {
+        "commit": null,
+        "sha256": null
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "README sections/model provenance; no checkpoint download",
+      "rendered_total_lines": null,
+      "tool_evidence_refs": [
+        "turn912565search13"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "外部官方研究/接口启发；并非本地资产准入或已验证ADMET收益。动态网页除另记commit外未固定版本；本轮没有下载/执行权重。"
+    },
+    {
+      "source_id": "X-MINIMOL",
+      "uri": "https://github.com/graphcore-research/minimol",
+      "source_version": {
+        "commit": null,
+        "sha256": null
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "README interface 512-d, package/model role, evaluation limitations L188-L234",
+      "rendered_total_lines": null,
+      "tool_evidence_refs": [
+        "turn742114view0"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "外部官方研究/接口启发；并非本地资产准入或已验证ADMET收益。动态网页除另记commit外未固定版本；本轮没有下载/执行权重。"
+    },
+    {
+      "source_id": "X-MOLFORMER",
+      "uri": "https://huggingface.co/ibm-research/MoLFormer-XL-both-10pct",
+      "source_version": {
+        "commit": null,
+        "sha256": null
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "model card L94-L155: 10pct, feature extractor/pooler, training coverage; not finetuning execution",
+      "rendered_total_lines": null,
+      "tool_evidence_refs": [
+        "turn726458view0"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "外部官方研究/接口启发；并非本地资产准入或已验证ADMET收益。动态网页除另记commit外未固定版本；本轮没有下载/执行权重。"
+    },
+    {
+      "source_id": "X-MOLF-CONFIG",
+      "uri": "https://huggingface.co/ibm-research/MoLFormer-XL-both-10pct/blob/main/config.json",
+      "source_version": {
+        "commit": null,
+        "sha256": null
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "complete displayed JSON L118-L150",
+      "rendered_total_lines": null,
+      "tool_evidence_refs": [
+        "turn788948view1"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "外部官方研究/接口启发；并非本地资产准入或已验证ADMET收益。动态网页除另记commit外未固定版本；本轮没有下载/执行权重。"
+    },
+    {
+      "source_id": "X-MOLF-REV",
+      "uri": "https://huggingface.co/ibm-research/MoLFormer-XL-both-10pct/commit/361063d0ad524ef77cf39b08469f6be770dc550f",
+      "source_version": {
+        "commit": "361063d0ad524ef77cf39b08469f6be770dc550f",
+        "sha256": null
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "commit identity/tokenizer changes L84-L113; not entire diff",
+      "rendered_total_lines": null,
+      "tool_evidence_refs": [
+        "turn788948view2"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "外部官方研究/接口启发；并非本地资产准入或已验证ADMET收益。动态网页除另记commit外未固定版本；本轮没有下载/执行权重。"
+    },
+    {
+      "source_id": "X-KPGT",
+      "uri": "https://github.com/lihan97/KPGT",
+      "source_version": {
+        "commit": null,
+        "sha256": null
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "README LiGhT and descriptor/fingerprint dependencies L182-L245",
+      "rendered_total_lines": null,
+      "tool_evidence_refs": [
+        "turn742114view3"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "外部官方研究/接口启发；并非本地资产准入或已验证ADMET收益。动态网页除另记commit外未固定版本；本轮没有下载/执行权重。"
+    },
+    {
+      "source_id": "X-UNIMOL",
+      "uri": "https://unimol.readthedocs.io/en/latest/quickstart.html",
+      "source_version": {
+        "commit": null,
+        "sha256": null
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "UniMolRepr and CLS/atomic output API L41-L58; no MolTrain call",
+      "rendered_total_lines": null,
+      "tool_evidence_refs": [
+        "turn216951view3"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "外部官方研究/接口启发；并非本地资产准入或已验证ADMET收益。动态网页除另记commit外未固定版本；本轮没有下载/执行权重。"
+    },
+    {
+      "source_id": "X-SMITED",
+      "uri": "https://huggingface.co/ibm-research/materials.smi-ted",
+      "source_version": {
+        "commit": null,
+        "sha256": null
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "model family and light feature-extraction interface L113-L132,L149-L259",
+      "rendered_total_lines": null,
+      "tool_evidence_refs": [
+        "turn839282view2"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "外部官方研究/接口启发；并非本地资产准入或已验证ADMET收益。动态网页除另记commit外未固定版本；本轮没有下载/执行权重。"
+    },
+    {
+      "source_id": "X-MOLE",
+      "uri": "https://github.com/recursionpharma/mole_public",
+      "source_version": {
+        "commit": null,
+        "sha256": null
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "README L185-L280, checkpoint section says TODO; proposed explicit lineage, registry alias not proven",
+      "rendered_total_lines": null,
+      "tool_evidence_refs": [
+        "turn216951view2"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "外部官方研究/接口启发；并非本地资产准入或已验证ADMET收益。动态网页除另记commit外未固定版本；本轮没有下载/执行权重。"
+    },
+    {
+      "source_id": "X-TABPFN",
+      "uri": "https://huggingface.co/Prior-Labs/tabpfn_2_6/blob/main/README.md",
+      "source_version": {
+        "commit": null,
+        "sha256": null
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "2.6 model card/license scope, not a molecular encoder",
+      "rendered_total_lines": null,
+      "tool_evidence_refs": [
+        "turn223142view3"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "外部官方研究/接口启发；并非本地资产准入或已验证ADMET收益。动态网页除另记commit外未固定版本；本轮没有下载/执行权重。"
+    },
+    {
+      "source_id": "X-TABLICENSE",
+      "uri": "https://huggingface.co/Prior-Labs/tabpfn_2_6/blob/main/LICENSE",
+      "source_version": {
+        "commit": null,
+        "sha256": null
+      },
+      "read_status": "search_snippet_only",
+      "read_scope": "primary LICENSE search excerpt only, not original full license read or legal clearance",
+      "rendered_total_lines": null,
+      "tool_evidence_refs": [
+        "turn775510search0"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "外部官方研究/接口启发；并非本地资产准入或已验证ADMET收益。动态网页除另记commit外未固定版本；本轮没有下载/执行权重。"
+    },
+    {
+      "source_id": "X-TDC-SPLIT",
+      "uri": "https://tdcommons.ai/functions/data_split/",
+      "source_version": {
+        "commit": null,
+        "sha256": null
+      },
+      "read_status": "read_substantive_sections",
+      "read_scope": "generic split docs; not evidence of this competition official split or leakage",
+      "rendered_total_lines": null,
+      "tool_evidence_refs": [
+        "turn223142view4"
+      ],
+      "independent_byte_hash_computed": false,
+      "version_note": "外部官方研究/接口启发；并非本地资产准入或已验证ADMET收益。动态网页除另记commit外未固定版本；本轮没有下载/执行权重。"
+    }
+  ],
+  "read_receipt_note": "真实原件/正文范围与工具引用见每项；read_full只指该文件，不代表所有链接原件；输入源hash未独立重算。",
+  "inherited_acceptance": [
+    {
+      "acceptance_id": "INH-SCORES",
+      "evidence_refs": [
+        "E-CONTROLLER",
+        "E-AUDIT22",
+        "E-AUDIT64",
+        "E-SCORES"
+      ],
+      "fact": "86新训练/评分＋2既有控制形成88槽；固定评分与匹配输入身份按主控准入复用",
+      "not_reperformed": [
+        "metric scoring",
+        "all prediction row replay",
+        "whole cache hash/freeze audit"
+      ]
+    },
+    {
+      "acceptance_id": "INH-LIMITS",
+      "evidence_refs": [
+        "E-LIMITS",
+        "E-AUDIT22"
+      ],
+      "fact": "BBB H046缺after、部分seed46跨主机、cache生产/消费环境差异等保持限制；不是全无混杂"
+    },
+    {
+      "acceptance_id": "INH-BRIDGE",
+      "evidence_refs": [
+        "E-AUDIT64",
+        "E-INTERFACE"
+      ],
+      "fact": "剩余16任务桥接及64fit已完成，22任务生产H0/F010可用；不再复用旧待接入状态"
+    },
+    {
+      "acceptance_id": "INH-TRANSPORT",
+      "evidence_refs": [
+        "E-START",
+        "E-RETRIEVE22",
+        "E-RETRIEVE64"
+      ],
+      "fact": "已有发布/取回回执沿用，不重新下载所有模型二进制；输入manifest独立字节hash本会话未验证"
+    }
+  ],
+  "read_checks": [
+    {
+      "check_id": "CHK-COUNTS",
+      "type": "new_derived",
+      "method": "从已验paired值转录，分别用Decimal与float按metric方向相减；按两个seed符号分类",
+      "sources": [
+        "E-SCORES"
+      ],
+      "result": "10双改善/5双退化/7混合；44pairs中27有利；排BBB限制pair后26/43",
+      "artifact": "derived_checks.json"
+    },
+    {
+      "check_id": "CHK-CONCENTRATION",
+      "type": "new_derived",
+      "method": "独立求和LD50/PPBR/Sol既有归一化差值，除以22并除全22已验净差；再从总和扣三项/BBB得到剩余任务均差；不调用metric scorer",
+      "sources": [
+        "E-SCORES",
+        "E-CONTROLLER"
+      ],
+      "result": "s46 85.74565068%；s47 100.98111586%；剩余19s47 −0.0320428983",
+      "artifact": "derived_checks.json"
+    },
+    {
+      "check_id": "CHK-MINICOUNTS",
+      "type": "original_read_plus_new_arithmetic",
+      "method": "Mini22同v6原件的task-level valid n和class counts原文引用，检查positive+negative=n；与当前身份回执适用范围绑定",
+      "sources": [
+        "E-MINI22",
+        "E-CONTROLLER"
+      ],
+      "result": "22task valid行合计11735；非数据集总量、非训练类权重",
+      "artifact": "derived_checks.json"
+    },
+    {
+      "check_id": "CHK-DILI",
+      "type": "targeted_cross_source",
+      "method": "读同split hash下H0/F010 s46原训练best/stop，独立与已验Valid汇总对照；不读取Y/残差",
+      "sources": [
+        "E-DILI-F",
+        "E-DILI-H",
+        "E-SCORES"
+      ],
+      "result": "F010 stop AUROC更高而Valid更低；stop不能作为泛化代理",
+      "artifact": "analysis.md#Q1"
+    },
+    {
+      "check_id": "CHK-PPBR",
+      "type": "targeted_cross_source",
+      "method": "读best epoch/last epoch/patience及内外MAE；42+8=50不误称预算截断",
+      "sources": [
+        "E-PPBR-F",
+        "E-PPBR-H",
+        "E-SCORES"
+      ],
+      "result": "保留尺度/分布假设，拒绝凭末epoch证明maxepoch不足",
+      "artifact": "analysis.md#Q1"
+    },
+    {
+      "check_id": "CHK-SCALER",
+      "type": "source_plus_math",
+      "method": "源码分母定义与首层代数重参数化对照；A=diag(d0/df)>0，Wf=Wh A^-1",
+      "sources": [
+        "E-SCALER",
+        "E-HEADS"
+      ],
+      "result": "floor不是删除特征；浮点/优化/正则仍可改变训练",
+      "artifact": "analysis.md#Q1"
+    },
+    {
+      "check_id": "CHK-RUNNER",
+      "type": "source_contract",
+      "method": "读取实际dataIO白名单及trainer loss/earlystop/reload；逐config检查仅支持字段/enums，new_code扩展明确隔离",
+      "sources": [
+        "E-DATAIO",
+        "E-TRAINER",
+        "E-INTERFACE"
+      ],
+      "result": "current seeds44–47、dropout0/.1/.3、50/8固定；新增linear/loss/split/asset不标config_only",
+      "artifact": "validation_report.json"
+    },
+    {
+      "check_id": "CHK-MATRIX",
+      "type": "new_independent_enumeration",
+      "method": "独立验证器从最终JSON逐seed规范化配置、资产、split和replicate reason，集合去重；控制/依赖图查存在及环",
+      "sources": [
+        "E-INTERFACE",
+        "E-SCORES"
+      ],
+      "result": "以validation_report实际结果为准；小25/中89/大197，既有控制不加新fit",
+      "artifact": "validation_report.json"
+    },
+    {
+      "check_id": "CHK-COST",
+      "type": "new_arithmetic_and_inherited_timestamps",
+      "method": "22job41.71771455+367.23183708；64job634.31960202；分别除22/64作span代理；共享1171.25558窗口仅计一次",
+      "sources": [
+        "E-COST22",
+        "E-COST64",
+        "E-RETRIEVE22",
+        "E-RETRIEVE64"
+      ],
+      "result": "1043.26915365 jobsec合计不是kernel；新工程/编码Q/E/R未测",
+      "artifact": "budget_scenarios.json"
+    },
+    {
+      "check_id": "CHK-ROW-ALIGNMENT",
+      "type": "inherited_not_replayed",
+      "method": "仅使用主控已验task/split/row_index回执；本会话没有取88CSV或真值逐行重对",
+      "sources": [
+        "E-CONTROLLER",
+        "E-AUDIT22",
+        "E-AUDIT64"
+      ],
+      "result": "已有有效范围复用；后续新输出必须新身份绑定；BBBafter限制不消失"
+    },
+    {
+      "check_id": "CHK-INPUT-MANIFEST",
+      "type": "not_independently_computed",
+      "method": "请求给定SHA绑定；未获取该manifest独立原字节",
+      "sources": [
+        "E-START",
+        "E-SOURCEINDEX"
+      ],
+      "result": "not_rehashed；不把回显SHA算独立检查"
+    },
+    {
+      "check_id": "CHK-SUBAGENTS",
+      "type": "capability_disclosure",
+      "method": "实际可用工具检索没有提供研究委派/子agent动作；没有模拟角色交叉同意",
+      "sources": [],
+      "result": "actual_subagent_count=0；定向源码/数学核验不是多个agent独立证据"
+    },
+    {
+      "check_id": "CHK-CONCENTRATION-SECOND",
+      "type": "independent_decimal_recalculation",
+      "method": "Recomputed fraction and remaining19/18 directly from retained accepted normalized input constants, independently of original derivation output",
+      "sources": [
+        "E-SCORES",
+        "E-CONTROLLER"
+      ],
+      "result": "all three quantities for both seeds match to <1e-20 Decimal difference",
+      "artifact": "derived_checks.json/concentration_input_values"
+    }
+  ],
+  "remaining_evidence_gaps": [
+    "G-BBB",
+    "G-MECHANISM",
+    "G-FEATURE-DIAG",
+    "G-BLIND",
+    "G-AP",
+    "G-VALID",
+    "G-ASSETS",
+    "G-CACHE",
+    "G-TRAINCOUNTS",
+    "G-COST",
+    "G-MANIFEST"
+  ],
+  "missing_evidence_file": "evidence_gaps.json",
+  "not_assessed": [
+    "逐行Valid真值/残差（权限禁止）",
+    "88个预测CSV全量分歧实算（索引已读，向量未读）",
+    "所有模型二进制/全库冻结或运输重复验收",
+    "新模型训练/编码/推理/安装",
+    "完整官方聚合公式/AP等价验证",
+    "其他研究线路Astra会话或结论",
+    "全部历史原件逐份读取"
+  ],
+  "new_calculations_only": [
+    "accepted aggregate deltas/categories",
+    "normalized-gain concentration sensitivity",
+    "Mini22 aggregate row/class count checks",
+    "proposed fit matrix/control deduplication",
+    "observed stage arithmetic and explicit cost assumptions"
+  ],
+  "subagents": {
+    "available_delegation_action_found": false,
+    "actual_invocations": 0,
+    "independent_cross_checks": "source triangulation and independent arithmetic paths, not role-played agents"
+  },
+  "recommended_budget": {
+    "scenario": "medium",
+    "new_unique_fits": 89,
+    "first_batch_unique_fits": 25,
+    "config_only": 57,
+    "new_code": 32,
+    "blocked_assets": 0,
+    "authorization": "none"
+  },
+  "matrix_totals": {
+    "concrete_proposal_objects": 99,
+    "max_seed_fits_across_tiers": 197,
+    "existing_comparison_slots": 88,
+    "existing_full_freeze_eligible_slots": 87,
+    "all_task_ids_covered": 22
+  },
+  "issue_file": "issues.json",
+  "direction_file": "search_space.json",
+  "proposal_file": "next_experiments.json",
+  "claim_event_file": "claim_events.json",
+  "boundary_checks": {
+    "valid_truth_rows_read": false,
+    "residuals_read": false,
+    "archived_code_executed": false,
+    "training_or_fitting_executed": false,
+    "model_loading_encoding_inference_executed": false,
+    "installed_packages": false,
+    "official_upload": false,
+    "local_ledger_modified": false,
+    "Astra_conversation_read": false
+  },
+  "stop_reasons": [
+    "没有后续训练授权；矩阵只供主控登记",
+    "Q3相应资产在版本/许可/完整行覆盖和接口准入前blocked",
+    "冻结/标签/身份失败只停依赖分支并保留运行失败，不把失败当质量结论"
+  ],
+  "file_integrity_status": "validated_before_manifest_seal",
+  "chat_terminal_status": "review_delivery_complete",
+  "client_download_verified": false
+}

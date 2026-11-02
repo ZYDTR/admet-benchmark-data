@@ -1,0 +1,154 @@
+{
+  "at": "2026-11-02T10:23:24.480272+00:00",
+  "directions": [
+    {
+      "pro_direction_id": "D-FLOOR",
+      "title": "任务自适应分母下限与局部剂量曲线",
+      "source": "packet://previous-pro/search_space.json",
+      "astra_relation": "DIR-FLOOR-LOCAL / DIR-FLOOR-DOSE",
+      "decision": "A24 completed; F001 DILI/half confirmed4 seeds; no dense floor scan",
+      "original_parameters_and_reserves_retained_at_source": true
+    },
+    {
+      "pro_direction_id": "D-BBB",
+      "title": "BBB缺after的前瞻性对照",
+      "source": "packet://previous-pro/search_space.json",
+      "astra_relation": null,
+      "decision": "conditional future control; original missing-after persists; no new fit now",
+      "original_parameters_and_reserves_retained_at_source": true
+    },
+    {
+      "pro_direction_id": "D-DROPOUT",
+      "title": "先拆dropout再比架构，避免线性头对照混杂",
+      "source": "packet://previous-pro/search_space.json",
+      "astra_relation": "DIR-CAPACITY",
+      "decision": "distinct regularization contrast;32 Pro fits plus4 F001 fits dispatched",
+      "original_parameters_and_reserves_retained_at_source": true
+    },
+    {
+      "pro_direction_id": "D-LINEAR",
+      "title": "冻结表示的线性/逻辑与正则回归对照",
+      "source": "packet://previous-pro/search_space.json",
+      "astra_relation": "DIR-SIMPLE",
+      "decision": "10 mapped current affine preparation;22 additional exact fits queued; compare with dropout0 MLP; deterministic solver reserve retained",
+      "original_parameters_and_reserves_retained_at_source": true
+    },
+    {
+      "pro_direction_id": "D-OPTIMIZER",
+      "title": "学习率/正则/容量的序贯交互检验",
+      "source": "packet://previous-pro/search_space.json",
+      "astra_relation": "DIR-OPTIMIZER",
+      "decision": "32 Pro fits plus4 F001 fits dispatched; width128 mostly unsuccessful does not answer lr question",
+      "original_parameters_and_reserves_retained_at_source": true
+    },
+    {
+      "pro_direction_id": "D-LOSS",
+      "title": "五个MAE任务的尾部稳健损失",
+      "source": "packet://previous-pro/search_space.json",
+      "astra_relation": "DIR-ROBUST-LOSS",
+      "decision": "16 total Pro loss fits queued across regression/classification; twice-Huber10 is not Astra Huber10; historical Caco2 premise corrected",
+      "original_parameters_and_reserves_retained_at_source": true
+    },
+    {
+      "pro_direction_id": "D-CLASSWEIGHT",
+      "title": "训练fit内类别权重与AP目标的有限样本检验",
+      "source": "packet://previous-pro/search_space.json",
+      "astra_relation": "DIR-CLASS-WEIGHT",
+      "decision": "6 normalized/clipped weighting fits distinct; CYP2C9 also uses different floor; preserve bundle limits",
+      "original_parameters_and_reserves_retained_at_source": true
+    },
+    {
+      "pro_direction_id": "D-SPLIT",
+      "title": "官方train内部嵌套结构分组压力测试",
+      "source": "packet://previous-pro/search_space.json",
+      "astra_relation": "DIR-GROUP-STRESS",
+      "decision": "Pro24 nested designs queued; not duplicates of active GROUP20, no new official Valid scores",
+      "original_parameters_and_reserves_retained_at_source": true
+    },
+    {
+      "pro_direction_id": "D-STOP",
+      "title": "早停噪声、训练预算与最佳重载",
+      "source": "packet://previous-pro/search_space.json",
+      "astra_relation": "DIR-EARLY-STOP",
+      "decision": "reserve; current remote low-lr curves provide a future budget question, no automatic epoch extension",
+      "original_parameters_and_reserves_retained_at_source": true
+    },
+    {
+      "pro_direction_id": "D-PRECISION",
+      "title": "标准差精度与legacy阈值边界诊断",
+      "source": "packet://previous-pro/search_space.json",
+      "astra_relation": null,
+      "decision": "new explicit16-fit conditional reserve; actual stored H0 denominator summaries already available; raw std<epsilon cannot be reconstructed from replaced1",
+      "original_parameters_and_reserves_retained_at_source": true
+    },
+    {
+      "pro_direction_id": "D-REPARAM",
+      "title": "等函数首层重参数化，区分表示信息与优化路径",
+      "source": "packet://previous-pro/search_space.json",
+      "astra_relation": null,
+      "decision": "new explicit4/8-fit mechanism reserve; algebra correct, initialization artifact availability unverified",
+      "original_parameters_and_reserves_retained_at_source": true
+    },
+    {
+      "pro_direction_id": "D-DISAGREE",
+      "title": "存量盲预测分歧与特征外推诊断",
+      "source": "packet://previous-pro/search_space.json",
+      "astra_relation": "Astra existing diagnostic analysis",
+      "decision": "86 blind CSVs/42063 predictions already analysed; retain two missing local old sources and no-truth interpretation",
+      "original_parameters_and_reserves_retained_at_source": true
+    },
+    {
+      "pro_direction_id": "D-ENSEMBLE",
+      "title": "固定权重的同表示多seed集成",
+      "source": "packet://previous-pro/search_space.json",
+      "astra_relation": "DIR-ENSEMBLE",
+      "decision": "59 fixed composite scores dispatched,0fit;43 original pairs+12F001+4four-seed; exclude BBB H0",
+      "original_parameters_and_reserves_retained_at_source": true
+    },
+    {
+      "pro_direction_id": "D-MINIMOL",
+      "title": "MiniMol512冻结表示的有限迁移对照",
+      "source": "packet://previous-pro/search_space.json",
+      "astra_relation": "DIR-MINIMOL",
+      "decision": "12 proposed F010 fits are distinct from Astra16 H0 fits; reuse eventual asset and encoding where exact; no silent floor dedup",
+      "original_parameters_and_reserves_retained_at_source": true
+    },
+    {
+      "pro_direction_id": "D-MOLFORMER",
+      "title": "MoLFormer10pct语言表示互补性",
+      "source": "packet://previous-pro/search_space.json",
+      "astra_relation": "DIR-MOLFORMER",
+      "decision": "12 exact blocked-asset fits queued; pinned upstream candidate not local readiness",
+      "original_parameters_and_reserves_retained_at_source": true
+    },
+    {
+      "pro_direction_id": "D-FUSION",
+      "title": "CheMeleon加Morgan位指纹的新头融合",
+      "source": "packet://previous-pro/search_space.json",
+      "astra_relation": "DIR-CLASSICAL",
+      "decision": "12 CheMeleon+Morgan/sqrt2048 fits distinct from Astra pure unscaled Morgan16; new fusion path required",
+      "original_parameters_and_reserves_retained_at_source": true
+    },
+    {
+      "pro_direction_id": "D-OTHER-ENCODERS",
+      "title": "KPGT、Uni-Mol、SMI-TED、MolE分层储备",
+      "source": "packet://previous-pro/search_space.json",
+      "astra_relation": "DIR-OTHER-ASSETS",
+      "decision": "preserve KPGT/UniMol/SMI-TED/MolE conditional reserve; primary asset/version/license/coverage verification required before adoption",
+      "original_parameters_and_reserves_retained_at_source": true
+    },
+    {
+      "pro_direction_id": "D-SCRATCH-TABPFN",
+      "title": "从零D-MPNN与TabPFN预测器的单列研究",
+      "source": "packet://previous-pro/search_space.json",
+      "astra_relation": "DIR-SCRATCH / DIR-OTHER-ASSETS",
+      "decision": "preserve separate scratch16 and ICL8 definitions; no conversion of ICL to SGD fit count; no scope expansion",
+      "original_parameters_and_reserves_retained_at_source": true
+    }
+  ],
+  "Astra_only_directions_retained": [
+    "DIR-RANKING",
+    "DIR-MTL"
+  ],
+  "note": "Direction counts are not additive scientific novelty counts. Preserve differences and explicit source lineage."
+}

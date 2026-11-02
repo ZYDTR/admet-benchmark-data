@@ -1,0 +1,658 @@
+{
+  "request_id": "admet-pro-parallel-20261102-001",
+  "classification_note": "已发布但未读、工具不可达、未记录、可计算、未来实验分别说明；本轮没有把未尝试标不可达。",
+  "gaps": [
+    {
+      "gap_id": "G-BBB",
+      "category": "not_recorded",
+      "question_ids": [
+        "Q1",
+        "Q4",
+        "Q6"
+      ],
+      "description": "原BBB H0 seed46 after状态缺失",
+      "source_ids": [
+        "E-LIMITS",
+        "E-AUDIT22"
+      ],
+      "exact_sources": [
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/common/limits.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": null
+          },
+          "actual_read_scope": "full"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/446e738d16fbbfb20043d23b2912aa90c36fdbc29fdc79cc757a8688e46eeeca.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": "446e738d16fbbfb20043d23b2912aa90c36fdbc29fdc79cc757a8688e46eeeca"
+          },
+          "actual_read_scope": "full"
+        }
+      ],
+      "actual_attempt_and_observation": "原限制与22验收已读，明确缺原after，不是本会话没找到预测。",
+      "specific_blocker": "历史未记录，不能用其他run after替代。",
+      "minimal_followup": "仅建议P-A-BBB46-REPAIR前瞻完整对照；旧产物保持research-only。",
+      "affected_decisions": [
+        "BBB完整冻结前提质量比较"
+      ],
+      "proposal_ids": [
+        "P-A-BBB46-REPAIR"
+      ],
+      "not_a_blanket_scientific_block": true,
+      "absence_inference": "记录明确缺失，不把后续成功追溯到旧run。"
+    },
+    {
+      "gap_id": "G-MECHANISM",
+      "category": "future_experiment_required",
+      "question_ids": [
+        "Q1",
+        "Q2"
+      ],
+      "description": "floor因果机制和独立泛化尚未识别",
+      "source_ids": [
+        "E-SCALER",
+        "E-SCORES",
+        "E-DILI-F",
+        "E-DILI-H"
+      ],
+      "exact_sources": [
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/evidence/objects/98497dc52267fcb3b868cba2349232c7f2b3f171416a5f33ef7e991cf04fb929.py",
+          "source_version": {
+            "commit": "f172e864efbfcb33837bbdd28768b0b4f7ca03a7",
+            "sha256": "98497dc52267fcb3b868cba2349232c7f2b3f171416a5f33ef7e991cf04fb929"
+          },
+          "actual_read_scope": "raw cache contract; L175-L423 scaling/statistics/target logic; not executed"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/current/all22-comparisons.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": null
+          },
+          "actual_read_scope": "paired_comparisons L2303-L3052 full; aggregate and selected score/per_task sections; NOT all 88 run objects"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/b7b53d508497cfac90ef4772c20f07d4cccb32565ed1f9a862f6bcce39c0e721.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": "b7b53d508497cfac90ef4772c20f07d4cccb32565ed1f9a862f6bcce39c0e721"
+          },
+          "actual_read_scope": "training config/history/best reload L0-L423; row/cache summary L541-L625; acceptance L665-L706; no per-row labels"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/ad55f831e0d25e18022fef143b0bbbcd8c116809d722eb86f69d0949d5354abd.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": "ad55f831e0d25e18022fef143b0bbbcd8c116809d722eb86f69d0949d5354abd"
+          },
+          "actual_read_scope": "best/last/internal-stop/optimizer aggregate L455-L587"
+        }
+      ],
+      "actual_attempt_and_observation": "已读实际scaler、完整paired比较及DILI配对轨迹；已得到可逆缩放推导和stop反例。",
+      "specific_blocker": "已有两seed同Valid汇总不能识别优化/正则/容量/分布等竞争因素。",
+      "minimal_followup": "A三点floor；B dropout/linear；C lr；S train-only结构压力；必要时有界reparam/f64储备。",
+      "affected_decisions": [
+        "F010推广、机制归因、是否新表示优先"
+      ],
+      "proposal_ids": [],
+      "not_a_blanket_scientific_block": true,
+      "absence_inference": "No absence inferred merely from an unresolved source search; read index is not read originals."
+    },
+    {
+      "gap_id": "G-FEATURE-DIAG",
+      "category": "published_not_fully_read",
+      "question_ids": [
+        "Q1",
+        "Q6"
+      ],
+      "description": "未穷尽已有无标签scaler/特征诊断与全run轨迹",
+      "source_ids": [
+        "E-RUNINDEX",
+        "E-SOURCEINDEX",
+        "E-SCALER",
+        "E-DILI-F",
+        "E-DILI-H",
+        "E-PPBR-H",
+        "E-PPBR-F",
+        "E-HALFLIFE-F"
+      ],
+      "exact_sources": [
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/runs/index.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": null
+          },
+          "actual_read_scope": "task/run navigation including selected DILI/PPBR/half-life objects; not every run original"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/source-manifest.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": null
+          },
+          "actual_read_scope": "targeted registered source/view entries only; find reading-contract/feature-distribution names did not resolve exact entry; not a full 22718-line read"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/evidence/objects/98497dc52267fcb3b868cba2349232c7f2b3f171416a5f33ef7e991cf04fb929.py",
+          "source_version": {
+            "commit": "f172e864efbfcb33837bbdd28768b0b4f7ca03a7",
+            "sha256": "98497dc52267fcb3b868cba2349232c7f2b3f171416a5f33ef7e991cf04fb929"
+          },
+          "actual_read_scope": "raw cache contract; L175-L423 scaling/statistics/target logic; not executed"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/b7b53d508497cfac90ef4772c20f07d4cccb32565ed1f9a862f6bcce39c0e721.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": "b7b53d508497cfac90ef4772c20f07d4cccb32565ed1f9a862f6bcce39c0e721"
+          },
+          "actual_read_scope": "training config/history/best reload L0-L423; row/cache summary L541-L625; acceptance L665-L706; no per-row labels"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/ad55f831e0d25e18022fef143b0bbbcd8c116809d722eb86f69d0949d5354abd.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": "ad55f831e0d25e18022fef143b0bbbcd8c116809d722eb86f69d0949d5354abd"
+          },
+          "actual_read_scope": "best/last/internal-stop/optimizer aggregate L455-L587"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/7d42d99e46e60a565fee83634e3768e9932f095aee949db9ef0b92bae4cd9aa6.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": "7d42d99e46e60a565fee83634e3768e9932f095aee949db9ef0b92bae4cd9aa6"
+          },
+          "actual_read_scope": "best/last/internal-stop L296-L322"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/8a6af03ed4067356b3b76e36a7cb3f2b5b7062c9b6f3464eb8cc489f9304d200.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": "8a6af03ed4067356b3b76e36a7cb3f2b5b7062c9b6f3464eb8cc489f9304d200"
+          },
+          "actual_read_scope": "best/last/internal-stop/training L728-L855"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/8e060ffd5829c1d32caad13bcd1ea711a6028264e47c5466286900207689e1de.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": "8e060ffd5829c1d32caad13bcd1ea711a6028264e47c5466286900207689e1de"
+          },
+          "actual_read_scope": "best/last/internal-stop L226-L265"
+        }
+      ],
+      "actual_attempt_and_observation": "索引有目标run；实际只定向阅读上述5个训练原件及scaler源码。对feature-distribution/reading-contract关键词查找未定位额外特定对象；这不是证明它不存在。",
+      "specific_blocker": "尚未逐个展开全部原件；此会话没有逐维统计数组诊断结果。",
+      "minimal_followup": "沿runs/index中具体task/config/seed原件只提取无标签std、floor作用维数、max/quantile、非有限数和已存在曲线，避免扫全库。",
+      "affected_decisions": [
+        "是否floor实际上改变输入、数值机制的优先级"
+      ],
+      "proposal_ids": [],
+      "not_a_blanket_scientific_block": true,
+      "absence_inference": "No absence inferred merely from an unresolved source search; read index is not read originals."
+    },
+    {
+      "gap_id": "G-BLIND",
+      "category": "admitted_data_computable_not_yet_computed",
+      "question_ids": [
+        "Q2",
+        "Q3",
+        "Q6"
+      ],
+      "description": "预测分歧、极端幅度及固定集成尚未计算",
+      "source_ids": [
+        "E-PREDINDEX"
+      ],
+      "exact_sources": [
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/current/blind-predictions.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": null
+          },
+          "actual_read_scope": "index entry/schema, first 54 lines; no prediction CSV contents read"
+        }
+      ],
+      "actual_attempt_and_observation": "已打开blind-predictions索引及首段schema；没有读取或计算88个CSV向量。",
+      "specific_blocker": "这是有索引的准入无真值数据，不是原件缺失。",
+      "minimal_followup": "授权零fit诊断时以精确URI读取blank-Y文件；按task/split/row_index配对；task级相关/分位；固定平均需主控新增评分且记exposure。",
+      "affected_decisions": [
+        "集成价值、候选互补、异常幅度定位"
+      ],
+      "proposal_ids": [],
+      "not_a_blanket_scientific_block": true,
+      "absence_inference": "No absence inferred merely from an unresolved source search; read index is not read originals."
+    },
+    {
+      "gap_id": "G-AP",
+      "category": "not_confirmed_in_published_policy",
+      "question_ids": [
+        "Q1",
+        "Q6"
+      ],
+      "description": "官方AP/AUPRC与本地AP及总公式等价未确认",
+      "source_ids": [
+        "E-FIXED-SCORER",
+        "E-ORIGINAL-RULE",
+        "E-RULEMAP",
+        "E-CONTROLLER"
+      ],
+      "exact_sources": [
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/adcfdd6074157a80d1ed58e9028927c64139f4d6/experiments/breadth-six24-20261102/host-scoring/fixed_metrics.py.txt",
+          "source_version": {
+            "commit": "adcfdd6074157a80d1ed58e9028927c64139f4d6",
+            "sha256": "10b0357998898bc4c6c02d43d4f3433f0b40b24e7fe77a86d5e70f12ed9e69d3"
+          },
+          "actual_read_scope": "L0-L65 local MAE/AUROC/tie-group AP/Spearman source; not executed"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/history/archive-20261101/originals/S-a95c8473d1769a29.json",
+          "source_version": {
+            "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+            "sha256": "f8a99bd337ed165f2f508e9303d2354594bb5bdec213797d5c582eeacfa06a55"
+          },
+          "actual_read_scope": "public rules snapshot L0-L98; user-confirmed freeze sourced separately"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/common/rule-originals.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": null
+          },
+          "actual_read_scope": "full"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/0479d220edcb14d608d302e85e387c0b0a48f50ef69e83d2ea43786c575ec3f3.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": "0479d220edcb14d608d302e85e387c0b0a48f50ef69e83d2ea43786c575ec3f3"
+          },
+          "actual_read_scope": "L0-L89 result acceptance, exact normalized aggregates, counts"
+        }
+      ],
+      "actual_attempt_and_observation": "本地评分实现已定向读：tie组average_precision，未执行；规则原文/映射及控制回执已读。",
+      "specific_blocker": "公开包没有本轮确认官方公式等价的验收，不能用本地推断约46替代。",
+      "minimal_followup": "从官方原文/评分器获得定义后只核对实现与公式，不重算全部已验分数；当前同口径本地比较继续。",
+      "affected_decisions": [
+        "赛事总分解释、AP语义映射"
+      ],
+      "proposal_ids": [],
+      "not_a_blanket_scientific_block": true,
+      "absence_inference": "No absence inferred merely from an unresolved source search; read index is not read originals."
+    },
+    {
+      "gap_id": "G-VALID",
+      "category": "not_fully_recorded",
+      "question_ids": [
+        "Q1",
+        "Q4",
+        "Q6"
+      ],
+      "description": "全生命周期Valid访问/选模次数不完整",
+      "source_ids": [
+        "E-LIMITS",
+        "E-HISTREG",
+        "E-CONTROLLER"
+      ],
+      "exact_sources": [
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/common/limits.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": null
+          },
+          "actual_read_scope": "full"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/263d3b905953bc18c17956babb180ecb71f3d8e3a22ff528b40bc362b60caa6c.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": "263d3b905953bc18c17956babb180ecb71f3d8e3a22ff528b40bc362b60caa6c"
+          },
+          "actual_read_scope": "records/navigation covering major experiments/failures; L0-L331,L368-L535; gap L332-L367 and end not claimed read"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/0479d220edcb14d608d302e85e387c0b0a48f50ef69e83d2ea43786c575ec3f3.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": "0479d220edcb14d608d302e85e387c0b0a48f50ef69e83d2ea43786c575ec3f3"
+          },
+          "actual_read_scope": "L0-L89 result acceptance, exact normalized aggregates, counts"
+        }
+      ],
+      "actual_attempt_and_observation": "正式task-score累计数已读；完整访问/适配次数没有足够记录。",
+      "specific_blocker": "新seed或新研究会话不能消除既有Valid选择偏差。",
+      "minimal_followup": "后续追加候选/评分exposure账，报告既往未知；禁止追溯编次数。",
+      "affected_decisions": [
+        "泛化置信程度、何时需要train-only压力或未来真正未调参数据"
+      ],
+      "proposal_ids": [],
+      "not_a_blanket_scientific_block": true,
+      "absence_inference": "No absence inferred merely from an unresolved source search; read index is not read originals."
+    },
+    {
+      "gap_id": "G-ASSETS",
+      "category": "not_prepared_and_some_originals_unresolved",
+      "question_ids": [
+        "Q3",
+        "Q4",
+        "Q6"
+      ],
+      "description": "替代底座的local权重/代码版本、许可证、覆盖与旧研究原件尚未闭环",
+      "source_ids": [
+        "E-ASSETS",
+        "E-ORIGINAL-ASSETS",
+        "E-SOURCEINDEX",
+        "X-MINIMOL",
+        "X-MOLFORMER",
+        "X-MOLF-REV",
+        "X-MOLE",
+        "X-TABPFN",
+        "X-TABLICENSE"
+      ],
+      "exact_sources": [
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/assets/readiness.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": null
+          },
+          "actual_read_scope": "full"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/history/archive-20261101/originals/N-3d003c99381806758257.json",
+          "source_version": {
+            "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+            "sha256": "79e52ef8e29ec3b6c65073cb8e0dc81239862a6deccaabfe90eb3cbd2a69b282"
+          },
+          "actual_read_scope": "full"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/source-manifest.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": null
+          },
+          "actual_read_scope": "targeted registered source/view entries only; find reading-contract/feature-distribution names did not resolve exact entry; not a full 22718-line read"
+        },
+        {
+          "uri": "https://github.com/graphcore-research/minimol",
+          "source_version": {
+            "commit": null,
+            "sha256": null
+          },
+          "actual_read_scope": "README interface 512-d, package/model role, evaluation limitations L188-L234"
+        },
+        {
+          "uri": "https://huggingface.co/ibm-research/MoLFormer-XL-both-10pct",
+          "source_version": {
+            "commit": null,
+            "sha256": null
+          },
+          "actual_read_scope": "model card L94-L155: 10pct, feature extractor/pooler, training coverage; not finetuning execution"
+        },
+        {
+          "uri": "https://huggingface.co/ibm-research/MoLFormer-XL-both-10pct/commit/361063d0ad524ef77cf39b08469f6be770dc550f",
+          "source_version": {
+            "commit": "361063d0ad524ef77cf39b08469f6be770dc550f",
+            "sha256": null
+          },
+          "actual_read_scope": "commit identity/tokenizer changes L84-L113; not entire diff"
+        },
+        {
+          "uri": "https://github.com/recursionpharma/mole_public",
+          "source_version": {
+            "commit": null,
+            "sha256": null
+          },
+          "actual_read_scope": "README L185-L280, checkpoint section says TODO; proposed explicit lineage, registry alias not proven"
+        },
+        {
+          "uri": "https://huggingface.co/Prior-Labs/tabpfn_2_6/blob/main/README.md",
+          "source_version": {
+            "commit": null,
+            "sha256": null
+          },
+          "actual_read_scope": "2.6 model card/license scope, not a molecular encoder"
+        },
+        {
+          "uri": "https://huggingface.co/Prior-Labs/tabpfn_2_6/blob/main/LICENSE",
+          "source_version": {
+            "commit": null,
+            "sha256": null
+          },
+          "actual_read_scope": "primary LICENSE search excerpt only, not original full license read or legal clearance"
+        }
+      ],
+      "actual_attempt_and_observation": "当前readiness与原registry已读，官方上游已查；MoLFormer上游revision已确认但非本地验收；MolE官方下载处TODO；部分旧调研只见本地路径，未解析到精确公共对象；不尝试访问他人本机。",
+      "specific_blocker": "未ready与未读原报告是两类；不知道localSHA就保留null，不编版本；TabPFN LICENSE仅搜索片段。",
+      "minimal_followup": "先精准resolve原调研对象并锁定模型角色/版本/权重SHA；后续经批准完成full-row覆盖、冻结和接口fixture；阻塞对应N/M而不阻塞CheMeleon。",
+      "affected_decisions": [
+        "新底座顺序、Q3完整资产出处闭环"
+      ],
+      "proposal_ids": [],
+      "not_a_blanket_scientific_block": true,
+      "absence_inference": "No absence inferred merely from an unresolved source search; read index is not read originals."
+    },
+    {
+      "gap_id": "G-CACHE",
+      "category": "not_measured_forward_equivalence",
+      "question_ids": [
+        "Q1",
+        "Q6"
+      ],
+      "description": "旧缓存生产与当前消费环境前向等价未测",
+      "source_ids": [
+        "E-LIMITS",
+        "E-AUDIT64",
+        "E-INTERFACE"
+      ],
+      "exact_sources": [
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/common/limits.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": null
+          },
+          "actual_read_scope": "full"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/426d5850ddba29a4a60fa9b9160ebd8cb73ea894d4a72283e4fb33213db33002.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": "426d5850ddba29a4a60fa9b9160ebd8cb73ea894d4a72283e4fb33213db33002"
+          },
+          "actual_read_scope": "full"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/assets/current-interface.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": null
+          },
+          "actual_read_scope": "full"
+        }
+      ],
+      "actual_attempt_and_observation": "已有缓存身份及当前消费学习验收继承，生产/消费环境不同已读。",
+      "specific_blocker": "不证明新环境重新编码结果相同；也不因此否定已验原缓存复用。",
+      "minimal_followup": "保持原cache而不新增encoding；只有确需新forward接口时另批做针对性验证，不全库重编码。",
+      "affected_decisions": [
+        "跨环境因果范围、缓存复用政策"
+      ],
+      "proposal_ids": [],
+      "not_a_blanket_scientific_block": true,
+      "absence_inference": "No absence inferred merely from an unresolved source search; read index is not read originals."
+    },
+    {
+      "gap_id": "G-TRAINCOUNTS",
+      "category": "computable_from_future_train_fit",
+      "question_ids": [
+        "Q2",
+        "Q4"
+      ],
+      "description": "新loss权重所需inner-fit类计数本报告未计算",
+      "source_ids": [
+        "E-DATAIO",
+        "E-TRAINER",
+        "E-METHOD"
+      ],
+      "exact_sources": [
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/9a7a4410a215f0eaf040252cef6b3d3aa8c0eef57a799508d88757bfe5d0a9db.py",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": "9a7a4410a215f0eaf040252cef6b3d3aa8c0eef57a799508d88757bfe5d0a9db"
+          },
+          "actual_read_scope": "full"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/evidence/objects/aa3fbc1a9b29a043f4bac3631cfb3244e4efbcab71636087ad679134edd9d4e5.py",
+          "source_version": {
+            "commit": "f172e864efbfcb33837bbdd28768b0b4f7ca03a7",
+            "sha256": "aa3fbc1a9b29a043f4bac3631cfb3244e4efbcab71636087ad679134edd9d4e5"
+          },
+          "actual_read_scope": "L0-L239 validator, optimizer, learning/early-stop/reload source; not executed"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/methodology/EXPERIMENT_DESIGN.md",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": "a31f5ca08e81d69c559054c80840fabe24c2d25e352f1fb0463de78d8d44c1b3"
+          },
+          "actual_read_scope": "full"
+        }
+      ],
+      "actual_attempt_and_observation": "已读split和训练标签规则；Valid类计数仅用作统计背景。",
+      "specific_blocker": "不得由Valid统计生成fit权重，当前会话未拟合/拆train数据。",
+      "minimal_followup": "未来既定split按train-fit计数，保存公式输入/权重；缺类skip。",
+      "affected_decisions": [
+        "L-cls具体数值权重；公式和任务/seed已确定"
+      ],
+      "proposal_ids": [],
+      "not_a_blanket_scientific_block": true,
+      "absence_inference": "No absence inferred merely from an unresolved source search; read index is not read originals."
+    },
+    {
+      "gap_id": "G-COST",
+      "category": "not_measured_or_partial_as_of",
+      "question_ids": [
+        "Q4",
+        "Q6"
+      ],
+      "description": "新接口工程/新表示编码、排队/kernel busy未测",
+      "source_ids": [
+        "E-COST22",
+        "E-COST64",
+        "E-RETRIEVE22",
+        "E-RETRIEVE64",
+        "E-OPS"
+      ],
+      "exact_sources": [
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/93df7d1bacfcd0e5e8e15977152a7bccbb6e188268d2adcc3d7893fe23b72ae8.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": "93df7d1bacfcd0e5e8e15977152a7bccbb6e188268d2adcc3d7893fe23b72ae8"
+          },
+          "actual_read_scope": "full"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/dbd898d865603496ddfb0dde45acc7ada8a0b3d05f35da1624d51d49c3c6c4c1.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": "dbd898d865603496ddfb0dde45acc7ada8a0b3d05f35da1624d51d49c3c6c4c1"
+          },
+          "actual_read_scope": "full"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/7efcb63f22cb4feec72df0af21bc518a2ed36c4cef58e630c4be582a81c845d8.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": "7efcb63f22cb4feec72df0af21bc518a2ed36c4cef58e630c4be582a81c845d8"
+          },
+          "actual_read_scope": "full"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/evidence/cc85de8a688015c5e51473e2efbdac46f0597f77665236b909a22a6063b30bdb.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": "cc85de8a688015c5e51473e2efbdac46f0597f77665236b909a22a6063b30bdb"
+          },
+          "actual_read_scope": "full"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/operations/cost-and-failures.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": null
+          },
+          "actual_read_scope": "full"
+        }
+      ],
+      "actual_attempt_and_observation": "作业span、角色as_of、共享取回窗口已读；分阶段不重叠的完整墙钟未全部记录。",
+      "specific_blocker": "不能将job进程span当kernel、将as_of当final或线性外推全部周转。",
+      "minimal_followup": "用新真实已授权任务的阶段时戳校准；未知Q/E/R保留符号；新增产物增量取回。",
+      "affected_decisions": [
+        "预算档选择、新资产是否值得编码"
+      ],
+      "proposal_ids": [],
+      "not_a_blanket_scientific_block": true,
+      "absence_inference": "No absence inferred merely from an unresolved source search; read index is not read originals."
+    },
+    {
+      "gap_id": "G-MANIFEST",
+      "category": "original_bytes_not_independently_obtained",
+      "question_ids": [
+        "Q6"
+      ],
+      "description": "输入清单字节未独立下载重哈希",
+      "source_ids": [
+        "E-START",
+        "E-SOURCEINDEX",
+        "E-DECISION"
+      ],
+      "exact_sources": [
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/START_HERE.md",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": null
+          },
+          "actual_read_scope": "full"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/source-manifest.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": null
+          },
+          "actual_read_scope": "targeted registered source/view entries only; find reading-contract/feature-distribution names did not resolve exact entry; not a full 22718-line read"
+        },
+        {
+          "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/research/decision-contract.json",
+          "source_version": {
+            "commit": "672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2",
+            "sha256": null
+          },
+          "actual_read_scope": "full"
+        }
+      ],
+      "actual_attempt_and_observation": "绑定请求提供的SHA；来源索引针对manifest/reading-contract查找未解析到独立目标；container网络途径曾DNS失败，但Web固定原件读取成功。",
+      "specific_blocker": "没有已定位并实际取到的独立manifest原字节；不猜文件名、不声称HTTP404或原件不存在。",
+      "minimal_followup": "主控可复用既有运输验收；本轮read_checks写未重算。输出文件自身会按实际字节重新生成SHA。",
+      "affected_decisions": [
+        "输入运输绑定独立性，不阻断已读取的当前科学证据"
+      ],
+      "proposal_ids": [],
+      "not_a_blanket_scientific_block": true,
+      "absence_inference": "No absence inferred merely from an unresolved source search; read index is not read originals."
+    }
+  ]
+}
