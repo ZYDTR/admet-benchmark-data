@@ -1,0 +1,67 @@
+{
+  "at": "2026-11-02T19:45:35.360093+00:00",
+  "candidate": "Monroe720 frozen encoder",
+  "status": "static source addendum; no model asset acquisition, ML import, execution, forward, or preparation dispatch",
+  "code_commit": "de075eabe98e4adbbedbc86ca9e877f4bfd9b629",
+  "follows": "FEASIBILITY.json",
+  "reviewed_source_sha256": {
+    "README.md": "c58b944bfb1cb31b16c5a963657eb383f5bdef7eaad0c6e4e2eb049512104cb0",
+    "LICENSE": "18a0af8a0e748b03052cdf67619030883a225e9565b23ff22813a66bf1747400",
+    "NOTICE": "c7bf7e818847acf56a504231131cb8a567e3e9580daaac225e8892a741069a86",
+    "monroe/model/grit.py": "83354075f329dfa572ee3444344bdeea8e6818efd1d64b7df920063b747b5a04",
+    "monroe/model/featurizer.py": "5447bb734d268fb7498ab06c21a85ca8528702148fe30fc1d4a76de941122359",
+    "monroe/model/ckpt.py": "95bf80a43cdae5db432230ae50e334fe3d7b847f6ce6200e43205cb70ddefabf",
+    "monroe/preprocessing/build_eval_graphs.py": "04f23be99a122e6b62e033bac2dab25db1f831d5beef17fb4ab9c533291c0a89",
+    "monroe/eval/embed.py": "84e481372fb8d468921ba80e9dd9fd4b36e47d702d5d5557dce7214cdcd4b79b",
+    "checkpoint/config.json": "35417d83c1dac08fb1178cc65fe440b8ab785bd61ad67c0f83c7371b10aa4fe5"
+  },
+  "new_findings": [
+    {
+      "id": "MNR-S1",
+      "source": "monroe/model/grit.py:361-434,565-574; checkpoint/config.json zero_vn_edge_rbf=false",
+      "observation": "Virtual-node coordinates are exactly zero. With the released config, virtual-node edge distances depend on each atom distance from that origin. The source explicitly documents their frame dependence.",
+      "implication": "Do not silently recenter coordinates or enable zero_vn_edge_rbf to claim an equivalent released encoder. Cache exact coordinates and bind origin policy. A translation-invariance performance claim remains untested."
+    },
+    {
+      "id": "MNR-S2",
+      "source": "monroe/model/grit.py:436-472,509-541",
+      "observation": "Without cached RRWP, forward allocates dense matrices for total nodes N across the whole batch and stacks 16 walk powers; the ordinary edged branch computes dense powers twice.",
+      "implication": "A molecule-count-only batch limit does not bound memory. Start tiny; report total atom count including explicit hydrogens, graph batch size and memory. Per-molecule RRWP caching is a possible optimization only after equality checks against the actual pinned forward, with full edge/stereo order preserved. No current runtime or memory claim."
+    },
+    {
+      "id": "MNR-S3",
+      "source": "monroe/model/grit.py:172-174,196-207,355-359,474-610",
+      "observation": "The encoder contains BatchNorm running statistics, a learned attention pool, and in-place mutations of the input PyG Batch including added virtual nodes and overwritten features.",
+      "implication": "Freeze parameters plus every persistent/nonpersistent buffer; eval mode before every forward. Require pretrained coverage of the pooling and normalization tensors. Rebuild or copy the graph batch before each independent forward so reuse cannot accumulate virtual nodes or consume transformed features."
+    },
+    {
+      "id": "MNR-S4",
+      "source": "monroe/preprocessing/build_eval_graphs.py:74-161; monroe/model/featurizer.py:378-470",
+      "observation": "The default path converts SMILES to InChI then rebuilds the molecule. It tries direct SMILES fallback after errors or a zero-edge graph. The nominal 10-second alarm surrounds only the primary build_single_graph path; direct SMILES fallback has no equivalent deadline. ETKDG has no explicit randomSeed.",
+      "implication": "Specify graph-construction route, fixed seed, bounded per-molecule execution covering all branches, optimization convergence reporting, and a fixed fallback order before model probes. Do not claim the upstream timeout bounds every molecule or that InChI fallback detects all partial connectivity changes."
+    },
+    {
+      "id": "MNR-S5",
+      "source": "monroe/eval/embed.py:28-100; monroe/model/featurizer.py:408-411",
+      "observation": "The convenience embedding API omits failures and returns a dictionary keyed by SMILES. Single-conformer geometry chooses its available energy result; convergence flags are not examined.",
+      "implication": "Store every original row, duplicate, success mask, graph branch, optimizer method/convergence flag, seed and exact coordinate/graph hashes. A failed row remains present and its fallback prediction is fixed before evaluation; no intersection-only score."
+    },
+    {
+      "id": "MNR-S6",
+      "source": "README.md:356-383; LICENSE; NOTICE; monroe/model/ckpt.py:38-106",
+      "observation": "The pinned README distributes the checkpoint within the repository and states MIT licensing. NOTICE identifies LibMTL and GRIT adaptations. The upstream loader uses weights_only=False and strict=False.",
+      "implication": "Repository attribution evidence is available and must travel with the adapter/checkpoint. Prefer weights_only=True after verifying the published LFS checksum and require complete encoder parameter/buffer key coverage; do not silently accept random missing tensors or broaden deserialization if safe loading fails. External pretraining data provenance remains a distinct applicability question."
+    }
+  ],
+  "next_preparation_recommendation": {
+    "timing": "Only after the existing mechanisms preparation parent and original three leaves terminate and their delivery is consumed; no fourth child or replacement session.",
+    "first_stage": "Versioned row-preserving encoder and graph-cache interface, with explicitly bounded real frozen probes; no head fitting or label-based selection.",
+    "possible_full_experiment": "Only after functional acceptance, decide whether to add 16 Monroe MLP/TabM slots to the existing same-four-task comparison; reuse existing controls and scores. This is not authorized or dispatched by this addendum.",
+    "paper_scope": "MLP/TabM adapter evaluates a frozen Monroe representation under those readouts, not the paper TabPFNv3 recipe.",
+    "prohibited_scope": "No implicit TabPFN license acceptance, token acquisition, additional pretrained model, trainable geometry, pretrained updates, full dataset encoding or hidden hyperparameter search in preparation."
+  },
+  "weights_downloaded_bytes": 0,
+  "model_loads": 0,
+  "encoder_forwards": 0,
+  "new_gradient_heads": 0
+}

@@ -1,0 +1,79 @@
+{
+  "at": "2026-11-02T19:51:16.149272+00:00",
+  "candidate": "Uni-Mol2 84M frozen CLS768",
+  "state": "primary-source feasibility only; not dispatched, imported, encoded or trained",
+  "code_commit": "90f52c41299a1a582da0f9765e9f87aa21faa16a",
+  "code_version": "unimol_tools 0.1.3.post1 in pinned setup.py",
+  "checkpoint": {
+    "repo": "dptech/Uni-Mol2",
+    "revision": "bf37d253c0f5ac61f468137eb00059978a104ff0",
+    "path": "modelzoo/84M/checkpoint.pt",
+    "bytes": 336632021,
+    "sha256": "5b9241630f1cf0b173fb06d1e76096e5daf5f91c3e51b066ba69524dafe60e35",
+    "gated": false,
+    "model_card_license": "mit",
+    "downloaded_bytes": 0
+  },
+  "expected_representation": {
+    "dimension": 768,
+    "source": "models/unimolv2.py:268-302",
+    "path": "return_repr=True returns CLS before classification_head; reject normal prediction logits as embedding",
+    "parameters_frozen": true,
+    "all_buffers_frozen": true
+  },
+  "findings": [
+    {
+      "id": "UM2-01",
+      "source": "data/conformer.py:384-415,514-547",
+      "fact": "Default max_atoms is128; heavy atoms are randomly cropped with numpy.random.shuffle above this count. Hydrogens are removed unconditionally in mol2unimolv2.",
+      "required": "Bind actual heavy-atom coverage, retained atom indices, crop RNG and policy. Prefer no silent crop in the initial representation contract; any oversized failure stays in the original row map. Larger full-molecule limits need an explicit resource-tested choice."
+    },
+    {
+      "id": "UM2-02",
+      "source": "predictor.py:38-87",
+      "fact": "UniMolRepr accepts kwargs but does not propagate them into self.params; max_atoms, seed and multi_process passed as extra kwargs are not honored through this constructor.",
+      "required": "Use an explicit verified adapter/config route instead of assuming these kwargs change preprocessing. Record actual downstream parameters."
+    },
+    {
+      "id": "UM2-03",
+      "source": "data/conformer.py:219-265,490-511; data/datahub.py:110-121",
+      "fact": "The SMILES path uses seed42, with3D/2D fallback. The atoms-and-coordinates input route builds a molecule containing atoms and a conformer but adds no bonds.",
+      "required": "Do not reuse a Monroe coordinate array through atoms-only input and call it equivalent molecular input. Reuse full molecule connectivity/stereochemistry or construct features from original SMILES and validated coordinates. Record geometry branch explicitly."
+    },
+    {
+      "id": "UM2-04",
+      "source": "data/datareader.py:152-169; predictor.py:129-143",
+      "fact": "Representation mode calls is_train=False, so an invalid SMILES raises. The V2 feature pool processes up to8 workers by default.",
+      "required": "External row-preserving wrapper must isolate invalid inputs, retain duplicates/failures, and honor task CPU limits; no data cleaning that removes evaluation rows."
+    },
+    {
+      "id": "UM2-05",
+      "source": "weights/weighthub.py:16-22,59-88; models/unimolv2.py:66-72,154-183",
+      "fact": "Import overwrites HF_ENDPOINT with hf-mirror.com; default weights live under the installed package and model construction can download automatically. Loader defaults strict=False without asserting full representation-key coverage.",
+      "required": "Explicit task-local pinned checkpoint and dependency roots, no automatic network/mirror changes, checksum verification, safe loading and complete pretrained coverage of the actual representation path. Any unused random classification head must be named and proven bypassed."
+    },
+    {
+      "id": "UM2-06",
+      "source": "models/unimolv2.py:222-248; tasks/trainer.py:812-835",
+      "fact": "Pair tensors scale with padded atom count squared and512 pair channels. Actual non-DDP inference uses eval plus no_grad and no autocast context, despite a generic trainer AMP setting.",
+      "required": "Start with a bounded small batch, record actual dtype and memory, explicitly no pretrained optimizer or adaptation. Do not infer mixed-precision execution from the trainer AMP flag alone."
+    },
+    {
+      "id": "UM2-07",
+      "source": "unimol_tools/setup.py; LICENSE; hf-model-metadata01.json",
+      "fact": "Code root license and model-card metadata indicate MIT. setup requires pandas<2 whereas the current host head environment uses pandas2.2.3.",
+      "required": "Keep a private dependency solution and preserve notices; do not downgrade the shared head environment. Current evidence is not a runtime compatibility result."
+    }
+  ],
+  "research_decision": "Keep as a subsequent geometry candidate after Monroe and current MoLFormer/TabICL evidence. Shared row/freeze/scoring contracts can be reused; geometry and graph semantics need their own explicit acceptance. No larger model or conformer search justified yet.",
+  "pending_before_host_trial": [
+    "complete exact inference dependency/source closure",
+    "bounded frozen encoder and coverage probes",
+    "frozen geometry/crop/fallback contract",
+    "verified all pretrained tensor loading and all-buffer freeze",
+    "Astra separate host TASK with fixed scientific contrast and budget"
+  ],
+  "actual_model_loads": 0,
+  "actual_forwards": 0,
+  "new_gradient_heads": 0
+}

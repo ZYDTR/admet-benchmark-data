@@ -1,0 +1,478 @@
+[
+  {
+    "issue_id": "I-P002-01",
+    "title": "AMES-selector-reversal",
+    "question_ids": [
+      "Q1",
+      "Q2",
+      "Q4"
+    ],
+    "historical_issue_ids": [
+      "AR001-13"
+    ],
+    "status": "open_for_bounded_discrimination",
+    "statement": "stop四seed反向而Valid四seed正向，机制开放",
+    "evidence_refs": [
+      "E-AMES",
+      "E-UAMES",
+      "E-48"
+    ],
+    "competing_explanations_and_falsification": "同轨迹更换stop selector后stress排序改变支持选择噪声；跨selector稳定但跨分区变号支持分布交互；两者可共存",
+    "limitations": "48不是selector因果检验；M3也不是新的独立外部验证",
+    "direction_ids": [
+      "D-M3"
+    ],
+    "related_proposal_ids": [
+      "P-M3-ames-01",
+      "P-M3-ames-02"
+    ],
+    "affected_runs_scope": "only current task/recipe evidence named in cited sources; no historical fault transplanted to unrelated new runs",
+    "resolution_or_acceptance": "同轨迹更换stop selector后stress排序改变支持选择噪声；跨selector稳定但跨分区变号支持分布交互；两者可共存"
+  },
+  {
+    "issue_id": "I-P002-02",
+    "title": "representation-scale-capacity",
+    "question_ids": [
+      "Q1",
+      "Q2",
+      "Q4"
+    ],
+    "historical_issue_ids": [
+      "AR001-04",
+      "AR001-08",
+      "AR001-13"
+    ],
+    "status": "open_for_bounded_discrimination",
+    "statement": "Mini收益不能完全归因encoder信息，PPBR46同设备反例必须保留",
+    "evidence_refs": [
+      "E-MMSOL",
+      "E-MMCYP",
+      "E-UMMSOL",
+      "E-U14",
+      "E-RUNS"
+    ],
+    "competing_explanations_and_falsification": "Mini同cache更换floor、近似头参数匹配后对照差异是否仍在；统计受影响维度无需Valid标签",
+    "limitations": "等参数不是等归纳偏置；不要求彻底证明唯一机制才保留有效配方",
+    "direction_ids": [
+      "D-M2",
+      "D-M6",
+      "D15",
+      "D-M11"
+    ],
+    "related_proposal_ids": [
+      "P-M2-ppbr_az-01",
+      "P-M2-solubility_aqsoldb-01",
+      "P-M2-clearance_microsome_az-01",
+      "P-M6-solubility_aqsoldb-01",
+      "P-M6-solubility_aqsoldb-02",
+      "P-M6-clearance_microsome_az-01",
+      "P-M6-clearance_microsome_az-02",
+      "P-M11-clearance_hepatocyte_az-01"
+    ],
+    "affected_runs_scope": "only current task/recipe evidence named in cited sources; no historical fault transplanted to unrelated new runs",
+    "resolution_or_acceptance": "Mini同cache更换floor、近似头参数匹配后对照差异是否仍在；统计受影响维度无需Valid标签"
+  },
+  {
+    "issue_id": "I-P002-03",
+    "title": "TabM-not-universal",
+    "question_ids": [
+      "Q1",
+      "Q2",
+      "Q4"
+    ],
+    "historical_issue_ids": [
+      "AR001-13"
+    ],
+    "status": "open_for_bounded_discrimination",
+    "statement": "CYP小头增益与micro退步并存；32槽位不是32新fit",
+    "evidence_refs": [
+      "E-FACTORIAL",
+      "E-U14",
+      "X-TABM-CODE"
+    ],
+    "competing_explanations_and_falsification": "plain深头 vs k1 vs k8 vs已有k32区分深度、参数、成员作用；原生成员均值规则一致",
+    "limitations": "k1仍是BatchEnsemble；不要把plain当已支持arch_type枚举",
+    "direction_ids": [
+      "D-M5"
+    ],
+    "related_proposal_ids": [
+      "P-M5-caco2_wang-01",
+      "P-M5-caco2_wang-02",
+      "P-M5-caco2_wang-03",
+      "P-M5-clearance_microsome_az-01",
+      "P-M5-clearance_microsome_az-02",
+      "P-M5-clearance_microsome_az-03",
+      "P-M5-cyp2d6_veith-01",
+      "P-M5-cyp2d6_veith-02",
+      "P-M5-cyp2d6_veith-03"
+    ],
+    "affected_runs_scope": "only current task/recipe evidence named in cited sources; no historical fault transplanted to unrelated new runs",
+    "resolution_or_acceptance": "plain深头 vs k1 vs k8 vs已有k32区分深度、参数、成员作用；原生成员均值规则一致"
+  },
+  {
+    "issue_id": "I-P002-04",
+    "title": "finite-training-window",
+    "question_ids": [
+      "Q1",
+      "Q4"
+    ],
+    "historical_issue_ids": [
+      "AR001-13"
+    ],
+    "status": "open_for_bounded_discrimination",
+    "statement": "部分Caco触顶50；DILI早停和CYP低lr非触顶正例反对统一解释",
+    "evidence_refs": [
+      "E-FACTORIAL",
+      "E-OPT72",
+      "E-CONF54",
+      "E-U72"
+    ],
+    "competing_explanations_and_falsification": "相同轨迹的50/8、200/8、200/fullwindow三策略；报步数与选epoch，不以trainloss替代外部质量",
+    "limitations": "改maxepochs不改patience对早停run可能无作用；更大候选集合本身是模型选择变化",
+    "direction_ids": [
+      "D-M4",
+      "D-M8"
+    ],
+    "related_proposal_ids": [
+      "P-M4-caco2_wang-01",
+      "P-M4-caco2_wang-02",
+      "P-M8-cyp3a4_veith-01",
+      "P-M8-cyp3a4_veith-02",
+      "P-M8-cyp3a4_veith-03",
+      "P-M8-cyp3a4_veith-04"
+    ],
+    "affected_runs_scope": "only current task/recipe evidence named in cited sources; no historical fault transplanted to unrelated new runs",
+    "resolution_or_acceptance": "相同轨迹的50/8、200/8、200/fullwindow三策略；报步数与选epoch，不以trainloss替代外部质量"
+  },
+  {
+    "issue_id": "I-P002-05",
+    "title": "ranking4-pending",
+    "question_ids": [
+      "Q1",
+      "Q4"
+    ],
+    "historical_issue_ids": [
+      "AR001-05"
+    ],
+    "status": "open_for_bounded_discrimination",
+    "statement": "半衰期ranking4有具体计划但未真实学习；新增尺度对照防止错误归因",
+    "evidence_refs": [
+      "E-RANK4",
+      "E-U54",
+      "E-ENS59"
+    ],
+    "competing_explanations_and_falsification": "rank混合对0.5MSE、fullMSE共同seed；只有胜尺度控制才支持pair信息收益",
+    "limitations": "pairwise目标不等Spearman直接优化；未准入新增rank温度网格",
+    "direction_ids": [
+      "D-M1",
+      "D12"
+    ],
+    "related_proposal_ids": [
+      "P-M1-half_life_obach-01",
+      "P-M1-half_life_obach-02"
+    ],
+    "affected_runs_scope": "only current task/recipe evidence named in cited sources; no historical fault transplanted to unrelated new runs",
+    "resolution_or_acceptance": "rank混合对0.5MSE、fullMSE共同seed；只有胜尺度控制才支持pair信息收益"
+  },
+  {
+    "issue_id": "I-P002-06",
+    "title": "weighted-BCE-scale",
+    "question_ids": [
+      "Q1",
+      "Q4"
+    ],
+    "historical_issue_ids": [
+      "AR001-05"
+    ],
+    "status": "open_for_bounded_discrimination",
+    "statement": "CYPD6substrate加权4/4而C9双负；实际w是截断平方根比",
+    "evidence_refs": [
+      "E-OLDGUIDE",
+      "E-U140",
+      "E-U54"
+    ],
+    "competing_explanations_and_falsification": "保留w与采样，仅除fit均权Z；效果持久才支持类别重权本身而非总loss尺度",
+    "limitations": "AdamW在eps=0且无clipping的恒正loss倍数下严格尺度不变；decoupled weight decay本身不打破此不变性。eps/AMP/舍入才是此负控制的实际残余路径；不能类比SGD学习率变化或预设有益。",
+    "direction_ids": [
+      "D-M7"
+    ],
+    "related_proposal_ids": [
+      "P-M7-cyp2d6_substrate_carbonmangels-01",
+      "P-M7-cyp2c9_substrate_carbonmangels-01"
+    ],
+    "affected_runs_scope": "only current task/recipe evidence named in cited sources; no historical fault transplanted to unrelated new runs",
+    "resolution_or_acceptance": "保留w与采样，仅除fit均权Z；效果持久才支持类别重权本身而非总loss尺度"
+  },
+  {
+    "issue_id": "I-P002-07",
+    "title": "new-predictor-asset-admission",
+    "question_ids": [
+      "Q3"
+    ],
+    "historical_issue_ids": [
+      "AR001-13"
+    ],
+    "status": "open_for_bounded_discrimination",
+    "statement": "TabICLv2版本可定位但无项目权重/接口实测；其fit不等finetune",
+    "evidence_refs": [
+      "E-ASSETS",
+      "X-TABICL-REG",
+      "X-TABICL-CLS",
+      "X-TABICL-CKPT-C",
+      "X-TABICL-CKPT-R"
+    ],
+    "competing_explanations_and_falsification": "固定checkpoint无参数/ buffer更新，context仅fit.Y，query批次不改变归一化/状态；分类与回归checkpoint不混用",
+    "limitations": "参数8estimators是变换视图；不能把论文基准当本项目已跑",
+    "direction_ids": [
+      "D-M9"
+    ],
+    "related_proposal_ids": [
+      "P-M9-ppbr_az-01",
+      "P-M9-clearance_microsome_az-01",
+      "P-M9-cyp2d6_veith-01",
+      "P-M9-dili-01"
+    ],
+    "affected_runs_scope": "only current task/recipe evidence named in cited sources; no historical fault transplanted to unrelated new runs",
+    "resolution_or_acceptance": "固定checkpoint无参数/ buffer更新，context仅fit.Y，query批次不改变归一化/状态；分类与回归checkpoint不混用"
+  },
+  {
+    "issue_id": "I-P002-08",
+    "title": "new-encoder-asset-admission",
+    "question_ids": [
+      "Q3"
+    ],
+    "historical_issue_ids": [
+      "AR001-10",
+      "AR001-13",
+      "AR001-14"
+    ],
+    "status": "open_for_bounded_discrimination",
+    "statement": "Monroe仅pointer/main；MoLFormer10pct有metadata但无payload/冻结cache验收",
+    "evidence_refs": [
+      "E-ASSETS",
+      "X-MONROE-LOADER",
+      "X-MONROE-POINTER",
+      "X-MF-CONFIG",
+      "X-MF-WEIGHT"
+    ],
+    "competing_explanations_and_falsification": "绑定immutable源码与权重、许可、全行覆盖、params+buffers前后相同；MoLFormer确定性flag与Monroe输入fallback逐项验收",
+    "limitations": "不得运行默认Polaris下载、FTencoder、TabPFNv3未准入部分；旧边界失败保留",
+    "direction_ids": [
+      "D-M10",
+      "D-M11"
+    ],
+    "related_proposal_ids": [
+      "P-M10-bbb_martins-01",
+      "P-M10-bbb_martins-02",
+      "P-M10-herg-01",
+      "P-M10-herg-02",
+      "P-M11-clearance_hepatocyte_az-01"
+    ],
+    "affected_runs_scope": "only current task/recipe evidence named in cited sources; no historical fault transplanted to unrelated new runs",
+    "resolution_or_acceptance": "绑定immutable源码与权重、许可、全行覆盖、params+buffers前后相同；MoLFormer确定性flag与Monroe输入fallback逐项验收"
+  },
+  {
+    "issue_id": "I-P002-09",
+    "title": "cohort-errors-unknown",
+    "question_ids": [
+      "Q5"
+    ],
+    "historical_issue_ids": [
+      "AR001-03",
+      "AR001-05",
+      "AR001-13"
+    ],
+    "status": "open_for_bounded_discrimination",
+    "statement": "固定高低分歧群入口保留，但Valid群实际误差未得到本轮授权汇总",
+    "evidence_refs": [
+      "E-ISSUES",
+      "E-SOURCEMAP",
+      "E-GROUP20"
+    ],
+    "competing_explanations_and_falsification": "同一预固定群、前后同尺度模型的合规聚合误差/排名；小群抑制；独立检查未通过不称修复",
+    "limitations": "分组成员blob未在本包公开不等不存在；group20已有评分不得仍写awaiting",
+    "direction_ids": [
+      "D16"
+    ],
+    "related_proposal_ids": [],
+    "affected_runs_scope": "only current task/recipe evidence named in cited sources; no historical fault transplanted to unrelated new runs",
+    "resolution_or_acceptance": "同一预固定群、前后同尺度模型的合规聚合误差/排名；小群抑制；独立检查未通过不称修复"
+  },
+  {
+    "issue_id": "I-P002-10",
+    "title": "consensus-risk",
+    "question_ids": [
+      "Q1",
+      "Q5"
+    ],
+    "historical_issue_ids": [
+      "AR001-05",
+      "AR001-13"
+    ],
+    "status": "open_for_bounded_discrimination",
+    "statement": "Pgp近同排序和低分歧群可能共享盲点，不能以共识做质量证据",
+    "evidence_refs": [
+      "E-PROOLD",
+      "E-ISSUES",
+      "E-ENS59"
+    ],
+    "competing_explanations_and_falsification": "固定低分歧底十分位与高分歧同时安全评估；train相似度低且模型一致仅标风险候选",
+    "limitations": "不得用小交集或连续分差恢复Valid个体答案",
+    "direction_ids": [
+      "D16",
+      "D17"
+    ],
+    "related_proposal_ids": [],
+    "affected_runs_scope": "only current task/recipe evidence named in cited sources; no historical fault transplanted to unrelated new runs",
+    "resolution_or_acceptance": "固定低分歧底十分位与高分歧同时安全评估；train相似度低且模型一致仅标风险候选"
+  },
+  {
+    "issue_id": "I-P002-11",
+    "title": "evaluation-history-and-scope",
+    "question_ids": [
+      "Q1",
+      "Q2",
+      "Q6"
+    ],
+    "historical_issue_ids": [
+      "AR001-12",
+      "AR001-14"
+    ],
+    "status": "open_for_bounded_discrimination",
+    "statement": "556整体Valid/95复合仍复用评价；20native stress回顾性；10历史未评分未知",
+    "evidence_refs": [
+      "E-START",
+      "E-MANIFEST",
+      "E-ISSUES",
+      "E-RULES",
+      "E-RULEMAP"
+    ],
+    "competing_explanations_and_falsification": "所有新结果携带选型次数/分区/host/cache/source；不重算已验评分，不把新请求清零历史",
+    "limitations": "官方AP/总公式未确认；约46/混合聚合不能称官网隐藏分",
+    "direction_ids": [
+      "D-M3",
+      "D16",
+      "D17"
+    ],
+    "related_proposal_ids": [
+      "P-M3-ames-01",
+      "P-M3-ames-02"
+    ],
+    "affected_runs_scope": "only current task/recipe evidence named in cited sources; no historical fault transplanted to unrelated new runs",
+    "resolution_or_acceptance": "所有新结果携带选型次数/分区/host/cache/source；不重算已验评分，不把新请求清零历史"
+  },
+  {
+    "issue_id": "I-P002-12",
+    "title": "freeze-operational-history",
+    "question_ids": [
+      "Q1",
+      "Q3",
+      "Q6"
+    ],
+    "historical_issue_ids": [
+      "AR001-14",
+      "AR001-15",
+      "AR001-16"
+    ],
+    "status": "open_for_bounded_discrimination",
+    "statement": "BBB旧H0s46缺after；运行失败与科学可用性分开；旧随机wrapper解释有条件继承",
+    "evidence_refs": [
+      "E-RUNS",
+      "E-ISSUES",
+      "E-EVENTS",
+      "E-ASSETS"
+    ],
+    "competing_explanations_and_falsification": "BBB使用已验F001而非修补旧after；监督退出与业务失败各记录，拒绝因为分数好而覆盖运行失败",
+    "limitations": "新增适配不触发全库冻结重审；只核受影响资产/接口",
+    "direction_ids": [
+      "D-M10"
+    ],
+    "related_proposal_ids": [
+      "P-M10-bbb_martins-01",
+      "P-M10-bbb_martins-02",
+      "P-M10-herg-01",
+      "P-M10-herg-02"
+    ],
+    "affected_runs_scope": "only current task/recipe evidence named in cited sources; no historical fault transplanted to unrelated new runs",
+    "resolution_or_acceptance": "BBB使用已验F001而非修补旧after；监督退出与业务失败各记录，拒绝因为分数好而覆盖运行失败"
+  },
+  {
+    "issue_id": "I-P002-13",
+    "title": "scope-closure-and-dedup",
+    "question_ids": [
+      "Q6"
+    ],
+    "historical_issue_ids": [
+      "AR001-13"
+    ],
+    "status": "open_for_bounded_discrimination",
+    "statement": "已派48不能再提为未做；空队列不代表科学问题关闭；PPBR128已经完成",
+    "evidence_refs": [
+      "E-48",
+      "E-EXECUTION",
+      "E-RUNS",
+      "E-SKILL"
+    ],
+    "competing_explanations_and_falsification": "按task/encoder/hash/cache/split/preprocess/objective/head/optimizer/seed去重；已计划rank4继承ID不另生成副本",
+    "limitations": "本轮按相关身份定向核验，未声称逐586原件全量重新验收",
+    "direction_ids": [
+      "D-M1",
+      "D-M6"
+    ],
+    "related_proposal_ids": [
+      "P-M1-half_life_obach-01",
+      "P-M1-half_life_obach-02",
+      "P-M6-solubility_aqsoldb-01",
+      "P-M6-solubility_aqsoldb-02",
+      "P-M6-clearance_microsome_az-01",
+      "P-M6-clearance_microsome_az-02"
+    ],
+    "affected_runs_scope": "only current task/recipe evidence named in cited sources; no historical fault transplanted to unrelated new runs",
+    "resolution_or_acceptance": "按task/encoder/hash/cache/split/preprocess/objective/head/optimizer/seed去重；已计划rank4继承ID不另生成副本"
+  },
+  {
+    "issue_id": "I-P002-14",
+    "title": "task-specific-negatives",
+    "question_ids": [
+      "Q1",
+      "Q2"
+    ],
+    "historical_issue_ids": [
+      "AR001-13"
+    ],
+    "status": "open_for_bounded_discrimination",
+    "statement": "Bio双负、DILI负迁移、half lowlr反转、half4member变差均保留",
+    "evidence_refs": [
+      "E-FRONTIER",
+      "E-NEW",
+      "E-FACTORIAL",
+      "E-U54",
+      "E-ENS59"
+    ],
+    "competing_explanations_and_falsification": "在指定负任务设对照；新家族失败只能收口该配方和任务，不推全域无效",
+    "limitations": "不把新胜例覆盖早期失败，不挑seed或者只报最优成员",
+    "direction_ids": [
+      "D-M5",
+      "D-M9",
+      "D14",
+      "D17"
+    ],
+    "related_proposal_ids": [
+      "P-M5-caco2_wang-01",
+      "P-M5-caco2_wang-02",
+      "P-M5-caco2_wang-03",
+      "P-M5-clearance_microsome_az-01",
+      "P-M5-clearance_microsome_az-02",
+      "P-M5-clearance_microsome_az-03",
+      "P-M5-cyp2d6_veith-01",
+      "P-M5-cyp2d6_veith-02",
+      "P-M5-cyp2d6_veith-03",
+      "P-M9-ppbr_az-01",
+      "P-M9-clearance_microsome_az-01",
+      "P-M9-cyp2d6_veith-01",
+      "P-M9-dili-01"
+    ],
+    "affected_runs_scope": "only current task/recipe evidence named in cited sources; no historical fault transplanted to unrelated new runs",
+    "resolution_or_acceptance": "在指定负任务设对照；新家族失败只能收口该配方和任务，不推全域无效"
+  }
+]

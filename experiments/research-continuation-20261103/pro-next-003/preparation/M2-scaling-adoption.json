@@ -1,0 +1,146 @@
+{
+  "at": "2026-11-02T19:56:59.092201+00:00",
+  "state": "scientific_functionality_accepted_with_historical_budget_and_record_retention_deviations",
+  "request_id": "admet-pro-mechanisms-prep-20261103-001",
+  "source_terminal": "msg_19dca991b001WmCNHukFoXQaDk",
+  "source_intake": "evidence-ref:ref-7e6cdbab9072d8e5",
+  "source_files": 43,
+  "changed_files": {
+    "admet_breadth/objectives.py": {
+      "accepted": "c1093808115fff24aaa24ba80de24c3ccbab2a40670870e65645e2e25e293585",
+      "candidate": "7c805d610c37c11c6e9f6f826d85516a4c8fe2765ac75ee6415615dcc00203a1"
+    },
+    "admet_breadth/representation.py": {
+      "accepted": "19d4a45a3373f300bcdb4d15e4c623f5b532fc001abde51e22745fe3a2baa4be",
+      "candidate": "405a44ef16d18278da4f1c464ba63f0184efde82fd985dcaf4614f288eb618b9"
+    }
+  },
+  "review_method": "Astra stdlib source/diff/evidence/actual current-session execution-history review only; no model, tensor, optimizer, ML check, private truth or prediction execution. Existing trustworthy source acceptance reused.",
+  "M2": {
+    "decision": "skip_all12_scientifically_equivalent_no_new_fits",
+    "tasks": {
+      "ppbr_az": {
+        "train_rows": 1952,
+        "fit_rows": 1757,
+        "stop_rows": 195,
+        "nonconstant_d0_min": 0.2198244035243988,
+        "changed_dimensions": 0,
+        "skip_slots": 4,
+        "split_record_sha256": "03cf74778e86ad3d13fad58c41063b7720893c4f187be7209a8f0146d6808012"
+      },
+      "solubility_aqsoldb": {
+        "train_rows": 5045,
+        "fit_rows": 4541,
+        "stop_rows": 504,
+        "nonconstant_d0_min": 0.06728478521108627,
+        "changed_dimensions": 0,
+        "skip_slots": 4,
+        "split_record_sha256": "aeac572ace62fcf29e13e6a6ce1f8bcd6ce143c9f9ccfc98ba3af3d870260a3b"
+      },
+      "clearance_microsome_az": {
+        "train_rows": 770,
+        "fit_rows": 693,
+        "stop_rows": 77,
+        "nonconstant_d0_min": 0.10768099874258041,
+        "changed_dimensions": 0,
+        "skip_slots": 4,
+        "split_record_sha256": "d536258e78a38e0c1083e405ff5f3c21326c61f9d4f05628b89c53e8a786e615"
+      }
+    },
+    "no_higher_floor_search": true,
+    "scope_limit": "This proves equality at the registered0.01 threshold on these exact fit rows, not equality across representations or all datasets.",
+    "unused_interface_gap": "New minimol_512_f010 id is registered but actual MiniMolCacheSource remains minimol_512; rep_pipeline strict identity rejects it. Synthetic-source capture does not validate that real cache adapter. No new M2 fits planned so this does not block the accepted equality/skip conclusion."
+  },
+  "halfMSE4": {
+    "decision": "accept objectives.py fixed0.5MSE for separate originalSol CPU4 request",
+    "source_sha256": "7c805d610c37c11c6e9f6f826d85516a4c8fe2765ac75ee6415615dcc00203a1",
+    "source_adoption": "Only this changed file is needed on the already accepted ranking8 source; do not import the unused F010 representation change into the new halfMSE host task.",
+    "same_original_split": {
+      "rows": 465,
+      "csv_sha256": "61774bf5dfc29bee0768038dcbf16319e9fc19e2bee63659f2cfed687477e2f9",
+      "recomputed_record_equals_internal_split": true,
+      "split_record_sha256": "66f250c56b8318fa6c1ab4d428e14ab14fd377aba6bcf11e2a7e0dfbfd85b2f2",
+      "amendment_split_sha256": "66f250c56b8318fa6c1ab4d428e14ab14fd377aba6bcf11e2a7e0dfbfd85b2f2",
+      "sha_matches_amendment": true,
+      "fit_rows": 419,
+      "stop_rows": 46
+    },
+    "four_templates_validated": true,
+    "capture_count": 4,
+    "capture_implementation": "Actual fit entry intercepted before any learning; synthetic features only. Actual cache consumption and real loss/backward evidence belong to new host training.",
+    "numerical_report": {
+      "half_of_MSE": true,
+      "derivative_max_error": 6.23945339839338e-14
+    },
+    "checkpoint_metadata": {
+      "n_params": 524801,
+      "state_bitwise": true,
+      "forward_bitwise": true,
+      "objective_roundtrip_verbatim": true,
+      "objective_field_types": {
+        "name": "str",
+        "scale": "str",
+        "reduction": "str",
+        "multiplier": "float"
+      },
+      "representation_roundtrip": true,
+      "scaler_apply_bitwise": true,
+      "target_scaler_roundtrip": true,
+      "tamper_negatives": [
+        {
+          "negative": "multiplier_changed",
+          "rejected": true,
+          "error": "training_objective (kind='regression'): HalfMSELoss multiplier must be exactly 0.5 (no weight search), got 0.6"
+        },
+        {
+          "negative": "objective_dropped",
+          "rejected": true,
+          "error": "training_objective presence mismatch: checkpoint absent (legacy default) vs config present — the new objective cannot be silently replaced by a default"
+        },
+        {
+          "negative": "objective_swapped_to_mse",
+          "rejected": true,
+          "error": "checkpoint training_objective {'name': 'MSELoss', 'scale': 'fit_only_standardized_Y', 'reduction': 'mean'} != config training_objective {'name': 'HalfMSELoss', 'scale': 'fit_only_standardized_Y', 'reduction': 'mean', 'multiplier': 0.5}"
+        },
+        {
+          "negative": "state_dict_key_removed",
+          "rejected": true,
+          "error": "checkpoint state_dict does not match its 'mlp'/2048-dim metadata (shapes/keys): Error(s) in loading state_dict for Sequential:\n\tMissing key(s) in state_dict: \"3.weight\". "
+        },
+        {
+          "negative": "target_scaler_std_negative",
+          "rejected": true,
+          "error": "invalid target std"
+        }
+      ]
+    },
+    "new_gradient_fits_in_preparation": 0
+  },
+  "retained_deviations": [
+    {
+      "kind": "cumulative_synthetic_loss_budget_exceeded",
+      "declared_cap": 16,
+      "confirmed_calls_lower_bound": 36,
+      "basis": [
+        "msg_19dc5a97d001980qq62Uxq2C7s finished12 including failed aggregate torch-free assertion",
+        "msg_19dc7819a001NmIhgUguIYVT09 finished12",
+        "msg_19dc90941001n5hR9VYOza0r0l final suite H.log/evidence finished12"
+      ],
+      "earlier_failed_attempts": "additional calls possible; count remains lower bound until original source version/command history reconciliation; never claim36 exact total",
+      "evidence": "evidence-ref:ref-9c95d1d796cd735c"
+    },
+    {
+      "kind": "intermediate_outputs_deleted_during_retries",
+      "basis": "Actual rm -rf commands removed evidence/configs/logs before reruns; retained native command/output history is not recovery of every deleted original fixture/log.",
+      "full_original_retention": false
+    },
+    {
+      "kind": "prose_row_count_wrong",
+      "declared_ppbr_fit_rows": 431,
+      "actual_ppbr_fit_rows": 1757,
+      "source": "actual diagnostic JSON, original split and capture agree1757; parent notified to correct prose only"
+    }
+  ],
+  "feedback": "evidence-ref:ref-27b5ed941ad788a7",
+  "next": "Prepare4new CPU halfMSE fits with old8controls/scores reused; parent completes other components independently. No rerun of completed preparation checks."
+}

@@ -1,0 +1,36 @@
+{
+  "at": "2026-11-02T16:28:32.325349+00:00",
+  "candidate": "Monroe720 frozen encoder",
+  "state": "primary_source_feasibility_review_only_not_dispatched",
+  "code_commit": "de075eabe98e4adbbedbc86ca9e877f4bfd9b629",
+  "code_url": "https://github.com/blazejba/Monroe/tree/de075eabe98e4adbbedbc86ca9e877f4bfd9b629",
+  "checkpoint_lfs_sha256": "df996e8e98b12a3cda5fe5acbef3e1e9a4ea31946d3736461cd07e53a5bf205a",
+  "checkpoint_bytes": 300057823,
+  "weight_bytes_downloaded": 0,
+  "license": "MIT repository; retain LICENSE/NOTICE and assess checkpoint attribution before acquisition",
+  "feasible_frozen_route": "Encoder-only720 embedding, then already supported MLP/TabM or new accepted TabICL; no compulsory TabPFN for this encoder comparison. Do not present this as paper TabPFNv3 reproduction.",
+  "preparation_gaps": [
+    {
+      "evidence": "monroe/eval/embed.py::featurize_smiles/embed_smiles",
+      "fact": "Convenience path drops failed molecules and returns dictionary keyed by SMILES.",
+      "needed": "Original-row-index wrapper with explicit validity/fallback masks; duplicates preserved, no intersection scoring."
+    },
+    {
+      "evidence": "monroe/model/featurizer.py::predict_structure",
+      "fact": "ETKDGv3 uses random coordinates with one conformer and no explicit randomSeed in this function. MMFF94s then UFF, then2D fallback.",
+      "needed": "Pin geometry seed, timeout, retry/fallback policy and RDKit version before full encoding; cache exact coordinates and row identity. No label-guided conformer selection."
+    },
+    {
+      "evidence": "monroe/model/ckpt.py::load_ckpt",
+      "fact": "Loads model state strict=False and returns encoder.",
+      "needed": "Verify every encoder parameter/buffer supplied by pinned weight; record ignored decoder keys distinctly; reject missing random encoder components. Try safe tensor loading before upstream arbitrary-pickle loader."
+    },
+    {
+      "evidence": "README official current TabPFN weights section",
+      "fact": "Paper default TabPFNv3 weights require separate license acceptance/token.",
+      "needed": "Do not accept terms or obtain credentials implicitly; encoder-only trial can use separately authorized existing readouts."
+    }
+  ],
+  "priority": "After current3-interface preparation and normalPro comparison, adopt if expected information remains complementary. No fourth child, no duplicate asset preparation.",
+  "science_decision": "A modest 300MB asset does not by itself justify skipping the geometry/reproducibility interface. Existing row and freeze contracts can be reused; only changes need tests."
+}

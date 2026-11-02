@@ -1,0 +1,423 @@
+[
+  {
+    "direction_id": "D-M1",
+    "title": "rank目标与损失尺度",
+    "evidence_refs": [
+      "E-RANK4",
+      "E-U54",
+      "E-ENS59"
+    ],
+    "support": "ranking4仍是计划；半衰期F001四seed局部支持且绝对波动大",
+    "counterevidence": "可能只是MSE系数/优化变化，不是rank信息",
+    "parameters_and_valid_combinations": "MSE系数{1,0.5}; pairwise系数{0,0.5}; temperature固定1；只保留(1,0),(0.5,0),(0.5,0.5)三格，不做全积",
+    "search_strategy": "hypothesis-discriminating staged contrasts; keep all negative results; no blind Cartesian product",
+    "configuration_count_rule": "已有fullMSE4复用，新增scale4+rank4=8",
+    "priority": "P0",
+    "readiness": "new_code",
+    "boundary": "proposal_only; no train/agent dispatch here; official train.Y only and frozen external params/buffers",
+    "proposal_ids": [
+      "P-M1-half_life_obach-01",
+      "P-M1-half_life_obach-02"
+    ],
+    "issue_ids": [
+      "I-P002-05",
+      "I-P002-13"
+    ]
+  },
+  {
+    "direction_id": "D-M2",
+    "title": "MiniMol内缩放剂量",
+    "evidence_refs": [
+      "E-MMSOL",
+      "E-MMCYP",
+      "E-OLDGUIDE"
+    ],
+    "support": "当前MiniH0与CheMF010同维度对照缺失；PPBR3/4反例",
+    "counterevidence": "不同encoder特征单位没有自然可比floor；0.01若无维度触发则实验无信息",
+    "parameters_and_valid_combinations": "MiniH0既有；MiniF010仅0.01新值；三任务seeds46/47；先无标签记录受影响维度/最大|z|",
+    "search_strategy": "hypothesis-discriminating staged contrasts; keep all negative results; no blind Cartesian product",
+    "configuration_count_rule": "3任务×1新配置×2=6；如转换完全相同则跳过而不是换更强floor",
+    "priority": "P0",
+    "readiness": "new_code",
+    "boundary": "proposal_only; no train/agent dispatch here; official train.Y only and frozen external params/buffers",
+    "proposal_ids": [
+      "P-M2-ppbr_az-01",
+      "P-M2-solubility_aqsoldb-01",
+      "P-M2-clearance_microsome_az-01"
+    ],
+    "issue_ids": [
+      "I-P002-02"
+    ]
+  },
+  {
+    "direction_id": "D-M3",
+    "title": "AMES stop选择与表示迁移",
+    "evidence_refs": [
+      "E-AMES",
+      "E-48",
+      "E-UAMES"
+    ],
+    "support": "四seedMorgan Valid赢/stop输；48只看整配方groupstress",
+    "counterevidence": "分区样本组成/fit比例变化、Valid选择历史可解释；不是已证官方泄漏",
+    "parameters_and_valid_combinations": "固定canonical四路70/10/10/10，split43，model44/45；两表示；同50epoch候选轨迹两个selector",
+    "search_strategy": "hypothesis-discriminating staged contrasts; keep all negative results; no blind Cartesian product",
+    "configuration_count_rule": "2表示×2seed=4fit；8个锁定后stress checkpoint输出，不按8fit计",
+    "priority": "P0",
+    "readiness": "new_code",
+    "boundary": "proposal_only; no train/agent dispatch here; official train.Y only and frozen external params/buffers",
+    "proposal_ids": [
+      "P-M3-ames-01",
+      "P-M3-ames-02"
+    ],
+    "issue_ids": [
+      "I-P002-01",
+      "I-P002-11"
+    ]
+  },
+  {
+    "direction_id": "D-M4",
+    "title": "Caco训练窗口",
+    "evidence_refs": [
+      "E-FACTORIAL",
+      "E-OPT72"
+    ],
+    "support": "TabM部分触顶50；未胜历史Huber，cap可能压低容量收益",
+    "counterevidence": "触顶是right-censoring不是未收敛证明；已有DILI很早停，不适用统一延长",
+    "parameters_and_valid_combinations": "固定200轨迹；虚拟(50,8),(200,8),(200,200)；MLP256、TabM32两种",
+    "search_strategy": "hypothesis-discriminating staged contrasts; keep all negative results; no blind Cartesian product",
+    "configuration_count_rule": "2head×2seed=4fit，最多12预定checkpoint输出；不是每epochValid",
+    "priority": "P0",
+    "readiness": "new_code",
+    "boundary": "proposal_only; no train/agent dispatch here; official train.Y only and frozen external params/buffers",
+    "proposal_ids": [
+      "P-M4-caco2_wang-01",
+      "P-M4-caco2_wang-02"
+    ],
+    "issue_ids": [
+      "I-P002-04"
+    ]
+  },
+  {
+    "direction_id": "D-M5",
+    "title": "TabM成员机制与深头容量",
+    "evidence_refs": [
+      "E-FACTORIAL",
+      "E-U14",
+      "X-TABM-CODE",
+      "X-TABM-PAPER"
+    ],
+    "support": "CYP同MiniTabM4/4小收益，而microMiniTabM2/2负",
+    "counterevidence": "k改变参数量和优化噪声；k1不是无BatchEnsemble的plainMLP",
+    "parameters_and_valid_combinations": "固定3×512/drop.1：plain独立实现、tabm k1、k8新；k32既有；Caco/CYP/micro三对照任务",
+    "search_strategy": "hypothesis-discriminating staged contrasts; keep all negative results; no blind Cartesian product",
+    "configuration_count_rule": "3任务×3新head×2seed=18；两已有head每任务共享",
+    "priority": "P1",
+    "readiness": "new_code",
+    "boundary": "proposal_only; no train/agent dispatch here; official train.Y only and frozen external params/buffers",
+    "proposal_ids": [
+      "P-M5-caco2_wang-01",
+      "P-M5-caco2_wang-02",
+      "P-M5-caco2_wang-03",
+      "P-M5-clearance_microsome_az-01",
+      "P-M5-clearance_microsome_az-02",
+      "P-M5-clearance_microsome_az-03",
+      "P-M5-cyp2d6_veith-01",
+      "P-M5-cyp2d6_veith-02",
+      "P-M5-cyp2d6_veith-03"
+    ],
+    "issue_ids": [
+      "I-P002-03",
+      "I-P002-14"
+    ]
+  },
+  {
+    "direction_id": "D-M6",
+    "title": "近似参数量匹配的表示比较",
+    "evidence_refs": [
+      "E-MMSOL",
+      "E-MMCYP",
+      "E-RUNS"
+    ],
+    "support": "Mini512MLP256仅131585头参数，CheM2048MLP256有524801；维度容量混杂",
+    "counterevidence": "等参数不等函数类；floor不同特征单位仍不可比",
+    "parameters_and_valid_combinations": "Sol/micro各CheM128F010、Mini512F010；两个seed；Mini256F010共享M2；PPBR128已做不再提",
+    "search_strategy": "hypothesis-discriminating staged contrasts; keep all negative results; no blind Cartesian product",
+    "configuration_count_rule": "2任务×2新head/representation×2seed=8",
+    "priority": "P1",
+    "readiness": "mixed_config_only_and_new_code",
+    "boundary": "proposal_only; no train/agent dispatch here; official train.Y only and frozen external params/buffers",
+    "proposal_ids": [
+      "P-M6-solubility_aqsoldb-01",
+      "P-M6-solubility_aqsoldb-02",
+      "P-M6-clearance_microsome_az-01",
+      "P-M6-clearance_microsome_az-02"
+    ],
+    "issue_ids": [
+      "I-P002-02",
+      "I-P002-13"
+    ]
+  },
+  {
+    "direction_id": "D-M7",
+    "title": "加权BCE的样本权重与总尺度",
+    "evidence_refs": [
+      "E-OLDGUIDE",
+      "E-U140",
+      "E-U54"
+    ],
+    "support": "CYPD6substrate加权4/4正，C9substrate双负",
+    "counterevidence": "理想加权BCE仅加logit截距并不改善排序；有限优化、容量、校准混杂；AdamW的恒正loss尺度近似抵消，decoupled decay不自行破坏不变性；该方向是低优先级有界负控制，等价可证就跳过。",
+    "parameters_and_valid_combinations": "原w=min(5,max(1,sqrt(nneg/npos)))不变；只除fit均权Z；不新采样",
+    "search_strategy": "hypothesis-discriminating staged contrasts; keep all negative results; no blind Cartesian product",
+    "configuration_count_rule": "2任务×1归一化配置×2seed=4；w=1等价跳过",
+    "priority": "P1",
+    "readiness": "new_code",
+    "boundary": "proposal_only; no train/agent dispatch here; official train.Y only and frozen external params/buffers",
+    "proposal_ids": [
+      "P-M7-cyp2d6_substrate_carbonmangels-01",
+      "P-M7-cyp2c9_substrate_carbonmangels-01"
+    ],
+    "issue_ids": [
+      "I-P002-06"
+    ]
+  },
+  {
+    "direction_id": "D-M8",
+    "title": "低学习率×训练窗口",
+    "evidence_refs": [
+      "E-CONF54",
+      "E-U54",
+      "E-U72"
+    ],
+    "support": "CYP3A4低lr在两floor各四seed正；一正例未触顶50",
+    "counterevidence": "不能把低lr好全部归于少更新或延长训练；dropout/weight decay路径随步数变",
+    "parameters_and_valid_combinations": "H0/F010×lr{5e-4,1e-4}×44/45，固定200轨迹与三个虚拟selector；其他项不变",
+    "search_strategy": "hypothesis-discriminating staged contrasts; keep all negative results; no blind Cartesian product",
+    "configuration_count_rule": "8新fit；8原50epoch对照复用，不能复制为新baseline",
+    "priority": "P1",
+    "readiness": "new_code",
+    "boundary": "proposal_only; no train/agent dispatch here; official train.Y only and frozen external params/buffers",
+    "proposal_ids": [
+      "P-M8-cyp3a4_veith-01",
+      "P-M8-cyp3a4_veith-02",
+      "P-M8-cyp3a4_veith-03",
+      "P-M8-cyp3a4_veith-04"
+    ],
+    "issue_ids": [
+      "I-P002-04"
+    ]
+  },
+  {
+    "direction_id": "D-M9",
+    "title": "冻结TabICLv2上下文预测",
+    "evidence_refs": [
+      "E-ASSETS",
+      "X-TABICL-PAPER",
+      "X-TABICL-REG",
+      "X-TABICL-CLS",
+      "X-TABICL-CKPT-C",
+      "X-TABICL-CKPT-R"
+    ],
+    "support": "有明确分类/回归checkpoint与code pin；项目尚无真实下游fit",
+    "counterevidence": "tabularbenchmark结果不等ADMET；上下文与变换可改变校准和训练分布",
+    "parameters_and_valid_combinations": "Mini512现成特征；PPBR/micro用regressor，CYPD6/DILI用classifier；8变换视图，random_state44；禁finetune",
+    "search_strategy": "hypothesis-discriminating staged contrasts; keep all negative results; no blind Cartesian product",
+    "configuration_count_rule": "4frozen-context fits，0梯度头训练；不是8×4个模型学习",
+    "priority": "P2",
+    "readiness": "blocked_assets",
+    "boundary": "proposal_only; no train/agent dispatch here; official train.Y only and frozen external params/buffers",
+    "proposal_ids": [
+      "P-M9-ppbr_az-01",
+      "P-M9-clearance_microsome_az-01",
+      "P-M9-cyp2d6_veith-01",
+      "P-M9-dili-01"
+    ],
+    "issue_ids": [
+      "I-P002-07",
+      "I-P002-14"
+    ]
+  },
+  {
+    "direction_id": "D-M10",
+    "title": "Monroe与具体MoLFormer10pct冻结表征",
+    "evidence_refs": [
+      "E-ASSETS",
+      "X-MONROE-PAPER",
+      "X-MONROE-LOADER",
+      "X-MF-CARD",
+      "X-MF-WEIGHT",
+      "X-MF-CONFIG"
+    ],
+    "support": "官方checkpoint可定位，项目未实跑；BBB/hERG表示探索少",
+    "counterevidence": "Monroe文献PT/FT混用对照不能迁移；MoLFormer长输入/立体信息/随机feature buffer会破坏等价",
+    "parameters_and_valid_combinations": "各两task BBB/hERG×46/47，固定MLP256；版本和输入coverage不过就skip",
+    "search_strategy": "hypothesis-discriminating staged contrasts; keep all negative results; no blind Cartesian product",
+    "configuration_count_rule": "2encoder×2task×2seed=8；4task/encoder缓存对象共享",
+    "priority": "P2",
+    "readiness": "blocked_assets",
+    "boundary": "proposal_only; no train/agent dispatch here; official train.Y only and frozen external params/buffers",
+    "proposal_ids": [
+      "P-M10-bbb_martins-01",
+      "P-M10-bbb_martins-02",
+      "P-M10-herg-01",
+      "P-M10-herg-02"
+    ],
+    "issue_ids": [
+      "I-P002-08",
+      "I-P002-12"
+    ]
+  },
+  {
+    "direction_id": "D-M11",
+    "title": "MiniMol向hepatocyte的任务扩面",
+    "evidence_refs": [
+      "E-FRONTIER",
+      "E-U14",
+      "E-ASSETS"
+    ],
+    "support": "microsome4/4不是hepatocyte证据；后者尚未实试Mini",
+    "counterevidence": "两个clearance任务的评价/样本分布不同；不能仅据相近名字迁移",
+    "parameters_and_valid_combinations": "一个已批准Mini512H0MLP256配方，46/47；不扫floor/head同轮",
+    "search_strategy": "hypothesis-discriminating staged contrasts; keep all negative results; no blind Cartesian product",
+    "configuration_count_rule": "2fit，1新task/encoder缓存对象",
+    "priority": "P2",
+    "readiness": "blocked_assets",
+    "boundary": "proposal_only; no train/agent dispatch here; official train.Y only and frozen external params/buffers",
+    "proposal_ids": [
+      "P-M11-clearance_hepatocyte_az-01"
+    ],
+    "issue_ids": [
+      "I-P002-02",
+      "I-P002-08"
+    ]
+  },
+  {
+    "direction_id": "D12",
+    "title": "MAE目标与Huber尺度拆解／rank有限迁移",
+    "evidence_refs": [
+      "E-U54",
+      "E-OLDGUIDE",
+      "E-ISSUES",
+      "E-RANK4"
+    ],
+    "support": "LD50Huber4/4，lipo/Caco3/4；Huber小误差为0.5MSE",
+    "counterevidence": "真实损失优势可能来自系数和大残差截断的组合；无群误差不推断离群标签错",
+    "parameters_and_valid_combinations": "仅当群证据或M1支持，LD50新增0.5MSE、L1各46/47=4；另VDss继承有效rank+scale各46/47=4；互斥优先，最多8新fit",
+    "search_strategy": "hypothesis-discriminating staged contrasts; keep all negative results; no blind Cartesian product",
+    "configuration_count_rule": "条件储备<=8，不计确定74；既有Huber/fullMSE只复用",
+    "priority": "P2",
+    "readiness": "new_code",
+    "boundary": "proposal_only; no train/agent dispatch here; official train.Y only and frozen external params/buffers",
+    "proposal_ids": [],
+    "issue_ids": [
+      "I-P002-05"
+    ]
+  },
+  {
+    "direction_id": "D13",
+    "title": "真正求解充分的线性／正则对照",
+    "evidence_refs": [
+      "E-U140",
+      "E-U54"
+    ],
+    "support": "affine总体7/38优、31差，而HIA特异4/4；有限AdamW不是所有线性解",
+    "counterevidence": "凸solver研究对照不自动具正式参赛资格；L2路径和closed form目标不同",
+    "parameters_and_valid_combinations": "HIA及Caco各fit-only L2 {1e-4,1e-2,1}; logistic / ridge按任务，内部stop选择；solver固定容差1e-8,max_iter10000；不得当成已有affine",
+    "search_strategy": "hypothesis-discriminating staged contrasts; keep all negative results; no blind Cartesian product",
+    "configuration_count_rule": "最多2task×3λ=6solverfits，seed由deterministic求解固定；新准入后具体展开",
+    "priority": "P3",
+    "readiness": "new_code",
+    "boundary": "proposal_only; no train/agent dispatch here; official train.Y only and frozen external params/buffers",
+    "proposal_ids": [],
+    "issue_ids": []
+  },
+  {
+    "direction_id": "D14",
+    "title": "有条件表示迁移，不全22统一配方",
+    "evidence_refs": [
+      "E-FRONTIER",
+      "E-MMCYP",
+      "E-FACTORIAL"
+    ],
+    "support": "CYPD6与micro的任务/head交互已真测；C9Veith/Pgp缺新表示",
+    "counterevidence": "同家族名不保证相同作用；高相关共识可能共同错误",
+    "parameters_and_valid_combinations": "只在M5显示可迁移机制且无覆盖失败时，CYP2C9Veith或Pgp择一：MiniMLP和MiniTabM固定k32×46/47；若选HIA/Bio需另议，不自动补全",
+    "search_strategy": "hypothesis-discriminating staged contrasts; keep all negative results; no blind Cartesian product",
+    "configuration_count_rule": "每次最多4fit+1task/encoder缓存；条件上限8/两任务，未列假任务占位proposal",
+    "priority": "P2",
+    "readiness": "blocked_assets_or_new_code",
+    "boundary": "proposal_only; no train/agent dispatch here; official train.Y only and frozen external params/buffers",
+    "proposal_ids": [],
+    "issue_ids": [
+      "I-P002-14"
+    ]
+  },
+  {
+    "direction_id": "D15",
+    "title": "表示压缩/投影与尺度不变性",
+    "evidence_refs": [
+      "E-MMSOL",
+      "E-MMCYP",
+      "E-FACTORIAL"
+    ],
+    "support": "D与头参数不同；F010改变优化几何，信息量未直接验证",
+    "counterevidence": "PCA丢弃信息且其fit受样本数限制；随机投影不等原表示，不能称encoder因果",
+    "parameters_and_valid_combinations": "M6仍不识别才对Sol/micro各CheM fit-only PCA rank=min(512,nfit-1)不whiten；固定seed43随机正交投影512作为另一控制；必须明确rank不足时不是512匹配",
+    "search_strategy": "hypothesis-discriminating staged contrasts; keep all negative results; no blind Cartesian product",
+    "configuration_count_rule": "2task×2projection×2modelseed=8fit上限；不做PCA/ridge/lr全积",
+    "priority": "P3",
+    "readiness": "new_code",
+    "boundary": "proposal_only; no train/agent dispatch here; official train.Y only and frozen external params/buffers",
+    "proposal_ids": [],
+    "issue_ids": [
+      "I-P002-02"
+    ]
+  },
+  {
+    "direction_id": "D16",
+    "title": "固定化学群与共识失败诊断",
+    "evidence_refs": [
+      "E-ISSUES",
+      "E-SOURCEMAP",
+      "E-GROUP20",
+      "E-48"
+    ],
+    "support": "高低分歧群已预绑定，群误差多未知；group20已有原生stress反例",
+    "counterevidence": "分歧≠错误、低分歧≠安全；小组精确分数可泄露个体",
+    "parameters_and_valid_combinations": "先既有群；未来train-only定义宽化学类/离train相似度层：RDKit ring/charge/mass/logP bins固定train分位、不跨标签切组；只申请主控批准且有足够support的成对聚合",
+    "search_strategy": "hypothesis-discriminating staged contrasts; keep all negative results; no blind Cartesian product",
+    "configuration_count_rule": "0新fit；取已有预测，host内部计分；不得请求逐行ValidY/残差或密集互补组差分",
+    "priority": "P0",
+    "readiness": "preparation_diagnostic_not_training",
+    "boundary": "proposal_only; no train/agent dispatch here; official train.Y only and frozen external params/buffers",
+    "proposal_ids": [],
+    "issue_ids": [
+      "I-P002-09",
+      "I-P002-10",
+      "I-P002-11"
+    ]
+  },
+  {
+    "direction_id": "D17",
+    "title": "受限集成与校准，不用Valid拟合权重",
+    "evidence_refs": [
+      "E-ENS59",
+      "E-U14",
+      "E-MMSOL"
+    ],
+    "support": "已有59固定均值，37/59不胜最佳成员；half四成员劣于双成员",
+    "counterevidence": "MAE平均不劣于成员平均是凸性，不证明优于最佳；自适应挑seed会偏",
+    "parameters_and_valid_combinations": "仅当48显示互补结构且两成员都准入，预先等权概率/原Y mean；stacking仅train内OOF且全fit身份明确，禁止Valid权重拟合；最多2预注册组合",
+    "search_strategy": "hypothesis-discriminating staged contrasts; keep all negative results; no blind Cartesian product",
+    "configuration_count_rule": "等权0新fit最多2评分；OOF需独立预算，不在74内偷加训练",
+    "priority": "P2",
+    "readiness": "new_code_or_config_only_after_prediction_identity",
+    "boundary": "proposal_only; no train/agent dispatch here; official train.Y only and frozen external params/buffers",
+    "proposal_ids": [],
+    "issue_ids": [
+      "I-P002-10",
+      "I-P002-11",
+      "I-P002-14"
+    ]
+  }
+]

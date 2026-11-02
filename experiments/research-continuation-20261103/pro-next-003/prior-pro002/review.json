@@ -1,0 +1,1705 @@
+{
+  "request_id": "admet-pro-next-research-20261102-002",
+  "input_manifest_sha256": "1fce919c9e7c6ee47ff7572446723966c83056c197a65283d0ee4790a38bae91",
+  "source_commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+  "input_cutoff": "2026-11-02T15:55:34.713393+00:00",
+  "status": "needs_evidence",
+  "scientific_status": "needs_evidence",
+  "execution_authorized": false,
+  "scope": "independent scientific continuation Q1–Q6; no old chat assumption overrides snapshot",
+  "decision_coverage": [
+    {
+      "question_id": "Q1",
+      "status": "answered",
+      "answer_summary": "逐22任务给局部保留、负配方停止、未知、下一判别和范围收口；不把已完成批次或空队列当研究完成。",
+      "answer_location": [
+        "analysis.md#Q1",
+        "task22_actions.json"
+      ],
+      "evidence_refs": [
+        "E-FRONTIER",
+        "E-RUNS",
+        "E-U54",
+        "E-MMSOL",
+        "E-MMCYP",
+        "E-FACTORIAL",
+        "E-ENS59"
+      ],
+      "support": "已有多配方四seed及负结果可支持局部处置",
+      "counterevidence": "重复Valid、小样本、跨环境与相反seed/分组限制全域结论",
+      "unresolved": [
+        "G01",
+        "G02",
+        "G07"
+      ],
+      "affected_decisions": [
+        "逐任务保留/停止/条件重开而非全22统一默认"
+      ]
+    },
+    {
+      "question_id": "Q2",
+      "status": "answered",
+      "answer_summary": "分开解释AMES选择/分布反转、Mini信息/尺度/容量、PPBR同设备反例、DILI早停负迁移；48检验整配方分组而不识别所有机制，新增M2/M3/M5/M6互补。",
+      "answer_location": [
+        "analysis.md#Q2",
+        "dispatched48_exclusions.json",
+        "next_experiments.json M2/M3/M5/M6"
+      ],
+      "evidence_refs": [
+        "E-AMES",
+        "E-MMSOL",
+        "E-MMCYP",
+        "E-FACTORIAL",
+        "E-OPT72",
+        "E-48"
+      ],
+      "support": "亲读匹配比较/stop/配置与已派48真实矩阵",
+      "counterevidence": "四seed共享同分区不是四次独立外部检验，PPBR46与microTabM反例保留",
+      "unresolved": [
+        "G01",
+        "G02"
+      ],
+      "affected_decisions": [
+        "不重复48，不追加seed追求全正，优先机制对照"
+      ]
+    },
+    {
+      "question_id": "Q3",
+      "status": "partial",
+      "answer_summary": "识别TabICLv2分类/回归具体checkpoint、MoLFormer10pct固定revision和Monroe LFS权重；论文/许可/loader实际阅读。新资产均无本地运行准入，Monroe immutable code pin仍缺。",
+      "answer_location": [
+        "analysis.md#Q3",
+        "scientific_assets.json",
+        "evidence_gaps.json G05/G06",
+        "next_experiments.json M9/M10/M11"
+      ],
+      "evidence_refs": [
+        "E-ASSETS",
+        "X-TABICL-PAPER",
+        "X-TABICL-REG",
+        "X-TABICL-CLS",
+        "X-TABICL-LICENSE",
+        "X-TABICL-CKPT-C",
+        "X-TABICL-CKPT-R",
+        "X-MONROE-PAPER",
+        "X-MONROE-POINTER",
+        "X-MONROE-LOADER",
+        "X-MF-WEIGHT",
+        "X-MF-CONFIG"
+      ],
+      "support": "官方源码/modelcard/checkpoint metadata能定位具体科学候选",
+      "counterevidence": "论文FT编码器不在边界内，main不是固定commit，metadata不是payload/冻结/coverage证明",
+      "unresolved": [
+        "G05",
+        "G06",
+        "G09"
+      ],
+      "affected_decisions": [
+        "Monroe/MoLFormer/TabICL必须blocked_assets，不影响现有缓存机制实验"
+      ]
+    },
+    {
+      "question_id": "Q4",
+      "status": "answered",
+      "answer_summary": "ranking4保留未执行并补0.5MSE控制；原posBCE平方根权重归一化；TabM deep/plain/k1/k8；200epoch同轨迹策略与近参数配平明确新接口。",
+      "answer_location": [
+        "analysis.md#Q4",
+        "next_batch_guide.md G1/G2",
+        "next_experiments.json M1/M4/M5/M6/M7/M8",
+        "derived_checks.json"
+      ],
+      "evidence_refs": [
+        "E-RANK4",
+        "E-OLDGUIDE",
+        "E-CONF54",
+        "E-OPT72",
+        "E-FACTORIAL",
+        "X-TABM-CODE"
+      ],
+      "support": "loss/尺度、参数公式、实现枚举、已验早停反例共同形成可证伪对照",
+      "counterevidence": "k1不是plain；等参数不等归纳偏置；200/8对已早停run可能无效；pairwise不等Spearman直接优化",
+      "unresolved": [
+        "G01",
+        "G08"
+      ],
+      "affected_decisions": [
+        "只采用能改变竞争解释的bounded contrasts，不无限grid"
+      ]
+    },
+    {
+      "question_id": "Q5",
+      "status": "partial",
+      "answer_summary": "保留六Huber Valid群、八native stress群及表示群完整索引入口；区分风险候选/实际误差/修复，低分歧群不能默认正确。部分成员blob无公开映射和Valid群安全误差未准入，不能给确定化学错误机制。",
+      "answer_location": [
+        "analysis.md#Q5",
+        "cohort_register.json",
+        "next_batch_guide.md G4",
+        "evidence_gaps.json G03/G04"
+      ],
+      "evidence_refs": [
+        "E-ISSUES",
+        "E-SOURCEMAP",
+        "E-GROUP20",
+        "E-48"
+      ],
+      "support": "现有固定ID/成员ref/部分SHA和真实group20分数可复用",
+      "counterevidence": "分歧与共识都不提供真值；总分上升不证明同群修复，小群差分有侧漏风险",
+      "unresolved": [
+        "G03",
+        "G04"
+      ],
+      "affected_decisions": [
+        "只索取主控授权安全汇总，不向训练方或本研究索取逐行ValidY/残差"
+      ]
+    },
+    {
+      "question_id": "Q6",
+      "status": "answered",
+      "answer_summary": "37个确定proposal、22/60/74上限，large=70梯度+4context；已派48排除，ranking4只计一次，已有控制只复用；模块/条件/科学收口与端到端成本公式完整。",
+      "answer_location": [
+        "analysis.md#Q6",
+        "next_batch_guide.md",
+        "next_experiments.json",
+        "budget_scenarios.json",
+        "conditional_followups.json",
+        "controls.json"
+      ],
+      "evidence_refs": [
+        "E-48",
+        "E-RANK4",
+        "E-RUNS",
+        "E-EXECUTION",
+        "E-SKILL",
+        "E-U14",
+        "E-UMMSOL",
+        "E-ASTRAOLD"
+      ],
+      "support": "科学身份去重、参数矩阵计数、真实旧成本与新接口不确定性分开",
+      "counterevidence": "时间假设不是实测GPU小时；等价/资格失败可减少fit，不用其他任务填数",
+      "unresolved": [
+        "G02",
+        "G08"
+      ],
+      "affected_decisions": [
+        "推荐中档分批上限；新增条件分支先登记，不能执行方扩张"
+      ]
+    }
+  ],
+  "read_receipt": [
+    {
+      "source_id": "E-START",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/START_HERE.md",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "444ee3a6070c33843b8e31c20362fcede9607c87e67db3b43ffbdb5a9bf4538f"
+      },
+      "registered_bytes": 3918,
+      "displayed_line_count": 24,
+      "read_scope": "全文",
+      "visible_tool_refs": [
+        "turn548784view0",
+        "turn481331view0"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-MANIFEST",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/input-manifest.json",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "1fce919c9e7c6ee47ff7572446723966c83056c197a65283d0ee4790a38bae91"
+      },
+      "registered_bytes": null,
+      "displayed_line_count": 355,
+      "read_scope": "全文登记对象和摘要；未下载原始字节计算输入哈希",
+      "visible_tool_refs": [
+        "turn548784view1",
+        "turn428372view0",
+        "turn822555view0"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-CONTRACT",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/decision-contract.json",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "7e29bcc1cd4dc6f9c22193dbbbbfe76ca22891b556c5cf08630e1c9f29ef4387"
+      },
+      "registered_bytes": 2857,
+      "displayed_line_count": 53,
+      "read_scope": "全文",
+      "visible_tool_refs": [
+        "turn676223view0",
+        "turn785540view0"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-DESIGN",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/methodology/EXPERIMENT_DESIGN.md",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "8dade31044e0101fd8d71aa782ba0c95581b43729ee4726f36f3693887810486"
+      },
+      "registered_bytes": 11551,
+      "displayed_line_count": 54,
+      "read_scope": "全文",
+      "visible_tool_refs": [
+        "turn676223view1",
+        "turn703882view3"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-SKILL",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/methodology/RESEARCH_SKILL.md",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "67fbe1c435dbe63057ed07d83407abf82bcec26fc61547ba9d48742186a88464"
+      },
+      "registered_bytes": 8543,
+      "displayed_line_count": 44,
+      "read_scope": "全文，版本3.4.1",
+      "visible_tool_refs": [
+        "turn676223view2"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-READING",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/READING_CONTRACT.json",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "9a836163ad406c19be6cdf6b48d7d1073b16a98172c25cbbd76dd3078944ffaa"
+      },
+      "registered_bytes": 4932,
+      "displayed_line_count": 102,
+      "read_scope": "已打开及主要要求0–91；不声称尾部未显示行已逐字读",
+      "visible_tool_refs": [
+        "turn676223view3"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-BRANCH",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/HISTORY_BRANCH_INDEX.json",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "bc8acde41e5b0d6a520e6792984c672929eaf1c5a2f14566251d953fb53c7309"
+      },
+      "registered_bytes": 27029,
+      "displayed_line_count": 597,
+      "read_scope": "问题相关分支0–133、202–353、400–581；导航不是所有下游原件已读",
+      "visible_tool_refs": [
+        "turn329786view0",
+        "turn703882view0",
+        "turn703882view1",
+        "turn740215view3"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-ASSETS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/ledger/assets.json",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "9c35bbb4ce06b595f4be534029889dfcecc59c43a24d1c20491b17b609d78bda"
+      },
+      "registered_bytes": 7472,
+      "displayed_line_count": 193,
+      "read_scope": "全文",
+      "visible_tool_refs": [
+        "turn329786view2",
+        "turn703882view2",
+        "turn503953view0"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-FRONTIER",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/current/task22-frontier.md",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "3e446f6d6e38c686f8ca2857d013991e1d082f30870531eacaae1cdf2ab53ee5"
+      },
+      "registered_bytes": 3135,
+      "displayed_line_count": 28,
+      "read_scope": "全文22任务；再下钻比较及负结果",
+      "visible_tool_refs": [
+        "turn329786view1",
+        "turn255978view2"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-RUNS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/ledger/experiments.json",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "ff2d0d0f688751afc3bfb326e8d8a3efb65927e180d0134f1ffd152adf086a2e"
+      },
+      "registered_bytes": 879730,
+      "displayed_line_count": 20828,
+      "read_scope": "头部、实际配置、width128定向检索及PPBR原结果；不是全586原件审计",
+      "visible_tool_refs": [
+        "turn646371view2",
+        "turn853302view4",
+        "turn859975view1",
+        "turn859975view3",
+        "turn859975view4",
+        "turn887672view1",
+        "turn887672view2",
+        "turn798988view0"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-ISSUES",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/ledger/issues.json",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "531d6e462b5dc24ada4fc04291f8680da21fdfe0a33268d3d755df460e1136cc"
+      },
+      "registered_bytes": 60593,
+      "displayed_line_count": 1432,
+      "read_scope": "原失败、AR001-01至14相关项、群成员引用和PRO86相关限制；选择性范围，不声称全文件逐项重验；末次定向核对AR001-08缓存含义",
+      "visible_tool_refs": [
+        "turn646371view3",
+        "turn606576view3",
+        "turn740215view0",
+        "turn740215view1",
+        "turn346218view1",
+        "turn199724view2",
+        "turn785540view2",
+        "turn624561view1",
+        "turn822555view1",
+        "turn887672view3",
+        "turn981092view2"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-EVENTS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/ledger/claim-events.json",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "c36311ec63d88e8c935f2575ed644d84bb8a0495721db9d831f99c8eb6da6ab0"
+      },
+      "registered_bytes": 31426,
+      "displayed_line_count": 690,
+      "read_scope": "旧冻结/下载事件与科学事件相关段，322–689；保留前序事件",
+      "visible_tool_refs": [
+        "turn691749view0",
+        "turn606576view2",
+        "turn740215view2",
+        "turn346218view2",
+        "turn745122view0",
+        "turn175540view0",
+        "turn175540view1",
+        "turn175540view2",
+        "turn175540view3"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-EXECUTION",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/ledger/proposal-execution.json",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "6309dd05e2e310b9aa01b3c9962d888e44b266fd669a31a0e914dbf63975f52d"
+      },
+      "registered_bytes": 90386,
+      "displayed_line_count": 2176,
+      "read_scope": "头部及ranking/width定向检索；计划不等于执行，最新状态以当前比较和派发48为准",
+      "visible_tool_refs": [
+        "turn691749view1",
+        "turn853302view1",
+        "turn859975view5"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-HISTORY",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/ledger/history-index.json",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "07c434accd9fff2775e578d2b245780632c2e44376b5bac99ca62b9c5b1bb89c"
+      },
+      "registered_bytes": 21198,
+      "displayed_line_count": 489,
+      "read_scope": "导航头部及分支关系，不将索引等同全部原件",
+      "visible_tool_refs": [
+        "turn329786view3"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-SOURCEMAP",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/SOURCE_MAP.json",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "71fcea28c4de23d4ee56b6d172397ba35bf6aa753174b1099cd40f1d15abdf85"
+      },
+      "registered_bytes": 875094,
+      "displayed_line_count": 27479,
+      "read_scope": "仅定向ref查找：群入口、Monroe/TabICL收据、固定盲群；未递归全部对象",
+      "visible_tool_refs": [
+        "turn646371view0",
+        "turn910362view0",
+        "turn910362view1",
+        "turn910362view2",
+        "turn910362view3",
+        "turn910362view4",
+        "turn910362view5",
+        "turn910362view6"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "多项packet_path和inherited_fixed_url均null，说明当前公开包只有引用，不能称原件不存在。",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-AMES",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/current/comparisons/00-ames-four-seed-comparisons.json",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "d1459dd13b62078868207e668ec4f8f860c87980cfc4977872e8395e9a0b392b"
+      },
+      "registered_bytes": 34862,
+      "displayed_line_count": 924,
+      "read_scope": "分数头部、共同环境/配置和末尾解释",
+      "visible_tool_refs": [
+        "turn596242view0",
+        "turn476275view1",
+        "turn624561view2"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-MMSOL",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/current/comparisons/01-four-seed-comparisons.json",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "26985c55cbc0acab4afd83a7b8b06ea91f64cebc0315d052b670a13fb946d5c4"
+      },
+      "registered_bytes": 58185,
+      "displayed_line_count": 1521,
+      "read_scope": "PPBR/Sol配对、源run定位、配置和部分原生早停",
+      "visible_tool_refs": [
+        "turn596242view1",
+        "turn476275view3",
+        "turn853302view2",
+        "turn624561view0"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-MMCYP",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/current/comparisons/02-four-seed-comparisons.json",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "5eb31d15de9d720065897d1d89960c071df765a5f18a15e39d4f4d621df5084b"
+      },
+      "registered_bytes": 83372,
+      "displayed_line_count": 2175,
+      "read_scope": "microsome/CYP配对结论、配置、部分stop原文",
+      "visible_tool_refs": [
+        "turn596242view2",
+        "turn476275view4"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-FACTORIAL",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/current/comparisons/03-factorial32-comparisons.json",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "8018e301fe9bfcdf63c33a37ef9d65323887e4dfe61b289060749f483bc0578c"
+      },
+      "registered_bytes": 110459,
+      "displayed_line_count": 2922,
+      "read_scope": "32槽位中12新增/20复用；Caco对照、TabM真实配置/参数量/成员loss形状、50epoch记录",
+      "visible_tool_refs": [
+        "turn596242view3",
+        "turn199724view3",
+        "turn853302view3",
+        "turn111224view5",
+        "turn798988view1"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-CONF54",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/current/comparisons/04-confirmation54-comparisons.json",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "3c5e70e0865437a821a38a85ef3adea072c67e0cedefc455a798b4d809ee81df"
+      },
+      "registered_bytes": 214307,
+      "displayed_line_count": 5723,
+      "read_scope": "CYP3A4低lr、HIA、CYP2D6substrate、VDss/half等相关原记录与对照；未逐字全5723行",
+      "visible_tool_refs": [
+        "turn606576view0",
+        "turn346218view3",
+        "turn111224view4"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-OPT72",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/current/comparisons/05-optimization72-comparisons.json",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "15a4bbe7d964dbb5c7938f9d43f49c09b424f312e70ee99c54562844804c8b23"
+      },
+      "registered_bytes": 276588,
+      "displayed_line_count": 7176,
+      "read_scope": "头部DILI真实正反例、消费字段；全组方向引用对应已验更新，不声称重新遍历72评分",
+      "visible_tool_refs": [
+        "turn606576view1"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-48",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/current/dispatched-stress48.json",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "6f9b56824fdb388ee4c49ad0b3fc82d20b78f1b02eae8041534ede02f333c2b3"
+      },
+      "registered_bytes": 104843,
+      "displayed_line_count": 3044,
+      "read_scope": "12配方、task/representation/scheme/seed字段、首尾配置及partition_rule；48已派未返回",
+      "visible_tool_refs": [
+        "turn646371view1",
+        "turn457195view0",
+        "turn457195view2",
+        "turn476275view6",
+        "turn785540view3"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-UAMES",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/ames6_update.md",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "28364eaa284ca3224e7f5646303db023781cb5334a50c90de1b3da8fc7c0477f"
+      },
+      "registered_bytes": 1248,
+      "displayed_line_count": 10,
+      "read_scope": "全文；作为主控/Astra已验总结消费，不冒充本轮重新评分",
+      "visible_tool_refs": [
+        "turn336920view2"
+      ],
+      "reading_kind": "controller_accepted_update_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-UMMSOL",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/minimol12_confirmation_update.md",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "c900aadab96e35942d4e64d3200b0c8c09552df48b0ed32d90f7c793b33da360"
+      },
+      "registered_bytes": 1793,
+      "displayed_line_count": 12,
+      "read_scope": "全文；作为主控/Astra已验总结消费，不冒充本轮重新评分",
+      "visible_tool_refs": [
+        "turn336920view1"
+      ],
+      "reading_kind": "controller_accepted_update_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-U14",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/confirm14_update.md",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "7fdb8162a1798f77b5f49b0bf252d14a316968e54443698310a22f048ca0ed01"
+      },
+      "registered_bytes": 1828,
+      "displayed_line_count": 11,
+      "read_scope": "全文；作为主控/Astra已验总结消费，不冒充本轮重新评分",
+      "visible_tool_refs": [
+        "turn336920view3"
+      ],
+      "reading_kind": "controller_accepted_update_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-U4",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/confirmation4seed_update.md",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "2d4498d44c8a72e26e6284ef1926c56282be8816b9b388ec236fd7de101302f0"
+      },
+      "registered_bytes": 3205,
+      "displayed_line_count": 14,
+      "read_scope": "全文；作为主控/Astra已验总结消费，不冒充本轮重新评分",
+      "visible_tool_refs": [
+        "turn336920view0"
+      ],
+      "reading_kind": "controller_accepted_update_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-U140",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/heads_losses140_update.md",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "84ce5224b4134c3bc8ba0a282e7fdb0f0175685cce883579eec80caaac9b8c0c"
+      },
+      "registered_bytes": 3054,
+      "displayed_line_count": 10,
+      "read_scope": "全文；作为主控/Astra已验总结消费，不冒充本轮重新评分",
+      "visible_tool_refs": [
+        "turn672456view0"
+      ],
+      "reading_kind": "controller_accepted_update_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-U54",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/confirmation54_update.md",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "aa44efcec58e83c7e1c4427a421867a52b2c3ab27046e8741bbbb3f03b9fb2d6"
+      },
+      "registered_bytes": 5517,
+      "displayed_line_count": 42,
+      "read_scope": "全文；作为主控/Astra已验总结消费，不冒充本轮重新评分",
+      "visible_tool_refs": [
+        "turn672456view1"
+      ],
+      "reading_kind": "controller_accepted_update_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-U72",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/optimization72_update.md",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "035c5deb51bbf7e89624538fdda6224271ebdf099a637e3cc5c42feefebc8503"
+      },
+      "registered_bytes": 5196,
+      "displayed_line_count": 34,
+      "read_scope": "全文；作为主控/Astra已验总结消费，不冒充本轮重新评分",
+      "visible_tool_refs": [
+        "turn672456view2"
+      ],
+      "reading_kind": "controller_accepted_update_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-GROUP20",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/group20_stress_update.md",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "fd8f751d5ab3ff9b5eede74894063e9e43034b1b19a44c3853d1a61fc81fa57c"
+      },
+      "registered_bytes": 2935,
+      "displayed_line_count": 25,
+      "read_scope": "全文；作为主控/Astra已验总结消费，不冒充本轮重新评分",
+      "visible_tool_refs": [
+        "turn672456view3"
+      ],
+      "reading_kind": "controller_accepted_update_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-MORGAN",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/morgan16_update.md",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "d623f05acfde53aa0c7c823188058a0a8722ccb4dbb432f7f695b3e7d9086195"
+      },
+      "registered_bytes": 2968,
+      "displayed_line_count": 22,
+      "read_scope": "全文；作为主控/Astra已验总结消费，不冒充本轮重新评分",
+      "visible_tool_refs": [
+        "turn299800view2"
+      ],
+      "reading_kind": "controller_accepted_update_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-UTABM",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/tabm32_complete_update.md",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "ebc1aa562898bfead2ac65a660170096406411fbfb0a37645feee263a414ef42"
+      },
+      "registered_bytes": 1543,
+      "displayed_line_count": 12,
+      "read_scope": "全文；作为主控/Astra已验总结消费，不冒充本轮重新评分",
+      "visible_tool_refs": [
+        "turn299800view3"
+      ],
+      "reading_kind": "controller_accepted_update_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-NEW",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/new_methods_confirmed_update.md",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "27b09cd69681df856af9b2ff3582b9237a0bc66e53305cd4b2bf3c71afdda91d"
+      },
+      "registered_bytes": 2691,
+      "displayed_line_count": 21,
+      "read_scope": "全文；作为主控/Astra已验总结消费，不冒充本轮重新评分",
+      "visible_tool_refs": [
+        "turn691749view3"
+      ],
+      "reading_kind": "controller_accepted_update_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-ENS59",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/ensemble59_update.md",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "96f99ac9a3c8ffa8fe43741a3284b3eeec567e0c23e7a45023511b7bdf31a7d8"
+      },
+      "registered_bytes": 3086,
+      "displayed_line_count": 21,
+      "read_scope": "全文；作为主控/Astra已验总结消费，不冒充本轮重新评分",
+      "visible_tool_refs": [
+        "turn199724view0"
+      ],
+      "reading_kind": "controller_accepted_update_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-RANK4",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/followup_halflife_ranking4.json",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "3fe1b53da7f057874862444c81589ad81b77d0c5e4fe5ff227f7f2792e992ccb"
+      },
+      "registered_bytes": 12594,
+      "displayed_line_count": 300,
+      "read_scope": "全文：四具体计划、loss、既有控制及未派状态",
+      "visible_tool_refs": [
+        "turn481331view1"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-ASTRAOLD",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/analysis.md",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "bbd79f7f160304cc359acbeb196af5ce2141f6da0257c64b185a666110c6d14a"
+      },
+      "registered_bytes": 21513,
+      "displayed_line_count": 100,
+      "read_scope": "问题相关历史假设、全22表及旧成本；明确旧截止不盖过新更新",
+      "visible_tool_refs": [
+        "turn299800view1",
+        "turn859975view0"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-PROOLD",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/previous-pro/analysis.md",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "648ce03ef6a1cc03423b78ac098e2b6277dbbf8eba9938091ee18ada4e49d0fb"
+      },
+      "registered_bytes": 63149,
+      "displayed_line_count": 344,
+      "read_scope": "0–89，旧Valid分区n/类别和旧方案历史；旧Caco损失误述由A004纠正",
+      "visible_tool_refs": [
+        "turn299800view0",
+        "turn745122view2"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-RULES",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/history/archive-20261101/originals/S-a95c8473d1769a29.json",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "f8a99bd337ed165f2f508e9303d2354594bb5bdec213797d5c582eeacfa06a55"
+      },
+      "registered_bytes": null,
+      "displayed_line_count": 142,
+      "read_scope": "全文公开规则与旧U02未确认状态",
+      "visible_tool_refs": [
+        "turn782873view2"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-RULEMAP",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/092d21ddaeb44f305a0628bef15fb6232ea8eb4b/experiments/agent-led-six-20261102/prior-history/prior-history/evidence/H-e275f0ef9a4955741956.md.txt",
+      "source_version": {
+        "commit": "092d21ddaeb44f305a0628bef15fb6232ea8eb4b",
+        "sha256": "fa5a8362b3593146787f1c137cb1105f7799dabef9245f92ccb335aeaf326061"
+      },
+      "registered_bytes": null,
+      "displayed_line_count": 26,
+      "read_scope": "全文：后续用户冻结确认与本地控制",
+      "visible_tool_refs": [
+        "turn782873view3"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "X-TABICL-README",
+      "uri": "https://raw.githubusercontent.com/soda-inria/tabicl/0dbff3ec8fc68c123c87af77b0ea8b25cd2d23f3/README.md",
+      "source_version": {
+        "commit": "0dbff3ec8fc68c123c87af77b0ea8b25cd2d23f3",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_line_count": 396,
+      "read_scope": "参数、v1/v2、冻结ICL与finetune分离",
+      "visible_tool_refs": [
+        "turn894653view1"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "X-TABICL-LICENSE",
+      "uri": "https://raw.githubusercontent.com/soda-inria/tabicl/0dbff3ec8fc68c123c87af77b0ea8b25cd2d23f3/LICENSE",
+      "source_version": {
+        "commit": "0dbff3ec8fc68c123c87af77b0ea8b25cd2d23f3",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_line_count": 210,
+      "read_scope": "BSD3主代码、forecast衍生Apache2",
+      "visible_tool_refs": [
+        "turn894653view0"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "X-TABICL-REG",
+      "uri": "https://raw.githubusercontent.com/soda-inria/tabicl/0dbff3ec8fc68c123c87af77b0ea8b25cd2d23f3/src/tabicl/_sklearn/regressor.py",
+      "source_version": {
+        "commit": "0dbff3ec8fc68c123c87af77b0ea8b25cd2d23f3",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_line_count": 693,
+      "read_scope": "参数0–139、fit和predict路径、mean/median输出及一次逆变换；215–235构造签名与562–675预测输出再次核对",
+      "visible_tool_refs": [
+        "turn782873view0",
+        "turn862191view1",
+        "turn862191view2",
+        "turn981092view1",
+        "turn805502view1",
+        "turn818042view0"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "X-TABICL-CLS",
+      "uri": "https://raw.githubusercontent.com/soda-inria/tabicl/0dbff3ec8fc68c123c87af77b0ea8b25cd2d23f3/src/tabicl/_sklearn/classifier.py",
+      "source_version": {
+        "commit": "0dbff3ec8fc68c123c87af77b0ea8b25cd2d23f3",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_line_count": 726,
+      "read_scope": "参数0–144、训练context和输出路径；248–272构造签名与枚举再次核对",
+      "visible_tool_refs": [
+        "turn782873view1",
+        "turn862191view3",
+        "turn981092view0",
+        "turn805502view0",
+        "turn805502view2"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "X-TABICL-PAPER",
+      "uri": "https://arxiv.org/html/2602.11139v1",
+      "source_version": {
+        "arxiv": "2602.11139v1"
+      },
+      "registered_bytes": null,
+      "displayed_line_count": 1735,
+      "read_scope": "摘要、方法/适用范围、distribution shift限制；不是全文逐段精读",
+      "visible_tool_refs": [
+        "turn520382view0",
+        "turn634111view2"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "X-TABICL-CKPT-C",
+      "uri": "https://huggingface.co/jingang/TabICL/blob/4dcd344ece2c00be9e831fdd35bed57b5ad83e19/tabicl-classifier-v2-20260212.ckpt",
+      "source_version": {
+        "commit": "4dcd344ece2c00be9e831fdd35bed57b5ad83e19",
+        "sha256": "bdc7dbd5e4ff21f8f0456fcf90c6b7cdf72dbea960f2d05b19bec19f9b3d4ed0"
+      },
+      "registered_bytes": null,
+      "displayed_line_count": null,
+      "read_scope": "模型卡及checkpoint元数据，不读取二进制",
+      "visible_tool_refs": [
+        "turn694894view2",
+        "turn273673view0",
+        "turn273673view1"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "X-TABICL-CKPT-R",
+      "uri": "https://huggingface.co/jingang/TabICL/blob/4dcd344ece2c00be9e831fdd35bed57b5ad83e19/tabicl-regressor-v2-20260212.ckpt",
+      "source_version": {
+        "commit": "4dcd344ece2c00be9e831fdd35bed57b5ad83e19",
+        "sha256": "0db9cb538f114e79026bf08f45f41ad8dd7ad2de2aaca9a5ca8cd3bd9748ae7a"
+      },
+      "registered_bytes": null,
+      "displayed_line_count": null,
+      "read_scope": "模型卡及checkpoint元数据，不读取二进制",
+      "visible_tool_refs": [
+        "turn273673view2"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "X-MONROE-PAPER",
+      "uri": "https://arxiv.org/html/2608.18982v1",
+      "source_version": {
+        "arxiv": "2608.18982v1"
+      },
+      "registered_bytes": null,
+      "displayed_line_count": 719,
+      "read_scope": "摘要、结构、28Polaris结果与PT/FT/Native区别",
+      "visible_tool_refs": [
+        "turn520382view1",
+        "turn634111view1"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "X-MONROE-README",
+      "uri": "https://raw.githubusercontent.com/blazejba/Monroe/main/README.md",
+      "source_version": {
+        "commit": null,
+        "sha256": null,
+        "requested_ref": "main"
+      },
+      "registered_bytes": null,
+      "displayed_line_count": null,
+      "read_scope": "README结构、720表示、TabPFNv3另需许可",
+      "visible_tool_refs": [
+        "turn481029view2",
+        "turn540807view2",
+        "turn540807view3"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "完整code commit解析尝试未成功，不能把main称为immutable。权重OID可另固定；仍blocked_assets。",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "X-MONROE-LICENSE",
+      "uri": "https://raw.githubusercontent.com/blazejba/Monroe/main/LICENSE",
+      "source_version": {
+        "commit": null,
+        "sha256": null,
+        "requested_ref": "main"
+      },
+      "registered_bytes": null,
+      "displayed_line_count": 19,
+      "read_scope": "MIT原文",
+      "visible_tool_refs": [
+        "turn764836view1"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "完整code commit解析尝试未成功，不能把main称为immutable。权重OID可另固定；仍blocked_assets。",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "X-MONROE-NOTICE",
+      "uri": "https://raw.githubusercontent.com/blazejba/Monroe/main/NOTICE",
+      "source_version": {
+        "commit": null,
+        "sha256": null,
+        "requested_ref": "main"
+      },
+      "registered_bytes": null,
+      "displayed_line_count": 30,
+      "read_scope": "GRIT/LibMTL第三方MIT声明",
+      "visible_tool_refs": [
+        "turn764836view2"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "完整code commit解析尝试未成功，不能把main称为immutable。权重OID可另固定；仍blocked_assets。",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "X-MONROE-CONFIG",
+      "uri": "https://raw.githubusercontent.com/blazejba/Monroe/main/checkpoint/config.json",
+      "source_version": {
+        "commit": null,
+        "sha256": null,
+        "requested_ref": "main"
+      },
+      "registered_bytes": null,
+      "displayed_line_count": 49,
+      "read_scope": "全部encoder参数",
+      "visible_tool_refs": [
+        "turn894653view2"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "完整code commit解析尝试未成功，不能把main称为immutable。权重OID可另固定；仍blocked_assets。",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "X-MONROE-POINTER",
+      "uri": "https://raw.githubusercontent.com/blazejba/Monroe/main/checkpoint/weights.pt",
+      "source_version": {
+        "commit": null,
+        "sha256": null,
+        "requested_ref": "main"
+      },
+      "registered_bytes": null,
+      "displayed_line_count": 3,
+      "read_scope": "仅Git LFS pointer，非模型权重payload",
+      "visible_tool_refs": [
+        "turn894653view3"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "完整code commit解析尝试未成功，不能把main称为immutable。权重OID可另固定；仍blocked_assets。",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "X-MONROE-LOADER",
+      "uri": "https://raw.githubusercontent.com/blazejba/Monroe/main/monroe/model/ckpt.py",
+      "source_version": {
+        "commit": null,
+        "sha256": null,
+        "requested_ref": "main"
+      },
+      "registered_bytes": null,
+      "displayed_line_count": 190,
+      "read_scope": "全loader，torch.load与strict=False风险",
+      "visible_tool_refs": [
+        "turn764836view0"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "完整code commit解析尝试未成功，不能把main称为immutable。权重OID可另固定；仍blocked_assets。",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "X-MONROE-INFERENCE",
+      "uri": "https://raw.githubusercontent.com/blazejba/Monroe/main/run_inference.py",
+      "source_version": {
+        "commit": null,
+        "sha256": null,
+        "requested_ref": "main"
+      },
+      "registered_bytes": null,
+      "displayed_line_count": 104,
+      "read_scope": "输入转换、构象fallback、默认Polaris样例不得运行",
+      "visible_tool_refs": [
+        "turn694894view1"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "完整code commit解析尝试未成功，不能把main称为immutable。权重OID可另固定；仍blocked_assets。",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "X-MF-PAPER",
+      "uri": "https://arxiv.org/abs/2106.09553",
+      "source_version": {
+        "arxiv": "2106.09553v3"
+      },
+      "registered_bytes": null,
+      "displayed_line_count": 185,
+      "read_scope": "原论文摘要与版本信息",
+      "visible_tool_refs": [
+        "turn520382view3"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "X-MF-CARD",
+      "uri": "https://huggingface.co/ibm-research/MoLFormer-XL-both-10pct",
+      "source_version": {
+        "commit": "361063d0ad524ef77cf39b08469f6be770dc550f",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_line_count": 228,
+      "read_scope": "模型卡：10pct非fullXL，Apache2，非isomeric预处理、长分子局限、v4/v5兼容提示",
+      "visible_tool_refs": [
+        "turn694894view3"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "X-MF-CONFIG",
+      "uri": "https://huggingface.co/ibm-research/MoLFormer-XL-both-10pct/blob/361063d0ad524ef77cf39b08469f6be770dc550f/config.json",
+      "source_version": {
+        "commit": "361063d0ad524ef77cf39b08469f6be770dc550f",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_line_count": 152,
+      "read_scope": "118–150字段，deterministic_eval默认false、768、12层、202位置",
+      "visible_tool_refs": [
+        "turn862191view0",
+        "turn785540view1"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "X-MF-WEIGHT",
+      "uri": "https://huggingface.co/ibm-research/MoLFormer-XL-both-10pct/blob/361063d0ad524ef77cf39b08469f6be770dc550f/model.safetensors",
+      "source_version": {
+        "commit": "361063d0ad524ef77cf39b08469f6be770dc550f",
+        "sha256": "0795977fe7192c4acdaf052f0e8464af57bc4bb59211271c5e61aaba2637b9c6"
+      },
+      "registered_bytes": null,
+      "displayed_line_count": 242,
+      "read_scope": "只读取metadata SHA与187MB，不下载权重",
+      "visible_tool_refs": [
+        "turn111224view2",
+        "turn822866view1"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "X-MF-CODE",
+      "uri": "https://huggingface.co/ibm-research/MoLFormer-XL-both-10pct/blob/main/modeling_molformer.py",
+      "source_version": {
+        "commit": null,
+        "requested_ref": "main",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_line_count": 992,
+      "read_scope": "首段可读；deterministic_eval定向再次取回429，buffer行为未完整闭环",
+      "visible_tool_refs": [
+        "turn273673view5",
+        "turn634111view3",
+        "turn862191view4"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "X-TABM-CODE",
+      "uri": "https://raw.githubusercontent.com/yandex-research/tabm/28e47ae301c92ec37787dde1ce923a0793f405b4/tabm.py",
+      "source_version": {
+        "commit": "28e47ae301c92ec37787dde1ce923a0793f405b4",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_line_count": 1674,
+      "read_scope": "LinearBatchEnsemble、MLPBackbone、TabM.make枚举/初始化/k验证等定向源码；不实例化模型",
+      "visible_tool_refs": [
+        "turn764836view3",
+        "turn931960view1",
+        "turn634111view4"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "X-TABM-PAPER",
+      "uri": "https://arxiv.org/html/2410.24210v3",
+      "source_version": {
+        "arxiv": "2410.24210v3"
+      },
+      "registered_bytes": null,
+      "displayed_line_count": 2048,
+      "read_scope": "摘要与参数高效集成方法，不把文献收益外推ADMET",
+      "visible_tool_refs": [
+        "turn520382view2"
+      ],
+      "reading_kind": "external_primary_or_inherited_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    },
+    {
+      "source_id": "E-OLDGUIDE",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/next_batch_guide.md",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": "f05834bf11417392e632e6dc09955e79869d3f6929390b75a65201755fb2a32d"
+      },
+      "registered_bytes": 6621,
+      "displayed_line_count": 36,
+      "read_scope": "全文，核对真实pos_weight、Morgan、MiniMol、原始分组算法及参数枚举",
+      "visible_tool_refs": [
+        "turn255978view0"
+      ],
+      "reading_kind": "packet_original",
+      "notes": "",
+      "byte_hash_independently_computed": false
+    }
+  ],
+  "read_checks": [
+    {
+      "check_id": "R01",
+      "kind": "inherited_acceptance",
+      "method": "从当前入口/manifest/accepted updates继承586/565/556+20/95与10未知；未重新评分或重新遍历全原件",
+      "sources": [
+        "E-START",
+        "E-MANIFEST",
+        "E-CONTRACT"
+      ],
+      "result": "counts inherited; 48dispatched no results"
+    },
+    {
+      "check_id": "R02",
+      "kind": "source_cross_check",
+      "method": "配对原文与update相互核对：AMES44/45、PPBR44/45/46、CYP/micro、Caco；检查任务/seed/metric方向，不加载真值",
+      "sources": [
+        "E-AMES",
+        "E-MMSOL",
+        "E-MMCYP",
+        "E-FACTORIAL",
+        "E-UAMES",
+        "E-UMMSOL",
+        "E-U14"
+      ],
+      "result": "matched positive and negative evidence retained; no repeated metric computations"
+    },
+    {
+      "check_id": "R03",
+      "kind": "new_algebra",
+      "method": "头参数逐层展开独立于总公式：(D+2)h+1；TabM共享W+成员r/s/bias+per-member output；D512k32得950304对照实际记录",
+      "sources": [
+        "X-TABM-CODE",
+        "E-FACTORIAL"
+      ],
+      "result": "derived_checks.json; no torch/model instantiated"
+    },
+    {
+      "check_id": "R04",
+      "kind": "new_arithmetic",
+      "method": "half F001 fourseed fixedmean0.332458569 - twoseed fixedmean0.377460914 = -0.045002345",
+      "sources": [
+        "E-ENS59"
+      ],
+      "result": "counterexample to universal more-member improvement; not new ensemble inference"
+    },
+    {
+      "check_id": "R05",
+      "kind": "matrix_dedup",
+      "method": "按asset/version/task/split/preprocessing/complete scientific config/loss/seed展开，74个名义唯一身份；48排除表48身份不交叉；原ranking4只采用一次；PPBR128未列为新fit",
+      "sources": [
+        "E-48",
+        "E-RANK4",
+        "E-RUNS",
+        "E-EXECUTION"
+      ],
+      "result": "machine validation of own matrix plus targeted historical identity checks; not claimed full586 machine re-audit"
+    },
+    {
+      "check_id": "R06",
+      "kind": "state_conflict_resolution",
+      "method": "比较旧嵌套awaiting与current_resolution/group20，恢复已评分native stress事实；Mini旧404状态与当前实际encoding/scoring分开",
+      "sources": [
+        "E-ISSUES",
+        "E-GROUP20",
+        "E-ASSETS",
+        "E-NEW"
+      ],
+      "result": "latest scoped evidence wins, previous failures remain; append claim_events"
+    },
+    {
+      "check_id": "R07",
+      "kind": "primary_external_sources",
+      "method": "读取官方TabICL模型文件metadata/代码fit,predict/license；Monroeconfig/loader/LFSpointer；MoLFormerconfig/card/weightmetadata；不下载或执行模型",
+      "sources": [
+        "X-TABICL-REG",
+        "X-TABICL-CLS",
+        "X-MONROE-LOADER",
+        "X-MONROE-POINTER",
+        "X-MF-CONFIG",
+        "X-MF-WEIGHT"
+      ],
+      "result": "fixed metadata versus missing payload/runtime separated, Monroe code commit unresolved"
+    },
+    {
+      "check_id": "R08",
+      "kind": "cost_derivation",
+      "method": "模块计数8+6+4+4+18+8+4+8+4+8+2=74，nominal gradient50epoch equivalents34/96/106；5–60s仅敏感性假设，不相加角色重叠",
+      "sources": [
+        "E-U14",
+        "E-UMMSOL",
+        "E-U72",
+        "E-ASTRAOLD"
+      ],
+      "result": "budget_scenarios.json; not claimed precise measured GPU hours"
+    },
+    {
+      "check_id": "R09",
+      "kind": "privacy_and_alignment",
+      "method": "本轮仅聚合分数、无标签诊断/源代码/索引；行序和原输入身份继承已有回执，未读逐行ValidY/残差；新接口只设计针对性fixture",
+      "sources": [
+        "E-RULES",
+        "E-RULEMAP",
+        "E-ISSUES"
+      ],
+      "result": "no rowwise truth/residual scoring; no new alignment replay claimed"
+    },
+    {
+      "check_id": "R10",
+      "kind": "historical_event_ID_check",
+      "method": "回查A012、A014、A015、A008、A009、A013原event_id和命题；A009精确ID为A009-GROUP20-STRESS，不制造后缀",
+      "sources": [
+        "E-EVENTS"
+      ],
+      "result": "append only predecessor references now exact; event time null when unknown"
+    },
+    {
+      "check_id": "R11",
+      "kind": "targeted_interface_and_algebra_check",
+      "method": "Re-read TabICL classifier/regressor constructor signatures and predict output_type; separate wrapper metadata from official kwargs. AR001-08 refers to cache bytes and is not a finite-window historical defect. Independently expand AdamW constant-loss scaling algebra.",
+      "sources": [
+        "X-TABICL-REG",
+        "X-TABICL-CLS",
+        "E-ISSUES"
+      ],
+      "result": "four TabICL API bindings explicit; history ID scopes corrected; scale negative-control limitation retained"
+    }
+  ],
+  "inherited_evidence": [
+    {
+      "source_id": "E-START",
+      "scope": "unchanged accepted aggregates, freeze/row identity or update within declared scope; not re-performed here"
+    },
+    {
+      "source_id": "E-UAMES",
+      "scope": "unchanged accepted aggregates, freeze/row identity or update within declared scope; not re-performed here"
+    },
+    {
+      "source_id": "E-UMMSOL",
+      "scope": "unchanged accepted aggregates, freeze/row identity or update within declared scope; not re-performed here"
+    },
+    {
+      "source_id": "E-U14",
+      "scope": "unchanged accepted aggregates, freeze/row identity or update within declared scope; not re-performed here"
+    },
+    {
+      "source_id": "E-U4",
+      "scope": "unchanged accepted aggregates, freeze/row identity or update within declared scope; not re-performed here"
+    },
+    {
+      "source_id": "E-U140",
+      "scope": "unchanged accepted aggregates, freeze/row identity or update within declared scope; not re-performed here"
+    },
+    {
+      "source_id": "E-U54",
+      "scope": "unchanged accepted aggregates, freeze/row identity or update within declared scope; not re-performed here"
+    },
+    {
+      "source_id": "E-U72",
+      "scope": "unchanged accepted aggregates, freeze/row identity or update within declared scope; not re-performed here"
+    },
+    {
+      "source_id": "E-GROUP20",
+      "scope": "unchanged accepted aggregates, freeze/row identity or update within declared scope; not re-performed here"
+    },
+    {
+      "source_id": "E-ENS59",
+      "scope": "unchanged accepted aggregates, freeze/row identity or update within declared scope; not re-performed here"
+    },
+    {
+      "source_id": "E-ASSETS",
+      "scope": "unchanged accepted aggregates, freeze/row identity or update within declared scope; not re-performed here"
+    }
+  ],
+  "unread_and_missing": [
+    {
+      "gap_id": "G01",
+      "category": "requires_future_experiment",
+      "question_ids": [
+        "Q1",
+        "Q2",
+        "Q4"
+      ],
+      "evidence_refs": [
+        "E-AMES",
+        "E-MMSOL",
+        "E-MMCYP",
+        "E-FACTORIAL",
+        "E-48"
+      ],
+      "what": "收益机制、AMES selector/分布作用、PPBR反例与TabM/维度/窗口的因果分解",
+      "attempt": "现有paired原文、stop记录、负结果及48真实配置已读；未训练",
+      "impact": "不影响保留局部配方证据；阻断唯一因果解释和全22默认",
+      "next": "M1–M8明确判别矩阵；48结果由主控归并，不能本轮猜测"
+    },
+    {
+      "gap_id": "G02",
+      "category": "not_returned_at_cutoff",
+      "question_ids": [
+        "Q1",
+        "Q2",
+        "Q6"
+      ],
+      "evidence_refs": [
+        "E-48",
+        "E-START"
+      ],
+      "what": "已派48的科学结果",
+      "attempt": "已读完整配方/分组字段与派发状态；截至快照无结果，不轮询外部新状态",
+      "impact": "结构stress稳定性仍未知；不影响正交新矩阵准备",
+      "next": "主控读取真实返回，与本轮逐身份去重归并"
+    },
+    {
+      "gap_id": "G03",
+      "category": "recorded_reference_not_published_as_readable_blob",
+      "question_ids": [
+        "Q5"
+      ],
+      "evidence_refs": [
+        "E-ISSUES",
+        "E-SOURCEMAP"
+      ],
+      "what": "固定Valid群的完整成员对象与部分followup原件",
+      "attempt": "沿SOURCE_MAP实际查ref-cbf486945e93dc71、ref-9f5530846948b69b、ref-420780b07d3c4f4b、ref-84525d8356765e3c等；多项packet_path和inherited_fixed_url为null；未拼接URI或尝试他人本机路径",
+      "impact": "不能独立描述群的具体化学组成或计算盲预测统计；完整群入口保留；不影响现有整任务分数",
+      "next": "需要时主控提供合规无标签群描述/可读既有对象映射；不是请求Validtruth"
+    },
+    {
+      "gap_id": "G04",
+      "category": "not_recorded_in_admitted_evidence_requires_authorized_aggregate",
+      "question_ids": [
+        "Q5"
+      ],
+      "evidence_refs": [
+        "E-ISSUES",
+        "E-GROUP20"
+      ],
+      "what": "高低分歧Valid群的真实误差/模型修复证据",
+      "attempt": "读issue current_resolution，明确候选risk而非error；group20已评分单列不混淆",
+      "impact": "不能称该群错误或已修复；整体收益不代替群结论",
+      "next": "主控在私有区对固定群生成授权安全成对聚合，支持不足就抑制；不请求逐行Y/残差"
+    },
+    {
+      "gap_id": "G05",
+      "category": "external_source_version_unresolved",
+      "question_ids": [
+        "Q3"
+      ],
+      "evidence_refs": [
+        "X-MONROE-README",
+        "X-MONROE-CONFIG",
+        "X-MONROE-POINTER",
+        "X-MONROE-LOADER"
+      ],
+      "what": "Monroe完整不可变code commit、权重payload和本地runtime",
+      "attempt": "官方main README/config/LICENSE/NOTICE/LFS pointer/loader原文已读；GitHub commit/history/API解析尝试未得到可用固定commit；未下载/加载payload",
+      "impact": "只阻断Monroe M10，不能把main当immutable；720配置/weightOID可核但不足ready",
+      "next": "主控准备时固定源码commit、校验payload和严格加载key清单、全行覆盖/冻结/许可"
+    },
+    {
+      "gap_id": "G06",
+      "category": "metadata_verified_runtime_not_performed",
+      "question_ids": [
+        "Q3"
+      ],
+      "evidence_refs": [
+        "X-TABICL-CKPT-C",
+        "X-TABICL-CKPT-R",
+        "X-TABICL-REG",
+        "X-TABICL-CLS",
+        "X-MF-WEIGHT",
+        "X-MF-CONFIG",
+        "X-MF-CODE"
+      ],
+      "what": "TabICLv2与MoLFormer本地资产/许可准入/输入覆盖/冻结接口",
+      "attempt": "固定版本model metadata/code/config已读；MoLFormer rawconfig取回失败后blob已成功；TabICL错误的src/tabicl/sklearn路径404后按官方检索找到_sklearn并成功读取；这些不是原件缺失",
+      "impact": "M9和对应M10 blocked_assets；现有CheM/Mini分支不受阻",
+      "next": "仅准备阶段依授权绑定payload/runtime，toy/no-update与query批次不改fit状态fixture；禁止本研究执行"
+    },
+    {
+      "gap_id": "G07",
+      "category": "historical_unknown_not_repaired",
+      "question_ids": [
+        "Q1",
+        "Q6"
+      ],
+      "evidence_refs": [
+        "E-START",
+        "E-ISSUES",
+        "E-RUNS"
+      ],
+      "what": "10历史未评分，BBB旧H0s46缺after，官方AP/聚合公式未确认",
+      "attempt": "继承账本与规则原文；不从新分数回填旧after/旧分数，不重复已验全量审计",
+      "impact": "相应旧run限用；约46不是隐藏榜；其他完整配方可继续比较",
+      "next": "10旧项仍unknown；BBB用真实F001有效控制；官方精确实现只在需要官方映射时独立补证"
+    },
+    {
+      "gap_id": "G08",
+      "category": "available_aggregate_computable_or_new_timing",
+      "question_ids": [
+        "Q6"
+      ],
+      "evidence_refs": [
+        "E-U14",
+        "E-UMMSOL",
+        "E-U72",
+        "E-ASTRAOLD"
+      ],
+      "what": "新代码/新encoder/TabICL端到端时间成本未测",
+      "attempt": "使用已记录job与角色周转时间，不相加重叠时间；本轮只计算矩阵上限与代数",
+      "impact": "不报假精确GPU小时；预算以fit/encoder对象/候选输出上限与可调整时间公式",
+      "next": "执行方未来记录准备、编码、fit、取回/评分、研究/等待，首个新接口fixture期间校准而不是为每个已知小头额外试训"
+    },
+    {
+      "gap_id": "G09",
+      "category": "not_read_not_required_for_current_conclusion",
+      "question_ids": [
+        "Q1",
+        "Q3",
+        "Q6"
+      ],
+      "evidence_refs": [
+        "E-BRANCH",
+        "E-HISTORY",
+        "E-RUNS",
+        "E-SOURCEMAP",
+        "E-ASSETS"
+      ],
+      "what": "未无差别通读586所有原产物、完整SOURCE_MAP及KPGT/SMITED/MolE全部旧原调研正文",
+      "attempt": "共同核心及问题依赖分支已读；详细范围见evidence_registry；没有把未尝试写成不可达",
+      "impact": "未核备选保持原登记的deferred/未准备状态，不纳入可运行矩阵；不影响已有方法身份去重与关键反例",
+      "next": "只有对应方向被选择才下钻所需原件，不全库重审"
+    }
+  ],
+  "limitations": [
+    "repeatedValid selection history retained",
+    "4modelseeds share same data and split; not four independent test populations",
+    "BBB oldH0s46 after missing; excluded as formal frozen control",
+    "official AP/aggregate mapping and some label units unconfirmed",
+    "cross-host/cache/software differences not erased",
+    "48 result absent at snapshot",
+    "TabICL/Monroe/MoLFormer no payload/runtime/freeze acceptance in this review",
+    "no private rowValid Y/residuals read; fixed cohort errors unknown",
+    "large indexes selectively read; not every historical raw evidence object audited"
+  ],
+  "subagents": {
+    "dispatched": 0,
+    "reason": "user prohibited Agent dispatch; cross-checks use source/code/aggregate/math, not role-play or multi-agent agreement"
+  },
+  "output_map": {
+    "analysis": "analysis.md",
+    "issues": "issues.json",
+    "guide": "next_batch_guide.md",
+    "matrix": "next_experiments.json",
+    "directions": "search_space.json",
+    "assets": "scientific_assets.json",
+    "cohorts": "cohort_register.json",
+    "task_actions": "task22_actions.json",
+    "budgets": "budget_scenarios.json",
+    "events": "claim_events.json"
+  },
+  "boundaries_observed": {
+    "training": false,
+    "model_loading": false,
+    "encoding_or_inference": false,
+    "installation": false,
+    "agent_dispatch": false,
+    "competition_submission": false,
+    "extra_publication": false,
+    "existing_quality_metric_recomputed": false,
+    "private_valid_Y_or_residual_read": false
+  },
+  "provenance_note": "Visible web reads and selectively read ranges recorded. Input/asset SHA strings are sourced metadata unless explicitly calculated for newly generated output files. Did not recalculate input manifest hash."
+}
