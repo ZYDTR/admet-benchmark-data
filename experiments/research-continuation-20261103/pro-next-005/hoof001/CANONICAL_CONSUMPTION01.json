@@ -1,0 +1,84 @@
+{
+  "at_utc": "2026-11-03T12:00:37.237192+00:00",
+  "phase": "canonical_complete_scaffold_pending",
+  "issue_id": "CB001-I-HEP-TAIL",
+  "primary_local_minus_tabicl": {
+    "metric": "unweighted_mean_of5_fold_Spearman_differences",
+    "fold_differences": [
+      0.06267675685725416,
+      0.004792353314859388,
+      -0.03068083097277824,
+      -0.07702931559433723,
+      -0.044660338945263056
+    ],
+    "delta": -0.016980275068052997,
+    "CI95": [
+      -0.05283138434486583,
+      0.01888558457593917
+    ],
+    "seed": 20261103,
+    "replicates": 2000,
+    "valid_replicates": 2000,
+    "scope": "descriptive conditional whole-group bootstrap within eachfold; historical adaptation uncorrected"
+  },
+  "newly_covered542_MAE": {
+    "n": 542,
+    "groups": 460,
+    "metric": "MAE",
+    "control": 34.68823914418801,
+    "treatment": 31.065901551817028,
+    "delta": -3.6223375923709824,
+    "replicates": 2000,
+    "seed": 20261103,
+    "CI95": [
+      -5.455498769471264,
+      -1.647342529119109
+    ],
+    "resampling": "paired whole native groups within the fixed cohort; percentile95; no independent new-data claim",
+    "valid_replicates": 2000
+  },
+  "complete_error_counts": {
+    "better": 534,
+    "worse": 314,
+    "equal": 0,
+    "material_improvement5": 434,
+    "material_harm5": 250,
+    "both_large50": 123,
+    "low_disagreement10_both_large50": 39,
+    "Tab_only_large50": 75,
+    "local_only_large50": 52,
+    "neither_large50": 598
+  },
+  "decision": "retain_current_candidate; no whole-task local replacement supported; consume frozen scaffold next",
+  "hypotheses": [
+    {
+      "claim": "MAE benefit confined to old306 selection",
+      "status": "weakened_by_matched_new542_improvement_in_canonical"
+    },
+    {
+      "claim": "local generally improves ranking over currentTabICL",
+      "status": "not_supported_canonical; point_lower_both_seed_means_lower_CI_crosses_zero"
+    },
+    {
+      "claim": "original consensus blindspot solved",
+      "status": "not_supported_canonical_old_cohort_retest"
+    },
+    {
+      "claim": "duplicate labels explain all local harms",
+      "status": "refuted_as_complete_explanation;164unique_identity_material_harms"
+    },
+    {
+      "claim": "concentration is a reliable causal failure gate",
+      "status": "unresolved; no newweight intervention"
+    }
+  ],
+  "remaining_dependency": "original Sol scaffold complete locked source index",
+  "frozen_scaffold_unchanged": true,
+  "new_experiments_dispatched": 0,
+  "artifact_sources": [
+    "packet://hoof001/CANONICAL_AGGREGATES.json",
+    "packet://hoof001/LEGACY_COHORT_AGGREGATES.json",
+    "evidence-ref:ref-def5b7b868a88f71"
+  ],
+  "report": "packet://hoof001/CANONICAL_FINDINGS.md"
+}

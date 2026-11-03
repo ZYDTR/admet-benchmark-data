@@ -1,0 +1,522 @@
+[
+  {
+    "direction_id": "D004-RANKPAIR",
+    "title": "Hep大间隔配对 vs 同数量均匀配对",
+    "issue_ids": [
+      "I004-RANK",
+      "I004-SELECTION"
+    ],
+    "supporting_evidence": "两个负例来自不同rep/scheme，值得区分pair信息与稀疏化，而非继续正例seed。",
+    "counterevidence_and_competing_explanations": "大gap也改变标签对分布/梯度，不等于真实噪声抑制证明；两seed仍有限。",
+    "parameters": {
+      "new_interface_name": "PairMaskRank004-v1 (proposed, not present runner CLI)",
+      "q_fit_definition": "median of all positive |z_i-z_j| for unordered i<j in this native fit only; even count median = mean of two central sorted gaps; no approximation; serialize q; no stress/stop Y used",
+      "batch_pair_universe": "unordered i<j among the current training batch, exclude exact equal original Y (equivalently equal zY); no replacement; canonical pair identity uses original official-train row_index",
+      "gap_arm": "select all current-batch pairs with |z_i-z_j|>=q_fit, let count be m_b; exact ties at q included",
+      "uniform_matched_arm": "select exactly m_b distinct pairs from full unequal-label batch universe, smallest SHA256 keys; m_b computed from same batch true fit labels, never from predictions",
+      "hash_key_protocol": "SHA256(UTF8(\"P004PAIR-v1|{task}|{split_id}|{model_seed}|{epoch_1based}|{batch_index_0based}|{min_row_index}|{max_row_index}\")); order by digest bytes then row-index pair; dedicated deterministic mechanism does not advance torch/numpy/dataloader RNG",
+      "pair_loss": "softplus(-sign(z_i-z_j)*(p_i-p_j)); mean over selected pairs; if m_b=0 return scalar0 with zero pair gradient",
+      "total_objective": "0.5*mean((p-zY)^2) over ALL rows in batch + 0.5*mean(selected pair losses)",
+      "q_interpretation": "experimental pair-information selection, not an assay-noise estimate or empirically optimal threshold",
+      "preregistered_no_grid": "one q quantile0.5 only; coefficient0.5 fixed; no q/lambda search; no extra seeds",
+      "logging": "fit-only q/tie count; per-epoch aggregate pair cardinality and average label-gap summaries; loss components; no rowwise Valid or rowwise residual logs",
+      "equivalence_gate": "if all eligible batches produce identical selections across arms, deterministic zero-fit fixture permits mathematical skip; do not force new runs; actual training trajectories not simulated here"
+    },
+    "valid_combinations_and_counting": "2表示×2方案×2mask×2共同seed=16gradient；H1取CheMscaffold和Minicanon=8，H2补其余8；共享16旧dense/Half控制只计一次。",
+    "stage": "H1/H2",
+    "preparation_mode": "new_code",
+    "search_strategy": "一个预设q，不做网格；H1先判选择信息vs稀疏效应，H2只有完成交互判别有价值才解锁。",
+    "stop_or_skip_rule": "无差异/均负关闭；同选择等价skip；不得改q或补seed以追正。",
+    "proposal_ids": [
+      "P004-H-chemeleon-canonical-gap",
+      "P004-H-chemeleon-canonical-uniform_matched",
+      "P004-H-chemeleon-scaffold-gap",
+      "P004-H-chemeleon-scaffold-uniform_matched",
+      "P004-H-minimol-canonical-gap",
+      "P004-H-minimol-canonical-uniform_matched",
+      "P004-H-minimol-scaffold-gap",
+      "P004-H-minimol-scaffold-uniform_matched"
+    ],
+    "scope": "proposal_only; no automatic training/encoding/scoring authorization",
+    "evidence_refs": [
+      "E-RANK-HEP",
+      "E-RANK-MICRO",
+      "E-RANK-VDSS"
+    ],
+    "cost_basis": "budget_scenarios.json; preparation/encoding/learning/retrieval/scoring/review kept distinct"
+  },
+  {
+    "direction_id": "D004-TABREADOUT",
+    "title": "冻结上下文读出有条件迁移到Sol",
+    "issue_ids": [
+      "I004-TAB"
+    ],
+    "supporting_evidence": "MiniMicro native两均值救回而CheM无同样收益，Sol可检验跨端点可迁移性。",
+    "counterevidence_and_competing_explanations": "Hep8尚未返回；Sol上下文3531行和内部预处理不同，不能把换读出称单因子。",
+    "parameters": {
+      "assets": [
+        "chemeleon",
+        "minimol"
+      ],
+      "fixed_readout": "tabicl_v2_regressor pinned v2-20260212",
+      "context_random_states": [
+        44,
+        45
+      ],
+      "scheme": "existing scaffold",
+      "kwargs": "all explicit in next_experiments.json; 8 estimators, kv repr, batch1, no AMP/FA3/auto-download"
+    },
+    "valid_combinations_and_counting": "2资产×2contextRNG=4contexts,0gradient,0encoding,4nativeMAE；旧四MLP控制复用。",
+    "stage": "S",
+    "preparation_mode": "new_code",
+    "search_strategy": "消费Hep8后有具体representation/readout决策才做；不是等待旧结果期间盲填空。",
+    "stop_or_skip_rule": "full context超资源则停止不隐式下采样；不扫contextensemble配置；无决策价值跳过。",
+    "proposal_ids": [
+      "P004-SOLCTX-chemeleon-scaffold",
+      "P004-SOLCTX-minimol-scaffold"
+    ],
+    "scope": "proposal_only; no automatic training/encoding/scoring authorization",
+    "evidence_refs": [
+      "E-TAB-STRESS",
+      "E-TAB-RAW",
+      "X-TABICL-REGRESSOR"
+    ],
+    "cost_basis": "budget_scenarios.json; preparation/encoding/learning/retrieval/scoring/review kept distinct"
+  },
+  {
+    "direction_id": "D004-COHORT",
+    "title": "既有M6Sol/TabICLCYP固定群前后证据",
+    "issue_ids": [
+      "I004-COHORT",
+      "I004-CAPACITY"
+    ],
+    "supporting_evidence": "lowSol共同误差L>0，CYP高群改善来源与TabICL落后whole都值得按固定群解释。",
+    "counterevidence_and_competing_explanations": "群来自46/47选择，当前再看是事后；群差不能定位分子或认定机制修复。",
+    "parameters": {
+      "Sol_runs": "M6 CheM128/Mini512 seeds46/47",
+      "Sol_groups": [
+        "existing high294",
+        "existing low294"
+      ],
+      "CYP_runs": "already-existing TabICL CheM/Mini context44/45",
+      "CYP_group": "existing high132 only",
+      "suppressed_CYP_low": "never requested"
+    },
+    "valid_combinations_and_counting": "8Sol+4CYP=12 potential safe aggregate group scores；0新学习/0重算旧评分；另行主控授权，不在training数组。",
+    "stage": "GQ",
+    "preparation_mode": "config_only",
+    "search_strategy": "现有预测+冻结cohort成员hash，主控私有评分后只回组metric/n/来源；不得更换组、扩群或做个体差分。",
+    "stop_or_skip_rule": "若预测身份不匹配或抑制门槛不满足，保留suppressed，不补组。",
+    "proposal_ids": [],
+    "scope": "proposal_only; no automatic training/encoding/scoring authorization",
+    "evidence_refs": [
+      "H-COHORT",
+      "E-DL",
+      "E-CAP-SOL",
+      "E-TAB-RAW"
+    ],
+    "cost_basis": "budget_scenarios.json; preparation/encoding/learning/retrieval/scoring/review kept distinct"
+  },
+  {
+    "direction_id": "D004-ACTIVE",
+    "title": "T2与Hep8结果消费，不创建重复fit",
+    "issue_ids": [
+      "I004-TAB",
+      "I004-MEMBERS"
+    ],
+    "supporting_evidence": "任务/版本/配置/种子已固定并派发。",
+    "counterevidence_and_competing_explanations": "当前零quality；运行中epoch/步数不是AP/MAE/Spearman。",
+    "parameters": {
+      "T2": "2gradient heads existing",
+      "Hep8": "8frozencontexts existing",
+      "new_units": 0
+    },
+    "valid_combinations_and_counting": "新增0；既有预算独立，不混入本轮small/medium/large。",
+    "stage": "consume_only",
+    "preparation_mode": "config_only",
+    "search_strategy": "按conditional_followups中的正/负/混合/失败四支解释。",
+    "stop_or_skip_rule": "不扩T2seed/k/权重，不重复Hep8，不以artifact取回完整为科学分析前置。",
+    "proposal_ids": [],
+    "scope": "proposal_only; no automatic training/encoding/scoring authorization",
+    "evidence_refs": [
+      "E-STATUS",
+      "E-LATE",
+      "E-T2-PREP"
+    ],
+    "cost_basis": "budget_scenarios.json; preparation/encoding/learning/retrieval/scoring/review kept distinct"
+  },
+  {
+    "direction_id": "D004-MEMBERS",
+    "title": "成员监督和Jensen/AP分离",
+    "issue_ids": [
+      "I004-MEMBERS",
+      "I004-CAPACITY"
+    ],
+    "supporting_evidence": "CYP k递增收益支持成员因素；T2已有唯一直接loss对照。",
+    "counterevidence_and_competing_explanations": "k不是k份独立网络；meanprob loss数值不等价AP；有塌缩/补偿风险。",
+    "parameters": {
+      "current_comparison": "mean member BCE vs NLL(mean positive probability)",
+      "held_fixed": "k32, same initial tensor, same mean-prob output"
+    },
+    "valid_combinations_and_counting": "本轮新增0，禁止再注册T2。",
+    "stage": "consume_only",
+    "preparation_mode": "config_only",
+    "search_strategy": "只接受已派两头原scope；若需成员分歧，限无标签aggregate诊断且不产生新学习。",
+    "stop_or_skip_rule": "结果不能支持就关闭此目标切换；不要追加超参数挽救。",
+    "proposal_ids": [],
+    "scope": "proposal_only; no automatic training/encoding/scoring authorization",
+    "evidence_refs": [
+      "E-T2-PREP",
+      "X-TABM-README",
+      "E-CAP-CYP"
+    ],
+    "cost_basis": "budget_scenarios.json; preparation/encoding/learning/retrieval/scoring/review kept distinct"
+  },
+  {
+    "direction_id": "D004-CAPACITY",
+    "title": "参数量与表示交互已有对照收口",
+    "issue_ids": [
+      "I004-CAPACITY"
+    ],
+    "supporting_evidence": "M5/M6覆盖plain/k1/k8/旧k32和近预算宽度。",
+    "counterevidence_and_competing_explanations": "Sol两正、micro异向，反对统一容量解释；近预算非严格相同函数类。",
+    "parameters": {
+      "completed": [
+        "M5 plain3/k1/k8",
+        "M6 CheM128/Mini512"
+      ],
+      "new_width_grid": []
+    },
+    "valid_combinations_and_counting": "新增0；群证据是GQ不是新capacityfit。",
+    "stage": "retained_analysis",
+    "preparation_mode": "config_only",
+    "search_strategy": "复用真实26结果，勿再提未做容量或新的K4默认。",
+    "stop_or_skip_rule": "无新科学因素不再加宽或加k。",
+    "proposal_ids": [],
+    "scope": "proposal_only; no automatic training/encoding/scoring authorization",
+    "evidence_refs": [
+      "E-CAP-CACO",
+      "E-CAP-MICRO",
+      "E-CAP-SOL",
+      "E-CAP-CYP"
+    ],
+    "cost_basis": "budget_scenarios.json; preparation/encoding/learning/retrieval/scoring/review kept distinct"
+  },
+  {
+    "direction_id": "D004-OPTIMIZATION",
+    "title": "窗口与学习率方向在原范围关闭",
+    "issue_ids": [
+      "I004-WINDOW"
+    ],
+    "supporting_evidence": "两套native低lr均正，200/8同50/8。",
+    "counterevidence_and_competing_explanations": "更长full200无正，不能用50cap解释已有多数负结果；也不能外推新encoder。",
+    "parameters": {
+      "completed_views": [
+        "50/8",
+        "200/8",
+        "full200"
+      ],
+      "lr_values_completed": [
+        0.0001,
+        0.0005
+      ],
+      "new_sweep": []
+    },
+    "valid_combinations_and_counting": "新增0；36views不是36fits。",
+    "stage": "closed_current_recipe",
+    "preparation_mode": "config_only",
+    "search_strategy": "保留一次预设计划；新方法如果真改变动力学另立假说，不借旧window续grid。",
+    "stop_or_skip_rule": "当前配方收口，不追加patience/epochs。",
+    "proposal_ids": [],
+    "scope": "proposal_only; no automatic training/encoding/scoring authorization",
+    "evidence_refs": [
+      "E-WINDOW-CACO",
+      "E-WINDOW-CYP",
+      "E-LR"
+    ],
+    "cost_basis": "budget_scenarios.json; preparation/encoding/learning/retrieval/scoring/review kept distinct"
+  },
+  {
+    "direction_id": "D004-SUPPORT",
+    "title": "N8不自动执行：样本支持与化学组成分开",
+    "issue_ids": [
+      "I004-N8"
+    ],
+    "supporting_evidence": "结构/原Valid的fit与评估成员同时改变；MiniTabICL在相同nativefit可修复部分差距。",
+    "counterevidence_and_competing_explanations": "单subset无法建立学习曲线、也不能证明化学成分是原因。",
+    "parameters": {
+      "future_only_size_levels": [
+        0.5,
+        0.75,
+        1.0
+      ],
+      "future_control": "nested deterministic subsets of one fixed fit and invariant stress; separate composition intervention needed",
+      "not_registered_now": true
+    },
+    "valid_combinations_and_counting": "当前0；未来需选定task/readout后展开确定矩阵；不把task占位符塞入next_experiments。",
+    "stage": "research_reserve",
+    "preparation_mode": "new_code",
+    "search_strategy": "仅当Hep8后具体标签或context预算决策需要样本规模关系，再预登记3点曲线；当前不发派。",
+    "stop_or_skip_rule": "若读出交互已经解决选型，无需样本曲线；不可因N8已提过而惯性执行。",
+    "proposal_ids": [],
+    "scope": "proposal_only; no automatic training/encoding/scoring authorization",
+    "evidence_refs": [
+      "E-TAB-STRESS",
+      "E-STATUS",
+      "P003-NEXT_EXPERIMENTS"
+    ],
+    "cost_basis": "budget_scenarios.json; preparation/encoding/learning/retrieval/scoring/review kept distinct"
+  },
+  {
+    "direction_id": "D004-GEOMETRY",
+    "title": "继承G8：freshproducer后检验几何配方互补",
+    "issue_ids": [
+      "I004-GEOMETRY",
+      "I004-PROVENANCE"
+    ],
+    "supporting_evidence": "2D序列MoL负不能否定3D；Sol持续误差与micro表示/读出交互给小面板决策价值。",
+    "counterevidence_and_competing_explanations": "PM6+PCBA与多预训练来源、维度、pooling、构象和缺失策略全混杂；旧cache不准入。",
+    "parameters": {
+      "tasks": [
+        "solubility_aqsoldb",
+        "clearance_microsome_az"
+      ],
+      "checkpoints": [
+        "Monroe pinned weights.pt 720",
+        "UniMol2 fixed84M CLS768"
+      ],
+      "model_seeds": [
+        44,
+        45
+      ],
+      "geometry_seed": 42,
+      "readout": "same MLP256 H0 MSE, scaffold"
+    },
+    "valid_combinations_and_counting": "2tasks×2encoders×2headseeds=8gradient；4fulltrainencoderpasses共享；0Valid/testencoding。保留原P003-G IDs非重复新增记录。",
+    "stage": "G",
+    "preparation_mode": "blocked_assets",
+    "search_strategy": "只在完整originalproducer before/after参数buffers、geometry配置、全行覆盖/重载/许可过关后。先用已有head，不引入TabPFN。",
+    "stop_or_skip_rule": "任一producer/coverage失败停止该asset；两任务均无可改变决策收益则停止该checkpoint配方，不改geometryseed/pooling追分。",
+    "proposal_ids": [
+      "P003-G-solubility_aqsoldb-monroe720-scaffold-mse",
+      "P003-G-solubility_aqsoldb-unimol2_84m_cls-scaffold-mse",
+      "P003-G-clearance_microsome_az-monroe720-scaffold-mse",
+      "P003-G-clearance_microsome_az-unimol2_84m_cls-scaffold-mse"
+    ],
+    "scope": "proposal_only; no automatic training/encoding/scoring authorization",
+    "evidence_refs": [
+      "E-GEOM",
+      "E-MONROE-FAIL",
+      "E-UNI-V4",
+      "X-MONROE-README",
+      "X-MONROE-LICENSE",
+      "X-UNI-PREDICTOR",
+      "X-UNI-CARD"
+    ],
+    "cost_basis": "budget_scenarios.json; preparation/encoding/learning/retrieval/scoring/review kept distinct"
+  },
+  {
+    "direction_id": "D004-FAMILIES",
+    "title": "新家族必须有能区别的预训练/输入假说",
+    "issue_ids": [
+      "I004-MOL",
+      "I004-GEOMETRY"
+    ],
+    "supporting_evidence": "MoL固定四任务主比主要负；已有Mini、CheM和几何候选已提供互补输入对照。",
+    "counterevidence_and_competing_explanations": "扩大模型名称列表不增加科学信息；KPGT/SMI-TED/MolE等只研究过未ready，不能冒称未做头基线。",
+    "parameters": {
+      "MoL": "close current10pct checkpoint+coverage policy on samepanel",
+      "other_researched": [
+        "KPGT",
+        "SMI-TED",
+        "MolE",
+        "UniMol-v1",
+        "scratchDMPNN",
+        "classical-other"
+      ],
+      "TabPFN": "not authorized; no model checkpoint or gate bypass"
+    },
+    "valid_combinations_and_counting": "新增0；本轮不注册无具体checkpoint/许可/输入覆盖的新familyfit。",
+    "stage": "research_reserve",
+    "preparation_mode": "blocked_assets",
+    "search_strategy": "有新的能力缺口才查新官方版本/许可与任务面板；当前仅geometryG8已满足科学候选程度仍需producer准入。",
+    "stop_or_skip_rule": "没有比现有资产更明确的信息增益则不启动。",
+    "proposal_ids": [],
+    "scope": "proposal_only; no automatic training/encoding/scoring authorization",
+    "evidence_refs": [
+      "E-ASSETS",
+      "E-MOL-CYP",
+      "E-MOL-CACO",
+      "E-MOL-DILI",
+      "X-MOL-CARD",
+      "X-MONROE-README"
+    ],
+    "cost_basis": "budget_scenarios.json; preparation/encoding/learning/retrieval/scoring/review kept distinct"
+  },
+  {
+    "direction_id": "D004-SELECTION",
+    "title": "选择偏差与压力测试范围记录",
+    "issue_ids": [
+      "I004-SELECTION",
+      "I004-AMES"
+    ],
+    "supporting_evidence": "AMES双selector同轨迹给直接反证；native历史已被多次看过。",
+    "counterevidence_and_competing_explanations": "共享train、重复Valid、后选负细胞不能变独立确认。",
+    "parameters": {
+      "new_wholeValid_scores": 0,
+      "new_rank_panel": "lock complete paired recipes then evaluate native once",
+      "group_discovery_seeds": [
+        46,
+        47
+      ]
+    },
+    "valid_combinations_and_counting": "0额外学习；现有矩阵内一次stop、一次native评分，不加views扮fit。",
+    "stage": "cross_cutting",
+    "preparation_mode": "config_only",
+    "search_strategy": "保留选择历史、提前注册停止；最终独立泛化还需未参与选择的数据，由用户另决。",
+    "stop_or_skip_rule": "不能用本轮新请求制造独立性或追求significant阈值。",
+    "proposal_ids": [],
+    "scope": "proposal_only; no automatic training/encoding/scoring authorization",
+    "evidence_refs": [
+      "E-DESIGN",
+      "E-REUSE",
+      "E-AMES",
+      "E-ISSUES"
+    ],
+    "cost_basis": "budget_scenarios.json; preparation/encoding/learning/retrieval/scoring/review kept distinct"
+  },
+  {
+    "direction_id": "D004-PROVENANCE",
+    "title": "源身份/准入与失败保留",
+    "issue_ids": [
+      "I004-PROVENANCE",
+      "I004-EQUIVALENCE"
+    ],
+    "supporting_evidence": "当前通过的冻结/score/row identity继承，无需全库重审。",
+    "counterevidence_and_competing_explanations": "运行失败不被高分覆盖；producer元数据不存在与未读要分开。",
+    "parameters": {
+      "new_work": "only affected source/row/init/producer bind",
+      "equivalence": "skip mathematical duplicates"
+    },
+    "valid_combinations_and_counting": "0学习；fixture/准备门槛不放训练数组。",
+    "stage": "cross_cutting",
+    "preparation_mode": "config_only",
+    "search_strategy": "最新CURRENT覆盖旧pending，原数值与失败不重写；计数与科学身份独立校验。",
+    "stop_or_skip_rule": "缺口只阻断其依赖项，其余继续。",
+    "proposal_ids": [],
+    "scope": "proposal_only; no automatic training/encoding/scoring authorization",
+    "evidence_refs": [
+      "E-STATUS",
+      "E-LATE",
+      "E-GEOM",
+      "E-SOURCEMAP",
+      "E-ISSUES"
+    ],
+    "cost_basis": "budget_scenarios.json; preparation/encoding/learning/retrieval/scoring/review kept distinct"
+  },
+  {
+    "direction_id": "D004-FRONTIERS",
+    "title": "22端点条件行动而非统一配方",
+    "issue_ids": [
+      "I004-FRONTIER"
+    ],
+    "supporting_evidence": "历史包含负权重/负表示/简单头收益和等价skip。",
+    "counterevidence_and_competing_explanations": "大多数任务无本轮新特异假说，不应为了覆盖新增头。",
+    "parameters": {
+      "tasks": [
+        "ames",
+        "bbb_martins",
+        "bioavailability_ma",
+        "caco2_wang",
+        "clearance_hepatocyte_az",
+        "clearance_microsome_az",
+        "cyp2c9_substrate_carbonmangels",
+        "cyp2c9_veith",
+        "cyp2d6_substrate_carbonmangels",
+        "cyp2d6_veith",
+        "cyp3a4_substrate_carbonmangels",
+        "cyp3a4_veith",
+        "dili",
+        "half_life_obach",
+        "herg",
+        "hia_hou",
+        "ld50_zhu",
+        "lipophilicity_astrazeneca",
+        "pgp_broccatelli",
+        "ppbr_az",
+        "solubility_aqsoldb",
+        "vdss_lombardo"
+      ],
+      "action_register": "task22_actions.json"
+    },
+    "valid_combinations_and_counting": "全22覆盖研究；新学习只3task且各有判别目的。",
+    "stage": "cross_cutting",
+    "preparation_mode": "config_only",
+    "search_strategy": "按端点保持/收口/等待/判别/资产门槛，当前队列为空不是研究完成。",
+    "stop_or_skip_rule": "关闭配方的理由是问题已无新信息，不是时间或批次数。",
+    "proposal_ids": [],
+    "scope": "proposal_only; no automatic training/encoding/scoring authorization",
+    "evidence_refs": [
+      "E-TASKS",
+      "E-HISTORY",
+      "E-EVENTS"
+    ],
+    "cost_basis": "budget_scenarios.json; preparation/encoding/learning/retrieval/scoring/review kept distinct"
+  },
+  {
+    "direction_id": "D004-COST",
+    "title": "多批次端到端计划与预算门槛",
+    "issue_ids": [
+      "I004-COST"
+    ],
+    "supporting_evidence": "训练与contexts有实际作业时间，但准备/读出/评分/取回仍有显著周转。",
+    "counterevidence_and_competing_explanations": "CPU作业秒、GPU作业秒、角色活跃、Pro时长不可直接相加。",
+    "parameters": {
+      "recommended": "medium ceiling staged after small",
+      "small": [
+        8,
+        0
+      ],
+      "medium": [
+        16,
+        4
+      ],
+      "large": [
+        24,
+        4
+      ],
+      "tuple_units": [
+        "gradient",
+        "context"
+      ]
+    },
+    "valid_combinations_and_counting": "14proposal；大档24gradient+4context=28fit身份，freshencoding4passes，旧控制24仅一次。",
+    "stage": "cross_cutting",
+    "preparation_mode": "config_only",
+    "search_strategy": "中档是上限而非命令；数值身份已给，未来资源数由主控登记。",
+    "stop_or_skip_rule": "无信息价值跳过不补数；超资源stop不偷偷缩样本。",
+    "proposal_ids": [
+      "P004-H-chemeleon-canonical-gap",
+      "P004-H-chemeleon-canonical-uniform_matched",
+      "P004-H-chemeleon-scaffold-gap",
+      "P004-H-chemeleon-scaffold-uniform_matched",
+      "P004-H-minimol-canonical-gap",
+      "P004-H-minimol-canonical-uniform_matched",
+      "P004-H-minimol-scaffold-gap",
+      "P004-H-minimol-scaffold-uniform_matched",
+      "P004-SOLCTX-chemeleon-scaffold",
+      "P004-SOLCTX-minimol-scaffold",
+      "P003-G-solubility_aqsoldb-monroe720-scaffold-mse",
+      "P003-G-solubility_aqsoldb-unimol2_84m_cls-scaffold-mse",
+      "P003-G-clearance_microsome_az-monroe720-scaffold-mse",
+      "P003-G-clearance_microsome_az-unimol2_84m_cls-scaffold-mse"
+    ],
+    "scope": "proposal_only; no automatic training/encoding/scoring authorization",
+    "evidence_refs": [
+      "E-RANK-ALL",
+      "E-TAB-STRESS",
+      "P003-BUDGET_SCENARIOS"
+    ],
+    "cost_basis": "budget_scenarios.json; preparation/encoding/learning/retrieval/scoring/review kept distinct"
+  }
+]

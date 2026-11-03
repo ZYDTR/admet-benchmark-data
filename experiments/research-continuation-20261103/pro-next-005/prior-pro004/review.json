@@ -1,0 +1,1904 @@
+{
+  "schema_version": "pro004-research-review-v1",
+  "request_id": "admet-pro-next-research-20261103-004",
+  "source_commit": "730373b4718d24618592b677a71a69508054f07a",
+  "input_manifest_sha256": "d5c998c3c95c40a7ed0555da01cb566a46457f65f9eb279530cd4c797d703fae",
+  "manifest_sha256": "d5c998c3c95c40a7ed0555da01cb566a46457f65f9eb279530cd4c797d703fae",
+  "input_cutoff": "2026-11-03T01:14:50.075644+00:00",
+  "late_operational_amendment": "current/LATE_OBSERVED_T2_STARTUP.json; actual updates observed, quality0 unchanged",
+  "status": "needs_evidence",
+  "scientific_status": "needs_evidence",
+  "execution_authorized": false,
+  "file_integrity_status": "validated",
+  "chat_terminal_status": "review_delivery_complete",
+  "decision_coverage": [
+    {
+      "question_id": "Q1",
+      "status": "answered",
+      "answer_summary": "22端点逐项保留/否决/条件判别，区分配方、表示读出交互和机制。R/X、容量/窗口、Tab32/MoL16完成；T2/Hep8在途不重复。",
+      "answer_location": [
+        "analysis.md#q1",
+        "task22_actions.json",
+        "claim_events.json"
+      ],
+      "evidence_refs": [
+        "E-TASKS",
+        "E-EVENTS",
+        "E-RUNS",
+        "E-STATUS",
+        "P003-TASK22_ACTIONS"
+      ],
+      "supporting_facts": [
+        "rank/micro/VDss增强",
+        "Sol近参数预算支持",
+        "CYP成员局部支持"
+      ],
+      "counterevidence_or_alternatives": [
+        "AMES结构/dual负例",
+        "Hep两rank负例",
+        "MiniMicro旧MLP结构不稳",
+        "PPBR低群负例"
+      ],
+      "unresolved": [
+        "10未评/BBBafter/最终独立泛化未解，不用新请求清零"
+      ],
+      "affected_decisions": [
+        "all22 task-action frontier",
+        "retirement scope",
+        "no completed/active replay"
+      ]
+    },
+    {
+      "question_id": "Q2",
+      "status": "answered",
+      "answer_summary": "20个原signedpairs按task/rep/scheme/seed全列；Hep8新配对选择对照区分label-gap筛选与相同数量稀疏pair，条件补8构成交互块。",
+      "answer_location": [
+        "analysis.md#q2",
+        "next_experiments.json:stageH1/H2",
+        "next_batch_guide.md#1"
+      ],
+      "evidence_refs": [
+        "E-RANK-HEP",
+        "E-RANK-MICRO",
+        "E-RANK-VDSS",
+        "E-RANK-ALL"
+      ],
+      "supporting_facts": [
+        "18positive2negative",
+        "HalfMSE排除系数单独解释",
+        "VDssFull/Half指标一致"
+      ],
+      "counterevidence_or_alternatives": [
+        "selectedepoch变化",
+        "梯度范数/正则/噪声仍可能",
+        "schemes/seeds依赖",
+        "选负cells回归均值风险"
+      ],
+      "unresolved": [
+        "新pairselection疗效未测",
+        "没有真实assaynoise证据"
+      ],
+      "affected_decisions": [
+        "H1first8",
+        "H2conditional8",
+        "no morehalf-life/seeds/lambda/windows"
+      ]
+    },
+    {
+      "question_id": "Q3",
+      "status": "answered",
+      "answer_summary": "完整原Tab16与native16显示readout×representation×scheme交互；消费已派Hep8，撤销N8自动触发，条件Sol4context测试读出迁移。",
+      "answer_location": [
+        "analysis.md#q3",
+        "conditional_followups.json",
+        "next_experiments.json:stageS"
+      ],
+      "evidence_refs": [
+        "E-TAB-RAW",
+        "E-TAB-STRESS",
+        "E-STATUS",
+        "X-TABICL-REGRESSOR"
+      ],
+      "supporting_facts": [
+        "MiniMicro两scheme读出均值提升",
+        "DILI同一表示旧头均值改善与跨表示排名是不同问题"
+      ],
+      "counterevidence_or_alternatives": [
+        "DILI跨scheme翻转",
+        "CheMMicro不改善",
+        "CYP低于旧Miniheads",
+        "CPU/GPU/scale/preprocess/stop混杂"
+      ],
+      "unresolved": [
+        "Hep8零结果",
+        "样本支持与chemistry未分离",
+        "Sol完整context资源未测"
+      ],
+      "affected_decisions": [
+        "no autoN8",
+        "Hep8consume",
+        "conditional fullSolcontexts"
+      ]
+    },
+    {
+      "question_id": "Q4",
+      "status": "answered",
+      "answer_summary": "M5/M6与窗口/lr完成结果削弱统一容量/预算解释；正确解释共享k和Jensen；仅消费T2原两头，无新k/seed/window矩阵。",
+      "answer_location": [
+        "analysis.md#q4",
+        "exclusions_and_reuse.json",
+        "conditional_followups.json:B-T2"
+      ],
+      "evidence_refs": [
+        "E-CAP-CYP",
+        "E-CAP-MICRO",
+        "E-CAP-SOL",
+        "E-CAP-CACO",
+        "E-WINDOW-CACO",
+        "E-WINDOW-CYP",
+        "E-LR",
+        "E-STATUS",
+        "X-TABM-README"
+      ],
+      "supporting_facts": [
+        "CYPk8/k32局部支持",
+        "Sol近预算仍Mini好",
+        "lr四原比正"
+      ],
+      "counterevidence_or_alternatives": [
+        "microk32不胜k8",
+        "fullwindow没新增改善",
+        "lossnumericalordering不保证AP"
+      ],
+      "unresolved": [
+        "T2AP未返回",
+        "成员质量/优化耦合细节未识别"
+      ],
+      "affected_decisions": [
+        "consume T2",
+        "close extra capacity/window grid"
+      ]
+    },
+    {
+      "question_id": "Q5",
+      "status": "answered",
+      "answer_summary": "区分固定群真实聚合错误、正L共同区间外误差与未定位化学盲区；数学上仅约束同一对标量预测的凸组合。提出绑定原cohort/run的GQ-SOL8和GQ-CYP4，0新学习。",
+      "answer_location": [
+        "analysis.md#q5",
+        "cohort_register.json",
+        "cohort_evidence_requests.json"
+      ],
+      "evidence_refs": [
+        "H-COHORT",
+        "H-COHORT-COMP",
+        "E-DL",
+        "E-CAP-SOL",
+        "E-TAB-RAW"
+      ],
+      "supporting_facts": [
+        "88safe scores",
+        "32positiveL accepted",
+        "PPBRlow退化"
+      ],
+      "counterevidence_or_alternatives": [
+        "不能定位个体/错误比例",
+        "非任意混合下界",
+        "8suppressed未知",
+        "选组46/47回顾性"
+      ],
+      "unresolved": [
+        "新配方在原群的after汇总",
+        "同群无标签化学profile"
+      ],
+      "affected_decisions": [
+        "12optional safeaggregate requests",
+        "no lowgroup unsuppression",
+        "no chemistry cause claim"
+      ]
+    },
+    {
+      "question_id": "Q6",
+      "status": "partial",
+      "answer_summary": "固定MoL16配方收口；官方源码/资产/pooling/许可门槛明确，几何旧cache拒绝不等于疗效负。沿用原G8身份，但freshproducer完整配置与全行准入尚未闭环。",
+      "answer_location": [
+        "analysis.md#q6",
+        "scientific_assets.json",
+        "next_batch_guide.md#3",
+        "next_experiments.json:stageG"
+      ],
+      "evidence_refs": [
+        "E-MOL-CYP",
+        "E-MOL-CACO",
+        "E-MOL-DILI",
+        "E-GEOM",
+        "E-UNI-V4",
+        "E-MONROE-FAIL",
+        "X-MONROE-README",
+        "X-MONROE-PAPER",
+        "X-UNI-README",
+        "X-UNI-PREDICTOR",
+        "X-UNI-CARD"
+      ],
+      "supporting_facts": [
+        "MoL具体checkpoint主比负为主",
+        "两个geometrycheckpoint/version/source已定位"
+      ],
+      "counterevidence_or_alternatives": [
+        "旧producer缺证不能补签",
+        "Monroesubcap实际越界",
+        "Uni-v4static非runtime",
+        "pretraining监督/维度不是纯3D"
+      ],
+      "unresolved": [
+        "Monroe futureprotocol未准入",
+        "freshgeometryH/coords/fallback/crop配置与fullcoverage未产出",
+        "TabICLfixedHFcard读取路线InternalError，不能扩大许可结论"
+      ],
+      "affected_decisions": [
+        "G8blocked untilfreshproducer",
+        "noTabPFNbypass",
+        "no newfamily name-only proposal"
+      ]
+    },
+    {
+      "question_id": "Q7",
+      "status": "answered",
+      "answer_summary": "14proposal按实际判别结构展开，小8grad，中16grad+4context，大24grad+4context；G8旧身份继承；sharedcontrols/encoding/群metric/active分账，条件停止有界。",
+      "answer_location": [
+        "analysis.md#q7",
+        "budget_scenarios.json",
+        "next_experiments.json",
+        "conditional_followups.json"
+      ],
+      "evidence_refs": [
+        "E-STATUS",
+        "E-RANK-ALL",
+        "E-TAB-STRESS",
+        "P003-NEXT_EXPERIMENTS",
+        "P003-CONTROLS"
+      ],
+      "supporting_facts": [
+        "exact signatures and commoncontrols",
+        "field-complete newobjective/newcontext definitions"
+      ],
+      "counterevidence_or_alternatives": [
+        "cost futureunknown",
+        "H1panel selectedretrospective",
+        "G blocked",
+        "configready notautorun"
+      ],
+      "unresolved": [
+        "资源授权与新代码fixture",
+        "Hep8/T2实际结果只影响自身条件分支"
+      ],
+      "affected_decisions": [
+        "recommend stagedmedium ceiling",
+        "no idle fill",
+        "review by completeblock/premisefailure"
+      ]
+    }
+  ],
+  "read_receipt": [
+    {
+      "source_id": "E-START",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/START_HERE.md",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "88a8161125113534dce486fa213100fb3e57ce0a6fe585e65df071ef5fcd9933"
+      },
+      "registered_bytes": 11665,
+      "displayed_total_lines": 106,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-STATUS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/current/CURRENT_STATUS.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "c16686a8de8fbc69ef167fa28fa963b79e2d185217b6ae3d2aa64a9e31b41096"
+      },
+      "registered_bytes": 28092,
+      "displayed_total_lines": 531,
+      "read_mode": "full_scientific_status_and_active_descriptors",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false,
+      "latest_visible_tool_reference": "turn503111view1"
+    },
+    {
+      "source_id": "E-LATE",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/current/LATE_OBSERVED_T2_STARTUP.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "55111c8c1d15ef58f3b1f10f12de26f856bb48131b9c80717591302f9ae8d6f5"
+      },
+      "registered_bytes": 1835,
+      "displayed_total_lines": 35,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-CONTRACT",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/decision-contract.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "41ab004a9e53ad91baf096ff9e07b7063fb3bee8830bb473249f7c320a32ab5f"
+      },
+      "registered_bytes": 29958,
+      "displayed_total_lines": 542,
+      "read_mode": "questions_scope_counts_and_active_bindings",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false,
+      "latest_visible_tool_reference": "turn863125view0"
+    },
+    {
+      "source_id": "E-DESIGN",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/methodology/EXPERIMENT_DESIGN.md",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "8dade31044e0101fd8d71aa782ba0c95581b43729ee4726f36f3693887810486"
+      },
+      "registered_bytes": 11551,
+      "displayed_total_lines": 54,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-SKILL",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/methodology/RESEARCH_SKILL.md",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "752fa5c9f8f7130b19b07e1230875a0fd2913edf5a2e40fbb56dc58c8220e3bd"
+      },
+      "registered_bytes": 9014,
+      "displayed_total_lines": 43,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-REUSE",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/methodology/evidence-reuse.md",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "1924b7d0d68c7735a58429e92618fb3d5cf47f01b5a63e8b3945dc748a3ef72c"
+      },
+      "registered_bytes": 9621,
+      "displayed_total_lines": 44,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-POLICY",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/methodology/scoring-and-publishing.md",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "32e4d40ee7bc4f16748932c0d9228daf21992e6dfe6e1c93b16886758357f024"
+      },
+      "registered_bytes": 8881,
+      "displayed_total_lines": 32,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-BRANCH",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/HISTORY_BRANCH_INDEX.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "9fd5f9dbc09b926f915c0e8bd66a48535ab44cd7d10a29cb001b8f4ec265844d"
+      },
+      "registered_bytes": 3820,
+      "displayed_total_lines": 30,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-READING",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/READING_CONTRACT.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "89c21f0e7fa4d388f582ae8b5c446adaf9c6cc82115442983ebd63e8c0acd168"
+      },
+      "registered_bytes": 8829,
+      "displayed_total_lines": 133,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false,
+      "latest_visible_tool_reference": "turn503111view0"
+    },
+    {
+      "source_id": "E-MANIFEST",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/input-manifest.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "d5c998c3c95c40a7ed0555da01cb566a46457f65f9eb279530cd4c797d703fae"
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 430,
+      "read_mode": "manifest_entries_scientific_and_prior_artifact_bindings",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-SOURCEMAP",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/SOURCE_MAP.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "22269cbf7f71854a9745abd285cb5b58e549ef102c0d573de0c64ba733576441"
+      },
+      "registered_bytes": 843633,
+      "displayed_total_lines": 28144,
+      "read_mode": "navigation_targeted_find_only",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-SOURCEMANIFEST",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/SOURCE_MANIFEST.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "dd32d5486890b37d73071a32c9a86762bfe5374091978baebd5096334754e1e1"
+      },
+      "registered_bytes": 51358,
+      "displayed_total_lines": 671,
+      "read_mode": "navigation_header_only",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-HISTORY",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/ledger/history-index.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "b70a09a7bdac0aae0f47b5249ec5dc725805b17339132cabecfb2f7644522707"
+      },
+      "registered_bytes": 21347,
+      "displayed_total_lines": 489,
+      "read_mode": "indexed_history_navigation",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-RUNS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/ledger/experiments.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "f004a2256b7f9df3364c0c6e57a1fd99c630916066e26942dd91f01dceb4f6af"
+      },
+      "registered_bytes": 1029458,
+      "displayed_total_lines": 24494,
+      "read_mode": "selected_original_run_records_not_full_audit",
+      "read_locator": "current capacity M5/M6 scalar records including L22827–22993, window trajectories/views, relevant scientific parent identifiers; nonrelevant rows not exhaustively read",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false,
+      "latest_visible_tool_reference": "turn930918view1"
+    },
+    {
+      "source_id": "E-EVENTS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/ledger/claim-events.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "403310136f63ddb4b23a4223abe271c12b7bd5e42f976f6f214d17fe9bc5c7ab"
+      },
+      "registered_bytes": 52750,
+      "displayed_total_lines": 1000,
+      "read_mode": "historical_and_recent_claim_chains",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-TASKS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/ledger/task22-frontier.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "2f0297bfb4b320f5de626b49d23007f849dc86f98cc19c6222d725b80a9eed27"
+      },
+      "registered_bytes": 43512,
+      "displayed_total_lines": 806,
+      "read_mode": "all22_task_action_entries",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-FRONTIER",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/ledger/decision-frontier.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "be70e3419685c05d9e06385e1cf7479bf5930374b2cf1b9067825167a4c702b5"
+      },
+      "registered_bytes": 45713,
+      "displayed_total_lines": 939,
+      "read_mode": "selected_history_and_pending_entries",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-ASSETS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/ledger/assets.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "9c35bbb4ce06b595f4be534029889dfcecc59c43a24d1c20491b17b609d78bda"
+      },
+      "registered_bytes": 7472,
+      "displayed_total_lines": 193,
+      "read_mode": "full_original_with_stale_dates_noted",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-ENSEMBLES",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/ledger/ensembles.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "827b2907ba96aa036889dff4d5ff470dfcb1024ec67c3d1ec8f872a7baeb6984"
+      },
+      "registered_bytes": 284511,
+      "displayed_total_lines": 7043,
+      "read_mode": "header_and_AMES_BBB_bioavailability_examples",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-PROPOSALS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/ledger/proposal-execution.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "56d4960051c728718c7edc1a08f4b793895e8fe904374a0b6ecfe737bc03ff18"
+      },
+      "registered_bytes": 112507,
+      "displayed_total_lines": 2630,
+      "read_mode": "targeted_navigation_not_full_item_audit",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-RANK-HEP",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/new-results/rank-transfer44-20261103/clearance_hepatocyte_az-results.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "0a0a0b9a0eb9fb8901f0c70fdda172a10450e4059d05a6e67b2cf675bf30348c"
+      },
+      "registered_bytes": 34524,
+      "displayed_total_lines": 803,
+      "read_mode": "all_primary_secondary_comparisons_and_metadata",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-RANK-MICRO",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/new-results/rank-transfer44-20261103/clearance_microsome_az-results.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "1d6590f5b8dae27407f2dca46bda4977137b23685040a99f4266e288d29ff126"
+      },
+      "registered_bytes": 34402,
+      "displayed_total_lines": 803,
+      "read_mode": "all_primary_secondary_comparisons_and_metadata",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-RANK-VDSS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/new-results/rank-transfer44-20261103/vdss_lombardo-results.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "c82912ce3be232e2bb56e9765b1c84adbda5032a6ea6109221cda92516b6c927"
+      },
+      "registered_bytes": 18738,
+      "displayed_total_lines": 458,
+      "read_mode": "all_primary_and_FullMSE_controls",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-RANK-ALL",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/new-results/rank-transfer44-20261103/combined-results.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "8837271801667381dae16901d1261d1b95b093c956e419b1defa820668c2c158"
+      },
+      "registered_bytes": 2725,
+      "displayed_total_lines": 57,
+      "read_mode": "summary_counts_cost",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false,
+      "latest_visible_tool_reference": "turn863125view1"
+    },
+    {
+      "source_id": "E-TAB-RAW",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/new-results/tabicl16-20261103/panel-results.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "3be070edc1181953e9a29ac46676b17fcc65b0249c6d20bcd4f0948150a79c81"
+      },
+      "registered_bytes": 72321,
+      "displayed_total_lines": 1644,
+      "read_mode": "all16_values_primary_and_readout_mean_comparisons",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false,
+      "latest_visible_tool_reference": "turn930918view0"
+    },
+    {
+      "source_id": "E-TAB-RAW-U",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/new-results/tabicl16-20261103/panel-update.md",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "fbb08f5072959a15c036fbe53d5a5eb5271af077130ccfc909c508f84b5fcdd2"
+      },
+      "registered_bytes": 2013,
+      "displayed_total_lines": 14,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-TAB-STRESS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/new-results/tabicl-stress16-20261103/combined-results.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "2c1b2c0ce2f0b4401e607143e731423f42a713f604ef28458958a1fe37c0e05d"
+      },
+      "registered_bytes": 15852,
+      "displayed_total_lines": 358,
+      "read_mode": "all_primary_secondary_comparisons_and_counts",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false,
+      "latest_visible_tool_reference": "turn863125view2"
+    },
+    {
+      "source_id": "E-TAB-MICRO",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/new-results/tabicl-stress16-20261103/clearance_microsome_az-results.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "7b93eddae7003a92f211a913393059e96cc2b6e0cc7a763b38231a884a5880e7"
+      },
+      "registered_bytes": 23017,
+      "displayed_total_lines": 462,
+      "read_mode": "metadata_and_selected_task_records",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-TAB-DILI",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/new-results/tabicl-stress16-20261103/dili-results.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "41f03a389cfdfe0932a623d6f93d78a80f9da1ce39ff68685af65f81b627e677"
+      },
+      "registered_bytes": 20312,
+      "displayed_total_lines": 462,
+      "read_mode": "metadata_and_selected_task_records",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-CAP-CYP",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/new-results/capacity26-20261103/cyp6-update.md",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "8200dcd636263daeef0a92e80f2f278149cc79b2004c979190756f2e90b77d09"
+      },
+      "registered_bytes": 596,
+      "displayed_total_lines": 9,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-CAP-MICRO",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/new-results/capacity26-20261103/micro10-update.md",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "c8299647e2b78a8cf47980186fba5a8a48a4f16b52cef80774392853caa1a5bf"
+      },
+      "registered_bytes": 778,
+      "displayed_total_lines": 9,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-CAP-SOL",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/new-results/capacity26-20261103/sol4-update.md",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "02523d1b4bd48443c4e7f0db669bfa8fcb1bcfa5cae3cd18fef6ba4dccb8919b"
+      },
+      "registered_bytes": 423,
+      "displayed_total_lines": 7,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-CAP-CACO",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/new-results/capacity26-20261103/caco6-update.md",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "fb4f2e1c713f3559c793669a90e7e0a3776946d86de68b5b49b289e00a3659a1"
+      },
+      "registered_bytes": 613,
+      "displayed_total_lines": 9,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-WINDOW-CACO",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/new-results/window12-20261103/caco-update.md",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "83185e0e2d3976f50aac79626771c8dbb5d19703d5ea535d1a262cb64151a481"
+      },
+      "registered_bytes": 688,
+      "displayed_total_lines": 7,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-WINDOW-CYP",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/new-results/window12-20261103/cyp-update.md",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "d70d39a9ca6597577bb58684675fab0a8b6d3dc70c6cf9bbfddf77b8d8cbbf7f"
+      },
+      "registered_bytes": 690,
+      "displayed_total_lines": 5,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-LR",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/new-results/cyp3a4-lr-stress8-20261103/combined-results.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "9118eca2a96896de9793a1c48e4024886d9619d9429960d7439faef7e0601a3a"
+      },
+      "registered_bytes": 2112,
+      "displayed_total_lines": 54,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-AMES",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/new-results/ames-dual-selector4-20261103/results.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "2a6e129a83acaa6ec0a04a3207f5e816f4911ffa0eeedd5d682b5bccef5e277c"
+      },
+      "registered_bytes": 11066,
+      "displayed_total_lines": 358,
+      "read_mode": "all8_selector_views_and_comparison_fields",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-DL",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/new-results/common-error-bound32-20261103/scientific-summary.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "c90cbc894e192443facea112f66cd2a7a221663057b5a56a954a813196a6b32a"
+      },
+      "registered_bytes": 44790,
+      "displayed_total_lines": 941,
+      "read_mode": "decision_and_selected_full_numeric_rows_not_recomputed",
+      "read_locator": "decision L1–2; selected full rows and source cohort/prediction hashes (PPBR/Sol/LD50/lipo); count32positive inherited from accepted summary, no recomputation",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false,
+      "latest_visible_tool_reference": "turn774656view1"
+    },
+    {
+      "source_id": "E-MOL-CYP",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/new-results/molformer16-20261103/cyp-update.md",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "4b0f93811132c4d3722aa3a3420204d62465d990a54142e0ad25883f15aec6b2"
+      },
+      "registered_bytes": 1232,
+      "displayed_total_lines": 15,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-MOL-CACO",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/new-results/molformer16-20261103/caco-results.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "85b4490e6ae7fcdd504b2fff64ef4e2c4c346b6091674f208b8cbb82b2f127af"
+      },
+      "registered_bytes": 2063,
+      "displayed_total_lines": 42,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-MOL-DILI",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/new-results/molformer16-20261103/dili-update.md",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "938d4d7637cd61db11a7080b36681025070a2aad547b5f351f6e7596ac3f3028"
+      },
+      "registered_bytes": 902,
+      "displayed_total_lines": 5,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-GEOM",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/readiness/geometry-consumption.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 44,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "not_obtained_no_hash_claim",
+      "raw_models_or_truth_accessed": false,
+      "latest_visible_tool_reference": "turn503111view2"
+    },
+    {
+      "source_id": "E-UNI-V4",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/readiness/unimol2-v4-static-review.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 24,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "not_obtained_no_hash_claim",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-MONROE-FAIL",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/readiness/monroe-original-evidence-corrections.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 23,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "not_obtained_no_hash_claim",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-T2-PREP",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/readiness/TabM-memberloss-preparation-consumption.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 60,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "not_obtained_no_hash_claim",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "H-COHORT",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f9bce86edb177a6b74f0af7a2e630a1350de914b/experiments/research-continuation-20261103/pro-next-003/cohort96/REPORT.md",
+      "source_version": {
+        "commit": "f9bce86edb177a6b74f0af7a2e630a1350de914b",
+        "sha256": "405a003087ba96a3c02f8ca5ce012801c000f20ce03219ea874afc20ca7d24f5"
+      },
+      "registered_bytes": 4281,
+      "displayed_total_lines": 28,
+      "read_mode": "full_original",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false,
+      "latest_visible_tool_reference": "turn774656view0"
+    },
+    {
+      "source_id": "H-COHORT-SUM",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f9bce86edb177a6b74f0af7a2e630a1350de914b/experiments/research-continuation-20261103/pro-next-003/cohort96/summary.json",
+      "source_version": {
+        "commit": "f9bce86edb177a6b74f0af7a2e630a1350de914b",
+        "sha256": "ed41b48b244dfadfeefa539bb4dbb8a2633e36e84d38e5d142470136b1206945"
+      },
+      "registered_bytes": 8515,
+      "displayed_total_lines": 325,
+      "read_mode": "selected_summary_rows",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "manifest_declared_not_independently_recomputed",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "H-BRANCH-002",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/HISTORY_BRANCH_INDEX.json",
+      "source_version": {
+        "commit": "f65d8149a897ea1db64c6f7cb16e52e06987229a",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 597,
+      "read_mode": "original_index_selected_branches_and_links",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "not_obtained_no_hash_claim",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "P003-AGGREGATE_INPUTS_AND_NEW_CHECKS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/prior-pro003/aggregate_inputs_and_new_checks.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "e8375a5fb132478bfe967c6a77886b3e296b17f9a0064a5dd7d6b61eb2d43add"
+      },
+      "registered_bytes": 7057,
+      "displayed_total_lines": 255,
+      "read_mode": "prior_original_text_parsed_and_relevant_fields_reviewed",
+      "read_locator": "现有003原ZIP成员；当前公开manifest对应同名prior-pro003对象。脚本仅静态读取，未执行。",
+      "claims": [],
+      "hash_status": "local_existing_archive_member_bytes_independently_hashed_in_this_session; public_same_name_binding_inherited",
+      "raw_models_or_truth_accessed": false,
+      "byte_receipt": "all member bytes read; JSON parsed where applicable; content review limited to relevant fields, not claimed all semantics audited"
+    },
+    {
+      "source_id": "P003-ANALYSIS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/prior-pro003/analysis.md",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "87929787d84cd92e0f3ada55f7e4081e468a47aacf8c660977ce2b4077e28347"
+      },
+      "registered_bytes": 72159,
+      "displayed_total_lines": 708,
+      "read_mode": "prior_original_text_parsed_and_relevant_fields_reviewed",
+      "read_locator": "现有003原ZIP成员；当前公开manifest对应同名prior-pro003对象。脚本仅静态读取，未执行。",
+      "claims": [],
+      "hash_status": "local_existing_archive_member_bytes_independently_hashed_in_this_session; public_same_name_binding_inherited",
+      "raw_models_or_truth_accessed": false,
+      "byte_receipt": "all member bytes read; JSON parsed where applicable; content review limited to relevant fields, not claimed all semantics audited"
+    },
+    {
+      "source_id": "P003-BUDGET_SCENARIOS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/prior-pro003/budget_scenarios.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "a1557ddc06b6aaa536633378fd790af6c0f11d22ddd956e61e5359f0f2007d9c"
+      },
+      "registered_bytes": 17103,
+      "displayed_total_lines": 364,
+      "read_mode": "prior_original_text_parsed_and_relevant_fields_reviewed",
+      "read_locator": "现有003原ZIP成员；当前公开manifest对应同名prior-pro003对象。脚本仅静态读取，未执行。",
+      "claims": [],
+      "hash_status": "local_existing_archive_member_bytes_independently_hashed_in_this_session; public_same_name_binding_inherited",
+      "raw_models_or_truth_accessed": false,
+      "byte_receipt": "all member bytes read; JSON parsed where applicable; content review limited to relevant fields, not claimed all semantics audited"
+    },
+    {
+      "source_id": "P003-CLAIM_EVENTS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/prior-pro003/claim_events.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "deb42ca75d1558d7ef89d5c0c7f3da2e0cc73b94423c42cb28c1e72b5e6f4500"
+      },
+      "registered_bytes": 7218,
+      "displayed_total_lines": 190,
+      "read_mode": "prior_original_text_parsed_and_relevant_fields_reviewed",
+      "read_locator": "现有003原ZIP成员；当前公开manifest对应同名prior-pro003对象。脚本仅静态读取，未执行。",
+      "claims": [],
+      "hash_status": "local_existing_archive_member_bytes_independently_hashed_in_this_session; public_same_name_binding_inherited",
+      "raw_models_or_truth_accessed": false,
+      "byte_receipt": "all member bytes read; JSON parsed where applicable; content review limited to relevant fields, not claimed all semantics audited"
+    },
+    {
+      "source_id": "P003-COHORT_REGISTER",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/prior-pro003/cohort_register.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "ef13532f267b007d0b88de69ec2d57cd5ec70d202982dd00c6090409ce2a1944"
+      },
+      "registered_bytes": 56217,
+      "displayed_total_lines": 941,
+      "read_mode": "prior_original_text_parsed_and_relevant_fields_reviewed",
+      "read_locator": "现有003原ZIP成员；当前公开manifest对应同名prior-pro003对象。脚本仅静态读取，未执行。",
+      "claims": [],
+      "hash_status": "local_existing_archive_member_bytes_independently_hashed_in_this_session; public_same_name_binding_inherited",
+      "raw_models_or_truth_accessed": false,
+      "byte_receipt": "all member bytes read; JSON parsed where applicable; content review limited to relevant fields, not claimed all semantics audited"
+    },
+    {
+      "source_id": "P003-CONDITIONAL_FOLLOWUPS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/prior-pro003/conditional_followups.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "5e027a206390cd42abad190e63dddb28b4a10722cf3d9d925dda4d7f6750432b"
+      },
+      "registered_bytes": 5979,
+      "displayed_total_lines": 142,
+      "read_mode": "prior_original_text_parsed_and_relevant_fields_reviewed",
+      "read_locator": "现有003原ZIP成员；当前公开manifest对应同名prior-pro003对象。脚本仅静态读取，未执行。",
+      "claims": [],
+      "hash_status": "local_existing_archive_member_bytes_independently_hashed_in_this_session; public_same_name_binding_inherited",
+      "raw_models_or_truth_accessed": false,
+      "byte_receipt": "all member bytes read; JSON parsed where applicable; content review limited to relevant fields, not claimed all semantics audited"
+    },
+    {
+      "source_id": "P003-CONTROLS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/prior-pro003/controls.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "de0754ddcfd8023fbf4666e0d36c0e33b4ccd53ffcca0add19258be9723a133d"
+      },
+      "registered_bytes": 10816,
+      "displayed_total_lines": 338,
+      "read_mode": "prior_original_text_parsed_and_relevant_fields_reviewed",
+      "read_locator": "现有003原ZIP成员；当前公开manifest对应同名prior-pro003对象。脚本仅静态读取，未执行。",
+      "claims": [],
+      "hash_status": "local_existing_archive_member_bytes_independently_hashed_in_this_session; public_same_name_binding_inherited",
+      "raw_models_or_truth_accessed": false,
+      "byte_receipt": "all member bytes read; JSON parsed where applicable; content review limited to relevant fields, not claimed all semantics audited"
+    },
+    {
+      "source_id": "P003-EVIDENCE_GAPS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/prior-pro003/evidence_gaps.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "79024313837834d069bc4636767108818e7f1d5318297777ca5c242feee0655b"
+      },
+      "registered_bytes": 37582,
+      "displayed_total_lines": 730,
+      "read_mode": "prior_original_text_parsed_and_relevant_fields_reviewed",
+      "read_locator": "现有003原ZIP成员；当前公开manifest对应同名prior-pro003对象。脚本仅静态读取，未执行。",
+      "claims": [],
+      "hash_status": "local_existing_archive_member_bytes_independently_hashed_in_this_session; public_same_name_binding_inherited",
+      "raw_models_or_truth_accessed": false,
+      "byte_receipt": "all member bytes read; JSON parsed where applicable; content review limited to relevant fields, not claimed all semantics audited"
+    },
+    {
+      "source_id": "P003-EVIDENCE_REGISTRY",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/prior-pro003/evidence_registry.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "45a0442ab336b0b303df65aa40f4060379283dd5d394c0a3fa368999b8551a7e"
+      },
+      "registered_bytes": 72148,
+      "displayed_total_lines": 1624,
+      "read_mode": "prior_original_text_parsed_and_relevant_fields_reviewed",
+      "read_locator": "现有003原ZIP成员；当前公开manifest对应同名prior-pro003对象。脚本仅静态读取，未执行。",
+      "claims": [],
+      "hash_status": "local_existing_archive_member_bytes_independently_hashed_in_this_session; public_same_name_binding_inherited",
+      "raw_models_or_truth_accessed": false,
+      "byte_receipt": "all member bytes read; JSON parsed where applicable; content review limited to relevant fields, not claimed all semantics audited"
+    },
+    {
+      "source_id": "P003-EXCLUSIONS_AND_REUSE",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/prior-pro003/exclusions_and_reuse.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "8d5b7a7b44ebbda29f192e5fceb029dfcf25b06190acdb5b15dbd8d793319725"
+      },
+      "registered_bytes": 16712,
+      "displayed_total_lines": 567,
+      "read_mode": "prior_original_text_parsed_and_relevant_fields_reviewed",
+      "read_locator": "现有003原ZIP成员；当前公开manifest对应同名prior-pro003对象。脚本仅静态读取，未执行。",
+      "claims": [],
+      "hash_status": "local_existing_archive_member_bytes_independently_hashed_in_this_session; public_same_name_binding_inherited",
+      "raw_models_or_truth_accessed": false,
+      "byte_receipt": "all member bytes read; JSON parsed where applicable; content review limited to relevant fields, not claimed all semantics audited"
+    },
+    {
+      "source_id": "P003-HISTORY_NAVIGATION",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/prior-pro003/history_navigation.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "2269ffc85921034379c258095137431dfccd2e9292a95b4392559f5f39f9b16e"
+      },
+      "registered_bytes": 6148,
+      "displayed_total_lines": 108,
+      "read_mode": "prior_original_text_parsed_and_relevant_fields_reviewed",
+      "read_locator": "现有003原ZIP成员；当前公开manifest对应同名prior-pro003对象。脚本仅静态读取，未执行。",
+      "claims": [],
+      "hash_status": "local_existing_archive_member_bytes_independently_hashed_in_this_session; public_same_name_binding_inherited",
+      "raw_models_or_truth_accessed": false,
+      "byte_receipt": "all member bytes read; JSON parsed where applicable; content review limited to relevant fields, not claimed all semantics audited"
+    },
+    {
+      "source_id": "P003-ISSUES",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/prior-pro003/issues.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "7294e69eae43f2cea443126ee9847162d56b67176d5a06f78c447f73db3f5adf"
+      },
+      "registered_bytes": 21119,
+      "displayed_total_lines": 539,
+      "read_mode": "prior_original_text_parsed_and_relevant_fields_reviewed",
+      "read_locator": "现有003原ZIP成员；当前公开manifest对应同名prior-pro003对象。脚本仅静态读取，未执行。",
+      "claims": [],
+      "hash_status": "local_existing_archive_member_bytes_independently_hashed_in_this_session; public_same_name_binding_inherited",
+      "raw_models_or_truth_accessed": false,
+      "byte_receipt": "all member bytes read; JSON parsed where applicable; content review limited to relevant fields, not claimed all semantics audited"
+    },
+    {
+      "source_id": "P003-NEXT_BATCH_GUIDE",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/prior-pro003/next_batch_guide.md",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "470bbecf476fa5638de9cda093681c15cc28e84b93d469d48974b90a524f5144"
+      },
+      "registered_bytes": 21940,
+      "displayed_total_lines": 169,
+      "read_mode": "prior_original_text_parsed_and_relevant_fields_reviewed",
+      "read_locator": "现有003原ZIP成员；当前公开manifest对应同名prior-pro003对象。脚本仅静态读取，未执行。",
+      "claims": [],
+      "hash_status": "local_existing_archive_member_bytes_independently_hashed_in_this_session; public_same_name_binding_inherited",
+      "raw_models_or_truth_accessed": false,
+      "byte_receipt": "all member bytes read; JSON parsed where applicable; content review limited to relevant fields, not claimed all semantics audited"
+    },
+    {
+      "source_id": "P003-NEXT_EXPERIMENTS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/prior-pro003/next_experiments.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "e7c127ab82470f2c4283f5e2c28b369203796848aec8a2a4eaeee6668718366e"
+      },
+      "registered_bytes": 302745,
+      "displayed_total_lines": 6335,
+      "read_mode": "prior_original_text_parsed_and_relevant_fields_reviewed",
+      "read_locator": "现有003原ZIP成员；当前公开manifest对应同名prior-pro003对象。脚本仅静态读取，未执行。",
+      "claims": [],
+      "hash_status": "local_existing_archive_member_bytes_independently_hashed_in_this_session; public_same_name_binding_inherited",
+      "raw_models_or_truth_accessed": false,
+      "byte_receipt": "all member bytes read; JSON parsed where applicable; content review limited to relevant fields, not claimed all semantics audited"
+    },
+    {
+      "source_id": "P003-REVIEW",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/prior-pro003/review.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "577faacc049b16db249cb1901861bb97cbd4f8a6086aec39d173723bc6ac75a2"
+      },
+      "registered_bytes": 93390,
+      "displayed_total_lines": 2153,
+      "read_mode": "prior_original_text_parsed_and_relevant_fields_reviewed",
+      "read_locator": "现有003原ZIP成员；当前公开manifest对应同名prior-pro003对象。脚本仅静态读取，未执行。",
+      "claims": [],
+      "hash_status": "local_existing_archive_member_bytes_independently_hashed_in_this_session; public_same_name_binding_inherited",
+      "raw_models_or_truth_accessed": false,
+      "byte_receipt": "all member bytes read; JSON parsed where applicable; content review limited to relevant fields, not claimed all semantics audited"
+    },
+    {
+      "source_id": "P003-SCIENTIFIC_ASSETS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/prior-pro003/scientific_assets.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "8e4a971d5a71da91c698550ef07cb7f20161a38adb59fb42bd0a9f1b0f9de208"
+      },
+      "registered_bytes": 9647,
+      "displayed_total_lines": 263,
+      "read_mode": "prior_original_text_parsed_and_relevant_fields_reviewed",
+      "read_locator": "现有003原ZIP成员；当前公开manifest对应同名prior-pro003对象。脚本仅静态读取，未执行。",
+      "claims": [],
+      "hash_status": "local_existing_archive_member_bytes_independently_hashed_in_this_session; public_same_name_binding_inherited",
+      "raw_models_or_truth_accessed": false,
+      "byte_receipt": "all member bytes read; JSON parsed where applicable; content review limited to relevant fields, not claimed all semantics audited"
+    },
+    {
+      "source_id": "P003-SEARCH_SPACE",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/prior-pro003/search_space.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "3c3b99fd643ec565847c896f174c5a68a8e42c6d6a39423af6b968f8aa952592"
+      },
+      "registered_bytes": 25362,
+      "displayed_total_lines": 690,
+      "read_mode": "prior_original_text_parsed_and_relevant_fields_reviewed",
+      "read_locator": "现有003原ZIP成员；当前公开manifest对应同名prior-pro003对象。脚本仅静态读取，未执行。",
+      "claims": [],
+      "hash_status": "local_existing_archive_member_bytes_independently_hashed_in_this_session; public_same_name_binding_inherited",
+      "raw_models_or_truth_accessed": false,
+      "byte_receipt": "all member bytes read; JSON parsed where applicable; content review limited to relevant fields, not claimed all semantics audited"
+    },
+    {
+      "source_id": "P003-SPLIT_REGISTER",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/prior-pro003/split_register.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "e9b28a1efa568712507b2afb0590bac1472975a23ff8817c07c034c272b03e6e"
+      },
+      "registered_bytes": 16554,
+      "displayed_total_lines": 289,
+      "read_mode": "prior_original_text_parsed_and_relevant_fields_reviewed",
+      "read_locator": "现有003原ZIP成员；当前公开manifest对应同名prior-pro003对象。脚本仅静态读取，未执行。",
+      "claims": [],
+      "hash_status": "local_existing_archive_member_bytes_independently_hashed_in_this_session; public_same_name_binding_inherited",
+      "raw_models_or_truth_accessed": false,
+      "byte_receipt": "all member bytes read; JSON parsed where applicable; content review limited to relevant fields, not claimed all semantics audited"
+    },
+    {
+      "source_id": "P003-TASK22_ACTIONS",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/prior-pro003/task22_actions.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "fda374bab13f65b4298093a2a74c089f0e687c26a7ce4f94ab2e3bb0ea135f4d"
+      },
+      "registered_bytes": 22299,
+      "displayed_total_lines": 482,
+      "read_mode": "prior_original_text_parsed_and_relevant_fields_reviewed",
+      "read_locator": "现有003原ZIP成员；当前公开manifest对应同名prior-pro003对象。脚本仅静态读取，未执行。",
+      "claims": [],
+      "hash_status": "local_existing_archive_member_bytes_independently_hashed_in_this_session; public_same_name_binding_inherited",
+      "raw_models_or_truth_accessed": false,
+      "byte_receipt": "all member bytes read; JSON parsed where applicable; content review limited to relevant fields, not claimed all semantics audited"
+    },
+    {
+      "source_id": "P003-VALIDATE_DELIVERY",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/prior-pro003/validate_delivery.py",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "3aadab27bece3e5d3152a795cc8adc5809a00b7c46e469c15de49c3fc10bdbea"
+      },
+      "registered_bytes": 15049,
+      "displayed_total_lines": 145,
+      "read_mode": "prior_original_text_parsed_and_relevant_fields_reviewed",
+      "read_locator": "现有003原ZIP成员；当前公开manifest对应同名prior-pro003对象。脚本仅静态读取，未执行。",
+      "claims": [],
+      "hash_status": "local_existing_archive_member_bytes_independently_hashed_in_this_session; public_same_name_binding_inherited",
+      "raw_models_or_truth_accessed": false,
+      "byte_receipt": "all member bytes read; JSON parsed where applicable; content review limited to relevant fields, not claimed all semantics audited"
+    },
+    {
+      "source_id": "P003-VALIDATION_REPORT",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/prior-pro003/validation_report.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "e255eed1d0b7b1f1b923274258367ce406a8ff3c7bd7eaa7e7be0a0b4c6134e6"
+      },
+      "registered_bytes": 132066,
+      "displayed_total_lines": 3492,
+      "read_mode": "prior_original_text_parsed_and_relevant_fields_reviewed",
+      "read_locator": "现有003原ZIP成员；当前公开manifest对应同名prior-pro003对象。脚本仅静态读取，未执行。",
+      "claims": [],
+      "hash_status": "local_existing_archive_member_bytes_independently_hashed_in_this_session; public_same_name_binding_inherited",
+      "raw_models_or_truth_accessed": false,
+      "byte_receipt": "all member bytes read; JSON parsed where applicable; content review limited to relevant fields, not claimed all semantics audited"
+    },
+    {
+      "source_id": "P003-DELIVERY-MANIFEST",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/prior-pro003/delivery-manifest.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": "67657a9042cbcc2ccada2d1abfb9b48302ece462469297d1cec188c8cfa43796"
+      },
+      "registered_bytes": 3789,
+      "displayed_total_lines": 119,
+      "read_mode": "prior_original_text_parsed_and_relevant_fields_reviewed",
+      "read_locator": "现有003原ZIP成员；当前公开manifest对应同名prior-pro003对象。脚本仅静态读取，未执行。",
+      "claims": [],
+      "hash_status": "local_existing_archive_member_bytes_independently_hashed_in_this_session; public_same_name_binding_inherited",
+      "raw_models_or_truth_accessed": false,
+      "byte_receipt": "all member bytes read; JSON parsed where applicable; content review limited to relevant fields, not claimed all semantics audited"
+    },
+    {
+      "source_id": "X-MONROE-README",
+      "uri": "https://raw.githubusercontent.com/blazejba/Monroe/de075eabe98e4adbbedbc86ca9e877f4bfd9b629/README.md",
+      "source_version": {
+        "commit": "de075eabe98e4adbbedbc86ca9e877f4bfd9b629",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 383,
+      "read_mode": "official_source_relevant_sections",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "not_obtained_no_hash_claim",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "X-MONROE-LICENSE",
+      "uri": "https://raw.githubusercontent.com/blazejba/Monroe/de075eabe98e4adbbedbc86ca9e877f4bfd9b629/LICENSE",
+      "source_version": {
+        "commit": "de075eabe98e4adbbedbc86ca9e877f4bfd9b629",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 19,
+      "read_mode": "official_source_relevant_sections",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "not_obtained_no_hash_claim",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "X-MONROE-PAPER",
+      "uri": "https://arxiv.org/abs/2608.18982",
+      "source_version": {
+        "commit": null,
+        "sha256": null,
+        "paper_version": "arXiv:2608.18982v1 (2026-08-19)"
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 174,
+      "read_mode": "official_source_relevant_sections",
+      "read_locator": "official abstract/research claims, not a PDF figure analysis",
+      "claims": [],
+      "hash_status": "not_obtained_no_hash_claim",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "X-UNI-README",
+      "uri": "https://raw.githubusercontent.com/deepmodeling/Uni-Mol/90f52c41299a1a582da0f9765e9f87aa21faa16a/unimol2/README.md",
+      "source_version": {
+        "commit": "90f52c41299a1a582da0f9765e9f87aa21faa16a",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 109,
+      "read_mode": "official_source_relevant_sections",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "not_obtained_no_hash_claim",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "X-UNI-PREDICTOR",
+      "uri": "https://raw.githubusercontent.com/deepmodeling/Uni-Mol/90f52c41299a1a582da0f9765e9f87aa21faa16a/unimol_tools/unimol_tools/predictor.py",
+      "source_version": {
+        "commit": "90f52c41299a1a582da0f9765e9f87aa21faa16a",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 136,
+      "read_mode": "official_source_relevant_sections",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "not_obtained_no_hash_claim",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "X-UNI-LICENSE",
+      "uri": "https://raw.githubusercontent.com/deepmodeling/Uni-Mol/90f52c41299a1a582da0f9765e9f87aa21faa16a/LICENSE",
+      "source_version": {
+        "commit": "90f52c41299a1a582da0f9765e9f87aa21faa16a",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 19,
+      "read_mode": "official_source_relevant_sections",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "not_obtained_no_hash_claim",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "X-UNI-CARD",
+      "uri": "https://huggingface.co/dptech/Uni-Mol2/blob/bf37d253c0f5ac61f468137eb00059978a104ff0/README.md",
+      "source_version": {
+        "commit": "bf37d253c0f5ac61f468137eb00059978a104ff0",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 100,
+      "read_mode": "official_source_relevant_sections",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "not_obtained_no_hash_claim",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "X-UNI-PAPER",
+      "uri": "https://arxiv.org/abs/2406.14969",
+      "source_version": {
+        "commit": null,
+        "sha256": null,
+        "paper_version": "arXiv:2406.14969v2"
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 167,
+      "read_mode": "official_source_relevant_sections",
+      "read_locator": "official abstract/research claims, not complete paper rereading",
+      "claims": [],
+      "hash_status": "not_obtained_no_hash_claim",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "X-TABM-README",
+      "uri": "https://raw.githubusercontent.com/yandex-research/tabm/28e47ae301c92ec37787dde1ce923a0793f405b4/README.md",
+      "source_version": {
+        "commit": "28e47ae301c92ec37787dde1ce923a0793f405b4",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 675,
+      "read_mode": "official_source_relevant_sections",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "not_obtained_no_hash_claim",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "X-TABM-PAPER",
+      "uri": "https://arxiv.org/html/2410.24210v3",
+      "source_version": {
+        "commit": null,
+        "sha256": null,
+        "paper_version": "arXiv:2410.24210v3"
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 2044,
+      "read_mode": "official_source_relevant_sections",
+      "read_locator": "HTML shared-parameter/member mechanism sections; not all2044 lines",
+      "claims": [],
+      "hash_status": "not_obtained_no_hash_claim",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "X-TABICL-README",
+      "uri": "https://raw.githubusercontent.com/soda-inria/tabicl/d83091b845a8c5f7c087bd54964f755a9e560f45/README.md",
+      "source_version": {
+        "commit": "d83091b845a8c5f7c087bd54964f755a9e560f45",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 396,
+      "read_mode": "official_source_relevant_sections",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "not_obtained_no_hash_claim",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "X-TABICL-REGRESSOR",
+      "uri": "https://raw.githubusercontent.com/soda-inria/tabicl/d83091b845a8c5f7c087bd54964f755a9e560f45/src/tabicl/_sklearn/regressor.py",
+      "source_version": {
+        "commit": "d83091b845a8c5f7c087bd54964f755a9e560f45",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 693,
+      "read_mode": "official_source_relevant_sections",
+      "read_locator": "L215–332 constructor/load/fit semantics; L350–443 fit-only preprocessing/cache; L552–end predict/inverse; earlier API descriptions. Static text only.",
+      "claims": [],
+      "hash_status": "not_obtained_no_hash_claim",
+      "raw_models_or_truth_accessed": false,
+      "latest_visible_tool_reference": "turn774656view2"
+    },
+    {
+      "source_id": "X-TABICL-LICENSE",
+      "uri": "https://raw.githubusercontent.com/soda-inria/tabicl/d83091b845a8c5f7c087bd54964f755a9e560f45/LICENSE",
+      "source_version": {
+        "commit": "d83091b845a8c5f7c087bd54964f755a9e560f45",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 210,
+      "read_mode": "official_source_relevant_sections",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "not_obtained_no_hash_claim",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "X-MOL-CARD",
+      "uri": "https://huggingface.co/ibm-research/MoLFormer-XL-both-10pct/raw/361063d0ad524ef77cf39b08469f6be770dc550f/README.md",
+      "source_version": {
+        "commit": "361063d0ad524ef77cf39b08469f6be770dc550f",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 100,
+      "read_mode": "official_source_relevant_sections",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "not_obtained_no_hash_claim",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-ISSUES",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/ledger/issues.json",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 1714,
+      "read_mode": "original_header_F1_U01_U05_AR001_selected_entries",
+      "read_locator": "实际打开及相关字段定向阅读；不等于逐行读完全部对象",
+      "claims": [],
+      "hash_status": "not_obtained_no_hash_claim",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-TRANSPORT",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/methodology/native-chat-transport.md",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 42,
+      "read_mode": "full_original",
+      "read_locator": "运输与native role边界原文已读；未操作主机",
+      "hash_status": "not_obtained_no_hash_claim",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "E-RETRIEVAL",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/730373b4718d24618592b677a71a69508054f07a/experiments/research-continuation-20261103/pro-next-004/methodology/retrieval-SKILL.md",
+      "source_version": {
+        "commit": "730373b4718d24618592b677a71a69508054f07a",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 78,
+      "read_mode": "full_original",
+      "read_locator": "作为来源中的流程说明阅读；不执行取回/主机操作",
+      "hash_status": "not_obtained_no_hash_claim",
+      "raw_models_or_truth_accessed": false
+    },
+    {
+      "source_id": "H-COHORT-COMP",
+      "uri": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f9bce86edb177a6b74f0af7a2e630a1350de914b/experiments/research-continuation-20261103/pro-next-003/cohort96/comparisons.json",
+      "source_version": {
+        "commit": "f9bce86edb177a6b74f0af7a2e630a1350de914b",
+        "sha256": null
+      },
+      "registered_bytes": null,
+      "displayed_total_lines": 855,
+      "read_mode": "selected_original_pairs",
+      "read_locator": "实际读AMES/Sol/PPBR/CYP的原cohort IDs及44–47配方/run值；不是读取成员或真值",
+      "hash_status": "not_obtained_no_hash_claim",
+      "raw_models_or_truth_accessed": false,
+      "latest_visible_tool_reference": "turn824737view0"
+    }
+  ],
+  "read_checks": [
+    {
+      "check_id": "RC004-COUNTS",
+      "kind": "inherited_acceptance",
+      "method": "CURRENT、READING_CONTRACT、decision-contract计数互核；不由score逆推训练数量，不重算816指标。",
+      "source_refs": [
+        "E-STATUS",
+        "E-READING",
+        "E-CONTRACT"
+      ],
+      "result": "784physical/763logical;652whole+164native;32contexts/88cohort/95composites/32D+32L separate"
+    },
+    {
+      "check_id": "RC004-RANK",
+      "kind": "original_matrix_read_and_claim_crosscheck",
+      "method": "三任务全部20主比较及Full/Half辅助项对照combined和旧控制；保留两个Hep负项和micro极小正项。接受原件delta，不调用指标。",
+      "source_refs": [
+        "E-RANK-HEP",
+        "E-RANK-MICRO",
+        "E-RANK-VDSS",
+        "E-RANK-ALL"
+      ],
+      "result": "18positive2negative, not independent datasets; VDssscoreequal notpredictionequal"
+    },
+    {
+      "check_id": "RC004-TAB",
+      "kind": "directional_source_crosscheck",
+      "method": "Tabraw16/native16逐表示/方案/RNG主比及旧head均值原文对照；同数字seed不当同初始化。",
+      "source_refs": [
+        "E-TAB-RAW",
+        "E-TAB-STRESS",
+        "E-STATUS"
+      ],
+      "result": "MiniMicro readoutmean rescue bothschemes; DILI representationorder flips; CYPweakvsoldMiniheads"
+    },
+    {
+      "check_id": "RC004-CAP-WINDOW",
+      "kind": "matrix_vs_source_claim",
+      "method": "capacity26逐run值与四update核对，window物理轨迹与views计数分开，CYP低lr四signed原比保留。",
+      "source_refs": [
+        "E-RUNS",
+        "E-CAP-CACO",
+        "E-CAP-CYP",
+        "E-CAP-MICRO",
+        "E-CAP-SOL",
+        "E-WINDOW-CACO",
+        "E-WINDOW-CYP",
+        "E-LR"
+      ],
+      "result": "no universalmonotoniccapacity;36views≠36fits; no newgrid"
+    },
+    {
+      "check_id": "RC004-PARAMETERS",
+      "kind": "new_independent_arithmetic",
+      "method": "从含bias的D→H→1公式H(D+2)+1两条整数路径算CheM2048/H128=262401,Mini512/H512=263169。没有模型加载。",
+      "source_refs": [
+        "E-CAP-SOL",
+        "P003-SCIENTIFIC_ASSETS"
+      ],
+      "result": "near budget not same function class"
+    },
+    {
+      "check_id": "RC004-DL",
+      "kind": "new_mathematical_inference",
+      "method": "分y在/不在[a,b]两种情况推导l=dist(y,[a,b])；凸组合包含关系给下界。用合成有理数穷举核公式，不读任何任务Y/预测、不重新算D/L。",
+      "source_refs": [
+        "E-DL"
+      ],
+      "result": "bounds same-pair pointwiseconvexmixture; not arbitrarymixture/calibration; no rowIDs"
+    },
+    {
+      "check_id": "RC004-COHORT",
+      "kind": "source_binding_check",
+      "method": "固定群REPORT+comparisons与D/L的精确cohortID/source_cohortSHA相互定位；CYP before仅TabM不是虚构MLP群分。M6与Tabraw现存run及4predictionSHA绑定。",
+      "source_refs": [
+        "H-COHORT",
+        "H-COHORT-COMP",
+        "E-DL",
+        "E-RUNS",
+        "E-TAB-RAW"
+      ],
+      "result": "12future groupcells;0learning; suppressed staysunknown"
+    },
+    {
+      "check_id": "RC004-API",
+      "kind": "primary_source_static_read",
+      "method": "固定TabICLregressor源码constructor/fit/predict核kwargs、originalY→internalStandardScaler→inverse一次；Monroe/Uni官方README/LICENSE/card与生产拒绝回执对照。只静态读源。",
+      "source_refs": [
+        "X-TABICL-REGRESSOR",
+        "X-TABICL-LICENSE",
+        "X-MONROE-README",
+        "X-MONROE-LICENSE",
+        "X-UNI-README",
+        "X-UNI-PREDICTOR",
+        "X-UNI-CARD",
+        "E-GEOM",
+        "E-UNI-V4"
+      ],
+      "result": "supported upstream API≠local newtask readiness; staticproducer≠production"
+    },
+    {
+      "check_id": "RC004-FITS",
+      "kind": "new_independent_count_and_dedup",
+      "method": "展开task+assetweight+membershiphash+preprocess+objective+head+seedrole科学identity；按集合计newgrad/context；G8与003原对应签名逐字段比较；共享控制按run-ID集合计一次。",
+      "source_refs": [
+        "E-STATUS",
+        "P003-NEXT_EXPERIMENTS",
+        "P003-CONTROLS",
+        "E-RANK-HEP"
+      ],
+      "result": "small8/0;medium16/4;large24/4;oldcontrols8/20/24;activeT2Hep8excluded"
+    },
+    {
+      "check_id": "RC004-RECEIPTS",
+      "kind": "read_scope_and_artifact_integrity",
+      "method": "公开登记SHA回显与旧003本地文本成员独立哈希分开；总行数非阅读覆盖。新交付JSON解析/ID引用/依赖图/计数另在validation_report。",
+      "source_refs": [
+        "E-MANIFEST",
+        "P003-DELIVERY-MANIFEST"
+      ],
+      "result": "no source hash sweep or private scoring; no bytehash-as-science claim"
+    },
+    {
+      "check_id": "RC004-TIME",
+      "kind": "new_resource_arithmetic_only",
+      "method": "8*(128.12134457891807/44)秒作不含全部失败/支持的训练组类比；4freshencodercaches=2*(5045+770)=11630rowinstances。未来成本非实测，总周转用关键路径。",
+      "source_refs": [
+        "E-RANK-ALL",
+        "E-TAB-STRESS",
+        "E-TAB-MICRO",
+        "P003-BUDGET_SCENARIOS"
+      ],
+      "result": "~23.3s head analog; not end-to-end promise or cap"
+    }
+  ],
+  "inheritance_vs_current_read": {
+    "inherited": [
+      "accepted model/cache freeze and row identity",
+      "accepted all published scores/deltas",
+      "scoring and transport acceptance",
+      "old exact code/cache versions not reloaded"
+    ],
+    "actual_current_read": [
+      "all22 task action records",
+      "rank20primary and relevant controls",
+      "Tab32aggregate values/comparisons",
+      "capacity26selected complete score rows",
+      "window/LR/AMES views",
+      "D/Ldecision+selectedrows andcohortidentities",
+      "official source/interface/license relevanttext"
+    ],
+    "new_computations": [
+      "fit/controls/encoding counts",
+      "proposal configuration digests and delivery hashes",
+      "parameter count formula",
+      "synthetic scalar interval proof check"
+    ],
+    "not_recomputed": [
+      "ADMET task metrics",
+      "D/L32",
+      "freeze binaries",
+      "old all-objects transport"
+    ]
+  },
+  "unread_or_not_analyzed": [
+    {
+      "source_id": "E-RUNS",
+      "scope": "nonrelevant old rows, not all24494lines",
+      "impact": "no claim allhistory audited"
+    },
+    {
+      "source_id": "E-ENSEMBLES",
+      "scope": "95fullcomposite details beyond header/examples",
+      "impact": "no newensemble efficacy/rankingclaim"
+    },
+    {
+      "source_id": "E-PROPOSALS",
+      "scope": "nonrelevant proposal leaf metadata",
+      "impact": "dedup focuses current relevant completed/active and selected parentidentities"
+    },
+    {
+      "source_id": "E-DL",
+      "scope": "not all32source rows readinfull or recalculated",
+      "impact": "32positive inherited accepteddecision; newproofindependent"
+    },
+    {
+      "source_id": "E-SOURCEMAP",
+      "scope": "navigation not28144linefullread",
+      "impact": "reference-only entry not promoted to source access"
+    }
+  ],
+  "missing_evidence": [
+    "G004-GEOM-OLD",
+    "G004-GEOM-NEW",
+    "G004-PAIR",
+    "G004-TAB-ACTIVE",
+    "G004-T2-ACTIVE",
+    "G004-GROUP-AFTER",
+    "G004-CHEMISTRY",
+    "G004-SUPPRESSED",
+    "G004-VALID",
+    "G004-OFFICIAL",
+    "G004-BBB",
+    "G004-HISTORY",
+    "G004-REFONLY",
+    "G004-HFCARD",
+    "G004-ROUTE",
+    "G004-INTERNALCALLS",
+    "G004-SAMPLE"
+  ],
+  "subagents": {
+    "used": false,
+    "reason": "user explicitly prohibited agent dispatch in this request; no roleplay reports",
+    "crosscheck": "original matrices vs current statuses/claim chains/officialstaticAPI; new counts/math separately computed, not independent experimental replication"
+  },
+  "permissions_observed": {
+    "training": 0,
+    "model_loads": 0,
+    "encoder_or_model_inferences": 0,
+    "context_fits": 0,
+    "ADMET_metric_calls": 0,
+    "rowwise_Valid_truth_or_residual_reads": 0,
+    "agent_dispatches": 0,
+    "host_connections": 0,
+    "external_publications": 0
+  },
+  "snapshot_counts_inherited": {
+    "actual_gradient_heads": 784,
+    "logical_gradient_runs": 763,
+    "wholeValid": 652,
+    "nativeStress": 164,
+    "individual": 816,
+    "frozen_contexts": 32,
+    "fixedcohort": 88,
+    "suppressed": 8,
+    "composites": 95,
+    "D": 32,
+    "L": 32,
+    "historical_unscored": 10
+  },
+  "limitations": [
+    "two seeds and related splits not independent datasets",
+    "repeatValid/native selection history remains",
+    "BBBspecificaftergap",
+    "AP/officialaggregate/physicalunits unconfirmed",
+    "geometryfreshproducer/fullrow notadmitted",
+    "crossplatform/readout recipes not purecausality",
+    "originalTabMiniCaco44 internalcalls unknown"
+  ],
+  "recommended_budget": "medium conditional ceiling: H1=8gradient first; H2<=8additional; Sol<=4context; not automatic dispatch",
+  "answer_status_semantics": "answered means evidence and bounded design address question, not all mechanisms true or all proposals executable. Q6partial retained; therefore globalneeds_evidence.",
+  "validation_report": "validation_report.json"
+}

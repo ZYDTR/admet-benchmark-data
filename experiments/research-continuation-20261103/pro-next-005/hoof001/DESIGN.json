@@ -1,0 +1,568 @@
+{
+  "request_id": "admet-hep-oof60-prep-20261103-001",
+  "cycle_id": "HOOF001",
+  "task": "clearance_hepatocyte_az",
+  "phase": "garage_blindspot_coverage_and_comparison",
+  "rows": 848,
+  "goal": "Produce matched group-heldout predictions for every original Hep train row with fixed current MiniMol+TabICL, local-label readout and original MLP control; identify complete rescue/harm/common-error cohorts and choose the next intervention from evidence.",
+  "why_now": {
+    "old_stress_unique_rows": 306,
+    "previously_uncovered_rows": 542,
+    "old_local_vs_MLP_high_MAE_relative_change": {
+      "canonical": -0.1818725,
+      "scaffold": -0.2323594
+    },
+    "limits": "Old high-tail gains do not establish a replacement for current TabICL. No full OOF for these three recipes exists. New folds improve train-internal coverage, not independence from historical research selection."
+  },
+  "fixed_group_keys": {
+    "source": "input/old-partitions/{scheme}.json row_assignments, element0=original row index, element1=exact existing group key",
+    "canonical": "RDKit canonical isomeric SMILES, no salt/tautomer cleanup",
+    "scaffold": "Existing Murcko includeChirality=False; empty -> ACYCLIC::canonical, parse failure -> RAW::original. Do not regenerate keys or silently alter chemistry.",
+    "validation": "Both source records must bind the exact 848-row CSV and ordered Drug_ID/Drug; whole groups never cross fit/stop/outer-test in a scheme."
+  },
+  "outer_partition": {
+    "method": "group_oof5_sizebalanced_hash_v1",
+    "n_folds": 5,
+    "seed": 20261103,
+    "label_independent": true,
+    "algorithm": "For each scheme, collect row IDs by existing group key. Sort keys by (-group_size, SHA256(UTF8(\"HOOF001|outer|20261103|\"+scheme+\"|\"+key)), key). Assign each entire group in that order to fold with smallest current row count, ties smallest fold index 0..4. No reshuffling/label balancing/retry for nicer outcomes. Each row is outer test exactly once per scheme."
+  },
+  "inner_partition": {
+    "method": "group_oof5_inner_hash_v1",
+    "stop_fraction_of_outer_train": 0.125,
+    "algorithm": "For outer fold f, exclude its test groups. Order remaining group keys by (SHA256(UTF8(\"HOOF001|inner|20261103|\"+scheme+\"|\"+str(f)+\"|\"+key)),key). Walk whole groups into stop until row count >= Python round(0.125*n_outer_train_rows), remaining groups fit. Ascending original row order within each membership. No labels used.",
+    "common_context": "ALL three methods use exactly inner-fit rows for gradient training/bank/TabICL context and any fitted preprocessing. Inner stop only selects MLP/local epochs; TabICL leaves it unused. No outer-train refit/addition of stop rows this cycle. Thus roughly70/10/20 original rows for all recipes."
+  },
+  "representation": {
+    "id": "minimol_512",
+    "external_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+    "raw_cache": "Original approved 848x512 raw train cache on training host; binding supplied to Sol separately. No new encoding.",
+    "feature_scaler": "Same H0 per-fold fit-only float32 mean/std ddof0; d=1 if std<1e-8 else std; all query/stop transformed using that fit state. Never reuse old fitted scaler.",
+    "target_scaler": "MLP/local use accepted fit-only target scaler with original train.Y and inverse exactly once; TabICL preserves original-Y context and its native context-only preprocessing."
+  },
+  "recipes": {
+    "mlp": "Copy original MLP configs:512->256 ReLU dropout0.1->1, AdamW lr0.0005 wd0.0001,batch128,max50,patience8,min_delta1e-7,earliest best, original MSE zY. Only run/partition/source-link fields change.",
+    "local": "Copy original regression B recipe: Linear512->128 bias, Euclidean p2 unsquared, full softmax T1, no embedding normalization/PLR/blocks/dropout/topk; train candidates floor(.5*(fit-minus-batch)), append batch once, own-row self mask only; inference all fit; AdamW .01/.0002,50epochs/pat8/b128. Preserve exact source science; only new partition envelope needed.",
+    "tabicl": "Copy approved Mini H0 TabICLRegressor config, n_estimators8,batch_size8,feat_shuffle_method latin,norm_methods null,outlier4,kv_cachefalse,AMPfalse,FA3false,auto_downloadfalse,random_state44/45. All pretrained parameters/buffers frozen. No TabICL finetuning."
+  },
+  "runs": [
+    {
+      "run_id": "hoof60-hep-minimol-mlp-canonical-f0-s44",
+      "method": "mlp",
+      "scheme": "canonical",
+      "outer_fold": 0,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-mlp-canonical-f0-s45",
+      "method": "mlp",
+      "scheme": "canonical",
+      "outer_fold": 0,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-local-canonical-f0-s44",
+      "method": "local",
+      "scheme": "canonical",
+      "outer_fold": 0,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-local-canonical-f0-s45",
+      "method": "local",
+      "scheme": "canonical",
+      "outer_fold": 0,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-tabicl-canonical-f0-s44",
+      "method": "tabicl",
+      "scheme": "canonical",
+      "outer_fold": 0,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-tabicl-canonical-f0-s45",
+      "method": "tabicl",
+      "scheme": "canonical",
+      "outer_fold": 0,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-mlp-canonical-f1-s44",
+      "method": "mlp",
+      "scheme": "canonical",
+      "outer_fold": 1,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-mlp-canonical-f1-s45",
+      "method": "mlp",
+      "scheme": "canonical",
+      "outer_fold": 1,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-local-canonical-f1-s44",
+      "method": "local",
+      "scheme": "canonical",
+      "outer_fold": 1,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-local-canonical-f1-s45",
+      "method": "local",
+      "scheme": "canonical",
+      "outer_fold": 1,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-tabicl-canonical-f1-s44",
+      "method": "tabicl",
+      "scheme": "canonical",
+      "outer_fold": 1,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-tabicl-canonical-f1-s45",
+      "method": "tabicl",
+      "scheme": "canonical",
+      "outer_fold": 1,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-mlp-canonical-f2-s44",
+      "method": "mlp",
+      "scheme": "canonical",
+      "outer_fold": 2,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-mlp-canonical-f2-s45",
+      "method": "mlp",
+      "scheme": "canonical",
+      "outer_fold": 2,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-local-canonical-f2-s44",
+      "method": "local",
+      "scheme": "canonical",
+      "outer_fold": 2,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-local-canonical-f2-s45",
+      "method": "local",
+      "scheme": "canonical",
+      "outer_fold": 2,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-tabicl-canonical-f2-s44",
+      "method": "tabicl",
+      "scheme": "canonical",
+      "outer_fold": 2,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-tabicl-canonical-f2-s45",
+      "method": "tabicl",
+      "scheme": "canonical",
+      "outer_fold": 2,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-mlp-canonical-f3-s44",
+      "method": "mlp",
+      "scheme": "canonical",
+      "outer_fold": 3,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-mlp-canonical-f3-s45",
+      "method": "mlp",
+      "scheme": "canonical",
+      "outer_fold": 3,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-local-canonical-f3-s44",
+      "method": "local",
+      "scheme": "canonical",
+      "outer_fold": 3,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-local-canonical-f3-s45",
+      "method": "local",
+      "scheme": "canonical",
+      "outer_fold": 3,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-tabicl-canonical-f3-s44",
+      "method": "tabicl",
+      "scheme": "canonical",
+      "outer_fold": 3,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-tabicl-canonical-f3-s45",
+      "method": "tabicl",
+      "scheme": "canonical",
+      "outer_fold": 3,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-mlp-canonical-f4-s44",
+      "method": "mlp",
+      "scheme": "canonical",
+      "outer_fold": 4,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-mlp-canonical-f4-s45",
+      "method": "mlp",
+      "scheme": "canonical",
+      "outer_fold": 4,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-local-canonical-f4-s44",
+      "method": "local",
+      "scheme": "canonical",
+      "outer_fold": 4,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-local-canonical-f4-s45",
+      "method": "local",
+      "scheme": "canonical",
+      "outer_fold": 4,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-tabicl-canonical-f4-s44",
+      "method": "tabicl",
+      "scheme": "canonical",
+      "outer_fold": 4,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-tabicl-canonical-f4-s45",
+      "method": "tabicl",
+      "scheme": "canonical",
+      "outer_fold": 4,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-mlp-scaffold-f0-s44",
+      "method": "mlp",
+      "scheme": "scaffold",
+      "outer_fold": 0,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-mlp-scaffold-f0-s45",
+      "method": "mlp",
+      "scheme": "scaffold",
+      "outer_fold": 0,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-local-scaffold-f0-s44",
+      "method": "local",
+      "scheme": "scaffold",
+      "outer_fold": 0,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-local-scaffold-f0-s45",
+      "method": "local",
+      "scheme": "scaffold",
+      "outer_fold": 0,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-tabicl-scaffold-f0-s44",
+      "method": "tabicl",
+      "scheme": "scaffold",
+      "outer_fold": 0,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-tabicl-scaffold-f0-s45",
+      "method": "tabicl",
+      "scheme": "scaffold",
+      "outer_fold": 0,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-mlp-scaffold-f1-s44",
+      "method": "mlp",
+      "scheme": "scaffold",
+      "outer_fold": 1,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-mlp-scaffold-f1-s45",
+      "method": "mlp",
+      "scheme": "scaffold",
+      "outer_fold": 1,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-local-scaffold-f1-s44",
+      "method": "local",
+      "scheme": "scaffold",
+      "outer_fold": 1,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-local-scaffold-f1-s45",
+      "method": "local",
+      "scheme": "scaffold",
+      "outer_fold": 1,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-tabicl-scaffold-f1-s44",
+      "method": "tabicl",
+      "scheme": "scaffold",
+      "outer_fold": 1,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-tabicl-scaffold-f1-s45",
+      "method": "tabicl",
+      "scheme": "scaffold",
+      "outer_fold": 1,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-mlp-scaffold-f2-s44",
+      "method": "mlp",
+      "scheme": "scaffold",
+      "outer_fold": 2,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-mlp-scaffold-f2-s45",
+      "method": "mlp",
+      "scheme": "scaffold",
+      "outer_fold": 2,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-local-scaffold-f2-s44",
+      "method": "local",
+      "scheme": "scaffold",
+      "outer_fold": 2,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-local-scaffold-f2-s45",
+      "method": "local",
+      "scheme": "scaffold",
+      "outer_fold": 2,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-tabicl-scaffold-f2-s44",
+      "method": "tabicl",
+      "scheme": "scaffold",
+      "outer_fold": 2,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-tabicl-scaffold-f2-s45",
+      "method": "tabicl",
+      "scheme": "scaffold",
+      "outer_fold": 2,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-mlp-scaffold-f3-s44",
+      "method": "mlp",
+      "scheme": "scaffold",
+      "outer_fold": 3,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-mlp-scaffold-f3-s45",
+      "method": "mlp",
+      "scheme": "scaffold",
+      "outer_fold": 3,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-local-scaffold-f3-s44",
+      "method": "local",
+      "scheme": "scaffold",
+      "outer_fold": 3,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-local-scaffold-f3-s45",
+      "method": "local",
+      "scheme": "scaffold",
+      "outer_fold": 3,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-tabicl-scaffold-f3-s44",
+      "method": "tabicl",
+      "scheme": "scaffold",
+      "outer_fold": 3,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-tabicl-scaffold-f3-s45",
+      "method": "tabicl",
+      "scheme": "scaffold",
+      "outer_fold": 3,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-mlp-scaffold-f4-s44",
+      "method": "mlp",
+      "scheme": "scaffold",
+      "outer_fold": 4,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-mlp-scaffold-f4-s45",
+      "method": "mlp",
+      "scheme": "scaffold",
+      "outer_fold": 4,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-local-scaffold-f4-s44",
+      "method": "local",
+      "scheme": "scaffold",
+      "outer_fold": 4,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-local-scaffold-f4-s45",
+      "method": "local",
+      "scheme": "scaffold",
+      "outer_fold": 4,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-tabicl-scaffold-f4-s44",
+      "method": "tabicl",
+      "scheme": "scaffold",
+      "outer_fold": 4,
+      "seed": 44,
+      "task": "clearance_hepatocyte_az"
+    },
+    {
+      "run_id": "hoof60-hep-minimol-tabicl-scaffold-f4-s45",
+      "method": "tabicl",
+      "scheme": "scaffold",
+      "outer_fold": 4,
+      "seed": 45,
+      "task": "clearance_hepatocyte_az"
+    }
+  ],
+  "scientific_changes_allowed": "Only new OOF group partition construction/validation, partition-aware config binding and output routing. Preserve model, losses, learning rates, batch/RNG, metrics and preprocessing arithmetic. No false old threeway_hash method labels or monkeypatching a wrong method name to bypass validation. Use an explicit narrow new OOF method and validated adapter/private derivative with lineage.",
+  "locking": "Freeze all10 partition records and60 configs before any learning. For each scheme, all20 gradient best states and10 context states/predictions must be locked before first outer-label metric review. Stage canonical then scaffold allowed, but later configs remain pre-frozen and no tuning from canonical results. Inner stop labels allowed for predefined early stopping only.",
+  "outputs": "Per scheme each method/seed yields exactly848 OOF predictions, original rowID/Drug_ID/Drug/fold/group key/source identity, no dropped/merged rows. Each prediction tied to fit/stop/test membership and saved selected model/context. Store per-fold originals, initial/best/physical-last/optimizer/used RNG as applicable, fold fit scaler/bank and provenance. Report formal fold Spearman/MAE after locking, equal-seed prediction metrics distinct from mean of seed scores; pooled Spearman descriptive only.",
+  "analysis_contract": {
+    "primary": "Mini local vs current Mini TabICL, paired within identical folds; MLP matched control explains earlier gains. Per-fold equal-seed predictions:5 Spearman differences per scheme and unweighted mean, seed-specific signs separately. Pooled OOF rank is descriptive, not independent generalization estimate.",
+    "fixed_cohorts": [
+      "all848",
+      "previously covered306 and uncovered542 from old union",
+      "Y<=3 low",
+      "Y>=150 high",
+      "3<Y<150 middle",
+      "original CB fixed cohorts when membership available",
+      "all other rows for each fixed cohort"
+    ],
+    "complete_error_sets": "Within each scheme, average predictions over44/45 per method. Define per-row absolute error, local-minus-Tab absolute-error delta; record every row with delta<0,>0,=0 and 5 raw-Y-unit material improvement/harm as descriptive threshold, not assay uncertainty. Define large error abs_error>=50 and agreement abs(local-Tab)<=10; complete shared-large-error, low-disagreement-shared-error, Tab-only-large/local-only-large cohorts. Record all memberships, counts and complement controls. These are diagnostic flags, not clinical accuracy/label correctness.",
+    "uncertainty": "Paired whole-group bootstrap2000 seed20261103, within each outer fold for fold-average Spearman difference, preserve same group draw across methods/seeds. Tail MAE whole-group bootstrap. Descriptive conditional uncertainty, no independence or multiple-testing correction claim. Do not call non-significant null evidence of equality.",
+    "chemistry": "Reuse actual canonical/scaffold keys; quantify group sizes, duplicates with different givenY, fit-neighbor support/similarity only if original compatible fingerprints already bound or new deterministic descriptor analysis separately registered. No label editing, pseudo labels or claim that disagreement proves mislabeling.",
+    "next_decision": "If local reliably improves a coherent cohort without broad rank harm, examine a fixed blending/support mechanism next under a separate task. If benefits fail on newly covered rows or shared errors dominate, close replacement claim and target representation/support/assay-condition explanation. No automatic blend grid/OOF stacker/Valid query under this task."
+  },
+  "budget_planned_training": {
+    "gradient_heads": 40,
+    "frozen_contexts": 20,
+    "CPU_process_seconds_total_cap": 7200,
+    "GPU_job_seconds_total_cap": 3600,
+    "context_attempts_max": 24,
+    "gradient_attempts_max": 44,
+    "new_encoder_rows": 0,
+    "new_Valid_calls": 0,
+    "official_upload": false,
+    "calibration": "ME40 successful CPU575.7s included larger AMES; this batch40 smallHep heads. Prior Hep8 context cap1800GPU seconds;20Hep contexts3600 cap is bounded allowance, not predicted wall time. All failed attempts/support included; no old budget reuse."
+  },
+  "invariants": [
+    "Only original train.Y",
+    "All external pretrained parameters and buffers frozen",
+    "All848 original rows/labels preserved; duplicates/empty IDs not merged",
+    "No teacher labels, new external training data, privateValid/test fitting, downloads of new models, candidate upload",
+    "Preparation0learning/0backward/0optimizer.step/0model-fit; actualSol only performs learning and TabICL contextfit"
+  ]
+}
