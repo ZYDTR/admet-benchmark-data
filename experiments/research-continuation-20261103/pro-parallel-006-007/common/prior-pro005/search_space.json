@@ -1,0 +1,517 @@
+[
+  {
+    "direction_id": "D005-TEMPERATURE",
+    "title": "固定状态的带宽干预",
+    "rationale": "集中与改进/伤害共存；预先固定的T2检验减轻集中在这些既定状态下能否改善质量，而非检验普遍必要性/充分性或学习路由门。",
+    "evidence_refs": [
+      "E-CONCENTRATION",
+      "E-HOOF-DESIGN",
+      "E-HOOF-AGG"
+    ],
+    "counterevidence": "相关性不等于坏因；T2与W*.5同函数；可能降低端点收益或保持共同错误。",
+    "parameters": {
+      "T_control": 1.0,
+      "T_new": 2.0,
+      "states": "10 accepted canonical local selected states",
+      "seeds": [
+        44,
+        45
+      ],
+      "bank": "original inner-fit only",
+      "no_new_fit": true
+    },
+    "combination_rules": "只采用明列对照；无未登记笛卡尔积、无见外层结果后调参数。物理fit/views/context分账。",
+    "configuration_and_fit_count": "5fold×2seed=10新预测视图；0gradient/context/encoder。代数等价fixture不另计视图。",
+    "preparation_mode": "new_code",
+    "priority": "first_zero_fit_discriminator",
+    "trigger": "获准宿主绑定原selected states和query-slot，不使用outer选T。",
+    "stop_or_skip": "T2不改善即关闭这个固定干预；不扫T，不把不显著当等效。",
+    "linked_issues": [
+      "I005-CONCENTRATION",
+      "I005-EQUIVALENCE",
+      "I005-COMMON-ERROR"
+    ],
+    "related_proposal_ids": [],
+    "related_diagnostic_ids": [
+      "Z005-T2-hep-canonical-f0",
+      "Z005-T2-hep-canonical-f1",
+      "Z005-T2-hep-canonical-f2",
+      "Z005-T2-hep-canonical-f3",
+      "Z005-T2-hep-canonical-f4"
+    ],
+    "execution_authorized": false
+  },
+  {
+    "direction_id": "D005-OBJECTIVE",
+    "title": "局部标签读出的受控排序目标",
+    "rationale": "local端点MAE收益与主排序/共错分离；原Spearman任务rank配方提供可迁移的目标假说，但readout不同需自己的HalfMSE对照。",
+    "evidence_refs": [
+      "E-HOOF-AGG",
+      "E-HOOF-DESIGN",
+      "E-TASK22"
+    ],
+    "counterevidence": "Pair16大间隔不能支持新筛pair；新local监控明定Spearman而历史monitor未暴露，旧MSE不是完美主控制。",
+    "parameters": {
+      "losses": [
+        ".5*MSE(zY)",
+        ".5*MSE(zY)+.5*mean_softplus(-sign(dY)*dp), all unequal within-batch pairs"
+      ],
+      "pair_temperature": 1,
+      "projection_dim": 128,
+      "lr": 0.01,
+      "weight_decay": 0.0002,
+      "epochs": 50,
+      "patience": 8,
+      "monitor": "Spearman maximize",
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "seeds": [
+        44,
+        45
+      ]
+    },
+    "combination_rules": "只采用明列对照；无未登记笛卡尔积、无见外层结果后调参数。物理fit/views/context分账。",
+    "configuration_and_fit_count": "2目标×5fold×2seed=20新gradient；只比较本轮同期Half/Rank。",
+    "preparation_mode": "new_code",
+    "priority": "primary_learning",
+    "trigger": "所有目标/seed/分区/monitor在任何新outer回验前整体锁定。",
+    "stop_or_skip": "有限目标对比无益或搬迁共同错误即关闭本配方；不追加lambda/seed。",
+    "linked_issues": [
+      "I005-OBJECTIVE",
+      "I005-OOF-HISTORY"
+    ],
+    "related_proposal_ids": [
+      "P005-O-hep-canonical-f0-half",
+      "P005-O-hep-canonical-f0-rank",
+      "P005-O-hep-canonical-f1-half",
+      "P005-O-hep-canonical-f1-rank",
+      "P005-O-hep-canonical-f2-half",
+      "P005-O-hep-canonical-f2-rank",
+      "P005-O-hep-canonical-f3-half",
+      "P005-O-hep-canonical-f3-rank",
+      "P005-O-hep-canonical-f4-half",
+      "P005-O-hep-canonical-f4-rank",
+      "P005-S-hep-canonical-f0-half",
+      "P005-S-hep-canonical-f0-rank",
+      "P005-S-hep-canonical-f1-half",
+      "P005-S-hep-canonical-f1-rank",
+      "P005-S-hep-canonical-f2-half",
+      "P005-S-hep-canonical-f2-rank",
+      "P005-S-hep-canonical-f3-half",
+      "P005-S-hep-canonical-f3-rank",
+      "P005-S-hep-canonical-f4-half",
+      "P005-S-hep-canonical-f4-rank"
+    ],
+    "related_diagnostic_ids": [],
+    "execution_authorized": false
+  },
+  {
+    "direction_id": "D005-SCALE",
+    "title": "目标×全局距离RMS约束",
+    "rationale": "把全局温度自由度从局部几何中移除，检验排序目标作用是否伴随不受约束的径向缩放。",
+    "evidence_refs": [
+      "E-CONCENTRATION",
+      "E-HOOF-DESIGN"
+    ],
+    "counterevidence": "固定RMS仍能局部集中；改变参数化/有效正则，不是纯容量不变或唯一机制识别。",
+    "parameters": {
+      "scale_levels": [
+        "free",
+        "d_eff=S(W0)/S(W)*||WΔ||, S²=2tr(WΣ_fitWᵀ)"
+      ],
+      "objectives": [
+        "HalfMSE",
+        "HalfMSE+HalfPair"
+      ],
+      "gradient_through_S": true,
+      "seed_initial_distance_matched": true,
+      "normalization_axis": "global fit covariance, NOT per-query norm",
+      "T": 1
+    },
+    "combination_rules": "只采用明列对照；无未登记笛卡尔积、无见外层结果后调参数。物理fit/views/context分账。",
+    "configuration_and_fit_count": "新增20gradient，与O20组成4配置×5fold×2seed=40唯一fit；控制不重跑。",
+    "preparation_mode": "new_code",
+    "priority": "conditional_preregistered",
+    "trigger": "只可在新outer结果未消费前选定；或依赖无标签/inner信息预登记，不依新outer优胜再加S。",
+    "stop_or_skip": "若四格等价fixture证明某臂无变化则skip；若O/S结论不区分机制不改名补网格。",
+    "linked_issues": [
+      "I005-CONCENTRATION",
+      "I005-EQUIVALENCE",
+      "I005-OBJECTIVE"
+    ],
+    "related_proposal_ids": [
+      "P005-S-hep-canonical-f0-half",
+      "P005-S-hep-canonical-f0-rank",
+      "P005-S-hep-canonical-f1-half",
+      "P005-S-hep-canonical-f1-rank",
+      "P005-S-hep-canonical-f2-half",
+      "P005-S-hep-canonical-f2-rank",
+      "P005-S-hep-canonical-f3-half",
+      "P005-S-hep-canonical-f3-rank",
+      "P005-S-hep-canonical-f4-half",
+      "P005-S-hep-canonical-f4-rank"
+    ],
+    "related_diagnostic_ids": [],
+    "execution_authorized": false
+  },
+  {
+    "direction_id": "D005-COMMON-ERROR",
+    "title": "同一完整群与补集的前后检验",
+    "rationale": "全体MAE下降但123双大误差、39低分歧共错、旧31/32群未稳定修复；修复必须落在同一完整成员集。",
+    "evidence_refs": [
+      "E-HOOF-AGG",
+      "E-HOOF-LEGACY",
+      "E-EVENTS"
+    ],
+    "counterevidence": "这些群多在历史结果后定义，条件区间不能恢复独立性；重叠群不能相加。",
+    "parameters": {
+      "frozen_groups": "cohort_register all approved full membership selectors",
+      "complements": true,
+      "primary": "fold mean Spearman before/after",
+      "secondary": "original-Y MAE whole/groups/complements",
+      "publication": "approved aggregate only, no rowwise truth/prediction/residual",
+      "new_small_groups": "suppress under host thresholds and overlap disclosure check"
+    },
+    "combination_rules": "只采用明列对照；无未登记笛卡尔积、无见外层结果后调参数。物理fit/views/context分账。",
+    "configuration_and_fit_count": "0新fit；由已经选定的Z/O/S/N预测复用；仅列有限完整群，不建细交叉网格。",
+    "preparation_mode": "new_code",
+    "priority": "mandatory_evaluation_projection",
+    "trigger": "相关方案完成后一次成批回验原群+补群；成员不能为新模型重选。",
+    "stop_or_skip": "只解决平均分不关闭共错issue；若披露风险不能满足则不发布该群数值。",
+    "linked_issues": [
+      "I005-COMMON-ERROR",
+      "I005-OOF-HISTORY"
+    ],
+    "related_proposal_ids": [
+      "P005-N-ames-smi40-canonical",
+      "P005-N-ames-smi40-scaffold",
+      "P005-N-ppbr_az-smi40-canonical",
+      "P005-N-ppbr_az-smi40-scaffold"
+    ],
+    "related_diagnostic_ids": [],
+    "execution_authorized": false
+  },
+  {
+    "direction_id": "D005-ASSAY",
+    "title": "端点语义与来源条件的零学习核对",
+    "rationale": "本地端点和同结构异标签提示条件信息缺失，但唯一身份群仍失败；需要区分可记录的测定条件与结构模型能知道的信息。",
+    "evidence_refs": [
+      "E-ASSAY",
+      "E-HOOF-AGG"
+    ],
+    "counterevidence": "ChEMBL/TDC总量及端点范围不能给848逐行映射；不授权补取Y或修改标签。",
+    "parameters": {
+      "mapping_fields": [
+        "existing source/assay ID",
+        "units",
+        "species",
+        "qualifier presence"
+      ],
+      "permission": "only already-approved metadata; no new training samples/answers",
+      "empty_loss_test": "one-sided endpoint loss equals usual error inside convex prediction bounds"
+    },
+    "combination_rules": "只采用明列对照；无未登记笛卡尔积、无见外层结果后调参数。物理fit/views/context分账。",
+    "configuration_and_fit_count": "0fit；无可用条件字段则明确停止条件模型设计，不创造标签。",
+    "preparation_mode": "blocked_assets",
+    "priority": "independent_source_question",
+    "trigger": "来源本身可能改变可辨识性，安全现有元数据可核时进行；不以高误差反查标签。",
+    "stop_or_skip": "映射未记录就保留未知；不把相同结构多Y当错误标注或去重依据。",
+    "linked_issues": [
+      "I005-ASSAY-SUPPORT",
+      "I005-EQUIVALENCE"
+    ],
+    "related_proposal_ids": [],
+    "related_diagnostic_ids": [],
+    "execution_authorized": false
+  },
+  {
+    "direction_id": "D005-SMI",
+    "title": "冻结SMI-TED Light40立体保留瓶颈面板",
+    "rationale": "AMES/PPBR的既有表示/简单读出/目标尝试留有具体共错；不同预训练先验值得有限面板，而非继续同信息读出网格。",
+    "evidence_refs": [
+      "X-SMI-CARD",
+      "X-SMI-WEIGHT",
+      "X-SMI-CODE",
+      "X-SMI-PAPER",
+      "E-TASK22"
+    ],
+    "counterevidence": "同一SMILES的不同编码不是新增观测条件；作者benchmark收益不证明本项目冻结收益；默认去立体/截断不满足本项目。",
+    "parameters": {
+      "checkpoint": "smi-ted-Light_40.pt sha256:baf252dbc081a00c68d2fd6ed8b08a0db0fa15244cfea442d49f0619a3a65375",
+      "representation": "frozen autoencoder encoder bottleneck 768, not mean pool",
+      "tasks": [
+        "ames",
+        "ppbr_az"
+      ],
+      "schemes": [
+        "canonical",
+        "scaffold"
+      ],
+      "seeds": [
+        44,
+        45
+      ],
+      "readout": "768→256 ReLU dropout.1→1; H0; AdamW.0005/.0001;50/8",
+      "loss": "AMES BCE logits; PPBR MSE fit-zY"
+    },
+    "combination_rules": "只采用明列对照；无未登记笛卡尔积、无见外层结果后调参数。物理fit/views/context分账。",
+    "configuration_and_fit_count": "2tasks×2schemes×1config×2seeds=8新gradient；2shared task encodes6636 originaltrain rows；0context。",
+    "preparation_mode": "blocked_assets",
+    "priority": "independent_after_asset_gate",
+    "trigger": "固定源码/词表/权重/许可/full-row producer冻结准入；不以Hep pending阻断独立准备。",
+    "stop_or_skip": "任一行无法无截断编码则该任务blocked，不drop/zero；固定面板无益就缩小结论，不重扫checkpoint。",
+    "linked_issues": [
+      "I005-NEW-ASSET",
+      "I005-COMMON-ERROR"
+    ],
+    "related_proposal_ids": [
+      "P005-N-ames-smi40-canonical",
+      "P005-N-ames-smi40-scaffold",
+      "P005-N-ppbr_az-smi40-canonical",
+      "P005-N-ppbr_az-smi40-scaffold"
+    ],
+    "related_diagnostic_ids": [],
+    "execution_authorized": false
+  },
+  {
+    "direction_id": "D005-KPGT",
+    "title": "KPGT的结构/描述符联合先验储备",
+    "rationale": "官方表征由FP虚拟节点+MD虚拟节点+graph readout构成，可能提供不同结构先验，值得版本/接口准备判断。",
+    "evidence_refs": [
+      "X-KPGT-REPO",
+      "X-KPGT-PAPER",
+      "X-KPGT-MODEL",
+      "X-KPGT-EXTRACT",
+      "X-KPGT-PREPROCESS"
+    ],
+    "counterevidence": "官方base权重链接403未得SHA；预处理会筛valid_ids；不能把graph切片当不含FP/MD的纯图表示。",
+    "parameters": {
+      "code_tag": "v1.0.0",
+      "candidate_embedding": "concat fp768,md768,graph768=2304",
+      "fp": "RDKFingerprint512 minPath1 maxPath7, NOT Morgan",
+      "md": "NormalizedRDKit2D200",
+      "required": "all rows retained; model.eval, freeze every param/buffer, immutable base.pth SHA/license"
+    },
+    "combination_rules": "只采用明列对照；无未登记笛卡尔积、无见外层结果后调参数。物理fit/views/context分账。",
+    "configuration_and_fit_count": "目前0已展开fit；权重未定位不造checkpoint版本或任务矩阵。准备完成后仅在能对SMI/已有图先验提出新问题时另行注册。",
+    "preparation_mode": "blocked_assets",
+    "priority": "reserve_with_specific_missing_asset",
+    "trigger": "官方权重版本/许可可实际绑定且旧ledger去重完成。",
+    "stop_or_skip": "无法获得合规完整生产不等于科学效果负；不随意换base权重填空。",
+    "linked_issues": [
+      "I005-NEW-ASSET",
+      "I005-CODE-BIND"
+    ],
+    "related_proposal_ids": [],
+    "related_diagnostic_ids": [],
+    "execution_authorized": false
+  },
+  {
+    "direction_id": "D005-GEO",
+    "title": "继承UniMol2 G4及Monroe G4，不新派producer",
+    "rationale": "GEO002已派可信freshproducer，旧cache缺原冻结证明不能准入；几何仍科学未测。",
+    "evidence_refs": [
+      "E-GEO-DESIGN",
+      "E-GEO-DECISION",
+      "E-GEO-PRIOR",
+      "E-P004-MATRIX"
+    ],
+    "counterevidence": "静态wrapper验收、权重hash和后补冻结日志不能追认旧producer；generated3D也不是实测体内构象。",
+    "parameters": {
+      "UniMol2": "84m_cls exact registered code/weight; existing GEO002 full-row gate",
+      "Monroe": "720 virtual-node pooling registered weight; producer unknown/unadmitted",
+      "tasks": [
+        "solubility_aqsoldb",
+        "clearance_microsome_az"
+      ],
+      "scheme": "scaffold",
+      "seeds": [
+        44,
+        45
+      ]
+    },
+    "combination_rules": "只采用明列对照；无未登记笛卡尔积、无见外层结果后调参数。物理fit/views/context分账。",
+    "configuration_and_fit_count": "4 inherited proposal×2seed=8旧待执行gradient身份，其中Uni4、Monroe4；新矩阵计0。",
+    "preparation_mode": "blocked_assets",
+    "priority": "inherited_branch",
+    "trigger": "Uni仅等待既有GEO002准入；Monroe来源问题独立。",
+    "stop_or_skip": "全行几何/冻结不通过记录运行准入失败，不记疗效负；不得drop长分子或零填充。",
+    "linked_issues": [
+      "I005-GEO",
+      "I005-DEDUP"
+    ],
+    "related_proposal_ids": [],
+    "related_diagnostic_ids": [],
+    "execution_authorized": false
+  },
+  {
+    "direction_id": "D005-INHERITED",
+    "title": "SOLCTX4条件保留，不偷换成HOOF TabICL配方",
+    "rationale": "前次具体SOLCTX接口与现在HOOF配置不同；Hep正负读出交互不是自动扩Sol的充分依据。",
+    "evidence_refs": [
+      "E-P004-MATRIX",
+      "E-P004-INTAKE",
+      "E-HOOF-DESIGN"
+    ],
+    "counterevidence": "Sol当前MiniMLP有稳定支持，M6已限制简单容量解释；更复杂context未必改善。",
+    "parameters": {
+      "original_ids": [
+        "P004-SOLCTX-chemeleon-scaffold",
+        "P004-SOLCTX-minimol-scaffold"
+      ],
+      "seeds": [
+        44,
+        45
+      ],
+      "config_policy": "original config retained, including norm and kv_cache options; no implicit substitution"
+    },
+    "combination_rules": "只采用明列对照；无未登记笛卡尔积、无见外层结果后调参数。物理fit/views/context分账。",
+    "configuration_and_fit_count": "4原有contextfit待条件；本轮新增0context，不与G8重复。",
+    "preparation_mode": "new_code",
+    "priority": "conditional_inherited",
+    "trigger": "原trigger重新经主控按当前证据判断；若保持则复用原ID，不改名为新。",
+    "stop_or_skip": "预算/任务机制不满足则hold；不把没执行当失败。",
+    "linked_issues": [
+      "I005-DEDUP",
+      "I005-HISTORY"
+    ],
+    "related_proposal_ids": [],
+    "related_diagnostic_ids": [],
+    "execution_authorized": false
+  },
+  {
+    "direction_id": "D005-INTERACTION",
+    "title": "保留任务×表示×读出×划分交互而非统一优胜",
+    "rationale": "Hep/micro/DILI/PPBR/CYP的不同读出和结构压力结果不一致；canonical/scaffold区别有信息但共享样本。",
+    "evidence_refs": [
+      "E-TASK22",
+      "E-EVENTS",
+      "E-HOOF-AGG"
+    ],
+    "counterevidence": "20rank配对/两seed不是独立任务集；跨平台/目标/监控可混杂。",
+    "parameters": {
+      "analysis_unit": [
+        "task",
+        "input",
+        "representation",
+        "readout",
+        "fit/stop/stress",
+        "preprocess",
+        "loss",
+        "monitor",
+        "seed"
+      ],
+      "rule": "state complete recipe effect first; decompose only decision-changing interaction"
+    },
+    "combination_rules": "只采用明列对照；无未登记笛卡尔积、无见外层结果后调参数。物理fit/views/context分账。",
+    "configuration_and_fit_count": "0额外fit；O/S是已确定机制拆分，N是明确bundle；其他任务不自动复制。",
+    "preparation_mode": "config_only",
+    "priority": "interpretation_guard",
+    "trigger": "已有结果足以提出一个互斥可检验解释时才单列对照。",
+    "stop_or_skip": "无任务特定判别不继续全任务配方复制。",
+    "linked_issues": [
+      "I005-HISTORY"
+    ],
+    "related_proposal_ids": [],
+    "related_diagnostic_ids": [],
+    "execution_authorized": false
+  },
+  {
+    "direction_id": "D005-CLOSED",
+    "title": "关闭已回答的gap/capacity/window循环",
+    "rationale": "Pair16实际四格无gap优势，M5/M6/window/lr8/T2均已有完整结果。",
+    "evidence_refs": [
+      "E-PAIR16",
+      "E-ME40",
+      "E-TASK22",
+      "E-P004-INTAKE"
+    ],
+    "counterevidence": "均匀匹配稀疏臂有正例；不能将gap失败推广到所有排序；有限配方关闭不是研究完成。",
+    "parameters": {
+      "excluded": [
+        "q-gap grid",
+        "extra T2 seeds/k/lossweights",
+        "repeat windows",
+        "Mini F010=H0 identical slots"
+      ],
+      "allowed_reopen": "new independently justified scientific factor only"
+    },
+    "combination_rules": "只采用明列对照；无未登记笛卡尔积、无见外层结果后调参数。物理fit/views/context分账。",
+    "configuration_and_fit_count": "0新fit；8个P004-H已映射16实fit；所有view不计fit。",
+    "preparation_mode": "config_only",
+    "priority": "dedup_required",
+    "trigger": "每次注册按真实科学身份对照已有/已派，不以proposal名称判断。",
+    "stop_or_skip": "没有决定信息的追加即跳过。",
+    "linked_issues": [
+      "I005-DEDUP",
+      "I005-HISTORY",
+      "I005-EQUIVALENCE"
+    ],
+    "related_proposal_ids": [],
+    "related_diagnostic_ids": [],
+    "execution_authorized": false
+  },
+  {
+    "direction_id": "D005-HISTORY",
+    "title": "历史适配和预注册边界",
+    "rationale": "全848覆盖提高而独立性没重置，原542可能参与过旧训练；新请求不能恢复盲性。",
+    "evidence_refs": [
+      "E-METHOD",
+      "E-HOOF-DESIGN",
+      "E-HOOF-STATS",
+      "E-CURRENT"
+    ],
+    "counterevidence": "原conditional CI不含重训、选择史和跨fold相关性；不显著不是等效。",
+    "parameters": {
+      "outer_use": "one locked complete comparison, not tuning",
+      "seed_aggregation": "predefined equal prediction means within fold; retain every seed",
+      "uncertainty": "conditional group bootstrap inherited definition, exploratory/conditional labeled",
+      "scaffold": "pending original30, do not rerun"
+    },
+    "combination_rules": "只采用明列对照；无未登记笛卡尔积、无见外层结果后调参数。物理fit/views/context分账。",
+    "configuration_and_fit_count": "0额外fit；仅影响评价/授权，不制造新数据。",
+    "preparation_mode": "config_only",
+    "priority": "global_boundary",
+    "trigger": "与每个新方案同时登记；S不能看O outer再选。",
+    "stop_or_skip": "若不能保持分离，仅能报告探索性，不能降格伪造confirmatory。",
+    "linked_issues": [
+      "I005-OOF-HISTORY"
+    ],
+    "related_proposal_ids": [],
+    "related_diagnostic_ids": [],
+    "execution_authorized": false
+  },
+  {
+    "direction_id": "D005-MONOTONE",
+    "title": "单调标尺变化不能修复排序的零fit判别",
+    "rationale": "严格单调后处理保持Spearman排序；校准若仅降低MAE不能解释主排序修复。",
+    "evidence_refs": [
+      "E-HOOF-AGG",
+      "E-HOOF-STATS"
+    ],
+    "counterevidence": "不同fold标尺影响pooledrho，非严格单调/并列值会改变秩；不据此禁止有明确效用的标尺校准。",
+    "parameters": {
+      "scope": "same row set and within-fold predictions; continuous strictly increasing map",
+      "proposal": "do not add a calibration-only rank-improvement fit",
+      "thresholds": "none tuned onOOF"
+    },
+    "combination_rules": "只采用明列对照；无未登记笛卡尔积、无见外层结果后调参数。物理fit/views/context分账。",
+    "configuration_and_fit_count": "0fit；必要时宿主仅给预测域/并列数摘要，不请求原预测。",
+    "preparation_mode": "config_only",
+    "priority": "mathematical_exclusion",
+    "trigger": "拟议目标只改变标尺却声称排序收益时使用。",
+    "stop_or_skip": "解释不成立就退回真实目标/信息改变，而非重复校准网格。",
+    "linked_issues": [
+      "I005-EQUIVALENCE",
+      "I005-OBJECTIVE"
+    ],
+    "related_proposal_ids": [],
+    "related_diagnostic_ids": [],
+    "execution_authorized": false
+  }
+]

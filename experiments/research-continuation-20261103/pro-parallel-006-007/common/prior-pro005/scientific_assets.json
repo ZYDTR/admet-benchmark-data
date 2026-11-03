@@ -1,0 +1,288 @@
+[
+  {
+    "asset_id": "minimol",
+    "role": "frozen_molecular_encoder",
+    "weights_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+    "code_commit": "41642328affbb35e4950b7b7a9020aa95919b503",
+    "feature_dim": 512,
+    "representation": "MiniMol_v1; gnn:15; global_max_pool",
+    "readiness": "accepted exact848x512 raw official-train cache reused; no encoding; binding supplied through accepted HOOF lineage",
+    "evidence_refs": [
+      "E-HOOF-DESIGN",
+      "E-OLD-ASSETS"
+    ],
+    "license": "inherited approved frozen asset"
+  },
+  {
+    "asset_id": "chemeleon",
+    "role": "frozen_molecular_encoder",
+    "weights_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+    "feature_dim": 2048,
+    "representation": "accepted original raw 2048 fingerprint; no new pooling/wrapper",
+    "code_version": "reuse source-bound accepted parent cache; upstream code commit not exposed in present projection",
+    "readiness": "accepted_all22_raw_caches; native slices reused",
+    "evidence_refs": [
+      "E-OLD-ASSETS",
+      "E-TASK22"
+    ],
+    "license": "inherited approved external encoder; no new license decision"
+  },
+  {
+    "asset_id": "smi_ted_light40_stereo768_v1",
+    "role": "frozen_SMILES_encoder_plus_frozen_autoencoder_bottleneck",
+    "repository": "ibm-research/materials.smi-ted",
+    "repository_revision": "414c3ea0a8603ef49d1c5bb3db336e09877c01ce",
+    "weights_file": "smi-ted-Light_40.pt",
+    "weights_bytes": 1155124350,
+    "weights_sha256": "baf252dbc081a00c68d2fd6ed8b08a0db0fa15244cfea442d49f0619a3a65375",
+    "feature_dim": 768,
+    "architecture": {
+      "n_layer": 12,
+      "n_head": 12,
+      "n_embd": 768,
+      "max_len": 202,
+      "num_feats": 32
+    },
+    "feature_path": "token embeddings padded to202x768 -> frozen decoder.autoencoder.encoder(flatten), not mean pooling; no generation/task prediction head",
+    "code_binding": {
+      "observed_official_file": "smi-ted/inference/smi_ted_light/load.py",
+      "observed_file_commit_short": "e131702",
+      "fixed_revision_file_fetch": "not successfully obtained by this web route",
+      "production_code_sha256": null,
+      "new_adapter_name": "FrozenSMILightStereo005-v1",
+      "adapter_sha256": null
+    },
+    "license": {
+      "model_card": "Apache-2.0 in official model card",
+      "code_and_dependency_notices": "must preserve/verify the fixed vendored files and all dependency licenses",
+      "admission": "not yet accepted by project for this producer"
+    },
+    "input_policy": "canonical ISOMERIC SMILES, original rows/labels retained, no salt/tautomer cleanup; explicit no silent truncation/no row dropping; unknown-token and length checks before producer admission",
+    "readiness": "blocked_assets",
+    "evidence_refs": [
+      "X-SMI-CARD",
+      "X-SMI-WEIGHT",
+      "X-SMI-CODE",
+      "E-OLD-ASSETS",
+      "X-SMI-CONFIG"
+    ],
+    "ambiguity": "metadata pointer and current source read are not a complete immutable code+weight producer admission; no model execution here",
+    "repository_revision_status": "fixed official modelcard revision read; weight and code bytes at that exact revision were not recovered through this tool; checkpoint target independently identified by observed main LFS oid",
+    "version_acceptance_gate": "must establish full fixed source+tokenizer/config+checkpoint SHA relation before producer; no main-branch unpinned runtime",
+    "architecture_status": "public config bound to414c revision; runtime checkpoint hparams must match during authorized preparation; config train_decoder=1 belongs upstream downstream training, prohibited here",
+    "producer_config": {
+      "dtype": "float32, no AMP",
+      "device": "CPU baseline for deterministic frozen producer; do not allow internal automatic CUDA migration",
+      "batch_size": 32,
+      "max_total_token_length_including_special": 202,
+      "tokenizer": "fixed official vocab, no unknown->pad silent replacement",
+      "pretrained_rng": "frozen checkpoint random-feature state; eval deterministic; initialization/redraw or mutation of any pretrained buffer is not silently excused",
+      "throughput_change_policy": "another device/batch/dtype must be a separately accepted numerical producer variant, not silently substituted"
+    }
+  },
+  {
+    "asset_id": "morgan_ecfp4",
+    "role": "deterministic_features_not_pretrained_encoder",
+    "weights_sha256": null,
+    "feature_dim": 2048,
+    "software": "RDKit 2024.09.6",
+    "parameters": {
+      "radius": 2,
+      "fpSize": 2048,
+      "includeChirality": true,
+      "useBondTypes": true,
+      "includeRingMembership": true,
+      "countSimulation": false,
+      "binary": true,
+      "scaling": "identity"
+    },
+    "historical_status_preserved": "accepted AMES and historical eight-task caches; dual4 already dispatched",
+    "evidence_refs": [
+      "E-OLD-ASSETS",
+      "E-CURRENT",
+      "E-TASK22"
+    ],
+    "current_readiness": "accepted cached AMES controls; not an execution LLM"
+  },
+  {
+    "asset_id": "tabicl_v2",
+    "role": "frozen_tabular_in_context_predictor_not_molecular_encoder",
+    "code_commit": "d83091b845a8c5f7c087bd54964f755a9e560f45",
+    "version": "2.2.0",
+    "checkpoint_repo": "jingang/TabICL",
+    "prior_registered_public_revision": "4dcd344ece2c00be9e831fdd35bed57b5ad83e19",
+    "classifier": {
+      "filename": "tabicl-classifier-v2-20260212.ckpt",
+      "registered_sha256": "bdc7dbd5e4ff21f8f0456fcf90c6b7cdf72dbea960f2d05b19bec19f9b3d4ed0"
+    },
+    "regressor": {
+      "filename": "tabicl-regressor-v2-20260212.ckpt",
+      "registered_sha256": "0db9cb538f114e79026bf08f45f41ad8dd7ad2de2aaca9a5ca8cd3bd9748ae7a"
+    },
+    "current96asset_receipt_binding": "current state reports ready; identity mapping to these prior public weight pointers must come from original prepared receipt, not assumed from family name",
+    "license": "BSD-3-Clause code verified; prior model license metadata inherited; optional components retain notices; NO TabPFN gate acceptance",
+    "seed_semantics": "random_state controls context/preprocessing/ensemble ordering, not pretrained initialization",
+    "historical_status_preserved": "16contextfits dispatched,0result at cutoff; no duplicate probe",
+    "evidence_refs": [
+      "E-OLD-ASSETS",
+      "E-CURRENT",
+      "E-TASK22"
+    ],
+    "current_readiness": "52 contextfits already completed in cumulative record; current HOOF recipe bound separately; no new contexts in this proposal"
+  },
+  {
+    "asset_id": "monroe720",
+    "role": "frozen_geometry_graph_encoder",
+    "code_commit": "de075eabe98e4adbbedbc86ca9e877f4bfd9b629",
+    "weights_file": "checkpoint/weights.pt",
+    "weights_sha256": "df996e8e98b12a3cda5fe5acbef3e1e9a4ea31946d3736461cd07e53a5bf205a",
+    "weight_bytes": 300057823,
+    "feature_dim": 720,
+    "representation": "published encoder pooling; no TabPFN; retain checkpoint virtual-node setting",
+    "license": "upstream MIT code; preserve NOTICE and dependent licenses; separate checkpoint/usage provenance accepted only after controller fixture",
+    "risks": [
+      "PM6 plus PCBA pretraining, not geometry-only evidence",
+      "SMILES-key dictionaries may collapse duplicates",
+      "strict=False hides missing encoder keys",
+      "BN buffers require eval+unchanged hash",
+      "zero_vn_edge_rbf=false leaves virtual-node origin-distance dependence",
+      "dense RRWP16 cost/node-square",
+      "mutating graph forward must reconstruct graph",
+      "entire geometry pipeline seed42,20s timeout incl fallback; no unrecorded crop/drop"
+    ],
+    "historical_status_preserved": "blocked_assets: only bounded no-label probe preparation, no task cache or efficacy",
+    "evidence_refs": [
+      "E-OLD-ASSETS",
+      "E-CURRENT",
+      "E-TASK22"
+    ],
+    "current_readiness": "old task cache unadmitted; no fresh producer result; inherited G4 remains blocked"
+  },
+  {
+    "asset_id": "unimol2_84m_cls",
+    "role": "frozen_geometry_graph_encoder",
+    "code_commit": "90f52c41299a1a582da0f9765e9f87aa21faa16a",
+    "package_version": "unimol_tools0.1.3.post1",
+    "checkpoint_repo": "dptech/Uni-Mol2",
+    "checkpoint_revision": "bf37d253c0f5ac61f468137eb00059978a104ff0",
+    "weights_file": "modelzoo/84M/checkpoint.pt",
+    "weights_sha256": "5b9241630f1cf0b173fb06d1e76096e5daf5f91c3e51b066ba69524dafe60e35",
+    "weight_bytes": 336632021,
+    "feature_dim": 768,
+    "representation": "return_repr=True CLS; bypass classification head",
+    "license": "MIT/public ungated per exact packet feasibility; fresh HF metadata pages inaccessible via this web route, not a claim weights missing",
+    "risks": [
+      "default random128heavy-atom crop prohibited",
+      "UniMolRepr kwargs does not propagate max_atoms/seed/multiprocess",
+      "atoms+coordinates input loses bonds",
+      "invalid SMILES may throw when is_train=False",
+      "default multiprocess8 not assumed task-safe",
+      "hidden HF_ENDPOINT/network/path effects",
+      "pair512 feature memory N^2; nonDDP autocast not assumed",
+      "privateenv old pandas constraint, no global environment mutation"
+    ],
+    "historical_status_preserved": "blocked_assets: no true task encoding/efficacy; current label-free preparation only",
+    "evidence_refs": [
+      "E-OLD-ASSETS",
+      "E-CURRENT",
+      "E-TASK22"
+    ],
+    "current_readiness": "GEO002 fresh producer PREPARATION dispatched; static v4 acceptance is not real encoding or head efficacy"
+  },
+  {
+    "asset_id": "molformer_10pct",
+    "role": "frozen_SMILES_encoder",
+    "repository": "ibm-research/MoLFormer-XL-both-10pct",
+    "known_primary_candidate_revision": "361063d0ad524ef77cf39b08469f6be770dc550f",
+    "known_primary_candidate_weights_sha256": "0795977fe7192c4acdaf052f0e8464af57bc4bb59211271c5e61aaba2637b9c6",
+    "current_mf16_exact_revision_binding": null,
+    "feature_dim": 768,
+    "readout": "current meanpool; MLP256/TabMk32",
+    "license": "Apache-2.0 on cited fixed public modelcard; not full-XL family maximum",
+    "historical_status_preserved": "12actualcompleted plus4CYPpending; do not replay; current source-adoption ref-323e465705337344 is reference-only",
+    "evidence_refs": [
+      "E-OLD-ASSETS",
+      "E-CURRENT",
+      "E-TASK22"
+    ],
+    "current_readiness": "16 heads completed with largely negative/mixed fixed-task outcomes; no fresh seed replay"
+  },
+  {
+    "asset_id": "kpgt",
+    "role": "frozen_molecular_encoder",
+    "boundary": "historically deferred; auxiliary information/source+cache path not closed",
+    "exact_checkpoint": null,
+    "historical_status_preserved": "researched_deferred_not_in_current_matrix",
+    "evidence_refs": [
+      "E-OLD-ASSETS",
+      "E-CURRENT",
+      "E-TASK22"
+    ],
+    "current_readiness": "official v1.0.0 code inspected; checkpoint access403 and immutable weight/license binding unresolved; reserve only"
+  },
+  {
+    "asset_id": "unimol_v1",
+    "role": "frozen_geometry_encoder",
+    "boundary": "historical Uni-Mol != selected UniMol2-84M",
+    "exact_checkpoint": null,
+    "historical_status_preserved": "researched_deferred_not_in_current_matrix",
+    "evidence_refs": [
+      "E-OLD-ASSETS",
+      "E-CURRENT",
+      "E-TASK22"
+    ],
+    "current_readiness": "historically researched/deferred; not newly ready or placed in current fit matrix"
+  },
+  {
+    "asset_id": "mole",
+    "role": "frozen_molecular_encoder",
+    "boundary": "checkpoint publication chain historically not closed",
+    "exact_checkpoint": null,
+    "historical_status_preserved": "researched_deferred_not_in_current_matrix",
+    "evidence_refs": [
+      "E-OLD-ASSETS",
+      "E-CURRENT",
+      "E-TASK22"
+    ],
+    "current_readiness": "historically researched/deferred; not newly ready or placed in current fit matrix"
+  },
+  {
+    "asset_id": "tabpfn26",
+    "role": "frozen_tabular_predictor",
+    "boundary": "license/version/usage not accepted; not same as Monroe optionalTabPFNv3",
+    "exact_checkpoint": null,
+    "historical_status_preserved": "researched_deferred_not_in_current_matrix",
+    "evidence_refs": [
+      "E-OLD-ASSETS",
+      "E-CURRENT",
+      "E-TASK22"
+    ],
+    "current_readiness": "historically researched/deferred; not newly ready or placed in current fit matrix"
+  },
+  {
+    "asset_id": "small_dmpnn_scratch",
+    "role": "new_from_scratch_graph_predictor",
+    "boundary": "not external frozen asset; independent admission/budget needed",
+    "exact_checkpoint": null,
+    "historical_status_preserved": "researched_deferred_not_in_current_matrix",
+    "evidence_refs": [
+      "E-OLD-ASSETS",
+      "E-CURRENT",
+      "E-TASK22"
+    ],
+    "current_readiness": "historically researched/deferred; not newly ready or placed in current fit matrix"
+  },
+  {
+    "asset_id": "classical_features_other",
+    "role": "feature_baseline",
+    "boundary": "Morgan actually tested; other classic recipes not thereby validated",
+    "exact_checkpoint": null,
+    "historical_status_preserved": "researched_deferred_not_in_current_matrix",
+    "evidence_refs": [
+      "E-OLD-ASSETS",
+      "E-CURRENT",
+      "E-TASK22"
+    ],
+    "current_readiness": "historically researched/deferred; not newly ready or placed in current fit matrix"
+  }
+]

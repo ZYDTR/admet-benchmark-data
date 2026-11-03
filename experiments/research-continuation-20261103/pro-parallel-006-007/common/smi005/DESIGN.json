@@ -1,0 +1,79 @@
+{
+  "request_id": "admet-smi8-preparation-20261103-001",
+  "cycle_id": "SMI005",
+  "at_utc": "2026-11-03T14:35:39.869602+00:00",
+  "goal": "Prepare an exact frozen SMI-TED Light40 stereo-preserving bottleneck producer and8 native heads for AMES/PPBR; test a distinct pretrained prior against fixed existing failures, not family reputation.",
+  "proposals": "input/PROPOSED_N4.json (four proposals ×seeds44/45 =8 futureheads); source terms overridden ONLY by followingexplicitclarifications",
+  "asset": {
+    "repository": "ibm-research/materials.smi-ted",
+    "revision": "414c3ea0a8603ef49d1c5bb3db336e09877c01ce",
+    "weight_file": "smi-ted-Light_40.pt",
+    "bytes": 1155124350,
+    "sha256": "baf252dbc081a00c68d2fd6ed8b08a0db0fa15244cfea442d49f0619a3a65375",
+    "code": "input/upstream/load.py",
+    "code_sha256": "e4fb006a990b4aba5807d64b2dd7f0a17cb4ef79743e1dae130583de2639def9",
+    "vocab": "input/upstream/vocab.txt",
+    "vocab_sha256": "8576b60e838336837f9e894457ef144f440c4d31bc8ceda2315fb5b28a6dfd95",
+    "config": "input/upstream/config.json",
+    "license": "Apache2 metadata in exact modelcard; preserve original notices and dependencylicenses; no acceptingadditionalgatedterms",
+    "state": "exactsource/weightLFS/config/vocab sameimmutable revision recovered; actualcheckpointbytes/hparams/freeze stillnotverified"
+  },
+  "input_rows": [
+    {
+      "task": "ames",
+      "split": "train",
+      "path": "input/data/ames/train.csv",
+      "sha256": "1f31f914999a8b1281dc9353d6d8a6f9e11cdabf4d9b43cb2984edd1775a771d",
+      "rows": 4684,
+      "columns": [
+        "Drug_ID",
+        "Drug",
+        "Y"
+      ]
+    },
+    {
+      "task": "ppbr_az",
+      "split": "train",
+      "path": "input/data/ppbr_az/train.csv",
+      "sha256": "92842d88cc0f9fe41a14d1effcf1f3a23d0a6415df4d6e615af6458dc6de8281",
+      "rows": 1952,
+      "columns": [
+        "Drug_ID",
+        "Drug",
+        "Y"
+      ]
+    }
+  ],
+  "input_policy": {
+    "model_text": "reuse accepted canonical isomeric string per originalrow from input/partitions/{task}.canonical.json row_assignments (same text for bothsplit schemes); bind trainCSV orderedidentity, preserve duplicates and originalrawSMILES in provenance. No stripping stereo/salt/tautomer normalization.",
+    "token_policy": "exact official regex+vocab, BOS/EOS,no truncation, no unknown->pad; exact regex roundtrip. All202 positions fixed padding, mask as original semantics; do not use default encode(normalize_smiles,isomericFalse) or truncateTrue.",
+    "static_preflight": "All4684AMES (max109 tokens incl2special) and1952PPBR(max143) pass regex/vocab/202 limit using originalcanonical keys. This is not real tokenizer/encoder evidence.",
+    "complete_rows": "No drop/zero/common-subset substitution; task blocked if production tokenization differs materially."
+  },
+  "feature_path": "Frozen MoLEncoder tokens masked/padded to202×768 -> flatten -> frozen decoder.autoencoder.encoder bottleneck768. Not meanpool, generation, reconstruction or native tasknet.",
+  "runtime_boundary": {
+    "owner": "originalSol chooseshost/backend afternew sourceadoption; do not fixCPU solely duePro proposal",
+    "numerical_science": "float32,noAMP;batch32,padall202; explicitchosenbackend propagated consistently,no automatic.cuda scattered inmodules. Record producer variant before any outcome; no silentalternate precision/batch.",
+    "freeze": "all externalparams/allregistered buffers includingnonpersistent frozenbeforefirstforward,allmoduleeval,no_grad,optimizer excludes all. Check actualcheckpointkeys/shapes and complete loaded encoder+bottleneck; no strictFalse swallowmissingkeys. Distinguish unused uncalled decoder/taskmodulekeys by explicit whitelist.",
+    "random_features": "Determine exact fast_transformers dependency fromofficial compatible source. Inspect initialfeaturemap/randomstate and redraw semantics: deterministic_eval alone maynotprove firstforwardunchanged. No after-warmup baseline to conceal mutation. Bind actualcheckpoint randomfeatures/RNG; ifstate missing orfirstforward mutates registeredbuffer,report exactgap ratherthan silently redraw/relax freeze.",
+    "rotary": "inv_freq is registeredfrozen buffer; seq_len_cached/cos_cached/sin_cached are generated scratch attributes in inspected source, recordderivation separately, never exempt registered buffers.",
+    "no_preparation_execution": "No model import/load/forward, no torch.load actualcheckpoint, no optimizersteps, no encoding. Synthetictoken/parser/math/interfaces allowed."
+  },
+  "heads": "Use exact N4 scientificloss/head/optimizer/monitor configs; H0fit-only,AMESunweightedBCE/AUROC,sigmoid;PPBRfit-zY MSE/stoprawMAE,inverseonce. Preserveactualexisting4nativepartitions and seeds44/45. Code/backendproductionbinding clarified, originalproposalidentity remains sourceidentity.",
+  "comparison": "16existingnativeheads reuseonce; representation+inputdim+head parametercount bundle, notisolatedencoder effect. Alloldcohorts+complements and allnewrepair/harm/commonerror/coverage, noValid.",
+  "prospective_stages": [
+    {
+      "stage": "F",
+      "owner": "Sol underlaterTASK",
+      "scope": "bounded32originaltrainrows,label-free,prespecifiedmaxlength/stereo/salt/hashedordinary coverage,repeatrow0; max40forwardrows,zeroheads; exactallparams/bufferfreeze/valid768finitecoverage/repeat. Notauthorizedbythispreparation."
+    },
+    {
+      "stage": "N",
+      "owner": "Sol underseparatelaterTASKafterFadoption",
+      "scope": "full6636originaltrainrows two sharedcaches then8fixednativeheads; noValid/test; noautomaticNfromstaticready."
+    }
+  ],
+  "stopping": "Failurefullrow/freeze/source gate blocksproducer notqualityfailure; admittedfullpanelno utility/oldgrouprepaircloses fixedrecipe,no checkpoint/seedgrid. No broadclaim allSMILESmodelsinvalid.",
+  "preparation_output": "READY_SMI005.json withactualcode/configs/fixedsource/dependencybindings/privatewriteevidence andoriginalerrors; no pretend realproducerpassed",
+  "independence": "SMI005 outsideFLOW01; existingHEPOS,SOLCTX,GEOscientificbudgetsunchanged"
+}

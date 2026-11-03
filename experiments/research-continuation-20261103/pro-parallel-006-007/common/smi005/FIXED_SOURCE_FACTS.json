@@ -1,0 +1,53 @@
+{
+  "cutoff": "2026-11-03T14:42:51.342353+00:00",
+  "hf_repository": "ibm-research/materials.smi-ted",
+  "revision": "414c3ea0a8603ef49d1c5bb3db336e09877c01ce",
+  "load_url": "https://huggingface.co/ibm-research/materials.smi-ted/raw/414c3ea0a8603ef49d1c5bb3db336e09877c01ce/smi-ted/inference/smi_ted_light/load.py",
+  "source_files": [
+    {
+      "name": "load.py",
+      "bytes": 23369,
+      "sha256": "e4fb006a990b4aba5807d64b2dd7f0a17cb4ef79743e1dae130583de2639def9"
+    },
+    {
+      "name": "model-revision.json",
+      "bytes": 12116,
+      "sha256": "b0cb3b0f4d5dd687de4022e3c13c24c9a57e68a0487aee9421402b356d991b1f"
+    },
+    {
+      "name": "weight-lfs.txt",
+      "bytes": 135,
+      "sha256": "bdf1d9161a623377bda7260e99210d3f47b7d3e9f568ea5eb58817ad633bc311"
+    },
+    {
+      "name": "vocab.txt",
+      "bytes": 16970,
+      "sha256": "8576b60e838336837f9e894457ef144f440c4d31bc8ceda2315fb5b28a6dfd95"
+    },
+    {
+      "name": "README.md",
+      "bytes": 6991,
+      "sha256": "197e8cb1ce90f57dc7c8f7161a9099a095ca62ed2b96bed628e8c8fae1af2948"
+    },
+    {
+      "name": "requirements.txt",
+      "bytes": 122,
+      "sha256": "82c247a1cab342c95c055734afe79818f8fa3f5f9f8a07995704f64c15d61b82"
+    }
+  ],
+  "weight_filename": "smi-ted-Light_40.pt",
+  "weight_lfs_size": 1155124350,
+  "weight_lfs_sha256": "baf252dbc081a00c68d2fd6ed8b08a0db0fa15244cfea442d49f0619a3a65375",
+  "weight_downloaded_loaded_verified": false,
+  "actual_science": "Static Python AST and exact regex/vocabulary evaluation over all original canonical isomeric strings; no external source executed, no imported model/tokenizer, no labels used. 4684 AMES +1952 PPBR all fit <=202 including two special tokens, no unknown/unmatched characters. Real tokenizer/encoder/freeze untested.",
+  "resolved_pro005_gap": "Fixed revision load.py now fetched HTTP200 with exact source identity; original tool access failures retained. No need to repeat this as unresolved source absence.",
+  "source_hazards": [
+    "Default canonicalization is isomeric=False; preserve existing canonical isomeric strings and original identity instead.",
+    "Unknown-token equals pad, truncation defaults on and automatic CUDA selection occur in upstream; explicit admitted handling needed.",
+    "Actual 768 representation is token encoder -> masked/padded202 flattened embeddings -> autoencoder.encoder bottleneck, not mean pooling.",
+    "Checkpoint hparams and strict-false loading branches require complete required module-key coverage, never silently random missing weights.",
+    "FastTransformers generalized random features deterministic_eval=True is not proof of unchanged registered buffers at first forward; no warmup hiding mutation.",
+    "Rotary inv_freq is registered/protected; cos/sin/seq_len scratch plain attributes must be distinguished from all registered and nonpersistent buffers."
+  ],
+  "question_remaining": "Investigate exact dependency/checkpoint behavior and competing frozen representations; source availability is not efficacy or freeze evidence."
+}
