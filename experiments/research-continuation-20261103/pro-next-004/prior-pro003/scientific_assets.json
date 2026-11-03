@@ -1,0 +1,263 @@
+[
+  {
+    "asset_id": "chemeleon",
+    "role": "frozen_molecular_encoder",
+    "weights_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+    "feature_dim": 2048,
+    "representation": "accepted original raw 2048 fingerprint; no new pooling/wrapper",
+    "code_version": "reuse source-bound accepted parent cache; upstream code commit not exposed in present projection",
+    "readiness": "accepted_all22_raw_caches; native slices reused",
+    "evidence_refs": [
+      "E-ASSETS",
+      "E-STRESS48",
+      "E-RUNS"
+    ],
+    "license": "inherited approved external encoder; no new license decision"
+  },
+  {
+    "asset_id": "minimol",
+    "role": "frozen_molecular_encoder",
+    "weights_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+    "code_commit": "41642328affbb35e4950b7b7a9020aa95919b503",
+    "feature_dim": 512,
+    "representation": "MiniMol_v1; gnn:15; global_max_pool",
+    "readiness": "actual raw/native caches on micro/hep/Sol/PPBR/CYP and tested other tasks; old404 not current blocker",
+    "evidence_refs": [
+      "E-ASSETS",
+      "E-STATUS",
+      "E-HEPSTRESS",
+      "E-P002-GUIDE"
+    ],
+    "license": "inherited approved frozen asset"
+  },
+  {
+    "asset_id": "morgan_ecfp4",
+    "role": "deterministic_features_not_pretrained_encoder",
+    "weights_sha256": null,
+    "feature_dim": 2048,
+    "software": "RDKit 2024.09.6",
+    "parameters": {
+      "radius": 2,
+      "fpSize": 2048,
+      "includeChirality": true,
+      "useBondTypes": true,
+      "includeRingMembership": true,
+      "countSimulation": false,
+      "binary": true,
+      "scaling": "identity"
+    },
+    "readiness": "accepted AMES and historical eight-task caches; dual4 already dispatched",
+    "evidence_refs": [
+      "H-MORGAN",
+      "H-AMES",
+      "E-STATUS",
+      "E-P002-GUIDE"
+    ]
+  },
+  {
+    "asset_id": "tabm",
+    "role": "trainable_new_readout_not_frozen_molecular_encoder",
+    "code_commit": "28e47ae301c92ec37787dde1ce923a0793f405b4",
+    "version": "0.0.3",
+    "parameters": {
+      "arch_type": "tabm",
+      "n_blocks": 3,
+      "d_block": 512,
+      "k": 32,
+      "dropout": 0.1,
+      "start_scaling_init": "random-signs",
+      "num_embeddings": null,
+      "cat_cardinalities": [],
+      "d_out": 1
+    },
+    "readiness": "k32 existing accepted; k1/k8/plain3x512 preparing via M5",
+    "evidence_refs": [
+      "X-TABM-CODE",
+      "X-TABM-README",
+      "H-TABM32",
+      "E-STATUS"
+    ]
+  },
+  {
+    "asset_id": "monroe720",
+    "role": "frozen_geometry_graph_encoder",
+    "code_commit": "de075eabe98e4adbbedbc86ca9e877f4bfd9b629",
+    "weights_file": "checkpoint/weights.pt",
+    "weights_sha256": "df996e8e98b12a3cda5fe5acbef3e1e9a4ea31946d3736461cd07e53a5bf205a",
+    "weight_bytes": 300057823,
+    "feature_dim": 720,
+    "representation": "published encoder pooling; no TabPFN; retain checkpoint virtual-node setting",
+    "license": "upstream MIT code; preserve NOTICE and dependent licenses; separate checkpoint/usage provenance accepted only after controller fixture",
+    "readiness": "blocked_assets: only bounded no-label probe preparation, no task cache or efficacy",
+    "risks": [
+      "PM6 plus PCBA pretraining, not geometry-only evidence",
+      "SMILES-key dictionaries may collapse duplicates",
+      "strict=False hides missing encoder keys",
+      "BN buffers require eval+unchanged hash",
+      "zero_vn_edge_rbf=false leaves virtual-node origin-distance dependence",
+      "dense RRWP16 cost/node-square",
+      "mutating graph forward must reconstruct graph",
+      "entire geometry pipeline seed42,20s timeout incl fallback; no unrecorded crop/drop"
+    ],
+    "evidence_refs": [
+      "E-MONROE",
+      "E-MONROE-ADD",
+      "X-MONROE-README",
+      "X-MONROE-GRIT",
+      "X-MONROE-LICENSE",
+      "E-STATUS"
+    ]
+  },
+  {
+    "asset_id": "unimol2_84m_cls",
+    "role": "frozen_geometry_graph_encoder",
+    "code_commit": "90f52c41299a1a582da0f9765e9f87aa21faa16a",
+    "package_version": "unimol_tools0.1.3.post1",
+    "checkpoint_repo": "dptech/Uni-Mol2",
+    "checkpoint_revision": "bf37d253c0f5ac61f468137eb00059978a104ff0",
+    "weights_file": "modelzoo/84M/checkpoint.pt",
+    "weights_sha256": "5b9241630f1cf0b173fb06d1e76096e5daf5f91c3e51b066ba69524dafe60e35",
+    "weight_bytes": 336632021,
+    "feature_dim": 768,
+    "representation": "return_repr=True CLS; bypass classification head",
+    "license": "MIT/public ungated per exact packet feasibility; fresh HF metadata pages inaccessible via this web route, not a claim weights missing",
+    "readiness": "blocked_assets: no true task encoding/efficacy; current label-free preparation only",
+    "risks": [
+      "default random128heavy-atom crop prohibited",
+      "UniMolRepr kwargs does not propagate max_atoms/seed/multiprocess",
+      "atoms+coordinates input loses bonds",
+      "invalid SMILES may throw when is_train=False",
+      "default multiprocess8 not assumed task-safe",
+      "hidden HF_ENDPOINT/network/path effects",
+      "pair512 feature memory N^2; nonDDP autocast not assumed",
+      "privateenv old pandas constraint, no global environment mutation"
+    ],
+    "evidence_refs": [
+      "E-UNIMOL2",
+      "X-UNIMOL-README",
+      "X-UNIMOL-API",
+      "X-UNIMOL-PAPER",
+      "E-STATUS"
+    ]
+  },
+  {
+    "asset_id": "molformer_10pct",
+    "role": "frozen_SMILES_encoder",
+    "repository": "ibm-research/MoLFormer-XL-both-10pct",
+    "known_primary_candidate_revision": "361063d0ad524ef77cf39b08469f6be770dc550f",
+    "known_primary_candidate_weights_sha256": "0795977fe7192c4acdaf052f0e8464af57bc4bb59211271c5e61aaba2637b9c6",
+    "current_mf16_exact_revision_binding": null,
+    "feature_dim": 768,
+    "readout": "current meanpool; MLP256/TabMk32",
+    "license": "Apache-2.0 on cited fixed public modelcard; not full-XL family maximum",
+    "readiness": "12actualcompleted plus4CYPpending; do not replay; current source-adoption ref-323e465705337344 is reference-only",
+    "evidence_refs": [
+      "E-STATUS",
+      "E-MF-CACO",
+      "E-MF-MICRO",
+      "E-MF-DILI",
+      "X-MF-CARD",
+      "E-SOURCEMAP",
+      "E-P002-GUIDE"
+    ]
+  },
+  {
+    "asset_id": "tabicl_v2",
+    "role": "frozen_tabular_in_context_predictor_not_molecular_encoder",
+    "code_commit": "d83091b845a8c5f7c087bd54964f755a9e560f45",
+    "version": "2.2.0",
+    "checkpoint_repo": "jingang/TabICL",
+    "prior_registered_public_revision": "4dcd344ece2c00be9e831fdd35bed57b5ad83e19",
+    "classifier": {
+      "filename": "tabicl-classifier-v2-20260212.ckpt",
+      "registered_sha256": "bdc7dbd5e4ff21f8f0456fcf90c6b7cdf72dbea960f2d05b19bec19f9b3d4ed0"
+    },
+    "regressor": {
+      "filename": "tabicl-regressor-v2-20260212.ckpt",
+      "registered_sha256": "0db9cb538f114e79026bf08f45f41ad8dd7ad2de2aaca9a5ca8cd3bd9748ae7a"
+    },
+    "current96asset_receipt_binding": "current state reports ready; identity mapping to these prior public weight pointers must come from original prepared receipt, not assumed from family name",
+    "license": "BSD-3-Clause code verified; prior model license metadata inherited; optional components retain notices; NO TabPFN gate acceptance",
+    "readiness": "16contextfits dispatched,0result at cutoff; no duplicate probe",
+    "seed_semantics": "random_state controls context/preprocessing/ensemble ordering, not pretrained initialization",
+    "evidence_refs": [
+      "E-STATUS",
+      "X-TABICL-README",
+      "X-TABICL-LICENSE",
+      "X-TABICL-REGRESSOR",
+      "X-TABICL-CLASSIFIER",
+      "X-TABICL-PAPER",
+      "E-P002-PROPOSALS"
+    ]
+  },
+  {
+    "asset_id": "kpgt",
+    "role": "frozen_molecular_encoder",
+    "readiness": "researched_deferred_not_in_current_matrix",
+    "boundary": "historically deferred; auxiliary information/source+cache path not closed",
+    "evidence_refs": [
+      "E-ASSETS"
+    ],
+    "exact_checkpoint": null
+  },
+  {
+    "asset_id": "unimol_v1",
+    "role": "frozen_geometry_encoder",
+    "readiness": "researched_deferred_not_in_current_matrix",
+    "boundary": "historical Uni-Mol != selected UniMol2-84M",
+    "evidence_refs": [
+      "E-ASSETS"
+    ],
+    "exact_checkpoint": null
+  },
+  {
+    "asset_id": "smi_ted",
+    "role": "frozen_molecular_encoder",
+    "readiness": "researched_deferred_not_in_current_matrix",
+    "boundary": "historical assets/interface not closed",
+    "evidence_refs": [
+      "E-ASSETS"
+    ],
+    "exact_checkpoint": null
+  },
+  {
+    "asset_id": "mole",
+    "role": "frozen_molecular_encoder",
+    "readiness": "researched_deferred_not_in_current_matrix",
+    "boundary": "checkpoint publication chain historically not closed",
+    "evidence_refs": [
+      "E-ASSETS"
+    ],
+    "exact_checkpoint": null
+  },
+  {
+    "asset_id": "tabpfn26",
+    "role": "frozen_tabular_predictor",
+    "readiness": "researched_deferred_not_in_current_matrix",
+    "boundary": "license/version/usage not accepted; not same as Monroe optionalTabPFNv3",
+    "evidence_refs": [
+      "E-ASSETS"
+    ],
+    "exact_checkpoint": null
+  },
+  {
+    "asset_id": "small_dmpnn_scratch",
+    "role": "new_from_scratch_graph_predictor",
+    "readiness": "researched_deferred_not_in_current_matrix",
+    "boundary": "not external frozen asset; independent admission/budget needed",
+    "evidence_refs": [
+      "E-ASSETS"
+    ],
+    "exact_checkpoint": null
+  },
+  {
+    "asset_id": "classical_features_other",
+    "role": "feature_baseline",
+    "readiness": "researched_deferred_not_in_current_matrix",
+    "boundary": "Morgan actually tested; other classic recipes not thereby validated",
+    "evidence_refs": [
+      "E-ASSETS"
+    ],
+    "exact_checkpoint": null
+  }
+]

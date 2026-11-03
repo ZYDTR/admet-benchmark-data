@@ -1,0 +1,539 @@
+[
+  {
+    "issue_id": "I003-RANK",
+    "title": "排序目标已过系数控制但非普适机制",
+    "status": "open_transfer_question",
+    "historical_issue_ids": [
+      "AR001-05"
+    ],
+    "affected_question_ids": [
+      "Q2",
+      "Q6"
+    ],
+    "evidence_refs": [
+      "E-RANK8",
+      "E-HALFMSE",
+      "E-HLSTRESS"
+    ],
+    "supporting_evidence": "四raw+四native配对均支持添加pairwise项；.5MSE≈fullMSE。",
+    "counterevidence_or_alternative": "尚余梯度规模、rank surrogate/停止/target分布；两个split不是独立数据集。",
+    "resolution": "R/X迁移其他三个Spearman任务，停止half-life追加。",
+    "acceptance_or_closure": "每task全格报告；能给局部采用或否决或表示交互结论即可收口，不需全任务全正。",
+    "related_proposal_ids": [
+      "P003-R-clearance_microsome_az-chemeleon-canonical-half",
+      "P003-R-clearance_microsome_az-chemeleon-canonical-rank",
+      "P003-R-clearance_microsome_az-chemeleon-scaffold-half",
+      "P003-R-clearance_microsome_az-chemeleon-scaffold-rank",
+      "P003-R-clearance_hepatocyte_az-chemeleon-canonical-half",
+      "P003-R-clearance_hepatocyte_az-chemeleon-canonical-rank",
+      "P003-R-clearance_hepatocyte_az-chemeleon-scaffold-half",
+      "P003-R-clearance_hepatocyte_az-chemeleon-scaffold-rank",
+      "P003-R-vdss_lombardo-chemeleon-canonical-half",
+      "P003-R-vdss_lombardo-chemeleon-canonical-rank",
+      "P003-R-vdss_lombardo-chemeleon-canonical-mse",
+      "P003-R-vdss_lombardo-chemeleon-scaffold-half",
+      "P003-R-vdss_lombardo-chemeleon-scaffold-rank",
+      "P003-R-vdss_lombardo-chemeleon-scaffold-mse",
+      "P003-X-clearance_microsome_az-minimol-canonical-half",
+      "P003-X-clearance_microsome_az-minimol-canonical-rank",
+      "P003-X-clearance_microsome_az-minimol-scaffold-half",
+      "P003-X-clearance_microsome_az-minimol-scaffold-rank",
+      "P003-X-clearance_hepatocyte_az-minimol-canonical-half",
+      "P003-X-clearance_hepatocyte_az-minimol-canonical-rank",
+      "P003-X-clearance_hepatocyte_az-minimol-scaffold-half",
+      "P003-X-clearance_hepatocyte_az-minimol-scaffold-rank"
+    ],
+    "direction_ids": [
+      "D-RANK",
+      "D-LOSSREP"
+    ],
+    "scope_rule": "不把旧缺陷移植到新run；未改变历史原件，不直接维护本地账本"
+  },
+  {
+    "issue_id": "I003-CLEARANCE",
+    "title": "Mini清除率raw与结构表现不一致",
+    "status": "open_mechanism",
+    "historical_issue_ids": [
+      "AR001-13"
+    ],
+    "affected_question_ids": [
+      "Q1",
+      "Q2",
+      "Q3"
+    ],
+    "evidence_refs": [
+      "H-CONFIRM14",
+      "E-HEPRAW",
+      "E-STRESS48",
+      "E-HEPSTRESS"
+    ],
+    "supporting_evidence": "rawmicro/hep四seed正。",
+    "counterevidence_or_alternative": "native分别1/4；hep原raw同CPU，不能仅归跨平台。",
+    "resolution": "R/X区分loss交互；N固定评价成员检验fit支持；K需M6触发。",
+    "acceptance_or_closure": "不再声称结构普适；若有限对照仍不能识别，保留多解释而非无限追加。",
+    "related_proposal_ids": [
+      "P003-X-clearance_microsome_az-minimol-canonical-half",
+      "P003-X-clearance_microsome_az-minimol-canonical-rank",
+      "P003-X-clearance_microsome_az-minimol-scaffold-half",
+      "P003-X-clearance_microsome_az-minimol-scaffold-rank",
+      "P003-X-clearance_hepatocyte_az-minimol-canonical-half",
+      "P003-X-clearance_hepatocyte_az-minimol-canonical-rank",
+      "P003-X-clearance_hepatocyte_az-minimol-scaffold-half",
+      "P003-X-clearance_hepatocyte_az-minimol-scaffold-rank",
+      "P003-N-clearance_microsome_az-chemeleon-scaffold-mse",
+      "P003-N-clearance_microsome_az-minimol-scaffold-mse",
+      "P003-N-clearance_hepatocyte_az-chemeleon-scaffold-mse",
+      "P003-N-clearance_hepatocyte_az-minimol-scaffold-mse",
+      "P003-K-clearance_microsome_az-chemeleon-scaffold-mse-w128",
+      "P003-K-clearance_microsome_az-minimol-scaffold-mse-w512"
+    ],
+    "direction_ids": [
+      "D-LOSSREP",
+      "D-SIZE"
+    ],
+    "scope_rule": "不把旧缺陷移植到新run；未改变历史原件，不直接维护本地账本"
+  },
+  {
+    "issue_id": "I003-SPLIT",
+    "title": "结构压力不是独立终评且部分分区不可行",
+    "status": "open_scope",
+    "historical_issue_ids": [
+      "AR001-03"
+    ],
+    "affected_question_ids": [
+      "Q2",
+      "Q3",
+      "Q6"
+    ],
+    "evidence_refs": [
+      "H-GROUP20",
+      "E-STRESS48",
+      "E-LD50",
+      "E-HLSTRESS"
+    ],
+    "supporting_evidence": "同scheme同成员配对可解释。",
+    "counterevidence_or_alternative": "跨scheme成员/样本量变，旧train已多次用；LD50scaffold4按fit gate缺失。",
+    "resolution": "复用分区，VDss新split先零fit门槛；N只改fit。",
+    "acceptance_or_closure": "不重抽、不将skip记失败；每split重拟合统计并锁stop后stress。",
+    "related_proposal_ids": [
+      "P003-R-clearance_microsome_az-chemeleon-canonical-half",
+      "P003-R-clearance_microsome_az-chemeleon-canonical-rank",
+      "P003-R-clearance_microsome_az-chemeleon-scaffold-half",
+      "P003-R-clearance_microsome_az-chemeleon-scaffold-rank",
+      "P003-R-clearance_hepatocyte_az-chemeleon-canonical-half",
+      "P003-R-clearance_hepatocyte_az-chemeleon-canonical-rank",
+      "P003-R-clearance_hepatocyte_az-chemeleon-scaffold-half",
+      "P003-R-clearance_hepatocyte_az-chemeleon-scaffold-rank",
+      "P003-R-vdss_lombardo-chemeleon-canonical-half",
+      "P003-R-vdss_lombardo-chemeleon-canonical-rank",
+      "P003-R-vdss_lombardo-chemeleon-canonical-mse",
+      "P003-R-vdss_lombardo-chemeleon-scaffold-half",
+      "P003-R-vdss_lombardo-chemeleon-scaffold-rank",
+      "P003-R-vdss_lombardo-chemeleon-scaffold-mse",
+      "P003-N-clearance_microsome_az-chemeleon-scaffold-mse",
+      "P003-N-clearance_microsome_az-minimol-scaffold-mse",
+      "P003-N-clearance_hepatocyte_az-chemeleon-scaffold-mse",
+      "P003-N-clearance_hepatocyte_az-minimol-scaffold-mse"
+    ],
+    "direction_ids": [
+      "D-RANK",
+      "D-SPLIT",
+      "D-SIZE"
+    ],
+    "scope_rule": "不把旧缺陷移植到新run；未改变历史原件，不直接维护本地账本"
+  },
+  {
+    "issue_id": "I003-COHORT",
+    "title": "低分歧不是无误差，抑制群不是零误差",
+    "status": "open_risk",
+    "historical_issue_ids": [
+      "AR001-05",
+      "AR001-13"
+    ],
+    "affected_question_ids": [
+      "Q1",
+      "Q3"
+    ],
+    "evidence_refs": [
+      "E-COHORT-REPORT",
+      "E-COHORT-SUMMARY",
+      "E-COHORT-COMP"
+    ],
+    "supporting_evidence": "合格低群有非零MAE；PPBR/LD50/lipo有低群反转。",
+    "counterevidence_or_alternative": "共同个体错尚不能由两个MAE证明，CYP低8抑制；Caco/micro太小无score。",
+    "resolution": "固定成员源指针保留，计算同源D后才得回归共同误差下界；禁止小群差分还原。",
+    "acceptance_or_closure": "不索取逐行Y；只有明确批准的安全汇总可增加，当前88不重算。",
+    "related_proposal_ids": [],
+    "direction_ids": [
+      "D-COHORT"
+    ],
+    "scope_rule": "不把旧缺陷移植到新run；未改变历史原件，不直接维护本地账本"
+  },
+  {
+    "issue_id": "I003-AMES",
+    "title": "AMES selector反转需消费已派而非重做",
+    "status": "waiting_dispatched",
+    "historical_issue_ids": [
+      "AR001-13"
+    ],
+    "affected_question_ids": [
+      "Q1",
+      "Q5"
+    ],
+    "evidence_refs": [
+      "H-AMES",
+      "E-STRESS48-U",
+      "E-STATUS",
+      "E-MECH"
+    ],
+    "supporting_evidence": "raw4/4正且旧stop4/4反。",
+    "counterevidence_or_alternative": "native4/4负；dual4未完成。",
+    "resolution": "等dual4锁双selector再单次stress；不重复拟合。",
+    "acceptance_or_closure": "若selection敏感则限定结论；若都负则排除仅selector能救此fit的解释。",
+    "related_proposal_ids": [],
+    "direction_ids": [
+      "D-SELECTOR"
+    ],
+    "scope_rule": "不把旧缺陷移植到新run；未改变历史原件，不直接维护本地账本"
+  },
+  {
+    "issue_id": "I003-WINDOW",
+    "title": "50epoch窗口与学习率/头效果未分离",
+    "status": "waiting_dispatched",
+    "historical_issue_ids": [
+      "AR001-05"
+    ],
+    "affected_question_ids": [
+      "Q4",
+      "Q5"
+    ],
+    "evidence_refs": [
+      "E-STATUS",
+      "E-MECH",
+      "H-OPT72",
+      "H-TABM32"
+    ],
+    "supporting_evidence": "部分CacoTabM触cap，CYP低LR四seed支持。",
+    "counterevidence_or_alternative": "没有200轨迹结果，长期多次stop选择也可能过拟合。",
+    "resolution": "消费12轨迹三causalviews，不设新50control。",
+    "acceptance_or_closure": "保存last state before best reload，sameepoch views去重，不声称复现旧prefix除非同构。",
+    "related_proposal_ids": [],
+    "direction_ids": [
+      "D-WINDOW"
+    ],
+    "scope_rule": "不把旧缺陷移植到新run；未改变历史原件，不直接维护本地账本"
+  },
+  {
+    "issue_id": "I003-CAPACITY",
+    "title": "容量/维度与表示作用未拆开",
+    "status": "waiting_M6_then_conditional",
+    "historical_issue_ids": [
+      "AR001-13"
+    ],
+    "affected_question_ids": [
+      "Q3",
+      "Q5",
+      "Q6"
+    ],
+    "evidence_refs": [
+      "E-STATUS",
+      "E-P002-GUIDE",
+      "E-M2"
+    ],
+    "supporting_evidence": "CheM2048与Mini512在MLP256首层参数相差约4倍。",
+    "counterevidence_or_alternative": "M6接近参数匹配非完全等效；宽度改变优化和函数空间。",
+    "resolution": "先消费原26，必要时仅K4结构转移。",
+    "acceptance_or_closure": "不复制rawM6；Mini新分区固定H0，避免增加scaler第二因素。",
+    "related_proposal_ids": [
+      "P003-K-clearance_microsome_az-chemeleon-scaffold-mse-w128",
+      "P003-K-clearance_microsome_az-minimol-scaffold-mse-w512"
+    ],
+    "direction_ids": [
+      "D-CAPACITY"
+    ],
+    "scope_rule": "不把旧缺陷移植到新run；未改变历史原件，不直接维护本地账本"
+  },
+  {
+    "issue_id": "I003-MEMBERS",
+    "title": "TabM成员机制不等于容量机制",
+    "status": "waiting_M5_then_conditional",
+    "historical_issue_ids": [
+      "AR001-13"
+    ],
+    "affected_question_ids": [
+      "Q4",
+      "Q5"
+    ],
+    "evidence_refs": [
+      "X-TABM-README",
+      "X-TABM-PAPER",
+      "H-CONFIRM14",
+      "E-STRESS48"
+    ],
+    "supporting_evidence": "CYP内换头额外效应小而正；不同task并非通用。",
+    "counterevidence_or_alternative": "k改变参数/共享与监督，plain与k1不完全同模型。",
+    "resolution": "原M5后仅必要时T2固定k32改lossaggregation；官方默认不是错误。",
+    "acceptance_or_closure": "synthetic稳定log-mixture loss与k1等价fixture；同split同种子控制；不过度归因ensemble独立性。",
+    "related_proposal_ids": [
+      "P003-T-cyp2d6_veith-minimol-scaffold-mean_bce"
+    ],
+    "direction_ids": [
+      "D-MEMBERLOSS"
+    ],
+    "scope_rule": "不把旧缺陷移植到新run；未改变历史原件，不直接维护本地账本"
+  },
+  {
+    "issue_id": "I003-GEOMETRY",
+    "title": "几何候选没有疗效或完整任务覆盖",
+    "status": "blocked_assets",
+    "historical_issue_ids": [
+      "AR001-13"
+    ],
+    "affected_question_ids": [
+      "Q4",
+      "Q6"
+    ],
+    "evidence_refs": [
+      "E-MONROE",
+      "E-MONROE-ADD",
+      "E-UNIMOL2",
+      "X-MONROE-README",
+      "X-UNIMOL-API"
+    ],
+    "supporting_evidence": "两个准确checkpoint/publicsource提供可检验候选。",
+    "counterevidence_or_alternative": "Monroe PCBA预训练混杂、原点虚节点、UniMol2裁剪/无bond输入、环境/冻结风险。",
+    "resolution": "先已有32probe/预算准备，再明确两task全行cache，获准才G8。",
+    "acceptance_or_closure": "冻结全部params/buffers、原行全覆盖/无隐式crop、实际许可/来源/几何路由可追踪；probe成功≠疗效。",
+    "related_proposal_ids": [
+      "P003-G-solubility_aqsoldb-monroe720-scaffold-mse",
+      "P003-G-solubility_aqsoldb-unimol2_84m_cls-scaffold-mse",
+      "P003-G-clearance_microsome_az-monroe720-scaffold-mse",
+      "P003-G-clearance_microsome_az-unimol2_84m_cls-scaffold-mse"
+    ],
+    "direction_ids": [
+      "D-GEOMETRY"
+    ],
+    "scope_rule": "不把旧缺陷移植到新run；未改变历史原件，不直接维护本地账本"
+  },
+  {
+    "issue_id": "I003-ASSETBIND",
+    "title": "当前MoL/TabICL精确来源绑定有公开层缺口",
+    "status": "needs_evidence",
+    "historical_issue_ids": [
+      "AR001-13"
+    ],
+    "affected_question_ids": [
+      "Q4",
+      "Q6"
+    ],
+    "evidence_refs": [
+      "E-STATUS",
+      "E-SOURCEMAP",
+      "E-MF-CACO",
+      "X-MF-CARD",
+      "E-P002-PROPOSALS"
+    ],
+    "supporting_evidence": "current明确MoL12与TabICL准备成功，精确候选版本/代码可列。",
+    "counterevidence_or_alternative": "current mf16 source-adoption仅ref，不可直接把旧Pro361063权重绑定为实际执行版本；HF指针本轮web不可达。",
+    "resolution": "原主控提供其已验source-adoption的安全版本/哈希摘录即可，不重做freeze/全包验收。",
+    "acceptance_or_closure": "来源摘录逐字段相等才升级known_candidate为current_bound；未补不影响已验12score的条件性分析。",
+    "related_proposal_ids": [
+      "P003-G-solubility_aqsoldb-monroe720-scaffold-mse",
+      "P003-G-solubility_aqsoldb-unimol2_84m_cls-scaffold-mse",
+      "P003-G-clearance_microsome_az-monroe720-scaffold-mse",
+      "P003-G-clearance_microsome_az-unimol2_84m_cls-scaffold-mse"
+    ],
+    "direction_ids": [
+      "D-GEOMETRY",
+      "D-MOLWAIT",
+      "D-TABICL"
+    ],
+    "scope_rule": "不把旧缺陷移植到新run；未改变历史原件，不直接维护本地账本"
+  },
+  {
+    "issue_id": "I003-M2",
+    "title": "H0与F010数学等价，旧Mini读入器身份另修",
+    "status": "closed_scientific_equivalence_with_interface_followup",
+    "historical_issue_ids": [
+      "AR001-13"
+    ],
+    "affected_question_ids": [
+      "Q1",
+      "Q5"
+    ],
+    "evidence_refs": [
+      "E-M2",
+      "E-STATUS"
+    ],
+    "supporting_evidence": "三个rawfit分母changed0，min非零d0>.01，12拟合已skip。",
+    "counterevidence_or_alternative": "新split不保证相同；原readerMiniF010仍Mini512identity，synthetic测试非真实cache通过。",
+    "resolution": "保留等价skip；仅M6准备补readeridentity，不新增M2。",
+    "acceptance_or_closure": "实际变量传递与cachetagfixture通过；无意义高floor扫描不作为fallback。",
+    "related_proposal_ids": [],
+    "direction_ids": [
+      "D-CAPACITY",
+      "D-SCALE"
+    ],
+    "scope_rule": "不把旧缺陷移植到新run；未改变历史原件，不直接维护本地账本"
+  },
+  {
+    "issue_id": "I003-MOL",
+    "title": "MoLFormer固定panel负/混合不能用withinMoL头改善覆盖",
+    "status": "waiting_pending_CYP_then_scope_close",
+    "historical_issue_ids": [
+      "AR001-13"
+    ],
+    "affected_question_ids": [
+      "Q1",
+      "Q4"
+    ],
+    "evidence_refs": [
+      "E-MF-CACO",
+      "E-MF-MICRO",
+      "E-MF-DILI",
+      "E-STATUS"
+    ],
+    "supporting_evidence": "Caco/micro各8primary负，DILI3胜5负。",
+    "counterevidence_or_alternative": "两seed、50epoch、不同dim/first-layer/backend混杂；未否决整个SMILES语言模型家族。",
+    "resolution": "停止这三task配方扩面，消费剩余CYP4；不自动延长MoLwindow或换pooling。",
+    "acceptance_or_closure": "CYP也负就该panel收口；若正，仅保留任务例外，另问题需controller登记。",
+    "related_proposal_ids": [],
+    "direction_ids": [
+      "D-MOLWAIT"
+    ],
+    "scope_rule": "不把旧缺陷移植到新run；未改变历史原件，不直接维护本地账本"
+  },
+  {
+    "issue_id": "I003-TABICL",
+    "title": "冻结上下文fit不可当梯度训练/已验证疗效",
+    "status": "waiting_dispatched",
+    "historical_issue_ids": [
+      "AR001-13"
+    ],
+    "affected_question_ids": [
+      "Q4"
+    ],
+    "evidence_refs": [
+      "E-STATUS",
+      "X-TABICL-REGRESSOR",
+      "X-TABICL-CLASSIFIER",
+      "X-TABICL-PAPER"
+    ],
+    "supporting_evidence": "16contextfits预登记且准备资产报告ready。",
+    "counterevidence_or_alternative": "实际query0，paper榜不是ADMET；contextseed不同语义；内置fitpreprocess可泄漏若错误池化。",
+    "resolution": "消费16真结果，记录fit-context labels与preprocess范围；不另probe。",
+    "acceptance_or_closure": "0参数更新和全buffers冻结；分类连续prob、回归原尺度；额外模型成员不是新梯度fit。",
+    "related_proposal_ids": [],
+    "direction_ids": [
+      "D-TABICL"
+    ],
+    "scope_rule": "不把旧缺陷移植到新run；未改变历史原件，不直接维护本地账本"
+  },
+  {
+    "issue_id": "I003-VIEWS",
+    "title": "物理轨迹/上下文fit/预测view/score必须分账",
+    "status": "open_accounting_control",
+    "historical_issue_ids": [],
+    "affected_question_ids": [
+      "Q5",
+      "Q6"
+    ],
+    "evidence_refs": [
+      "E-STATUS",
+      "E-MECH",
+      "H-ENSEMBLE59"
+    ],
+    "supporting_evidence": "4dual+12window=16物理轨迹；最多8+36views。",
+    "counterevidence_or_alternative": "best-state冒充last会破坏因果prefix；相同checkpoint若重复计数夸大信息。",
+    "resolution": "exclusions_and_reuse预先排除，所有输出绑定完整科学identity、selector、checkpointSHA与predictionSHA。",
+    "acceptance_or_closure": "views不countasfit；同源预测相同去重；worker失败与supervisor失败独立保存。",
+    "related_proposal_ids": [],
+    "direction_ids": [
+      "D-SELECTOR",
+      "D-WINDOW",
+      "D-ENSEMBLE"
+    ],
+    "scope_rule": "不把旧缺陷移植到新run；未改变历史原件，不直接维护本地账本"
+  },
+  {
+    "issue_id": "I003-SELECTION",
+    "title": "重复Valid和历史未记访问不因新请求清零",
+    "status": "persistent_scope",
+    "historical_issue_ids": [
+      "AR001-01",
+      "AR001-12",
+      "U04",
+      "U05"
+    ],
+    "affected_question_ids": [
+      "Q1",
+      "Q2",
+      "Q3",
+      "Q6"
+    ],
+    "evidence_refs": [
+      "E-ISSUELOG",
+      "H-BRANCH",
+      "E-STATUS",
+      "E-COHORT-REPORT"
+    ],
+    "supporting_evidence": "正式分数累计已登记，native结构也来自已使用train。",
+    "counterevidence_or_alternative": "生命周期所有旧探索访问次数从未完整记录；官方AP/aggregate及finalrefit未确认。",
+    "resolution": "本矩阵0新wholeValid；train-stop选择后固定stress报告所有格；保留统计不确定而非虚构p值。",
+    "acceptance_or_closure": "不报官网隐藏榜/独立终评/精确置信度；10历史未评仍未知、BBB旧after缺口单列不继承至新run。",
+    "related_proposal_ids": [],
+    "direction_ids": [
+      "D-COHORT",
+      "D-ENSEMBLE"
+    ],
+    "scope_rule": "不把旧缺陷移植到新run；未改变历史原件，不直接维护本地账本"
+  },
+  {
+    "issue_id": "I003-FRONTIER",
+    "title": "覆盖22任务不等于全任务统一新训练",
+    "status": "open_decision_frontier",
+    "historical_issue_ids": [],
+    "affected_question_ids": [
+      "Q1",
+      "Q6"
+    ],
+    "evidence_refs": [
+      "H-FRONTIER",
+      "H-CONFIRM54",
+      "E-STATUS",
+      "E-ISSUELOG"
+    ],
+    "supporting_evidence": "任务证据支持不同保留/否决/wait类别。",
+    "counterevidence_or_alternative": "小Valid/未测资产/局部负例不足全局定案。",
+    "resolution": "task22_actions逐项条件收口，所有old失败保留导航。",
+    "acceptance_or_closure": "每task有下一决策与stop，不因idle或一次batch完成而宣布研究结束。",
+    "related_proposal_ids": [],
+    "direction_ids": [
+      "D-CLASSWEIGHT",
+      "D-FRONTIER"
+    ],
+    "scope_rule": "不把旧缺陷移植到新run；未改变历史原件，不直接维护本地账本"
+  },
+  {
+    "issue_id": "I003-COST",
+    "title": "新接口/几何完整周转成本未记录",
+    "status": "needs_measurement_not_new_probe",
+    "historical_issue_ids": [],
+    "affected_question_ids": [
+      "Q6"
+    ],
+    "evidence_refs": [
+      "E-STRESS48-U",
+      "E-HEPSTRESS-U",
+      "E-LD50",
+      "E-STATUS"
+    ],
+    "supporting_evidence": "旧已测CPU跨度很大；cache可共享。",
+    "counterevidence_or_alternative": "当前prep/取回/Pro时间未完整发布，不能用GPU秒估全部或重叠相加。",
+    "resolution": "第一批准真实fit顺带记录时长，不加试跑；按criticalpath台账记录准备/返回/评分/交接。",
+    "acceptance_or_closure": "费用/时间按事实校准，几何开销未知则G阻断；数字情景明确为假设不是预测。",
+    "related_proposal_ids": [],
+    "direction_ids": [],
+    "scope_rule": "不把旧缺陷移植到新run；未改变历史原件，不直接维护本地账本"
+  }
+]

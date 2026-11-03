@@ -1,0 +1,690 @@
+[
+  {
+    "direction_id": "D-RANK",
+    "title": "将已受控排序增益迁移到另外三个Spearman任务",
+    "scientific_question": "固定系数 .5/.5 是否跨endpoint有益，而非追加半衰期确认？",
+    "evidence_refs": [
+      "E-HALFMSE",
+      "E-HLSTRESS",
+      "E-RANK8"
+    ],
+    "counterevidence": "rank不等于Spearman；梯度尺度、pair采样与停止仍可能解释局部获益。",
+    "parameters": {
+      "tasks": [
+        "clearance_microsome_az",
+        "clearance_hepatocyte_az",
+        "vdss_lombardo"
+      ],
+      "losses": [
+        "HalfMSELoss",
+        "0.5MSE+0.5pairwise_softplus"
+      ],
+      "VDss_additional_anchor": "FullMSE",
+      "split": [
+        "canonical43",
+        "scaffold43"
+      ],
+      "model_seeds": [
+        44,
+        45
+      ],
+      "coefficient_grid": [
+        0.5
+      ]
+    },
+    "valid_combinations_and_exclusions": "所有格预登记；micro/hep FullMSE旧控制复用；VDss补4；不扫权重/半衰期seed。",
+    "search_strategy": "predeclared paired contrasts; no full Cartesian search, no winning-cell-only report",
+    "readiness": "config_only_existing_math_with_source_binding",
+    "priority": "P0",
+    "incremental_fit_cap": 28,
+    "count_note": "cap is a scope cap; overlap with linked proposals is shared, never sum direction caps",
+    "issue_ids": [
+      "I003-RANK",
+      "I003-SPLIT"
+    ],
+    "proposal_ids": [
+      "P003-R-clearance_microsome_az-chemeleon-canonical-half",
+      "P003-R-clearance_microsome_az-chemeleon-canonical-rank",
+      "P003-R-clearance_microsome_az-chemeleon-scaffold-half",
+      "P003-R-clearance_microsome_az-chemeleon-scaffold-rank",
+      "P003-R-clearance_hepatocyte_az-chemeleon-canonical-half",
+      "P003-R-clearance_hepatocyte_az-chemeleon-canonical-rank",
+      "P003-R-clearance_hepatocyte_az-chemeleon-scaffold-half",
+      "P003-R-clearance_hepatocyte_az-chemeleon-scaffold-rank",
+      "P003-R-vdss_lombardo-chemeleon-canonical-half",
+      "P003-R-vdss_lombardo-chemeleon-canonical-rank",
+      "P003-R-vdss_lombardo-chemeleon-canonical-mse",
+      "P003-R-vdss_lombardo-chemeleon-scaffold-half",
+      "P003-R-vdss_lombardo-chemeleon-scaffold-rank",
+      "P003-R-vdss_lombardo-chemeleon-scaffold-mse",
+      "P003-X-clearance_microsome_az-minimol-canonical-half",
+      "P003-X-clearance_microsome_az-minimol-canonical-rank",
+      "P003-X-clearance_microsome_az-minimol-scaffold-half",
+      "P003-X-clearance_microsome_az-minimol-scaffold-rank",
+      "P003-X-clearance_hepatocyte_az-minimol-canonical-half",
+      "P003-X-clearance_hepatocyte_az-minimol-canonical-rank",
+      "P003-X-clearance_hepatocyte_az-minimol-scaffold-half",
+      "P003-X-clearance_hepatocyte_az-minimol-scaffold-rank"
+    ],
+    "scope": "proposal_only",
+    "notes": ""
+  },
+  {
+    "direction_id": "D-LOSSREP",
+    "title": "loss×representation差分的差分",
+    "scientific_question": "micro/hep结构失败是否随loss与表示发生交互？",
+    "evidence_refs": [
+      "E-HEPSTRESS",
+      "E-STRESS48",
+      "H-CONFIRM14"
+    ],
+    "counterevidence": "不能将CheM2048F010与Mini512H0之间交互解释为encoder独立信息量。",
+    "parameters": {
+      "tasks": [
+        "clearance_microsome_az",
+        "clearance_hepatocyte_az"
+      ],
+      "representations": [
+        "CheM2048F010",
+        "Mini512H0"
+      ],
+      "losses": [
+        "HalfMSELoss",
+        "rank.5/.5"
+      ],
+      "splits": [
+        "canonical43",
+        "scaffold43"
+      ],
+      "seeds": [
+        44,
+        45
+      ]
+    },
+    "valid_combinations_and_exclusions": "共享R的CheM16；新增Mini16。不得只选CheM阳性的task；nullCheM仍可有Mini交互。",
+    "search_strategy": "predeclared paired contrasts; no full Cartesian search, no winning-cell-only report",
+    "readiness": "config_only",
+    "priority": "P0",
+    "incremental_fit_cap": 16,
+    "count_note": "cap is a scope cap; overlap with linked proposals is shared, never sum direction caps",
+    "issue_ids": [
+      "I003-CLEARANCE",
+      "I003-RANK"
+    ],
+    "proposal_ids": [
+      "P003-X-clearance_microsome_az-minimol-canonical-half",
+      "P003-X-clearance_microsome_az-minimol-canonical-rank",
+      "P003-X-clearance_microsome_az-minimol-scaffold-half",
+      "P003-X-clearance_microsome_az-minimol-scaffold-rank",
+      "P003-X-clearance_hepatocyte_az-minimol-canonical-half",
+      "P003-X-clearance_hepatocyte_az-minimol-canonical-rank",
+      "P003-X-clearance_hepatocyte_az-minimol-scaffold-half",
+      "P003-X-clearance_hepatocyte_az-minimol-scaffold-rank"
+    ],
+    "scope": "proposal_only",
+    "notes": ""
+  },
+  {
+    "direction_id": "D-SPLIT",
+    "title": "两种结构压力回答不同问题",
+    "scientific_question": "canonical是否只限制同身份跨分区；scaffold是否改变邻域支持并改变方法次序？",
+    "evidence_refs": [
+      "H-GROUP20",
+      "E-STRESS48",
+      "E-HEPSTRESS",
+      "E-HLSTRESS"
+    ],
+    "counterevidence": "两种方案同时改变fit/stop/stress成员，不能把绝对分差归于单一化学因素；两seed共享同分区。",
+    "parameters": {
+      "split_seed": [
+        43
+      ],
+      "methods": [
+        "canonical_threeway_hash_v1",
+        "scaffold_threeway_hash_v1"
+      ],
+      "fractions": [
+        0.7,
+        0.1,
+        0.2
+      ]
+    },
+    "valid_combinations_and_exclusions": "优先复用原分区；不重抽、不清行；原eligible失败按skip；比较同scheme内的方法差。",
+    "search_strategy": "predeclared paired contrasts; no full Cartesian search, no winning-cell-only report",
+    "readiness": "config_only",
+    "priority": "P0",
+    "incremental_fit_cap": 0,
+    "count_note": "cap is a scope cap; overlap with linked proposals is shared, never sum direction caps",
+    "issue_ids": [
+      "I003-SPLIT"
+    ],
+    "proposal_ids": [
+      "P003-R-clearance_microsome_az-chemeleon-canonical-half",
+      "P003-R-clearance_microsome_az-chemeleon-canonical-rank",
+      "P003-R-clearance_microsome_az-chemeleon-scaffold-half",
+      "P003-R-clearance_microsome_az-chemeleon-scaffold-rank",
+      "P003-R-clearance_hepatocyte_az-chemeleon-canonical-half",
+      "P003-R-clearance_hepatocyte_az-chemeleon-canonical-rank",
+      "P003-R-clearance_hepatocyte_az-chemeleon-scaffold-half",
+      "P003-R-clearance_hepatocyte_az-chemeleon-scaffold-rank",
+      "P003-R-vdss_lombardo-chemeleon-canonical-half",
+      "P003-R-vdss_lombardo-chemeleon-canonical-rank",
+      "P003-R-vdss_lombardo-chemeleon-canonical-mse",
+      "P003-R-vdss_lombardo-chemeleon-scaffold-half",
+      "P003-R-vdss_lombardo-chemeleon-scaffold-rank",
+      "P003-R-vdss_lombardo-chemeleon-scaffold-mse"
+    ],
+    "scope": "proposal_only",
+    "notes": "本方向fit已在R/X计，不另添一层split扫描。"
+  },
+  {
+    "direction_id": "D-SIZE",
+    "title": "固定评估成员的单点样本量反证",
+    "scientific_question": "仅减fit支持会否改变Mini/CheM差距，而不是把raw与stress的所有变化都归为化学？",
+    "evidence_refs": [
+      "E-STRESS48",
+      "E-HEPSTRESS-U",
+      "E-HEPRAW"
+    ],
+    "counterevidence": "减少fit还会改变学习步数、统计拟合和化学覆盖；单点不是完整学习曲线。",
+    "parameters": {
+      "tasks": [
+        "clearance_microsome_az",
+        "clearance_hepatocyte_az"
+      ],
+      "fit_fraction_of_existing_fit": [
+        0.75
+      ],
+      "scheme": [
+        "existing_scaffold43"
+      ],
+      "assets": [
+        "CheM",
+        "Mini"
+      ],
+      "seeds": [
+        44,
+        45
+      ]
+    },
+    "valid_combinations_and_exclusions": "whole-group hash最长prefix一次；stop/stress不动；refit统计；不为满足比例挑组；fullfit控制复用，8新fits。",
+    "search_strategy": "predeclared paired contrasts; no full Cartesian search, no winning-cell-only report",
+    "readiness": "new_code",
+    "priority": "P2",
+    "incremental_fit_cap": 8,
+    "count_note": "cap is a scope cap; overlap with linked proposals is shared, never sum direction caps",
+    "issue_ids": [
+      "I003-CLEARANCE",
+      "I003-SPLIT"
+    ],
+    "proposal_ids": [
+      "P003-N-clearance_microsome_az-chemeleon-scaffold-mse",
+      "P003-N-clearance_microsome_az-minimol-scaffold-mse",
+      "P003-N-clearance_hepatocyte_az-chemeleon-scaffold-mse",
+      "P003-N-clearance_hepatocyte_az-minimol-scaffold-mse"
+    ],
+    "scope": "proposal_only",
+    "notes": ""
+  },
+  {
+    "direction_id": "D-SELECTOR",
+    "title": "消费AMES双选择器而非再派模型",
+    "scientific_question": "同一训练轨迹上选模视图变化是否足以改变Morgan/CheM排序？",
+    "evidence_refs": [
+      "H-AMES",
+      "E-STRESS48-U",
+      "E-STATUS",
+      "E-MECH"
+    ],
+    "counterevidence": "只有两个stop集合，不能单独解释fit-size或原Valid分布；若同epoch选中，无信息新view须合并。",
+    "parameters": {
+      "already_dispatched_fits": 4,
+      "max_views": 8,
+      "epoch_cap": 50,
+      "selectors": [
+        "stopA AUROC",
+        "stopB AUROC"
+      ]
+    },
+    "valid_combinations_and_exclusions": "0newfits；两个selector锁定后才评价stress一次；不把view写成物理fit。",
+    "search_strategy": "predeclared paired contrasts; no full Cartesian search, no winning-cell-only report",
+    "readiness": "already_dispatched_wait",
+    "priority": "P0",
+    "incremental_fit_cap": 0,
+    "count_note": "cap is a scope cap; overlap with linked proposals is shared, never sum direction caps",
+    "issue_ids": [
+      "I003-AMES",
+      "I003-VIEWS"
+    ],
+    "proposal_ids": [],
+    "scope": "proposal_only",
+    "notes": ""
+  },
+  {
+    "direction_id": "D-WINDOW",
+    "title": "消费长窗口的因果早停策略",
+    "scientific_question": "50cap/8patience与200cap的区别，是否改变lr/floor/TabM解释？",
+    "evidence_refs": [
+      "E-STATUS",
+      "E-MECH",
+      "H-OPT72",
+      "H-TABM32"
+    ],
+    "counterevidence": "200/full不是通用性能改善；更大的stop搜索次数本身可增加选择偏差。",
+    "parameters": {
+      "already_dispatched_trajectories": 12,
+      "policies": [
+        "50/8",
+        "200/8",
+        "200/full"
+      ],
+      "max_views": 36
+    },
+    "valid_combinations_and_exclusions": "0newfits；prefix严格chronological；不可从best reload后伪称last续训；同checkpoint共享metric。",
+    "search_strategy": "predeclared paired contrasts; no full Cartesian search, no winning-cell-only report",
+    "readiness": "already_dispatched_wait",
+    "priority": "P0",
+    "incremental_fit_cap": 0,
+    "count_note": "cap is a scope cap; overlap with linked proposals is shared, never sum direction caps",
+    "issue_ids": [
+      "I003-WINDOW",
+      "I003-VIEWS"
+    ],
+    "proposal_ids": [],
+    "scope": "proposal_only",
+    "notes": ""
+  },
+  {
+    "direction_id": "D-CAPACITY",
+    "title": "现有M5/M6加条件结构容量转移",
+    "scientific_question": "维度差下头参数量解释能否经固定表示换宽反证？",
+    "evidence_refs": [
+      "E-STATUS",
+      "E-P002-GUIDE",
+      "E-M2",
+      "H-TABM32"
+    ],
+    "counterevidence": "plain/k1/k8不完全参数匹配；M6约匹配参数仍有width与优化几何差。",
+    "parameters": {
+      "already_preparing_seed_fits": 26,
+      "M5_heads": [
+        "plain3x512",
+        "TabMk1",
+        "TabMk8"
+      ],
+      "old_control": "TabMk32 reused6",
+      "M6_widths": {
+        "CheM": 128,
+        "Mini": 512
+      },
+      "new_native_reserve": {
+        "task": "clearance_microsome_az",
+        "scheme": "scaffold43",
+        "seeds": [
+          44,
+          45
+        ]
+      }
+    },
+    "valid_combinations_and_exclusions": "不得重复raw26；只有M6出现方向一致且决定相关的宽度效应才开K4；Mini新scaffold用H0固定，不默认原raw的F010等价。",
+    "search_strategy": "predeclared paired contrasts; no full Cartesian search, no winning-cell-only report",
+    "readiness": "config_only_after_existing_preparation",
+    "priority": "P1",
+    "incremental_fit_cap": 4,
+    "count_note": "cap is a scope cap; overlap with linked proposals is shared, never sum direction caps",
+    "issue_ids": [
+      "I003-CAPACITY",
+      "I003-M2"
+    ],
+    "proposal_ids": [
+      "P003-K-clearance_microsome_az-chemeleon-scaffold-mse-w128",
+      "P003-K-clearance_microsome_az-minimol-scaffold-mse-w512"
+    ],
+    "scope": "proposal_only",
+    "notes": ""
+  },
+  {
+    "direction_id": "D-MEMBERLOSS",
+    "title": "固定k32对成员监督作真正缺失的反事实",
+    "scientific_question": "保持架构/输出聚合相同，仅loss从成员均值改为均值概率的NLL，区分成员监督效应。",
+    "evidence_refs": [
+      "X-TABM-README",
+      "X-TABM-PAPER",
+      "E-STRESS48",
+      "H-CONFIRM14"
+    ],
+    "counterevidence": "官方默认要求成员分别训练；本方案是有意机制消融，不是bugfix或预期必胜；AP不等于BCE。",
+    "parameters": {
+      "task": "cyp2d6_veith",
+      "scheme": "scaffold43",
+      "seeds": [
+        44,
+        45
+      ],
+      "k": 32,
+      "losses": [
+        "existing mean member BCE logits",
+        "new NLL(mean sigmoid(member logits))"
+      ]
+    },
+    "valid_combinations_and_exclusions": "现有k32同scaffold控制复用；只新增2；不换prob聚合为meanlogit；先等M5问题仍成立。",
+    "search_strategy": "predeclared paired contrasts; no full Cartesian search, no winning-cell-only report",
+    "readiness": "new_code",
+    "priority": "P2",
+    "incremental_fit_cap": 2,
+    "count_note": "cap is a scope cap; overlap with linked proposals is shared, never sum direction caps",
+    "issue_ids": [
+      "I003-MEMBERS"
+    ],
+    "proposal_ids": [
+      "P003-T-cyp2d6_veith-minimol-scaffold-mean_bce"
+    ],
+    "scope": "proposal_only",
+    "notes": ""
+  },
+  {
+    "direction_id": "D-GEOMETRY",
+    "title": "冻结几何图表示的有界双任务挑战",
+    "scientific_question": "在Sol阳性参考与micro结构失败上，Monroe与UniMol2是否增加实用信息？",
+    "evidence_refs": [
+      "E-MONROE",
+      "E-MONROE-ADD",
+      "E-UNIMOL2",
+      "X-MONROE-README",
+      "X-UNIMOL-PAPER"
+    ],
+    "counterevidence": "Monroe PCBA预训练/模型结构/读出与几何捆绑；UniMol2不同训练源与size；准备成功不证明疗效。",
+    "parameters": {
+      "tasks": [
+        "solubility_aqsoldb",
+        "clearance_microsome_az"
+      ],
+      "checkpoints": [
+        "Monroe720 exactOID",
+        "UniMol2-84M CLS768 exactOID"
+      ],
+      "head": "MLP256 H0 MSE",
+      "scheme": "existing_scaffold43",
+      "seeds": [
+        44,
+        45
+      ]
+    },
+    "valid_combinations_and_exclusions": "4 task/encoder缓存共享8fits；不编码Valid/test；full-row coverage失败停；0TabPFN；不默认pooling变更还是同模型。",
+    "search_strategy": "predeclared paired contrasts; no full Cartesian search, no winning-cell-only report",
+    "readiness": "blocked_assets",
+    "priority": "P2",
+    "incremental_fit_cap": 8,
+    "count_note": "cap is a scope cap; overlap with linked proposals is shared, never sum direction caps",
+    "issue_ids": [
+      "I003-GEOMETRY",
+      "I003-ASSETBIND"
+    ],
+    "proposal_ids": [
+      "P003-G-solubility_aqsoldb-monroe720-scaffold-mse",
+      "P003-G-solubility_aqsoldb-unimol2_84m_cls-scaffold-mse",
+      "P003-G-clearance_microsome_az-monroe720-scaffold-mse",
+      "P003-G-clearance_microsome_az-unimol2_84m_cls-scaffold-mse"
+    ],
+    "scope": "proposal_only",
+    "notes": ""
+  },
+  {
+    "direction_id": "D-MOLWAIT",
+    "title": "MoL负结果的任务化收口与在途CYP",
+    "scientific_question": "CYP剩余4是否给独立任务例外，而非抹去Caco/micro负结果？",
+    "evidence_refs": [
+      "E-MF-CACO",
+      "E-MF-MICRO",
+      "E-MF-DILI",
+      "E-STATUS"
+    ],
+    "counterevidence": "DILI3/8对比正不构成一致替代；withinMoL TabM收益不证明encoder比别人好。",
+    "parameters": {
+      "pending_tasks": [
+        "cyp2d6_veith"
+      ],
+      "pending_heads": [
+        "MLP256",
+        "TabMk32"
+      ],
+      "pending_seeds": [
+        46,
+        47
+      ]
+    },
+    "valid_combinations_and_exclusions": "0newfit；CYP若也负，固定panel配方收口；若正，只保留CYP范围，再决定结构验证，不自动新增wholeValid筛选。",
+    "search_strategy": "predeclared paired contrasts; no full Cartesian search, no winning-cell-only report",
+    "readiness": "already_dispatched_wait",
+    "priority": "P0",
+    "incremental_fit_cap": 0,
+    "count_note": "cap is a scope cap; overlap with linked proposals is shared, never sum direction caps",
+    "issue_ids": [
+      "I003-MOL",
+      "I003-ASSETBIND"
+    ],
+    "proposal_ids": [],
+    "scope": "proposal_only",
+    "notes": ""
+  },
+  {
+    "direction_id": "D-TABICL",
+    "title": "冻结上下文方法的首次真实证据",
+    "scientific_question": "相同输入表示下无梯度的上下文预测能否改变固定任务排序？",
+    "evidence_refs": [
+      "E-STATUS",
+      "X-TABICL-README",
+      "X-TABICL-REGRESSOR",
+      "X-TABICL-CLASSIFIER",
+      "X-TABICL-LICENSE",
+      "X-TABICL-PAPER"
+    ],
+    "counterevidence": "外部tabular榜并不预测ADMET；特征相关、维度/样本比例与预处理改变；随机state不等于模型初始化seed。",
+    "parameters": {
+      "already_dispatched_contextfits": 16,
+      "gradient_fits": 0,
+      "tasks": [
+        "caco2_wang",
+        "clearance_microsome_az",
+        "dili",
+        "cyp2d6_veith"
+      ],
+      "assets": [
+        "CheMF010",
+        "MiniH0"
+      ],
+      "random_states": [
+        44,
+        45
+      ]
+    },
+    "valid_combinations_and_exclusions": "0新contextfit/额外probe；fit-context只能含train-fit，stop选择与stress查询隔离；记录内置预处理和输出尺度。",
+    "search_strategy": "predeclared paired contrasts; no full Cartesian search, no winning-cell-only report",
+    "readiness": "already_dispatched_wait",
+    "priority": "P0",
+    "incremental_fit_cap": 0,
+    "count_note": "cap is a scope cap; overlap with linked proposals is shared, never sum direction caps",
+    "issue_ids": [
+      "I003-ASSETBIND",
+      "I003-TABICL"
+    ],
+    "proposal_ids": [],
+    "scope": "proposal_only",
+    "notes": ""
+  },
+  {
+    "direction_id": "D-COHORT",
+    "title": "共识区真实误差与零新增truth的可检验下界",
+    "scientific_question": "用既有group MAE和同源盲预测D，检查两模型至少共同留下多少误差，不拿共识当正确。",
+    "evidence_refs": [
+      "E-COHORT-REPORT",
+      "E-COHORT-SUMMARY",
+      "E-COHORT-COMP",
+      "E-ISSUELOG"
+    ],
+    "counterevidence": "MAE二者非零不足以逐样本确认共同错；AUROC/AP不能套绝对误差下界；群46/47选择偏差保留。",
+    "parameters": {
+      "fixed_groups": "完整cohort_register，不变",
+      "regression_statistic": "D=mean abs(pA-pB) on exact same model/group",
+      "lower_bound": "max(0,(MAE_A+MAE_B-D)/2)",
+      "classification": "no inference from suppressedcells"
+    },
+    "valid_combinations_and_exclusions": "0fit；不新增标签调用；D若不能严格绑定则不计算实际下界。Caco10/micro12不扩群救分数，CYP低群不发布类别数。",
+    "search_strategy": "predeclared paired contrasts; no full Cartesian search, no winning-cell-only report",
+    "readiness": "existing_aggregate_plus_no_truth_diagnostic_only",
+    "priority": "P0",
+    "incremental_fit_cap": 0,
+    "count_note": "cap is a scope cap; overlap with linked proposals is shared, never sum direction caps",
+    "issue_ids": [
+      "I003-COHORT",
+      "I003-SELECTION"
+    ],
+    "proposal_ids": [],
+    "scope": "proposal_only",
+    "notes": ""
+  },
+  {
+    "direction_id": "D-SCALE",
+    "title": "把M2等价作为科学停止而非失败",
+    "scientific_question": "Mini实际d0全部>.01时H0/F010是同变换，是否还有信息可得？",
+    "evidence_refs": [
+      "E-M2",
+      "E-STATUS"
+    ],
+    "counterevidence": "该等价只属三个rawfit成员，不能外推新分区/encoder/任意floor；旧读入器identity错误另修。",
+    "parameters": {
+      "tasks": [
+        "ppbr_az",
+        "solubility_aqsoldb",
+        "clearance_microsome_az"
+      ],
+      "floor": [
+        0.01
+      ],
+      "result": "changed_dimensions=0"
+    },
+    "valid_combinations_and_exclusions": "12equivalentseedfits全部skip；不再加更高floor或改常数规则制造差异；若新split诊断相同照样跳过。",
+    "search_strategy": "predeclared paired contrasts; no full Cartesian search, no winning-cell-only report",
+    "readiness": "zero_fit_stop_existing_branch",
+    "priority": "P0",
+    "incremental_fit_cap": 0,
+    "count_note": "cap is a scope cap; overlap with linked proposals is shared, never sum direction caps",
+    "issue_ids": [
+      "I003-M2"
+    ],
+    "proposal_ids": [],
+    "scope": "proposal_only",
+    "notes": ""
+  },
+  {
+    "direction_id": "D-CLASSWEIGHT",
+    "title": "保留分类权重的任务条件而非统一配方",
+    "scientific_question": "2D6substrate局部支持与2C9substrate负例是否提示需要不同监督权重？",
+    "evidence_refs": [
+      "H-HEAD140",
+      "H-CONFIRM54",
+      "H-GROUP20",
+      "E-P002-PROPOSALS"
+    ],
+    "counterevidence": "小AP任务排名对阳性支持敏感，改权重与类别先验并非万能。",
+    "parameters": {
+      "existing_candidates": [
+        "unweighted1",
+        "fit-only nneg/npos",
+        "priorProM7 explicitly bounded tempered weight"
+      ],
+      "loss": "BCEWithLogitsLoss",
+      "metric": "localAP continuousprob"
+    },
+    "valid_combinations_and_exclusions": "本轮不转录或新增未授权原M7；必须先查原proposal身份/执行状态；不能用Valid prevalence拟权重。",
+    "search_strategy": "predeclared paired contrasts; no full Cartesian search, no winning-cell-only report",
+    "readiness": "prior_proposal_reserve_not_new_matrix",
+    "priority": "P3",
+    "incremental_fit_cap": 0,
+    "count_note": "cap is a scope cap; overlap with linked proposals is shared, never sum direction caps",
+    "issue_ids": [
+      "I003-FRONTIER"
+    ],
+    "proposal_ids": [],
+    "scope": "proposal_only",
+    "notes": ""
+  },
+  {
+    "direction_id": "D-ENSEMBLE",
+    "title": "平均预测不等于新的独立机制证据",
+    "scientific_question": "95composite及既有59比较如何作为辅助而非训练胜率？",
+    "evidence_refs": [
+      "H-ENSEMBLE59",
+      "E-STATUS"
+    ],
+    "counterevidence": "MAE平均不差于成员均值是凸性；比最佳成员差仍常见；sameValid选择权重有偏。",
+    "parameters": {
+      "new_fits": 0,
+      "candidate_policy": "only previously registered equal averages; no hindsight deletion of weak seeds or optimizedweights"
+    },
+    "valid_combinations_and_exclusions": "没有新的ensemble评分授权；先保留old95；成员预测相同视图去重。",
+    "search_strategy": "predeclared paired contrasts; no full Cartesian search, no winning-cell-only report",
+    "readiness": "reuse_only",
+    "priority": "P2",
+    "incremental_fit_cap": 0,
+    "count_note": "cap is a scope cap; overlap with linked proposals is shared, never sum direction caps",
+    "issue_ids": [
+      "I003-SELECTION",
+      "I003-VIEWS"
+    ],
+    "proposal_ids": [],
+    "scope": "proposal_only",
+    "notes": ""
+  },
+  {
+    "direction_id": "D-FRONTIER",
+    "title": "覆盖22任务但不强迫22任务都训练",
+    "scientific_question": "不同任务保留/否决/等待/缺证据何时算科学收口？",
+    "evidence_refs": [
+      "H-FRONTIER",
+      "E-STATUS",
+      "H-CONFIRM54",
+      "E-ISSUELOG"
+    ],
+    "counterevidence": "队列空/批次结束/全任务有分数不等于科学完结；未测不是负结果。",
+    "parameters": {
+      "tasks": [
+        "ames",
+        "bbb_martins",
+        "bioavailability_ma",
+        "caco2_wang",
+        "clearance_hepatocyte_az",
+        "clearance_microsome_az",
+        "cyp2c9_substrate_carbonmangels",
+        "cyp2c9_veith",
+        "cyp2d6_substrate_carbonmangels",
+        "cyp2d6_veith",
+        "cyp3a4_substrate_carbonmangels",
+        "cyp3a4_veith",
+        "dili",
+        "half_life_obach",
+        "herg",
+        "hia_hou",
+        "ld50_zhu",
+        "lipophilicity_astrazeneca",
+        "pgp_broccatelli",
+        "ppbr_az",
+        "solubility_aqsoldb",
+        "vdss_lombardo"
+      ],
+      "rule": "每task明示已试方向、反例、下一判别与停止"
+    },
+    "valid_combinations_and_exclusions": "固定矩阵仅对问题有新增信息的任务；其余task进入明确wait/defer/retire_recipe，不用seed填空。",
+    "search_strategy": "predeclared paired contrasts; no full Cartesian search, no winning-cell-only report",
+    "readiness": "analysis_and_controller_decision",
+    "priority": "P0",
+    "incremental_fit_cap": 0,
+    "count_note": "cap is a scope cap; overlap with linked proposals is shared, never sum direction caps",
+    "issue_ids": [
+      "I003-FRONTIER"
+    ],
+    "proposal_ids": [],
+    "scope": "proposal_only",
+    "notes": ""
+  }
+]

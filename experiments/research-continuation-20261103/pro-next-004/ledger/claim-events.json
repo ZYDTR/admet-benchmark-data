@@ -1,0 +1,1000 @@
+{
+  "original_catalog": "evidence-ref:ref-e5a566208d4762eb",
+  "original_events": [
+    {
+      "event_id": "CE-FREEZE-01",
+      "claim_id": "C-FREEZE",
+      "supersedes_event_id": null,
+      "occurred_at": null,
+      "time_precision": "historical_order_only",
+      "status": "proposed",
+      "statement": "跨run wrapper总摘要不同足以证明冻结编码器被更新",
+      "reason": "原issues中保留initial hypothesis：总摘要不同是否意味外部编码器变化。这里导入的是疑问，不称它曾被证实。",
+      "source_ids": [
+        "issues"
+      ],
+      "reviewer": "controller_import_of_preserved_evidence",
+      "scope": "两run已登记wrapper状态",
+      "affected_proposals": [
+        "AR001-16"
+      ]
+    },
+    {
+      "event_id": "CE-FREEZE-02",
+      "claim_id": "C-FREEZE",
+      "supersedes_event_id": "CE-FREEZE-01",
+      "occurred_at": null,
+      "time_precision": "historical_order_only",
+      "status": "refuted",
+      "statement": "跨run wrapper总摘要不同足以证明冻结编码器被更新",
+      "reason": "跨run不同仅在未被fingerprint调用的随机predictor；各run登记参数及buffer前后相同。因此单凭总摘要不同不能推出冻结失效。",
+      "source_ids": [
+        "tensors",
+        "call-path",
+        "disposition"
+      ],
+      "reviewer": "controller_import_of_preserved_evidence",
+      "scope": "仅两个run已登记状态与核验调用链；不代表未登记内存均已证明",
+      "affected_proposals": [
+        "AR001-16"
+      ]
+    },
+    {
+      "event_id": "CE-DOWNLOAD-01",
+      "claim_id": "C-DOWNLOAD",
+      "supersedes_event_id": null,
+      "occurred_at": null,
+      "time_precision": "historical_order_only",
+      "status": "proposed",
+      "statement": "下载事件超时说明本轮实际文件下载失败",
+      "reason": "下载事件等待超时，原失败回执已保存；当时还没有系统文件的独立确认。",
+      "source_ids": [
+        "download-timeout"
+      ],
+      "reviewer": "controller_import_of_preserved_evidence",
+      "scope": "本次原audit.zip请求",
+      "affected_proposals": [
+        "gateway-recovery"
+      ]
+    },
+    {
+      "event_id": "CE-DOWNLOAD-02",
+      "claim_id": "C-DOWNLOAD",
+      "supersedes_event_id": "CE-DOWNLOAD-01",
+      "occurred_at": null,
+      "time_precision": "historical_order_only",
+      "status": "refuted",
+      "statement": "下载事件超时说明本轮实际文件下载失败",
+      "reason": "系统下载实际成功；文件身份、六件SHA和ZIP CRC通过。超时的是工具事件捕获，真实传输完成时间仍未知。",
+      "source_ids": [
+        "download-correction",
+        "round"
+      ],
+      "reviewer": "controller_import_of_preserved_evidence",
+      "scope": "本次原audit.zip，不推广为所有超时均成功",
+      "affected_proposals": [
+        "gateway-recovery"
+      ]
+    },
+    {
+      "event_id": "CE-SCALE-01",
+      "claim_id": "C-SCALE",
+      "supersedes_event_id": null,
+      "occurred_at": null,
+      "time_precision": "historical_order_only",
+      "status": "proposed",
+      "statement": "极端标准化特征是当前预测误差偏大的原因",
+      "reason": "异常z量级已独立计算，但未形成与误差的因果证据，需要受控实验；不能因数值异常就宣布原因已经找到。",
+      "source_ids": [
+        "cache",
+        "issues"
+      ],
+      "reviewer": "controller_import_of_preserved_evidence",
+      "scope": "两个当前内部留出集合；未新增标签诊断或实验",
+      "affected_proposals": [
+        "P01",
+        "AR001-04"
+      ]
+    }
+  ],
+  "current_packet_events": [
+    {
+      "id": "E-PRO28",
+      "prior_claim": "六任务F010在lipo/BBB/hep/LD50/Sol两个旧seed均改善，CYP不一致",
+      "status": "historical_fact_retained",
+      "evidence": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f172e864efbfcb33837bbdd28768b0b4f7ca03a7/experiments/scaler-six28-20261102/current/comparisons.json"
+    },
+    {
+      "id": "E-86-LIPO-HEP-STRESS",
+      "predecessor": "E-PRO28",
+      "claim": "新seed46/47继续支持lipo/hep/LD50/Sol的局部改善，保留跨主机/旧控制限制",
+      "status": "supported_descriptively",
+      "evidence": "../current/all22-comparisons.json"
+    },
+    {
+      "id": "E-86-BBB",
+      "predecessor": "E-PRO28",
+      "claim": "BBB seed47同平台略退化，seed46虽改善却缺控制after且跨平台；普遍稳定改善说法缩小",
+      "status": "claim_narrowed",
+      "evidence": "../current/all22-comparisons.json"
+    },
+    {
+      "id": "E-86-CYP",
+      "predecessor": "E-PRO28",
+      "claim": "CYP2D6新两seed均改善，但不能抹去旧seed不一致",
+      "status": "new_evidence_with_prior_counterexample",
+      "evidence": "../current/all22-comparisons.json"
+    },
+    {
+      "id": "E-F010-UNIVERSAL",
+      "predecessor": "E-PRO28",
+      "claim": "全22推广F010不被支持；五任务双退化，七任务不稳定",
+      "status": "blanket_claim_refuted",
+      "evidence": "../current/results.md"
+    },
+    {
+      "id": "E-MECHANISM",
+      "predecessor": "E-PRO28",
+      "claim": "极端标准化与总体均分改善不单独证明泛化因果，需竞争机制与反证",
+      "status": "mechanism_open"
+    },
+    {
+      "id": "E-GLM",
+      "claim": "新增16任务桥接已采纳且64fit已真实执行；旧仅准备中状态过期，保持原始报告截点",
+      "status": "implementation_and_execution_completed",
+      "source": {
+        "source_key": "controller/glm-first-observation-001/REPORT.md",
+        "source_sha256": "7d827044a58c5f8a1829aff70e37385dc7c0aa63374dcbf575a44ff2906aaba5",
+        "candidate_path": "evidence/7d827044a58c5f8a1829aff70e37385dc7c0aa63374dcbf575a44ff2906aaba5.md",
+        "disposition": "new_semantic_view"
+      }
+    },
+    {
+      "id": "E-DINO",
+      "claim": "外部DINO方法仅为研究假设，当前线性头等接口缺口按实际代码判断，不能当竞赛规则",
+      "status": "proposed_not_executed",
+      "source": "../research/DINO_REUSE_ADDENDUM.json"
+    }
+  ],
+  "new_events": [
+    {
+      "event_id": "A001-SCALE-TAIL",
+      "predecessor": "CE-SCALE-01",
+      "at": "2026-11-02T08:52:39.053648+00:00",
+      "author": "Astra",
+      "claim": "F010 suppresses extreme prediction disagreement in three large-benefit MAE tasks; conditioning/tail mechanism plausible",
+      "status": "narrowed_supported_descriptively",
+      "evidence": [
+        "evidence-ref:ref-7960c6a37b902af2",
+        "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/current/all22-comparisons.json"
+      ],
+      "counterevidence_or_limit": "No row truth/residual; cannot attribute loss improvement to individual tails; other tasks worsen",
+      "affected_directions": [
+        "DIR-FLOOR-LOCAL",
+        "DIR-FLOOR-DOSE",
+        "DIR-ROBUST-LOSS"
+      ]
+    },
+    {
+      "event_id": "A001-UNIVERSAL",
+      "predecessor": "E-F010-UNIVERSAL",
+      "at": "2026-11-02T08:52:39.053648+00:00",
+      "author": "Astra",
+      "claim": "Do not roll out F010 uniformly; top3 contribute92.82% inferred aggregate gain",
+      "status": "refutation_strengthened",
+      "evidence": [
+        "evidence-ref:ref-7960c6a37b902af2"
+      ],
+      "counterevidence_or_limit": "10 tasks still improve both seeds, retain those local outcomes",
+      "affected_directions": [
+        "DIR-FLOOR-LOCAL"
+      ]
+    },
+    {
+      "event_id": "A001-STOP",
+      "predecessor": "E-MECHANISM",
+      "at": "2026-11-02T08:52:39.053648+00:00",
+      "author": "Astra",
+      "claim": "Selected-stop improvement and Valid improvement disagree in19 of42 pairs; stable predictions can still be worse",
+      "status": "supported_descriptively",
+      "evidence": [
+        "evidence-ref:ref-6a5eb2ebe9cab852"
+      ],
+      "counterevidence_or_limit": "Selected stop is biased; 2 reused old-control histories unavailable locally; no causal distribution-shift proof",
+      "affected_directions": [
+        "DIR-GROUP-STRESS",
+        "DIR-EARLY-STOP",
+        "DIR-CAPACITY"
+      ]
+    },
+    {
+      "event_id": "A001-LOSS-HISTORY",
+      "predecessor": null,
+      "at": "2026-11-02T08:52:39.053648+00:00",
+      "author": "Astra",
+      "claim": "Historical Caco2 changed early-stop monitor, not MSE training loss",
+      "status": "historical_interpretation_corrected",
+      "evidence": [
+        "evidence-ref:ref-31330f75545f7fb1"
+      ],
+      "counterevidence_or_limit": "Three paired seeds on reused Valid, no general superiority proof",
+      "affected_directions": [
+        "DIR-ROBUST-LOSS"
+      ]
+    },
+    {
+      "event_id": "A001-SIMPLE",
+      "predecessor": "E-DINO",
+      "at": "2026-11-02T08:52:39.053648+00:00",
+      "author": "Astra",
+      "claim": "Affine, matched128head, group-stress, alternate representation remain untested by existing86",
+      "status": "open_gap_concretized",
+      "evidence": [
+        "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/next_experiments.json"
+      ],
+      "counterevidence_or_limit": "Proposals and runnable code differ; no performance claim until new results",
+      "affected_directions": [
+        "DIR-SIMPLE",
+        "DIR-GROUP-STRESS",
+        "DIR-CLASSICAL",
+        "DIR-MINIMOL"
+      ]
+    },
+    {
+      "event_id": "A001-BBB",
+      "predecessor": "E-86-BBB",
+      "at": "2026-11-02T08:52:39.053648+00:00",
+      "author": "Astra",
+      "claim": "BBB s47 reversal and s46 missing-after constrain adoption; new F001 does not repair old freeze record",
+      "status": "restriction_retained",
+      "evidence": [
+        "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/current/all22-comparisons.json"
+      ],
+      "counterevidence_or_limit": "Research score can still describe observed behavior; other tasks unaffected",
+      "affected_directions": [
+        "DIR-FLOOR-LOCAL"
+      ]
+    },
+    {
+      "event_id": "A001-COST",
+      "predecessor": null,
+      "at": "2026-11-02T08:52:39.053648+00:00",
+      "author": "Astra",
+      "claim": "Full turnover dominated by more than epoch compute; report distinct overlapping stages",
+      "status": "accounting_corrected",
+      "evidence": [
+        "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/672730a7c9f76d7b4f1cbc5bac80cf9fbda573b2/experiments/breadth22-confirm86-20261102/parallel-research/operations/cost-and-failures.json"
+      ],
+      "counterevidence_or_limit": "Historic intervals not disjoint, full pure model thinking unknown",
+      "affected_directions": []
+    },
+    {
+      "event_id": "A001-DISPATCH",
+      "predecessor": null,
+      "at": "2026-11-02T08:52:39.053648+00:00",
+      "author": "Astra",
+      "claim": "A24 adopted and sent under explicit user authority; other88 remain proposals",
+      "status": "adopted_dispatched",
+      "evidence": [
+        "evidence-ref:ref-9f824521aaa49b45"
+      ],
+      "counterevidence_or_limit": "Message success is not learning completion or quality gain",
+      "affected_directions": [
+        "DIR-FLOOR-LOCAL"
+      ]
+    },
+    {
+      "event_id": "A002-F001-LOCAL",
+      "predecessor": "A001-UNIVERSAL",
+      "at": "2026-11-02T09:16:12.942261+00:00",
+      "claim": "F001 wins againstbothH0/F010 onDILI andhalf-life across46/47; notuniversal",
+      "evidence": "evidence-ref:ref-8978630f80929e1d",
+      "counterevidence": "BBB/VDssF001worsebothanchorsbothseeds;CYP3A4Veith/HIA partialrecoverynotH0wins",
+      "scope": "descriptive repeatedValid; confirmation44/45andgroupstress needed",
+      "affected_directions": [
+        "DIR-FLOOR-LOCAL",
+        "DIR-GROUP-STRESS"
+      ]
+    },
+    {
+      "event_id": "A002-CAPACITY",
+      "predecessor": "A001-SIMPLE",
+      "at": "2026-11-02T09:16:12.942261+00:00",
+      "claim": "Reducing256to128 worsensDILI/half/bio bothseeds, PPBRimprovesbothseeds slightly, CYP2C9sub/VDssmixed",
+      "evidence": "evidence-ref:ref-9193667f644bf549",
+      "counterevidence": "Smallernetworknotuniversalregularizationbenefit;selectedstop andinitialization remainmediators",
+      "affected_directions": [
+        "DIR-CAPACITY",
+        "DIR-SIMPLE",
+        "DIR-EARLY-STOP"
+      ]
+    },
+    {
+      "event_id": "A002-QUALITY",
+      "predecessor": "A001-DISPATCH",
+      "at": "2026-11-02T09:16:12.942261+00:00",
+      "claim": "Userexplicitly prioritizesquality/researchdepth andavailablecompute, notToken/GPUminimization; independent76interface preparationstarted",
+      "evidence": "evidence-ref:ref-95ebd3b94ce2e64b",
+      "scope": "nochange to startedscientificconfigs orlabel/freezeboundaries"
+    },
+    {
+      "event_id": "A003-FOUR-SEED",
+      "predecessor": "A002-F001-LOCAL",
+      "at": "2026-11-02T09:43:37.523744+00:00",
+      "claim": "DILI andhalf-life each4of4 H0/F001pairedseed effectspositive",
+      "status": "supported_locally_descriptively",
+      "evidence": "evidence-ref:ref-d79feb6fde81c84a",
+      "limits": "44/45H100 vs46/47RTX4090group, same repeatedlyusedValid; no significance or independentgeneralization",
+      "next_actual_decision": "evidence-ref:ref-ee88e9ebed5dcc80"
+    },
+    {
+      "event_id": "A003-HALF-ABSOLUTE",
+      "predecessor": "A003-FOUR-SEED",
+      "at": "2026-11-02T09:43:37.523744+00:00",
+      "claim": "Positivepairedfloor effectdoesnotresolvehalf-life absolute instability:seed44F001Spearman0.053 vsotherseeds~0.324-0.335",
+      "status": "counterexample_preserved",
+      "evidence": [
+        "evidence-ref:ref-d79feb6fde81c84a",
+        "evidence-ref:ref-24d13ad2792d5924"
+      ],
+      "affected_proposal": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/followup_halflife_ranking4.json"
+    },
+    {
+      "event_id": "PRO86-E-HETEROGENEITY",
+      "origin_request_id": "admet-pro-parallel-20261102-001",
+      "event_time": null,
+      "predecessor_event_id": "E-F010-UNIVERSAL",
+      "predecessor_source": "E-CLAIMS",
+      "original_claim": "完整22任务不支持统一F010",
+      "new_claim": "在五MAE全部双改善、Spearman混合、分类多反例的基础上，下一步应做任务族/机制分解；不只看平均分",
+      "status": "supported_and_refined",
+      "supporting_evidence_refs": [
+        "E-SCORES"
+      ],
+      "counterevidence_or_uncertainty": "只有两新seed，task families相关，不构成显著性或生物学机制证明",
+      "affected_direction_ids": [
+        "D-FLOOR",
+        "D-LOSS",
+        "D-CLASSWEIGHT"
+      ],
+      "old_record_action": "retain unchanged; append this event only",
+      "accepted_into_local_ledger_at": "2026-11-02T10:23:24.480272+00:00",
+      "original_file": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/previous-pro/claim_events.json",
+      "consumption": "Pro original claim retained with its cutoff; see pro_integration.md for current44fit evidence and corrections"
+    },
+    {
+      "event_id": "PRO86-E-CONCENTRATION",
+      "origin_request_id": "admet-pro-parallel-20261102-001",
+      "event_time": null,
+      "predecessor_event_id": "E-F010-UNIVERSAL",
+      "predecessor_source": "E-CLAIMS",
+      "original_claim": "五双退化/七混合已反证全量推广",
+      "new_claim": "新推导：LD50+PPBR+Sol贡献seed46约85.75%、seed47约100.98%的本地推断均分净增益；去三项剩余19任务seed47略负",
+      "status": "new_derived_evidence",
+      "supporting_evidence_refs": [
+        "E-SCORES",
+        "E-CONTROLLER"
+      ],
+      "counterevidence_or_uncertainty": "依赖未确认的本地归一化公式；并非官方分或三个任务唯一因果机制",
+      "affected_direction_ids": [
+        "D-FLOOR",
+        "D-SPLIT"
+      ],
+      "old_record_action": "retain unchanged; append this event only",
+      "accepted_into_local_ledger_at": "2026-11-02T10:23:24.480272+00:00",
+      "original_file": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/previous-pro/claim_events.json",
+      "consumption": "Pro original claim retained with its cutoff; see pro_integration.md for current44fit evidence and corrections"
+    },
+    {
+      "event_id": "PRO86-E-INVERTIBLE",
+      "origin_request_id": "admet-pro-parallel-20261102-001",
+      "event_time": null,
+      "predecessor_event_id": "E-MECHANISM",
+      "predecessor_source": "E-CLAIMS",
+      "original_claim": "极端标准化与总体改善不单独证明泛化因果",
+      "new_claim": "正对角分母缩放保持数学信息；可能改变优化/初始化/正则，而非自动移除噪声",
+      "status": "mechanism_scope_narrowed",
+      "supporting_evidence_refs": [
+        "E-SCALER",
+        "E-HEADS"
+      ],
+      "counterevidence_or_uncertainty": "有限浮点可能损失精度；等函数存在不意味训练轨迹相同",
+      "affected_direction_ids": [
+        "D-LINEAR",
+        "D-OPTIMIZER",
+        "D-REPARAM",
+        "D-PRECISION"
+      ],
+      "old_record_action": "retain unchanged; append this event only",
+      "accepted_into_local_ledger_at": "2026-11-02T10:23:24.480272+00:00",
+      "original_file": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/previous-pro/claim_events.json",
+      "consumption": "Pro original claim retained with its cutoff; see pro_integration.md for current44fit evidence and corrections"
+    },
+    {
+      "event_id": "PRO86-E-STOP-COUNTEREXAMPLE",
+      "origin_request_id": "admet-pro-parallel-20261102-001",
+      "event_time": null,
+      "predecessor_event_id": "E-MECHANISM",
+      "predecessor_source": "E-CLAIMS",
+      "original_claim": "机制仍开放",
+      "new_claim": "DILI同seed同split F010 stop AUROC更高而Valid更低；PPBR轨迹best11→42；早停收益不能作Valid代理",
+      "status": "new_counterexample",
+      "supporting_evidence_refs": [
+        "E-DILI-F",
+        "E-DILI-H",
+        "E-PPBR-H",
+        "E-PPBR-F",
+        "E-SCORES"
+      ],
+      "counterevidence_or_uncertainty": "两任务定向原件不能概括全22；PPBR正好50不证明预算截断",
+      "affected_direction_ids": [
+        "D-SPLIT",
+        "D-STOP"
+      ],
+      "old_record_action": "retain unchanged; append this event only",
+      "accepted_into_local_ledger_at": "2026-11-02T10:23:24.480272+00:00",
+      "original_file": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/previous-pro/claim_events.json",
+      "consumption": "Pro original claim retained with its cutoff; see pro_integration.md for current44fit evidence and corrections"
+    },
+    {
+      "event_id": "PRO86-E-BBB-REPAIR",
+      "origin_request_id": "admet-pro-parallel-20261102-001",
+      "event_time": null,
+      "predecessor_event_id": "E-86-BBB",
+      "predecessor_source": "E-CLAIMS",
+      "original_claim": "BBB旧稳定改善缩小且原H046缺after",
+      "new_claim": "仅建议新完整RTX4090 H046作为未来对照，历史缺after不因新训练消失",
+      "status": "future_validation_only",
+      "supporting_evidence_refs": [
+        "E-AUDIT22",
+        "E-LIMITS"
+      ],
+      "counterevidence_or_uncertainty": "此轮尚未执行；不能预言新score或retroactive freeze",
+      "affected_direction_ids": [
+        "D-BBB"
+      ],
+      "old_record_action": "retain unchanged; append this event only",
+      "accepted_into_local_ledger_at": "2026-11-02T10:23:24.480272+00:00",
+      "original_file": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/previous-pro/claim_events.json",
+      "consumption": "Pro original claim retained with its cutoff; see pro_integration.md for current44fit evidence and corrections"
+    },
+    {
+      "event_id": "PRO86-E-CYP",
+      "origin_request_id": "admet-pro-parallel-20261102-001",
+      "event_time": null,
+      "predecessor_event_id": "E-86-CYP",
+      "predecessor_source": "E-CLAIMS",
+      "original_claim": "CYP2D6新两seed改善但旧不一致保留",
+      "new_claim": "CYP2C9/2D6/3A4及substrate/Veith应分别处理；3A4两任务双退化反证统一CYP响应",
+      "status": "scope_refined",
+      "supporting_evidence_refs": [
+        "E-SCORES",
+        "E-OLD28"
+      ],
+      "counterevidence_or_uncertainty": "任务、标签定义和指标不同，不能作同一机制的直接生物学因果比较",
+      "affected_direction_ids": [
+        "D-CLASSWEIGHT",
+        "D-FLOOR"
+      ],
+      "old_record_action": "retain unchanged; append this event only",
+      "accepted_into_local_ledger_at": "2026-11-02T10:23:24.480272+00:00",
+      "original_file": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/previous-pro/claim_events.json",
+      "consumption": "Pro original claim retained with its cutoff; see pro_integration.md for current44fit evidence and corrections"
+    },
+    {
+      "event_id": "PRO86-E-READINESS",
+      "origin_request_id": "admet-pro-parallel-20261102-001",
+      "event_time": null,
+      "predecessor_event_id": "E-GLM",
+      "predecessor_source": "E-CLAIMS",
+      "original_claim": "16任务桥接和64fit已完成",
+      "new_claim": "当前22任务H0/F010齐全；没有剩余16任务接入阻塞，config_only无需重做整桥接",
+      "status": "implementation_fact_reused",
+      "supporting_evidence_refs": [
+        "E-INTERFACE",
+        "E-AUDIT64"
+      ],
+      "counterevidence_or_uncertainty": "新表示/linear/loss接口仍未准备，不随原bridge自动通过",
+      "affected_direction_ids": [
+        "D-FLOOR",
+        "D-DROPOUT"
+      ],
+      "old_record_action": "retain unchanged; append this event only",
+      "accepted_into_local_ledger_at": "2026-11-02T10:23:24.480272+00:00",
+      "original_file": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/previous-pro/claim_events.json",
+      "consumption": "Pro original claim retained with its cutoff; see pro_integration.md for current44fit evidence and corrections"
+    },
+    {
+      "event_id": "PRO86-E-DINO",
+      "origin_request_id": "admet-pro-parallel-20261102-001",
+      "event_time": null,
+      "predecessor_event_id": "E-DINO",
+      "predecessor_source": "E-CLAIMS",
+      "original_claim": "DINO仅方法假设，线性等接口未实现",
+      "new_claim": "将线性头、loss、train-only structure、disagreement纳入有界可证伪路线；不迁移视觉改标签/伪标签/F1阈值流程",
+      "status": "proposal_operationalized",
+      "supporting_evidence_refs": [
+        "E-METHOD",
+        "E-DINO",
+        "E-DATAIO"
+      ],
+      "counterevidence_or_uncertainty": "候选方案不是已执行或已证明提升",
+      "affected_direction_ids": [
+        "D-LINEAR",
+        "D-LOSS",
+        "D-CLASSWEIGHT",
+        "D-SPLIT",
+        "D-DISAGREE"
+      ],
+      "old_record_action": "retain unchanged; append this event only",
+      "accepted_into_local_ledger_at": "2026-11-02T10:23:24.480272+00:00",
+      "original_file": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/previous-pro/claim_events.json",
+      "consumption": "Pro original claim retained with its cutoff; see pro_integration.md for current44fit evidence and corrections"
+    },
+    {
+      "event_id": "PRO86-E-ROOT-CORRECTIONS",
+      "origin_request_id": "admet-pro-parallel-20261102-001",
+      "event_time": null,
+      "predecessor_event_id": null,
+      "predecessor_source": "E-ROOT-REVIEW",
+      "original_claim": "旧Pro对cross-batch H0、16任务门槛和ensemble存在过度限制",
+      "new_claim": "采纳当前主控有证据的范围修订：已验同身份控制可跨批复用；16任务不等六任务全胜；同表示seed ensemble可以研究",
+      "status": "inherited_correction_retained",
+      "supporting_evidence_refs": [
+        "E-ROOT-REVIEW"
+      ],
+      "counterevidence_or_uncertainty": "仍保留真实跨主机/缺after/Valid适配限制，不能扩大为全无混杂",
+      "affected_direction_ids": [
+        "D-ENSEMBLE",
+        "D-FLOOR"
+      ],
+      "old_record_action": "retain unchanged; append this event only",
+      "accepted_into_local_ledger_at": "2026-11-02T10:23:24.480272+00:00",
+      "original_file": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/previous-pro/claim_events.json",
+      "consumption": "Pro original claim retained with its cutoff; see pro_integration.md for current44fit evidence and corrections"
+    },
+    {
+      "event_id": "A004-PRO-CACO-HISTORY",
+      "previous_event_id": null,
+      "at": "2026-11-02T10:23:24.480272+00:00",
+      "claim": "The earlier six Caco2 experiments changed the early-stopping metric from standardized MSE to original-scale MAE; both used MSE training loss. Pro references to prior L1/MSE training-loss experiments are not supported by these six records.",
+      "evidence": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/analysis.md",
+      "affected": [
+        "Pro analysis1.3/H3/Q5",
+        "I-HEAD-OBJECTIVE",
+        "D-LOSS",
+        "next_batch_guide WP-L"
+      ],
+      "decision": "Correct the historical premise; retain actual new Huber/weighted-loss proposals as genuinely distinct pending interfaces. Do not alter Pro originals."
+    },
+    {
+      "event_id": "A005-FIXED-ENSEMBLE59",
+      "at": "2026-11-02T10:38:11.276523+00:00",
+      "claim": "Fixed seed averaging is useful but heterogeneous; more members did not universally improve Valid quality. F001 advantage for DILI/half-life persists at matching member sets.",
+      "evidence": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/ensemble59_update.md",
+      "status": "supported_descriptively_not_independent_generalization",
+      "decision": [
+        "Retain fixed averaging as prospective baseline comparison; no posthoc member exclusion or learned weights",
+        "DILI F001 supports pursuing floor under group stress; half-life four-seed decline keeps ranking-loss and split robustness relevant",
+        "Original72 optimization scoring dispatched separately; future representation comparisons must assess diversity with predeclared combinations"
+      ]
+    },
+    {
+      "event_id": "A006-OPTIMIZATION72",
+      "at": "2026-11-02T10:54:58.287714+00:00",
+      "claim": "LR/dropout effects depend on task/floor; CYP3A4 floor ordering reverses with learning rate. Native best-stop direction opposed Valid in26/72; no universal lower-lr/dropout removal adoption.",
+      "evidence": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/optimization72_update.md",
+      "status": "supported_descriptively_two_seeds_reused_Valid",
+      "next_action": "fixed36means dispatched; H100head/loss140 remainsfrozen; exact28confirmation plannedwithfuture140controls"
+    },
+    {
+      "event_id": "A007-H140-RESULTS",
+      "claim_id": "C-HEAD-OBJECTIVE",
+      "previous_event_id": "A006-OPTIMIZATION72",
+      "at": "2026-11-02T11:40:31.882793+00:00",
+      "claim": "Affine is broadly worse in this recipe except HIA; Huber and posBCE benefits are task-specific.",
+      "status": "supported_descriptively_reused_valid",
+      "evidence": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/heads_losses140_update.md",
+      "affected_proposals": [
+        "evidence-ref:ref-fe5bdff9e0d030fa"
+      ],
+      "cohort_resolution": "not established; see AR001-05 cohort index"
+    },
+    {
+      "event_id": "A008-CONFIRM54-RESULTS",
+      "claim_id": "C-HEAD-OBJECTIVE",
+      "previous_event_id": "A007-H140-RESULTS",
+      "at": "2026-11-02T12:42:31.904108+00:00",
+      "claim": "New44/45 supports HIA affine, LD50 Huber, CYP2D6substrate posBCE and CYP3A4 lowLR in task-specific recipes; half-life lowLR reverses in both newseeds; Caco/lipo mixed.",
+      "status": "task_specific_partial_replication_reused_valid",
+      "evidence": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/confirmation54_update.md",
+      "cohort_resolution": "Not established; six prebound blind prediction-sensitivity groups followed acrossnewseeds, no truth/error metrics",
+      "affected_proposals": [
+        "confirmation54",
+        "tabm_factorial32",
+        "production52"
+      ]
+    },
+    {
+      "event_id": "A009-GROUP20-STRESS",
+      "claim_id": "C-GROUP-ROBUSTNESS",
+      "at": "2026-11-02T12:53:44.574404+00:00",
+      "claim": "Scaling effects differ across fixed chemical groups: DILI F010 improves both; CYP2C9sub,half-life,solubility F010 change direction across groupings. F001 retains limited DILI/half-life support againstH0.",
+      "status": "supported_limited_native_train_stress_not_independent_generalization",
+      "evidence": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/group20_stress_update.md",
+      "cohort_index": "evidence-ref:ref-16f2da438242992a",
+      "complete_member_same_group_comparisons": "evidence-ref:ref-6c2002bc62ed162b",
+      "issue_id": "AR001-03",
+      "new_fit_or_metric_requests": 0
+    },
+    {
+      "event_id": "A010-MORGAN16",
+      "claim_id": "C-REPRESENTATION-READOUT",
+      "at": "2026-11-02T13:09:41.393302+00:00",
+      "claim": "Morgan2048identity+MLP is not a universalimprovement overregisteredCheMrecipe; Amespositive in2seeds butsameGPUreference absent, motivatingmatched6fitconfirmation.",
+      "status": "supported_task_specific_descriptive_recipe_comparison",
+      "evidence": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/morgan16_update.md",
+      "issue_id": "AR001-13",
+      "cohort_index": "evidence-ref:ref-cbf486945e93dc71",
+      "followup_task": "evidence-ref:ref-6650cf17bd7e5b50"
+    },
+    {
+      "event_id": "A011-MINIMOL16-TABM10",
+      "claim_id": "C-REPRESENTATION-READOUT",
+      "at": "2026-11-02T13:50:12.116305+00:00",
+      "claim": "MiniMLP improvesSol2seeds;PPBRreference sensitive. CheMTabM Caco/clearance2seedpositive,other2mixed.",
+      "status": "supported_task_specific_recipe_comparisons_requiresconfirmation",
+      "evidence": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/minimol16_tabm_phase1_update.md",
+      "issue_id": "AR001-13",
+      "followup_task": "evidence-ref:ref-1bf0e46a14e56ee9"
+    },
+    {
+      "event_id": "A012-AMES6",
+      "claim_id": "C-AMES-MORGAN-CONFIRMATION",
+      "at": "2026-11-02T13:55:23.982779+00:00",
+      "claim": "Morgan identity+MLP beatsCheM H0 in all4 matchedGPU/environmentseeds onfixedValid, registeredcriterion met. Nativeinternalstopranking reverses.",
+      "status": "supported_withinValid_recipe_candidate_not_independent_generalization",
+      "evidence": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/ames6_update.md",
+      "issue_id": "AR001-13"
+    },
+    {
+      "event_id": "A013-TABM32",
+      "claim_id": "C-REPRESENTATION-HEAD-INTERACTION",
+      "at": "2026-11-02T14:02:59.730884+00:00",
+      "claim": "NeitherMiniMol norTabM universallywins;clearanceMiniMLPandCYP MiniTabM showtwo-seedtask-specificsignals.",
+      "status": "descriptive_recipe_evidence_pendingmatched4seedconfirmation",
+      "evidence": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/tabm32_complete_update.md",
+      "followup": "evidence-ref:ref-8c813d1932060452",
+      "issue_id": "AR001-13"
+    },
+    {
+      "event_id": "A014-MINIMOL12-CONFIRMATION",
+      "claim_id": "C-MINIMOL-TASK-SPECIFIC",
+      "at": "2026-11-02T14:48:42.692999+00:00",
+      "claim": "Sol MiniMLP beatsmatchedCheMF010 inall4seeds;PPBR3/4withmatched46reversal doesnotmeetregisteredcriterion.",
+      "status": "SolwithinValidcandidateconfirmed_PPBRprovisional",
+      "evidence": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/minimol12_confirmation_update.md",
+      "issue_id": "AR001-13"
+    },
+    {
+      "event_id": "A015-CONFIRM14",
+      "claim_id": "C-TASK-SPECIFIC-REPRESENTATION-HEAD",
+      "at": "2026-11-02T14:51:56.814986+00:00",
+      "claim": "Matched4seeds supportMiniMLPclearanceandMiniTabMCYP;CYP withinMiniTabM extraeffectsmallbutpositiveinall4.",
+      "status": "registeredwithinValidcriteria_met_notindependentgeneralization",
+      "evidence": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f65d8149a897ea1db64c6f7cb16e52e06987229a/experiments/research-continuation-20261102/pro-next-002/astra-history/confirm14_update.md",
+      "issue_id": "AR001-13"
+    },
+    {
+      "event_id": "astra-fixed-cohort96-consumption-20261103",
+      "at": "2026-11-02T16:48:39.949622+00:00",
+      "type": "fixed_cohort_scores_and_next_scientific_dispatch",
+      "evidence": "evidence-ref:ref-4ce7bad29b3d6dba",
+      "new_fits_completed": 0,
+      "new_group_numeric_metrics": 88,
+      "whole_valid_numeric_metrics_unchanged": 556,
+      "primary_decision": "Preservefiveconditionalrecipes;stoplipoHuberexpansion;newLD50loss8chemicalsplitquestionqueued",
+      "limits": "RepeatedsameValid;groupselection46/47 separatedfromnew44/45;noadaptivegroupselector,nocausalrepairclaim,noPropublicationofthisprivateoutput."
+    },
+    {
+      "event_id": "astra-ld50-scaffold-ineligible-20261103",
+      "at": "2026-11-02T16:56:57.549159+00:00",
+      "type": "prelearning_partition_eligibility",
+      "evidence": "evidence-ref:ref-4320ef035769221c",
+      "new_fits": 0,
+      "decision": "Keep4canonical fits;skip4scaffold;no redraw or replacement;crossschemequestionremainsmissingnotfalsified"
+    },
+    {
+      "id": "E-STRESS48-PARTIAL34-20261103",
+      "at": "2026-11-02T17:39:28.365062+00:00",
+      "claim": "34头本机轻科学原件验收，17匹配stress对比：AMES Morgan0/4、PPBR Mini4/4、Sol Mini4/4、microsome Mini1/4，CYP canonical44 Mini+0.0384967其余待回。收窄AMES/清除率稳健性，强化PPBR/Sol条件候选；旧Valid结论不抹去，划分/fit数量/平台/配方混杂未归因，固定48不更改。",
+      "status": "verified_partial_new_science",
+      "evidence": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f9bce86edb177a6b74f0af7a2e630a1350de914b/experiments/research-continuation-20261103/pro-next-003/stress48/results.json",
+      "new_task_heads": 34,
+      "new_native_stress_metrics": 34,
+      "new_private_Valid_metrics": 0,
+      "all48_complete": false
+    },
+    {
+      "id": "E-STRESS48-COMPLETE-SCIENCE-20261103",
+      "at": "2026-11-02T17:46:37.309257+00:00",
+      "status": "scientific_source_verified_archive_pending",
+      "claim": "48CPUheads/24pairs complete; MiniMol positive4/4 onPPBR/Sol/CYP, microsome1/4,DILI0/4; MorganAMES0/4. Keep scopedpositivecandidates and narrownegative/mixedclaims.",
+      "evidence": "evidence-ref:ref-3462e6a98085f8a2",
+      "incremental_heads_since_prior34_event": 14,
+      "incremental_native_stress_scores": 14,
+      "new_private_Valid_metrics": 0,
+      "research_complete": false
+    },
+    {
+      "id": "E-LD50-STRESS4-20261103",
+      "at": "2026-11-02T18:25:55.379946+00:00",
+      "status": "scientific_source_verified_archive_pending",
+      "claim": "Canonical seed effects mixed: retain previous wholeValid/localcohort Huber evidence but do not claim robust transfer across chemical groups. Scaffold absent by prespecified gate, not negative. No extra seeds/delta search or privateValid re-score from this result.",
+      "evidence": "evidence-ref:ref-35e1f9bdb239dc6e",
+      "incremental_heads": 4,
+      "incremental_native_stress_scores": 4,
+      "new_private_Valid_metrics": 0,
+      "prespecified_skips": 4
+    },
+    {
+      "id": "E-RANKING8-20261103",
+      "at": "2026-11-02T18:40:43.461849+00:00",
+      "claim": "Conditional adoption of fixed halfMSE+halfPairwise recipe for half-life. All4 paired seeds improve; next prepare exactly4 halfMSE mechanism controls before expanding rank weights/tasks.",
+      "evidence": "evidence-ref:ref-dff6dbdc5df7d53d",
+      "new_private_Valid_metrics": 8,
+      "incremental_heads": 0
+    },
+    {
+      "id": "E-HEPATOCYTE4-20261103",
+      "at": "2026-11-02T18:43:04.617867+00:00",
+      "claim": "Both46/47 positive on wholeValid; proceed to exactly4 new heads for matched44/45 confirmation with same caches/settings. No further seeds or tuning.",
+      "evidence": "evidence-ref:ref-e689b6f0c6483449",
+      "new_private_Valid_metrics": 4,
+      "incremental_heads": 0
+    },
+    {
+      "id": "E-HEPATOCYTE-CONFIRM4-20261103",
+      "at": "2026-11-02T19:00:23.027143+00:00",
+      "claim": "Conditional four-seed adoption of Mini512H0 MLP256 hepatocyte recipe over matchedCPU CheM2048F010. Next fixedcanonical/scaffold nativeTrain stress8 with2seeds and bothrepresentations; zero newencoding, no extra wholeValid scoring.",
+      "evidence": "evidence-ref:ref-4f34269cf5f3b33a",
+      "new_private_Valid_metrics": 4,
+      "incremental_heads": 0
+    },
+    {
+      "id": "E-HEPATOCYTE-STRESS8-20261103",
+      "at": "2026-11-02T19:20:13.736915+00:00",
+      "claim": "Canonical1of2 positive; scaffold0of2 positive. Preregistered structural-robustness criterion not met; scaffold counterevidence supports split dependence. Retain previous four-positive Valid as conditional fixed-recipe evidence, not universal superiority. Stop further hepatocyte seed expansion; no new Valid scoring for these8.",
+      "evidence": "evidence-ref:ref-f0859a15dc6e1768",
+      "incremental_heads": 8,
+      "new_private_Valid_metrics": 0,
+      "new_nativeTrain_stress_metrics": 8
+    },
+    {
+      "id": "E-HALFLIFE-HALFMSE4-MECHANISM-20261103",
+      "claim": "On the four reusedValid seeds, rank beats same0.5MSE control allfour;0.5MSE versusfullMSE nearlyunchanged. Supports ranking contribution beyond MSE coefficient onthisfixed split, notnewexternalgeneralization.",
+      "evidence": "evidence-ref:ref-a3840dcd64aef172",
+      "status": "conditionally_supported",
+      "at": "2026-11-02T21:12:59.962905+00:00",
+      "reviewer": "Astra",
+      "counting": "Scientific event only; unique actual fits/metrics already recorded inexperiments/decisionfrontier, no additional computation."
+    },
+    {
+      "id": "E-HALFLIFE-RANKSTRESS8-20261103",
+      "claim": "Rank−0.5MSE Spearman positive inbothseeds underbothcanonical/scaffold splits; predeclaredconditionalstructure criterion met. Sameinit/commonbatch,afterstoplocknativeStressonce.8heads288steps,0newValid. Two schemes shareoriginal465train andarenotindependentexternalholdouts. Noextra half-life seeds/Valid now.",
+      "evidence": "evidence-ref:ref-cc6ce40b5d6ca974",
+      "status": "conditionally_supported",
+      "at": "2026-11-02T21:12:59.962905+00:00",
+      "reviewer": "Astra",
+      "counting": "Scientific event only; unique actual fits/metrics already recorded inexperiments/decisionfrontier, no additional computation."
+    },
+    {
+      "id": "E-MOLFORMER-FIRST12-20261103",
+      "claim": "FrozenMoLFormer768 withregisteredMLP/TabM onCaco/micro/DILI:16primarycomparisons acrossfirsttwo tasks allnegative;DILI3win5loss andnogroupconsistentgain. WithinMoLTabM gains do notestablishrepresentationbenefit. ContinueoriginalCYP4;noadaptiveexpansionofcompletedthree.",
+      "evidence": [
+        "evidence-ref:ref-c8b5f7c9a2d91103",
+        "evidence-ref:ref-35ff2ecc9c57b3ff",
+        "evidence-ref:ref-631c2c084a1d00de"
+      ],
+      "status": "not_supported_or_unresolved_by_task",
+      "at": "2026-11-02T21:12:59.962905+00:00",
+      "reviewer": "Astra",
+      "counting": "Scientific event only; unique actual fits/metrics already recorded inexperiments/decisionfrontier, no additional computation."
+    },
+    {
+      "id": "E-MINIMOL-F010-NOOP-20261103",
+      "claim": "Actual fit-only MiniMol512 denominators onPPBR/Sol/micro H0equalF010 exactly;12M2prospectivefits scientificallyequivalent andskipped,notfailed andnottrained. No higherfloorsearch. Actual F010readeridentifier repair isseparatecapacity-preparationwork.",
+      "evidence": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f9bce86edb177a6b74f0af7a2e630a1350de914b/experiments/research-continuation-20261103/pro-next-003/preparation/M2-scaling-adoption.json",
+      "status": "equivalence_skip",
+      "at": "2026-11-02T21:12:59.962905+00:00",
+      "reviewer": "Astra",
+      "counting": "Scientific event only; unique actual fits/metrics already recorded inexperiments/decisionfrontier, no additional computation."
+    },
+    {
+      "id": "E-AMES-DUAL-SELECTOR4-20261103",
+      "claim": "Morgan minusCheM stressAUROC negative4of4 across44/45 andtwo selectors; same4trajectories8views. SelectorstopBminusA mixed1positive3negative. NoMorganreplacement oradditionalValidqueries.",
+      "evidence": "packet://new-results/ames-dual-selector4-20261103/results.json",
+      "status": "no_support_for_replacement",
+      "at": "2026-11-02T21:33:36.367415+00:00",
+      "reviewer": "Astra",
+      "counting": "Scientific event only;4fits and8metrics already counted."
+    },
+    {
+      "id": "E-TABICL-CACO4-20261103",
+      "claim": "MiniMol wins2of2withinTabICL Caco. Unpaired recipe means:CheMTabICL belowoldMLP/TabM;MiniTabICL aboveoldMLPbutbelowoldTabM. No replacement/adaptiveexpansion fromthisgroup.",
+      "evidence": "evidence-ref:ref-76d879e078b2e0cd",
+      "status": "conditional_within_recipe_support_no_existingTabMreplacement",
+      "at": "2026-11-02T21:40:28.741559+00:00",
+      "reviewer": "Astra",
+      "counting": "4contextfitsseparatefromgradientheads;4wholeValidmetricsalreadycounted."
+    },
+    {
+      "id": "E-MOLFORMER-ALL16-20261103",
+      "claim": "All16fixedheads scored:MoLvsCheM/Mini32primarycontrasts3positive29negative(DILIonlymixed);CYP8of8negative. WithinMoLTabMvsMLP7positive1negative. No replacement/adaptiveextension onthese4tasks.",
+      "evidence": "evidence-ref:ref-d156d2bda737694e",
+      "status": "no_support_for_general_replacement_on_registered_panel",
+      "at": "2026-11-02T21:46:46.511286+00:00",
+      "reviewer": "Astra",
+      "counting": "Descriptorcountsofcorrelatedcomparisons,not32independenttrials;16heads/16metricsalreadycounted."
+    },
+    {
+      "id": "E-TABICL-DILI4-20261103",
+      "claim": "DILI48Valid:TabICLbothrepresentationmeansaboveoldMLP/TabM(4unpairedcontrastspositive);withinTabMiniCheM1positive1negative. Groupedstresscandidate,notuniversalwinner/noextraValidqueries.",
+      "evidence": "evidence-ref:ref-fe521f6f4ffd8b0c",
+      "status": "conditional_followup_candidate",
+      "at": "2026-11-02T21:58:37.421568+00:00",
+      "reviewer": "Astra",
+      "counting": "4sourcecontextfitsseparate;4metricseventsalreadycounted;0newmeanmetrics"
+    },
+    {
+      "id": "E-WINDOW-CACO4-20261103",
+      "claim": "NoCacoextensionadoption:200pat8sameall4;full200threeworse/oneidentical. TabMbetterMLPbothseeds/allpoliciesbutdependentaliases;capacity26fixedmatrixalreadypredispatchedtestsmechanism.",
+      "evidence": "evidence-ref:ref-f82b5a481c8b5d26",
+      "status": "no_extendedwindow_adoption",
+      "at": "2026-11-02T22:24:02.381639+00:00",
+      "reviewer": "Astra",
+      "counting": "4physicalfitsalreadycounted;7newmetricstates;12viewsnotindependent;5zeroaliascontrasts0extraqueries"
+    },
+    {
+      "id": "E-TABICL-MICRO4-20261103",
+      "claim": "Micro111Valid:MiniTabICL two pairedMini-CheM contrasts positive (+.1532800230,+.1150443331); MiniTabICLmean .6356920776 exceeds oldMiniMLP/TabM means descriptively. CheMTabICLaboveoldMLPbutbelowoldTabM. GroupednativeTrainstresscandidate afteroriginal16,notuniversalreplacement/noadaptiveValidqueries.",
+      "evidence": "evidence-ref:ref-48c7b0f91742c5b1",
+      "status": "conditional_followup_candidate",
+      "at": "2026-11-02T22:29:01.662264+00:00",
+      "reviewer": "Astra",
+      "counting": "4contextfitseparate;4newmetriccalls;meansnoextraquery"
+    },
+    {
+      "id": "E-WINDOW-CYP8-20261103",
+      "claim": "CYP3A4:200pat8identicalto50pat8all8;full2003negative5zero. LR1e-4beats5e-4inbothseedsandbothscalers/all3dependentpolicies;F010vsH0mixed3positive9negative. PrioritizefixedlowerLRnativeTrainstressconfirmation;noextendedwindowadoption/noextraValidsearch.",
+      "evidence": "evidence-ref:ref-a291948f2f4b5780",
+      "status": "lowerLRconfirmationcandidate_noextendedwindow",
+      "at": "2026-11-02T22:31:45.701668+00:00",
+      "reviewer": "Astra",
+      "counting": "8physicalfitsalreadycounted;11newmetricstates;24dependentviewsnot24fits/independentrepeats"
+    },
+    {
+      "id": "E-CAPACITY-CACO6-20261103",
+      "claim": "Caco:k8betterk1bothseeds; k1vsplain,oldk32vsk8,oldk32vsplainallmixed. No evidenceformonotonicgainwithmembercount;do notadoptk32overk8universally.",
+      "evidence": "evidence-ref:ref-4093e687f7a05a34",
+      "status": "registered_capacity_contrasts_consumed",
+      "at": "2026-11-02T22:42:02.777811+00:00",
+      "reviewer": "Astra",
+      "counting": "6newmetriccalls;fitsalreadycounted;oldcontrolsreused0rescore"
+    },
+    {
+      "id": "E-CAPACITY-MICRO10-20261103",
+      "claim": "Micro:k8betterk1bothseeds;oldk32worsek8bothseeds; k1vsplainandoldk32vsplainmixed. Near-parameterMiniMLP512vsCheMMLP128mixed. Miniadvantageisnotuniformunderthiscapacitymatching.",
+      "evidence": "evidence-ref:ref-eedd6c37ddd3d6d6",
+      "status": "registered_capacity_contrasts_consumed",
+      "at": "2026-11-02T22:42:02.839121+00:00",
+      "reviewer": "Astra",
+      "counting": "10newmetriccalls;fitsalreadycounted;oldcontrolsreused0rescore"
+    },
+    {
+      "id": "E-CAPACITY-SOL4-20261103",
+      "claim": "Sol:near-parameterMiniMLP512beatsCheMMLP128bothseeds(MAEimprovement+.27368820057592136/+.548983005815213). SupportsMiniSolrecipeevenwhenreadoutparameterbudgetsnear;representation/inputdim/hiddenwidth/stoptrajectoryremainconfounded.",
+      "evidence": "evidence-ref:ref-6b4ca0a06784882c",
+      "status": "registered_capacity_contrasts_consumed",
+      "at": "2026-11-02T22:42:02.898863+00:00",
+      "reviewer": "Astra",
+      "counting": "4newmetriccalls;fitsalreadycounted;oldcontrolsreused0rescore"
+    },
+    {
+      "id": "E-CAPACITY-CYP6-20261103",
+      "claim": "AllCYPregisteredcapacitycontrastsretained;interpretactualsummariesbelowwithoutselectingwinnerornewquery.",
+      "evidence": "evidence-ref:ref-e471b08bcea20f5a",
+      "status": "registered_capacity_contrasts_consumed",
+      "at": "2026-11-02T22:48:04.906125+00:00",
+      "reviewer": "Astra",
+      "counting": "6newmetriccalls;fitsalreadycounted;oldcontrolsreused0rescore"
+    },
+    {
+      "id": "E-CYP3A4-LRSTRESS-CANONICAL4-20261103",
+      "at": "2026-11-02T23:12:29.619309+00:00",
+      "claim": "Both seeds improve under this fixed grouping.",
+      "evidence": "evidence-ref:ref-8da0ad88f6551cae",
+      "incremental_heads": 4,
+      "new_privateValid_metrics": 0,
+      "new_nativeTrain_stress_metrics": 4
+    },
+    {
+      "id": "E-CYP3A4-LRSTRESS-SCAFFOLD4-20261103",
+      "at": "2026-11-02T23:14:30.925875+00:00",
+      "claim": "Both seeds improve under this fixed grouping.",
+      "evidence": "evidence-ref:ref-8bfaad6d96db8f86",
+      "incremental_heads": 4,
+      "new_privateValid_metrics": 0,
+      "new_nativeTrain_stress_metrics": 4
+    },
+    {
+      "id": "E-COMMON-ERROR-BOUND32-20261103",
+      "at": "2026-11-02T23:26:06.813781+00:00",
+      "claim": "Low disagreement is not an accuracy certificate. All32 fixed-model pairs have positive oracle-selection error lower bounds. Do not use a low-disagreement gate as reliable automatically; no new labels, groups, routing thresholds or model expansion is justified by this algebra alone.",
+      "evidence": "evidence-ref:ref-5c889c11248c20f4",
+      "new_prediction_disagreement_statistics": 32,
+      "new_algebraic_bounds": 32,
+      "incremental_heads": 0,
+      "new_quality_metrics": 0,
+      "new_truth_reads": 0
+    },
+    {
+      "id": "E-TABICL-CYP4-SCORED-20261103",
+      "at": "2026-11-02T23:29:37.047156+00:00",
+      "claim": "MiniMol beats CheM in both frozen TabICL contexts; MiniTabICL meanAP .7297453283 is lower than existingMiniMLP .7556804820 andMiniTabM .7653019636. No additionalCYPTabICL contexts orValid queries; retain existingMiniTabM candidate and finish separately registeredDILI/micro nativeStress16.",
+      "evidence": "evidence-ref:ref-496ea0f5ffd7ae37",
+      "incremental_heads": 0,
+      "context_fits_already_counted": 4,
+      "new_privateValid_metrics": 4,
+      "old_metric_calls": 0
+    },
+    {
+      "id": "E-RANK44-CLEARANCE_MICROSOME_AZ-20261103",
+      "at": "2026-11-02T23:54:49.803221+00:00",
+      "claim": "clearance_microsome_az registered rank-HalfMSE: 8 positive/0 negative/0 tie. No universal transfer claim.",
+      "evidence": "evidence-ref:ref-86182d0a50a1957b",
+      "incremental_heads": 16,
+      "new_privateValid_metrics": 0,
+      "new_nativeTrain_stress_metrics": 16
+    },
+    {
+      "id": "E-RANK44-CLEARANCE_HEPATOCYTE_AZ-20261103",
+      "at": "2026-11-02T23:54:53.135263+00:00",
+      "claim": "clearance_hepatocyte_az registered rank-HalfMSE: 6 positive/2 negative/0 tie. No universal transfer claim.",
+      "evidence": "evidence-ref:ref-bd3ae1fd72145679",
+      "incremental_heads": 16,
+      "new_privateValid_metrics": 0,
+      "new_nativeTrain_stress_metrics": 16
+    },
+    {
+      "id": "E-RANK44-VDSS_LOMBARDO-20261103",
+      "at": "2026-11-02T23:55:06.885827+00:00",
+      "claim": "vdss_lombardo registered rank-HalfMSE: 4 positive/0 negative/0 tie. No universal transfer claim.",
+      "evidence": "evidence-ref:ref-1df06c04d94234c0",
+      "incremental_heads": 12,
+      "new_privateValid_metrics": 0,
+      "new_nativeTrain_stress_metrics": 12
+    },
+    {
+      "id": "E-TABSTRESS-DILI8-20261103",
+      "at": "2026-11-03T00:22:09.920818+00:00",
+      "claim": "{'primary': {'positive': 2, 'negative': 2, 'tie': 0}, 'secondary': {'positive': 3, 'negative': 1, 'tie': 0}}",
+      "evidence": "evidence-ref:ref-61b4abe03f1c7cb8",
+      "new_contexts": 8,
+      "new_gradient_heads": 0,
+      "new_nativeStress_metrics": 8,
+      "new_privateValid_metrics": 0
+    },
+    {
+      "id": "E-TABSTRESS-CLEARANCE_MICROSOME_AZ8-20261103",
+      "at": "2026-11-03T00:24:58.880593+00:00",
+      "claim": "{'primary': {'positive': 3, 'negative': 1, 'tie': 0}, 'secondary': {'positive': 2, 'negative': 2, 'tie': 0}}",
+      "evidence": "evidence-ref:ref-dfcbb66a425dbfda",
+      "new_contexts": 8,
+      "new_gradient_heads": 0,
+      "new_nativeStress_metrics": 8,
+      "new_privateValid_metrics": 0
+    }
+  ],
+  "rule": "preserve predecessor and counterevidence; no destructive rewrite"
+}

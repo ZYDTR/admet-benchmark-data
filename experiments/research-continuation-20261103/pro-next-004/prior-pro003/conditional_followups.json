@@ -1,0 +1,142 @@
+{
+  "request_id": "admet-pro-next-research-20261103-003",
+  "branches": [
+    {
+      "branch_id": "B-R-positive",
+      "trigger": "R完整同task同split同seed配对方向稳定，且rank相对HalfMSE优而非仅scale效应",
+      "allowed_stage_ids": [
+        "X"
+      ],
+      "proposal_ids": [
+        "P003-X-clearance_microsome_az-minimol-canonical-half",
+        "P003-X-clearance_microsome_az-minimol-canonical-rank",
+        "P003-X-clearance_microsome_az-minimol-scaffold-half",
+        "P003-X-clearance_microsome_az-minimol-scaffold-rank",
+        "P003-X-clearance_hepatocyte_az-minimol-canonical-half",
+        "P003-X-clearance_hepatocyte_az-minimol-canonical-rank",
+        "P003-X-clearance_hepatocyte_az-minimol-scaffold-half",
+        "P003-X-clearance_hepatocyte_az-minimol-scaffold-rank"
+      ],
+      "skip_stop": "不自动外部Valid或扫lambda；若源身份失败则只阻断相关task",
+      "scientific_information": "X可检验收益是否依赖representation，与canonical/scaffold回答不同问题",
+      "evidence_refs": [
+        "E-HLSTRESS",
+        "E-HEPSTRESS"
+      ],
+      "execution_authority": "none; controller checks actual evidence and registers exact subset"
+    },
+    {
+      "branch_id": "B-R-null",
+      "trigger": "R的CheM ranking无一致收益，或canonical/scaffold相反",
+      "allowed_stage_ids": [
+        "X"
+      ],
+      "proposal_ids": [
+        "P003-X-clearance_microsome_az-minimol-canonical-half",
+        "P003-X-clearance_microsome_az-minimol-canonical-rank",
+        "P003-X-clearance_microsome_az-minimol-scaffold-half",
+        "P003-X-clearance_microsome_az-minimol-scaffold-rank",
+        "P003-X-clearance_hepatocyte_az-minimol-canonical-half",
+        "P003-X-clearance_hepatocyte_az-minimol-canonical-rank",
+        "P003-X-clearance_hepatocyte_az-minimol-scaffold-half",
+        "P003-X-clearance_hepatocyte_az-minimol-scaffold-rank"
+      ],
+      "skip_stop": "不追加半衰期seed；X不是必须先CheM成功才做，预算不足可暂存",
+      "scientific_information": "不同表示可能仍与目标有交互；预定Mini crossing反驳普适目标论，不是追逐最佳seed",
+      "evidence_refs": [
+        "E-HLSTRESS",
+        "E-STRESS48"
+      ],
+      "execution_authority": "none; controller checks actual evidence and registers exact subset"
+    },
+    {
+      "branch_id": "B-X-size",
+      "trigger": "R/X后Mini结构差仍在；需要判别fit支持量而非再换loss",
+      "allowed_stage_ids": [
+        "N"
+      ],
+      "proposal_ids": [
+        "P003-N-clearance_microsome_az-chemeleon-scaffold-mse",
+        "P003-N-clearance_microsome_az-minimol-scaffold-mse",
+        "P003-N-clearance_hepatocyte_az-chemeleon-scaffold-mse",
+        "P003-N-clearance_hepatocyte_az-minimol-scaffold-mse"
+      ],
+      "skip_stop": "先消费已有M6；若已足以决策或nested首前缀不合格则跳过N，不重抽子集",
+      "scientific_information": "固定stop/stress内样本量干预；不能把剩余差异都解释化学",
+      "evidence_refs": [
+        "E-HEPRAW",
+        "E-HEPSTRESS",
+        "E-STRESS48"
+      ],
+      "execution_authority": "none; controller checks actual evidence and registers exact subset"
+    },
+    {
+      "branch_id": "B-M6",
+      "trigger": "M6原有raw配方给一致容量线索且仍影响micro结构决策",
+      "allowed_stage_ids": [
+        "K"
+      ],
+      "proposal_ids": [
+        "P003-K-clearance_microsome_az-chemeleon-scaffold-mse-w128",
+        "P003-K-clearance_microsome_az-minimol-scaffold-mse-w512"
+      ],
+      "skip_stop": "M6无一致线索则不跑K；不复制Sol/raw M6",
+      "scientific_information": "同capacity因素在结构split下能否迁移；不是寻找更大头",
+      "evidence_refs": [
+        "E-STATUS",
+        "E-M2"
+      ],
+      "execution_authority": "none; controller checks actual evidence and registers exact subset"
+    },
+    {
+      "branch_id": "B-M5",
+      "trigger": "M5已完成且k变化提示成员监督/共享机制仍需判别",
+      "allowed_stage_ids": [
+        "T"
+      ],
+      "proposal_ids": [
+        "P003-T-cyp2d6_veith-minimol-scaffold-mean_bce"
+      ],
+      "skip_stop": "M5无决策价值、实际源不等价或codefixture失败则不跑T",
+      "scientific_information": "固定k32只改训练损失聚合，拆开capacity与memberloss",
+      "evidence_refs": [
+        "E-STATUS",
+        "X-TABM-README"
+      ],
+      "execution_authority": "none; controller checks actual evidence and registers exact subset"
+    },
+    {
+      "branch_id": "B-G",
+      "trigger": "已有几何准备完成、明确许可/冻结/完整task缓存可用且有预算",
+      "allowed_stage_ids": [
+        "G"
+      ],
+      "proposal_ids": [
+        "P003-G-solubility_aqsoldb-monroe720-scaffold-mse",
+        "P003-G-solubility_aqsoldb-unimol2_84m_cls-scaffold-mse",
+        "P003-G-clearance_microsome_az-monroe720-scaffold-mse",
+        "P003-G-clearance_microsome_az-unimol2_84m_cls-scaffold-mse"
+      ],
+      "skip_stop": "probe成功不足解锁；任一encoder/task不能全原行覆盖只阻断该单元，不裁剪/丢行；已有同identity复用",
+      "scientific_information": "同split上的独立表示family补充；只能归因完整recipe，不证明geometry唯一原因",
+      "evidence_refs": [
+        "E-MONROE",
+        "E-MONROE-ADD",
+        "E-UNIMOL2"
+      ],
+      "execution_authority": "none; controller checks actual evidence and registers exact subset"
+    }
+  ],
+  "no_extra_seed_or_grid_fallback": true,
+  "next_research_trigger": [
+    "decisive contradiction affecting registered design",
+    "new scientific method/source/interface outside this matrix",
+    "all informative authorized branches completed or scientifically exhausted",
+    "unresolved premise changes comparison validity"
+  ],
+  "not_triggers": [
+    "queue empty",
+    "each head completes",
+    "fixed elapsed minutes"
+  ]
+}

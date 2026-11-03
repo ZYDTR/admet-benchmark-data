@@ -1,0 +1,255 @@
+{
+  "request_id": "admet-pro-next-research-20261103-003",
+  "aggregate_input_transcriptions": {
+    "half_life_raw_rank_minus_halfmse": {
+      "44": 0.11960046832632373,
+      "45": 0.1530678444957289,
+      "46": 0.155881738377593,
+      "47": 0.03588213616731689
+    },
+    "half_life_stress": [
+      {
+        "scheme": "canonical",
+        "seed": 44,
+        "control": 0.04527443187890187,
+        "candidate": 0.3106227504465618,
+        "registered_delta": 0.26534831856765995
+      },
+      {
+        "scheme": "canonical",
+        "seed": 45,
+        "control": 0.19113466683934624,
+        "candidate": 0.2241782113192832,
+        "registered_delta": 0.03304354447993696
+      },
+      {
+        "scheme": "scaffold",
+        "seed": 44,
+        "control": 0.19872328650206597,
+        "candidate": 0.2571642890510364,
+        "registered_delta": 0.05844100254897042
+      },
+      {
+        "scheme": "scaffold",
+        "seed": 45,
+        "control": 0.15675052867035522,
+        "candidate": 0.22146692487914232,
+        "registered_delta": 0.06471639620878711
+      }
+    ],
+    "micro_stress": [
+      {
+        "scheme": "canonical",
+        "seed": 44,
+        "control": 0.6157509068137567,
+        "candidate": 0.5447284612057485,
+        "n": 154
+      },
+      {
+        "scheme": "canonical",
+        "seed": 45,
+        "control": 0.611076877488029,
+        "candidate": 0.5821801744456193,
+        "n": 154
+      },
+      {
+        "scheme": "scaffold",
+        "seed": 44,
+        "control": 0.35862730915660374,
+        "candidate": 0.3408452102924531,
+        "n": 159
+      },
+      {
+        "scheme": "scaffold",
+        "seed": 45,
+        "control": 0.31585145793678365,
+        "candidate": 0.3386402922272455,
+        "n": 159
+      }
+    ],
+    "hep_stress": [
+      {
+        "scheme": "canonical",
+        "seed": 44,
+        "control": 0.46913576990565814,
+        "candidate": 0.5442002015827534,
+        "n": 171
+      },
+      {
+        "scheme": "canonical",
+        "seed": 45,
+        "control": 0.5297496687694723,
+        "candidate": 0.5229360325815104,
+        "n": 171
+      },
+      {
+        "scheme": "scaffold",
+        "seed": 44,
+        "control": 0.5701642307208755,
+        "candidate": 0.5234110062766509,
+        "n": 170
+      },
+      {
+        "scheme": "scaffold",
+        "seed": 45,
+        "control": 0.5371618631453398,
+        "candidate": 0.4934003070010459,
+        "n": 170
+      }
+    ],
+    "cohort44_examples": [
+      {
+        "task": "ppbr_az",
+        "group": "low",
+        "n": 28,
+        "control_MAE": 5.697744641681056,
+        "candidate_MAE": 5.274543543938111
+      },
+      {
+        "task": "solubility_aqsoldb",
+        "group": "low",
+        "n": 294,
+        "control_MAE": 0.8410099250150898,
+        "candidate_MAE": 0.6777375419683508
+      },
+      {
+        "task": "ames",
+        "group": "high",
+        "n": 114,
+        "control_AUROC": 0.5728813559322034,
+        "candidate_AUROC": 0.6554699537750385
+      }
+    ],
+    "source_refs": {
+      "half_life_raw_rank_minus_halfmse": [
+        "E-HALFMSE"
+      ],
+      "half_life_stress": [
+        "E-HLSTRESS"
+      ],
+      "micro_stress": [
+        "E-STRESS48"
+      ],
+      "hep_stress": [
+        "E-HEPSTRESS"
+      ],
+      "cohort44_examples": [
+        "E-COHORT-COMP"
+      ]
+    }
+  },
+  "checks": [
+    {
+      "check_id": "CHK-COUNTS",
+      "method": "integer arithmetic of accepted current counts, not score recomputation",
+      "inputs": {
+        "gradient": 686,
+        "logical": 665,
+        "whole": 588,
+        "stress": 88,
+        "unknown": 10,
+        "fixedcohort": 88,
+        "suppressed": 8,
+        "composite": 95
+      },
+      "results": {
+        "whole_plus_stress": 676,
+        "gradient_minus_scored": 10,
+        "gradient_minus_logical": 21,
+        "native_increment": 68
+      },
+      "interpretation": "676single values;10unknown preserved;21 extra heads per multi-task logical grouping inherited; cohort/composite not added as fits",
+      "evidence_refs": [
+        "E-STATUS"
+      ]
+    },
+    {
+      "check_id": "CHK-half_life_stress",
+      "method": "candidate minus control of already accepted aggregate metrics; no prediction/Y loaded",
+      "deltas": [
+        0.26534831856765995,
+        0.03304354447993696,
+        0.05844100254897042,
+        0.06471639620878711
+      ],
+      "positive_count": 4,
+      "mean_delta_descriptive": 0.10538731545133861,
+      "evidence_refs": [
+        "E-HLSTRESS"
+      ]
+    },
+    {
+      "check_id": "CHK-micro_stress",
+      "method": "candidate minus control of already accepted aggregate metrics; no prediction/Y loaded",
+      "deltas": [
+        -0.07102244560800819,
+        -0.028896703042409655,
+        -0.01778209886415061,
+        0.022788834290461857
+      ],
+      "positive_count": 1,
+      "mean_delta_descriptive": -0.02372810330602665,
+      "evidence_refs": [
+        "E-STRESS48"
+      ]
+    },
+    {
+      "check_id": "CHK-hep_stress",
+      "method": "candidate minus control of already accepted aggregate metrics; no prediction/Y loaded",
+      "deltas": [
+        0.07506443167709526,
+        -0.006813636187961825,
+        -0.046753224444224584,
+        -0.043761556144293834
+      ],
+      "positive_count": 1,
+      "mean_delta_descriptive": -0.005565996274846247,
+      "evidence_refs": [
+        "E-HEPSTRESS"
+      ]
+    },
+    {
+      "check_id": "CHK-RAW-HALFMSE",
+      "method": "arithmetic mean of four registered deltas",
+      "mean_delta": 0.11610804684174064,
+      "range": [
+        0.03588213616731689,
+        0.155881738377593
+      ],
+      "evidence_refs": [
+        "E-HALFMSE"
+      ]
+    },
+    {
+      "check_id": "CHK-CAPACITY",
+      "method": "one hidden-layer scalar MLP parameter count D*h + h_bias + h_out + out_bias =D*h+2*h+1",
+      "counts": {
+        "(2048, 256)": 524801,
+        "(512, 256)": 131585,
+        "(2048, 128)": 262401,
+        "(512, 512)": 263169,
+        "(720, 256)": 184833,
+        "(768, 256)": 197121
+      },
+      "matched_width_relative_difference": 0.0029268181142602353,
+      "conclusion": "M6pair262401vs263169 approximately parameter-matched, not exactly; width and optimization geometry differ",
+      "evidence_refs": [
+        "E-P002-GUIDE",
+        "E-STATUS"
+      ]
+    },
+    {
+      "check_id": "CHK-COMMON-ERROR-BOUND",
+      "method": "a=|y-pA|,b=|y-pB|,d=|pA-pB|; |a-b|<=d, min(a,b)=(a+b-|a-b|)/2; average => mean(min)>=max(0,(MAE_A+MAE_B-D)/2)",
+      "actual_bound_computed": false,
+      "why_not": "D must be calculated on exact fixed membership and exact same model prediction source, then source-bound; no matching D aggregate was independently available here",
+      "new_truth_needed": false,
+      "classification_warning": "AUROC/AP cannot be substituted for MAE in this inequality",
+      "evidence_refs": [
+        "E-COHORT-COMP",
+        "E-COHORT-REPORT"
+      ]
+    }
+  ],
+  "not_done": "No old quality scores, model inference, residuals or label-level metrics recomputed."
+}

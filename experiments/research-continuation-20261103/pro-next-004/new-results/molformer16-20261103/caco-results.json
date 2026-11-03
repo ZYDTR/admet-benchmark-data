@@ -1,0 +1,42 @@
+{
+  "at": "2026-11-02T20:24:34.450368+00:00",
+  "decision": "No support for frozenMoLFormer768 onCaco2 at eitherregisteredhead;all8crossrepresentationcontrastsnegative. Continue other3preregisteredtasks unchanged,noCacoexpansion.",
+  "scores": {
+    "path": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f9bce86edb177a6b74f0af7a2e630a1350de914b/experiments/research-continuation-20261103/pro-next-003/molformer/caco/scores.json",
+    "sha256": "2c1bdf1d2bda50e4226c9a2f2a0b8b359d9861f080a817f64687f1f2a55540a7"
+  },
+  "comparisons": {
+    "path": "https://raw.githubusercontent.com/ZYDTR/admet-benchmark-data/f9bce86edb177a6b74f0af7a2e630a1350de914b/experiments/research-continuation-20261103/pro-next-003/molformer/caco/comparisons.json",
+    "sha256": "f93d283e09b61d4a982647035ed0ae01048b00616b2e0cc97bb1162cba2300a4"
+  },
+  "receipt": {
+    "path": "evidence-ref:ref-1c8ef6da46e58a70",
+    "sha256": "89d0824c9006e76b8c42d1abfc6226a86beac52e98c5e52de11707f9c7e2a0b5"
+  },
+  "primary_outcomes": {
+    "negative": 8,
+    "positive": 0,
+    "tie": 0
+  },
+  "secondary_MoL_TabM_vs_MLP": [
+    {
+      "seed": 46,
+      "signed_improvement": 0.035992095580607175,
+      "outcome": "win"
+    },
+    {
+      "seed": 47,
+      "signed_improvement": -0.007566099779006963,
+      "outcome": "loss"
+    }
+  ],
+  "limits": [
+    "All twelve Caco slots reuse91Valid rows and raw43split; two seeds are not independent held-out replication.",
+    "MoLFormer768,Mini512,CheM2048 change backbone,scale,input dimension and trainable capacity; compare registered pipelines, not isolated backbone causality.",
+    "MoLMLP197121 andTabM1089568 parameters; original baselines differ. Producer/MLP onGPU3 andTabM onGPU2; retain actual per-run UUIDs.",
+    "TabM hit50epoch cap in both seeds. No adaptive extension is authorized by scoring.",
+    "Original SCI01 singleUUID reporting refusal and constructor hidden_dim failure retained; no completed model retraining."
+  ],
+  "new_Astra_truth_or_metric_calls": 0,
+  "source_partial_archive_state_independent": true
+}

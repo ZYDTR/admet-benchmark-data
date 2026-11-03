@@ -1,0 +1,54 @@
+{
+  "at": "2026-11-02T23:15:25.316942+00:00",
+  "request_id": "admet-cyp3a4-lr-stress8-training-20261103-001",
+  "actual_heads": 8,
+  "optimizer_steps": 7152,
+  "nativeStress_metrics": 8,
+  "privateValid_metrics": 0,
+  "pairs": [
+    {
+      "scheme": "canonical",
+      "seed": 44,
+      "highLR_AP": 0.8543681008171664,
+      "lowLR_AP": 0.8581454714099931,
+      "signed_improvement": 0.0037773705928266788,
+      "control": "c3lr8-cyp3a4_veith-h0-lr5e-4-canonical-s44",
+      "treatment": "c3lr8-cyp3a4_veith-h0-lr1e-4-canonical-s44"
+    },
+    {
+      "scheme": "canonical",
+      "seed": 45,
+      "highLR_AP": 0.8492052444892976,
+      "lowLR_AP": 0.8523186635052197,
+      "signed_improvement": 0.003113419015922103,
+      "control": "c3lr8-cyp3a4_veith-h0-lr5e-4-canonical-s45",
+      "treatment": "c3lr8-cyp3a4_veith-h0-lr1e-4-canonical-s45"
+    },
+    {
+      "scheme": "scaffold",
+      "seed": 44,
+      "highLR_AP": 0.8360694439004678,
+      "lowLR_AP": 0.859648109527432,
+      "signed_improvement": 0.0235786656269642,
+      "control": "c3lr8-cyp3a4_veith-h0-lr5e-4-scaffold-s44",
+      "treatment": "c3lr8-cyp3a4_veith-h0-lr1e-4-scaffold-s44"
+    },
+    {
+      "scheme": "scaffold",
+      "seed": 45,
+      "highLR_AP": 0.8493599452602741,
+      "lowLR_AP": 0.856879815187832,
+      "signed_improvement": 0.007519869927557821,
+      "control": "c3lr8-cyp3a4_veith-h0-lr5e-4-scaffold-s45",
+      "treatment": "c3lr8-cyp3a4_veith-h0-lr1e-4-scaffold-s45"
+    }
+  ],
+  "head_job_wall_seconds": 192.3655451652594,
+  "two_scheme_stress_intersection": 406,
+  "decision": "采用较窄的当前候选：CheM2048 H0 +MLP256/dropout0.1/AdamWwd1e-4/lr1e-4/batch128/max50pat8。两结构分组各两种子低LR均优于5e-4，配对init/fit统计/共同样本顺序核实；与既有Window12低LR支持一致。停止本问题追加LR/种子/长窗口；不推其他任务、F010或所有未测LR。原train回溯、stress成员有交集、重复选择史保留。",
+  "archive": "pending originalSol",
+  "evidence": [
+    "evidence-ref:ref-8da0ad88f6551cae",
+    "evidence-ref:ref-8bfaad6d96db8f86"
+  ]
+}

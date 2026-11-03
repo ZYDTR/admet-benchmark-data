@@ -1,0 +1,364 @@
+{
+  "request_id": "admet-pro-next-research-20261103-003",
+  "recommended": "medium",
+  "scenarios": [
+    {
+      "scenario_id": "small",
+      "recommended": false,
+      "stage_ids": [
+        "R"
+      ],
+      "proposal_ids": [
+        "P003-R-clearance_microsome_az-chemeleon-canonical-half",
+        "P003-R-clearance_microsome_az-chemeleon-canonical-rank",
+        "P003-R-clearance_microsome_az-chemeleon-scaffold-half",
+        "P003-R-clearance_microsome_az-chemeleon-scaffold-rank",
+        "P003-R-clearance_hepatocyte_az-chemeleon-canonical-half",
+        "P003-R-clearance_hepatocyte_az-chemeleon-canonical-rank",
+        "P003-R-clearance_hepatocyte_az-chemeleon-scaffold-half",
+        "P003-R-clearance_hepatocyte_az-chemeleon-scaffold-rank",
+        "P003-R-vdss_lombardo-chemeleon-canonical-half",
+        "P003-R-vdss_lombardo-chemeleon-canonical-rank",
+        "P003-R-vdss_lombardo-chemeleon-canonical-mse",
+        "P003-R-vdss_lombardo-chemeleon-scaffold-half",
+        "P003-R-vdss_lombardo-chemeleon-scaffold-rank",
+        "P003-R-vdss_lombardo-chemeleon-scaffold-mse"
+      ],
+      "task_ids": [
+        "clearance_hepatocyte_az",
+        "clearance_microsome_az",
+        "vdss_lombardo"
+      ],
+      "new_gradient_fits": 28,
+      "new_context_fits": 0,
+      "new_wholeValid_scores": 0,
+      "maximum_new_native_stress_scores": 28,
+      "physical_unit": "one task/representation/head/loss/split/scaler/monitor/modelseed optimization trajectory",
+      "reused_control_ids": [
+        "C-clearance_hepatocyte_az-chemeleon-mlp-canonical-mse",
+        "C-clearance_hepatocyte_az-chemeleon-mlp-scaffold-mse",
+        "C-clearance_microsome_az-chemeleon-mlp-canonical-mse",
+        "C-clearance_microsome_az-chemeleon-mlp-scaffold-mse"
+      ],
+      "unique_existing_control_fits": 8,
+      "shared_new_encoder_caches": 0,
+      "encoding_details": "0 new encodings: index/slice accepted raw frozen train caches",
+      "readiness_counts": {
+        "config_only": 28,
+        "new_code": 0,
+        "blocked_assets": 0
+      },
+      "authority": "proposal_only; controller may authorize separate stage subsets; cap not automatic obligation",
+      "cost": {
+        "measured_anchors": [
+          {
+            "source_id": "E-STRESS48-U",
+            "cpu_job_seconds": 1843.198455,
+            "fits": 48,
+            "per_fit_arithmetic_seconds": 38.3999678125,
+            "meaning": "heterogeneous existingMLP/TabM wholejob, notpurekernel and notforecast"
+          },
+          {
+            "source_id": "E-HEPSTRESS-U",
+            "cpu_job_seconds": 34.018494,
+            "fits": 8,
+            "per_fit_arithmetic_seconds": 4.25231175,
+            "meaning": "hepMLP route includes split/sealing; alternate35.517231 includes morepack/check, notadded"
+          },
+          {
+            "source_id": "E-LD50",
+            "cpu_job_seconds": 50.02869527,
+            "fits": 4,
+            "per_fit_arithmetic_seconds": 12.5071738175,
+            "meaning": "LD50 differenttask/control, calibrationonly"
+          }
+        ],
+        "simple_anchor_scaling_seconds": [
+          119.06472899999999,
+          1075.19909875
+        ],
+        "simple_anchor_scaling_label": "两个实测异质anchor各自线性外推，用来识别准备主导；不是统计区间、保证或容量上限。ranking O(B^2)与平台可能使实际超出。",
+        "end_to_end_formula": "wall=critical_path(preparation/interface_binding, shared_encode_if_any, authorized_training, retrieval+fixed_scoring+handoff, research_review_if_triggered); overlapping intervals union, not sum. Serial conservative planning envelope=P+E+H+R+S+J+Q; each category measured separately.",
+        "unknown_terms": {
+          "P": "准备/新接口/源绑定，本轮未完整发布",
+          "E": "几何四cache含分子构象失败重试与加载；无实测，全行ready前不承诺",
+          "H": "实际头学习按epochs/steps、CPU/GPU日志取数",
+          "R": "取回/运输",
+          "S": "固定stress评分",
+          "J": "交接/队列/主控登记",
+          "Q": "下一次Pro深评审仅在决策节点，不逐头调用"
+        },
+        "planning_assumption_example_not_measurement": {
+          "cached_pipeline_P_hours": [
+            0.5,
+            2.0
+          ],
+          "R_S_J_hours": [
+            0.5,
+            1.5
+          ],
+          "Q_hours": null,
+          "serial_cached_budget_note": "R或R+X按同一次准备合并派发，示例1–3.5小时非学习开销加实测校准的H；不是对未来完成时间的承诺。新代码N/T可更长，几何E未知不得硬报GPU小时。"
+        },
+        "calibration": "利用第一个获准的实际预登记fit及实际取回自然记录，不新增probe或重复控制。"
+      }
+    },
+    {
+      "scenario_id": "medium",
+      "recommended": true,
+      "stage_ids": [
+        "R",
+        "X"
+      ],
+      "proposal_ids": [
+        "P003-R-clearance_microsome_az-chemeleon-canonical-half",
+        "P003-R-clearance_microsome_az-chemeleon-canonical-rank",
+        "P003-R-clearance_microsome_az-chemeleon-scaffold-half",
+        "P003-R-clearance_microsome_az-chemeleon-scaffold-rank",
+        "P003-R-clearance_hepatocyte_az-chemeleon-canonical-half",
+        "P003-R-clearance_hepatocyte_az-chemeleon-canonical-rank",
+        "P003-R-clearance_hepatocyte_az-chemeleon-scaffold-half",
+        "P003-R-clearance_hepatocyte_az-chemeleon-scaffold-rank",
+        "P003-R-vdss_lombardo-chemeleon-canonical-half",
+        "P003-R-vdss_lombardo-chemeleon-canonical-rank",
+        "P003-R-vdss_lombardo-chemeleon-canonical-mse",
+        "P003-R-vdss_lombardo-chemeleon-scaffold-half",
+        "P003-R-vdss_lombardo-chemeleon-scaffold-rank",
+        "P003-R-vdss_lombardo-chemeleon-scaffold-mse",
+        "P003-X-clearance_microsome_az-minimol-canonical-half",
+        "P003-X-clearance_microsome_az-minimol-canonical-rank",
+        "P003-X-clearance_microsome_az-minimol-scaffold-half",
+        "P003-X-clearance_microsome_az-minimol-scaffold-rank",
+        "P003-X-clearance_hepatocyte_az-minimol-canonical-half",
+        "P003-X-clearance_hepatocyte_az-minimol-canonical-rank",
+        "P003-X-clearance_hepatocyte_az-minimol-scaffold-half",
+        "P003-X-clearance_hepatocyte_az-minimol-scaffold-rank"
+      ],
+      "task_ids": [
+        "clearance_hepatocyte_az",
+        "clearance_microsome_az",
+        "vdss_lombardo"
+      ],
+      "new_gradient_fits": 44,
+      "new_context_fits": 0,
+      "new_wholeValid_scores": 0,
+      "maximum_new_native_stress_scores": 44,
+      "physical_unit": "one task/representation/head/loss/split/scaler/monitor/modelseed optimization trajectory",
+      "reused_control_ids": [
+        "C-clearance_hepatocyte_az-chemeleon-mlp-canonical-mse",
+        "C-clearance_hepatocyte_az-chemeleon-mlp-scaffold-mse",
+        "C-clearance_hepatocyte_az-minimol-mlp-canonical-mse",
+        "C-clearance_hepatocyte_az-minimol-mlp-scaffold-mse",
+        "C-clearance_microsome_az-chemeleon-mlp-canonical-mse",
+        "C-clearance_microsome_az-chemeleon-mlp-scaffold-mse",
+        "C-clearance_microsome_az-minimol-mlp-canonical-mse",
+        "C-clearance_microsome_az-minimol-mlp-scaffold-mse"
+      ],
+      "unique_existing_control_fits": 16,
+      "shared_new_encoder_caches": 0,
+      "encoding_details": "0 new encodings: index/slice accepted raw frozen train caches",
+      "readiness_counts": {
+        "config_only": 44,
+        "new_code": 0,
+        "blocked_assets": 0
+      },
+      "authority": "proposal_only; controller may authorize separate stage subsets; cap not automatic obligation",
+      "cost": {
+        "measured_anchors": [
+          {
+            "source_id": "E-STRESS48-U",
+            "cpu_job_seconds": 1843.198455,
+            "fits": 48,
+            "per_fit_arithmetic_seconds": 38.3999678125,
+            "meaning": "heterogeneous existingMLP/TabM wholejob, notpurekernel and notforecast"
+          },
+          {
+            "source_id": "E-HEPSTRESS-U",
+            "cpu_job_seconds": 34.018494,
+            "fits": 8,
+            "per_fit_arithmetic_seconds": 4.25231175,
+            "meaning": "hepMLP route includes split/sealing; alternate35.517231 includes morepack/check, notadded"
+          },
+          {
+            "source_id": "E-LD50",
+            "cpu_job_seconds": 50.02869527,
+            "fits": 4,
+            "per_fit_arithmetic_seconds": 12.5071738175,
+            "meaning": "LD50 differenttask/control, calibrationonly"
+          }
+        ],
+        "simple_anchor_scaling_seconds": [
+          187.10171699999998,
+          1689.59858375
+        ],
+        "simple_anchor_scaling_label": "两个实测异质anchor各自线性外推，用来识别准备主导；不是统计区间、保证或容量上限。ranking O(B^2)与平台可能使实际超出。",
+        "end_to_end_formula": "wall=critical_path(preparation/interface_binding, shared_encode_if_any, authorized_training, retrieval+fixed_scoring+handoff, research_review_if_triggered); overlapping intervals union, not sum. Serial conservative planning envelope=P+E+H+R+S+J+Q; each category measured separately.",
+        "unknown_terms": {
+          "P": "准备/新接口/源绑定，本轮未完整发布",
+          "E": "几何四cache含分子构象失败重试与加载；无实测，全行ready前不承诺",
+          "H": "实际头学习按epochs/steps、CPU/GPU日志取数",
+          "R": "取回/运输",
+          "S": "固定stress评分",
+          "J": "交接/队列/主控登记",
+          "Q": "下一次Pro深评审仅在决策节点，不逐头调用"
+        },
+        "planning_assumption_example_not_measurement": {
+          "cached_pipeline_P_hours": [
+            0.5,
+            2.0
+          ],
+          "R_S_J_hours": [
+            0.5,
+            1.5
+          ],
+          "Q_hours": null,
+          "serial_cached_budget_note": "R或R+X按同一次准备合并派发，示例1–3.5小时非学习开销加实测校准的H；不是对未来完成时间的承诺。新代码N/T可更长，几何E未知不得硬报GPU小时。"
+        },
+        "calibration": "利用第一个获准的实际预登记fit及实际取回自然记录，不新增probe或重复控制。"
+      }
+    },
+    {
+      "scenario_id": "large",
+      "recommended": false,
+      "stage_ids": [
+        "R",
+        "X",
+        "N",
+        "G",
+        "K",
+        "T"
+      ],
+      "proposal_ids": [
+        "P003-R-clearance_microsome_az-chemeleon-canonical-half",
+        "P003-R-clearance_microsome_az-chemeleon-canonical-rank",
+        "P003-R-clearance_microsome_az-chemeleon-scaffold-half",
+        "P003-R-clearance_microsome_az-chemeleon-scaffold-rank",
+        "P003-R-clearance_hepatocyte_az-chemeleon-canonical-half",
+        "P003-R-clearance_hepatocyte_az-chemeleon-canonical-rank",
+        "P003-R-clearance_hepatocyte_az-chemeleon-scaffold-half",
+        "P003-R-clearance_hepatocyte_az-chemeleon-scaffold-rank",
+        "P003-R-vdss_lombardo-chemeleon-canonical-half",
+        "P003-R-vdss_lombardo-chemeleon-canonical-rank",
+        "P003-R-vdss_lombardo-chemeleon-canonical-mse",
+        "P003-R-vdss_lombardo-chemeleon-scaffold-half",
+        "P003-R-vdss_lombardo-chemeleon-scaffold-rank",
+        "P003-R-vdss_lombardo-chemeleon-scaffold-mse",
+        "P003-X-clearance_microsome_az-minimol-canonical-half",
+        "P003-X-clearance_microsome_az-minimol-canonical-rank",
+        "P003-X-clearance_microsome_az-minimol-scaffold-half",
+        "P003-X-clearance_microsome_az-minimol-scaffold-rank",
+        "P003-X-clearance_hepatocyte_az-minimol-canonical-half",
+        "P003-X-clearance_hepatocyte_az-minimol-canonical-rank",
+        "P003-X-clearance_hepatocyte_az-minimol-scaffold-half",
+        "P003-X-clearance_hepatocyte_az-minimol-scaffold-rank",
+        "P003-N-clearance_microsome_az-chemeleon-scaffold-mse",
+        "P003-N-clearance_microsome_az-minimol-scaffold-mse",
+        "P003-N-clearance_hepatocyte_az-chemeleon-scaffold-mse",
+        "P003-N-clearance_hepatocyte_az-minimol-scaffold-mse",
+        "P003-G-solubility_aqsoldb-monroe720-scaffold-mse",
+        "P003-G-solubility_aqsoldb-unimol2_84m_cls-scaffold-mse",
+        "P003-G-clearance_microsome_az-monroe720-scaffold-mse",
+        "P003-G-clearance_microsome_az-unimol2_84m_cls-scaffold-mse",
+        "P003-K-clearance_microsome_az-chemeleon-scaffold-mse-w128",
+        "P003-K-clearance_microsome_az-minimol-scaffold-mse-w512",
+        "P003-T-cyp2d6_veith-minimol-scaffold-mean_bce"
+      ],
+      "task_ids": [
+        "clearance_hepatocyte_az",
+        "clearance_microsome_az",
+        "cyp2d6_veith",
+        "solubility_aqsoldb",
+        "vdss_lombardo"
+      ],
+      "new_gradient_fits": 66,
+      "new_context_fits": 0,
+      "new_wholeValid_scores": 0,
+      "maximum_new_native_stress_scores": 66,
+      "physical_unit": "one task/representation/head/loss/split/scaler/monitor/modelseed optimization trajectory",
+      "reused_control_ids": [
+        "C-clearance_hepatocyte_az-chemeleon-mlp-canonical-mse",
+        "C-clearance_hepatocyte_az-chemeleon-mlp-scaffold-mse",
+        "C-clearance_hepatocyte_az-minimol-mlp-canonical-mse",
+        "C-clearance_hepatocyte_az-minimol-mlp-scaffold-mse",
+        "C-clearance_microsome_az-chemeleon-mlp-canonical-mse",
+        "C-clearance_microsome_az-chemeleon-mlp-scaffold-mse",
+        "C-clearance_microsome_az-minimol-mlp-canonical-mse",
+        "C-clearance_microsome_az-minimol-mlp-scaffold-mse",
+        "C-cyp2d6_veith-minimol-tabm-scaffold-bce",
+        "C-solubility_aqsoldb-chemeleon-mlp-scaffold-mse",
+        "C-solubility_aqsoldb-minimol-mlp-scaffold-mse"
+      ],
+      "unique_existing_control_fits": 22,
+      "shared_new_encoder_caches": 4,
+      "encoding_details": "2tasks(Sol,micro)×2encoders(Monroe,UniMol2), each complete official-train once; shared2headseeds; noValid/testencode",
+      "readiness_counts": {
+        "config_only": 48,
+        "new_code": 10,
+        "blocked_assets": 8
+      },
+      "authority": "proposal_only; controller may authorize separate stage subsets; cap not automatic obligation",
+      "cost": {
+        "measured_anchors": [
+          {
+            "source_id": "E-STRESS48-U",
+            "cpu_job_seconds": 1843.198455,
+            "fits": 48,
+            "per_fit_arithmetic_seconds": 38.3999678125,
+            "meaning": "heterogeneous existingMLP/TabM wholejob, notpurekernel and notforecast"
+          },
+          {
+            "source_id": "E-HEPSTRESS-U",
+            "cpu_job_seconds": 34.018494,
+            "fits": 8,
+            "per_fit_arithmetic_seconds": 4.25231175,
+            "meaning": "hepMLP route includes split/sealing; alternate35.517231 includes morepack/check, notadded"
+          },
+          {
+            "source_id": "E-LD50",
+            "cpu_job_seconds": 50.02869527,
+            "fits": 4,
+            "per_fit_arithmetic_seconds": 12.5071738175,
+            "meaning": "LD50 differenttask/control, calibrationonly"
+          }
+        ],
+        "simple_anchor_scaling_seconds": [
+          246.63408149999998,
+          2227.198133125
+        ],
+        "simple_anchor_scaling_label": "两个实测异质anchor各自线性外推，用来识别准备主导；不是统计区间、保证或容量上限。ranking O(B^2)与平台可能使实际超出。",
+        "end_to_end_formula": "wall=critical_path(preparation/interface_binding, shared_encode_if_any, authorized_training, retrieval+fixed_scoring+handoff, research_review_if_triggered); overlapping intervals union, not sum. Serial conservative planning envelope=P+E+H+R+S+J+Q; each category measured separately.",
+        "unknown_terms": {
+          "P": "准备/新接口/源绑定，本轮未完整发布",
+          "E": "几何四cache含分子构象失败重试与加载；无实测，全行ready前不承诺",
+          "H": "实际头学习按epochs/steps、CPU/GPU日志取数",
+          "R": "取回/运输",
+          "S": "固定stress评分",
+          "J": "交接/队列/主控登记",
+          "Q": "下一次Pro深评审仅在决策节点，不逐头调用"
+        },
+        "planning_assumption_example_not_measurement": {
+          "cached_pipeline_P_hours": [
+            0.5,
+            2.0
+          ],
+          "R_S_J_hours": [
+            0.5,
+            1.5
+          ],
+          "Q_hours": null,
+          "serial_cached_budget_note": "R或R+X按同一次准备合并派发，示例1–3.5小时非学习开销加实测校准的H；不是对未来完成时间的承诺。新代码N/T可更长，几何E未知不得硬报GPU小时。"
+        },
+        "calibration": "利用第一个获准的实际预登记fit及实际取回自然记录，不新增probe或重复控制。"
+      }
+    }
+  ],
+  "stage_order": [
+    "R",
+    "X",
+    "conditional N",
+    "conditional K/T",
+    "blocked G"
+  ],
+  "do_not_sum_shared_direction_caps": true,
+  "reference_timing_scope": "current job/role observations; older Pro UI times do not silently substitute current turnaround"
+}
