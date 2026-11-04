@@ -1,0 +1,65 @@
+{
+  "request_id": "admet-pro-thin-endpoints-20261103-006",
+  "input_cutoff": "2026-11-03T14:42:51.342353+00:00",
+  "manifest_identity": "7d2c9fabaa18f80aba0ae7cf28e19f860bfefa55b990efd924ae35d2cc18442b",
+  "status": "finite_candidate_space_not_authorized",
+  "axes": {
+    "task": [
+      "pgp_broccatelli priority",
+      "herg conditional",
+      "bbb_martins conditional",
+      "cyp2c9_veith conditional",
+      "cyp2c9_substrate_carbonmangels conditional"
+    ],
+    "representation": [
+      "CheM raw 2048",
+      "MiniMol raw 512",
+      "Morgan ECFP4 raw 2048"
+    ],
+    "descriptor_view": [
+      "base representation",
+      "base representation + fixed 8 RDKit descriptors"
+    ],
+    "readout": [
+      "one fixed L2 logistic regression C=1, no class weights"
+    ],
+    "split": [
+      "reuse accepted task-native train-only split; otherwise partition owner prepares and binds"
+    ],
+    "metric": {
+      "bbb_martins": "AUROC",
+      "herg": "AUROC",
+      "pgp_broccatelli": "AUROC",
+      "cyp2c9_veith": "AP; official AUPRC only after source contract",
+      "cyp2c9_substrate_carbonmangels": "AP; official AUPRC only after source contract"
+    }
+  },
+  "descriptor_set": [
+    "MW",
+    "Crippen cLogP",
+    "TPSA",
+    "HBD",
+    "HBA",
+    "rotatable bonds",
+    "aromatic rings",
+    "formal charge"
+  ],
+  "explicitly_excluded": [
+    "weighted BCE repeat",
+    "Morgan-only recipe repeat",
+    "floor/cap sweeps",
+    "seed-only expansion",
+    "temperature/scale sweeps",
+    "unverified pKa prediction",
+    "guessed assay covariates",
+    "new external labels or rows",
+    "cross-task CYP recipe transfer",
+    "SMI8/HEPOS40/SOLCTX4/GEO32 modification"
+  ],
+  "conditional_modules": [
+    "Pgp GRID MIF/pharmacophore",
+    "hERG multi-pharmacophore",
+    "CYP2C9 substrate site-of-metabolism/pose"
+  ],
+  "principle": "No arbitrary broad grid. Expand only if the finite first-stage result leaves a specific, source-supported unresolved mechanism and complete train-internal groups."
+}

@@ -1,0 +1,144 @@
+{
+  "cycle": "PGPPHYS006",
+  "at_utc": "2026-11-03T15:19:00.766158+00:00",
+  "state": "scientific_design_pending_actual_source_binding_not_training_authorized",
+  "source_proposal": "P006-PGP-REP-PHYS",
+  "source": "evidence-ref:ref-c8bd0ddcce45105e",
+  "task": "pgp_broccatelli",
+  "question": "Do eight transparent deterministic 2D physicochemical descriptors add information to existing representations under the same fixed readout on original train scaffold OOF?",
+  "primary_source": "https://pubmed.ncbi.nlm.nih.gov/21341745/",
+  "source_limit": "Original paper supports membrane-related descriptors/pharmacophores, not this exact eight-feature set or its efficacy. Eight-feature ablation is our hypothesis; no true pKa/pH/logD/transport label inferred.",
+  "competing_explanations": [
+    "descriptors add missing accessible physicochemical information",
+    "existing learned/fingerprint representations already carry that information",
+    "gain reflects scaling/regularization interaction or added capacity rather than new chemistry",
+    "dataset support/assay mixture dominates all representations"
+  ],
+  "matrix": [
+    {
+      "representation": "CheM_raw2048",
+      "added_descriptors": false
+    },
+    {
+      "representation": "CheM_raw2048",
+      "added_descriptors": true
+    },
+    {
+      "representation": "MiniMol_raw512",
+      "added_descriptors": false
+    },
+    {
+      "representation": "MiniMol_raw512",
+      "added_descriptors": true
+    },
+    {
+      "representation": "Morgan_ECFP4_binary2048",
+      "added_descriptors": false
+    },
+    {
+      "representation": "Morgan_ECFP4_binary2048",
+      "added_descriptors": true
+    }
+  ],
+  "source_gate": "Accepted asset family does not imply Pgp cache exists. Original Sol first supplies exact original train identity, per-representation raw all-row cache identities or explicit absent, exact prior internal split if any. No fresh encoding in source request.",
+  "partition": {
+    "preference": "Reuse an accepted Pgp original-train scaffold 5-fold all-row OOF if it exists, with immutable membership. Otherwise scientific owner will bind an explicit 5-fold scaffold construction using accepted project partition factory after raw row mapping is available. No new split has been made.",
+    "official_split_unchanged": true,
+    "grouping": "Original canonical duplicates remain original rows but share partition/bootstrap group. Scaffold unit distinct from canonical molecule; exact current factory identity required.",
+    "no_inner_stop_required": "fixed logistic readout no model selection/early stopping; all other four outer folds fit, heldout fifth never used for fitting/scaling."
+  },
+  "descriptors": {
+    "RDKit_version": "2024.09.6",
+    "features": [
+      {
+        "name": "MW",
+        "function": "Descriptors.MolWt"
+      },
+      {
+        "name": "cLogP",
+        "function": "Crippen.MolLogP"
+      },
+      {
+        "name": "TPSA",
+        "function": "rdMolDescriptors.CalcTPSA"
+      },
+      {
+        "name": "HBD",
+        "function": "rdMolDescriptors.CalcNumHBD"
+      },
+      {
+        "name": "HBA",
+        "function": "rdMolDescriptors.CalcNumHBA"
+      },
+      {
+        "name": "rotatable_bonds",
+        "function": "rdMolDescriptors.CalcNumRotatableBonds",
+        "strict": "Strict"
+      },
+      {
+        "name": "aromatic_rings",
+        "function": "rdMolDescriptors.CalcNumAromaticRings"
+      },
+      {
+        "name": "formal_charge",
+        "function": "rdmolops.GetFormalCharge"
+      }
+    ],
+    "input": "Original accepted canonical-isomeric SMILES parsing without new salt/tautomer/stereo cleanup; no external pKa model",
+    "invalid": "no row drop/imputation; explicit unsupported row blocks whole-row comparison until separate science decision"
+  },
+  "preprocessing": {
+    "CheM_Mini": "per-feature fit-only float64 mean/std ddof0, std<1e-8 ->1; cast features float64 for logistic",
+    "Morgan": "binary original bits identity; do not per-bit standardize",
+    "descriptors": "fit-only float64 mean/std ddof0 std<1e-8 ->1, append in fixed order",
+    "label": "unchanged original binary train.Y"
+  },
+  "readout": {
+    "type": "sklearn LogisticRegression",
+    "solver": "lbfgs",
+    "penalty": "l2",
+    "C": 1.0,
+    "fit_intercept": true,
+    "class_weight": null,
+    "tol": 1e-08,
+    "max_iter": 5000,
+    "warm_start": false,
+    "dtype": "float64",
+    "seed": "no claimed seed replicate; deterministic solver/fold is unit",
+    "software": "actual installed supported version to be source-bound before new TASK; no unpinned floating package",
+    "nonconvergence": "record invalid comparison; no silent C/tolerance tuning"
+  },
+  "analysis": {
+    "lock": "all 6x5=30 new prediction records complete and immutable before first comparative metric; no fit authorized yet",
+    "primary": "three paired within-representation descriptor-minus-base equal-fold AUROC deltas; all original train OOF rows",
+    "secondary": [
+      "pooled AUROC descriptive",
+      "AP explicitly not official AUPRC",
+      "Brier/logloss and fixed p>=0.5 confusion/error transitions"
+    ],
+    "whole_groups": "all rows; baseline-consensus correct/error among three base representations; baseline disagreement bottom20/middle60/top20; fit-bank Morgan low-support; every descriptor-vs-base repair/harm/persistent-error/neither-error, all complements/members/denominators. Definitions/membership freeze from base OOF before candidate outcome inspection; these are exploratory outcome-defined baseline groups, not independent confirmatory cohorts.",
+    "low_support": "perfold nearest Morgan Tanimoto to fit bank; fit reference excludes same canonical molecule group; q20 of fit leave-group-out similarity, fixed linear quantile. Actual canonical source binding needed before computation.",
+    "uncertainty": "paired scaffold cluster bootstrap 2000 resamples seed20261103, conditional fixed OOF predictions; 95% descriptive and98.333333% intervals for three-family simultaneous claim; resample groups within folds, recompute equal-fold AUROC; undefined single-class replicates reported, not filled0",
+    "mechanistic_limit": "descriptor effect also changes accessible feature/scaling/regularization. Does not prove causal membrane mechanism. No gain significance is not equivalence."
+  },
+  "prospective_budget": {
+    "fits": 30,
+    "new_external_encoder_forwards": 0,
+    "Valid_test": 0,
+    "time_allowance": "not authorized; bound after actual source/cache availability and executor estimate",
+    "status": "proposal only pending original preparation/source"
+  },
+  "decision_rules": {
+    "support": "repeatable paired descriptor gain with complete relevant group repair and no material harm; interpret per representation first",
+    "negative": "no stable increment closes tested exact8+fixedlinear recipe only, not all physicochemical information or all heads",
+    "reopen": "independent new train evidence with specific unaddressed mechanism, source-mapped assay fields or independently admitted distinct feature; no arbitrary seed/descriptor sweep"
+  },
+  "owners": {
+    "science_and_trainOOF_analysis": "Astra",
+    "existing_source_identity": "originalSol",
+    "newimplementation_partition_preparation": "existingOpenCode parent after exact scientific source packet ready",
+    "real_learning": "originalSol only under separate future TASK",
+    "Valid": "designated scorer only under separate request"
+  },
+  "no_new_execution_permission": true
+}

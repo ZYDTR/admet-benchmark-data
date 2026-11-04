@@ -1,0 +1,186 @@
+{
+  "request_id": "admet-pro-thin-endpoints-20261103-006",
+  "input_cutoff": "2026-11-03T14:42:51.342353+00:00",
+  "manifest_identity": "7d2c9fabaa18f80aba0ae7cf28e19f860bfefa55b990efd924ae35d2cc18442b",
+  "authorization": "proposal_only_no_training_no_model_loading_no_checkpoint_download_no_label_acquisition_no_valid_or_test_scoring",
+  "frozen_rules": {
+    "external_parameters_and_buffers": "immutable",
+    "labels": "original train.Y only",
+    "rows": "preserve all original row identities; no deduplication or relabeling",
+    "preprocessing": "fit-only statistics within each inner fit",
+    "active_work": "do not modify SMI8, HEPOS40, SOLCTX4, GEO32"
+  },
+  "priority_proposal": {
+    "id": "P006-PGP-REP-PHYS",
+    "task": "pgp_broccatelli",
+    "metric": "AUROC_primary",
+    "hypothesis": "Transparent 2D physicochemical descriptors may add membrane-partitioning information not explicit in existing representations.",
+    "split": {
+      "required": "accepted train-only grouped/scaffold OOF manifest for Pgp; reuse if present in source ledger, otherwise partition owner prepares and binds new internal partition",
+      "currently_available": false,
+      "dependency_owner": "partition/data owner",
+      "must_include": [
+        "task/split identity",
+        "original row_index mapping",
+        "fold membership",
+        "inner fit/stop membership",
+        "split seed",
+        "partition hash",
+        "grouping and duplicate policy",
+        "no Valid/test labels"
+      ]
+    },
+    "representations": [
+      "CheM raw 2048 accepted cache",
+      "MiniMol raw 512 accepted cache",
+      "Morgan ECFP4 raw 2048 accepted cache"
+    ],
+    "matrix": [
+      {
+        "cell": "PGP-CHEM-BASE",
+        "representation": "CheM",
+        "descriptors": false
+      },
+      {
+        "cell": "PGP-CHEM-PHYS",
+        "representation": "CheM",
+        "descriptors": true
+      },
+      {
+        "cell": "PGP-MINI-BASE",
+        "representation": "MiniMol",
+        "descriptors": false
+      },
+      {
+        "cell": "PGP-MINI-PHYS",
+        "representation": "MiniMol",
+        "descriptors": true
+      },
+      {
+        "cell": "PGP-MORGAN-BASE",
+        "representation": "Morgan",
+        "descriptors": false
+      },
+      {
+        "cell": "PGP-MORGAN-PHYS",
+        "representation": "Morgan",
+        "descriptors": true
+      }
+    ],
+    "descriptor_spec": {
+      "features": [
+        "MW",
+        "RDKit Crippen cLogP",
+        "TPSA",
+        "HBD",
+        "HBA",
+        "rotatable_bond_count",
+        "aromatic_ring_count",
+        "formal_charge"
+      ],
+      "version": "fixed versioned RDKit implementation; pin exact version at preparation",
+      "scaling": "fit-only z-score for 8 added descriptors; std<1e-8 -> 1; Morgan bits unchanged",
+      "exclusions": [
+        "no external pKa predictor",
+        "no guessed pH/logD assay covariates",
+        "no external labels or new rows"
+      ]
+    },
+    "readout": {
+      "type": "L2 logistic regression",
+      "C": 1.0,
+      "fit_intercept": true,
+      "class_weight": null,
+      "solver": "choose one deterministic solver at preparation and freeze version/solver/tolerance",
+      "output": "continuous probability",
+      "seeds": "do not invent seeds for deterministic solver; fold is primary replication"
+    },
+    "budget": {
+      "fits": "6 x K accepted folds; if K=5 then 30 fits (illustrative arithmetic only)",
+      "new_encoders": 0,
+      "checkpoint_downloads": 0,
+      "external_parameter_updates": 0,
+      "runtime": "unknown; no measurement"
+    },
+    "controls": {
+      "reuse": [
+        "existing CheM/MiniMol/Morgan caches",
+        "original Pgp train rows/labels",
+        "any accepted Pgp partition if present"
+      ],
+      "do_not_repeat": [
+        "weighted BCE",
+        "Morgan-only recipe under renamed ID",
+        "floor/cap/seed/scale sweeps",
+        "near-identical blind candidate repeats"
+      ]
+    },
+    "primary_outputs": [
+      "OOF AUROC by fold and equal-fold mean",
+      "AP separately named unless official AUPRC contract proven",
+      "full repair/harm/persistent-error/consensus-error groups and complements",
+      "low/high disagreement and low-support coverage",
+      "prevalence and class counts",
+      "cluster-bootstrap uncertainty",
+      "representation and descriptor ablations"
+    ],
+    "falsification": [
+      "No descriptor increment across all three representations weakens the simple 2D membrane-proxy hypothesis.",
+      "Gain only in one representation supports an interaction, not universal physicochemical gain.",
+      "Overall AUROC gain without repair in low-support/consensus-error groups does not support the proposed mechanism.",
+      "No stable representation differences and no group-level pattern closes this finite comparison."
+    ],
+    "execution_gate": "No execution until partition manifest and original row identity receipt accepted; this proposal does not authorize work."
+  },
+  "conditional_alternatives": [
+    {
+      "id": "P006-HERG-REP3",
+      "task": "herg",
+      "trigger": "Pgp study or task-independent evidence shows representation gaps; herg-specific accepted train-only partition available.",
+      "matrix": "Morgan/CheM/MiniMol × one fixed L2 logistic readout; only if a persistent consensus-error group remains, add same 8-descriptor view as a second predeclared stage.",
+      "metric": "AUROC",
+      "stop": "No stable representation gap; no extra seed/floor grid."
+    },
+    {
+      "id": "P006-BBB-REP3",
+      "task": "bbb_martins",
+      "trigger": "Accepted BBB train-only partition; source semantics and logBB cutoff lineage bound.",
+      "matrix": "Morgan/CheM/MiniMol × fixed same readout, followed conditionally by same 8-descriptor ablation.",
+      "metric": "AUROC",
+      "stop": "No low-support/error relation and no descriptor increment; do not use Pgp inhibitor labels as efflux covariates."
+    },
+    {
+      "id": "P006-CYP2C9-INH-REP3",
+      "task": "cyp2c9_veith",
+      "trigger": "Accepted inhibition split and assay lineage mapping; AP/AUPRC contract confirmed separately.",
+      "matrix": "Morgan/CheM/MiniMol × fixed same readout; if source mapping is reliable, train-only source/protocol subgroup analysis, no guessed covariates.",
+      "metric": "AP unless official AUPRC implementation/source confirmed",
+      "stop": "No source effect and no representation gap; no F010 repeat."
+    },
+    {
+      "id": "P006-CYP2C9-SUB-REP3",
+      "task": "cyp2c9_substrate_carbonmangels",
+      "trigger": "Accepted substrate split plus six-publication source lineage.",
+      "matrix": "Morgan/CheM/MiniMol × fixed same readout; only after persistent error pattern, separately design source-supported site-of-metabolism representation.",
+      "metric": "AP unless official AUPRC contract confirmed",
+      "stop": "No weighted BCE/Morgan repeat; no CYP2D6 transfer."
+    }
+  ],
+  "prospective_modules": [
+    {
+      "module": "Pgp 3D MIF/pharmacophore",
+      "source_basis": "Broccatelli 2011 uses GRID MIF/pharmacophoric features and membrane-partition-related physicochemical properties.",
+      "gate": "Only after existing-representation plus descriptor comparison leaves large low-support/consensus-error groups; require immutable code/weights or deterministic coordinate pipeline, protonation/conformer policy, license and producer acceptance."
+    },
+    {
+      "module": "hERG multi-pharmacophore",
+      "source_basis": "Wang et al. 2016 reports ensemble of pharmacophore hypotheses integrated with NBC/SVM.",
+      "gate": "Only if hERG fixed representation comparison leaves reproducible consensus errors; no paper score substitution."
+    },
+    {
+      "module": "CYP2C9 substrate site-of-metabolism/pose",
+      "source_basis": "Ahlström et al. 2007 experimentally studied CYP2C9 substrate/inhibitor/metabolite interactions and LC-MS/MS verification for a distinct 14-compound series.",
+      "gate": "Require Carbon-Mangels six-source row lineage and independently admitted frozen module; do not generate labels or infer labels from docking."
+    }
+  ]
+}

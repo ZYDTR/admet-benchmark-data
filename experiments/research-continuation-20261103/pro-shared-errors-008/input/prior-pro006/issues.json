@@ -1,0 +1,107 @@
+{
+  "request_id": "admet-pro-thin-endpoints-20261103-006",
+  "input_cutoff": "2026-11-03T14:42:51.342353+00:00",
+  "manifest_identity": "7d2c9fabaa18f80aba0ae7cf28e19f860bfefa55b990efd924ae35d2cc18442b",
+  "phase": "exploratory_design_only",
+  "issues": [
+    {
+      "id": "I006-PGP-PHYS-PROXY",
+      "task": "pgp_broccatelli",
+      "status": "proposed_blocked_on_partition",
+      "claim": "2D physicochemical descriptors may add membrane-partitioning information not sufficiently explicit in current fingerprints/embeddings.",
+      "evidence": [
+        "Broccatelli 2011 used pharmacophoric features and membrane-partition-related physicochemical properties; current project has accepted CheM/MiniMol/Morgan assets."
+      ],
+      "counterevidence": [
+        "Current model outputs may already encode these properties; Pro005 found mixed floor outcomes and some near-identical candidate predictions."
+      ],
+      "owner": "partition_owner then designated score_owner; scientific interpretation by task owner",
+      "reopen_trigger": "Accepted Pgp train-only split manifest with row identity, fold membership and hash; descriptor implementation fixed and train-fit-only.",
+      "stop": "No stable descriptor increment or no improvement in full low-support/consensus-error groups; do not extend into parameter grid."
+    },
+    {
+      "id": "I006-BBB-IONIZATION",
+      "task": "bbb_martins",
+      "status": "monitor_no_new_fit",
+      "claim": "BBB prediction may be limited by ionization, polarity, passive permeability and efflux interactions.",
+      "evidence": [
+        "Martins 2012 literature-derived set was enriched for BBB positives; common logBB threshold is -1."
+      ],
+      "counterevidence": [
+        "No row-level pKa, pH, logD or transporter-substrate labels; Pro005 BBB floor outcomes mixed."
+      ],
+      "owner": "data lineage owner; score owner for train-only cohorts",
+      "reopen_trigger": "Three-representation same-head train-only comparison plus validated source fields or stable residual/consensus-error group.",
+      "stop": "No relation between low support and error; no descriptor increment; no source fields."
+    },
+    {
+      "id": "I006-HERG-PHARMACOPHORE",
+      "task": "herg",
+      "status": "monitor_no_new_fit",
+      "claim": "Multiple binding pharmacophores and physicochemical features may be underrepresented by simple 2D encodings.",
+      "evidence": [
+        "Wang 2016 explicitly combines multiple pharmacophore hypotheses and ML."
+      ],
+      "counterevidence": [
+        "TDC hERG is only 648 compounds; Pro005 floor direction inconsistent; no new task-level scores."
+      ],
+      "owner": "partition_owner then score_owner",
+      "reopen_trigger": "Accepted train-only split and complete three-representation baseline; persistent full consensus-error group supports a spatial pharmacophore module.",
+      "stop": "No reproducible representation/readout gap; do not add seeds or floor sweeps."
+    },
+    {
+      "id": "I006-CYP2C9-INHIBITION-ASSAY",
+      "task": "cyp2c9_veith",
+      "status": "monitor_no_new_fit",
+      "claim": "Probe-dependent bioluminescent assay and isozyme/library differences may contribute to mixed results.",
+      "evidence": [
+        "Veith 2009 recombinant CYP panel; PubChem AID1851 multi-concentration CYP-Glo protocol."
+      ],
+      "counterevidence": [
+        "No row-level assay/source mapping; Pro005 only recorded small two-seed F010 support without native confirmation."
+      ],
+      "owner": "assay lineage owner and partition owner",
+      "reopen_trigger": "Verified original assay-source mapping for train rows and accepted train-only folds.",
+      "stop": "If within-source and between-source performance are indistinguishable, stop heterogeneity branch."
+    },
+    {
+      "id": "I006-CYP2C9-SUBSTRATE",
+      "task": "cyp2c9_substrate_carbonmangels",
+      "status": "monitor_no_new_fit",
+      "claim": "Productive binding/site-of-metabolism information and six-source heterogeneity may limit 2D classification.",
+      "evidence": [
+        "TDC says six publications merged; Ahlström 2007 experimentally validates productive CYP2C9 poses/metabolites for a distinct compound series."
+      ],
+      "counterevidence": [
+        "No mapping from Carbon-Mangels rows to those six source assays; prior weighted BCE/Morgan fixed matrix did not support replacement; Mini mixed."
+      ],
+      "owner": "source-lineage owner and partition owner",
+      "reopen_trigger": "Six-source lineage plus accepted independent train-only split and stable representation-specific failure group.",
+      "stop": "Do not port CYP2D6 recipe or repeat weighted BCE/Morgan; no source mapping means no assay subgroup experiment."
+    },
+    {
+      "id": "I006-SPLIT-DEPENDENCY",
+      "task": "all_five",
+      "status": "blocking_preparation_dependency",
+      "claim": "Current published split register does not expose accepted task-specific train-only partitions for these five endpoints.",
+      "evidence": [
+        "Pro005 split_register lists Hep HOOF folds and AMES/PPBR stress partitions only."
+      ],
+      "owner": "partition/data owner",
+      "reopen_trigger": "Provide immutable split manifest, original row mapping, fold/fit/stop membership, seed, hash, and leakage/grouping policy for each task.",
+      "stop": "No training/score proposal is executable until exact partition is bound."
+    },
+    {
+      "id": "I006-AP-AUPRC",
+      "task": "cyp2c9_veith;cyp2c9_substrate_carbonmangels",
+      "status": "metric_contract_dependency",
+      "claim": "AP cannot be relabeled official AUPRC without source-level metric equivalence.",
+      "evidence": [
+        "Project scoring policy requires official scorer/contract evidence and explicit naming."
+      ],
+      "owner": "benchmark/scoring owner",
+      "reopen_trigger": "Official benchmark metric source and implementation mapping supplied.",
+      "stop": "Report AP as AP only; do not claim official AUPRC."
+    }
+  ]
+}
