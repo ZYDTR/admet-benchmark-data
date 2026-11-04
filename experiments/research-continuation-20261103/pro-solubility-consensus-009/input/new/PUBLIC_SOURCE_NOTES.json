@@ -1,0 +1,25 @@
+{
+  "created_at_utc": "2026-11-03T21:11:13.077825+00:00",
+  "read_scope": "Original methods, Table2, curation steps and reliability caveats; not all cited studies. No external row dataset or labels downloaded.",
+  "sources": [
+    {
+      "id": "AQ2019",
+      "title": "AqSolDB, a curated reference set of aqueous solubility and 2D descriptors for a diverse set of compounds",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6687799/",
+      "doi": "10.1038/s41597-019-0151-1",
+      "findings": [
+        "Nine merged source datasets; the original table includes source-identifying ID, SD, occurrence count and reliability group.",
+        "Exactly two conflicting measurements were resolved by choosing the measured value closer to an ALOGPS reference prediction; therefore reliability groups are curation descriptors, not independent error labels.",
+        "Single-observation G1 cannot establish experimental reliability. The published final-column table does not list per-row pH or temperature."
+      ],
+      "project_inference": "These facts motivate provenance/condition hypotheses, not relabeling, cleaning or importing external answers. Our exact train table only provides the columns actually recorded in support_sign_results01.",
+      "access_note": "Publisher page failed via identity redirect; same original paper read through PMC."
+    }
+  ],
+  "counterarguments": [
+    "Observed shared residuals alone do not establish label corruption or irreducibility.",
+    "Broad missing-condition literature does not prove that any of our112 rows were measured at differing pH.",
+    "Drug_ID name matches are not proven exact AqSolDB record/source mapping; source joins must preserve ambiguity and coverage."
+  ],
+  "public_request_boundary": "No row identities, Y, residuals, features, model weights or private evaluation are supplied to Pro."
+}

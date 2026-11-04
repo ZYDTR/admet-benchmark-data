@@ -1,0 +1,85 @@
+{
+  "design_id": "SOLCTX-DIVERSITY04",
+  "at_utc": "2026-11-03T20:53:34.520505+00:00",
+  "stage": "exploratory_existing_prediction_diagnostic",
+  "trigger": "Both candidate single seeds point-improve vs matched oldMini seed but bothcandidate two-seedmeans fail originalValidgate; error-cancellation decomposition attributes loss0.02675/0.02630 to weakerwithin-new-seed cancellation. Need distinguish cross-readout complementarity from simply enlargingensemble.",
+  "inputs": {
+    "source_index_sha256": "db983a9037cfdd2a6c54c84b232e71ff3239e235e32fab644e50623f7cd07281",
+    "frozen_reference_sha256": "aab335abffc5bcf4fff64f5d1e47c2d0de5ad8929a6c4dd8c316729dcf6a5ef2",
+    "original_results_sha256": "ec66db99d1e258c3c8e54368289dc2cd12cc9c468955c11adf5eee3eda360ee0",
+    "cancellation_results_sha256": "11820039dbb7f6b6b902ace13bb09834b6dd8dadee08a93d1eb80dc56417a612"
+  },
+  "hypotheses": [
+    {
+      "id": "cross_readout_complementarity",
+      "prediction": "Replacing exactly one of oldMini two members with a newreadout member reduces MAE in both mirroredassignments withoutlarge-error/cohort deterioration."
+    },
+    {
+      "id": "assignment_specific_noise_or_tradeoff",
+      "prediction": "Only oneassignment improves, uncertainty spanszero, or gains come withnew harms; no portableadoption."
+    }
+  ],
+  "views": [
+    {
+      "view_id": "solctx-diversity04-oldMini44-newCheM45",
+      "members": [
+        "old_minimol44",
+        "new_chemeleon45"
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "view_id": "solctx-diversity04-oldMini45-newCheM44",
+      "members": [
+        "old_minimol45",
+        "new_chemeleon44"
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "view_id": "solctx-diversity04-oldMini44-newMini45",
+      "members": [
+        "old_minimol44",
+        "new_minimol45"
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "view_id": "solctx-diversity04-oldMini45-newMini44",
+      "members": [
+        "old_minimol45",
+        "new_minimol44"
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ]
+    }
+  ],
+  "primary_reference": "old_minimol_mean (exacttwo members,same.5/.5); compare eachfixedmix to corresponding new two-seedmean secondarily",
+  "analysis": "All1009/11fixedgroupsandcomplements,originalAE1/.25thresholds,331whole-scaffold10000bootstrap seed20261103; nominal98.75% intervals for4 contrasts as conservative familywise95% exploratoryscreen, not independentconfirmation. Reportall4, neverselectseedassignmentorfitweights.",
+  "decision": "This cannot override original SOLCTX Valid rejection. Both mirroredassignments mustshowconsistent gainwith tradeoffandintervalsupport before proposing any separatelyprecommitted independentconfirmation. Noactualfit/Valid/publication authorized by diagnostic. Negative/mixed results close samefixedmix withoutweight/seedgrid.",
+  "limits": [
+    "Samehistoricaloutcomes alreadyobserved; post-result justifieddiagnostic only",
+    "newCheM blends change representation andreadout together; not purecausality",
+    "newMini mix retains Mini representation butpreprocess/headrecipes differ",
+    "No training a router from stressoutcomes"
+  ],
+  "budget": {
+    "model_loads": 0,
+    "forwards": 0,
+    "fits": 0,
+    "new_numeric_prediction_views": 4,
+    "max_wall_seconds_analysis": 50
+  },
+  "owner": "Astra existing-evidence statisticalanalysis"
+}

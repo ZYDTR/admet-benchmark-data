@@ -1,0 +1,118 @@
+{
+  "cycle": "SOLCTX001",
+  "original_proposals": [
+    "P004-SOLCTX-chemeleon-scaffold",
+    "P004-SOLCTX-minimol-scaffold"
+  ],
+  "question": "Solubility readout transfer and representation ordering",
+  "runs": [
+    {
+      "representation": "chemeleon",
+      "seed": 44,
+      "method": "frozen TabICL regressor2.2.0",
+      "preprocessing": "F010 fit std floor .01",
+      "kwargs": {
+        "n_estimators": 8,
+        "norm_methods": [
+          "none",
+          "power"
+        ],
+        "feat_shuffle_method": "latin",
+        "outlier_threshold": 4.0,
+        "batch_size": 1,
+        "kv_cache": "repr",
+        "offload_mode": "cpu",
+        "use_amp": false,
+        "random_state": 44,
+        "n_jobs": 2
+      },
+      "Y": "original fit-only Y; internal inverse exactly once",
+      "fit_rows": 3531,
+      "stop_unused": 505,
+      "query_rows": 1009
+    },
+    {
+      "representation": "chemeleon",
+      "seed": 45,
+      "method": "frozen TabICL regressor2.2.0",
+      "preprocessing": "F010 fit std floor .01",
+      "kwargs": {
+        "n_estimators": 8,
+        "norm_methods": [
+          "none",
+          "power"
+        ],
+        "feat_shuffle_method": "latin",
+        "outlier_threshold": 4.0,
+        "batch_size": 1,
+        "kv_cache": "repr",
+        "offload_mode": "cpu",
+        "use_amp": false,
+        "random_state": 45,
+        "n_jobs": 2
+      },
+      "Y": "original fit-only Y; internal inverse exactly once",
+      "fit_rows": 3531,
+      "stop_unused": 505,
+      "query_rows": 1009
+    },
+    {
+      "representation": "minimol",
+      "seed": 44,
+      "method": "frozen TabICL regressor2.2.0",
+      "preprocessing": "H0 replace std<1e-8 with1",
+      "kwargs": {
+        "n_estimators": 8,
+        "norm_methods": [
+          "none",
+          "power"
+        ],
+        "feat_shuffle_method": "latin",
+        "outlier_threshold": 4.0,
+        "batch_size": 1,
+        "kv_cache": "repr",
+        "offload_mode": "cpu",
+        "use_amp": false,
+        "random_state": 44,
+        "n_jobs": 2
+      },
+      "Y": "original fit-only Y; internal inverse exactly once",
+      "fit_rows": 3531,
+      "stop_unused": 505,
+      "query_rows": 1009
+    },
+    {
+      "representation": "minimol",
+      "seed": 45,
+      "method": "frozen TabICL regressor2.2.0",
+      "preprocessing": "H0 replace std<1e-8 with1",
+      "kwargs": {
+        "n_estimators": 8,
+        "norm_methods": [
+          "none",
+          "power"
+        ],
+        "feat_shuffle_method": "latin",
+        "outlier_threshold": 4.0,
+        "batch_size": 1,
+        "kv_cache": "repr",
+        "offload_mode": "cpu",
+        "use_amp": false,
+        "random_state": 45,
+        "n_jobs": 2
+      },
+      "Y": "original fit-only Y; internal inverse exactly once",
+      "fit_rows": 3531,
+      "stop_unused": 505,
+      "query_rows": 1009
+    }
+  ],
+  "old_controls": "Exact MiniMol/CheMeleon MLP matched original fit/stop/stress rows and two seeds; full fixed public prior config sources available via HISTORY.json",
+  "assets": {
+    "MiniMol_ckpt_sha256": "a3061e1cdbbd5e544168fbf8c1e01836c8c19ac030891d495a2ae9f29cfe97a7",
+    "CheM_ckpt_sha256": "c376624d3407204e780a0ed13a9ac097cc9bb1c13ef89cdbc633c1715c183651",
+    "TabICL_ckpt_sha256": "0db9cb538f114e79026bf08f45f41ad8dd7ad2de2aaca9a5ca8cd3bd9748ae7a"
+  },
+  "gate": "Each rep mean lowerMAE than oldMini; two-contrast97.5CI upper<0; both seeds pointlower; largeAE>=1 count no greater; all4jointlocked/complete. Both failed.",
+  "limits": "Multiple recipe changes and historical outcomes limit causal and independent-generalization claims."
+}

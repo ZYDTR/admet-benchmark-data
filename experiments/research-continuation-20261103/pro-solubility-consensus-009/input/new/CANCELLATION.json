@@ -1,0 +1,267 @@
+{
+  "at_utc": "2026-11-03T20:52:46.277526+00:00",
+  "question": "Why do both new seeds improve but their fixedmean lose to oldMiniMLP?",
+  "scope": "Exact algebraic decomposition on existing1009predictions; no newcandidate, fit, inference or outcome-optimized weight",
+  "models": {
+    "old_chemeleon": {
+      "individual_seed_average_MAE": 0.797874688097537,
+      "equal_seed_mean_MAE": 0.7776601422349323,
+      "averaging_cancellation_gain": 0.020214545862604863,
+      "opposite_signed_errors": 123,
+      "signed_error_Pearson": 0.9289540525611633,
+      "mean_absolute_prediction_difference": 0.3097464757410324
+    },
+    "old_minimol": {
+      "individual_seed_average_MAE": 0.7420771151637819,
+      "equal_seed_mean_MAE": 0.7112161116896185,
+      "averaging_cancellation_gain": 0.03086100347416328,
+      "opposite_signed_errors": 201,
+      "signed_error_Pearson": 0.9062912116325301,
+      "mean_absolute_prediction_difference": 0.3698310214107329
+    },
+    "new_chemeleon": {
+      "individual_seed_average_MAE": 0.7223344825803215,
+      "equal_seed_mean_MAE": 0.7182247530660631,
+      "averaging_cancellation_gain": 0.00410972951425832,
+      "opposite_signed_errors": 62,
+      "signed_error_Pearson": 0.9839666978164903,
+      "mean_absolute_prediction_difference": 0.13238558877625006
+    },
+    "new_minimol": {
+      "individual_seed_average_MAE": 0.7365655891805043,
+      "equal_seed_mean_MAE": 0.7320091332473643,
+      "averaging_cancellation_gain": 0.00455645593314015,
+      "opposite_signed_errors": 62,
+      "signed_error_Pearson": 0.9807904555719614,
+      "mean_absolute_prediction_difference": 0.15036744910141875
+    }
+  },
+  "decomposition": {
+    "chemeleon": {
+      "all1009": {
+        "n": 1009,
+        "individual_seed_average_error_delta": -0.019742632583460346,
+        "lost_averaging_gain": 0.026751273959904957,
+        "mean_prediction_MAE_delta": 0.007008641376444607,
+        "lost_averaging_gain_CI95": [
+          0.012186667195520282,
+          0.040163850458991034
+        ]
+      },
+      "both_old_large": {
+        "n": 151,
+        "individual_seed_average_error_delta": -0.14598151233063664,
+        "lost_averaging_gain": -0.00010098931015722092,
+        "mean_prediction_MAE_delta": -0.14608250164079387,
+        "lost_averaging_gain_CI95": [
+          -0.0003244550177391566,
+          0.0
+        ]
+      },
+      "oldMini_only_large": {
+        "n": 93,
+        "individual_seed_average_error_delta": -0.5770330495062,
+        "lost_averaging_gain": -0.007050674352338234,
+        "mean_prediction_MAE_delta": -0.5840837238585382,
+        "lost_averaging_gain_CI95": [
+          -0.016510031956831612,
+          -0.0002137744038899688
+        ]
+      },
+      "oldCheM_only_large": {
+        "n": 111,
+        "individual_seed_average_error_delta": 0.3950540383646246,
+        "lost_averaging_gain": 0.020185145545676773,
+        "mean_prediction_MAE_delta": 0.41523918391030135,
+        "lost_averaging_gain_CI95": [
+          0.004633785476004345,
+          0.033355933378589005
+        ]
+      },
+      "neither_old_large": {
+        "n": 654,
+        "individual_seed_average_error_delta": 0.018250714726021272,
+        "lost_averaging_gain": 0.038872242156842776,
+        "mean_prediction_MAE_delta": 0.057122956882864055,
+        "lost_averaging_gain_CI95": [
+          0.019085089170417013,
+          0.055139806740656
+        ]
+      },
+      "old_low_disagreement_both_large": {
+        "n": 57,
+        "individual_seed_average_error_delta": -0.014116425745070249,
+        "lost_averaging_gain": -0.00026753308480246244,
+        "mean_prediction_MAE_delta": -0.014383958829872711,
+        "lost_averaging_gain_CI95": [
+          -0.0009149631500244216,
+          0.0
+        ]
+      },
+      "both_old_large_complement": {
+        "n": 858,
+        "individual_seed_average_error_delta": 0.0024742331995508677,
+        "lost_averaging_gain": 0.0314770219246828,
+        "mean_prediction_MAE_delta": 0.03395125512423367,
+        "lost_averaging_gain_CI95": [
+          0.014809302083455064,
+          0.04566816556237044
+        ]
+      },
+      "oldMini_only_large_complement": {
+        "n": 916,
+        "individual_seed_average_error_delta": 0.03683816302114095,
+        "lost_averaging_gain": 0.03018313115754537,
+        "mean_prediction_MAE_delta": 0.06702129417868631,
+        "lost_averaging_gain_CI95": [
+          0.01473477949726689,
+          0.04427801352549702
+        ]
+      },
+      "oldCheM_only_large_complement": {
+        "n": 898,
+        "individual_seed_average_error_delta": -0.0710148268765978,
+        "lost_averaging_gain": 0.027562900077922024,
+        "mean_prediction_MAE_delta": -0.04345192679867579,
+        "lost_averaging_gain_CI95": [
+          0.01182847299314242,
+          0.04184581963507815
+        ]
+      },
+      "neither_old_large_complement": {
+        "n": 355,
+        "individual_seed_average_error_delta": -0.08973601044374478,
+        "lost_averaging_gain": 0.004421377619630776,
+        "mean_prediction_MAE_delta": -0.08531463282411403,
+        "lost_averaging_gain_CI95": [
+          -0.0015822834800055517,
+          0.00997145802169548
+        ]
+      },
+      "old_low_disagreement_both_large_complement": {
+        "n": 952,
+        "individual_seed_average_error_delta": -0.020079495808027824,
+        "lost_averaging_gain": 0.02836899665060698,
+        "mean_prediction_MAE_delta": 0.008289500842579156,
+        "lost_averaging_gain_CI95": [
+          0.013026938956703567,
+          0.04201165594124903
+        ]
+      }
+    },
+    "minimol": {
+      "all1009": {
+        "n": 1009,
+        "individual_seed_average_error_delta": -0.005511525983277526,
+        "lost_averaging_gain": 0.026304547541023127,
+        "mean_prediction_MAE_delta": 0.020793021557745605,
+        "lost_averaging_gain_CI95": [
+          0.012787213806248325,
+          0.03867201188821233
+        ]
+      },
+      "both_old_large": {
+        "n": 151,
+        "individual_seed_average_error_delta": -0.1471404699415665,
+        "lost_averaging_gain": 0.0,
+        "mean_prediction_MAE_delta": -0.1471404699415665,
+        "lost_averaging_gain_CI95": [
+          0.0,
+          0.0
+        ]
+      },
+      "oldMini_only_large": {
+        "n": 93,
+        "individual_seed_average_error_delta": -0.38705470734940295,
+        "lost_averaging_gain": 0.0,
+        "mean_prediction_MAE_delta": -0.38705470734940295,
+        "lost_averaging_gain_CI95": [
+          0.0,
+          0.0
+        ]
+      },
+      "oldCheM_only_large": {
+        "n": 111,
+        "individual_seed_average_error_delta": 0.20265177436655094,
+        "lost_averaging_gain": 0.01887330346186143,
+        "mean_prediction_MAE_delta": 0.22152507782841238,
+        "lost_averaging_gain_CI95": [
+          0.001066972980072859,
+          0.03380018208126902
+        ]
+      },
+      "neither_old_large": {
+        "n": 654,
+        "individual_seed_average_error_delta": 0.04611440683923064,
+        "lost_averaging_gain": 0.03737974278994758,
+        "mean_prediction_MAE_delta": 0.08349414962917821,
+        "lost_averaging_gain_CI95": [
+          0.01907120735233391,
+          0.05205422107099377
+        ]
+      },
+      "old_low_disagreement_both_large": {
+        "n": 57,
+        "individual_seed_average_error_delta": -0.14469520312229922,
+        "lost_averaging_gain": 0.0,
+        "mean_prediction_MAE_delta": -0.14469520312229922,
+        "lost_averaging_gain_CI95": [
+          0.0,
+          0.0
+        ]
+      },
+      "both_old_large_complement": {
+        "n": 858,
+        "individual_seed_average_error_delta": 0.019413847603787313,
+        "lost_averaging_gain": 0.030933902644396664,
+        "mean_prediction_MAE_delta": 0.05034775024818397,
+        "lost_averaging_gain_CI95": [
+          0.015619128179267432,
+          0.04399042790836579
+        ]
+      },
+      "oldMini_only_large_complement": {
+        "n": 916,
+        "individual_seed_average_error_delta": 0.03322593675367626,
+        "lost_averaging_gain": 0.028975205752065865,
+        "mean_prediction_MAE_delta": 0.06220114250574213,
+        "lost_averaging_gain_CI95": [
+          0.014251070022150552,
+          0.0420575958513215
+        ]
+      },
+      "oldCheM_only_large_complement": {
+        "n": 898,
+        "individual_seed_average_error_delta": -0.031242178921842067,
+        "lost_averaging_gain": 0.02722310889156539,
+        "mean_prediction_MAE_delta": -0.004019070030276683,
+        "lost_averaging_gain_CI95": [
+          0.013019859239934402,
+          0.04024008191884525
+        ]
+      },
+      "neither_old_large_complement": {
+        "n": 355,
+        "individual_seed_average_error_delta": -0.1006195825069968,
+        "lost_averaging_gain": 0.005901230096525686,
+        "mean_prediction_MAE_delta": -0.0947183524104711,
+        "lost_averaging_gain_CI95": [
+          0.00029675112948864755,
+          0.011199275453066801
+        ]
+      },
+      "old_low_disagreement_both_large_complement": {
+        "n": 952,
+        "individual_seed_average_error_delta": 0.002821950484079868,
+        "lost_averaging_gain": 0.02787950469421464,
+        "mean_prediction_MAE_delta": 0.030701455178294507,
+        "lost_averaging_gain_CI95": [
+          0.013757677976231905,
+          0.040435264333642716
+        ]
+      }
+    }
+  },
+  "identity": "DeltaMAE(mean)=DeltaMAE(averageindividualseeds)+oldcancellationgain-newcancellationgain",
+  "interpretation_limit": "Descriptive conditional error cancellation; correlation does not establish underlying training/representation mechanism. Two seeds share data. Old cohort/complements unchanged."
+}
